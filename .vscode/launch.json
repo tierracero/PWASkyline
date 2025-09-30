@@ -1,0 +1,40 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:Skyline2.0}",
+            "name": "Debug App",
+            "program": "${workspaceFolder:Skyline2.0}/.build/debug/App",
+            "preLaunchTask": "swift: Build Debug App"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:Skyline2.0}",
+            "name": "Release App",
+            "program": "${workspaceFolder:Skyline2.0}/.build/release/App",
+            "preLaunchTask": "swift: Build Release App"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:Skyline2.0}",
+            "name": "Debug Service",
+            "program": "${workspaceFolder:Skyline2.0}/.build/debug/Service",
+            "preLaunchTask": "swift: Build Debug Service"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:Skyline2.0}",
+            "name": "Release Service",
+            "program": "${workspaceFolder:Skyline2.0}/.build/release/Service",
+            "preLaunchTask": "swift: Build Release Service"
+        }
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "web.hotReload": true,
+    "menu.state": {
+        "Maintenance": true,
+        "Features": true,
+        "Debug": true,
+        "Settings": true,
+        "Release": true,
+        "Support": false
+    },
+    "swift.hotRebuild": false,
+    "stream.loggingLevel": "Verbose",
+    "web.debugGzip": true,
+    "web.debugBrotli": true,
+    "swift.clearLogBeforeBuild": true
+}
