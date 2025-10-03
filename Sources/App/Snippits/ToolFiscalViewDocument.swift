@@ -192,13 +192,13 @@ class ToolFiscalViewDocument: Div {
                 Div{
                     Label("Emisor")
                         .color(.yellowTC)
-                    Label(self.doc.receptorRfc)
+                    Label(self.doc.emisorRfc)
                         .float(.right)
                 }
                 .marginBottom(3.px)
                 
-                InputText(self.doc.receptorName)
-                    .class( .textFiledBlackDarkMedium )
+                InputText(self.emisorName)
+                    .class( .textFiledBlackDarkMedium)
                     .custom("width", "calc(100% - 18px)")
                     .marginBottom(7.px)
                     .disabled(true)
@@ -207,13 +207,13 @@ class ToolFiscalViewDocument: Div {
                 Div{
                     Label("Receptor")
                         .color(.yellowTC)
-                    Label(self.doc.emisorRfc)
+                    Label(self.doc.receptorRfc)
                         .float(.right)
                 }
                 .marginBottom(3.px)
 
-                InputText(self.emisorName)
-                    .class( .textFiledBlackDarkMedium)
+                InputText("\(self.account.folio) \(self.doc.receptorName)")
+                    .class( .textFiledBlackDarkMedium )
                     .custom("width", "calc(100% - 18px)")
                     .marginBottom(7.px)
                     .disabled(true)
@@ -998,5 +998,3 @@ class ToolFiscalViewDocument: Div {
     }
     
 }
-
-

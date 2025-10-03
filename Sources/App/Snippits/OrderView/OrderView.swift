@@ -1976,18 +1976,18 @@ class OrderView: Div {
                 }
                 .boxShadow(h: 2.px, v: 2.px, blur: 3.px, color: .grayBlackDark)
                 .class(.roundGrayBlackDark)
-              w  .hidden(self.$requierServiceAddress.map{!$0})
+                .hidden(self.$requierServiceAddress.map{!$0})
                 
                 Div().class(.clear).marginTop(24.px)
                 
             }
-            .custom("height", "calc(100% - 73px)")
+            .custom("height", "calc(100% - 73px)") 
             .marginBottom(7.px)
             .overflow(.auto)
             
             /// Status View
             Div{
-                
+                     
                 /// pending
                 Div {
                     
