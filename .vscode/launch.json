@@ -4,36 +4,36 @@
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:Skyline2.0}",
+            "cwd": "${workspaceFolder:PWASkyline}",
             "name": "Debug App",
-            "program": "${workspaceFolder:Skyline2.0}/.build/debug/App",
+            "program": "${workspaceFolder:PWASkyline}/.build/debug/App",
             "preLaunchTask": "swift: Build Debug App"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:Skyline2.0}",
+            "cwd": "${workspaceFolder:PWASkyline}",
             "name": "Release App",
-            "program": "${workspaceFolder:Skyline2.0}/.build/release/App",
+            "program": "${workspaceFolder:PWASkyline}/.build/release/App",
             "preLaunchTask": "swift: Build Release App"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:Skyline2.0}",
+            "cwd": "${workspaceFolder:PWASkyline}",
             "name": "Debug Service",
-            "program": "${workspaceFolder:Skyline2.0}/.build/debug/Service",
+            "program": "${workspaceFolder:PWASkyline}/.build/debug/Service",
             "preLaunchTask": "swift: Build Debug Service"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:Skyline2.0}",
+            "cwd": "${workspaceFolder:PWASkyline}",
             "name": "Release Service",
-            "program": "${workspaceFolder:Skyline2.0}/.build/release/Service",
+            "program": "${workspaceFolder:PWASkyline}/.build/release/Service",
             "preLaunchTask": "swift: Build Release Service"
         }
     ]

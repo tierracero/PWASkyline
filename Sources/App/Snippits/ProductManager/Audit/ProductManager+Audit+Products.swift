@@ -676,17 +676,15 @@ extension ProductManagerView.AuditView {
                         Div{
                             
                             Img()
-                                .src("/skyline/media/download2.png")
+                                .src("/skyline/media/excel.png")
                                 .marginLeft(12.px)
                                 .height(18.px)
-                        
-                             Span("Descargar")
-                             
+
                          }
                         .float(.right)
-                        .class(.uibtn)
                         .onClick {
                             self.downloadCardexReport(
+                                .csv,
                                 startAt: startAtUTS,
                                 endAt: endAtUTS,
                                 storeId: relationId,
@@ -694,6 +692,26 @@ extension ProductManagerView.AuditView {
                             )
                         }
                         
+                        Div{
+
+                            Img()
+                                .src("/skyline/media/pdf.png")
+                                .marginLeft(12.px)
+                                .height(18.px)
+                             
+                         }
+                        .float(.right)
+                        .onClick {
+                            self.downloadCardexReport(
+                                .pdf,
+                                startAt: startAtUTS,
+                                endAt: endAtUTS,
+                                storeId: relationId,
+                                payload: payload
+                            )
+                        }
+                        
+
                         H1("Resultados")
                             .color(.darkGoldenRod)
                     }
@@ -707,23 +725,29 @@ extension ProductManagerView.AuditView {
             }
         }
         
-        func downloadCardexReport(startAt: Int64, endAt: Int64, storeId: UUID, payload: CustPOCEndpointV1.CardexResponse) {
+        func downloadCardexReport(_ documentType:  DocumentType, startAt: Int64, endAt: Int64, storeId: UUID, payload: CustPOCEndpointV1.CardexResponse) {
             
             loadingView(show: true)
             
             var name = ""
             
-            var contents =
-            "SKU/UPC/POC," +
-            "Nombre x Marca / Modelo," +
-            "Costo," +
-            "Precio," +
-            "Saldo Ini," +
-            "Inicial," +
-            "+ Agr," +
-            "- Rem," +
-            "Final," +
-            "Saldo Fini\n"
+            let tableHeader: [String] = [
+                "POC/SKU/UPC | Nombre | Marca",
+                "Modelo",
+                "Costo",
+                "Precio",
+                "Saldo Ini",
+                "Inicial",
+                "+ Agr",
+                "- Rem",
+                "Final",
+                "Saldo Fini"
+            ]
+
+            var tableBody: [[String]] = []
+
+            var contents = "\(custCatchUrl),Reporte de Cardex,,,,,,,,\n" +
+            tableHeader.joined(separator: ",") + "\n"
             
             var totalInitialUnits: Int = 0
             
@@ -749,7 +773,7 @@ extension ProductManagerView.AuditView {
             
             name += " \(getDate(startAt).formatedLong) al \(getDate(endAt).formatedLong)"
             
-            let fileName = safeFileName(name: "\(name).csv", to: .none, folio: nil)
+            let fileName = safeFileName(name: "\(name)", to: .none, folio: nil)
             
             payload.objects.forEach { item in
                 
@@ -765,18 +789,23 @@ extension ProductManagerView.AuditView {
                 
                 totalFinalCost += item.finalBalance
                 
-                contents +=
-                "\(item.poc.upc)," +
-                "\("\(item.poc.name) \(item.poc.brand) \(item.poc.model)".purgeSpaces)," +
-                "\(item.poc.cost.formatMoney.replace(from: ",", to: ""))," +
-                "\(item.poc.pricea.formatMoney.replace(from: ",", to: ""))," +
-                "\(item.initalBalance.formatMoney.replace(from: ",", to: ""))," +
-                "\(item.initalInventory.toString)," +
-                "\(item.addedInventory.toString)," +
-                "\(item.removeInventory.toString)," +
-                "\(item.finalInventory.toString)," +
-                "\(item.finalBalance.formatMoney.replace(from: ",", to: ""))\n"
-                
+                let row: [String] = [
+                    "\(item.poc.upc) \(item.poc.name) \(item.poc.brand)",
+                    item.poc.model,
+                    item.poc.cost.formatMoney,
+                    item.poc.pricea.formatMoney,
+                    item.initalBalance.formatMoney,
+                    item.initalInventory.toString,
+                    item.addedInventory.toString,
+                    item.removeInventory.toString,
+                    item.finalInventory.toString,
+                    item.finalBalance.formatMoney
+                ]
+
+                tableBody.append(row)
+
+                contents += row.map{ $0.replace(from: ",", to: "") }.joined(separator: ",") +  "\n"
+    
             }
             
             
@@ -818,39 +847,66 @@ extension ProductManagerView.AuditView {
             
             let _costTaxTrasladadosSF = (costTaxSF.trasladado.doubleValue / 1000000)
             
-            
             // MARK: SUB TOTAL
-            contents += ",,,," +
-            "\(_costSubTotalSI.formatMoney.replace(from: ",", to: ""))," +
-            "," +
-            "," +
-            "," +
-            "," +
-            "\(_costSubTotalSF.formatMoney.replace(from: ",", to: ""))"
+            var row: [String] = [
+                "",
+                "",
+                "",
+                "",
+                "",
+                _costSubTotalSI.formatMoney,
+                "",
+                "",
+                "",
+                "",
+                _costSubTotalSF.formatMoney,
+            ]
+
+            contents += row.map{ $0.replace(from: ",", to: "") }.joined(separator: ",") +  "\n"
             
             // MARK: TAX
-            contents += ",,,," +
-            "\(_costTaxTrasladadosSI.formatMoney.replace(from: ",", to: ""))," +
-            "," +
-            "," +
-            "," +
-            "," +
-            "\(_costTaxTrasladadosSF.formatMoney.replace(from: ",", to: ""))"
+            row = [
+                "",
+                "",
+                "",
+                "",
+                "",
+                _costTaxTrasladadosSI.formatMoney,
+                "",
+                "",
+                "",
+                "",
+                _costTaxTrasladadosSF.formatMoney,
+            ]
             
+            contents += row.map{ $0.replace(from: ",", to: "") }.joined(separator: ",") +  "\n"
             
             // MARK: TOTAL
-            contents += ",,,," +
-            "\(totalInitialCost.formatMoney.replace(from: ",", to: ""))," +
-            "\(totalInitialUnits.toString)," +
-            "\(totalAddedUnits.toString)," +
-            "\(totalRemovedUnits.toString)," +
-            "\(totalFinalUnits.toString)," +
-            "\(totalFinalCost.formatMoney.replace(from: ",", to: ""))"
+            row = [
+                "",
+                "",
+                "",
+                "",
+                "",
+                totalInitialCost.formatMoney,
+                totalInitialUnits.toString,
+                totalAddedUnits.toString,
+                totalRemovedUnits.toString,
+                totalFinalUnits.toString,
+                totalFinalCost.formatMoney,
+            ]
+            
+            contents += row.map{ $0.replace(from: ",", to: "") }.joined(separator: ",") +  "\n"
             
             loadingView(show: false)
             
-            _ = JSObject.global.download!( fileName, contents)
-            
+            switch documentType {
+                case .csv:
+                _ = JSObject.global.download!( fileName, contents)
+                case .pdf:
+                _ = JSObject.global.createProductAuditPDF!( fileName, name, tableHeader, tableBody)
+            }
+
         }
         
         func selectConcesionier(){
@@ -881,6 +937,15 @@ extension ProductManagerView.AuditView {
 
 extension ProductManagerView.AuditView.Products {
     
+
+    enum DocumentType {
+
+        case csv
+
+        case pdf
+
+    }
+
     
     public enum CardexRequestType: String, Codable, CaseIterable {
         

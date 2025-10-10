@@ -500,13 +500,14 @@ class ToolFiscalViewDocument: Div {
                 }
                 
                 do {
+
                     let raw = try JSONDecoder().decode(FiscalDocumentObject.self, from: data)
                     
                     comment = raw.comment
                     
                     detailsView.appendChild(Label("Conceptos"))
                     
-                    var table = Table{
+                    let table = Table{
                         Tr{
                             Td("Descripción")
                             Td("Uni.")
@@ -612,7 +613,7 @@ class ToolFiscalViewDocument: Div {
                     
                     detailsView.appendChild(Label("Conceptos"))
                     
-                    var table = Table {
+                    let table = Table {
                         Tr{
                             Td("Descripción")
                             Td("Uni.")

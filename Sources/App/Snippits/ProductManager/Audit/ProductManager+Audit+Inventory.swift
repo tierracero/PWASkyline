@@ -773,13 +773,30 @@ extension ProductManagerView.AuditView {
                                     }
                                 
                                 Img()
-                                    .src("/skyline/media/download2.png")
+                                    .src("/skyline/media/excel.png")
                                     .marginRight(24.px)
                                     .paddingTop(7.px)
                                     .float(.right)
                                     .width(36.px)
                                     .onClick {
                                         self.download(
+                                            .csv,
+                                            name: "inventario_existente_\(store?.name ?? "")_\(Date().cronStamp).csv",
+                                            item: catchItems,
+                                            type: type,
+                                            title: "Inventario por Tienda - \(store?.name ?? "")"
+                                        )
+                                    }
+                                
+                                Img()
+                                    .src("/skyline/media/pdf.png")
+                                    .marginRight(24.px)
+                                    .paddingTop(7.px)
+                                    .float(.right)
+                                    .width(36.px)
+                                    .onClick {
+                                        self.download(
+                                            .pdf,
                                             name: "inventario_existente_\(store?.name ?? "")_\(Date().cronStamp).csv",
                                             item: catchItems,
                                             type: type,
@@ -791,7 +808,7 @@ extension ProductManagerView.AuditView {
                                 
                             })
                             
-                            var tableBody = TBody()
+                            let tableBody = TBody()
                                 .hidden($sectionIsHidden)
                             
                             let table = Table {
@@ -1082,14 +1099,31 @@ extension ProductManagerView.AuditView {
                                     }
                                 
                                 Img()
-                                    .src("/skyline/media/download2.png")
+                                    .src("/skyline/media/excel.png")
                                     .marginRight(24.px)
                                     .paddingTop(7.px)
                                     .float(.right)
                                     .width(36.px)
                                     .onClick {
                                         self.download(
-                                            name: "ventas_por_clientes_\( "\(account.businessName) \(account.firstName) \(account.lastName)".purgeSpaces.replace(from: " ", to: "_") )__\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-")).csv",
+                                            .csv,
+                                            name: "ventas_por_clientes_\( "\(account.businessName) \(account.firstName) \(account.lastName)".purgeSpaces.replace(from: " ", to: "_") )__\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))",
+                                            item: catchItems,
+                                            type: type,
+                                            title: "Ventas Por Clientes \( "\(account.businessName) \(account.firstName) \(account.lastName)".purgeSpaces.replace(from: " ", to: "_") )__\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))"
+                                        )
+                                    }
+
+                                Img()
+                                    .src("/skyline/media/pdf.png")
+                                    .marginRight(24.px)
+                                    .paddingTop(7.px)
+                                    .float(.right)
+                                    .width(36.px)
+                                    .onClick {
+                                        self.download(
+                                            .pdf,
+                                            name: "ventas_por_clientes_\( "\(account.businessName) \(account.firstName) \(account.lastName)".purgeSpaces.replace(from: " ", to: "_") )__\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))",
                                             item: catchItems,
                                             type: type,
                                             title: "Ventas Por Clientes \( "\(account.businessName) \(account.firstName) \(account.lastName)".purgeSpaces.replace(from: " ", to: "_") )__\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))"
@@ -1100,7 +1134,7 @@ extension ProductManagerView.AuditView {
                                 
                             })
                             
-                            var table = Table {
+                            let table = Table {
                                 Tr{
                                     Td("POC/SKU/UPC")
                                     Td("Nombre")
@@ -1250,7 +1284,7 @@ extension ProductManagerView.AuditView {
                                     }
                             })
                             
-                            var table = Table {
+                            let table = Table {
                                 Tr{
                                     Td("POC/SKU/UPC")
                                     Td("Nombre")
@@ -1358,14 +1392,31 @@ extension ProductManagerView.AuditView {
                                     }
                                 
                                 Img()
-                                    .src("/skyline/media/download2.png")
+                                    .src("/skyline/media/excel.png")
                                     .marginRight(24.px)
                                     .paddingTop(7.px)
                                     .float(.right)
                                     .width(36.px)
                                     .onClick {
                                         self.download(
-                                            name: "ventas_por_usuario_\( uname.purgeSpaces.replace(from: " ", to: "_") )__\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-")).csv",
+                                            .csv,
+                                            name: "ventas_por_usuario_\( uname.purgeSpaces.replace(from: " ", to: "_") )__\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))",
+                                            item: catchItems,
+                                            type: type,
+                                            title: "Ventas Por Ususario \( uname.purgeSpaces.replace(from: " ", to: "_") )__\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))"
+                                        )
+                                    }
+                                
+                                Img()
+                                    .src("/skyline/media/pdf.png")
+                                    .marginRight(24.px)
+                                    .paddingTop(7.px)
+                                    .float(.right)
+                                    .width(36.px)
+                                    .onClick {
+                                        self.download(
+                                            .pdf,
+                                            name: "ventas_por_usuario_\( uname.purgeSpaces.replace(from: " ", to: "_") )__\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))",
                                             item: catchItems,
                                             type: type,
                                             title: "Ventas Por Ususario \( uname.purgeSpaces.replace(from: " ", to: "_") )__\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))"
@@ -1599,14 +1650,32 @@ extension ProductManagerView.AuditView {
                                     }
                                 
                                 Img()
-                                    .src("/skyline/media/download2.png")
+                                    .src("/skyline/media/excel.png")
                                     .marginRight(24.px)
                                     .paddingTop(7.px)
                                     .float(.right)
                                     .width(36.px)
                                     .onClick {
                                         self.download(
-                                            name: "inventario_en_concesion_\( "\(account.businessName) \(account.firstName) \(account.lastName)".purgeSpaces.replace(from: " ", to: "_") )_\(getDate().formatedLong.replace(from: " ", to: "_").purgeSpaces.replace(from: "/", to: "_")).csv",
+                                            .csv,
+                                            name: "inventario_en_concesion_\( "\(account.businessName) \(account.firstName) \(account.lastName)".purgeSpaces.replace(from: " ", to: "_") )_\(getDate().formatedLong.replace(from: " ", to: "_").purgeSpaces.replace(from: "/", to: "_"))",
+                                            item: catchItems,
+                                            type: type,
+                                            title: "Inventario en Concesión - \(account.businessName) \(account.firstName) \(account.lastName) \(getDate().formatedLong)"
+                                        )
+                                    }
+
+                                
+                                Img()
+                                    .src("/skyline/media/pdf.png")
+                                    .marginRight(24.px)
+                                    .paddingTop(7.px)
+                                    .float(.right)
+                                    .width(36.px)
+                                    .onClick {
+                                        self.download(
+                                            .pdf,
+                                            name: "inventario_en_concesion_\( "\(account.businessName) \(account.firstName) \(account.lastName)".purgeSpaces.replace(from: " ", to: "_") )_\(getDate().formatedLong.replace(from: " ", to: "_").purgeSpaces.replace(from: "/", to: "_"))",
                                             item: catchItems,
                                             type: type,
                                             title: "Inventario en Concesión - \(account.businessName) \(account.firstName) \(account.lastName) \(getDate().formatedLong)"
@@ -1617,7 +1686,7 @@ extension ProductManagerView.AuditView {
                                 
                             })
                             
-                            var table = Table {
+                            let table = Table {
                                 Tr{
                                     Td("POC/SKU/UPC")
                                     Td("Nombre")
@@ -1744,57 +1813,41 @@ extension ProductManagerView.AuditView {
             }
         }
         
-        func download(name: String, item: [API.custPOCV1.AuditObject], type: InventoryAuditTypes, title: String) {
+        func download(_ documentType: DocumentType, name: String, item: [API.custPOCV1.AuditObject], type: InventoryAuditTypes, title: String) {
             
             loadingView(show: true)
             
-            var contents = ""
-            
+            print("🟢  type: \(type.rawValue)")
+
             switch type {
             case .general:
                 break
             case .lowInvetory:
                 break
             case .byStore:
-                contents = downloadByStore(items: item, title: title)
+                downloadByStore(type: documentType, name: name, items: item, title: title)
             case .byDepartement:
                 break
             case .byProduct:
-                contents = downloadByProduct(item: item, title: title)
+                downloadByProduct(type: documentType, name: name, item: item, title: title)
             case .bySales:
-                contents = downloadBySales(item: item, title: title)
-                
+                downloadBySales(type: documentType, name: name, item: item, title: title)
             case .bySalesConcession:
-                contents = downloadBySalesConcession(item: item, title: title)
-                
+                downloadBySalesConcession(type: documentType, name: name, item: item, title: title)
             case .byCustomerSales:
-                contents = downloadBySales(item: item, title: title)
+                downloadBySales(type: documentType, name: name, item: item, title: title)
             case .byUserSales:
-                contents = downloadBySales(item: item, title: title)
+                downloadBySales(type: documentType, name: name, item: item, title: title)
             case .byConcession:
-                contents = downloadByConcession(item: item, title: title)
+                downloadByConcession(type: documentType, name: name, item: item, title: title)
             }
-            
-            _ = JSObject.global.download!( name, contents)
             
             loadingView(show: false)
             
         }
         
-        func downloadByStore (items: [API.custPOCV1.AuditObject], title: String) -> String {
-            
-            var contents = "\(title),\(custCatchUrl),,\n" +
-            "POC/SKU/UPC," +
-            "Nombre," +
-            "Marca," +
-            "Modelo," +
-            "DiaZero," +
-            "Mas Antig," +
-            "Mas Nuevo," +
-            "Unis," +
-            "Cost," +
-            "Precio\n"
-            
+        func downloadByStore(type: DocumentType, name: String, items: [API.custPOCV1.AuditObject], title: String)  {
+
             var catchItems: [API.custPOCV1.AuditObject] = []
             
             var storeCostTotal: Int64 = 0
@@ -1813,7 +1866,7 @@ extension ProductManagerView.AuditView {
                         nocodeRefrence.append(item)
                         return
                     }
-                 
+                
                     itemRefrence[poc.upc] = item
                     
                 }
@@ -1828,7 +1881,24 @@ extension ProductManagerView.AuditView {
             }
             
             catchItems.append(contentsOf: nocodeRefrence)
-            
+
+            let tableHeader: [String] = [
+                "POC/SKU/UPC Nombre Marca",
+                "Modelo",
+                "DiaZero",
+                "Mas Antiguo",
+                "Mas Nuevo",
+                "Unis",
+                "Cost",
+                "Precio"
+            ]
+
+            var tableBody: [[String]] = []
+
+            var contents = "\(title),\(custCatchUrl),,\n" +
+
+            tableHeader.joined(separator: ",") + "\n"
+
             catchItems.forEach { item in
                 
                 let itemCostTotal: Int64 = item.items.map{ $0.cost }.reduce(0, +)
@@ -1855,7 +1925,18 @@ extension ProductManagerView.AuditView {
                     newestItem = "\(date.monthName.prefix(3)) \(date.year.toString.suffix(2))"
                 }
                 
-                contents += "\(poc?.upc ?? "N/D"),\(poc?.name ?? "N/D"),\(poc?.brand ?? "N/D"),\(poc?.model ?? "N/D"),\(item.zeroDay?.toString ?? "---"),\(oldestItem),\(newestItem),\(item.items.count.toString),\(itemCostTotal.formatMoney.replace(from: ",", to: "")),\(itemPriceTotal.formatMoney.replace(from: ",", to: ""))\n"
+                let row: [String] = [
+                        "\(poc?.upc ?? "N/D"),\(poc?.name ?? "N/D"),\(poc?.brand ?? "N/D")",
+                        poc?.model ?? "N/D",
+                        item.zeroDay?.toString ?? "---",
+                        oldestItem,
+                        newestItem,
+                        item.items.count.toString,
+                        itemCostTotal.formatMoney,
+                        itemPriceTotal.formatMoney
+                ]
+
+                contents += row.map{ $0.replace(from: ",", to: "") }.joined(separator: ",") + "\n"
                 
                 storeCostTotal += itemCostTotal
                 
@@ -1863,29 +1944,66 @@ extension ProductManagerView.AuditView {
                 
             }
             
-            contents += ",,,,,,,,\(storeCostTotal.formatMoney.replace(from: ",", to: "")),\(storePriceTotal.formatMoney.replace(from: ",", to: ""))\n"
+            let row:[String] = [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                storeCostTotal.formatMoney,
+                storePriceTotal.formatMoney
+            ]
             
-            return contents
+            tableBody.append(row)
+
+            contents += row.map{ $0.replace(from: ",", to: "") }.joined(separator: ",") + "\n"
+
+            switch type {
+                case .csv:
+                
+                _ = JSObject.global.download!( name, contents)
+
+                case .pdf:
+            
+                    _ = JSObject.global.createProductAuditPDF!(name, title, tableHeader, tableBody)
+
+
+            }
         }
         
-        func downloadByProduct (item: [API.custPOCV1.AuditObject], title: String) -> String {
+        func downloadByProduct(type: DocumentType, name: String, item: [API.custPOCV1.AuditObject], title: String) {
             
+            /*
+            let tableHeader: [String] = [
+                "POC/SKU/UPC Nombre Marca",
+                "Nombre",
+                "Existente",
+                "Faltante"
+            ]
+
             var contents = "\(title),\(custCatchUrl),,\n" +
-            "SKU / UPC / POC, Nombre, Existente, Faltante"
-            
-            return contents
-            
+                tableHeader.joined(separator: ",") + "\n"
+
+            switch type {
+                case .csv:
+
+                _ = JSObject.global.download!( name, contents)
+                
+                case .pdf:
+                
+                _ = JSObject.global.createProductAuditPDF!( name, json, title)
+
+            }
+        */
         }
         
-        func downloadBySales (item: [API.custPOCV1.AuditObject], title: String) -> String {
-            
-            var contents = "\(custCatchUrl),\(title),,,,,,,,\n" +
-            "POC/SKU/UPC,Nombre,Marca,Modelo,DiaZero,Mas Antig.,Mas Nuevo,Unis.,Costo,IVA,Costo Neto,Precio,IVA,Precio Neto\n"
-            
+        func downloadBySales(type: DocumentType, name: String, item: [API.custPOCV1.AuditObject], title: String) {
+
             var itemRefrence: [String:API.custPOCV1.AuditObject] = [:]
             
             var nocodeRefrence: [API.custPOCV1.AuditObject] = []
-           
+        
             var costSubTotal: Int64 = 0
             
             var costTaxTotal: Int64 = 0
@@ -1906,17 +2024,37 @@ extension ProductManagerView.AuditView {
                         nocodeRefrence.append(item)
                         return
                     }
-                 
+                
                     itemRefrence[poc.upc] = item
                     
                 }
             }
             
+            let tableHeader: [String] = [
+                "POC/SKU/UPC | Nombre | Marca",
+                "Modelo",
+                "DiaZero",
+                "Mas Antig.",
+                "Mas Nuevo",
+                "Unis.",
+                "Costo",
+                "IVA",
+                "Costo Neto",
+                "Precio",
+                "IVA",
+                "Precio Neto"
+            ]
+            
+            var tableBody: [[String]] = []
+
+            var contents = "\(custCatchUrl),\(title),,,,,,,,\n" +
+            tableHeader.joined(separator: ",") + "\n"
+
             item.forEach { item in
                 
                 let itemCostTotal: Int64 = item.items.map{ $0.cost }.reduce(0, +)
                 
-                /// CalcSubTotalResponse
+                /* CalcSubTotalResponse*/
                 let costTax = calcSubTotal(
                     substractedTaxCalculation: true,
                     units: 100 * 10000,
@@ -1932,14 +2070,13 @@ extension ProductManagerView.AuditView {
                     ]
                 )
                 
-                
                 let _costSubTotal = (costTax.subTotal.doubleValue / 1000000)
                 
                 let _costTaxTrasladados = (costTax.trasladado.doubleValue / 1000000)
                 
                 let itemPriceTotal: Int64 = item.items.map{ $0.price }.reduce(0, +)
                 
-                /// CalcSubTotalResponse
+                /* CalcSubTotalResponse*/
                 let priceTax = calcSubTotal(
                     substractedTaxCalculation: true,
                     units: 100 * 10000,
@@ -1980,16 +2117,28 @@ extension ProductManagerView.AuditView {
                     
                     newestItem = "\(date.monthName.prefix(3)) \(date.year.toString.suffix(2))"
                 }
+
+                let row: [String] = [
+                        "\(poc?.upc ?? "N/D") \(poc?.name ?? "") \(poc?.brand ?? "")".purgeSpaces,
+                        "\(poc?.model ?? "N/D")",
+                        "\(item.zeroDay?.toString ?? "---")",
+                        "\(oldestItem)",
+                        "\(newestItem)",
+                        "\(item.items.count.toString)",
+                        "\(_costSubTotal.formatMoney)",
+                        "\(_costTaxTrasladados.formatMoney)",
+                        "\(itemCostTotal.formatMoney)",
+                        "\(_priceSubTotal.formatMoney)",
+                        "\(_priceTaxTrasladados.formatMoney)",
+                        "\(itemPriceTotal.formatMoney)"
+                ]
+
+                tableBody.append(row)
+
+                contents += row.map{ $0.replace(from: ",", to: "") }.joined(separator: ",") + "\n"
                 
-                contents += "\(poc?.upc ?? "N/D"),\((poc?.name ?? "N/D").replace(from: ",", to: "")),\(poc?.brand ?? "N/D"),\(poc?.model ?? "N/D"),\(item.zeroDay?.toString ?? "---"),\(oldestItem),\(newestItem)," +
-                "\"\(item.items.count.toString)\"," +
-                "\"\(_costSubTotal.formatMoney)\"," +
-                "\"\(_costTaxTrasladados.formatMoney)\"," +
-                "\"\(itemCostTotal.formatMoney)\"," +
-                "\"\(_priceSubTotal.formatMoney)\"," +
-                "\"\(_priceTaxTrasladados.formatMoney)\"," +
-                "\"\(itemPriceTotal.formatMoney)\"\n"
-                
+                tableBody.append(row)
+
                 costSubTotal += _costSubTotal.toCents
                 
                 costTaxTotal += _costTaxTrasladados.toCents
@@ -1998,28 +2147,74 @@ extension ProductManagerView.AuditView {
                 
                 
                 priceSubTotal += _priceSubTotal.toCents
-               
+            
                 priceTaxTotal += _priceTaxTrasladados.toCents
                 
                 storePriceTotal += itemPriceTotal
                 
             }
             
-            contents += ",,,,,,,,\"\(costSubTotal.formatMoney)\",\"\(costTaxTotal.fromCents)\",\"\(storeCostTotal.formatMoney)\",\"\(priceSubTotal.formatMoney)\",\"\(priceTaxTotal.fromCents)\",\"\(storePriceTotal.formatMoney)\"\n"
+            let row: [String] = [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "\(costSubTotal.formatMoney)",
+                    "\(costTaxTotal.formatMoney)",
+                    "\(storeCostTotal.formatMoney)",
+                    "\(priceSubTotal.formatMoney)",
+
+                    "\(priceTaxTotal.formatMoney)",
+                    "\(storePriceTotal.formatMoney)"
+                ]
             
-            return contents
+            tableBody.append(row)
+
+            contents += row.joined(separator: ",") + "\n"
+            
+            switch type {
+                case .csv:
+
+                _ = JSObject.global.download!( name, contents)
+
+                case .pdf:
+
+                _ = JSObject.global.createProductAuditPDF!( name, title, tableHeader, tableBody)
+                
+            }
             
         }
         
-        func downloadBySalesConcession (item: [API.custPOCV1.AuditObject], title: String) -> String {
-            
+        func downloadBySalesConcession(type: DocumentType, name: String, item: [API.custPOCV1.AuditObject], title: String) {
+
+            let tableHeader: [String] = [
+                "POC/SKU/UPC | Nombre | Marca",
+                "Modelo",
+                "DiaZero",
+                "Mas Antig.",
+                "Mas Nuevo",
+                "Unis.",
+                "Costo",
+                "IVA",
+                "Costo Neto",
+                "Precio",
+                "IVA",
+                "Precio Neto"
+            ]
+
+            var tableBody: [[String]] = []
+
             var contents = "\(custCatchUrl),\(title),,,,,,,,\n" +
-            "POC/SKU/UPC,Nombre,Marca,Modelo,DiaZero,Mas Antig.,Mas Nuevo,Unis.,Costo,IVA,Costo Neto,Precio,IVA,Precio Neto\n"
-            
+            tableHeader.joined(separator: ",") + "\n"
+
             var itemRefrence: [String:API.custPOCV1.AuditObject] = [:]
             
             var nocodeRefrence: [API.custPOCV1.AuditObject] = []
-           
+        
             var costSubTotal: Int64 = 0
             
             var costTaxTotal: Int64 = 0
@@ -2040,7 +2235,7 @@ extension ProductManagerView.AuditView {
                         nocodeRefrence.append(item)
                         return
                     }
-                 
+                
                     itemRefrence[poc.upc] = item
                     
                 }
@@ -2073,7 +2268,7 @@ extension ProductManagerView.AuditView {
                 
                 let itemPriceTotal: Int64 = item.items.map{ $0.price }.reduce(0, +)
                 
-                /// CalcSubTotalResponse
+                /*CalcSubTotalResponse */
                 let priceTax = calcSubTotal(
                     substractedTaxCalculation: true,
                     units: 100 * 10000,
@@ -2115,15 +2310,26 @@ extension ProductManagerView.AuditView {
                     newestItem = "\(date.monthName.prefix(3)) \(date.year.toString.suffix(2))"
                 }
                 
-                contents += "\(poc?.upc ?? "N/D"),\((poc?.name ?? "N/D").replace(from: ",", to: "")),\(poc?.brand ?? "N/D"),\(poc?.model ?? "N/D"),\(item.zeroDay?.toString ?? "---"),\(oldestItem),\(newestItem)," +
-                "\"\(item.items.count.toString)\"," +
-                "\"\(_costSubTotal.formatMoney)\"," +
-                "\"\(_costTaxTrasladados.formatMoney)\"," +
-                "\"\(itemCostTotal.formatMoney)\"," +
-                "\"\(_priceSubTotal.formatMoney)\"," +
-                "\"\(_priceTaxTrasladados.formatMoney)\"," +
-                "\"\(itemPriceTotal.formatMoney)\"\n"
+                let row: [String] = [
+                        "\(poc?.upc ?? "N/D") \(poc?.name ?? "") \(poc?.brand ?? "")".purgeSpaces,
+                        poc?.model ?? "N/D",
+                        item.zeroDay?.toString ?? "---",
+                        oldestItem,
+                        newestItem,
+                        item.items.count.toString,
+                        _costSubTotal.formatMoney,
+                        _costTaxTrasladados.formatMoney,
+                        itemCostTotal.formatMoney,
+                        _priceSubTotal.formatMoney,
+                        _priceTaxTrasladados.formatMoney,
+                        itemPriceTotal.formatMoney
+                ]
+
+                tableBody.append(row)
+
+                contents += row.map{ $0.replace(from: ",", to: "") }.joined(separator: ",") + "\n"
                 
+
                 costSubTotal += _costSubTotal.toCents
                 
                 costTaxTotal += _costTaxTrasladados.toCents
@@ -2132,24 +2338,69 @@ extension ProductManagerView.AuditView {
                 
                 
                 priceSubTotal += _priceSubTotal.toCents
-               
+            
                 priceTaxTotal += _priceTaxTrasladados.toCents
                 
                 storePriceTotal += itemPriceTotal
                 
             }
             
-            contents += ",,,,,,,,\"\(costSubTotal.formatMoney)\",\"\(costTaxTotal.fromCents)\",\"\(storeCostTotal.formatMoney)\",\"\(priceSubTotal.formatMoney)\",\"\(priceTaxTotal.fromCents)\",\"\(storePriceTotal.formatMoney)\"\n"
+            let row: [String] = [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    costSubTotal.formatMoney,
+                    costTaxTotal.formatMoney,
+                    storeCostTotal.formatMoney,
+                    priceSubTotal.formatMoney,
+                    priceTaxTotal.formatMoney,
+                    storePriceTotal.formatMoney
+                ]
+
+            tableBody.append(row)
+
+            contents += row.joined(separator: ",") + "\n"
             
-            return contents
+            switch type {
+                case .csv:
+                
+                _ = JSObject.global.download!( name, contents)
+                
+                case .pdf:
+                
+                _ = JSObject.global.createProductAuditPDF!( name, title, tableHeader, tableBody)
+
+            }
             
         }
         
-        func downloadByConcession (item: [API.custPOCV1.AuditObject], title: String) -> String {
+        func downloadByConcession(type: DocumentType, name: String, item: [API.custPOCV1.AuditObject], title: String) {
             
-            var contents = "\(custCatchUrl),\(title),,\n" +
-            "SKU / UPC / POC, Nombre,Marca,Modelo,DiaZero,Mas Antig.,Mas Nuevo,Unis.,Costo,Precio\n"
-            
+            let tableHeader: [String] = [
+                "POC/SKU/UPC | Nombre | Marca",
+                "Modelo",
+                "DiaZero",
+                "Mas Antig.",
+                "Mas Nuevo",
+                "Unis.",
+                "Costo",
+                // "IVA",
+                // "Costo Neto",
+                "Precio",
+                // "IVA",
+                // "Precio Neto"
+            ]
+
+            var tableBody: [[String]] = []
+
+            var contents = "\(custCatchUrl),\(title),,,,,,,,\n" +
+            tableHeader.joined(separator: ",") + "\n"
+
             var storeUnitsTotal: Int = 0
             
             var storeCostTotal: Int64 = 0
@@ -2168,7 +2419,7 @@ extension ProductManagerView.AuditView {
                         nocodeRefrence.append(item)
                         return
                     }
-                 
+                
                     itemRefrence[poc.upc] = item
                     
                 }
@@ -2199,9 +2450,22 @@ extension ProductManagerView.AuditView {
                     
                     newestItem = "\(date.monthName.prefix(3)) \(date.year.toString.suffix(2))"
                 }
-                
-                contents += "\(poc?.upc ?? "N/D"),\((poc?.name ?? "N/D").replace(from: ",", to: "")),\(poc?.brand ?? "N/D"),\(poc?.model ?? "N/D"),\(item.zeroDay?.toString ?? "---"),\(oldestItem),\(newestItem),\"\(item.items.count.toString)\",\"\(itemCostTotal.formatMoney)\",\"\(itemPriceTotal.formatMoney)\"\n"
-                
+
+                let row: [String] =  [
+                    "\(poc?.upc ?? "") \(poc?.name ?? "") \(poc?.brand ?? "")".purgeSpaces,
+                    poc?.model ?? "",
+                    item.zeroDay?.toString ?? "---",
+                    oldestItem,
+                    newestItem,
+                    item.items.count.toString,
+                    itemCostTotal.formatMoney,
+                    itemPriceTotal.formatMoney,
+                ]
+
+                tableBody.append(row)
+
+                contents += row.map{ $0.replace(from: ",", to: "") }.joined(separator: ",") + "\n"
+            
                 storeUnitsTotal += item.items.count
                 
                 storeCostTotal += itemCostTotal
@@ -2209,11 +2473,33 @@ extension ProductManagerView.AuditView {
                 storePriceTotal += itemPriceTotal
                 
             }
+
+            let row: [String] =  [
+                "",
+                "",
+                "",
+                "",
+                "",
+                storeUnitsTotal.toString,
+                storeCostTotal.formatMoney,
+                storePriceTotal.formatMoney,
+            ]
+
+            tableBody.append(row)
+
+            contents += row.map{ $0.replace(from: ",", to: "") }.joined(separator: ",") + "\n"
+
+            switch type {
+                case .csv:
             
-            contents += ",,,,,,,\"\(storeUnitsTotal.toString)\",\"\(storeCostTotal.formatMoney)\",\"\(storePriceTotal.formatMoney)\"\n"
-        
-            return contents
-            
+                _ = JSObject.global.download!( name, contents)
+
+                case .pdf:
+                
+                _ = JSObject.global.createProductAuditPDF!( name, title, tableHeader, tableBody)
+
+            }
+
         }
         
         func renderGenral(payload: CustPOCEndpointV1.AuditsResponse) {
@@ -2456,13 +2742,24 @@ extension ProductManagerView.AuditView {
                     }
                 
                 Img()
-                    .src("/skyline/media/download2.png")
+                    .src("/skyline/media/excel.png")
                     .marginRight(24.px)
                     .paddingTop(7.px)
                     .float(.right)
                     .width(36.px)
                     .onClick {
-                        self.download(name: "inventario_existente_\(store?.name ?? "")_\(Date().cronStamp).csv", item: catchItems)
+                        self.download(.csv, name: "inventario_existente_\(store?.name ?? "")_\(Date().cronStamp).csv", item: catchItems)
+                    }
+
+                
+                Img()
+                    .src("/skyline/media/pdf.png")
+                    .marginRight(24.px)
+                    .paddingTop(7.px)
+                    .float(.right)
+                    .width(36.px)
+                    .onClick {
+                        self.download(pdf, name: "inventario_existente_\(store?.name ?? "")_\(Date().cronStamp).csv", item: catchItems)
                     }
                 */
                 Div().clear(.both)
@@ -2821,7 +3118,7 @@ extension ProductManagerView.AuditView {
             var zeroItemRefrence: [UUID:[API.custPOCV1.AuditZeroObject]] = [:]
             
             payload.items.forEach { item in
-                
+
                 guard let storeid = item.storeid else {
                     return
                 }
@@ -2924,14 +3221,31 @@ extension ProductManagerView.AuditView {
                         }
                     
                     Img()
-                        .src("/skyline/media/download2.png")
+                        .src("/skyline/media/excel.png")
                         .marginRight(24.px)
                         .paddingTop(7.px)
                         .float(.right)
                         .width(36.px)
                         .onClick {
                             self.download(
-                                name: "ventas_por_dia_\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))).csv",
+                                .csv,
+                                name: "ventas_por_dia_\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))",
+                                item: payload.items,
+                                type: .bySales,
+                                title: "Venta por Día \(getDate(startAtUTS).formatedLong) - \(getDate(endAtUTS).formatedLong)"
+                            )
+                        }
+
+                    Img()
+                        .src("/skyline/media/pdf.png")
+                        .marginRight(24.px)
+                        .paddingTop(7.px)
+                        .float(.right)
+                        .width(36.px)
+                        .onClick {
+                            self.download(
+                                .pdf,
+                                name: "ventas_por_dia_\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))",
                                 item: payload.items,
                                 type: .bySales,
                                 title: "Venta por Día \(getDate(startAtUTS).formatedLong) - \(getDate(endAtUTS).formatedLong)"
@@ -2944,7 +3258,7 @@ extension ProductManagerView.AuditView {
                 
                 self.resultDiv.appendChild(Div().height(3.px).clear(.both))
                 
-                var table = Table {
+                let table = Table {
                     THead{
                         Tr{
                             Td("Date")
@@ -2961,7 +3275,7 @@ extension ProductManagerView.AuditView {
                 .width(100.percent)
                 .color(.white)
                 
-                var tableBody = TBody().hidden($sectionAIsHidden)
+                let tableBody = TBody().hidden($sectionAIsHidden)
                 
                 let yearKeys = itemByDateRefrence.map{ $0.key }.sorted()
                 
@@ -3051,7 +3365,7 @@ extension ProductManagerView.AuditView {
                     
                     @State var sectionBIsHidden = true
                     
-                    var tableBody = TBody().hidden($sectionBIsHidden)
+                    let tableBody = TBody().hidden($sectionBIsHidden)
                     
                     var conterRow = true
                     
@@ -3098,14 +3412,32 @@ extension ProductManagerView.AuditView {
                             }
                         
                         Img()
-                            .src("/skyline/media/download2.png")
+                            .src("/skyline/media/excel.png")
                             .marginRight(24.px)
                             .paddingTop(7.px)
                             .float(.right)
                             .width(36.px)
                             .onClick {
                                 self.download(
-                                    name: "inventario_existente_\( (store?.name ?? "").replace(from: " ", to: "_") )_\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-")).csv",
+                                    .csv,
+                                    name: "inventario_existente_\( (store?.name ?? "").replace(from: " ", to: "_") )_\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))",
+                                    item: itemsSorted,
+                                    type: .bySales,
+                                    title: "Inventario Existente - \( (store?.name ?? ""))_\(getDate(startAtUTS).formatedLong) al \(getDate(endAtUTS).formatedLong)"
+                                )
+                                
+                            }
+                        
+                        Img()
+                            .src("/skyline/media/pdf.png")
+                            .marginRight(24.px)
+                            .paddingTop(7.px)
+                            .float(.right)
+                            .width(36.px)
+                            .onClick {
+                                self.download(
+                                    .pdf,
+                                    name: "inventario_existente_\( (store?.name ?? "").replace(from: " ", to: "_") )_\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))",
                                     item: itemsSorted,
                                     type: .bySales,
                                     title: "Inventario Existente - \( (store?.name ?? ""))_\(getDate(startAtUTS).formatedLong) al \(getDate(endAtUTS).formatedLong)"
@@ -3119,7 +3451,7 @@ extension ProductManagerView.AuditView {
                     
                     self.resultDiv.appendChild(Div().height(3.px).clear(.both))
                     
-                    var table = Table {
+                    let table = Table {
                         THead {
                             Tr{
                                 Td("POC/SKU/UPC")
@@ -3249,7 +3581,7 @@ extension ProductManagerView.AuditView {
                     })
                     
                     
-                    var table = Table {
+                    let table = Table {
                         Tr{
                             Td("POC/SKU/UPC")
                             Td("Nombre")
@@ -3470,14 +3802,31 @@ extension ProductManagerView.AuditView {
                         }
                     
                     Img()
-                        .src("/skyline/media/download2.png")
+                        .src("/skyline/media/excel.png")
                         .marginRight(24.px)
                         .paddingTop(7.px)
                         .float(.right)
                         .width(36.px)
                         .onClick {
                             self.download(
-                                name: "ventas_por_dia_\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))).csv",
+                                .csv,
+                                name: "ventas_por_dia_\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))",
+                                item: payload.items,
+                                type: .bySales,
+                                title: "Venta por Día \(getDate(startAtUTS).formatedLong) - \(getDate(endAtUTS).formatedLong)"
+                            )
+                        }
+
+                    Img()
+                        .src("/skyline/media/pdf.png")
+                        .marginRight(24.px)
+                        .paddingTop(7.px)
+                        .float(.right)
+                        .width(36.px)
+                        .onClick {
+                            self.download(
+                                .pdf,
+                                name: "ventas_por_dia_\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-")))",
                                 item: payload.items,
                                 type: .bySales,
                                 title: "Venta por Día \(getDate(startAtUTS).formatedLong) - \(getDate(endAtUTS).formatedLong)"
@@ -3644,19 +3993,35 @@ extension ProductManagerView.AuditView {
                             }
                         
                         Img()
-                            .src("/skyline/media/download2.png")
+                            .src("/skyline/media/excel.png")
                             .marginRight(24.px)
                             .paddingTop(7.px)
                             .float(.right)
                             .width(36.px)
                             .onClick {
                                 self.download(
-                                    name: "inventario_existente_\( (store?.name ?? "").replace(from: " ", to: "_") )_\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-")).csv",
+                                    .csv,
+                                    name: "inventario_existente_\( (store?.name ?? "").replace(from: " ", to: "_") )_\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))",
                                     item: itemsSorted,
                                     type: .bySales,
                                     title: "Inventario Existente - \( (store?.name ?? ""))_\(getDate(startAtUTS).formatedLong) al \(getDate(endAtUTS).formatedLong)"
                                 )
-                                
+                            }
+                        
+                        Img()
+                            .src("/skyline/media/pdf.png")
+                            .marginRight(24.px)
+                            .paddingTop(7.px)
+                            .float(.right)
+                            .width(36.px)
+                            .onClick {
+                                self.download(
+                                    .pdf,
+                                    name: "inventario_existente_\( (store?.name ?? "").replace(from: " ", to: "_") )_\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))",
+                                    item: itemsSorted,
+                                    type: .bySales,
+                                    title: "Inventario Existente - \( (store?.name ?? ""))_\(getDate(startAtUTS).formatedLong) al \(getDate(endAtUTS).formatedLong)"
+                                )
                             }
                         
                         Div().clear(.both)
@@ -3665,7 +4030,7 @@ extension ProductManagerView.AuditView {
                     
                     self.resultDiv.appendChild(Div().height(3.px).clear(.both))
                     
-                    var table = Table {
+                    let table = Table {
                         THead {
                             Tr{
                                 Td("POC/SKU/UPC")
@@ -3791,7 +4156,7 @@ extension ProductManagerView.AuditView {
                     
                     @State var sectionBIsHidden = true
                     
-                    var tableBody = TBody().hidden($sectionBIsHidden)
+                    let tableBody = TBody().hidden($sectionBIsHidden)
                     
                     var conterRow = true
                     
@@ -3837,15 +4202,32 @@ extension ProductManagerView.AuditView {
                             }
                         
                         Img()
-                            .src("/skyline/media/download2.png")
+                            .src("/skyline/media/excel.png")
                             .marginRight(24.px)
                             .paddingTop(7.px)
                             .float(.right)
                             .width(36.px)
                             .onClick {
                                 self.download(
-                                    
-                                    name: "inventario_existente_\( ("\(account.businessName) \(account.firstName) \(account.lastName)").replace(from: " ", to: "_") )_\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-")).csv",
+                                    .csv,
+                                    name: "inventario_existente_\( ("\(account.businessName) \(account.firstName) \(account.lastName)").replace(from: " ", to: "_") )_\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))",
+                                    item: itemsSorted,
+                                    type: .bySales,
+                                    title: "Inventario Existente - \( ("\(account.businessName) \(account.firstName) \(account.lastName)"))_\(getDate(startAtUTS).formatedLong) al \(getDate(endAtUTS).formatedLong)"
+                                )
+                                
+                            }
+                        
+                        Img()
+                            .src("/skyline/media/pdf.png")
+                            .marginRight(24.px)
+                            .paddingTop(7.px)
+                            .float(.right)
+                            .width(36.px)
+                            .onClick {
+                                self.download(
+                                    .pdf,
+                                    name: "inventario_existente_\( ("\(account.businessName) \(account.firstName) \(account.lastName)").replace(from: " ", to: "_") )_\(getDate(startAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))_al_\(getDate(endAtUTS).formatedLong.replace(from: " ", to: "-").replace(from: "/", to: "-"))",
                                     item: itemsSorted,
                                     type: .bySales,
                                     title: "Inventario Existente - \( ("\(account.businessName) \(account.firstName) \(account.lastName)"))_\(getDate(startAtUTS).formatedLong) al \(getDate(endAtUTS).formatedLong)"
@@ -3859,7 +4241,7 @@ extension ProductManagerView.AuditView {
                     
                     self.resultDiv.appendChild(Div().height(3.px).clear(.both))
                     
-                    var table = Table {
+                    let table = Table {
                         THead {
                             Tr{
                                 Td("POC/SKU/UPC")
@@ -4081,4 +4463,12 @@ extension ProductManagerView.AuditView.Inventory {
         case byConcesion
     }
     
+    enum DocumentType {
+
+        case csv
+
+        case pdf
+
+    }
+
 }
