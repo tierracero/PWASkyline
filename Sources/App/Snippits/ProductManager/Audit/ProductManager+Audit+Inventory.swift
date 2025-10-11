@@ -2137,15 +2137,14 @@ extension ProductManagerView.AuditView {
 
                 contents += row.map{ $0.replace(from: ",", to: "") }.joined(separator: ",") + "\n"
                 
-                tableBody.append(row)
-
+                // MARK: ADD COSTS
                 costSubTotal += _costSubTotal.toCents
                 
                 costTaxTotal += _costTaxTrasladados.toCents
                 
                 storeCostTotal += itemCostTotal
                 
-                
+                // MARK: ADD PROCES
                 priceSubTotal += _priceSubTotal.toCents
             
                 priceTaxTotal += _priceTaxTrasladados.toCents

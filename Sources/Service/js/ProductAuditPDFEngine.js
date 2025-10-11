@@ -73,7 +73,7 @@ function createProductAuditPDF(fileName, title, tableHeader, tableBody) {
         creator: 'TierraCero.com | Hacemos tu empresa más grande'
     });
 
-    doc.text('From javascript arrays', 10, 10)
+    doc.text(title, 10, 10)
 
     doc.autoTable({
         startY: 20,
