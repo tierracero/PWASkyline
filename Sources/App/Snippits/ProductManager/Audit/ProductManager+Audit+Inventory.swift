@@ -2794,7 +2794,7 @@ extension ProductManagerView.AuditView {
                     self.resultDiv.appendChild(H3("\(poc.upc) \(poc.brand) \(poc.model) \(poc.name)").color(.yellowTC))
                 }
                 
-                var tableCardex = TBody()
+                let tableCardex = TBody()
                 
                 self.resultDiv.appendChild(
                     Table {
@@ -2896,7 +2896,7 @@ extension ProductManagerView.AuditView {
                     avaragePrice = (totalPrice.toDouble / units.toDouble).toInt64
                 }
                 
-                var timeTable = Table {
+                let timeTable = Table {
                     THead{
                         Tr{
                             Td("POC/SKU/UPC")
@@ -3012,7 +3012,7 @@ extension ProductManagerView.AuditView {
                 
             })
             
-            var table = Table {
+            let table = Table {
                 THead{
                     Tr{
                         Td("POC/SKU/UPC")
