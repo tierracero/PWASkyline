@@ -420,8 +420,124 @@ extension ToolsView.WebPage {
                         
                         Div{
                             
-                            
+                            /* MARK: DIPLOMAS */
+                            Div{
+                                Div{
+                                    
+                                    Img()
+                                        .src("/skyline/media/add.png")
+                                        .padding(all: 3.px)
+                                        .paddingRight(0.px)
+                                        .cursor(.pointer)
+                                        .float(.right)
+                                        .height(22.px)
+                                        .onClick {
+                                            
+                                            let view = DiplomaView(
+                                                item: nil,
+                                                files: [],
+                                                notes: []
+                                            ) { itemId, name, description in
+                                                
+                                                guard let view = self.diplomaRows[itemId] else {
+                                                    return
+                                                }
+                                                
+                                                view.name = name
+                                                
+                                                view.descr = description
+                                                
+                                            } updateAvatar: { itemId, avatar in
+                                                
+                                                guard let view = self.diplomaRows[itemId] else {
+                                                    return
+                                                }
+                                                
+                                                view.avatar.load("https://\(custCatchUrl)/contenido/thump_\(avatar)")
+                                                
+                                            } addItem: { item in
+                                                self.addDiplomaRow(item)
+                                            } deleteItem: { itemId in
+                                                
+                                                self.diplomaRows[itemId]?.remove()
+                                                
+                                                self.diplomaRows.removeValue(forKey: itemId)
+                                                
+                                            }
+                                            
+                                            addToDom(view)
+                                            
+                                        }
+                                    
+                                    H2("Lista de diplomas")
+                                        .color(.white)
+                                }
+                                
+                                Div().clear(.both)
+                                
+                                self.diplomaRowsGrid
+                            }
+                            .height(350.px)
 
+                            /* MARK: PROFILES */
+                            Div{
+                                Div{
+                                    
+                                    Img()
+                                        .src("/skyline/media/add.png")
+                                        .padding(all: 3.px)
+                                        .paddingRight(0.px)
+                                        .cursor(.pointer)
+                                        .float(.right)
+                                        .height(22.px)
+                                        .onClick {
+                                            
+                                            let view = ProfileView(
+                                                item: nil,
+                                                files: [],
+                                                notes: []
+                                            ) { itemId, name, description in
+                                                
+                                                guard let view = self.profileRows[itemId] else {
+                                                    return
+                                                }
+                                                
+                                                view.name = name
+                                                
+                                                view.descr = description
+                                                
+                                            } updateAvatar: { itemId, avatar in
+                                                
+                                                guard let view = self.profileRows[itemId] else {
+                                                    return
+                                                }
+                                                
+                                                view.avatar.load("https://\(custCatchUrl)/contenido/thump_\(avatar)")
+                                                
+                                            } addItem: { item in
+                                                self.addProfileRow(item)
+                                            } deleteItem: { itemId in
+                                                
+                                                self.profileRows[itemId]?.remove()
+                                                
+                                                self.profileRows.removeValue(forKey: itemId)
+                                                
+                                            }
+                                            
+                                            addToDom(view)
+                                            
+                                        }
+                                    
+                                    H2("Lista de perfiles")
+                                        .color(.white)
+                                }
+                                
+                                Div().clear(.both)
+                                
+                                self.diplomaRowsGrid
+                            }
+                            .height(350.px)
+                            
                             /* MARK: Carucell One */
                             Div{
                                 Div{
@@ -1007,6 +1123,66 @@ extension ToolsView.WebPage {
             profileRows[item.id] =  view
             
             profileRowsGrid.appendChild(view)
+            
+        }
+        
+        func addDiplomaRow(_ item: CustWebContent) {
+            
+            let view = DiplomaRow(item: item) { view in
+                loadingView(show: true)
+                API.themeV1.getViewDiploma(
+                    id: item.id
+                ) { resp in
+                    
+                    loadingView(show: false)
+                    
+                    guard let resp else {
+                        showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                        return
+                    }
+                    
+                    guard resp.status == .ok else {
+                        showError(.errorGeneral, resp.msg)
+                        return
+                    }
+                    
+                    guard let payload = resp.data else {
+                        showError(.unexpectedResult, .unexpenctedMissingPayload)
+                        return
+                    }
+                    
+                    let view = DiplomaView(
+                        item: payload.diploma,
+                        files: payload.files,
+                        notes: payload.notes
+                    ) { itemId, name, description in
+                        
+                        view.name = name
+                        
+                        view.descr = description
+                        
+                    } updateAvatar: { itemId, avatar in
+                        
+                        view.avatar.load("https://\(custCatchUrl)/contenido/thump_\(avatar)")
+                        
+                    } addItem: { item in
+                        // MARK: un used since service exist
+                    } deleteItem: { itemId in
+                        
+                        self.diplomaRows[itemId]?.remove()
+                        
+                        self.diplomaRows.removeValue(forKey: itemId)
+                        
+                    }
+                    
+                    addToDom(view)
+                    
+                }
+            }
+            
+            diplomaRows[item.id] =  view
+            
+            diplomaRowsGrid.appendChild(view)
             
         }
         

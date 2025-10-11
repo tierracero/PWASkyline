@@ -902,7 +902,7 @@ extension ProductManagerView.AuditView {
             
             switch documentType {
                 case .csv:
-                _ = JSObject.global.download!( fileName, contents)
+                _ = JSObject.global.download!( "\(fileName).csv", contents)
                 case .pdf:
                 _ = JSObject.global.createProductAuditPDF!( fileName, name, tableHeader, tableBody)
             }

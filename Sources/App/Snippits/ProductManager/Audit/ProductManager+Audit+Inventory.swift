@@ -1962,7 +1962,7 @@ extension ProductManagerView.AuditView {
             switch type {
                 case .csv:
                 
-                _ = JSObject.global.download!( name, contents)
+                _ = JSObject.global.download!( "\(name).csv", contents)
 
                 case .pdf:
             
@@ -1988,7 +1988,7 @@ extension ProductManagerView.AuditView {
             switch type {
                 case .csv:
 
-                _ = JSObject.global.download!( name, contents)
+                _ = JSObject.global.download!( "\(name).csv", contents)
                 
                 case .pdf:
                 
@@ -2178,7 +2178,7 @@ extension ProductManagerView.AuditView {
             switch type {
                 case .csv:
 
-                _ = JSObject.global.download!( name, contents)
+                _ = JSObject.global.download!( "\(name).csv", contents)
 
                 case .pdf:
 
@@ -2368,7 +2368,7 @@ extension ProductManagerView.AuditView {
             switch type {
                 case .csv:
                 
-                _ = JSObject.global.download!( name, contents)
+                _ = JSObject.global.download!( "\(name).csv", contents)
                 
                 case .pdf:
                 
