@@ -46,6 +46,10 @@ extension ToolsView.WebPage {
         
         public let structure: WebConfigMeetUs
         
+        @State var diplomas: [CustWebContent]
+
+        @State var profiles: [CustWebContent]
+
         /// serviceImgOne
         @State var imageOne: [CustWebFilesQuick]
         
@@ -58,6 +62,8 @@ extension ToolsView.WebPage {
         public init(
             data: WebMeetUs,
             structure: WebConfigMeetUs,
+            diplomas: [CustWebContent],
+            profiles: [CustWebContent],
             imageOne: [CustWebFilesQuick],
             imageTwo: [CustWebFilesQuick],
             imageThree: [CustWebFilesQuick]
@@ -77,6 +83,8 @@ extension ToolsView.WebPage {
             self.imgTwo = data.imgTwo
             self.imgThree = data.imgThree
             self.structure = structure
+            self.diplomas = diplomas
+            self.profiles = profiles
             self.imageOne = imageOne
             self.imageTwo = imageTwo
             self.imageThree = imageThree
@@ -85,6 +93,20 @@ extension ToolsView.WebPage {
         required init() {
             fatalError("init() has not been implemented")
         }
+        
+        lazy var diplomaRowsGrid = Div()
+            .custom("height", "calc(100% - 37px)")
+            .overflow(.auto)
+        
+        /// [CustWebContent.Id : DiplomaRow ]
+        var diplomaRows: [UUID : DiplomaRow] = [:]
+
+        lazy var profileRowsGrid = Div()
+            .custom("height", "calc(100% - 37px)")
+            .overflow(.auto)
+        
+        /// [CustWebContent.Id : ProfileRow ]
+        var profileRows: [UUID : ProfileRow] = [:]
         
         lazy var metaTitleTextArea = TextArea(self.$metaTitle)
             .custom("width","calc(100% - 18px)")
@@ -211,7 +233,7 @@ extension ToolsView.WebPage {
             
             Div{
                 
-                /// Header
+                /* Header */
                 Div{
                     
                     Img()
@@ -398,7 +420,9 @@ extension ToolsView.WebPage {
                         
                         Div{
                             
-                            // MARK: Carucell One
+                            
+
+                            /* MARK: Carucell One */
                             Div{
                                 Div{
                                     
@@ -425,7 +449,7 @@ extension ToolsView.WebPage {
                             }
                             .hidden(!self.structure.imgOne)
                             
-                            // MARK: Carucell Two
+                            /* MARK: Carucell Two */
                             Div{
                                 
                                 Div{
@@ -453,7 +477,7 @@ extension ToolsView.WebPage {
                             }
                             .hidden(!self.structure.imgTwo)
                             
-                            // MARK: Carucell Three
+                            /* MARK: Carucell Three*/
                             Div{
                                 Div{
                                     
@@ -528,6 +552,10 @@ extension ToolsView.WebPage {
             left(0.px)
             top(0.px)
             
+            profiles.forEach { item in
+                addProfileRow(item)
+            }
+
             imageOne.forEach { image in
                 
                 let imageView = ImageWebView(
@@ -919,6 +947,66 @@ extension ToolsView.WebPage {
             }
             
             fileInputThree.click()
+            
+        }
+        
+        func addProfileRow(_ item: CustWebContent) {
+            
+            let view = ProfileRow(item: item) { view in
+                loadingView(show: true)
+                API.themeV1.getViewProfile(
+                    id: item.id
+                ) { resp in
+                    
+                    loadingView(show: false)
+                    
+                    guard let resp else {
+                        showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                        return
+                    }
+                    
+                    guard resp.status == .ok else {
+                        showError(.errorGeneral, resp.msg)
+                        return
+                    }
+                    
+                    guard let payload = resp.data else {
+                        showError(.unexpectedResult, .unexpenctedMissingPayload)
+                        return
+                    }
+                    
+                    let view = ProfileView(
+                        item: payload.profile,
+                        files: payload.files,
+                        notes: payload.notes
+                    ) { profileId, name, description in
+                        
+                        view.name = name
+                        
+                        view.descr = description
+                        
+                    } updateAvatar: { serviceId, avatar in
+                        
+                        view.avatar.load("https://\(custCatchUrl)/contenido/thump_\(avatar)")
+                        
+                    } addItem: { service in
+                        // MARK: un used since service exist
+                    } deleteItem: { serviceId in
+                        
+                        self.profileRows[serviceId]?.remove()
+                        
+                        self.profileRows.removeValue(forKey: serviceId)
+                        
+                    }
+                    
+                    addToDom(view)
+                    
+                }
+            }
+            
+            profileRows[item.id] =  view
+            
+            profileRowsGrid.appendChild(view)
             
         }
         

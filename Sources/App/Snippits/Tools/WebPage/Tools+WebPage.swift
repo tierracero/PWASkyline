@@ -1261,6 +1261,8 @@ extension ToolsView {
                 let view = MeetUsPage(
                     data: payload.data,
                     structure: payload.structure,
+                    diplomas: payload.diplomas,
+                    profiles: payload.profiles,
                     imageOne: payload.imagesOne,
                     imageTwo: payload.imagesTwo,
                     imageThree: payload.imagesThree

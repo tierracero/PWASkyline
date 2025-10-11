@@ -110,7 +110,6 @@ extension ToolsView.WebPage {
             .padding(all: 7.px)
             .height(70.px)
         
-        
         lazy var mainTextTextArea = TextArea(self.$mainText)
             .custom("width","calc(100% - 18px)")
             .placeholder("Texto principal")
