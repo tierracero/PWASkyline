@@ -1514,6 +1514,7 @@ extension ToolsView.WebPage {
         
         var toId: UUID? = nil
         
+        /// logoIndexMain, logoIndexWhite, logoIndexWhiteTrans, logoIndexBlack, logoIndexBlackTrans, logoIndexIcon, ...
         var subId: CustWebFilesObjectType? = nil
         
         switch toType {

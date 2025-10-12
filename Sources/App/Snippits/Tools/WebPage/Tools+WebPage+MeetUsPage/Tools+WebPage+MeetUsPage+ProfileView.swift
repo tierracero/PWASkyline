@@ -142,7 +142,7 @@ extension ToolsView.WebPage.MeetUsPage {
                             self.remove()
                         }
                     
-                    H2(self.$id.map{ ($0 == nil) ? "Crear Servicio" : "Editar Servicio" })
+                    H2(self.$id.map{ ($0 == nil) ? "Crear Perfil" : "Editar Perfil" })
                         .color(.lightBlueText)
                         .marginLeft(7.px)
                         .float(.left)
@@ -373,7 +373,7 @@ extension ToolsView.WebPage.MeetUsPage {
                                     self.deleteItem(id)
                                 }
                             
-                            Div(self.$id.map{ ($0 ==  nil) ? "Crear Servicio" : "Guardar Cambios" })
+                            Div(self.$id.map{ ($0 ==  nil) ? "Crear Perfil" : "Guardar Cambios" })
                                 .class(.uibtnLargeOrange)
                                 .onClick {
                                     self.saveServiceData()

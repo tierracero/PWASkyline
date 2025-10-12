@@ -95,15 +95,14 @@ extension ToolsView.WebPage {
         }
         
         lazy var diplomaRowsGrid = Div()
-            .custom("height", "calc(100% - 37px)")
-            .overflow(.auto)
+        .margin(all: 3.px)
+            
         
         /// [CustWebContent.Id : DiplomaRow ]
         var diplomaRows: [UUID : DiplomaRow] = [:]
 
         lazy var profileRowsGrid = Div()
-            .custom("height", "calc(100% - 37px)")
-            .overflow(.auto)
+            .margin(all: 3.px)
         
         /// [CustWebContent.Id : ProfileRow ]
         var profileRows: [UUID : ProfileRow] = [:]
@@ -473,11 +472,17 @@ extension ToolsView.WebPage {
                                         .color(.white)
                                 }
                                 
-                                Div().clear(.both)
+                                Div().clear(.both).height(3.px)
+
+                                Div{
+                                    self.diplomaRowsGrid
+                                }
+                                .custom("height", "calc(100% - 40px)")
+                                .class(.roundDarkBlue)
+                                .overflow(.auto)
                                 
-                                self.diplomaRowsGrid
                             }
-                            .height(350.px)
+                            .height(300.px)
 
                             /* MARK: PROFILES */
                             Div{
@@ -532,11 +537,17 @@ extension ToolsView.WebPage {
                                         .color(.white)
                                 }
                                 
-                                Div().clear(.both)
+                                Div().clear(.both).height(3.px)
                                 
-                                self.diplomaRowsGrid
+                                Div{
+                                    self.diplomaRowsGrid
+                                }
+                                .custom("height", "calc(100% - 40px)")
+                                .class(.roundDarkBlue)
+                                .overflow(.auto)
+
                             }
-                            .height(350.px)
+                            .height(300.px)
                             
                             /* MARK: Carucell One */
                             Div{
@@ -670,6 +681,10 @@ extension ToolsView.WebPage {
             
             profiles.forEach { item in
                 addProfileRow(item)
+            }
+
+            diplomas.forEach { item in
+                addDiplomaRow(item)
             }
 
             imageOne.forEach { image in
