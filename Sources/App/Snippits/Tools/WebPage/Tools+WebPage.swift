@@ -1405,7 +1405,13 @@ extension ToolsView.WebPage {
         case webContent(CustWebFilesObjectType)
         
         case webService(UUID?)
-        
+
+        case webBlog(UUID?)
+
+        case webDiploma(UUID?)
+
+        case webProfile(UUID?)
+    
     }
     
     static func loadMedia(file: File, to toType: LoadMediaType, imageView view: ImageWebView, imageContainer container: Div ) {
@@ -1553,6 +1559,15 @@ extension ToolsView.WebPage {
             subId = type
         case .webService(let id):
             to = .webService
+            toId = id
+        case .webBlog(let id):
+            to = .webBlog
+            toId = id
+        case .webDiploma(let id):
+            to = .webDiploma
+            toId = id
+        case .webProfile(let id):
+            to = .webProfile
             toId = id
         }
         
