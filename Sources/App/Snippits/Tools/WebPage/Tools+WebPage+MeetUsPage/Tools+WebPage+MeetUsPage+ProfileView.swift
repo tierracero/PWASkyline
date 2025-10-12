@@ -508,7 +508,7 @@ extension ToolsView.WebPage.MeetUsPage {
                 
                 ToolsView.WebPage.loadMedia(
                     file: file,
-                    to: .webService(self.id),
+                    to: .webProfile(self.id),
                     imageView: imageView,
                     imageContainer: self.imageContainer
                 )
@@ -630,7 +630,7 @@ extension ToolsView.WebPage.MeetUsPage {
             
             let editor = ImageEditor(
                 eventid: viewid,
-                to: .webService,
+                to: .webProfile,
                 relid: id,
                 subId: nil,
                 isAvatar: isAvatar,
