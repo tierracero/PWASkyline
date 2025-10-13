@@ -540,7 +540,7 @@ extension ToolsView.WebPage {
                                 Div().clear(.both).height(3.px)
                                 
                                 Div{
-                                    self.diplomaRowsGrid
+                                    self.profileRowsGrid
                                 }
                                 .custom("height", "calc(100% - 40px)")
                                 .class(.roundDarkBlue)
