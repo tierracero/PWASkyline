@@ -1,5 +1,5 @@
 //
-//  Tools+WebPage+ServicePage+View.swift
+//  Tools+WebPage+MeetUsPage+DiplomaView.swift
 //
 //
 //  Created by Victor Cantu on 1/24/25.
@@ -10,9 +10,9 @@ import TCFundamentals
 import TCFireSignal
 import Web
 
-extension ToolsView.WebPage.ServicePage {
+extension ToolsView.WebPage.BlogPage {
     
-    class ServiceView: Div {
+    class BlogView: Div {
         
         override class var name: String { "div" }
         
@@ -24,8 +24,6 @@ extension ToolsView.WebPage.ServicePage {
         
         @State var descr: String
         
-        @State var cost: String
-        
         @State var inPromo: Bool
         
         @State var avatar: String
@@ -34,7 +32,7 @@ extension ToolsView.WebPage.ServicePage {
         
         var notes: [CustGeneralNotes]
         
-        private var updateService: ((
+        private var updateItem: ((
             _ id: UUID,
             _ name: String,
             _ description: String
@@ -45,19 +43,19 @@ extension ToolsView.WebPage.ServicePage {
             _ avatar: String
         ) -> ())
         
-        private var addService: ((
+        private var addItem: ((
             _ service: CustWebContent
         ) -> ())
         
-        private var deleteService: ((
+        private var deleteItem: ((
             _ id: UUID
         ) -> ())
         
         required init(
-            service: CustWebContent?,
+            item: CustWebContent?,
             files: [CustWebFilesQuick],
             notes: [CustGeneralNotes],
-            updateService: @escaping ((
+            updateItem: @escaping ((
                 _ id: UUID,
                 _ name: String,
                 _ description: String
@@ -66,26 +64,25 @@ extension ToolsView.WebPage.ServicePage {
                 _ id: UUID,
                 _ avatar: String
             ) -> ()),
-            addService: @escaping ((
+            addItem: @escaping ((
                 _ service: CustWebContent
             ) -> ()),
-            deleteService: @escaping ((
+            deleteItem: @escaping ((
                 _ id: UUID
             ) -> ())
         ) {
-            self.id = service?.id
-            self.name = service?.name ?? ""
-            self.smallDescription = service?.smallDescription ?? ""
-            self.descr = service?.description ?? ""
-            self.cost = service?.cost ?? ""
-            self.inPromo = service?.inPromo ?? false
-            self.avatar = service?.avatar ?? "/skyline/media/tierraceroRoundLogoWhite.svg"
+            self.id = item?.id
+            self.name = item?.name ?? ""
+            self.smallDescription = item?.smallDescription ?? ""
+            self.descr = item?.description ?? ""
+            self.inPromo = item?.inPromo ?? false
+            self.avatar = item?.avatar ?? "/skyline/media/tierraceroRoundLogoWhite.svg"
             self.files = files
             self.notes = notes
-            self.updateService = updateService
+            self.updateItem = updateItem
             self.updateAvatar = updateAvatar
-            self.addService = addService
-            self.deleteService = deleteService
+            self.addItem = addItem
+            self.deleteItem = deleteItem
         }
         
         required init() {
@@ -109,12 +106,6 @@ extension ToolsView.WebPage.ServicePage {
             .class(.textFiledBlackDark)
             .placeholder("Small Description")
             .height(90.px)
-        
-        lazy var costField = InputText(self.$cost)
-            .custom("width","calc(100% - 24px)")
-            .class(.textFiledBlackDark)
-            .placeholder("0.00")
-            .height(31.px)
         
         lazy var inPromoCheckbox = InputCheckbox().toggle(self.$inPromo)
         
@@ -151,7 +142,7 @@ extension ToolsView.WebPage.ServicePage {
                             self.remove()
                         }
                     
-                    H2(self.$id.map{ ($0 == nil) ? "Crear Servicio" : "Editar Servicio" })
+                    H2(self.$id.map{ ($0 == nil) ? "Crear Diploma" : "Editar Diploma" })
                         .color(.lightBlueText)
                         .marginLeft(7.px)
                         .float(.left)
@@ -313,26 +304,6 @@ extension ToolsView.WebPage.ServicePage {
                         Div{
                         
                             Div{
-                                Span("Precio")
-                                    .fontSize(22.px)
-                                    .color(.white)
-                            }
-                            .class(.oneHalf)
-                            
-                            Div{
-                                self.costField
-                            }
-                            .class(.oneHalf)
-                            
-                            Div().class(.clear)
-                            
-                        }
-                        
-                        Div().class(.clear).height(7.px)
-                        
-                        Div{
-                        
-                            Div{
                                 Span("En Promo")
                                     .fontSize(22.px)
                                     .color(.white)
@@ -399,10 +370,10 @@ extension ToolsView.WebPage.ServicePage {
                                     guard let id = self.id else {
                                         return
                                     }
-                                    self.deleteService(id)
+                                    self.deleteItem(id)
                                 }
                             
-                            Div(self.$id.map{ ($0 ==  nil) ? "Crear Servicio" : "Guardar Cambios" })
+                            Div(self.$id.map{ ($0 ==  nil) ? "Crear Diploma" : "Guardar Cambios" })
                                 .class(.uibtnLargeOrange)
                                 .onClick {
                                     self.saveServiceData()
@@ -537,7 +508,7 @@ extension ToolsView.WebPage.ServicePage {
                 
                 ToolsView.WebPage.loadMedia(
                     file: file,
-                    to: .webService(self.id),
+                    to: .webBlog(self.id),
                     imageView: imageView,
                     imageContainer: self.imageContainer
                 )
@@ -565,25 +536,15 @@ extension ToolsView.WebPage.ServicePage {
                 return
             }
             
-            if !cost.isEmpty {
-                
-                guard let _ = Double(cost) else {
-                    showError(.campoRequerido, "Ingrese un costo valido o deje el campo vacio.")
-                    return
-                }
-                
-            }
-            
             loadingView(show: true)
             
             if let id {
                 
-                API.themeV1.saveViewServices(
+                API.themeV1.saveViewDiploma(
                     id: id,
                     name: name,
                     smallDescription: smallDescription,
                     description: descr,
-                    cost: cost,
                     configLanguage: .Spanish,
                     inPromo: inPromo
                 ) { resp in
@@ -600,7 +561,7 @@ extension ToolsView.WebPage.ServicePage {
                         return
                     }
                     
-                    self.updateService(id, self.name, self.descr)
+                    self.updateItem(id, self.name, self.descr)
                     
                 }
                 
@@ -624,11 +585,10 @@ extension ToolsView.WebPage.ServicePage {
                 
             }
             
-            API.themeV1.addViewServices(
+            API.themeV1.addViewDiploma(
                 name: name,
                 smallDescription: smallDescription,
                 description: descr,
-                cost: cost,
                 configLanguage: .Spanish,
                 inPromo: inPromo,
                 files: files
@@ -651,9 +611,9 @@ extension ToolsView.WebPage.ServicePage {
                     return
                 }
                 
-                self.id = payload.service.id
+                self.id = payload.diploma.id
                 
-                self.addService(payload.service)
+                self.addItem(payload.diploma)
                 
             }
         }
@@ -670,7 +630,7 @@ extension ToolsView.WebPage.ServicePage {
             
             let editor = ImageEditor(
                 eventid: viewid,
-                to: .webService,
+                to: .webBlog,
                 relid: id,
                 subId: nil,
                 isAvatar: isAvatar,
