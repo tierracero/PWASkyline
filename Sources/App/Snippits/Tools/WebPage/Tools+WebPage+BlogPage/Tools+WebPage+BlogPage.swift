@@ -29,22 +29,22 @@ extension ToolsView.WebPage {
         
         @State var imgThree: String
         
-        public let structure: WebConfigService
+        public let structure: WebConfigBlog
         
         @State var blogs: [CustWebContent]
         
-        /// serviceImgOne
+        /// blogImgOne
         @State var imageOne: [CustWebFilesQuick]
         
-        /// serviceImgTwo
+        /// blogImgTwo
         @State var imageTwo: [CustWebFilesQuick]
         
-        /// serviceImgThree
+        /// blogImgThree
         @State var imageThree: [CustWebFilesQuick]
         
         public init(
             data: WebBlog,
-            structure: WebConfigService,
+            structure: WebConfigBlog,
             blogs: [CustWebContent],
             imageOne: [CustWebFilesQuick],
             imageTwo: [CustWebFilesQuick],
@@ -70,12 +70,11 @@ extension ToolsView.WebPage {
             fatalError("init() has not been implemented")
         }
         
-        lazy var blogRowsGrid = Div()
-            .custom("height", "calc(100% - 37px)")
-            .overflow(.auto)
+        lazy var itemRowsGrid = Div()
+            .margin(all: 3.px)
         
         /// [CustWebContent.Id : BlogRow ]
-        var blogeRows: [UUID : BlogRow] = [:]
+        var itemRows: [UUID : BlogRow] = [:]
         
         lazy var metaTitleTextArea = TextArea(self.$metaTitle)
             .custom("width","calc(100% - 18px)")
@@ -178,12 +177,12 @@ extension ToolsView.WebPage {
                         }
                     
                     Img()
-                        .src("/skyline/media/panel_service.png")
+                        .src("/skyline/media/panel_blog.png")
                         .marginLeft(7.px)
                         .height(35.px)
                         .float(.left)
                     
-                    H2("Configuracion Pagina Servicios")
+                    H2("Configuracion Pagina Blog")
                         .color(.lightBlueText)
                         .marginLeft(7.px)
                         .float(.left)
@@ -280,82 +279,6 @@ extension ToolsView.WebPage {
                                 self.subTextTextArea
                                 Div().clear(.both).height(7.px)
                                 
-                                Div{
-                                    
-                                    Img()
-                                        .src("/skyline/media/add.png")
-                                        .padding(all: 3.px)
-                                        .paddingRight(0.px)
-                                        .cursor(.pointer)
-                                        .float(.right)
-                                        .height(22.px)
-                                        .onClick {
-                                            self.renderInputFileOne()
-                                        }
-                                    
-                                    H2("Imagen 1")
-                                        .color(.white)
-                                    
-                                    self.fileInputOne
-                                    
-                                }
-                                
-                                Div().clear(.both).height(3.px)
-                                
-                                self.fileContainerOne
-                                
-                                Div().clear(.both).height(7.px)
-                                
-                                Div{
-                                    
-                                    Img()
-                                        .src("/skyline/media/add.png")
-                                        .padding(all: 3.px)
-                                        .paddingRight(0.px)
-                                        .cursor(.pointer)
-                                        .float(.right)
-                                        .height(22.px)
-                                        .onClick {
-                                            self.renderInputFileTwo()
-                                        }
-                                    
-                                    H2("Imagen 2")
-                                        .color(.white)
-                                    
-                                    self.fileInputTwo
-                                    
-                                }
-                                
-                                Div().clear(.both).height(3.px)
-                                
-                                self.fileContainerTwo
-                                
-                                Div().clear(.both).height(7.px)
-                                
-                                Div{
-                                    
-                                    Img()
-                                        .src("/skyline/media/add.png")
-                                        .padding(all: 3.px)
-                                        .paddingRight(0.px)
-                                        .cursor(.pointer)
-                                        .float(.right)
-                                        .height(22.px)
-                                        .onClick {
-                                            self.renderInputFileThree()
-                                        }
-                                    
-                                    H2("Imagen 3")
-                                        .color(.white)
-                                    
-                                    self.fileInputThree
-                                    
-                                }
-                                
-                                Div().clear(.both).height(3.px)
-                                
-                                self.fileContainerThree
-                                
                             }
                             .padding(all: 3.px)
                         }
@@ -365,12 +288,79 @@ extension ToolsView.WebPage {
                     }
                     .height(100.percent)
                     .width(50.percent)
+                    .overflow(.auto)
                     .float(.left)
                     
                     Div{
                         Div{
+                 
                             Div{
-                                /*
+
+                                Div{
+                                    
+                                    Img()
+                                        .src("/skyline/media/add.png")
+                                        .padding(all: 3.px)
+                                        .paddingRight(0.px)
+                                        .cursor(.pointer)
+                                        .float(.right)
+                                        .height(22.px)
+                                        .onClick {
+                                            
+                                            let view = BlogView(
+                                                item: nil,
+                                                files: [],
+                                                notes: []
+                                            ) { itemId, name, description in
+                                                
+                                                guard let view = self.itemRows[itemId] else {
+                                                    return
+                                                }
+                                                
+                                                view.name = name
+                                                
+                                                view.descr = description
+                                            
+                                            } updateAvatar: { itemId, avatar in
+                                                
+                                                guard let view = self.itemRows[itemId] else {
+                                                    return
+                                                }
+                                                
+                                                view.avatar.load("https://\(custCatchUrl)/contenido/thump_\(avatar)")
+                                                
+                                            } addItem: { item in
+                                                self.addItemRow(item)
+                                            } deleteItem: { itemId in
+                                                
+                                                self.itemRows[itemId]?.remove()
+                                                
+                                                self.itemRows.removeValue(forKey: itemId)
+                                                
+                                            }
+                                            
+                                            addToDom(view)
+                                            
+                                        }
+                                    
+                                    H2("Ultimos blogs")
+                                        .color(.white)
+                                }
+                                
+                                Div().clear(.both).height(3.px)
+
+                                Div{
+                                    self.itemRowsGrid
+                                }
+                                .custom("height", "calc(100% - 40px)")
+                                .class(.roundDarkBlue)
+                                .overflow(.auto)
+                            }
+                            .height(300.px)
+
+                            /* MARK: Image 1*/
+                            Div{
+                                
                                 Img()
                                     .src("/skyline/media/add.png")
                                     .padding(all: 3.px)
@@ -379,53 +369,79 @@ extension ToolsView.WebPage {
                                     .float(.right)
                                     .height(22.px)
                                     .onClick {
-                                        
-                                        let view = BlogView(
-                                            item: nil,
-                                            files: [],
-                                            notes: []
-                                        ) { itemId, name, description in
-                                            
-                                            guard let view = self.blogeRows[itemId] else {
-                                                return
-                                            }
-                                            
-                                            view.name = name
-                                            
-                                            view.descr = description
-                                            
-                                        } updateAvatar: { itemId, avatar in
-                                            
-                                            guard let view = self.blogeRows[itemId] else {
-                                                return
-                                            }
-                                            
-                                            view.avatar.load("https://\(custCatchUrl)/contenido/thump_\(avatar)")
-                                            
-                                        } addItem: { item in
-                                            self.addServiceRow(item)
-                                        } deleteItem: { itemId in
-                                            
-                                            self.blogeRows[itemId]?.remove()
-                                            
-                                            self.blogeRows.removeValue(forKey: itemId)
-                                            
-                                        }
-                                        
-                                        addToDom(view)
-                                        
+                                        self.renderInputFileOne()
                                     }
-                                */   
-                                H2("Lista de servicios")
+                                
+                                H2("Imagen 1")
                                     .color(.white)
+                                
+                                self.fileInputOne
+                                
                             }
                             
-                            Div().clear(.both)
+                            Div().clear(.both).height(3.px)
                             
-                            self.blogRowsGrid
+                            self.fileContainerOne
+                            
+                            Div().clear(.both).height(7.px)
+                            
+                            /* MARK: Image 2*/
+                            Div{
+                                
+                                Img()
+                                    .src("/skyline/media/add.png")
+                                    .padding(all: 3.px)
+                                    .paddingRight(0.px)
+                                    .cursor(.pointer)
+                                    .float(.right)
+                                    .height(22.px)
+                                    .onClick {
+                                        self.renderInputFileTwo()
+                                    }
+                                
+                                H2("Imagen 2")
+                                    .color(.white)
+                                
+                                self.fileInputTwo
+                                
+                            }
+                            
+                            Div().clear(.both).height(3.px)
+                            
+                            self.fileContainerTwo
+                            
+                            Div().clear(.both).height(7.px)
+                            
+                            /* MARK: Image 3*/
+                            Div{
+                                
+                                Img()
+                                    .src("/skyline/media/add.png")
+                                    .padding(all: 3.px)
+                                    .paddingRight(0.px)
+                                    .cursor(.pointer)
+                                    .float(.right)
+                                    .height(22.px)
+                                    .onClick {
+                                        self.renderInputFileThree()
+                                    }
+                                
+                                H2("Imagen 3")
+                                    .color(.white)
+                                
+                                self.fileInputThree
+                                
+                            }
+                            
+                            Div().clear(.both).height(3.px)
+                            
+                            self.fileContainerThree
+                            
+
                         }
                         .custom("height", "calc(100% - 60px)")
                         .margin(all: 3.px)
+                        .overflow(.auto)
                         
                         Div{
                             Div("Guardar Cambios")
@@ -470,14 +486,14 @@ extension ToolsView.WebPage {
             left(0.px)
             top(0.px)
             
-            blogs.forEach { service in
-                addItemRow(service)
+            blogs.forEach { item in
+                addItemRow(item)
             }
             
             imageOne.forEach { image in
                 
                 let imageView = ImageWebView(
-                    relation: .serviceImgOne,
+                    relation: .blogImgOne,
                     relationId: nil,
                     type: .img,
                     mediaId: image.id,
@@ -516,7 +532,7 @@ extension ToolsView.WebPage {
             imageTwo.forEach { image in
                 
                 let imageView = ImageWebView( 
-                    relation: .serviceImgTwo,
+                    relation: .blogImgTwo,
                     relationId: nil,
                     type: .img,
                     mediaId: image.id,
@@ -556,7 +572,7 @@ extension ToolsView.WebPage {
             imageThree.forEach { image in
                 
                 let imageView = ImageWebView(
-                    relation: .serviceImgThree,
+                    relation: .blogImgThree,
                     relationId: nil,
                     type: .img,
                     mediaId: image.id,
@@ -623,7 +639,7 @@ extension ToolsView.WebPage {
             
             loadingView(show: true)
             
-            API.themeV1.saveWebService(
+            API.themeV1.saveWebBlog(
                 configLanguage: .Spanish,
                 metaTitle: metaTitle,
                 metaDescription: metaDescription,
@@ -663,7 +679,7 @@ extension ToolsView.WebPage {
                 }
             
                 let imageView = ImageWebView(
-                    relation: .serviceImgOne,
+                    relation: .blogImgOne,
                     relationId: nil,
                     type: .img,
                     mediaId: nil,
@@ -697,7 +713,7 @@ extension ToolsView.WebPage {
                 
                 ToolsView.WebPage.loadMedia(
                     file: file,
-                    to: .webContent(.serviceImgOne),
+                    to: .webContent(.blogImgOne),
                     imageView: imageView,
                     imageContainer: self.fileContainerOne
                 )
@@ -722,7 +738,7 @@ extension ToolsView.WebPage {
                 }
             
                 let imageView = ImageWebView(
-                    relation: .serviceImgTwo,
+                    relation: .blogImgTwo,
                     relationId: nil,
                     type: .img,
                     mediaId: nil,
@@ -756,7 +772,7 @@ extension ToolsView.WebPage {
                 
                 ToolsView.WebPage.loadMedia(
                     file: file,
-                    to: .webContent(.serviceImgTwo),
+                    to: .webContent(.blogImgTwo),
                     imageView: imageView,
                     imageContainer: self.fileContainerTwo
                 )
@@ -781,7 +797,7 @@ extension ToolsView.WebPage {
                 }
             
                 let imageView = ImageWebView(
-                    relation: .serviceImgThree,
+                    relation: .blogImgThree,
                     relationId: nil,
                     type: .img,
                     mediaId: nil,
@@ -815,7 +831,7 @@ extension ToolsView.WebPage {
                 
                 ToolsView.WebPage.loadMedia(
                     file: file,
-                    to: .webContent(.serviceImgThree),
+                    to: .webContent(.blogImgThree),
                     imageView: imageView,
                     imageContainer: self.fileContainerThree
                 )
@@ -852,7 +868,7 @@ extension ToolsView.WebPage {
                         showError(.unexpectedResult, .unexpenctedMissingPayload)
                         return
                     }
-                    /*
+                    
                     let view = BlogView(
                         item: payload.blog,
                         files: payload.files,
@@ -868,23 +884,23 @@ extension ToolsView.WebPage {
                         view.avatar.load("https://\(custCatchUrl)/contenido/thump_\(avatar)")
                         
                     } addItem: { blog in
-                        // MARK: un used since service exist
+                        // MARK: un used since blog entrie exist
                     } deleteItem: { itemId in
                         
-                        self.blogeRows[itemId]?.remove()
+                        self.itemRows[itemId]?.remove()
                         
-                        self.blogeRows.removeValue(forKey: itemId)
+                        self.itemRows.removeValue(forKey: itemId)
                         
                     }
                     
                     addToDom(view)
-                    */
+                    
                 }
             }
             
-            blogeRows[item.id] =  view
+            itemRows[item.id] =  view
             
-            blogRowsGrid.appendChild(view)
+            itemRowsGrid.appendChild(view)
             
         }
         
@@ -907,15 +923,15 @@ extension ToolsView.WebPage {
             
             switch type {
             case .one:
-                subId = .serviceImgOne
+                subId = .blogImgOne
                 wapWidthPre = structure.imgOneWidth
                 wapHeightPre = structure.imgOneHeight
             case .two:
-                subId = .serviceImgTwo
+                subId = .blogImgTwo
                 wapWidthPre = structure.imgTwoWidth
                 wapHeightPre = structure.imgTwoHeight
             case .three:
-                subId = .serviceImgThree
+                subId = .blogImgThree
                 wapWidthPre = structure.imgThreeWidth
                 wapHeightPre = structure.imgThreeHeight
             }

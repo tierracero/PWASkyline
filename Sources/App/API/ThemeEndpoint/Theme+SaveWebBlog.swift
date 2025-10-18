@@ -26,7 +26,7 @@ extension ThemeEndpointV1 {
         sendPost(
             rout,
             version,
-            "purchase",
+            "saveWebBlog",
             SaveWebBlogRequest(
                 configLanguage: configLanguage,
                 metaTitle: metaTitle,

@@ -18,10 +18,15 @@ extension ToolsView.SystemSettings {
         
         @State var storeList: [CustStore] = []
         
-        @State var selectedStore: UUID? = nil
+        @State var selectedStore: CustStore? = nil
         
+        @State var selectMenuViewIsHidden:Bool = true
+
+        lazy var storeSelector = Div()
+        .float(.left)
+
         lazy var storeContainer = Div()
-            .custom("height", "calc(100% - 42px)")
+            .custom("height", "calc(100% - 35px)")
         
         /// [ CustStore.id : CustStore ]
         var storeRefrence: [ UUID : StoreView ] = [:]
@@ -30,6 +35,7 @@ extension ToolsView.SystemSettings {
             
             Div{
                 
+                /* MARK: MAIN TOOLS*/
                 Div{
                     
                     Img()
@@ -56,7 +62,6 @@ extension ToolsView.SystemSettings {
                     }
 
                     /* MARK: Reports */
-
 
                     Div{
 
@@ -112,24 +117,94 @@ extension ToolsView.SystemSettings {
                     
                 }
                 
+                /* MARK:  STORE TOOL*/
                 Div{
                     
                     Div{
 
                         Div{
+                            
+                            Div().height(7.px)
 
-                            ForEach(self.$storeList) { store in
-                                Div(store.name)
-                                .color(self.$selectedStore.map{ ($0 == store.id) ? .yellowTC : .lightGray })
-                                .borderBottom(width: .thin, style: .solid, color: self.$selectedStore.map{$0 == store.id ? .yellowTC : .transparent})
-                                .class(.uibtnLarge)
-                                .marginRight(7.px)
-                                .fontSize(18.px)
-                                .float(.left)
-                                .onClick {
-                                    self.selectedStore = store.id
+                            /* Store Name */
+                            H2(self.$selectedStore.map{$0?.name ?? "Seleccione Tienda" })
+                            .hidden( self.$storeList.map{ $0.count > 1 } )
+                            .paddingRight(7.px)
+                            .color(.goldenRod)
+                            .float(.left)
+
+                            /* Store Selector */
+                            Div{
+                                
+                                Div{
+                                    
+                                    Img()
+                                        .src("/skyline/media/panel_service.png")
+                                        .marginRight(12.px)
+                                        .marginLeft(12.px)
+                                        .height(18.px)
+                                        .float(.left)
+                                
+                                    H2(self.$selectedStore.map{$0?.name ?? "Seleccione Tienda" })
+                                    .color(.goldenRod)
+                                    .float(.left)
+                                    
+                                    Div{
+                                        Img()
+                                            .src(self.$selectMenuViewIsHidden.map{ $0 ? "/skyline/media/dropDown.png" : "/skyline/media/dropDownClose.png"  })
+                                            .class(.iconWhite)
+                                            .paddingTop(7.px)
+                                            .opacity(0.5)
+                                            .width(18.px)
+                                    }
+                                    .borderLeft(width: BorderWidthType.thin, style: .solid, color: .gray)
+                                    .paddingRight(3.px)
+                                    .paddingLeft(7.px)
+                                    .marginLeft(7.px)
+                                    .float(.right)
+                                    
+                                    Div().clear(.both)
+                                    
                                 }
+                                .class(.uibtn)
+                                .onClick {
+                                    self.selectMenuViewIsHidden = !self.selectMenuViewIsHidden
+                                }
+                                
+                                Div{
+                                    
+                                    ForEach(self.$storeList) { store in
+                                        Div{
+                                            Span(store.name)
+                                        }
+                                        .width(90.percent)
+                                        .marginTop(7.px)
+                                        .class(.uibtn)
+                                        .onClick { _, event in
+                                            self.selectedStore = store
+                                            self.selectMenuViewIsHidden = true
+                                            event.stopPropagation()
+                                        }
+                                    }
+                                    
+                                    Div().height(7.px)
+                                }
+                                .hidden(self.$selectMenuViewIsHidden)
+                                .backgroundColor(.transparentBlack)
+                                .position(.absolute)
+                                .borderRadius(12.px)
+                                .padding(all: 3.px)
+                                .margin(all: 3.px)
+                                .marginTop(7.px)
+                                .bottom(42.px)
+                                .zIndex(1)
+                                .onClick { _, event in
+                                    event.stopPropagation()
+                                }
+                                
                             }
+                            .hidden( self.$storeList.map{ $0.count == 1} )
+                            .paddingRight(7.px)
 
                         }
                         .float(.left)
@@ -144,21 +219,44 @@ extension ToolsView.SystemSettings {
                                 .height(18.px)
                             
                             Span("Ageragr Tienda")
-                            .float(.right
-                            )
+                            .float(.right)
                             
                         }
                         .class(.uibtnLarge)
                         .marginRight(7.px)
                         .fontSize(18.px)
                         .height(22.px)
-                        .float(.left)
+                        .float(.right)
+                        .onClick {
+                            
+                        }
                         
+
+                        Div{
+                            
+                            Img()
+                                .src("/skyline/media/icon_white_general_statusl@128.png")
+                                .padding(all: 3.px)
+                                .paddingRight(7.px)
+                                .cursor(.pointer)
+                                .height(28.px)
+                            
+                            Span("Configuracion Avanzada")
+                            .float(.right)
+                            
+                        }
+                        .class(.uibtnLarge)
+                        .marginRight(7.px)
+                        .fontSize(18.px)
+                        .height(22.px)
+                        .float(.right)
+                        .onClick {
+                            
+                        }
+
                         Div().clear(.both)
                         
                     }
-                    
-                    Div().clear(.both).height(7.px)
                     
                     self.storeContainer
                     
@@ -187,12 +285,24 @@ extension ToolsView.SystemSettings {
             left(0.px)
             top(0.px)
             
+            stores.forEach { id, store in
+                if store.mainStore {
+                    storeList.append(store)
+                }
+            }
+
+             stores.forEach { id, store in
+                if !store.mainStore {
+                    storeList.append(store)
+                }
+            }
+
             storeList = stores.map { $1 }
             
             stores.forEach { id, store in
                 
                 let view = StoreView(store: store)
-                    .hidden(self.$selectedStore.map{ id != self.selectedStore })
+                    .hidden(self.$selectedStore.map{ id != self.selectedStore?.id })
                 
                 storeContainer.appendChild(view)
                 
@@ -200,7 +310,7 @@ extension ToolsView.SystemSettings {
                 
             }
             
-            selectedStore = stores.first?.key
+            selectedStore = storeList.first
             
         }
     }

@@ -24,6 +24,8 @@ extension ToolsView.WebPage.BlogPage {
         
         @State var descr: String
         
+        @State var link: String
+
         @State var inPromo: Bool
         
         @State var avatar: String
@@ -75,6 +77,7 @@ extension ToolsView.WebPage.BlogPage {
             self.name = item?.name ?? ""
             self.smallDescription = item?.smallDescription ?? ""
             self.descr = item?.description ?? ""
+            self.link = item?.cost ?? ""
             self.inPromo = item?.inPromo ?? false
             self.avatar = item?.avatar ?? "/skyline/media/tierraceroRoundLogoWhite.svg"
             self.files = files
@@ -105,6 +108,12 @@ extension ToolsView.WebPage.BlogPage {
             .custom("width","calc(100% - 24px)")
             .class(.textFiledBlackDark)
             .placeholder("Small Description")
+            .height(90.px)
+
+        lazy var linkField = TextArea(self.$link)
+            .custom("width","calc(100% - 24px)")
+            .class(.textFiledBlackDark)
+            .placeholder("Vinculo Externo")
             .height(90.px)
         
         lazy var inPromoCheckbox = InputCheckbox().toggle(self.$inPromo)
@@ -142,7 +151,7 @@ extension ToolsView.WebPage.BlogPage {
                             self.remove()
                         }
                     
-                    H2(self.$id.map{ ($0 == nil) ? "Crear Diploma" : "Editar Diploma" })
+                    H2(self.$id.map{ ($0 == nil) ? "Crear Entrada del Blog" : "Editar Entrada del Blog" })
                         .color(.lightBlueText)
                         .marginLeft(7.px)
                         .float(.left)
@@ -328,7 +337,7 @@ extension ToolsView.WebPage.BlogPage {
                         
                         Div {
                             // MARK: NAME ES
-                            Label("Nombre del Servicio")
+                            Label("Nombre del Evento")
                                 .color(.gray)
                             
                             Div().class(.clear).height(3.px)
@@ -357,6 +366,17 @@ extension ToolsView.WebPage.BlogPage {
                             
                             Div().class(.clear).height(7.px)
 
+
+                            // MARK: Link
+                            Label("Vinculo Externo")
+                                .color(.gray)
+                            
+                            Div().class(.clear).height(3.px)
+                            
+                            self.linkField
+                            
+                            Div().class(.clear).height(7.px)
+
                         }
                         .custom("height", "calc(100% - 50px)")
                         
@@ -373,10 +393,10 @@ extension ToolsView.WebPage.BlogPage {
                                     self.deleteItem(id)
                                 }
                             
-                            Div(self.$id.map{ ($0 ==  nil) ? "Crear Diploma" : "Guardar Cambios" })
+                            Div(self.$id.map{ ($0 ==  nil) ? "Crear Blog" : "Guardar Cambios" })
                                 .class(.uibtnLargeOrange)
                                 .onClick {
-                                    self.saveServiceData()
+                                    self.saveBlogData()
                                 }
                         }
                         .align(.right)
@@ -519,7 +539,7 @@ extension ToolsView.WebPage.BlogPage {
             
         }
         
-        func saveServiceData() {
+        func saveBlogData() {
             
             if name.isEmpty {
                 showError(.campoRequerido,.requierdValid("nombre"))
@@ -540,11 +560,12 @@ extension ToolsView.WebPage.BlogPage {
             
             if let id {
                 
-                API.themeV1.saveViewDiploma(
+                API.themeV1.saveViewBlog(
                     id: id,
                     name: name,
                     smallDescription: smallDescription,
                     description: descr,
+                    link: link.isEmpty ? nil : link,
                     configLanguage: .Spanish,
                     inPromo: inPromo
                 ) { resp in
@@ -585,10 +606,11 @@ extension ToolsView.WebPage.BlogPage {
                 
             }
             
-            API.themeV1.addViewDiploma(
+            API.themeV1.addViewBlog(
                 name: name,
                 smallDescription: smallDescription,
                 description: descr,
+                link:  link.isEmpty ? nil : link,
                 configLanguage: .Spanish,
                 inPromo: inPromo,
                 files: files
@@ -611,9 +633,9 @@ extension ToolsView.WebPage.BlogPage {
                     return
                 }
                 
-                self.id = payload.diploma.id
+                self.id = payload.blog.id
                 
-                self.addItem(payload.diploma)
+                self.addItem(payload.blog)
                 
             }
         }

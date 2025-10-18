@@ -1936,6 +1936,8 @@ extension ProductManagerView.AuditView {
                         itemPriceTotal.formatMoney
                 ]
 
+                tableBody.append(row)
+
                 contents += row.map{ $0.replace(from: ",", to: "") }.joined(separator: ",") + "\n"
                 
                 storeCostTotal += itemCostTotal
@@ -2173,7 +2175,7 @@ extension ProductManagerView.AuditView {
             
             tableBody.append(row)
 
-            contents += row.joined(separator: ",") + "\n"
+            contents += row.map{ $0.replace(from: ",", to: "") }.joined(separator: ",") + "\n"
             
             switch type {
                 case .csv:
@@ -2363,7 +2365,7 @@ extension ProductManagerView.AuditView {
 
             tableBody.append(row)
 
-            contents += row.joined(separator: ",") + "\n"
+            contents += row.map{ $0.replace(from: ",", to: "") }.joined(separator: ",") + "\n"
             
             switch type {
                 case .csv:

@@ -361,7 +361,7 @@ extension ToolsView {
             .width(124.px)
             .float(.left)
             .onClick {
-                
+                self.loadBlogView()
             }
         
         lazy var downloadButton = Li{
@@ -850,6 +850,10 @@ extension ToolsView {
                         break
                     case .viewOrder:
                         break
+                    case .viewDiploma:
+                        break
+                    case .viewProfile:
+                        break
                     case .work:
                         break
                     case .vendor:
@@ -916,6 +920,10 @@ extension ToolsView {
                     case .viewAlbum:
                         break
                     case .viewOrder:
+                        break
+                    case .viewDiploma:
+                        break
+                    case .viewProfile:
                         break
                     case .work:
                         break
@@ -1313,6 +1321,46 @@ extension ToolsView {
            }
         }
         
+        func loadBlogView() {
+            
+            loadingView(show: true)
+           
+            API.themeV1.getWebBlog(
+                theme: self.account.pwa.rawValue,
+                configLanguage: .Spanish
+            ) { resp in
+            
+               loadingView(show: false)
+               
+               guard let resp else {
+                   showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                   return
+               }
+               
+               guard resp.status == .ok else {
+                   showError(.errorGeneral, resp.msg)
+                   return
+               }
+               
+               guard let payload = resp.data else {
+                   showError(.unexpectedResult, .unexpenctedMissingPayload)
+                   return
+               }
+               
+               let view = BlogPage(
+                data: payload.data,
+                structure: payload.structure,
+                blogs: payload.blogs,
+                imageOne: payload.imagesOne,
+                imageTwo: payload.imagesTwo,
+                imageThree: payload.imagesThree
+               )
+                
+                addToDom(view)
+                
+           }
+        }
+
         /*
         MARK: General Components Loader
         */
@@ -1513,7 +1561,7 @@ extension ToolsView.WebPage {
         }
         
         let fileName =  safeFileName(name: file.name, to: nil, folio: nil)
-        
+
         let formData = FormData()
         
         var to: ImagePickerTo? =  nil
