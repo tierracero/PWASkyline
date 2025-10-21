@@ -597,10 +597,11 @@ class OrderPrintEngine: Div {
         
         switch configStore.print.image {
         case .none:
-            self.orderImg
-                .hidden(true)
+            self.orderImg.hidden(true)
         case .pinpattern:
             self.orderImg.src("https://tierracero.com/dev/core/images/pimg-PatronPIN.jpg")
+        case .location:
+            self.orderImg.hidden(true)
         }
         
         if let _logo = custWebFilesLogos?.logoIndexWhite.avatar {

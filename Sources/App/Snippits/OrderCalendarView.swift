@@ -458,33 +458,33 @@ class OrderCalendarView: Div {
                 
                 var _tdc = 0
                 
-                WeekDays.allCases.forEach { _day in
+                Weekdays.allCases.forEach { _day in
                     switch _day{
-                    case .domingo:
-                        if _weekName == _day.description {
+                    case .sunday:
+                        if _weekName == _day.documentableName {
                             _tdc = 6
                         }
-                    case .lunes:
-                        if _weekName == _day.description {
+                    case .monday:
+                        if _weekName == _day.documentableName {
                             _tdc = 5
                         }
-                    case .martes:
-                        if _weekName == _day.description {
+                    case .tuesday:
+                        if _weekName == _day.documentableName {
                             _tdc = 4
                         }
-                    case .miercoles:
-                        if _weekName == _day.description {
+                    case .wednesday:
+                        if _weekName == _day.documentableName {
                             _tdc = 3
                         }
-                    case .jueves:
-                        if _weekName == _day.description {
+                    case .thursday:
+                        if _weekName == _day.documentableName {
                             _tdc = 2
                         }
-                    case .viernes:
-                        if _weekName == _day.description {
+                    case .friday:
+                        if _weekName == _day.documentableName {
                             _tdc = 1
                         }
-                    case .sabado:
+                    case .saturday, .publicHolidays:
                         break
                     }
                 }

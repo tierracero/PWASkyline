@@ -45,6 +45,7 @@ extension InputCheckbox {
         .class(.switch)
         .float(.left)
     }
+    
     public func toggle(_ isReady: State<Bool>, _ isDisabled: Bool = false) ->  Label {
         
         let toggle = Span()
@@ -60,6 +61,24 @@ extension InputCheckbox {
         .class(.switch)
         .float(.left)
     }
+    
+    public func toggle(_ isReady: Bool, _ isDisabled: Bool = false) ->  Label {
+        
+        let toggle = Span()
+        
+        return Label {
+            
+            InputCheckbox(isReady)
+                .disabled(isDisabled)
+            toggle
+                .class(.slider, .round)
+                .cursor(.pointer)
+        }
+        .class(.switch)
+        .float(.left)
+    }
+    
+
     public func toggle(_ isReady: State<Bool>, _ isDisabled: State<Bool>, callback: @escaping ( (_ isChecked: Bool) -> () ) ) ->  Label {
         
         let toggle = Span()

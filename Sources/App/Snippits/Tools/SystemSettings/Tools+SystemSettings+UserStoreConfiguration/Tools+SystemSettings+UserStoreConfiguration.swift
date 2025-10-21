@@ -142,7 +142,7 @@ extension ToolsView.SystemSettings {
                                         .src("/skyline/media/panel_service.png")
                                         .marginRight(12.px)
                                         .marginLeft(12.px)
-                                        .height(18.px)
+                                        .height(28.px)
                                         .float(.left)
                                 
                                     H2(self.$selectedStore.map{$0?.name ?? "Seleccione Tienda" })
@@ -174,12 +174,10 @@ extension ToolsView.SystemSettings {
                                 Div{
                                     
                                     ForEach(self.$storeList) { store in
-                                        Div{
-                                            Span(store.name)
-                                        }
-                                        .width(90.percent)
-                                        .marginTop(7.px)
-                                        .class(.uibtn)
+                                        Div(store.name)
+                                        .custom("width", "cal(100% - 12px)")
+                                        .width(100.percent)
+                                        .class(.uibtn, .oneLineText)
                                         .onClick { _, event in
                                             self.selectedStore = store
                                             self.selectMenuViewIsHidden = true
@@ -191,12 +189,11 @@ extension ToolsView.SystemSettings {
                                 }
                                 .hidden(self.$selectMenuViewIsHidden)
                                 .backgroundColor(.transparentBlack)
-                                .position(.absolute)
                                 .borderRadius(12.px)
+                                .position(.absolute)
                                 .padding(all: 3.px)
                                 .margin(all: 3.px)
-                                .marginTop(7.px)
-                                .bottom(42.px)
+                                .width(300.px)
                                 .zIndex(1)
                                 .onClick { _, event in
                                     event.stopPropagation()
@@ -239,19 +236,20 @@ extension ToolsView.SystemSettings {
                                 .padding(all: 3.px)
                                 .paddingRight(7.px)
                                 .cursor(.pointer)
-                                .height(28.px)
+                                .height(18.px)
                             
                             Span("Configuracion Avanzada")
                             .float(.right)
                             
                         }
+                        .hidden(self.$selectedStore.map{  $0 == nil })
                         .class(.uibtnLarge)
                         .marginRight(7.px)
                         .fontSize(18.px)
                         .height(22.px)
                         .float(.right)
                         .onClick {
-                            
+                            self.loadStore()
                         }
 
                         Div().clear(.both)
@@ -313,5 +311,55 @@ extension ToolsView.SystemSettings {
             selectedStore = storeList.first
             
         }
+
+        func loadStore() {
+
+            loadingView(show: true)
+            
+            guard let selectedStore else {
+                showError(.errorGeneral, "Seleccione tienda para configurar")
+                return
+            }
+
+            getUsers(storeid: selectedStore.id, onlyActive: true) { users in
+                
+                API.custAPIV1.loadStore(storeId: selectedStore.id) { resp in
+                
+                    loadingView(show: false)
+
+                    guard let resp else {
+                        showError(.errorDeCommunicacion, .serverConextionError)
+                        return
+                    }
+                    
+                    guard resp.status == .ok else {
+                        showError(.errorGeneral, resp.msg)
+                        return
+                    }
+                    
+                    guard let payload = resp.data else {
+                        showError(.unexpectedResult, .unexpenctedMissingPayload)
+                        return
+                    }
+
+                    let view = StoreDetailView(
+                        store: payload.store,
+                        mails: payload.mails,
+                        inventory: payload.inventory,
+                        stores: payload.stores,
+                        config: payload.config,
+                        fiscal: payload.fiscal, 
+                        bodegas: payload.bodegas
+                    )
+                    
+                    addToDom(view)
+
+                }
+        
+            }
+                
+        }
+
+
     }
 }
