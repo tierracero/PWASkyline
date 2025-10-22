@@ -699,7 +699,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                                         Div().clear(.both).height(3.px)
 
                                         self.supervisorField
-                                        
+
                                         self.supervisorSelect
                                         
                                     }
@@ -1420,7 +1420,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
                 getUsers(storeid: nil, onlyActive: true) { users in
 
-                    userRefrence = Dictionary(uniqueKeysWithValues: users.map{ ($0.id, $0) })
+                    self.userRefrence = Dictionary(uniqueKeysWithValues: users.map{ ($0.id, $0) })
 
                     users.forEach{ user in
                         self.supervisorSelect.appendChild(
@@ -1531,7 +1531,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                     return
                 }
 
-                guard let selectedUser = userRefrence[userId] else {
+                guard let selectedUser = self.userRefrence[userId] else {
                     return
                 }
 
