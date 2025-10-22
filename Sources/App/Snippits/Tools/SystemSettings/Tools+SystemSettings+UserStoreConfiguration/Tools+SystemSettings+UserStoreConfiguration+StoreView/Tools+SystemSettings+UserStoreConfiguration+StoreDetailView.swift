@@ -33,7 +33,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         
         @State var supervisor: CustUsername?
 
-        @State var supervisorListener: String
+        @State var supervisorListener: String = ""
 
         @State var telephone: String
         
@@ -121,6 +121,15 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         
         ///  Locked inventory to only use inventorie associeted to store
         @State var lockedInventory: Bool
+
+        @State var groopName: String = ""
+
+        @State var bodega: String = ""
+
+        @State var bodegaDescr: String = ""
+
+        @State var seccion: String = ""
+
 
         /* Refrences */
 
@@ -571,7 +580,31 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         var fridayScheduleObjectView: ScheduleObjectView
 
         var saturdayScheduleObjectView: ScheduleObjectView
+        
+        lazy var groopNameField = InputText(self.$groopName)
+        .placeholder("Nombre del grupo")
+        .custom("width","calc(100% - 24px)")
+        .class(.textFiledBlackDark)
+        .height(31.px)
 
+        lazy var bodegaField = InputText(self.$bodega)
+        .placeholder("Nombre de la bodega")
+        .custom("width","calc(100% - 24px)")
+        .class(.textFiledBlackDark)
+        .height(31.px)
+        
+        lazy var bodegaDescrField = InputText(self.$bodegaDescr)
+        .placeholder("Descripcion de la bodega")
+        .custom("width","calc(100% - 24px)")
+        .class(.textFiledBlackDark)
+        .height(31.px)
+        
+        lazy var seccionField = InputText(self.$seccion)
+        .placeholder("Nombre de la seccion")
+        .custom("width","calc(100% - 24px)")
+        .class(.textFiledBlackDark)
+        .height(31.px)
+        
         @DOM override var body: DOM.Content {
             
             Div{
@@ -1275,6 +1308,93 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                             }
                             .class(.roundDarkBlue)
                             .height(210.px)
+                            .hidden(self.$id != nil)
+
+                            Div{
+
+                                Div{
+
+                                    Div{
+                                        Div("Nombre del Equipo (Grupo)")
+                                        .class(.oneLineText)
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div{
+                                        self.groopNameField
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div().clear(.both)
+
+                                }
+                                .marginBottom(7.px)
+
+                                Div{
+
+                                    Div{
+                                        Div("Nombre de la Bodega")
+                                        .class(.oneLineText)
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div{
+                                        self.bodegaField
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div().clear(.both)
+
+                                }
+                                .marginBottom(7.px)
+
+                                Div{
+
+                                    Div{
+                                        Div("Descripción de la bodega")
+                                        .class(.oneLineText)
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div{
+                                        self.bodegaDescrField
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div().clear(.both)
+
+                                }
+                                .marginBottom(7.px)
+
+                                Div{
+
+                                    Div{
+                                        Div("Nombre de la seccion")
+                                        .class(.oneLineText)
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div{
+                                        self.seccionField
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div().clear(.both)
+
+                                }
+                                .marginBottom(7.px)
+                            }
+                            .class(.roundDarkBlue)
+                            .height(210.px)
+                            .hidden(self.$id == nil)
 
                             Div("+ Agregar Bodega")
                             .custom("width", "calc(100% - 14px)")
@@ -1381,7 +1501,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 .overflow(.auto)
                 
                 Div{
-                    Div("Guardar Cambios")
+                    Div(self.$id.map{ $0 != nil ? "Guardar Cambios" : "Crear Teinda" })
                     .class(.uibtnLargeOrange)
                 }
                 .align(.right)
@@ -1428,9 +1548,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                                 .value(user.id.uuidString)
                         )
                     }
-
                 }
-            
             }
 
             fiscal.forEach { profile in
