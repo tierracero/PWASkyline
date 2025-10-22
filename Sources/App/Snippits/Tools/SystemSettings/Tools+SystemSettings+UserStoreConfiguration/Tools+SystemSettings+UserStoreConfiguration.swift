@@ -344,7 +344,6 @@ extension ToolsView.SystemSettings {
 
                     let view = StoreDetailView(
                         store: payload.store,
-                        mails: payload.mails,
                         inventory: payload.inventory,
                         stores: payload.stores,
                         config: payload.config,

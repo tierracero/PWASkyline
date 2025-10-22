@@ -149,7 +149,7 @@ func connWebsocket(interval: Double){
     
     var url = "wss://intratc.co/ws?\(query)"
     
-    if WebApp.shared.window.location.hostname == "127.0.0.1" || WebApp.shared.window.location.hostname == localTestIp {
+    if WebApp.shared.window.location.hostname == "localhost" || WebApp.shared.window.location.hostname == localTestIp {
         //url = "wss://localhost:8800/ws?\(query)"
         print("⚡️⚡️  \(url)")
     }

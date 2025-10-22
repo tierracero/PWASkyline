@@ -229,15 +229,6 @@ class ToolsView: Div {
         left(0.px)
         top(0.px)
         
-        
-        print("🟢  custCatchUrl \(custCatchUrl)")
-        print("🟢  custCatchUrl \(custCatchUrl)")
-        print("🟢  custCatchUrl \(custCatchUrl)")
-        print("🟢  custCatchUrl \(custCatchUrl)")
-        print("🟢  custCatchUrl \(custCatchUrl)")
-        print("🟢  custCatchUrl \(custCatchUrl)")
-        print("🟢  custCatchUrl \(custCatchUrl)")
-        
     }
     
     

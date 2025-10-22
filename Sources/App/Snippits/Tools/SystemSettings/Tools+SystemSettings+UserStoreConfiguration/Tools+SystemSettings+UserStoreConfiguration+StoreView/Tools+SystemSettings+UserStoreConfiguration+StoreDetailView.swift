@@ -18,11 +18,11 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         
         /* MARK: Store details */
 
-        @State var id: UUID?
+        @State var id: UUID
         
-        @State var createdAt: Int64?
+        @State var createdAt: Int64
         
-        @State var modifiedAt: Int64?
+        @State var modifiedAt: Int64
         
         @State var storeName: String
         
@@ -122,80 +122,76 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
         /* Refrences */
 
-        var store: CustStore?
-
-        @State var mails: [String]
+        var store: CustStore
 
         @State var inventory: [CustUserInventoryObject]
 
+        @State var bodegas: [CustStoreBodegasQuick]
+        
         var stores: [CustStoreRef]
         
-        var config: ConfigStore?
+        var config: ConfigStore
 
         var fiscal: [FIAccountsQuick]
 
-        @State var bodegas: [CustStoreBodegasQuick]
-
-
         /* INITILIZER */
         init(
-            store: CustStore?,
-            mails: [String],
+            store: CustStore,
             inventory: [CustUserInventoryObject],
             stores: [CustStoreRef],
-            config: ConfigStore?,
+            config: ConfigStore,
             fiscal: [FIAccountsQuick],
             bodegas: [CustStoreBodegasQuick]
         ) {
 
-            self.id = store?.id
+            self.id = store.id
             
-            self.createdAt = store?.createdAt
+            self.createdAt = store.createdAt
             
-            self.modifiedAt = store?.modifiedAt
+            self.modifiedAt = store.modifiedAt
             
-            self.storeName = store?.name ?? ""
+            self.storeName = store.name
             
-            self.mainStore = store?.mainStore ?? false
+            self.mainStore = store.mainStore
             
             /// CustUsername.id
-            self.supervisorId = store?.custUsername
+            self.supervisorId = store.custUsername
 
             /// CustUsername
             self.supervisor = nil
 
-            self.telephone = store?.telephone ?? ""
+            self.telephone = store.telephone
             
-            self.mobile = store?.mobile ?? ""
+            self.mobile = store.mobile
             
-            self.email = store?.email ?? ""
+            self.email = store.email
             
-            self.street = store?.street ?? ""
+            self.street = store.street
             
-            self.colony = store?.colony ?? ""
+            self.colony = store.colony
             
-            self.city = store?.city ?? ""
+            self.city = store.city
             
-            self.state = store?.state ?? ""
+            self.state = store.state
             
-            self.country = store?.country ?? ""
+            self.country = store.country
             
-            self.zip = store?.zip ?? ""
+            self.zip = store.zip
             
-            self.isFiscalable = store?.isFiscalable ?? false
+            self.isFiscalable = store.isFiscalable
             
-            self.isPublic = store?.isPublic ?? false
+            self.isPublic = store.isPublic
             
             ///  UUID?
             self.fiscalProfileListener = ""
             
-            if let lat = store?.lat, let lon = store?.lon  {
+            if let lat = store.lat, let lon = store.lon  {
                 self.location = try? .init(latitud: lat, longitud: lon)
             }
 
-            self.balance = store?.balance.formatMoney ?? "0"
+            self.balance = store.balance.formatMoney
             
-            self.storePrefix = store?.storePrefix ?? ""
+            self.storePrefix = store.storePrefix
             
             /// GeneralStatus
             /// unrequested, active, suspended, canceled, fraud, delicuent, hotline, collection
@@ -218,7 +214,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             self.orderImageListener = ""
             
             // Int
-            self.orderLineBreak = config?.print.lineBreak.toString ?? ""
+            self.orderLineBreak = config.print.lineBreak.toString
             
             // Defiene printing configuration of store SALE POINT
             // public var printPdv: ConfigStorePrinting
@@ -234,13 +230,13 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             self.posImageListener = ""
 
             // Int        
-            self.posLineBreak = config?.printPdv.lineBreak.toString ?? ""
+            self.posLineBreak = config.printPdv.lineBreak.toString
             
             // Int64
-            self.priceModifierPdv = config?.priceModifierPdv.formatMoney ?? "0"
+            self.priceModifierPdv = config.priceModifierPdv.formatMoney
             
             // Int64
-            self.priceModifierOrder = config?.priceModifierOrder.formatMoney ?? "0"
+            self.priceModifierOrder = config.priceModifierOrder.formatMoney
             
             // StoreOperationType
             /// internal, external
@@ -251,29 +247,17 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             self.oporationStoreListener = ""
             
             ///  Locked inventory to only use inventorie associeted to store
-            self.lockedInventory = config?.lockedInventory ?? false
+            self.lockedInventory = config.lockedInventory
 
-            if let config {
-                self.sundayScheduleObjectView = .init(day: .sunday, schedule: config.schedule.sunday)
-                self.mondayScheduleObjectView = .init(day: .monday, schedule: config.schedule.monday)
-                self.tuesdayScheduleObjectView = .init(day: .tuesday, schedule: config.schedule.tuesday)
-                self.wednesdayScheduleObjectView = .init(day: .wednesday, schedule: config.schedule.wednesday)
-                self.thursdayScheduleObjectView = .init(day: .thursday, schedule: config.schedule.thursday)
-                self.fridayScheduleObjectView = .init(day: .friday, schedule: config.schedule.friday)
-                self.saturdayScheduleObjectView = .init(day: .saturday, schedule: config.schedule.saturday)
-            }
-            else {
-                self.sundayScheduleObjectView = .init(day: .sunday, schedule: .init())
-                self.mondayScheduleObjectView = .init(day: .monday, schedule: .init())
-                self.tuesdayScheduleObjectView = .init(day: .tuesday, schedule: .init())
-                self.wednesdayScheduleObjectView = .init(day: .wednesday, schedule: .init())
-                self.thursdayScheduleObjectView = .init(day: .thursday, schedule: .init())
-                self.fridayScheduleObjectView = .init(day: .friday, schedule: .init())
-                self.saturdayScheduleObjectView = .init(day: .saturday, schedule: .init())
-            }
+            self.sundayScheduleObjectView = .init(day: .sunday, schedule: config.schedule.sunday)
+            self.mondayScheduleObjectView = .init(day: .monday, schedule: config.schedule.monday)
+            self.tuesdayScheduleObjectView = .init(day: .tuesday, schedule: config.schedule.tuesday)
+            self.wednesdayScheduleObjectView = .init(day: .wednesday, schedule: config.schedule.wednesday)
+            self.thursdayScheduleObjectView = .init(day: .thursday, schedule: config.schedule.thursday)
+            self.fridayScheduleObjectView = .init(day: .friday, schedule: config.schedule.friday)
+            self.saturdayScheduleObjectView = .init(day: .saturday, schedule: config.schedule.saturday)
 
             self.store = store
-            self.mails = mails
             self.inventory = inventory
             self.stores = stores
             self.config = config
@@ -292,26 +276,22 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
         // Int64?
         lazy var createdAtField = InputText(self.$createdAt.map{
-            if let uts = $0 {
-                return getDate(uts).formatedLong
-            }
-            return ""
+            return getDate($0).formatedLong
          })
         .placeholder("Creacion de Tienda")
         .custom("width","calc(100% - 24px)")
         .class(.textFiledBlackDark)
+        .disabled(true)
         .height(31.px)
 
         // Int64?
         lazy var modifiedAtField = InputText(self.$modifiedAt.map{
-            if let uts = $0 {
-                return getDate(uts).formatedLong
-            }
-            return ""
+            return getDate($0).formatedLong
          })
         .placeholder("Ultima Modificación")
         .custom("width","calc(100% - 24px)")
         .class(.textFiledBlackDark)
+        .disabled(true)
         .height(31.px)
 
         lazy var storeNameField = InputText(self.$storeName)
@@ -440,9 +420,8 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         }
         .custom("width","calc(100% - 24px)")
         .class(.textFiledBlackDark)
+        .disabled(true)
         .height(31.px)
-
-        // mails: [String]
 
         // inventory: [CustUserInventoryObject]
 
@@ -474,6 +453,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             Option("Seleccione Opcion")
                 .value("")
         }
+        .custom("width","calc(100% - 24px)")
+        .class(.textFiledBlackDark)
+        .height(31.px)
+
+         lazy var orderLineBreakField = InputText(self.$orderLineBreak)
+        .placeholder("Prefijo Tienda")
         .custom("width","calc(100% - 24px)")
         .class(.textFiledBlackDark)
         .height(31.px)
@@ -593,13 +578,14 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 .marginBottom(3.px)
                 
                 Div{
-                    /*   */
+                    /*  Info basica  y mapa  */
                     Div{
 
                         Div{
                             Div{
 
-                                H2("Informacion de la empresa")
+                                H2("Información de la empresa")
+                                .color(.darkGoldenRod)
 
                                 Div().clear(.both).height(3.px)
 
@@ -608,7 +594,8 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                                     
                                     Div {
 
-                                        Label("Nombre de la tienda")
+                                        Div("Nombre de la tienda")
+                                        .class(.oneLineText)
                                         
                                         Div().clear(.both).height(3.px)
 
@@ -620,7 +607,8 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
                                     Div{
 
-                                        Label("Matriz")
+                                        Div("Matriz")
+                                        .class(.oneLineText)
                                         
                                         Div().clear(.both).height(3.px)
 
@@ -635,21 +623,173 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                                 }
                                 .marginBottom(7.px)
 
-                                // telephoneField
+                                // telephone / mobile
                                 Div{
 
-                                    Label("Telefono")
-                                    
-                                    Div().clear(.both).height(3.px)
+                                    Div{
 
-                                    self.telephoneField
+                                        Div("Telefono")
+                                        .class(.oneLineText)
+                                        
+                                        Div().clear(.both).height(3.px)
+
+                                        self.telephoneField
+
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div{
+
+                                        Div("Movil")
+                                        .class(.oneLineText)
+                                        
+                                        Div().clear(.both).height(3.px)
+
+                                        self.mobileField
+                                        
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div().clear(.both)
 
                                 }
                                 .marginBottom(7.px)
+
+                                // correo / Supervisor
+                                Div{
+
+                                    Div{
+
+                                        Div("Correo Electronico")
+                                        .class(.oneLineText)
+                                        
+                                        Div().clear(.both).height(3.px)
+
+                                        self.emailField
+
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div{
+
+                                        Div("Supervisor")
+                                        .class(.oneLineText)
+                                        
+                                        Div().clear(.both).height(3.px)
+
+                                        self.supervisorField
+                                        
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div().clear(.both)
+
+                                }
+                                .marginBottom(7.px)
+
+                                H2("Direccion Fisica")
+                                .color(.darkGoldenRod)
+
+                                Div().clear(.both).height(3.px)
+
+                                // Calle y nuemro
+
+                                Div("Calle y numero")
+                                .class(.oneLineText)
+                                
+                                Div().clear(.both).height(3.px)
+
+                                self.streetField
+
+                                Div().clear(.both).height(7.px)
+
+                                // colonia  / cuidad
+                                Div{
+
+                                    Div{
+
+                                        Div("Colonia")
+                                        .class(.oneLineText)
+                                        
+                                        Div().clear(.both).height(3.px)
+
+                                        self.colonyField
+
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div{
+
+                                        Div("Cuidad")
+                                        .class(.oneLineText)
+                                        
+                                        Div().clear(.both).height(3.px)
+
+                                        self.cityField
+                                        
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div().clear(.both)
+
+                                }
+                                .marginBottom(7.px)
+
+                                // colonia  / cuidad
+                                Div{
+
+                                    Div{
+
+                                        Div("Estado")
+                                        .class(.oneLineText)
+                                        
+                                        Div().clear(.both).height(3.px)
+
+                                        self.stateField
+
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div{
+
+                                        Div("Codigo Postal")
+                                        .class(.oneLineText)
+                                        
+                                        Div().clear(.both).height(3.px)
+
+                                        self.zipField
+                                        
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div().clear(.both)
+
+                                }
+                                .marginBottom(7.px)
+
+                                // Pais
+
+                                Div("Pais")
+                                .class(.oneLineText)
+                                
+                                Div().clear(.both).height(3.px)
+
+                                self.countryField
+
+                                Div().clear(.both).height(7.px)
+
                             }
                             .margin(all: 3.px)
                         }
-                        .width(33.percent)
+                        .width(25.percent)
                         .float(.left)
 
                         Div{
@@ -660,11 +800,25 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
                                 Div().clear(.both).height(3.px)
 
+                                Div{
+                                    
+                                    Table().noResult(label: #"🗺️ Agregue direccion y  "Cargue mapa" para ver el mapa y ajustar la ubicación"#)
+                                    .hidden( self.$location.map{ $0 != nil})
+
+                                    Div()
+                                    .id(.init("mapkitjs"))
+                                    .hidden( self.$location.map{ $0 == nil})
+                                    .height(100.percent)
+                                }
+                                .custom("height", "calc(100% - 32px)")
+
                             }
+                            .custom("height", "calc(100% - 6px)")
                             .margin(all: 3.px)
                             
                         }
-                        .width(67.percent)
+                        .width(75.percent)
+                        .height(500.px)
                         .float(.left)
 
                     }
@@ -672,11 +826,538 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                     Div().clear(.both).height(3.px)
 
                     Div{
+                        // Información adicional
+                        Div{
+
+                            H2("Información adicional")
+                            .color(.darkGoldenRod)
+
+                            Div().clear(.both).height(3.px)
+
+                            // creado  / modificado
+                            Div{
+
+                                Div{
+
+                                    Div("Fecha de creacion")
+                                    .class(.oneLineText)
+                                    
+                                    Div().clear(.both).height(3.px)
+
+                                    self.createdAtField
+
+                                }
+                                .width(50.percent)
+                                .float(.left)
+
+                                Div{
+
+                                    Div("Ultima Modificacion")
+                                    .class(.oneLineText)
+                                    
+                                    Div().clear(.both).height(3.px)
+
+                                    self.modifiedAtField
+                                    
+                                }
+                                .width(50.percent)
+                                .float(.left)
+
+                                Div().clear(.both)
+
+                            }
+                            .marginBottom(7.px)
+
+                            // balance / puede facturar
+                            Div{
+
+                                Div{
+
+                                    Div("Balance")
+                                    .class(.oneLineText)
+                                    
+                                    Div().clear(.both).height(3.px)
+                                    
+                                    self.balanceField
+
+                                }
+                                .width(50.percent)
+                                .float(.left)
+
+                                Div{
+
+                                    Div("Prefijo")
+                                    .class(.oneLineText)
+                                    
+                                    Div().clear(.both).height(3.px)
+
+                                    self.storePrefixField
+                                    
+                                }
+                                .width(50.percent)
+                                .float(.left)
+
+                                Div().clear(.both)
+
+                            }
+                            .marginBottom(7.px)
+
+                            Div{
+
+                                Div("Tienda Publica")
+                                .marginRight(7.px)
+                                .fontSize(26.px)
+                                .float(.left)
+                                
+                                self.isPublicToggle
+                                .marginRight(7.px)
+                                .float(.right)
+
+                                Div().clear(.both)
+                            }
+                            .marginBottom(7.px)
+
+                            Div{
+
+                                Div("Puede Facturar")
+                                .class(.oneLineText)
+                                .marginRight(7.px)
+                                .fontSize(26.px)
+                                .float(.left)
+                                
+                                self.isFiscalableToggle
+                                .marginRight(7.px)
+                                .float(.right)
+
+                                Div().clear(.both)
+                                
+                            }
+                            .marginBottom(7.px)
+
+                            Div{
+
+                                Div("Inventario Bloqueado")
+                                .class(.oneLineText)
+                                .marginRight(7.px)
+                                .fontSize(26.px)
+                                .float(.left)
+                                
+                                self.lockedInventoryToggle
+                                .marginRight(7.px)
+                                .float(.right)
+
+                                Div().clear(.both)
+                                
+                            }
+                            .marginBottom(7.px)
+
+                            Div{
+
+                                Div("Perfil fiscal por defecto")
+                                .class(.oneLineText)
+                                
+                                Div().clear(.both).height(3.px)
+
+                                self.fiscalProfileSelect
+
+                            }
+                            .marginBottom(7.px)
+
+                            // status
+                            Div{
+
+                                Div{
+
+                                    Div("Status")
+                                    .class(.oneLineText)
+                                    .fontSize(26.px)
+                                    .float(.left)
+
+                                }
+                                .width(50.percent)
+                                .float(.left)
+
+                                Div{
+
+                                    self.statusSelect
+                                    
+                                }
+                                .width(50.percent)
+                                .float(.left)
+
+                                Div().clear(.both)
+
+                            }
+                            .marginBottom(7.px)
+
+                        }
+                        .width(25.percent)
+                        .float(.left)
+
+                        // Impresiones 
+                        Div{
+
+                            Div().height(30.px)
+                            
+                            // Tipo de  Operacion
+                            Div{
+
+                                Div{
+
+                                    Div("Tipo de Operacion")
+                                    .class(.oneLineText)
+                                    
+                                    Div().clear(.both).height(3.px)
+
+                                    self.operationTypeSelect
+
+                                }
+                                .width(50.percent)
+                                .float(.left)
+
+                                Div{
+
+                                    Div("Tienda de Operaciones")
+                                    .class(.oneLineText)
+                                    
+                                    Div().clear(.both).height(3.px)
+
+                                    self.oporationStoreSelect
+                                    
+                                }
+                                .width(50.percent)
+                                .float(.left)
+
+                                Div().clear(.both)
+
+                            }
+                            .marginBottom(7.px)
+
+                            H2("Impresion de Ordenes")
+                            .color(.darkGoldenRod)
+
+                            Div().clear(.both).height(3.px)
+
+                            Div{
+
+                                Div{
+
+                                    Div("Boton de Impresion")
+                                    .class(.oneLineText)
+                                    .marginRight(7.px)
+                                    
+                                    self.orderButtonSelect
+
+                                }
+                                .width(50.percent)
+                                .align(.left)
+                                .float(.left)
+
+                                Div{
+
+                                    Div("Opcion de Impresion")
+                                    .class(.oneLineText)
+                                    
+                                    Div().clear(.both).height(3.px)
+
+                                    self.orderDocumentSelect
+                                    
+                                }
+                                .width(50.percent)
+                                .float(.left)
+
+                                Div().clear(.both)
+
+                            }
+                            .marginBottom(7.px)
+
+                            Div{
+
+                                Div{
+
+                                    Div("Salto de impresion")
+                                    .class(.oneLineText)
+                                    .marginRight(7.px)
+                                    
+                                    self.orderLineBreakField
+
+                                }
+                                .width(50.percent)
+                                .align(.left)
+                                .float(.left)
+
+                                Div{
+
+                                    Div("Opcion de Impresion")
+                                    .class(.oneLineText)
+                                    
+                                    Div().clear(.both).height(3.px)
+
+                                    self.orderImageSelect
+                                    
+                                }
+                                .width(50.percent)
+                                .float(.left)
+
+                                Div().clear(.both)
+
+                            }
+                            .marginBottom(7.px)
+
+                            H2("Impresion de PDV")
+                            .color(.darkGoldenRod)
+
+                            Div().clear(.both).height(3.px)
+
+                            Div{
+
+                                Div{
+
+                                    Div("Boton de Impresion")
+                                    .class(.oneLineText)
+                                    .marginRight(7.px)
+                                    
+                                    self.posButtonSelect
+
+                                }
+                                .width(50.percent)
+                                .align(.left)
+                                .float(.left)
+
+                                Div{
+
+                                    Div("Opcion de Impresion")
+                                    .class(.oneLineText)
+                                    
+                                    Div().clear(.both).height(3.px)
+
+                                    self.posDocumentSelect
+                                    
+                                }
+                                .width(50.percent)
+                                .float(.left)
+
+                                Div().clear(.both)
+
+                            }
+                            .marginBottom(7.px)
+
+                            Div{
+
+                                Div{
+
+                                    Div("Salto de impresion")
+                                    .class(.oneLineText)
+                                    .marginRight(7.px)
+                                    
+                                    self.posLineBreakField
+                                    
+                                }
+                                .width(50.percent)
+                                .align(.left)
+                                .float(.left)
+
+                                Div{
+
+                                    Div("Opcion de Impresion")
+                                    .class(.oneLineText)
+                                    
+                                    Div().clear(.both).height(3.px)
+
+                                    self.posImageSelect
+                                    
+                                }
+                                .width(50.percent)
+                                .float(.left)
+
+                                Div().clear(.both)
+
+                            }
+                            .marginBottom(7.px)
+
+                        }
+                        .width(25.percent)
+                        .float(.left)
+                        /// mas config y bodegas 
+                        Div{
+
+                            H2("Modificadores de Precios")
+                            .color(.darkGoldenRod)
+
+                            Div().clear(.both).height(3.px)
+
+                            Div{
+
+                                Div{
+
+                                    Div("Precio en Orden")
+                                    .class(.oneLineText)
+                                    .marginRight(7.px)
+                                    
+                                    self.priceModifierOrderField
+
+                                }
+                                .width(50.percent)
+                                .align(.left)
+                                .float(.left)
+
+                                Div{
+
+                                    Div("Precio en Mostrador")
+                                    .class(.oneLineText)
+                                    
+                                    Div().clear(.both).height(3.px)
+
+                                    self.priceModifierPdvField
+                                    
+                                }
+                                .width(50.percent)
+                                .float(.left)
+
+                                Div().clear(.both)
+
+                            }
+                            .marginBottom(7.px)
+
+                            H2("Bodegas")
+                            .color(.darkGoldenRod)
+
+                            Div().clear(.both).height(3.px)
+
+                            Div{
+                                Div{
+                                    Table().noResult(label: "🪑 No hay bodegas")
+                                    .hidden(self.$bodegas.map{ !$0.isEmpty })
+
+                                    ForEach(self.$bodegas) { item in
+                                        Div(item.name)
+                                        .custom("width", "calc(100% - 14px)")
+                                        .class(.uibtnLargeOrange)
+                                        .onClick {
+
+                                        }
+                                    }
+                                    .hidden(self.$bodegas.map{ $0.isEmpty })
+
+                                }
+                                .custom("height", "calc(100% - 6px)")
+                                .overflow(.auto)
+                                .padding(all: 3.px)
+                            }
+                            .class(.roundDarkBlue)
+                            .height(210.px)
+
+                            Div("+ Agregar Bodega")
+                            .custom("width", "calc(100% - 14px)")
+                            .class(.uibtnLargeOrange)
+                            .align(.center)
+
+                        }
+                        .width(25.percent)
+                        .float(.left)
+
+                        // Activos de la tienda
+                        Div{
+                            Div{
+
+                                H2("Activos de la tienda")
+                                .color(.darkGoldenRod)
+
+                                Div().clear(.both).height(3.px)
+
+                                Div{
+                                    Div{
+
+                                        Table().noResult(label: "🪑 No hay activos")
+                                        .hidden(self.$inventory.map{ !$0.isEmpty })
+
+                                        ForEach(self.$inventory) { item in
+                                            H2("hola")
+                                        }
+                                        .hidden(self.$inventory.map{ $0.isEmpty })
+
+                                    }
+                                    .custom("height", "calc(100% - 6px)")
+                                    .overflow(.auto)
+                                    .padding(all: 3.px)
+                                }
+                                .class(.roundDarkBlue)
+                                .height(300.px)
+
+                                Div("+ Agregar Activo")
+                                .custom("width", "calc(100% - 14px)")
+                                .class(.uibtnLargeOrange)
+                                .align(.center)
+
+                            }
+                            .margin(all: 3.px)
+                        }
+                        .width(25.percent)
+                        .float(.left)
 
                     }
+
+                    Div().clear(.both).height(3.px)
+
+                    Div {
+
+                        H2("Horario")
+                        .color(.darkGoldenRod)
+
+                        Div().clear(.both).height(3.px)
+                        
+                        Div{
+
+                            self.sundayScheduleObjectView
+
+                            Div().clear(.both).height(3.px)
+
+                            self.mondayScheduleObjectView
+
+                            Div().clear(.both).height(3.px)
+
+                            self.tuesdayScheduleObjectView
+
+                            Div().clear(.both).height(3.px)
+
+                            self.wednesdayScheduleObjectView
+
+                        }
+                        .width(50.percent)
+                        .float(.left)
+
+                        Div{
+
+                            self.thursdayScheduleObjectView
+
+                            Div().clear(.both).height(3.px)
+
+                            self.fridayScheduleObjectView
+
+                            Div().clear(.both).height(3.px)
+
+                            self.saturdayScheduleObjectView
+
+
+                        }
+                        .width(50.percent)
+                        .float(.left)
+                            
+                    }
+                    .width(50.percent)
+                    .float(.left)
+
+
                 }
-                .custom("height", "calc(100% - 35px)")
+                .custom("height", "calc(100% - 82px)")
+                .overflow(.auto)
                 
+                Div{
+                    Div("Guardar Cambios")
+                    .class(.uibtnLargeOrange)
+                }
+                .align(.right)
+
             }
             .backgroundColor(.backGroundGraySlate)
             .borderRadius(all: 24.px)
@@ -719,8 +1400,8 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                     .value(item.rawValue)
                 )
             }
-
-            CustStorePrintButtonOptions.allCases.forEach { item in
+  
+            CustStorePrintDocumentImage.allCases.forEach { item in
                 orderImageSelect.appendChild(
                     Option(item.description)
                     .value(item.rawValue)
@@ -762,9 +1443,21 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 )
             }
 
+            GeneralStatus.allCases.forEach { item in
+
+                if item != .active  && item != .suspended {
+                    return
+                }
+
+                statusSelect.appendChild(
+                    Option(item.description)
+                    .value(item.rawValue)
+                )
+            }
+
             stores.forEach{ item in
 
-                if let store, store.id == item.id {
+                if store.id == item.id {
                     return
                 }
 
@@ -774,81 +1467,28 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 )
             }
             
-            if let store {
-                self.fiscalProfileListener = store.fiscal?.uuidString ?? ""
-                self.statusListener = store.status.rawValue
+            self.fiscalProfileListener = store.fiscal?.uuidString ?? ""
+            self.statusListener = store.status.rawValue
+            self.orderButtonListener = config.print.button.rawValue
+            self.orderDocumentListener = config.print.document.rawValue
+            self.orderImageListener = config.print.image.rawValue
+            self.orderImageListener = config.print.image.rawValue
+            self.posButtonListener = config.printPdv.button.rawValue
+            self.posDocumentListener = config.printPdv.document.rawValue
+            self.posImageListener = config.printPdv.image.rawValue
+            self.operationTypeListener = config.operationType.rawValue
+            self.oporationStoreListener = config.oporationStore?.uuidString ?? ""
+
+
+        }
+
+        override func didAddToDOM() {
+            super.didAddToDOM()
+
+            if let location {
+                _ = JSObject.global.activateMap!("mapkitjs", location, WebApp.shared.window.location.hostname == "localhost" ?  "\(WebApp.shared.window.location.hostname):\(WebApp.shared.window.location.port)" : WebApp.shared.window.location.hostname )
             }
 
-            if let config {
-                self.orderButtonListener = config.print.button.rawValue
-                self.orderDocumentListener = config.print.document.rawValue
-                self.orderImageListener = config.print.image.rawValue
-                self.orderImageListener = config.print.image.rawValue
-                self.posButtonListener = config.printPdv.button.rawValue
-                self.posDocumentListener = config.printPdv.document.rawValue
-                self.posImageListener = config.printPdv.image.rawValue
-                self.operationTypeListener = config.operationType.rawValue
-                self.oporationStoreListener = config.oporationStore?.uuidString ?? ""
-            }
-
         }
-    }
-}
-
-extension ToolsView.SystemSettings.UserStoreConfiguration.StoreDetailView {
-    
-    class ScheduleObjectView: Div {
-
-        override class var name: String { "div" }
-
-        let day: Weekdays
-
-        @State var workDay: Bool
-
-        /// followed, broken
-        @State var type: CustUserProfileScheduleDayTypes
-
-        @State var start: Int
-
-        @State var lucheStart: Int
-
-        @State var lucheEnd: Int
-
-        @State var end: Int
-
-        init(
-            day: Weekdays,
-            schedule: ConfigStoreScheduleObject
-        ) {
-            self.day = day
-            self.workDay = schedule.workDay
-            self.type = schedule.type
-            self.start = schedule.start
-            self.lucheStart = schedule.lucheStart
-            self.lucheEnd = schedule.lucheEnd
-            self.end = schedule.end
-        }
-
-        required init() {
-          fatalError("init() has not been implemented")
-        }
-
-        @DOM override var body: DOM.Content {
-            H2(self.day.documentableName)
-        }
-
-
-        override func buildUI() {
-            super.buildUI()
-            print("🟢 execute build")
-            self.class(.transparantBlackBackGround)
-            position(.absolute)
-            height(100.percent)
-            width(100.percent)
-            left(0.px)
-            top(0.px)
-            
-        }
-
     }
 }

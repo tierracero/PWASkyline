@@ -17,7 +17,7 @@ class App: WebApp {
             
             Navigator.shared.serviceWorker?.register("./service.js")
 
-            if WebApp.shared.window.location.hostname == "127.0.0.1" || WebApp.shared.window.location.hostname == localTestIp {
+            if WebApp.shared.window.location.hostname == "localhost" || WebApp.shared.window.location.hostname == localTestIp {
                 developmentMode = .develpment
                 print("⚠️ APPLICATION IN DEVEPMENT MODE")
                 print("⚠️ API MODE: \(developmentMode.rawValue)")
@@ -127,7 +127,7 @@ class App: WebApp {
             Page("hotline") { HotlineViewcontroler() }
             Page("nodisponible") { ServiceNotAvailbleViewControler() }
 
-            if WebApp.shared.window.location.hostname == "control.tierracero.com" || WebApp.shared.window.location.hostname == "tierracero.com" || WebApp.shared.window.location.hostname == "127.0.0.1" {
+            if WebApp.shared.window.location.hostname == "control.tierracero.com" || WebApp.shared.window.location.hostname == "tierracero.com" || WebApp.shared.window.location.hostname == "localhost" {
                 // Page("socialconn") { SocialConnect() }
                 // Page("youtubeconn") { YoutubeConnect(isRequesting: .ytPageToken) }
                 // Page("mercadolibre") { MercadoLibreConnect() }

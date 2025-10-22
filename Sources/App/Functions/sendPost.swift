@@ -22,7 +22,7 @@ public func sendPost<T: Codable> (
     
     var server = "https://intratc.co/api"
     
-    if WebApp.shared.window.location.hostname == "127.0.0.1" || WebApp.shared.window.location.hostname == localTestIp {
+    if WebApp.shared.window.location.hostname == "localhost" || WebApp.shared.window.location.hostname == localTestIp {
         switch developmentMode {
             case .local:
                 server = "http://localhost:8800/api"    
@@ -117,7 +117,7 @@ public func sendPost<T: Codable> (
 	
 	var payload = ""
     
-    if WebApp.shared.window.location.hostname == "127.0.0.1" || WebApp.shared.window.location.hostname == localTestIp {
+    if WebApp.shared.window.location.hostname == "localhost" || WebApp.shared.window.location.hostname == localTestIp {
         print("🟡 \(url)")
     }
     
@@ -132,7 +132,7 @@ public func sendPost<T: Codable> (
 		return
 	}
 	
-    if WebApp.shared.window.location.hostname == "127.0.0.1" || WebApp.shared.window.location.hostname == localTestIp {
+    if WebApp.shared.window.location.hostname == "localhost" || WebApp.shared.window.location.hostname == localTestIp {
         print("🟡 payload")
         print(payload)
     }
@@ -157,7 +157,7 @@ public func sendPost<T: Codable> (
         if let str = String(data: jsonData, encoding: .utf8){
             let utf8str = str.data(using: .utf8)
             if let base64Encoded = utf8str?.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0)) {
-                if WebApp.shared.window.location.hostname == "127.0.0.1" || WebApp.shared.window.location.hostname == localTestIp {
+                if WebApp.shared.window.location.hostname == "localhost" || WebApp.shared.window.location.hostname == localTestIp {
                     print("Authorization")
                     print(base64Encoded)
                 }
@@ -178,7 +178,7 @@ public func sendPost<T: Codable> (
         
         print("HOSTNAME: \(WebApp.shared.window.location.hostname)")
         
-        if WebApp.shared.window.location.hostname == "127.0.0.1" || WebApp.shared.window.location.hostname == localTestIp {
+        if WebApp.shared.window.location.hostname == "localhost" || WebApp.shared.window.location.hostname == localTestIp {
             if let json = xhr.responseText {
                 print("🟡 🟡 🟡 🟡 🟡 🟡 🟡 🟡 🟡 🟡 🟡 🟡 🟡 ")
                 print(json)
