@@ -1501,7 +1501,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 .overflow(.auto)
                 
                 Div{
-                    Div(self.$id.map{ $0 != nil ? "Guardar Cambios" : "Crear Teinda" })
+                    Div(self.$id.map{ $0 != nil ? "Guardar Cambios" : "Crear Tienda" })
                     .class(.uibtnLargeOrange)
                 }
                 .align(.right)
