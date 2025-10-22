@@ -1358,7 +1358,6 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                     .width(50.percent)
                     .float(.left)
 
-
                 }
                 .custom("height", "calc(100% - 82px)")
                 .overflow(.auto)
@@ -1488,7 +1487,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             self.posDocumentListener = config.printPdv.document.rawValue
             self.posImageListener = config.printPdv.image.rawValue
             self.operationTypeListener = config.operationType.rawValue
-            self.oporationStoreListener = config.oporationStore?.uuidString ?? ""
+            self.oporationStoreListener = config.operationStore?.uuidString ?? ""
 
 
         }
@@ -1551,13 +1550,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             })
         }
 
-
         func saveStore() {
-
-            guard let storeId = id else {
-                showError(.errorGeneral, "No se ha cargado tienda")
-                return
-            }
 
             if storePrefix.isEmpty {
                 showError(.campoRequerido, "")
@@ -1565,9 +1558,9 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 return
             }
 
-            if name.isEmpty {
+            if storeName.isEmpty {
                 showError(.campoRequerido, "")
-                nameField.select()
+                storeNameField.select()
                 return
             }
 
@@ -1577,53 +1570,305 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 return
             }
 
-            if name.isEmpty {
+            if email.isEmpty {
                 showError(.campoRequerido, "")
-                nameField.select()
+                emailField.select()
                 return
             }
 
-            API.custAPIV1.saveStore(
-                storeId: UUID,
-                name: String,
-                telephone: String,
-                mobile: String,
-                email: String,
-                street: String,
-                colony: String,
-                city: String,
-                state: String,
-                country: String,
-                zip: String,
-                isPublic: Bool,
-                isFiscalable: Bool,
-                fiscalProfileId: UUID?,
-                fiscalProfileName: String,
-                lat: Double?,
-                lon: Double?,
-                button: CustStorePrintButtonType,
-                document: CustStorePrintButtonOptions,
-                image: CustStorePrintDocumentImage,
-                lineBreak: Int,
-                buttonPdv: CustStorePrintButtonType,
-                documentPdv: CustStorePrintButtonOptions,
-                imagePdv: CustStorePrintDocumentImage,
-                lineBreakPdv: Int, priceModifierPdv: Double,
-                priceModifierOrder: Double,
-                operationType: StoreOperationType,
-                operationStore: UUID?,
-                sunday: ConfigStoreScheduleObject,
-                monday: ConfigStoreScheduleObject,
-                tuesday: ConfigStoreScheduleObject,
-                wednesday: ConfigStoreScheduleObject,
-                thursday: ConfigStoreScheduleObject,
-                friday: ConfigStoreScheduleObject,
-                saturday: ConfigStoreScheduleObject, l
-                ockedInventory: Bool
-            ) { resp in
-
+            if street.isEmpty {
+                showError(.campoRequerido, "")
+                streetField.select()
+                return
             }
 
+            if colony.isEmpty {
+                showError(.campoRequerido, "")
+                colonyField.select()
+                return
+            }
+
+            if city.isEmpty {
+                showError(.campoRequerido, "")
+                cityField.select()
+                return
+            }
+
+            if state.isEmpty {
+                showError(.campoRequerido, "")
+                stateField.select()
+                return
+            }
+
+            if country.isEmpty {
+                showError(.campoRequerido, "")
+                countryField.select()
+                return
+            }
+
+            if zip.isEmpty {
+                showError(.campoRequerido, "")
+                zipField.select()
+                return
+            }
+
+            if isFiscalable {
+                if fiscalProfile == nil {
+                    showError(.campoRequerido, "")
+                    return
+                }
+            }
+
+            guard let location else {
+                showError(.campoRequerido, "")
+                return
+            }
+
+            guard let button = CustStorePrintButtonType(rawValue: orderButtonListener) else {
+                showError(.campoRequerido, "")
+                return
+            }
+
+            guard let document = CustStorePrintButtonOptions(rawValue: orderDocumentListener) else {
+                showError(.campoRequerido, "")
+                return
+            }
+
+            guard let image = CustStorePrintDocumentImage(rawValue: orderImageListener) else {
+                showError(.campoRequerido, "")
+                return
+            }
+
+            guard let lineBreak = Int(orderLineBreak) else {
+                showError(.campoRequerido, "")
+                return
+            }
+
+            guard let buttonPdv = CustStorePrintButtonType(rawValue: posButtonListener) else {
+                showError(.campoRequerido, "")
+                return
+            }
+
+            guard let documentPdv = CustStorePrintButtonOptions(rawValue: posDocumentListener) else {
+                showError(.campoRequerido, "")
+                return
+            }
+
+            guard let imagePdv = CustStorePrintDocumentImage(rawValue: posImageListener) else {
+                showError(.campoRequerido, "")
+                return
+            }
+
+            guard let lineBreakPdv = Int(posLineBreak) else {
+                showError(.campoRequerido, "")
+                return
+            }
+
+            guard let priceModifierPdv = Double(priceModifierPdv) else {
+                showError(.campoRequerido, "")
+                return
+            }
+
+            guard let priceModifierOrder = Double(priceModifierOrder) else {
+                showError(.campoRequerido, "")
+                return
+            }
+
+            guard let operationType = StoreOperationType(rawValue: operationTypeListener) else {
+                showError(.campoRequerido, "")
+                return
+            }
+
+            let operationStore = UUID(uuidString: oporationStoreListener)
+            
+            if operationType == .external {
+                if operationStore == nil {
+                    showError(.campoRequerido, "")
+                    return
+                }
+            }
+
+            let sunday: ConfigStoreScheduleObject = .init(
+                workDay: sundayScheduleObjectView.workDay,
+                type: sundayScheduleObjectView.type,
+                start: Int(sundayScheduleObjectView.start) ?? 0,
+                lucheStart: Int(sundayScheduleObjectView.lucheStart) ?? 0,
+                lucheEnd: Int(sundayScheduleObjectView.lucheEnd) ?? 0,
+                end: Int(sundayScheduleObjectView.end) ?? 0
+            )
+
+            let monday: ConfigStoreScheduleObject = .init(
+                workDay: mondayScheduleObjectView.workDay,
+                type: mondayScheduleObjectView.type,
+                start: Int(mondayScheduleObjectView.start) ?? 0,
+                lucheStart: Int(mondayScheduleObjectView.lucheStart) ?? 0,
+                lucheEnd: Int(mondayScheduleObjectView.lucheEnd) ?? 0,
+                end: Int(mondayScheduleObjectView.end) ?? 0
+            )
+
+            let tuesday: ConfigStoreScheduleObject = .init(
+                workDay: tuesdayScheduleObjectView.workDay,
+                type: tuesdayScheduleObjectView.type,
+                start: Int(tuesdayScheduleObjectView.start) ?? 0,
+                lucheStart: Int(tuesdayScheduleObjectView.lucheStart) ?? 0,
+                lucheEnd: Int(tuesdayScheduleObjectView.lucheEnd) ?? 0,
+                end: Int(tuesdayScheduleObjectView.end) ?? 0
+            )
+
+            let wednesday: ConfigStoreScheduleObject = .init(
+                workDay: wednesdayScheduleObjectView.workDay,
+                type: wednesdayScheduleObjectView.type,
+                start: Int(wednesdayScheduleObjectView.start) ?? 0,
+                lucheStart: Int(wednesdayScheduleObjectView.lucheStart) ?? 0,
+                lucheEnd: Int(wednesdayScheduleObjectView.lucheEnd) ?? 0,
+                end: Int(wednesdayScheduleObjectView.end) ?? 0
+            )
+
+            let thursday: ConfigStoreScheduleObject = .init(
+                workDay: thursdayScheduleObjectView.workDay,
+                type: thursdayScheduleObjectView.type,
+                start: Int(thursdayScheduleObjectView.start) ?? 0,
+                lucheStart: Int(thursdayScheduleObjectView.lucheStart) ?? 0,
+                lucheEnd: Int(thursdayScheduleObjectView.lucheEnd) ?? 0,
+                end: Int(thursdayScheduleObjectView.end) ?? 0
+            )
+
+            let friday: ConfigStoreScheduleObject = .init(
+                workDay: fridayScheduleObjectView.workDay,
+                type: fridayScheduleObjectView.type,
+                start: Int(fridayScheduleObjectView.start) ?? 0,
+                lucheStart: Int(fridayScheduleObjectView.lucheStart) ?? 0,
+                lucheEnd: Int(fridayScheduleObjectView.lucheEnd) ?? 0,
+                end: Int(fridayScheduleObjectView.end) ?? 0
+            )
+
+            let saturday: ConfigStoreScheduleObject = .init(
+                workDay: saturdayScheduleObjectView.workDay,
+                type: saturdayScheduleObjectView.type,
+                start: Int(saturdayScheduleObjectView.start) ?? 0,
+                lucheStart: Int(saturdayScheduleObjectView.lucheStart) ?? 0,
+                lucheEnd: Int(saturdayScheduleObjectView.lucheEnd) ?? 0,
+                end: Int(saturdayScheduleObjectView.end) ?? 0
+            )
+
+            loadingView(show: true)
+
+            switch sunday.validate()  {
+            case .invalid(let error):
+                showError(.errorGeneral, "Error de configuracion de horario: Domingo. \(error)")
+                return
+            case .valid:
+                break
+            }
+
+            switch monday.validate()  {
+            case .invalid(let error):
+                showError(.errorGeneral, "Error de configuracion de horario: Lunes. \(error)")
+                return
+            case .valid:
+                break
+            }
+
+            switch tuesday.validate()  {
+            case .invalid(let error):
+                showError(.errorGeneral, "Error de configuracion de horario: Martes. \(error)")
+                return
+            case .valid:
+                break
+            }
+
+            switch wednesday.validate()  {
+            case .invalid(let error):
+                showError(.errorGeneral, "Error de configuracion de horario: Miercoles. \(error)")
+                return
+            case .valid:
+                break
+            }
+
+            switch thursday.validate()  {
+            case .invalid(let error):
+                showError(.errorGeneral, "Error de configuracion de horario: Jueves. \(error)")
+                return
+            case .valid:
+                break
+            }
+
+            switch friday.validate()  {
+            case .invalid(let error):
+                showError(.errorGeneral, "Error de configuracion de horario: Viernes. \(error)")
+                return
+            case .valid:
+                break
+            }
+
+            switch saturday.validate()  {
+            case .invalid(let error):
+                showError(.errorGeneral, "Error de configuracion de horario: Sabado. \(error)")
+                return
+            case .valid:
+                break
+            }
+
+            if let storeId = id {
+
+                API.custAPIV1.saveStore(
+                    storeId: storeId,
+                    name: storeName,
+                    telephone: telephone,
+                    mobile: mobile,
+                    email: email,
+                    street: street,
+                    colony: colony,
+                    city: city,
+                    state: state,
+                    country: country,
+                    zip: zip,
+                    isPublic: isPublic,
+                    isFiscalable: isFiscalable,
+                    fiscalProfileId: UUID(uuidString: fiscalProfileListener),
+                    fiscalProfileName: fiscalProfileSelect.text,
+                    lat: location.latitud,
+                    lon: location.longitud,
+                    button: button,
+                    document: document,
+                    image: image,
+                    lineBreak: lineBreak,
+                    buttonPdv: buttonPdv,
+                    documentPdv: documentPdv,
+                    imagePdv: imagePdv,
+                    lineBreakPdv: lineBreakPdv,
+                    priceModifierPdv: priceModifierPdv,
+                    priceModifierOrder: priceModifierOrder,
+                    operationType: operationType,
+                    operationStore: operationStore,
+                    sunday: sunday,
+                    monday: monday,
+                    tuesday: tuesday,
+                    wednesday: wednesday,
+                    thursday: thursday,
+                    friday: friday,
+                    saturday: saturday, 
+                    lockedInventory: lockedInventory
+                ) { resp in
+
+                    loadingView(show: false)
+                    
+                    guard let resp else {
+                        showError(.errorDeCommunicacion, .serverConextionError)
+                        return
+                    }
+                    
+                }
+
+            }
+            else {
+
+            }
+            
+
         }
+
+        //XD
+
     }
 }

@@ -15,7 +15,7 @@ public func getWorkLoadPayload(){
     var store = custCatchStore
     
     if configStore.operationType == .external {
-        if let _store = configStore.oporationStore {
+        if let _store = configStore.operationStore {
             store = _store
         }
     }
