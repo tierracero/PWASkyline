@@ -213,8 +213,6 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 self.opacity(0.5)
             }
 
-
-
             CustUserProfileScheduleDayTypes.allCases.forEach { item in
                 operationTypeSelect.appendChild(
                     Option(item.description)
@@ -233,14 +231,8 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 self.type = value
             }
 
-            
-
         }
 
-        func saveStore() {
-
-
-
-        }
     }
+
 }

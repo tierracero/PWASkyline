@@ -284,21 +284,21 @@ function getDate(uts = null){
     }
     
     return {
-    day: day,
-    month: month,
-    year: thisDate.getFullYear(),
-    vDate: day+'/'+month+'/'+thisDate.getFullYear().toString().substring(2),
-    time: hour+':'+min+':'+thisDate.getSeconds(),
-    stime: hour+':'+min,
-    hour: hour,
-        'min': min,
-    sec: thisDate.getSeconds(),
-    timestamp: ''+thisDate.getFullYear() + min + day + hour + min+thisDate.getSeconds(),
-    uts: Math.round(thisDate.getTime() / 1000),
-    dia: longDays[thisDate.getDay()],
-    diaCorto: shortDays[thisDate.getDay()],
-    mes: mesLargo,
-    mesCorto: mesCorto
+        day: day,
+        month: month,
+        year: thisDate.getFullYear(),
+        vDate: day+'/'+month+'/'+thisDate.getFullYear().toString().substring(2),
+        time: hour+':'+min+':'+thisDate.getSeconds(),
+        stime: hour+':'+min,
+        hour: hour,
+            'min': min,
+        sec: thisDate.getSeconds(),
+        timestamp: ''+thisDate.getFullYear() + min + day + hour + min+thisDate.getSeconds(),
+        uts: Math.round(thisDate.getTime() / 1000),
+        dia: longDays[thisDate.getDay()],
+        diaCorto: shortDays[thisDate.getDay()],
+        mes: mesLargo,
+        mesCorto: mesCorto
     };
 }
 function isoDateToUTS(isoDate){

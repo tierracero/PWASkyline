@@ -2801,7 +2801,7 @@ function dataURLtoFile(dataurl, filename) {
     return new File([u8arr], filename, {type:mime});
 }
 
-function activateMap(mapId, geolocation, domian) {
+function activateMap(mapId, geolocation, domian, stores, updateLocation) {
 
     marker = null
 
@@ -2810,10 +2810,6 @@ function activateMap(mapId, geolocation, domian) {
 	let lat = geolocation.latitud
 
 	let lon = geolocation.longitud
-
-    console.log(`lat ${parseFloat(lat)}`)
-    
-    console.log(`lon ${parseFloat(lon)}`)
 
 	mapkit.init({
 		authorizationCallback: function(done) {
@@ -2836,13 +2832,15 @@ function activateMap(mapId, geolocation, domian) {
     var storeMapArrays = []
 	
     var MarkerAnnotation = mapkit.MarkerAnnotation
-    /*
-    for(var i = 0; i < resp.data.stores.length; i++){
+    
+    for(var i = 0; i < stores.length; i++){
         
-        var succ = new mapkit.Coordinate(parseFloat(resp.data.stores[i].lat), parseFloat(resp.data.stores[i].lon));
+        let store = stores[i]
+
+        var succ = new mapkit.Coordinate(parseFloat(store.lat), parseFloat(store.lon));
         var succAnnotation = new MarkerAnnotation(succ);
         succAnnotation.color = "#969696"; 
-        succAnnotation.title = resp.data.stores[i].name;
+        succAnnotation.title = store.name;
         succAnnotation.subtitle = "Sucursal";
         succAnnotation.selected = "true";
         // succAnnotation.glyphText = "";
@@ -2850,7 +2848,7 @@ function activateMap(mapId, geolocation, domian) {
         // Add and show both annotations on the map
         storeMapArrays.push(succAnnotation)
     }
-    */
+
 
     if(storeMapArrays.length > 0){
         map.showItems(storeMapArrays);
@@ -2875,9 +2873,8 @@ function activateMap(mapId, geolocation, domian) {
 
     marker.addEventListener("drag-end", function() {
         
-        $(`#custStroreLat`).val(marker.coordinate.latitude)
-        $(`#custStroreLon`).val(marker.coordinate.longitude)
-        
+        updateLocation(marker.coordinate.latitude, marker.coordinate.longitude)
+
     });
 
     map.addAnnotation(marker);
@@ -2890,100 +2887,120 @@ function activateMap(mapId, geolocation, domian) {
 		}
 		else{
 
-			var serchString = ""
-			var hasFeild = 7
-			if(resp.data.store.street != ""){
-				hasFeild += 7
-				if(serchString == ""){
-					serchString = resp.data.store.street
-				}
-				else{
-					serchString += "," + resp.data.store.street
-				}
-			}
-			if(resp.data.store.street != ""){
-				hasFeild += 7
-				if(serchString == ""){
-					serchString = resp.data.store.street
-				}
-				else{
-					serchString += "," + resp.data.store.street
-				}
-			}
-			if(resp.data.store.city != ""){
-				hasFeild += 7
-				if(serchString == ""){
-					serchString = resp.data.store.city
-				}
-				else{
-					serchString += "," + resp.data.store.city
-				}
-			}
-			if(resp.data.store.state != ""){
-				hasFeild += 7
-				if(serchString == ""){
-					serchString = resp.data.store.state
-				}
-				else{
-					serchString += "," + resp.data.store.state
-				}
-			}
-			if(resp.data.store.zip != ""){
-				hasFeild += 7
-				if(serchString == ""){
-					serchString = resp.data.store.zip
-				}
-				else{
-					serchString += "," + resp.data.store.zip
-				}
-			}
-			if(resp.data.store.country != ""){
-				hasFeild += 7
-				if(serchString == ""){
-					serchString = resp.data.store.country
-				}
-				else{
-					serchString += "," + resp.data.store.country
-				}
-			}
-			
-			let search = new mapkit.Search({ getsUserLocation: true }); search.search(serchString, (error, data) => {
-				if (error) {
-					// handle search error return;
-				}
-				let annotations = data.places.map(place => {
-
-					$(`#custStroreLat`).val(place.coordinate.latitude)
-					$(`#custStroreLon`).val(place.coordinate.longitude)
-
-					let annotation = new mapkit.CoordinateRegion(
-						new mapkit.Coordinate(place.coordinate.latitude, place.coordinate.longitude),
-						new mapkit.CoordinateSpan((1.005887832 / hasFeild), (2.12991153 / hasFeild))
-					);
-			
-					map.region = annotation;
-
-					marker = new mapkit.MarkerAnnotation(map.center, {
-						draggable: true,
-						selected: true,
-						title: "Selecciona tu ubicación"
-					});
-					marker.addEventListener("drag-start", function(event) {
-						// No need to show "Drag me" message once user has dragged
-						event.target.title = "";
-					});
-					marker.addEventListener("drag-end", function() {
-						// Center the loupe on the marker's new location
-						// zoomedMap.setCenterAnimated(marker.coordinate);
-
-						$(`#custStroreLat`).val(marker.coordinate.latitude)
-						$(`#custStroreLon`).val(marker.coordinate.longitude)
-						
-					});
-					map.addAnnotation(marker);
-				});
-			});
 
 		}
             */
+}
+
+function searchMap(mapId, domian, street, city, state, zip, country, updateLocation) {
+    
+    marker = null
+
+	map = new mapkit.Map(mapId);
+
+	mapkit.init({
+		authorizationCallback: function(done) {
+
+			var xhr = new XMLHttpRequest();
+
+            xhr.open("GET", `https://intratc.co/api/jwt/${encodeURIComponent(domian)}`);
+
+			xhr.addEventListener("load", function() {
+				console.log("🗺 ",this.responseText,"🗺 ")
+				done(this.responseText);
+			});
+
+			xhr.send();
+
+		},
+		language: "es"
+	});
+
+
+    var serchString = ""
+    var hasFeild = 7
+
+    if(street != ""){
+        hasFeild += 7
+        if(serchString == ""){
+            serchString = street
+        }
+        else{
+            serchString += "," + street
+        }
+    }
+    if(city != ""){
+        hasFeild += 7
+        if(serchString == ""){
+            serchString = city
+        }
+        else{
+            serchString += "," + city
+        }
+    }
+    if(state != ""){
+        hasFeild += 7
+        if(serchString == ""){
+            serchString = state
+        }
+        else{
+            serchString += "," + state
+        }
+    }
+    if(zip != ""){
+        hasFeild += 7
+        if(serchString == ""){
+            serchString = zip
+        }
+        else{
+            serchString += "," + zip
+        }
+    }
+    if(country != ""){
+        hasFeild += 7
+        if(serchString == ""){
+            serchString = country
+        }
+        else{
+            serchString += "," + country
+        }
+    }
+    
+    let search = new mapkit.Search({ getsUserLocation: true }); search.search(serchString, (error, data) => {
+        
+        if (error) {
+            // handle search error return;
+        }
+
+        let annotations = data.places.map(place => {
+
+            updateLocation(marker.coordinate.latitude, marker.coordinate.longitude)
+
+            let annotation = new mapkit.CoordinateRegion(
+                new mapkit.Coordinate(place.coordinate.latitude, place.coordinate.longitude),
+                new mapkit.CoordinateSpan((1.005887832 / hasFeild), (2.12991153 / hasFeild))
+            );
+    
+            map.region = annotation;
+
+            marker = new mapkit.MarkerAnnotation(map.center, {
+                draggable: true,
+                selected: true,
+                title: "Selecciona tu ubicación"
+            });
+            marker.addEventListener("drag-start", function(event) {
+                // No need to show "Drag me" message once user has dragged
+                event.target.title = "";
+            });
+            marker.addEventListener("drag-end", function() {
+                // Center the loupe on the marker's new location
+                // zoomedMap.setCenterAnimated(marker.coordinate);
+
+                updateLocation(marker.coordinate.latitude, marker.coordinate.longitude)
+                
+            });
+            map.addAnnotation(marker);
+        });
+    });
+
 }

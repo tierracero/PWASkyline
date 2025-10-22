@@ -18,11 +18,11 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         
         /* MARK: Store details */
 
-        @State var id: UUID
+        @State var id: UUID?
         
-        @State var createdAt: Int64
+        @State var createdAt: Int64?
         
-        @State var modifiedAt: Int64
+        @State var modifiedAt: Int64?
         
         @State var storeName: String
         
@@ -122,7 +122,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
         /* Refrences */
 
-        var store: CustStore
+        var store: CustStore?
 
         @State var inventory: [CustUserInventoryObject]
 
@@ -136,7 +136,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
         /* INITILIZER */
         init(
-            store: CustStore,
+            store: CustStore?,
             inventory: [CustUserInventoryObject],
             stores: [CustStoreRef],
             config: ConfigStore,
@@ -144,54 +144,54 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             bodegas: [CustStoreBodegasQuick]
         ) {
 
-            self.id = store.id
+            self.id = store?.id
             
-            self.createdAt = store.createdAt
+            self.createdAt = store?.createdAt
             
-            self.modifiedAt = store.modifiedAt
+            self.modifiedAt = store?.modifiedAt
             
-            self.storeName = store.name
+            self.storeName = store?.name ?? ""
             
-            self.mainStore = store.mainStore
+            self.mainStore = store?.mainStore ?? false
             
             /// CustUsername.id
-            self.supervisorId = store.custUsername
+            self.supervisorId = store?.custUsername
 
             /// CustUsername
             self.supervisor = nil
 
-            self.telephone = store.telephone
+            self.telephone = store?.telephone ?? ""
             
-            self.mobile = store.mobile
+            self.mobile = store?.mobile ?? ""
             
-            self.email = store.email
+            self.email = store?.email ?? ""
             
-            self.street = store.street
+            self.street = store?.street ?? ""
             
-            self.colony = store.colony
+            self.colony = store?.colony ?? ""
             
-            self.city = store.city
+            self.city = store?.city ?? ""
             
-            self.state = store.state
+            self.state = store?.state ?? ""
             
-            self.country = store.country
+            self.country = store?.country ?? ""
             
-            self.zip = store.zip
+            self.zip = store?.zip ?? ""
             
-            self.isFiscalable = store.isFiscalable
+            self.isFiscalable = store?.isFiscalable ??  false
             
-            self.isPublic = store.isPublic
+            self.isPublic = store?.isPublic ?? false
             
             ///  UUID?
             self.fiscalProfileListener = ""
             
-            if let lat = store.lat, let lon = store.lon  {
+            if let lat = store?.lat, let lon = store?.lon  {
                 self.location = try? .init(latitud: lat, longitud: lon)
             }
 
-            self.balance = store.balance.formatMoney
+            self.balance = store?.balance.formatMoney ?? "0"
             
-            self.storePrefix = store.storePrefix
+            self.storePrefix = store?.storePrefix ?? ""
             
             /// GeneralStatus
             /// unrequested, active, suspended, canceled, fraud, delicuent, hotline, collection
@@ -407,6 +407,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         // READ_ONLY      
         // String  
         lazy var storePrefixField = InputText(self.$storePrefix)
+        .disabled(self.$id.map{ $0 != nil })
         .placeholder("Prefijo Tienda")
         .custom("width","calc(100% - 24px)")
         .class(.textFiledBlackDark)
@@ -796,7 +797,15 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
                             Div{
 
-                                H2("Mapa")
+                                Div {
+                                    Div("🗺️ Cargar Map")
+                                    .class(.uibtn)
+                                    .float(.right)
+                                    .onClick {
+                                        self.searchMap()
+                                    }
+                                    H2("Mapa")
+                                }
 
                                 Div().clear(.both).height(3.px)
 
@@ -1180,9 +1189,11 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                         .float(.left)
                         /// mas config y bodegas 
                         Div{
-
-                            H2("Modificadores de Precios")
-                            .color(.darkGoldenRod)
+                            Div{
+                                H2("Modificadores de Precios")
+                                .color(.darkGoldenRod)
+                            }.class(.oneLineText)
+                            
 
                             Div().clear(.both).height(3.px)
 
@@ -1457,7 +1468,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
             stores.forEach{ item in
 
-                if store.id == item.id {
+                if store?.id == item.id {
                     return
                 }
 
@@ -1467,8 +1478,8 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 )
             }
             
-            self.fiscalProfileListener = store.fiscal?.uuidString ?? ""
-            self.statusListener = store.status.rawValue
+            self.fiscalProfileListener = store?.fiscal?.uuidString ?? ""
+            self.statusListener = store?.status.rawValue ?? GeneralStatus.active.rawValue
             self.orderButtonListener = config.print.button.rawValue
             self.orderDocumentListener = config.print.document.rawValue
             self.orderImageListener = config.print.image.rawValue
@@ -1486,7 +1497,131 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             super.didAddToDOM()
 
             if let location {
-                _ = JSObject.global.activateMap!("mapkitjs", location, WebApp.shared.window.location.hostname == "localhost" ?  "\(WebApp.shared.window.location.hostname):\(WebApp.shared.window.location.port)" : WebApp.shared.window.location.hostname )
+                _ = JSObject.global.activateMap!("mapkitjs", location, WebApp.shared.window.location.hostname == "localhost" ?  "\(WebApp.shared.window.location.hostname):\(WebApp.shared.window.location.port)" : WebApp.shared.window.location.hostname, stores, JSClosure { jresp in
+
+                    guard jresp.count == 2 else {
+                        return .undefined
+                    }
+
+                    guard let  lat = jresp[0].number else {
+                        return .undefined
+                    }
+
+                    guard let  lon = jresp[1].number else {
+                        return .undefined
+                    }
+
+                    self.location = .init(latitud: lat, longitud: lon)
+
+                    return .undefined
+                    
+                })
+            }
+
+        }
+    
+        func searchMap(){
+            
+            _ = JSObject.global.searchMap!(
+                "mapkitjs",
+                WebApp.shared.window.location.hostname == "localhost" ?  "\(WebApp.shared.window.location.hostname):\(WebApp.shared.window.location.port)" : WebApp.shared.window.location.hostname,
+                street,
+                city,
+                state,
+                zip,
+                country,
+                JSClosure { jresp in
+
+                guard jresp.count == 2 else {
+                    return .undefined
+                }
+
+                guard let  lat = jresp[0].number else {
+                    return .undefined
+                }
+
+                guard let  lon = jresp[1].number else {
+                    return .undefined
+                }
+
+                self.location = .init(latitud: lat, longitud: lon)
+
+                return .undefined
+                
+            })
+        }
+
+
+        func saveStore() {
+
+            guard let storeId = id else {
+                showError(.errorGeneral, "No se ha cargado tienda")
+                return
+            }
+
+            if storePrefix.isEmpty {
+                showError(.campoRequerido, "")
+                storePrefixField.select()
+                return
+            }
+
+            if name.isEmpty {
+                showError(.campoRequerido, "")
+                nameField.select()
+                return
+            }
+
+            if telephone.isEmpty {
+                showError(.campoRequerido, "")
+                telephoneField.select()
+                return
+            }
+
+            if name.isEmpty {
+                showError(.campoRequerido, "")
+                nameField.select()
+                return
+            }
+
+            API.custAPIV1.saveStore(
+                storeId: UUID,
+                name: String,
+                telephone: String,
+                mobile: String,
+                email: String,
+                street: String,
+                colony: String,
+                city: String,
+                state: String,
+                country: String,
+                zip: String,
+                isPublic: Bool,
+                isFiscalable: Bool,
+                fiscalProfileId: UUID?,
+                fiscalProfileName: String,
+                lat: Double?,
+                lon: Double?,
+                button: CustStorePrintButtonType,
+                document: CustStorePrintButtonOptions,
+                image: CustStorePrintDocumentImage,
+                lineBreak: Int,
+                buttonPdv: CustStorePrintButtonType,
+                documentPdv: CustStorePrintButtonOptions,
+                imagePdv: CustStorePrintDocumentImage,
+                lineBreakPdv: Int, priceModifierPdv: Double,
+                priceModifierOrder: Double,
+                operationType: StoreOperationType,
+                operationStore: UUID?,
+                sunday: ConfigStoreScheduleObject,
+                monday: ConfigStoreScheduleObject,
+                tuesday: ConfigStoreScheduleObject,
+                wednesday: ConfigStoreScheduleObject,
+                thursday: ConfigStoreScheduleObject,
+                friday: ConfigStoreScheduleObject,
+                saturday: ConfigStoreScheduleObject, l
+                ockedInventory: Bool
+            ) { resp in
+
             }
 
         }
