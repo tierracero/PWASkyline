@@ -33,6 +33,8 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         
         @State var supervisor: CustUsername?
 
+        @State var supervisorListener: String
+
         @State var telephone: String
         
         @State var mobile: String
@@ -133,6 +135,8 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         var config: ConfigStore
 
         var fiscal: [FIAccountsQuick]
+
+        var userRefrence: [UUID:CustUsername] = [:]
 
         /* INITILIZER */
         init(
@@ -311,7 +315,20 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         .placeholder("Seleccione Supervisor")
         .custom("width","calc(100% - 24px)")
         .class(.textFiledBlackDark)
+        .disabled(true)
         .height(31.px)
+        .hidden(self.$id.map{ $0 == nil })
+
+        lazy var supervisorSelect = Select(self.$supervisorListener)
+        .body{
+            Option("Seleccione Opcion")
+                .value("")
+        }
+        .custom("width","calc(100% - 24px)")
+        .class(.textFiledBlackDark)
+        .height(31.px)
+        .hidden(self.$id.map{ $0 != nil })
+
 
         // String
         lazy var telephoneField = InputText(self.$telephone)
@@ -682,6 +699,8 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                                         Div().clear(.both).height(3.px)
 
                                         self.supervisorField
+                                        
+                                        self.supervisorSelect
                                         
                                     }
                                     .width(50.percent)
@@ -1194,7 +1213,6 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                                 .color(.darkGoldenRod)
                             }.class(.oneLineText)
                             
-
                             Div().clear(.both).height(3.px)
 
                             Div{
@@ -1392,9 +1410,27 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             top(0.px)
 
             if let userId = supervisorId {
+
                 getUserRefrence(id: .id(userId)) {user in
                     self.supervisor = user
                 }
+
+            }
+            else {
+
+                getUsers(storeid: nil, onlyActive: true) { users in
+
+                    userRefrence = Dictionary(uniqueKeysWithValues: users.map{ ($0.id, $0) })
+
+                    users.forEach{ user in
+                        self.supervisorSelect.appendChild(
+                            Option(user.username)
+                                .value(user.id.uuidString)
+                        )
+                    }
+
+                }
+            
             }
 
             fiscal.forEach { profile in
@@ -1476,7 +1512,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                     .value(item.id.uuidString)
                 )
             }
-            
+
             self.fiscalProfileListener = store?.fiscal?.uuidString ?? ""
             self.statusListener = store?.status.rawValue ?? GeneralStatus.active.rawValue
             self.orderButtonListener = config.print.button.rawValue
@@ -1489,6 +1525,21 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             self.operationTypeListener = config.operationType.rawValue
             self.oporationStoreListener = config.operationStore?.uuidString ?? ""
 
+            $supervisorListener.listen {
+
+                guard let userId = UUID(uuidString: $0) else {
+                    return
+                }
+
+                guard let selectedUser = userRefrence[userId] else {
+                    return
+                }
+
+                self.supervisorId = userId
+
+                self.supervisor =  selectedUser
+
+            }
 
         }
 
