@@ -273,7 +273,7 @@ extension ToolsView.SystemSettings {
                         .float(.right)
                         .onClick {
 
-                            let stores: [CustStoreRef] = storeList.map{ .init(
+                            let stores: [CustStoreRef] = self.storeList.map{ .init(
                                 id: $0.id,
                                 name: $0.name,
                                 lat: $0.lat,
