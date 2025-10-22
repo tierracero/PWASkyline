@@ -33,7 +33,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         
         @State var supervisor: CustUsername?
 
-        @State var supervisorListener: String = ""
+        @State var supervisorListener: String = "" 
 
         @State var telephone: String
         
