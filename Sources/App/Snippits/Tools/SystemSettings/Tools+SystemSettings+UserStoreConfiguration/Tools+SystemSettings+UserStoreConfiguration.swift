@@ -228,7 +228,6 @@ extension ToolsView.SystemSettings {
                             
                         }
                         
-
                         Div{
                             
                             Img()
@@ -252,6 +251,57 @@ extension ToolsView.SystemSettings {
                             self.loadStore()
                         }
 
+
+                        Div{
+                            
+                            Img()
+                                .src("/skyline/media/add.png")
+                                .padding(all: 3.px)
+                                .paddingRight(7.px)
+                                .cursor(.pointer)
+                                .height(18.px)
+                            
+                            Span("Agregar Tienda")
+                            .float(.right)
+                            
+                        }
+                        .hidden(self.$selectedStore.map{  $0 == nil })
+                        .class(.uibtnLarge)
+                        .marginRight(7.px)
+                        .fontSize(18.px)
+                        .height(22.px)
+                        .float(.right)
+                        .onClick {
+
+                            let stores: [CustStoreRef] = storeList.map{ .init(
+                                id: $0.id,
+                                name: $0.name,
+                                lat: $0.lat,
+                                lon: $0.lon
+                            )}
+
+                            let fiscals: [FIAccountsQuick] = fiscalProfiles.map{ .init(
+                                id: $0.id,
+                                rfc: $0.rfc,
+                                razon: $0.razon
+                            )}
+
+                          let view = StoreDetailView(
+                                store: nil,
+                                inventory: [],
+                                stores: stores,
+                                config: .init(),
+                                fiscal: fiscals, 
+                                bodegas: []
+                            )
+                            
+                            addToDom(view)
+                        }
+
+                        /*
+
+
+                        */
                         Div().clear(.both)
                         
                     }
