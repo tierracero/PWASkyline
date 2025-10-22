@@ -2974,7 +2974,7 @@ function searchMap(mapId, domian, street, city, state, zip, country, updateLocat
 
         let annotations = data.places.map(place => {
 
-            updateLocation(marker.coordinate.latitude, marker.coordinate.longitude)
+            updateLocation(place.coordinate.latitude, place.coordinate.longitude)
 
             let annotation = new mapkit.CoordinateRegion(
                 new mapkit.Coordinate(place.coordinate.latitude, place.coordinate.longitude),

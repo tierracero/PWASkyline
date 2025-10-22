@@ -966,6 +966,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                             Div{
 
                                 Div("Tienda Publica")
+                                .custom("width", "calc(100% - 70px)")
                                 .marginRight(7.px)
                                 .fontSize(26.px)
                                 .float(.left)
@@ -981,6 +982,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                             Div{
 
                                 Div("Puede Facturar")
+                                .custom("width", "calc(100% - 70px)")
                                 .class(.oneLineText)
                                 .marginRight(7.px)
                                 .fontSize(26.px)
@@ -998,6 +1000,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                             Div{
 
                                 Div("Inventario Bloqueado")
+                                .custom("width", "calc(100% - 70px)")
                                 .class(.oneLineText)
                                 .marginRight(7.px)
                                 .fontSize(26.px)
@@ -1308,93 +1311,62 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                             }
                             .class(.roundDarkBlue)
                             .height(210.px)
-                            .hidden(self.$id != nil)
+                            .hidden(self.$id.map{ $0  != nil })
 
                             Div{
 
                                 Div{
 
-                                    Div{
-                                        Div("Nombre del Equipo (Grupo)")
+                                    Div("Nombre del Equipo (Grupo)")
                                         .class(.oneLineText)
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
 
-                                    Div{
-                                        self.groopNameField
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
+                                    Div().clear(.both).height(3.px)
 
-                                    Div().clear(.both)
+                                    self.groopNameField
 
                                 }
                                 .marginBottom(7.px)
 
                                 Div{
 
-                                    Div{
-                                        Div("Nombre de la Bodega")
+                                    Div("Nombre de la Bodega")
                                         .class(.oneLineText)
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
 
-                                    Div{
-                                        self.bodegaField
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
+                                    Div().clear(.both).height(3.px)
 
-                                    Div().clear(.both)
+                                    self.bodegaField
+
 
                                 }
                                 .marginBottom(7.px)
 
                                 Div{
 
-                                    Div{
-                                        Div("Descripción de la bodega")
+                                    Div("Descripción de la bodega")
                                         .class(.oneLineText)
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
 
-                                    Div{
-                                        self.bodegaDescrField
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
+                                    Div().clear(.both).height(3.px)
 
-                                    Div().clear(.both)
+                                    self.bodegaDescrField
 
                                 }
                                 .marginBottom(7.px)
 
                                 Div{
 
-                                    Div{
-                                        Div("Nombre de la seccion")
+                                    Div("Nombre de la seccion")
                                         .class(.oneLineText)
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
 
-                                    Div{
-                                        self.seccionField
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
+                                    Div().clear(.both).height(3.px)
 
-                                    Div().clear(.both)
+                                    self.seccionField
 
                                 }
                                 .marginBottom(7.px)
                             }
                             .class(.roundDarkBlue)
                             .height(210.px)
-                            .hidden(self.$id == nil)
+                            .hidden(self.$id.map{ $0 == nil })
 
                             Div("+ Agregar Bodega")
                             .custom("width", "calc(100% - 14px)")
@@ -1441,6 +1413,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                             }
                             .margin(all: 3.px)
                         }
+                        .hidden(self.$id.map{ $0  != nil })
                         .width(25.percent)
                         .float(.left)
 
@@ -1690,6 +1663,44 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
     
         func searchMap(){
             
+            if street.isEmpty {
+                showError(.campoRequerido, "Ingese Calle y Numero")
+                streetField.select()
+                return
+            }
+            
+            if colony.isEmpty {
+                showError(.campoRequerido, "Ingrese Colonia")
+                colonyField.select()
+                return
+            }
+
+            if city.isEmpty {
+                showError(.campoRequerido, "Ingrese Cuidad")
+                cityField.select()
+                return
+            }
+
+            if state.isEmpty {
+                showError(.campoRequerido, "Ingrese Estado")
+                stateField.select()
+                return
+            }
+
+            if zip.isEmpty {
+                showError(.campoRequerido, "Ingrese Codigo Postal")
+                zipField.select()
+                return
+            }
+
+            if country.isEmpty {
+                countryField.select()
+                showError(.campoRequerido, "Ingrese Pais")
+                return
+            }
+
+            loadingView(show: true)
+            
             _ = JSObject.global.searchMap!(
                 "mapkitjs",
                 WebApp.shared.window.location.hostname == "localhost" ?  "\(WebApp.shared.window.location.hostname):\(WebApp.shared.window.location.port)" : WebApp.shared.window.location.hostname,
@@ -1699,6 +1710,8 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 zip,
                 country,
                 JSClosure { jresp in
+
+                loadingView(show: false)
 
                 guard jresp.count == 2 else {
                     return .undefined
@@ -1980,6 +1993,8 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
             if let storeId = id {
 
+                loadingView(show: true)
+
                 API.custAPIV1.saveStore(
                     storeId: storeId,
                     name: storeName,
@@ -2026,12 +2041,113 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                         showError(.errorDeCommunicacion, .serverConextionError)
                         return
                     }
+
+                    guard resp.status == .ok else {
+                        showError(.errorGeneral, resp.msg)
+                        return
+                    }
+
+
                     
                 }
 
             }
             else {
 
+                guard let supervisorId = UUID(uuidString: supervisorListener) else {
+                    showError(.campoRequerido, "Seleccione un supervisor")
+                    return
+                }
+
+                if storePrefix.isEmpty {
+                    showError(.campoRequerido, "Ingrese prefijo de la tienda")
+                    return
+                }
+
+                if groopName.isEmpty {
+                    showError(.campoRequerido, "Nombre del grupo")
+                    return
+                }
+
+                if bodega.isEmpty {
+                    showError(.campoRequerido, "Ingrese nombre de la bodega")
+                    return
+                }
+
+                if seccion.isEmpty {
+                    showError(.campoRequerido, "Ingrese nombre de la seccion en la bodega ")
+                    return
+                }
+
+                loadingView(show: false)
+
+                API.custAPIV1.createStore(
+                    supervisorId: supervisorId,
+                    storePrefix: storePrefix,
+                    name: storeName,
+                    telephone: telephone,
+                    mobile: mobile,
+                    email: email,
+                    street: street,
+                    colony: colony,
+                    city: city,
+                    state: state,
+                    country: country,
+                    zip: zip,
+                    isPublic: isPublic,
+                    isFiscalable: isFiscalable,
+                    fiscalProfileId: UUID(uuidString: fiscalProfileListener),
+                    fiscalProfileName: fiscalProfileSelect.text,
+                    lat: location.latitud,
+                    lon: location.longitud,
+                    button: button,
+                    document: document,
+                    image: image,
+                    lineBreak: lineBreak,
+                    buttonPdv: buttonPdv,
+                    documentPdv: documentPdv,
+                    imagePdv: imagePdv,
+                    lineBreakPdv: lineBreakPdv,
+                    priceModifierPdv: priceModifierPdv,
+                    priceModifierOrder: priceModifierOrder,
+                    operationType: operationType,
+                    operationStore: operationStore,
+                    sunday: sunday,
+                    monday: monday,
+                    tuesday: tuesday,
+                    wednesday: wednesday,
+                    thursday: thursday,
+                    friday: friday,
+                    saturday: saturday, 
+                    lockedInventory: lockedInventory,
+                    groopName: groopName,
+                    bodega: bodega,
+                    bodegaDescr: bodegaDescr,
+                    seccion: seccion
+                ) { resp in 
+
+                    loadingView(show: false)
+                    
+                    guard let resp else {
+                        showError(.errorDeCommunicacion, .serverConextionError)
+                        return
+                    }
+
+                    guard resp.status == .ok else {
+                        showError(.errorGeneral, resp.msg)
+                        return
+                    }
+                    
+                    guard let payload = resp.data else {
+                        showError(.unexpectedResult, .unexpenctedMissingPayload)
+                        return
+                    }
+
+                    self.id = payload.storeId
+
+                    self.bodegas.append(payload.bodega)
+                    
+                }
             }
             
 

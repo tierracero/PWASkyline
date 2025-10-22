@@ -206,51 +206,6 @@ extension ToolsView.SystemSettings {
                         }
                         .float(.left)
                     
-                        Div{
-                            
-                            Img()
-                                .src("/skyline/media/add.png")
-                                .padding(all: 3.px)
-                                .paddingRight(7.px)
-                                .cursor(.pointer)
-                                .height(18.px)
-                            
-                            Span("Ageragr Tienda")
-                            .float(.right)
-                            
-                        }
-                        .class(.uibtnLarge)
-                        .marginRight(7.px)
-                        .fontSize(18.px)
-                        .height(22.px)
-                        .float(.right)
-                        .onClick {
-                            
-                        }
-                        
-                        Div{
-                            
-                            Img()
-                                .src("/skyline/media/icon_white_general_statusl@128.png")
-                                .padding(all: 3.px)
-                                .paddingRight(7.px)
-                                .cursor(.pointer)
-                                .height(18.px)
-                            
-                            Span("Configuracion Avanzada")
-                            .float(.right)
-                            
-                        }
-                        .hidden(self.$selectedStore.map{  $0 == nil })
-                        .class(.uibtnLarge)
-                        .marginRight(7.px)
-                        .fontSize(18.px)
-                        .height(22.px)
-                        .float(.right)
-                        .onClick {
-                            self.loadStore()
-                        }
-
 
                         Div{
                             
@@ -298,10 +253,30 @@ extension ToolsView.SystemSettings {
                             addToDom(view)
                         }
 
-                        /*
+                        
+                        Div{
+                            
+                            Img()
+                                .src("/skyline/media/icon_white_general_statusl@128.png")
+                                .padding(all: 3.px)
+                                .paddingRight(7.px)
+                                .cursor(.pointer)
+                                .height(18.px)
+                            
+                            Span("Configuracion Avanzada")
+                            .float(.right)
+                            
+                        }
+                        .hidden(self.$selectedStore.map{  $0 == nil })
+                        .class(.uibtnLarge)
+                        .marginRight(7.px)
+                        .fontSize(18.px)
+                        .height(22.px)
+                        .float(.right)
+                        .onClick {
+                            self.loadStore()
+                        }
 
-
-                        */
                         Div().clear(.both)
                         
                     }

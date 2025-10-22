@@ -783,15 +783,39 @@ extension OrderRouteView{
             
             if street.isEmpty {
                 showError(.campoRequerido, "Ingese Calle y Numero")
+                streetField.select()
                 return
             }
             
             if colony.isEmpty {
-                showError(.campoRequerido, "Seleccione Colonia")
+                showError(.campoRequerido, "Ingrese Colonia")
+                colonyField.select()
                 return
             }
-            
-            print("🟢 init map")
+
+            if city.isEmpty {
+                showError(.campoRequerido, "Ingrese Cuidad")
+                cityField.select()
+                return
+            }
+
+            if state.isEmpty {
+                showError(.campoRequerido, "Ingrese Estado")
+                stateField.select()
+                return
+            }
+
+            if zip.isEmpty {
+                showError(.campoRequerido, "Ingrese Codigo Postal")
+                zipField.select()
+                return
+            }
+
+            if country.isEmpty {
+                countryField.select()
+                showError(.campoRequerido, "Ingrese Pais")
+                return
+            }
             
             loadingView(show: true)
             
