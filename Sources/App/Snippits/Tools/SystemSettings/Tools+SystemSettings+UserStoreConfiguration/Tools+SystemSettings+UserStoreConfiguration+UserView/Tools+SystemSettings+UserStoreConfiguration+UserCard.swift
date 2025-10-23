@@ -174,44 +174,60 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                         
                         Div().clear(.both).height(3.px)
                     }
-                    .width(170.px)
+                    .height(100.percent)
+                    .width(70.percent)
                     .float(.left)
                     
                     Div{
-                        Img()
-                            .src("/skyline/media/default_panda.jpeg")
-                            .borderRadius(7.px)
-                            .height(128.px)
-                            .width(128.px)
+                        Div{
+                            Img()
+                                .src("/skyline/media/default_panda.jpeg")
+                                .custom("aspect-ratio", "1/1")
+                                .width(100.percent.px)
+                                .borderRadius(7.px)
+                                .objectFit(.cover)
+                        }
+                        .width(100.percent)
+                        .margin(all: 7.px)
                     }
-                    .width(128.px)
+                    .height(100.percent)
+                    .width(30.percent)
                     .float(.left)
                     
                     Div().clear(.both)
                     
                 }
+                .height(120.px)
                 
-                Div().marginTop(3.px)
+                Div().height(7.px)
                 
-                Span("username")
-                    .color(.gray)
+                Div{
+                    Span("username")
+                        .color(.gray)
+                    
+                    Div().height(3.px)
+                    
+                    Div(self.user.username)
+                        .class(.oneLineText)
+                        .width(293.px)
+                        .color(.white)
+                }
+                .width(50.percent)
+                .float(.left)
+
+                Div{
+                    Span("nombre")
+                        .color(.gray)
+                    
+                    Div().height(3.px)
+                    
+                    Div(self.$nick.map{ $0.isEmpty ? "-- Sin Nombre --" : $0 })
+                        .color(.white)
+                }
+                .width(50.percent)
+                .float(.left)
                 
-                Div().marginTop(1.px)
-                
-                Div(self.user.username)
-                    .class(.oneLineText)
-                    .width(293.px)
-                    .color(.white)
-                
-                Div().marginTop(3.px)
-                
-                Span("nombre")
-                    .color(.gray)
-                
-                Div().marginTop(1.px)
-                
-                Div(self.$nick.map{ $0.isEmpty ? "-- Sin Nombre --" : $0 })
-                    .color(.white)
+                Div().height(7.px)
                 
             }
             .backgroundColor(.grayBlackDark)
@@ -225,6 +241,10 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         
         override func buildUI() {
             super.buildUI()
+            
+            custom("width", "calc(50% - 14px)")
+            maxWidth(400.px)
+            minWidth(300.px)
             margin(all: 7.px)
             float(.left)
         

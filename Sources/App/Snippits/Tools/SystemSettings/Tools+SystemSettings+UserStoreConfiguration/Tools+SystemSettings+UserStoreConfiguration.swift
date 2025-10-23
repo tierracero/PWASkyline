@@ -175,14 +175,17 @@ extension ToolsView.SystemSettings {
                                     
                                     ForEach(self.$storeList) { store in
                                         Div(store.name)
-                                        .custom("width", "cal(100% - 12px)")
-                                        .width(100.percent)
+                                        .custom("width", "cal(100% - 1px)")
                                         .class(.uibtn, .oneLineText)
+                                        .fontSize(23.px)
                                         .onClick { _, event in
                                             self.selectedStore = store
                                             self.selectMenuViewIsHidden = true
                                             event.stopPropagation()
                                         }
+
+                                        Div().height(3.px)
+
                                     }
                                     
                                     Div().height(7.px)
@@ -248,12 +251,13 @@ extension ToolsView.SystemSettings {
                                 config: .init(),
                                 fiscal: fiscals, 
                                 bodegas: []
-                            )
+                            ) { payload in
+                            
+                            }
                             
                             addToDom(view)
                         }
-
-                        
+  
                         Div{
                             
                             Img()
@@ -320,8 +324,6 @@ extension ToolsView.SystemSettings {
                 }
             }
 
-            storeList = stores.map { $1 }
-            
             stores.forEach { id, store in
                 
                 let view = StoreView(store: store)
@@ -374,16 +376,14 @@ extension ToolsView.SystemSettings {
                         config: payload.config,
                         fiscal: payload.fiscal, 
                         bodegas: payload.bodegas
-                    )
+                    ){ payload in 
+                            
+                    }
                     
                     addToDom(view)
 
                 }
-        
             }
-                
         }
-
-
     }
 }

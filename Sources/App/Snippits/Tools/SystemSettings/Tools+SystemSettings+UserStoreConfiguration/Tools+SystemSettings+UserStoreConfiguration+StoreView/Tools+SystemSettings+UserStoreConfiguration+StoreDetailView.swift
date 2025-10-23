@@ -147,6 +147,13 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
         var userRefrence: [UUID:CustUsername] = [:]
 
+
+
+        
+        private var callback: (
+            _ payload: Callbacktype
+        ) ->  Void
+
         /* INITILIZER */
         init(
             store: CustStore?,
@@ -154,7 +161,10 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             stores: [CustStoreRef],
             config: ConfigStore,
             fiscal: [FIAccountsQuick],
-            bodegas: [CustStoreBodegasQuick]
+            bodegas: [CustStoreBodegasQuick],
+            callback: @escaping (
+                _ payload: Callbacktype
+            ) ->  Void
         ) {
 
             self.id = store?.id
@@ -276,6 +286,8 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             self.config = config
             self.fiscal = fiscal
             self.bodegas = bodegas
+
+            self.callback = callback
 
             super.init()
 
@@ -1311,7 +1323,13 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                             }
                             .class(.roundDarkBlue)
                             .height(210.px)
-                            .hidden(self.$id.map{ $0  != nil })
+                            .hidden(self.$id.map{ $0  == nil })
+
+                            Div("+ Agregar Bodega")
+                            .custom("width", "calc(100% - 14px)")
+                            .class(.uibtnLargeOrange)
+                            .align(.center)
+                            .hidden(self.$id.map{ $0  == nil })
 
                             Div{
 
@@ -1364,14 +1382,8 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                                 }
                                 .marginBottom(7.px)
                             }
-                            .class(.roundDarkBlue)
-                            .height(210.px)
-                            .hidden(self.$id.map{ $0 == nil })
+                            .hidden(self.$id.map{ $0 != nil })
 
-                            Div("+ Agregar Bodega")
-                            .custom("width", "calc(100% - 14px)")
-                            .class(.uibtnLargeOrange)
-                            .align(.center)
 
                         }
                         .width(25.percent)
@@ -1413,7 +1425,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                             }
                             .margin(all: 3.px)
                         }
-                        .hidden(self.$id.map{ $0  != nil })
+                        .hidden(self.$id.map{ $0  == nil })
                         .width(25.percent)
                         .float(.left)
 
@@ -2143,17 +2155,37 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                         return
                     }
 
-                    self.id = payload.storeId
+                    self.id = payload.store.id
+
+                    self.createdAt = getNow()
+
+                    self.modifiedAt = getNow()
 
                     self.bodegas.append(payload.bodega)
                     
                 }
             }
-            
-
         }
+    }
+}
 
-        //XD
+extension ToolsView.SystemSettings.UserStoreConfiguration.StoreDetailView {
+
+    struct CallbackUpdate {
+
+        let storeId: UUID
+
+        let name: String
+
+        
+    }
+
+    enum Callbacktype {
+
+        case  create(CustStore)
+
+        case update(CallbackUpdate)
 
     }
+
 }

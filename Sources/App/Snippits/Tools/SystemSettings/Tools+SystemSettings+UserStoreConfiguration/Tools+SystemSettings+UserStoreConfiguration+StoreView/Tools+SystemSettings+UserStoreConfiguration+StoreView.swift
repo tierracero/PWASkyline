@@ -85,32 +85,28 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                         Div{
                             
                         }
-                        .custom("height", "calc(100% - 37px)")
+                        .custom("height", "calc(100% - 72px)")
                         .class(.roundGrayBlackDark)
                         .padding(all: 3.px)
                         .marginTop(3.px)
                         
+                        Div{
+                            Div("Agregar")
+                            .custom("width", "100% - 12px")
+                            .class(.uibtnLargeOrange)
+                            .align(.center)
+                        }
+
                     }
                     .custom("height", "calc(50% - 7px)")
                     .marginBottom(7.px)
                     
-                    /// Bodegas
+                    /// Estadisticas
                     Div {
                         
-                        H2("Bodegas")
+                        H2("Estadisticas")
                             .color(.lightGray)
                             .float(.left)
-                        
-                        Img()
-                            .src("/skyline/media/add.png")
-                            .padding(all: 3.px)
-                            .paddingRight(7.px)
-                            .cursor(.pointer)
-                            .float(.right)
-                            .height(24.px)
-                            .onClick {
-                                
-                            }
                         
                         Div().class(.clear)
                         
