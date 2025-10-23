@@ -2972,7 +2972,17 @@ function searchMap(mapId, domian, street, city, state, zip, country, updateLocat
             // handle search error return;
         }
 
-        let annotations = data.places.map(place => {
+        console.log(`🗺️ Ubicaciones Localizadas ${places.length}`)
+
+        let places = data.places
+
+        places.forEach( place => {
+            console.log(place)
+        })
+        
+        console.log("- - - - - - - - - - - - - - - - - - - ")
+
+        data.places.map(place => {
 
             updateLocation(place.coordinate.latitude, place.coordinate.longitude)
 

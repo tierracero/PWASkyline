@@ -251,8 +251,46 @@ extension ToolsView.SystemSettings {
                                 config: .init(),
                                 fiscal: fiscals, 
                                 bodegas: []
-                            ) { payload in
+                            ) { event in
                             
+                                switch event {
+                                case .create(let store):
+                                    self.storeList.append(store)
+                                    
+                                    let view = StoreView(store: store)
+                                        .hidden(self.$selectedStore.map{ store.id != self.selectedStore?.id })
+                                    
+                                    self.storeContainer.appendChild(view)
+                                    
+                                    self.storeRefrence[store.id] = view
+
+                                case .update(let payload):
+
+                                    var newStorestoreList: [CustStore] = []
+
+                                    if payload.storeId == self.selectedStore?.id {
+                                        self.selectedStore?.name = payload.name
+                                    }
+
+                                    self.storeList.forEach{ store in
+
+                                        var store = store
+
+                                        if store.id == payload.storeId {
+                                            store.name = payload.name
+                                        }
+
+                                        if self.selectedStore?.id == store.id {
+                                            self.selectedStore = store
+                                        }
+
+                                        newStorestoreList.append(store)
+                                    }
+                                    
+                                    self.storeList = newStorestoreList
+                                    
+                                }
+
                             }
                             
                             addToDom(view)
@@ -404,6 +442,11 @@ extension ToolsView.SystemSettings {
                                 if store.id == payload.storeId {
                                     store.name = payload.name
                                 }
+
+                                if self.selectedStore?.id == store.id {
+                                    self.selectedStore = store
+                                }
+
                                 newStorestoreList.append(store)
                             }
                             
