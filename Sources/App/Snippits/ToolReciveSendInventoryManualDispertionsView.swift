@@ -351,22 +351,20 @@ class ToolReciveSendInventoryManualDispertionsView: Div {
                 }
                 .hidden(self.$profiles.map{ $0.count < 2 })
                 
-                
                 Div().class(.clear).height(7.px)
                 
                 Div("iniciar Compra")
-                    .color(.yellowTC)
-                    .textAlign(.center)
+                    .paddingBottom(7.px)
                     .marginBottom(7.px)
                     .width(97.percent)
-                    .paddingBottom(7.px)
                     .paddingTop(7.px)
+                    .textAlign(.center)
+                    .color(.yellowTC)
                     .fontSize(18.px)
                     .class(.uibtn)
                     .onClick {
                         self.createDocument()
                     }
-                
                 
             }
             .custom("left", "calc(50% - 224px)")
@@ -433,6 +431,7 @@ class ToolReciveSendInventoryManualDispertionsView: Div {
         position(.absolute)
         height(100.percent)
         width(100.percent)
+        color(.white)
         left(0.px)
         top(0.px)
         

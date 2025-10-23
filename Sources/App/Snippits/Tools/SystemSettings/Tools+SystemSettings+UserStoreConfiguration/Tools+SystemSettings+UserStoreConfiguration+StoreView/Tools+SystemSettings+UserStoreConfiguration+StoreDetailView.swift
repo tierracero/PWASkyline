@@ -124,7 +124,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
         @State var groopName: String = ""
 
-        @State var bodega: String = ""
+        @State var bodegaName: String = ""
 
         @State var bodegaDescr: String = ""
 
@@ -137,9 +137,9 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
         @State var inventory: [CustUserInventoryObject]
 
-        @State var bodegas: [CustStoreBodegasQuick]
+        @State var bodegasRefrence: [CustStoreBodegasQuick]
         
-        var stores: [CustStoreRef]
+        var storesRefrence: [CustStoreRef]
         
         var config: ConfigStore
 
@@ -282,10 +282,10 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
             self.store = store
             self.inventory = inventory
-            self.stores = stores
+            self.storesRefrence = stores
             self.config = config
             self.fiscal = fiscal
-            self.bodegas = bodegas
+            self.bodegasRefrence = bodegas
 
             self.callback = callback
 
@@ -464,7 +464,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
         // inventory: [CustUserInventoryObject]
 
-        // bodegas: [CustStoreBodegasQuick]
+        // bodegasRefrence: [CustStoreBodegasQuick]
 
         // CustStorePrintButtonType
         lazy var orderButtonSelect = Select(self.$orderButtonListener)
@@ -599,7 +599,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         .class(.textFiledBlackDark)
         .height(31.px)
 
-        lazy var bodegaField = InputText(self.$bodega)
+        lazy var bodegaField = InputText(self.$bodegaName)
         .placeholder("Nombre de la bodega")
         .custom("width","calc(100% - 24px)")
         .class(.textFiledBlackDark)
@@ -1304,9 +1304,9 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                             Div{
                                 Div{
                                     Table().noResult(label: "🪑 No hay bodegas")
-                                    .hidden(self.$bodegas.map{ !$0.isEmpty })
+                                    .hidden(self.$bodegasRefrence.map{ !$0.isEmpty })
 
-                                    ForEach(self.$bodegas) { item in
+                                    ForEach(self.$bodegasRefrence) { item in
                                         Div(item.name)
                                         .custom("width", "calc(100% - 14px)")
                                         .class(.uibtnLargeOrange)
@@ -1314,7 +1314,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
                                         }
                                     }
-                                    .hidden(self.$bodegas.map{ $0.isEmpty })
+                                    .hidden(self.$bodegasRefrence.map{ $0.isEmpty })
 
                                 }
                                 .custom("height", "calc(100% - 6px)")
@@ -1607,7 +1607,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 )
             }
 
-            stores.forEach{ item in
+            storesRefrence.forEach{ item in
 
                 if store?.id == item.id {
                     return
@@ -1653,7 +1653,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             super.didAddToDOM()
 
             if let location {
-                _ = JSObject.global.activateMap!("mapkitjs", location, WebApp.shared.window.location.hostname == "localhost" ?  "\(WebApp.shared.window.location.hostname):\(WebApp.shared.window.location.port)" : WebApp.shared.window.location.hostname, stores, JSClosure { jresp in
+                _ = JSObject.global.activateMap!("mapkitjs", location, WebApp.shared.window.location.hostname == "localhost" ?  "\(WebApp.shared.window.location.hostname):\(WebApp.shared.window.location.port)" : WebApp.shared.window.location.hostname, storesRefrence, JSClosure { jresp in
 
                     guard jresp.count == 2 else {
                         return .undefined
@@ -2062,7 +2062,48 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                         return
                     }
 
+                    var newStores: [UUID:CustStore] = [:]
 
+                    stores.forEach{ _, store in
+                        if storeId == store.id {
+                            newStores[store.id] = .init(
+                                id: store.id,
+                                createdAt: store.createdAt,
+                                modifiedAt: getNow(),
+                                name: self.storeName,
+                                mainStore: store.mainStore,
+                                custUsername: self.supervisorId ?? store.custUsername,
+                                telephone: self.telephone,
+                                mobile: self.mobile,
+                                email: self.email,
+                                street: self.street,
+                                colony: self.colony,
+                                city: self.city,
+                                state: self.state,
+                                country: self.country,
+                                zip: self.zip,
+                                schedulea: store.schedulea,
+                                scheduleb: store.scheduleb,
+                                schedulec: store.scheduleb,
+                                isFiscalable: self.isFiscalable,
+                                isPublic: self.isPublic,
+                                fiscal: UUID(uuidString: self.fiscalProfileListener),
+                                lat: location.latitud.toString,
+                                lon: location.longitud.toString,
+                                balance: store.balance,
+                                storePrefix: store.storePrefix,
+                                status: store.status
+                            )
+                        }
+
+                        newStores[store.id] = store
+                        
+                    }
+
+                    self.callback(.update(.init(
+                        storeId: storeId,
+                         name: self.storeName
+                    )))
                     
                 }
 
@@ -2084,7 +2125,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                     return
                 }
 
-                if bodega.isEmpty {
+                if bodegaName.isEmpty {
                     showError(.campoRequerido, "Ingrese nombre de la bodega")
                     return
                 }
@@ -2136,7 +2177,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                     saturday: saturday, 
                     lockedInventory: lockedInventory,
                     groopName: groopName,
-                    bodega: bodega,
+                    bodega: bodegaName,
                     bodegaDescr: bodegaDescr,
                     seccion: seccion
                 ) { resp in 
@@ -2164,8 +2205,19 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
                     self.modifiedAt = getNow()
 
-                    self.bodegas.append(payload.bodega)
+                    self.bodegasRefrence.append(payload.bodega)
                     
+                    self.callback(.create(payload.store))
+
+                    stores[payload.store.id] = payload.store
+
+                    bodegas[payload.bodega.id] = CustStoreBodegasSinc(
+                        id: payload.bodega.id,
+                        modifiedAt: getNow(),
+                        custStore: payload.store.id,
+                        name: payload.bodega.name
+                    )
+
                 }
             }
         }
@@ -2180,7 +2232,6 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.StoreDetailView {
 
         let name: String
 
-        
     }
 
     enum Callbacktype {
