@@ -978,7 +978,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                             Div{
 
                                 Div("Tienda Publica")
-                                .custom("width", "calc(100% - 70px)")
+                                .custom("width", "calc(100% - 75px)")
                                 .marginRight(7.px)
                                 .fontSize(26.px)
                                 .float(.left)
@@ -994,7 +994,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                             Div{
 
                                 Div("Puede Facturar")
-                                .custom("width", "calc(100% - 70px)")
+                                .custom("width", "calc(100% - 75px)")
                                 .class(.oneLineText)
                                 .marginRight(7.px)
                                 .fontSize(26.px)
@@ -1012,7 +1012,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                             Div{
 
                                 Div("Inventario Bloqueado")
-                                .custom("width", "calc(100% - 70px)")
+                                .custom("width", "calc(100% - 75px)")
                                 .class(.oneLineText)
                                 .marginRight(7.px)
                                 .fontSize(26.px)
@@ -1488,6 +1488,9 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 Div{
                     Div(self.$id.map{ $0 != nil ? "Guardar Cambios" : "Crear Tienda" })
                     .class(.uibtnLargeOrange)
+                    .onClick {
+                        self.saveStore()
+                    }
                 }
                 .align(.right)
 
@@ -1747,94 +1750,94 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         func saveStore() {
 
             if storePrefix.isEmpty {
-                showError(.campoRequerido, "")
+                showError(.campoRequerido, "Prefijo de la tienda")
                 storePrefixField.select()
                 return
             }
 
             if storeName.isEmpty {
-                showError(.campoRequerido, "")
+                showError(.campoRequerido, "Nombre de la tienda")
                 storeNameField.select()
                 return
             }
 
             if telephone.isEmpty {
-                showError(.campoRequerido, "")
+                showError(.campoRequerido, "Telefono Fijo")
                 telephoneField.select()
                 return
             }
 
+
+            if mobile.isEmpty {
+                showError(.campoRequerido, "Telefono Celular")
+                mobileField.select()
+                return
+            }
+
             if email.isEmpty {
-                showError(.campoRequerido, "")
+                showError(.campoRequerido, "Correo Electronico")
                 emailField.select()
                 return
             }
 
             if street.isEmpty {
-                showError(.campoRequerido, "")
+                showError(.campoRequerido, "Calle y numero")
                 streetField.select()
                 return
             }
 
             if colony.isEmpty {
-                showError(.campoRequerido, "")
+                showError(.campoRequerido, "Colonia")
                 colonyField.select()
                 return
             }
 
             if city.isEmpty {
-                showError(.campoRequerido, "")
+                showError(.campoRequerido, "Cuidad")
                 cityField.select()
                 return
             }
 
             if state.isEmpty {
-                showError(.campoRequerido, "")
+                showError(.campoRequerido, "Estado")
                 stateField.select()
                 return
             }
 
             if country.isEmpty {
-                showError(.campoRequerido, "")
+                showError(.campoRequerido, "Pais")
                 countryField.select()
                 return
             }
 
             if zip.isEmpty {
-                showError(.campoRequerido, "")
+                showError(.campoRequerido, "Codigo postal")
                 zipField.select()
                 return
             }
 
-            if isFiscalable {
-                if fiscalProfile == nil {
-                    showError(.campoRequerido, "")
-                    return
-                }
-            }
-
             guard let location else {
-                showError(.campoRequerido, "")
+                showError(.campoRequerido, "Carge mapa")
                 return
             }
 
             guard let button = CustStorePrintButtonType(rawValue: orderButtonListener) else {
-                showError(.campoRequerido, "")
+                showError(.campoRequerido, "Tipo de boton (orden)")
                 return
             }
 
             guard let document = CustStorePrintButtonOptions(rawValue: orderDocumentListener) else {
-                showError(.campoRequerido, "")
+                showError(.campoRequerido, "Tipo de impresion (orden)")
                 return
             }
 
             guard let image = CustStorePrintDocumentImage(rawValue: orderImageListener) else {
-                showError(.campoRequerido, "")
+                showError(.campoRequerido, "Image de impresion (orden)")
                 return
             }
 
             guard let lineBreak = Int(orderLineBreak) else {
-                showError(.campoRequerido, "")
+                showError(.campoRequerido, "Salto de impresion (orden)")
                 return
             }
 

@@ -64,38 +64,32 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 Div{
                     // Activos y Herramientas
                     Div {
-                        
-                        H2("Activos y Herramientas")
-                            .color(.lightGray)
-                            .float(.left)
-                        
-                        Img()
-                            .src("/skyline/media/add.png")
-                            .padding(all: 3.px)
-                            .paddingRight(7.px)
-                            .cursor(.pointer)
-                            .float(.right)
-                            .height(24.px)
-                            .onClick {
+                        Div{
+
+                            H2("Activos y Herramientas")
+                                .color(.lightGray)
+                                .float(.left)
                                 
-                            }
+                             Div{
+                                Span("+ Agregar")
+                             }
+                                .class(.uibtnLargeOrange)
+                                .float(.right)
+                            
+                            Div().clear(.both)
+
+                        }
+                        
                         
                         Div().class(.clear)
                         
                         Div{
                             
                         }
-                        .custom("height", "calc(100% - 72px)")
+                        .custom("height", "calc(100% - 42px)")
                         .class(.roundGrayBlackDark)
                         .padding(all: 3.px)
                         .marginTop(3.px)
-                        
-                        Div{
-                            Div("Agregar")
-                            .custom("width", "100% - 12px")
-                            .class(.uibtnLargeOrange)
-                            .align(.center)
-                        }
 
                     }
                     .custom("height", "calc(50% - 7px)")
