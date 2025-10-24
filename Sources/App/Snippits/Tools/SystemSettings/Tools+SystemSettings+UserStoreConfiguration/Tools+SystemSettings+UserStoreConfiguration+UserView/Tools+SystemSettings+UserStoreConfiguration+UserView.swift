@@ -137,6 +137,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         @DOM override var body: DOM.Content {
             Div{
                 
+                /* MARK: Avatar */
                 Div{
                     
                     Img()
@@ -169,6 +170,70 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 Div{
                     Div{
                         
+                        Div().clear(.both).marginTop(7.px)
+        
+                        Div{
+
+                            Img()
+                                .src("/skyline/media/mobileCamara.png")
+                                .height(22.px)
+                                .class(.iconWhite)
+                                .marginLeft(7.px)
+                                .cursor(.pointer)
+                                .onClick { _, event in
+                                    /*    
+                                    let eventid = UUID()
+                                    
+                                    API.custAPIV1.requestMobileCamara(
+                                        type: .useCamaraForUser,
+                                        connid: custCatchChatConnID,
+                                        eventid: eventid,
+                                        relatedid: self.user.id,
+                                        relatedfolio: "",
+                                        multipleTakes: false
+                                    ) { resp in
+                                        
+                                        loadingView(show: false)
+                                        
+                                        guard let resp else {
+                                            showError(.errorDeCommunicacion, .serverConextionError)
+                                            return
+                                        }
+                                        
+                                        guard resp.status == .ok else {
+                                            showError(.errorGeneral, resp.msg)
+                                            return
+                                        }
+                                        
+                                        showSuccess(.operacionExitosa, "Entre en la notificacion en su movil.")
+                                        
+                                    }
+                                    */
+                                }
+                
+                            Img()
+                                .src("/skyline/media/icon_clip.png")
+                                .height(22.px)
+                                .class(.iconWhite)
+                                .marginLeft(7.px)
+                                .cursor(.pointer)
+                                .onClick { _, event in
+                                    //self.msgFileLoader.click()
+                                }
+
+                            Img()
+                                .src("/skyline/media/webcam.png")
+                                .height(22.px)
+                                .class(.iconWhite)
+                                .marginLeft(7.px)
+                                .cursor(.pointer)
+                                .onClick { _, event in
+                                    //self.msgFileLoader.click()
+                                }
+                        }
+
+                        Div().clear(.both).marginTop(7.px)
+
                         Div{
                             Img()
                                 .src("/skyline/media/default_panda.jpeg")
