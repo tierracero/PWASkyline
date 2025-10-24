@@ -1716,6 +1716,8 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
             loadingView(show: true)
             
+            location = nil
+
             _ = JSObject.global.searchMap!(
                 "mapkitjs",
                 WebApp.shared.window.location.hostname == "localhost" ?  "\(WebApp.shared.window.location.hostname):\(WebApp.shared.window.location.port)" : WebApp.shared.window.location.hostname,

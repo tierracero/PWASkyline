@@ -2893,29 +2893,6 @@ function activateMap(mapId, geolocation, domian, stores, updateLocation) {
 }
 
 function searchMap(mapId, domian, street, city, state, zip, country, updateLocation) {
-    
-    marker = null
-
-	map = new mapkit.Map(mapId);
-
-	mapkit.init({
-		authorizationCallback: function(done) {
-
-			var xhr = new XMLHttpRequest();
-
-            xhr.open("GET", `https://intratc.co/api/jwt/${encodeURIComponent(domian)}`);
-
-			xhr.addEventListener("load", function() {
-				console.log("🗺 ",this.responseText,"🗺 ")
-				done(this.responseText);
-			});
-
-			xhr.send();
-
-		},
-		language: "es"
-	});
-
 
     var serchString = ""
     var hasFeild = 7
@@ -2966,15 +2943,38 @@ function searchMap(mapId, domian, street, city, state, zip, country, updateLocat
         }
     }
     
-    let search = new mapkit.Search({ getsUserLocation: true }); search.search(serchString, (error, data) => {
+    marker = null
+
+	map = new mapkit.Map(mapId);
+
+    mapkit.init({
+        authorizationCallback: function(done) {
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open("GET", `https://intratc.co/api/jwt/${encodeURIComponent(domian)}`);
+
+            xhr.addEventListener("load", function() {
+                console.log("🗺 ",this.responseText,"🗺 ")
+                done(this.responseText);
+            });
+
+            xhr.send();
+
+        },
+        language: "es"
+    });
+
+    let search = new mapkit.Search({ getsUserLocation: true })
+    search.search(serchString, (error, data) => {
         
         if (error) {
             // handle search error return;
         }
 
-        console.log(`🗺️ Ubicaciones Localizadas ${places.length}`)
-
         let places = data.places
+
+        console.log(`🗺️ Ubicaciones Localizadas ${places.length}`)
 
         places.forEach( place => {
             console.log(place)

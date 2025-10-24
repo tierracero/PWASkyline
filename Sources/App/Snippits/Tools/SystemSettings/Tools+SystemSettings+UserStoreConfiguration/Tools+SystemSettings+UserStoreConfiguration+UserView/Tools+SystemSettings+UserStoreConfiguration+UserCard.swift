@@ -58,6 +58,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         
         @DOM override var body: DOM.Content {
             Div{
+
                 Div{
                     
                     Span(self.$role.map{ $0.description })
@@ -69,7 +70,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                     
                 }
                 
-                Div().marginTop(3.px)
+                Div().clear(.both).height(3.px)
                 
                 Div{
                     
@@ -179,11 +180,62 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                     .float(.left)
                     
                     Div{
+                        
+                        Div{
+
+                            Img()
+                                .src("/skyline/media/mobileCamara.png")
+                                .height(22.px)
+                                .class(.iconWhite)
+                                .marginLeft(7.px)
+                                .cursor(.pointer)
+                                .onClick { _, event in
+                                    
+                                    let eventid = UUID()
+                                    
+                                    API.custAPIV1.requestMobileCamara(
+                                        type: .useCamaraForUser,
+                                        connid: custCatchChatConnID,
+                                        eventid: eventid,
+                                        relatedid: self.user.id,
+                                        relatedfolio: "",
+                                        multipleTakes: false
+                                    ) { resp in
+                                        
+                                        loadingView(show: false)
+                                        
+                                        guard let resp else {
+                                            showError(.errorDeCommunicacion, .serverConextionError)
+                                            return
+                                        }
+                                        
+                                        guard resp.status == .ok else {
+                                            showError(.errorGeneral, resp.msg)
+                                            return
+                                        }
+                                        
+                                        showSuccess(.operacionExitosa, "Entre en la notificacion en su movil.")
+                                        
+                                    }
+                                }
+                
+                            Img()
+                                .src("/skyline/media/icon_clip.png")
+                                .height(22.px)
+                                .class(.iconWhite)
+                                .marginLeft(7.px)
+                                .cursor(.pointer)
+                                .onClick { _, event in
+                                    //self.msgFileLoader.click()
+                                }
+            
+                        }
+
                         Div{
                             Img()
                                 .src("/skyline/media/default_panda.jpeg")
                                 .custom("aspect-ratio", "1/1")
-                                .width(100.percent.px)
+                                .width(100.percent)
                                 .borderRadius(7.px)
                                 .objectFit(.cover)
                         }
@@ -227,7 +279,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 .width(50.percent)
                 .float(.left)
                 
-                Div().height(7.px)
+                Div().clear(.both).height(3.px)
                 
             }
             .backgroundColor(.grayBlackDark)
@@ -258,10 +310,6 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 
             }
             
-            
         }
-        
-        
-        
     }
 }

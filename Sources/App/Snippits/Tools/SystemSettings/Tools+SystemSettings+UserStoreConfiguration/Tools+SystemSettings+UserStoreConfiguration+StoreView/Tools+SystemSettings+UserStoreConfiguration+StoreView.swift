@@ -70,11 +70,27 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                                 .color(.lightGray)
                                 .float(.left)
                                 
-                             Div{
-                                Span("+ Agregar")
-                             }
-                                .class(.uibtnLargeOrange)
+                              Div{
+                                
+                                Img()
+                                    .src("/skyline/media/add.png")
+                                    .padding(all: 3.px)
+                                    .paddingRight(7.px)
+                                    .cursor(.pointer)
+                                    .height(18.px)
+                                
+                                Span("Agregar")
                                 .float(.right)
+                                
+                            }
+                            .class(.uibtnLarge)
+                            .marginRight(7.px)
+                            .fontSize(18.px)
+                            .height(22.px)
+                            .float(.right)
+                            .onClick {
+                                // ADD tool
+                            }
                             
                             Div().clear(.both)
 
