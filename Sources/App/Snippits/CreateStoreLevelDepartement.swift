@@ -15,7 +15,7 @@ class CreateStoreLevelDepartement: Div {
     
     override class var name: String { "div" }
     
-    let dep: CustStoreDepsAPI?
+    @State var dep: CustStoreDepsAPI?
     
     private var callback: ((
         _ id: UUID,
@@ -64,6 +64,8 @@ class CreateStoreLevelDepartement: Div {
     @State var name = ""
     
     @State var descr = ""
+
+    @State var isPublic: Bool = true
     
     lazy var nameField = InputText(self.$name)
         .placeholder("Nombre del Departamento")
@@ -177,7 +179,6 @@ class CreateStoreLevelDepartement: Div {
                 .width(100.percent)
                 .align(.center)
                 
-                
             }
             .width(30.percent)
             .float(.left)
@@ -185,18 +186,26 @@ class CreateStoreLevelDepartement: Div {
             Div().class(.clear).marginBottom(7.px)
             
             Div{
-                Div(self.buttonText)
-                    .class(.uibtnLarge)
-                    .onClick{
-                        self.createLevel()
-                    }
+                
+                Div("Tienda Publica")
+                .width(50.percent)
+                .align(.left)
+                .float(.left)
+
+                Div {
+                    InputCheckbox().toggle(self.$isPublic)
+                }
+                .width(50.percent)
+                .align(.left)
+                .float(.left)
+
+                Div().clear(.both)
             }
-            .align(.center)
-            
+
             Div().class(.clear).marginBottom(7.px)
             
-            if let _ = self.dep {
-                
+            Div{
+
                 Div{
                     H2("Eliminar")
                         .letterSpacing(2.px)
@@ -207,9 +216,19 @@ class CreateStoreLevelDepartement: Div {
                         }
                 }
                 .align(.center)
-                
-                Div().class(.clear).marginBottom(7.px)
+                .hidden(self.$dep.map{ $0 == nil })
+
+                Div(self.buttonText)
+                    .class(.uibtnLarge)
+                    .onClick{
+                        self.createLevel()
+                    }
             }
+            .align(.right)
+            
+            Div().class(.clear).marginBottom(7.px)
+                
+        
                  
         }
         .backgroundColor(.grayBlack)
@@ -282,7 +301,8 @@ class CreateStoreLevelDepartement: Div {
                 name: name,
                 smallDescription: descr,
                 description: "",
-                icon: ""
+                icon: "",
+                isPublic: isPublic
             ) { resp in
                 
                 loadingView(show: false)
@@ -315,7 +335,8 @@ class CreateStoreLevelDepartement: Div {
                 description: "",
                 icon: "",
                 coverLandscape: "",
-                coverPortrait: ""
+                coverPortrait: "",
+                isPublic: isPublic
             ) { resp in
                 
                 loadingView(show: false)

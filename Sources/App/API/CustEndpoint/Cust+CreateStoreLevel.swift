@@ -21,6 +21,7 @@ extension CustAPIEndpointV1 {
         icon: String,
         coverLandscape: String,
         coverPortrait: String,
+        isPublic: Bool,
         callback: @escaping ( (_ resp: APIResponse?) -> () )
     ) {
         sendPost(
@@ -35,7 +36,8 @@ extension CustAPIEndpointV1 {
                 description: description,
                 icon: icon,
                 coverLandscape: coverLandscape,
-                coverPortrait: coverPortrait
+                coverPortrait: coverPortrait,
+                isPublic: isPublic
             )
         ) { payload in
             guard let data = payload else{

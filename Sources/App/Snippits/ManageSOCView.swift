@@ -469,13 +469,20 @@ class ManageSOCView: Div {
     
     var imageRefrence: [UUID:ImagePOCContainer] = [:]
     
-    
     lazy var thisCodeLevelSelect = Select(self.$thisCodeLevelListener)
         .disabled(self.$relatedCodes.map{ !$0.isEmpty })
         .custom("width", "calc(100% - 75px)")
         .class(.textFiledBlackDark)
         .height(28.px)
-    
+
+    var saleActionRefrence: [UUID : ServiceAccionRow] = [:]
+
+    lazy var saleActionDiv = Div()
+
+    var serviceActionRefrence: [UUID : ServiceAccionRow] = [:]
+
+    lazy var serviceActionDiv = Div()
+
     @DOM override var body: DOM.Content {
         
         /// Product Detail View
@@ -1218,8 +1225,21 @@ class ManageSOCView: Div {
                                         type: .saleAction,
                                         currentIds: self.saleAction.map{ $0.id },
                                         callback: { action in
-                                            /// Add to dom
+                                            
                                             self.saleAction.append(action)
+
+                                            let view = ServiceAccionRow(
+                                                type: .saleAction,
+                                                action: action,
+                                                removed: { 
+                                                    self.removeSaleAction(action.id)
+                                                }
+                                            )
+
+                                            self.saleActionDiv.appendChild(view)
+
+                                            self.saleActionRefrence[action.id] = view
+
                                         }
                                     ))
                                 }
@@ -1229,17 +1249,20 @@ class ManageSOCView: Div {
                         .marginBottom(7.px)
                         
                         Div{
+                            /*
                             ForEach(self.$saleAction){ action in
                                 
                                 ServiceAccionRow(
                                     type: .saleAction,
                                     action: action,
-                                    removed: { id in
-                                        self.removeSaleAction(id)
+                                    removed: { 
+                                        self.removeSaleAction(action.id)
                                     }
                                 )
-                                
+
                             }
+                            */
+                            self.saleActionDiv
                             .hidden(self.$saleAction.map{ $0.isEmpty })
                             .id(Id(stringLiteral: "saleAction"))
                             
@@ -1267,7 +1290,21 @@ class ManageSOCView: Div {
                                         type: .serviceAction,
                                         currentIds: self.saleAction.map{ $0.id },
                                         callback: { action in
+
                                             self.serviceAction.append(action)
+
+                                            let view = ServiceAccionRow(
+                                                type: .serviceAction,
+                                                action: action,
+                                                removed: { 
+                                                    self.removeSaleAction(action.id)
+                                                }
+                                            )
+
+                                            self.serviceActionDiv.appendChild(view)
+
+                                            self.serviceActionRefrence[action.id] = view
+
                                         }
                                     ))
                                 }
@@ -1277,17 +1314,20 @@ class ManageSOCView: Div {
                         .marginBottom(7.px)
                         
                         Div{
+                            /*
                             ForEach(self.$serviceAction){ action in
                                 
                                 ServiceAccionRow(
                                     type: .serviceAction,
                                     action: action,
-                                    removed: { id in
-                                        self.removeServiceAction(id)
+                                    removed: {
+                                        self.removeServiceAction(action.id)
                                     }
                                 )
                                 
                             }
+                            */
+                            self.serviceActionDiv
                             .hidden(self.$serviceAction.map{ $0.isEmpty })
                             .id(Id(stringLiteral: "serviceAction"))
                             
@@ -1960,6 +2000,7 @@ class ManageSOCView: Div {
         if let socid {
             loadSOCData(socid: socid)
         }
+
     }
     
     func calcInternalCost(){
@@ -2227,7 +2268,40 @@ class ManageSOCView: Div {
             }
             
             self.autoCalcCost = currentAutoCalcCost
-            
+           
+           // self.saleAction
+            payload.soc.saleAction.forEach { action in
+
+                let view = ServiceAccionRow(
+                    type: .saleAction,
+                    action: action,
+                    removed: { 
+                        self.removeSaleAction(action.id)
+                    }
+                )
+
+                self.saleActionDiv.appendChild(view)
+
+                self.saleActionRefrence[action.id] = view
+
+            }
+
+            payload.soc.serviceAction.forEach { action in
+
+                let view = ServiceAccionRow(
+                    type: .saleAction,
+                    action: action,
+                    removed: { 
+                        self.removeServiceAction(action.id)
+                    }
+                )
+
+                self.serviceActionDiv.appendChild(view)
+
+                self.serviceActionRefrence[action.id] = view
+
+            }
+
         }
     }
     
@@ -2750,6 +2824,17 @@ class ManageSOCView: Div {
         }
     }
     
+    /*
+
+    var saleActionRefrence: [UUID : ServiceAccionRow] = [:]
+
+    lazy var saleActionDiv = Div()
+
+    var serviceActionRefrence: [UUID : ServiceAccionRow] = [:]
+
+    lazy var serviceActionDiv = Div()
+    */
+
     func removeSaleAction(_ id: UUID) {
         
         var actions: [CustSaleActionQuick] = []
@@ -2759,11 +2844,18 @@ class ManageSOCView: Div {
             if action.id == id  {
                 return
             }
+            
             actions.append(action)
         }
         
         saleAction = actions
-        
+
+        if let view = saleActionRefrence[id] {
+            view.remove()
+        }
+         
+         saleActionRefrence.removeValue(forKey: id)
+
     }
     
     func removeServiceAction(_ id: UUID) {
@@ -2780,6 +2872,12 @@ class ManageSOCView: Div {
         
         serviceAction = actions
         
+        if let view = serviceActionRefrence[id] {
+            view.remove()
+        }
+         
+         serviceActionRefrence.removeValue(forKey: id)
+         
     }
     
     func deleteSOC(){

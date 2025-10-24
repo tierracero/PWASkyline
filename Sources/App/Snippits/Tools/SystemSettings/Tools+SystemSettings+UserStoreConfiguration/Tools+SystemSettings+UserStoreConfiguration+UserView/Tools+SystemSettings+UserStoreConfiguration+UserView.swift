@@ -175,10 +175,30 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                         Div{
 
                             Img()
-                                .src("/skyline/media/mobileCamara.png")
-                                .height(22.px)
+                                .src("/skyline/media/icon_clip.png")
+                                .height(24.px)
                                 .class(.iconWhite)
-                                .marginLeft(7.px)
+                                .marginRight(7.px)
+                                .cursor(.pointer)
+                                .onClick { _, event in
+                                    //self.msgFileLoader.click()
+                                }
+
+                            Img()
+                                .src("/skyline/media/webcam.png")
+                                .height(24.px)
+                                .class(.iconWhite)
+                                .marginRight(7.px)
+                                .cursor(.pointer)
+                                .onClick { _, event in
+                                    //self.msgFileLoader.click()
+                                }
+
+                            Img()
+                                .src("/skyline/media/mobileCamara.png")
+                                .height(24.px)
+                                .class(.iconWhite)
+                                .marginRight(7.px)
                                 .cursor(.pointer)
                                 .onClick { _, event in
                                     /*    
@@ -211,26 +231,8 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                                     */
                                 }
                 
-                            Img()
-                                .src("/skyline/media/icon_clip.png")
-                                .height(22.px)
-                                .class(.iconWhite)
-                                .marginLeft(7.px)
-                                .cursor(.pointer)
-                                .onClick { _, event in
-                                    //self.msgFileLoader.click()
-                                }
-
-                            Img()
-                                .src("/skyline/media/webcam.png")
-                                .height(22.px)
-                                .class(.iconWhite)
-                                .marginLeft(7.px)
-                                .cursor(.pointer)
-                                .onClick { _, event in
-                                    //self.msgFileLoader.click()
-                                }
                         }
+                        .align(.right)
 
                         Div().clear(.both).marginTop(7.px)
 

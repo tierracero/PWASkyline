@@ -19,14 +19,12 @@ class ServiceAccionRow: Div {
     var action: CustSaleActionQuick
     
     private var removed: ((
-        _ id: UUID
     ) -> ())
     
     init(
         type: SaleActionType,
         action: CustSaleActionQuick,
         removed: @escaping ((
-            _ id: UUID
         ) -> ())
     ) {
         self.type = type
@@ -63,7 +61,7 @@ class ServiceAccionRow: Div {
                 .marginTop(7.px)
                 .height(24.px)
                 .onClick { _, event in
-                    self.removed(self.action.id)
+                    self.removed()
                     event.stopPropagation()
                 }
             

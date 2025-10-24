@@ -178,14 +178,14 @@ class ServiceAccionsView: Div {
                 return
             }
             
-            guard let data = resp.data else {
+            guard let actions = resp.data else {
                 showError(.errorGeneral, .unexpenctedMissingPayload)
                 return
             }
             
-            self.favorits = data.actions
+            self.favorits = actions
             
-            self.actions = data.actions
+            self.actions = actions
             
         }
     }

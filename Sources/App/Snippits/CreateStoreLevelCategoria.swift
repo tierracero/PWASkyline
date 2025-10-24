@@ -296,7 +296,8 @@ class CreateStoreLevelCategoria: Div {
                 name: name,
                 smallDescription: descr,
                 description: "",
-                icon: ""
+                icon: "",
+                isPublic: true
             ) { resp in
                 
                 loadingView(show: false)
@@ -328,7 +329,8 @@ class CreateStoreLevelCategoria: Div {
                 description: "",
                 icon: "",
                 coverLandscape: "",
-                coverPortrait: ""
+                coverPortrait: "",
+                isPublic: true
             ) { resp in
                 
                 loadingView(show: false)

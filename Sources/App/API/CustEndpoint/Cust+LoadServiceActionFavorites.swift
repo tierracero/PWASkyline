@@ -14,7 +14,7 @@ extension CustAPIEndpointV1 {
     static func loadServiceActionFavorites(
         type: SaleActionType,
         currentIDs: [UUID],
-        callback: @escaping ( (_ resp: APIResponseGeneric<LoadServiceActionFavoritesResponse>?) -> () )
+        callback: @escaping ( (_ resp: APIResponseGeneric<[CustSaleActionQuick]>?) -> () )
     ) {
         sendPost(
             rout,
@@ -32,7 +32,7 @@ extension CustAPIEndpointV1 {
             }
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<LoadServiceActionFavoritesResponse>.self, from: data)
+                let resp = try JSONDecoder().decode(APIResponseGeneric<[CustSaleActionQuick]>.self, from: data)
                 callback(resp)
             }
             catch{

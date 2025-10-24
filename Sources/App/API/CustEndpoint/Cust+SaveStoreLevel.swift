@@ -18,6 +18,7 @@ extension CustAPIEndpointV1 {
         smallDescription: String,
         description: String,
         icon: String,
+        isPublic: Bool,
         callback: @escaping ( (_ resp: APIResponse?) -> () )
     ) {
         sendPost(
@@ -30,7 +31,8 @@ extension CustAPIEndpointV1 {
                 name: name,
                 smallDescription: smallDescription,
                 description: description,
-                icon: icon
+                icon: icon,
+                isPublic: isPublic
             )
         ) { payload in
             

@@ -206,7 +206,11 @@ extension ToolsView {
                             }
 
                             self.services = services
-                                  
+                                
+                            if let depId = self.selectedDepatment?.id {
+                                self.sericesRefrences[depId]  = services
+                            }
+                            
                         }
                         
                         addToDom(view)
@@ -424,6 +428,7 @@ extension ToolsView {
                 self.selectedDepatment = dep
                 
                 self.sericesRefrences[dep.id] = data
+                
                 self.services = data
                 
             }

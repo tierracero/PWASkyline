@@ -297,7 +297,8 @@ class CreateStoreLevelLine: Div {
                 name: name,
                 smallDescription: descr,
                 description: "",
-                icon: ""
+                icon: "",
+                isPublic: true
             ) { resp in
                 
                 loadingView(show: false)
@@ -329,7 +330,8 @@ class CreateStoreLevelLine: Div {
                 description: "",
                 icon: "",
                 coverLandscape: "",
-                coverPortrait: ""
+                coverPortrait: "",
+                isPublic: true
             ) { resp in
                 
                 loadingView(show: false)

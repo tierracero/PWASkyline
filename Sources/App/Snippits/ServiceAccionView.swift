@@ -142,24 +142,13 @@ class ServiceAccionView: Div {
             self.productionLevel = select.value
         }
 
+    var itemRefrence: [ UUID : ServiceAccionItemElementRow ] = [:]
+
+    lazy var itemContainer = Div()
+
     @DOM override var body: DOM.Content {
         
         Div{
-            
-            Script()
-                .type("text/javascript")
-                .src("https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js")
-                .onLoad {
-                    /*
-                     new Sortable(example1, {
-                         animation: 150,
-                         ghostClass: 'blue-background-class'
-                     });
-                     */
-                    
-                    _ = JSObject.global.sortable!("sortableElements")
-                    
-                }
             
             /// Header
             Div{
@@ -179,6 +168,7 @@ class ServiceAccionView: Div {
             
             Div{
                 
+                /* MARK: GENRAL INFIORMATION */
                 Div {
                     Div{
                         
@@ -189,14 +179,16 @@ class ServiceAccionView: Div {
                             
                             Label("Nombre de la accion")
                                 .color(.white)
+
+                            Div().class(.clear).height(3.px)
                             
                             Div{
                                 self.nameField
                             }
                         }
-                        .class(.section)
+
                         
-                        Div().class(.clear).marginBottom(12.px)
+                        Div().class(.clear).height(12.px)
                         
                         Div{
                             InputCheckbox().toggle(self.$requestCompletition)
@@ -225,16 +217,17 @@ class ServiceAccionView: Div {
                             Div{
                                 
                                 Label("Minutos de producción")
+                                    .fontSize(18.px)
                                     .color(.white)
-                                
+
                             }
-                            .width(50.percent)
+                            .width(80.percent)
                             .float(.left)
                             
                             Div{
                                 self.productionTimeField
                             }
-                            .width(50.percent)
+                            .width(20.percent)
                             .float(.left)
                         }
                         
@@ -279,6 +272,7 @@ class ServiceAccionView: Div {
                 .overflow(.auto)
                 .float(.left)
                 
+                /* MARK: ACTION ELEMENTS */
                 Div {
                     Div{
                         
@@ -292,6 +286,7 @@ class ServiceAccionView: Div {
                                         element: nil,
                                         callback: { element in
                                             self.objects.append(element)
+                                            self.renderElement(element)
                                         }
                                     ))
                                 }
@@ -302,38 +297,7 @@ class ServiceAccionView: Div {
                         
                         Div{
                             
-                            ForEach(self.$objects){ obj in
-                                
-                                ServiceAccionItemElementRow(
-                                    element: obj
-                                ) { id in
-                                    var objects: [CustSaleActionObjectDecoder] = []
-                                    self.objects.forEach { element in
-                                        if id == element.id {
-                                            return
-                                        }
-                                        objects.append(element)
-                                    }
-                                    self.objects = objects
-                                    
-                                } callback: { editedeElement in
-                                    var objects: [CustSaleActionObjectDecoder] = []
-                                    self.objects.forEach { element in
-                                        if editedeElement.id == element.id {
-                                            objects.append(editedeElement)
-                                        }
-                                        else {
-                                            objects.append(element)
-                                        }
-                                    }
-                                    self.objects = objects
-                                    
-                                }
-                                .onDrop {
-                                    self.arrageElements()
-                                }
-                                
-                            }
+                            self.itemContainer
                             .hidden(self.$objects.map{ $0.isEmpty })
                             .id("sortableElements")
                             
@@ -391,6 +355,13 @@ class ServiceAccionView: Div {
         left(0.px)
         top(0.px)
         
+        self.appendChild(Script()
+                .type("text/javascript")
+                .src("https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js")
+                .onLoad {
+                    _ = JSObject.global.sortable!("sortableElements")
+                })
+
         SaleActionDificultltyLevel.allCases.forEach { item in
             productionLevelSelect.appendChild(
                 Option(item.description)
@@ -460,13 +431,81 @@ class ServiceAccionView: Div {
                 self.productionLevelListener = self.productionLevel
                 
                 self.nameField.class(.isOk)
-                
+
+                payload.objects.forEach { obj in
+                    self.renderElement(obj)
+                }
+            }
+        }
+    }
+    
+    func renderElement(_ obj: CustSaleActionObjectDecoder) {
+
+        let view = ServiceAccionItemElementRow(
+            element: obj
+        ) { id in
+
+            var objects: [CustSaleActionObjectDecoder] = []
+
+            self.objects.forEach { element in
+                if id == element.id {
+                    return
+                }
+                objects.append(element)
+            }
+
+            self.objects = objects
+
+            if var view = self.itemRefrence [id] {
+                view.remove()
+            }
+
+            self.itemRefrence.removeValue(forKey: id)
+            
+        } callback: { editedeElement in
+
+            var objects: [CustSaleActionObjectDecoder] = []
+
+            self.objects.forEach { element in
+                if editedeElement.id == element.id {
+                    objects.append(editedeElement)
+                }
+                else {
+                    objects.append(element)
+                }
+            }
+
+            self.objects = objects
+
+            if var view = self.itemRefrence [obj.id] {
+
+                view.element = editedeElement
+
+                view.type = editedeElement.type
+
+                view.typeListener = editedeElement.type.rawValue
+
+                view.title = editedeElement.title
+
+                view.help = editedeElement.help
+
+                view.placeholder = editedeElement.placeholder
+
+                view.isRequired = editedeElement.isRequired
+
             }
             
         }
-        
+        .onDrop {
+            self.arrageElements()
+        }
+
+        self.itemRefrence[obj.id] = view
+
+        self.itemContainer.appendChild(view)
+            
     }
-    
+
     func calculateProductionTime(){
         
         guard let time = Double(productionTime) else {
@@ -569,6 +608,7 @@ class ServiceAccionView: Div {
                 element: nil,
                 callback: { element in
                     self.objects.append(element)
+                    self.renderElement(element)
                 }
             ))
             return
@@ -621,4 +661,5 @@ class ServiceAccionView: Div {
         }
         
     }
+
 }
