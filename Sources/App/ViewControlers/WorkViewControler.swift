@@ -2085,7 +2085,7 @@ class WorkViewControler: PageController {
                         
                         addToDom(view)
                         
-                    case .scanner, .ocr, .paymentOrder, .paymentAccount, .paymentSale, .authTask,  .notifyTask, .social, .orderFiles, .orderMessage, .orderSendToUser, .customerMessage, .tierraceroMessage, .papacontadorMessage, .useCamaraForProduct, .useCamaraForOrder, .useCamaraForUser, .debugMode:
+                    case .scanner, .ocr, .paymentOrder, .paymentAccount, .paymentSale, .authTask,  .notifyTask, .social, .orderFiles, .orderMessage, .orderSendToUser, .customerMessage, .tierraceroMessage, .papacontadorMessage, .useCamaraForProduct, .useCamaraForOrder, .useCamaraForUser, .debugMode, .useCamaraForAsset:
                         break
                     }
                     

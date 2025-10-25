@@ -33,6 +33,15 @@ class ServiceAccionItemElementRow: Div {
             _ element: CustSaleActionObjectDecoder
         ) -> ())
     ) {
+
+        self.id = element.id
+        self.type = element.type
+        self.typeListener = element.type.rawValue
+        self.title = element.title
+        self.help = element.help
+        self.placeholder = element.placeholder
+        self.isRequired = element.isRequired
+        self.customerMessage = element.customerMessage
         self.element = element
         self.removeItem = removeItem
         self.callback = callback
@@ -43,21 +52,23 @@ class ServiceAccionItemElementRow: Div {
     required init() {
         fatalError("init() has not been implemented")
     }
+
+    let id: UUID
     
     /// textField, textArea, checkBox, selection, radio, instruction
-    @State var type = SaleActionInputType.textField
+    @State var type: SaleActionInputType 
     
-    @State var typeListener = SaleActionInputType.textField.rawValue
+    @State var typeListener: String
     
-    @State var title: String = ""
+    @State var title: String
     
-    @State var help: String = ""
+    @State var help: String
     
-    @State var placeholder: String = ""
+    @State var placeholder: String
     
-    @State var isRequired: Bool = false
+    @State var isRequired: Bool
     
-    @State var customerMessage: String = ""
+    @State var customerMessage: String
     
     @DOM override var body: DOM.Content {
         
@@ -86,24 +97,6 @@ class ServiceAccionItemElementRow: Div {
                             self.placeholder = element.placeholder
                             
                             self.isRequired = element.isRequired
-
-    /*
-                            loadingView(show: true)
-                            
-                            API.custAPIV1.createSaleActionItem(
-                                type: type,
-                                id: id,
-                                name: name,
-                                productionLevel: _productionLevel,
-                                workforceLevel: _workforceLevel,
-                                productionTime: _productionTime,
-                                requestCompletition: requestCompletition, 
-                                operationalObject: self.operationalObject.map { $0.id },
-                                isFavorite: isFavorite,
-                                objects: objects
-                            ) { resp in
-                            }
-*/
 
                         }
                     ))
@@ -187,23 +180,7 @@ class ServiceAccionItemElementRow: Div {
         
         self.class(.uibtnLarge)
             .width(95.percent)
-        
-        self.id(Id(stringLiteral: element.id.uuidString ))
-        
-        type = element.type
-        
-        typeListener = type.rawValue
-        
-        title = element.title
-        
-        help = element.help
-        
-        placeholder = element.placeholder
-        
-        isRequired = element.isRequired
-        
-        customerMessage = element.customerMessage
-        
+            
     }
     
     override func didAddToDOM() {

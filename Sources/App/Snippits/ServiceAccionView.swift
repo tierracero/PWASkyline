@@ -477,7 +477,7 @@ class ServiceAccionView: Div {
 
             self.objects = objects
 
-            if var view = self.itemRefrence [obj.id] {
+            if let view = self.itemRefrence [obj.id] {
 
                 view.element = editedeElement
 
@@ -493,6 +493,8 @@ class ServiceAccionView: Div {
 
                 view.isRequired = editedeElement.isRequired
 
+                self.itemRefrence [obj.id] = view
+                
             }
             
         }
@@ -539,6 +541,8 @@ class ServiceAccionView: Div {
     
     func arrageElements() {
         
+        print("🚧 itemContainer")
+
         if let string = JSObject.global.renderElements!("sortableElements").string {
             
             if string.isEmpty {
@@ -546,8 +550,15 @@ class ServiceAccionView: Div {
             }
             
             let parts = string.explode(",")
-            
+        
             var ids: [UUID] = []
+
+
+            print("🚧 parts")
+
+            parts.forEach { part in
+                print(part)
+            }
             
             parts.forEach { part in
                 if let id = UUID(uuidString: part) {
@@ -626,7 +637,7 @@ class ServiceAccionView: Div {
             requestCompletition: requestCompletition, 
             operationalObject: self.operationalObject.map { $0.id },
             isFavorite: isFavorite,
-            objects: objects
+            objects: itemRefrence.map{ $1.element }
         ) { resp in
             
             loadingView(show: false)

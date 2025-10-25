@@ -1517,10 +1517,11 @@ class AccountView: PageController {
                 }
                 
                 H3("Cargos y Finanzas")
-                    .backgroundColor( self.$currentAccountTab.map{$0 == .finance ? .lightBlueText : .transparent})
-                    .color( self.$currentAccountTab.map{$0 == .finance ? .white : .lightBlueText})
+                    .backgroundColor( self.$currentAccountTab.map{$0 == .finance ? .black : .transparent})
+                    .color( self.$currentAccountTab.map{$0 == .finance ? .lightBlueText : .gray})
                     .padding(top: 3.px, right: 7.px, bottom: 3.px, left: 7.px)
-                    .borderRadius(all: 12.px)
+                    .borderTopRightRadius(12.px)
+                    .borderTopLeftRadius(12.px)
                     .marginLeft(7.px)
                     .cursor(.pointer)
                     .float(.left)
@@ -1529,16 +1530,18 @@ class AccountView: PageController {
                     }
                 
                 H3("Credito")
-                    .backgroundColor( self.$currentAccountTab.map{$0 == .credit ? .lightBlueText : .transparent})
-                    .color( self.$currentAccountTab.map{$0 == .credit ? .white : .lightBlueText})
+                    .backgroundColor( self.$currentAccountTab.map{$0 == .credit ? .black : .transparent})
+                    .color( self.$currentAccountTab.map{$0 == .credit ? .lightBlueText : .gray})
                     .padding(top: 3.px, right: 7.px, bottom: 3.px, left: 7.px)
-                    .borderRadius(all: 12.px)
+                    .borderTopRightRadius(12.px)
+                    .borderTopLeftRadius(12.px)
                     .marginLeft(7.px)
                     .cursor(.pointer)
                     .float(.left)
                     .onClick {
                         self.currentAccountTab = .credit
                     }
+
             }
             .height(30.px)
             

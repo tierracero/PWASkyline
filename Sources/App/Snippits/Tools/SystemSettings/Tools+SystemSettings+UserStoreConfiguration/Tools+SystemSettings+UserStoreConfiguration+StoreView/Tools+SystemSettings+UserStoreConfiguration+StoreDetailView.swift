@@ -135,7 +135,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
         var store: CustStore?
 
-        @State var inventory: [CustUserInventoryObject]
+        @State var inventory: [API.custAPIV1.GetUserInventoryObject]
 
         @State var bodegasRefrence: [CustStoreBodegasQuick]
         
@@ -157,7 +157,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         /* INITILIZER */
         init(
             store: CustStore?,
-            inventory: [CustUserInventoryObject],
+            inventory: [API.custAPIV1.GetUserInventoryObject],
             stores: [CustStoreRef],
             config: ConfigStore,
             fiscal: [FIAccountsQuick],
