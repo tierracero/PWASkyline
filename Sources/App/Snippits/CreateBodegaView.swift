@@ -10,7 +10,7 @@ import TCFundamentals
 import TCFireSignal
 import Web
 
-class CreateSectionView: Div {
+class CreateBodegaView: Div {
     
     override class var name: String { "div" }
     
@@ -18,33 +18,31 @@ class CreateSectionView: Div {
     
     let storeName: String
     
-    let bodid: UUID
+    @State var bodegaId: UUID?
+
+    @State var bodegaName: String
     
-    let bodName: String
-    
-    @State var sectionName: String
-    
-    @State var sectionDescription: String = ""
+    @State var bodegaDescription: String
     
     private var callback: ((
-        _ section: CustStoreSeccionesSinc
+        _ section: CustStoreBodegasSinc
     ) -> ())
     
     init(
         storeid: UUID,
         storeName: String,
-        bodid: UUID,
-        bodName: String,
-        sectionName: String,
+        bodegaId: UUID?,
+        bodegaName: String,
+        bodegaDescription: String,
         callback: @escaping ((
-            _ section: CustStoreSeccionesSinc
+            _ section: CustStoreBodegasSinc
         ) -> ())
     ) {
         self.storeid = storeid
         self.storeName = storeName
-        self.bodid = bodid
-        self.bodName = bodName
-        self.sectionName = sectionName
+        self.bodegaId = bodegaId
+        self.bodegaName = bodegaName
+        self.bodegaDescription = bodegaDescription
         self.callback = callback
         
         super.init()
@@ -54,7 +52,7 @@ class CreateSectionView: Div {
         fatalError("init() has not been implemented")
     }
     
-    lazy var newSectionName = InputText(self.$sectionName)
+    lazy var newSectionName = InputText(self.$bodegaName)
         .class(.textFiledBlackDark)
         .placeholder("Ingrese Nueva Seccion")
         .width(90.percent)
@@ -64,7 +62,7 @@ class CreateSectionView: Div {
             self.checkSectionAvailability()
         }
     
-    lazy var newSectionDescription = InputText(self.$sectionDescription)
+    lazy var newSectionDescription = InputText(self.$bodegaDescription)
         .class(.textFiledBlackDark)
         .placeholder("Descripcion, que va a incluir.")
         .width(90.percent)
@@ -99,26 +97,6 @@ class CreateSectionView: Div {
             
             H2( self.storeName )
                 .color(.white)
-            
-            Div().class(.clear).height(7.px)
-            
-            Div{
-                
-                Label("Bodega")
-                    .fontSize(18.px)
-                    .color(.gray)
-                
-                Div{
-                    Label(self.bodName)
-                        .width(90.percent)
-                        .fontSize(23.px)
-                        .color(.white)
-                        .height(28.px)
-                        
-                    
-                }
-            }
-            .class(.section)
             
             Div().class(.clear).height(7.px)
             
