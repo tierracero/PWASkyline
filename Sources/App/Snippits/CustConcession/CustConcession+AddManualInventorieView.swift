@@ -18,17 +18,74 @@ extension CustConcessionView {
         
         let account: CustAcct
         
+        let newDocumentName: String
+
+        let vendor: CustVendorsQuick
+
+        let profile: FiscalEndpointV1.Profile
+
+        let bodegas: [CustStoreBodegasQuick]
+        
         init(
-            account: CustAcct
+            account: CustAcct,
+            newDocumentName: String,
+            vendor: CustVendorsQuick,
+            profile: FiscalEndpointV1.Profile,
+            bodegas: [CustStoreBodegasQuick]
         ) {
             self.account = account
+            self.newDocumentName = newDocumentName
+            self.vendor = vendor
+            self.profile = profile
+            self.bodegas = bodegas
             super.init()
         }
         
         required init() {
             fatalError("init() has not been implemented")
         }
-        
+        /* MARK: general data */
+
+
+    @State var vendorFolio = ""
+    
+    @State var businessName = ""
+    
+    @State var vendorRfc = ""
+    
+    @State var vendorRazon = ""
+    
+    @State var finaceContact = ""
+    
+    @State var oporationContact = ""
+    
+    @State var receptorRfc = ""
+    
+    @State var receptorRazon = ""
+    
+    @State var fiscalUse: FiscalUse? = nil
+    
+    @State var paymentForm: FiscalPaymentMeths? = nil
+    
+    /// Documet data
+    @State var docid: UUID? = nil
+    
+    @State var docuuid = ""
+    
+    @State var docFolio = ""
+    
+    @State var docSerie = ""
+    
+    @State var total = ""
+    
+    @State var internalCost: Int64 = 0
+    
+    @State var balance = ""
+    
+    @State var officialDate = ""
+    
+
+        /* MARK: Kart */
         @State var balanceString =  "0.00"
         
         @State var kart: [SalePointObject] = []
@@ -99,11 +156,362 @@ extension CustConcessionView {
             
                 self.resultBox
 
+                /*. Fiscal Profiles */
+                Div {
+                    
+                    /// Receptor Data
+                    Div{
+                        
+                        Label("Perfil Fiscal")
+                            .padding(all: 3.px)
+                            .paddingLeft(0.px)
+                            .marginLeft(0.px)
+                            .fontSize(18.px)
+                            .color(.gray)
+                            .marginBottom(3.px)
+                        
+                        /// RFC
+                        Div{
+                            
+                            Label("RFC")
+                                .padding(all: 3.px)
+                                .paddingLeft(0.px)
+                                .marginLeft(0.px)
+                                .fontSize(18.px)
+                                .color(.gray)
+                            
+                            Div( self.$receptorRfc.map{ $0.isEmpty ? "XAXX010101000" : $0 } )
+                                .color(self.$receptorRfc.map{ $0.isEmpty ? .grayContrast : .white })
+                            .class(.textFiledBlackDarkReadMode, .oneLineText)
+                            .fontSize(18.px)
+                            
+                        }.marginBottom(3.px).class(.section)
+                        
+                        /// Razon
+                        Div{
+                            Label("Razon Social")
+                                .color(.gray)
+                                .fontSize(14.px)
+                            
+                            Div(self.$receptorRazon.map { $0.isEmpty ? "Razon Social" : $0 })
+                                .color(self.$receptorRazon.map{ $0.isEmpty ? .grayContrast : .white })
+                                .class(.textFiledBlackDarkReadMode, .oneLineText)
+                                .fontSize(18.px)
+                            
+                        }.marginBottom(3.px)
+                        
+                        /// USO
+                        Div{
+                            
+                            Label(LString(
+                                .es("Uso CFDI"),
+                                .en("Use CFDI")
+                            ))
+                                .color(.gray)
+                                .fontSize(14.px)
+                            
+                            Div(self.$fiscalUse.map { ($0 == nil) ? "USO CFDI" : ($0?.description ?? "") })
+                                .color(self.$fiscalUse.map{ ($0 == nil) ? .grayContrast : .white })
+                                .class(.textFiledBlackDarkReadMode, .oneLineText)
+                                .fontSize(18.px)
+                                
+                        }.marginBottom(3.px)
+                    
+                    }
+                    .marginRight(1.percent)
+                    .width(24.percent)
+                    .float(.left)
+                    
+                    /// Vendor  Data
+                    Div{
+                        
+                        /// Account Number
+                        Div{
+                            
+                            Label("Cuenta")
+                                .padding(all: 3.px)
+                                .paddingLeft(0.px)
+                                .marginLeft(0.px)
+                                .fontSize(18.px)
+                                .color(.gray)
+                            
+                            Div( self.$vendorFolio.map{ $0.isEmpty ? "veXX-0000" : $0 } )
+                                .color(self.$vendorFolio.map{ $0.isEmpty ? .grayContrast : .white })
+                            .class(.textFiledBlackDarkReadMode, .oneLineText)
+                            .fontSize(18.px)
+                            
+                        }.marginBottom(3.px).class(.section)
+                        
+                        
+                        /// RFC
+                        Div{
+                            
+                            Label("RFC")
+                                .padding(all: 3.px)
+                                .paddingLeft(0.px)
+                                .marginLeft(0.px)
+                                .fontSize(18.px)
+                                .color(.gray)
+                            
+                            Div(self.$vendorRfc.map { $0.isEmpty ? "XAXX010101000" : $0 })
+                                .color(self.$vendorRfc.map{ $0.isEmpty ? .grayContrast : .white })
+                                .class(.textFiledBlackDarkReadMode, .oneLineText)
+                                .fontSize(18.px)
+                            
+                        }.marginBottom(3.px).class(.section)
+                        
+                        /// Razon
+                        Div{
+                            Label("Razon Social")
+                                .color(.gray)
+                                .fontSize(14.px)
+                            
+                            Div(self.$vendorRazon.map { $0.isEmpty ? "Razon Social" : $0 })
+                                .color(self.$vendorRazon.map{ $0.isEmpty ? .grayContrast : .white })
+                                .class(.textFiledBlackDarkReadMode, .oneLineText)
+                                .fontSize(18.px)
+                            
+                        }.marginBottom(3.px)
+                        
+                        /// Buisness Name
+                        Div{
+                            
+                            Label("Nombre Empresa")
+                                .color(.gray)
+                                .fontSize(14.px)
+                            
+                            Div(self.$businessName.map { $0.isEmpty ? "Nombre Empresa" : $0 })
+                                .color(self.$businessName.map{ $0.isEmpty ? .grayContrast : .white })
+                                .class(.textFiledBlackDarkReadMode, .oneLineText)
+                                .fontSize(18.px)
+                            
+                        }.marginBottom(3.px)
+                        
+                    }
+                    .marginRight(1.percent)
+                    .width(24.percent)
+                    .float(.left)
+                    
+                    /// Vendor / Document
+                    Div{
+                        
+                        /// contacto
+                        Div{
+                            
+                            Label("Con. Finz / Con. Operativo")
+                                .fontSize(14.px)
+                                .color(.gray)
+                            
+                            Div{//
+                                
+                                Span(self.$finaceContact.map{ $0.isEmpty ? "8341230000" : $0 })
+                                    .color(self.$finaceContact.map{ $0.isEmpty ? .grayContrast : .white })
+                                
+                                Span(" / ")
+                                    .color(self.$oporationContact.map{ $0.isEmpty ? .grayContrast : .white })
+                                
+                                Span(self.$oporationContact.map{ $0.isEmpty ? "8341230000" : $0 })
+                                    .color(self.$oporationContact.map{ $0.isEmpty ? .grayContrast : .white })
+                                
+                            }
+                            .color(self.$docuuid.map{ $0.isEmpty ? .grayContrast : .white })
+                            .class(.textFiledBlackDarkReadMode, .oneLineText)
+                            
+                        }.marginBottom(3.px)
+                        
+                        /// UUID
+                        Div{
+                            
+                            Label("UUID")
+                                .fontSize(14.px)
+                                .color(.gray)
+                            
+                            Div(self.$docuuid.map{ $0.isEmpty ? "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" : $0 })
+                                .color(self.$docuuid.map{ $0.isEmpty ? .grayContrast : .white })
+                                .class(.textFiledBlackDarkReadMode, .oneLineText)
+                                .fontSize(12.px)
+                            
+                        }
+                        
+                        /// Folio /Serie
+                        Div{
+                            
+                            Label("Folio/Serie")
+                                .padding(all: 3.px)
+                                .paddingLeft(0.px)
+                                .marginLeft(0.px)
+                                .fontSize(18.px)
+                                .color(.gray)
+                            
+                            Div{
+                                
+                                Span(self.$docSerie.map{ $0.isEmpty ? "Serie" : $0 })
+                                    .color(self.$docSerie.map{ $0.isEmpty ? .grayContrast : .white })
+                                
+                                Span("/")
+                                    .color(self.$docFolio.map{ $0.isEmpty ? .grayContrast : .white })
+                                
+                                Span(self.$docFolio.map{ $0.isEmpty ? "Folio" : $0 })
+                                    .color(self.$docFolio.map{ $0.isEmpty ? .grayContrast : .white })
+                                
+                            }
+                            .color(self.$vendorRfc.map{ $0.isEmpty ? .grayContrast : .white })
+                            .class(.textFiledBlackDarkReadMode, .oneLineText)
+                            .fontSize(18.px)
+                            
+                        }.class(.section)
+                        
+                        /// Forma de Pago
+                        Div{
+                            
+                            Label("Forma de Pago")
+                                .color(.gray)
+                                .fontSize(14.px)
+                            
+                            Div(self.$paymentForm.map { ($0 == nil) ? "Forma de Pago" : ($0?.description ?? "") })
+                                .color(self.$paymentForm.map{ ($0 == nil) ? .grayContrast : .white })
+                                .class(.textFiledBlackDarkReadMode, .oneLineText)
+                                .fontSize(18.px)
+                                
+                        }
+                        
+                    }
+                    .marginRight(1.percent)
+                    .width(24.percent)
+                    .float(.left)
+                    
+                    /// Document
+                    Div{
+                    
+                        Div{
+                            
+                            /// Ofical Date
+                            Div{
+                                
+                                Label("Fecha de Emision")
+                                    .color(.gray)
+                                    .fontSize(14.px)
+                                
+                                Div( self.$officialDate.map{ $0.isEmpty ? "DD/MM/AAAA" : $0 } )
+                                    .color(self.$officialDate.map{ $0.isEmpty ? .grayContrast : .white })
+                                .class(.textFiledBlackDarkReadMode, .oneLineText)
+                                .fontSize(18.px)
+                                
+                            }.marginBottom(3.px)
+                            
+                        }
+                        .width(50.percent)
+                        .float(.left)
+                        Div{
+                            
+                            /// Due Date
+                            Div{
+                                
+                                Label("Fecha de Pago")
+                                    .color(.gray)
+                                    .fontSize(14.px)
+                                
+                                Div( self.$dueDate.map{ $0.isEmpty ? "DD/MM/AAAA" : $0 } )
+                                    .color(self.$dueDate.map{ $0.isEmpty ? .grayContrast : .white })
+                                .class(.textFiledBlackDarkReadMode, .oneLineText)
+                                .fontSize(18.px)
+                                
+                            }
+                            
+                        }
+                        .width(50.percent)
+                        .float(.left)
+                        
+                        Div().clear(.both)
+                        
+                        /// Total
+                        Div{
+                            
+                            Label("Total")
+                                .color(.yellowTC)
+                                .padding(all: 3.px)
+                                .paddingLeft(0.px)
+                                .marginLeft(0.px)
+                                .fontSize(18.px)
+                            
+                            Div( self.$total.map{ $0.isEmpty ? "0.00" : $0 } )
+                                .color(self.$total.map{ $0.isEmpty ? .grayContrast : .white })
+                            .class(.textFiledBlackDarkReadMode, .oneLineText)
+                            .fontSize(18.px)
+                            
+                        }.paddingBottom(3.px).class(.section)
+                        
+                        /// Balance
+                        Div{
+                            
+                            Label("Balance")
+                                .padding(all: 3.px)
+                                .paddingLeft(0.px)
+                                .marginLeft(0.px)
+                                .fontSize(18.px)
+                                .color(.gray)
+                            
+                            Div( self.$balance.map{ $0.isEmpty ? "0.00" : $0 } )
+                                .color(self.$balance.map{ $0.isEmpty ? .grayContrast : .white })
+                                .class(.textFiledBlackDarkReadMode, .oneLineText)
+                                .fontSize(18.px)
+                            
+                        }
+                        .paddingBottom(3.px).class(.section)
+                        .hidden(self.$ingresoManual.map{ $0 == true })
+                        
+                        /// Costos
+                        Div{
+                            
+                            Label("Costo")
+                                .color(.yellowTC)
+                                .padding(all: 3.px)
+                                .paddingLeft(0.px)
+                                .marginLeft(0.px)
+                                .fontSize(18.px)
+                            
+                            Div( self.$internalCost.map{ $0.formatMoney } )
+                                .color(self.$internalCost.map{ ($0 == 0) ? .grayContrast : .white })
+                                .class(.textFiledBlackDarkReadMode, .oneLineText)
+                                .fontSize(18.px)
+                        }
+                        .hidden(self.$ingresoManual.map{ $0 != true })
+                        .paddingBottom(3.px).class(.section)
+                        
+                        
+                        /// Numero de Unidades
+                        Div{
+                            
+                            Label("Unidades")
+                                .color(.yellowTC)
+                                .padding(all: 3.px)
+                                .paddingLeft(0.px)
+                                .marginLeft(0.px)
+                                .fontSize(18.px)
+                            
+                            Div( self.$totalUnits.map{ $0 == 0 ? "" : $0.toString } )
+                                .color(self.$total.map{ $0.isEmpty ? .grayContrast : .white })
+                                .class(.textFiledBlackDarkReadMode, .oneLineText)
+                                .fontSize(18.px)
+                            
+                        }.paddingBottom(3.px).class(.section)
+                        
+                    
+                    }
+                    .marginRight(1.percent)
+                    .width(24.percent)
+                    .float(.left)
+                    
+                    Div().class(.clear)
+                    
+                }.height(175.px)
+                
+
                 //Price Grid
                 Div{
                     self.itemGrid
                 }
-                .custom("height", "calc(100% - 115px)")
+                .custom("height", "calc(100% - 400px)")
                 .padding(all: 7.px)
                 .class(.roundDarkBlue)
                 .overflow(.auto)

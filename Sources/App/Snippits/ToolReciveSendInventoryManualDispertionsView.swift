@@ -82,6 +82,10 @@ class ToolReciveSendInventoryManualDispertionsView: Div {
                     .height(24.px)
                     .float(.right)
                     .onClick {
+
+                        print("🚧 🚧 🚧 🚧 🚧 🚧 ")
+                        print("use StartManualInventory view insted")
+
                         self.createNewDocumentIsHidden = false
                         self.newDocumentNameField.select()
                     }

@@ -58,7 +58,7 @@ class CreateBodegaView: Div {
     
     lazy var newBodegaField = InputText(self.$bodegaName)
         .class(.textFiledBlackDark)
-        .placeholder("Ingrese Nueva Seccion")
+        .placeholder("Nombre de la nueva bodega")
         .width(90.percent)
         .fontSize(23.px)
         .height(28.px)

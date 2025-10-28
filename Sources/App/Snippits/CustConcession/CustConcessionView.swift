@@ -355,7 +355,7 @@ class CustConcessionView: Div {
                             H2("Herramientas")
                                 .float(.left)
 
-                            Div().class(.clear).marginTop(7.px)
+                            Div().class(.clear).height(7.px)
 
                             Div{
     
@@ -393,13 +393,20 @@ class CustConcessionView: Div {
                                 .align(.center)
                                 .class(.uibtn)
                                 .onClick {
-                                    addToDom(AddManualInventorieView(account: self.account))
+
+                                    let view = StartManualInventory { name, vendor, profile in
+
+                                    }
+
+                                    addToDom(view)
+                                    
+                                    // addToDom(AddManualInventorieView(account: self.account))
                                 }
                             }
                             .width(50.percent)
                             .float(.left)
 
-                            Div().class(.clear).marginTop(7.px)
+                            Div().class(.clear).height(12.px)
 
                             Div{
                                 Div{
@@ -418,12 +425,16 @@ class CustConcessionView: Div {
 
                                     let view = CreateBodegaView(
                                         storeid: self.account.id,
-                                        storeName: "\(self.account.fiscalRazon) \(self.account.businessName)",
+                                        storeName: "Crear bodega para concesionario",
                                         bodegaId: nil,
                                         bodegaName: "",
                                         bodegaDescription: "",
                                         createTo: .other
                                     ) { bodega in
+                                        self.bodegas.append(.init(
+                                            id: bodega.id,
+                                            name: bodega.name
+                                        ))
 
                                     }
 
@@ -439,12 +450,12 @@ class CustConcessionView: Div {
                             .width(50.percent)
                             .float(.left)
 
-                            Div().class(.clear).marginTop(7.px)
+                            Div().class(.clear).height(7.px)
 
 
                         }
                         
-                        Div().class(.clear).marginTop(7.px)
+                        Div().class(.clear).height(7.px)
                         
                         
                     }
