@@ -15,6 +15,12 @@ extension CustAccountEndpointV1 {
         storeId: UUID,
         accountId: UUID,
         items: [SaleObjectItem],
+        documentName: String,
+        documentSerie: String,
+        documentFolio: String,
+        vendorId: UUID,
+        profileId: UUID,
+        bodega: UUID?,
         callback: @escaping ( (_ resp: APIResponseGeneric<AddCustomerManualConcessionResponse>?) -> () )) {
         
         sendPost(
@@ -24,7 +30,13 @@ extension CustAccountEndpointV1 {
             AddCustomerManualConcessionRequest(
                 storeId: storeId,
                 accountId: accountId,
-                items: items
+                items: items,
+                documentName: documentName,
+                documentSerie: documentSerie,
+                documentFolio: documentFolio,
+                vendorId: vendorId,
+                profileId: profileId,
+                bodega: bodega
             )
         ) { data in
             

@@ -24,7 +24,7 @@ extension CustConcessionView {
 
         let profile: FiscalEndpointV1.Profile
 
-        let bodegas: [CustStoreBodegasQuick]
+        @State var bodegas: [CustStoreBodegasQuick]
         
         init(
             account: CustAcct,
@@ -46,44 +46,46 @@ extension CustConcessionView {
         }
         /* MARK: general data */
 
+        @State var vendorFolio = ""
+        
+        @State var businessName = ""
+        
+        @State var vendorRfc = ""
+        
+        @State var vendorRazon = ""
+        
+        @State var finaceContact = ""
+        
+        @State var oporationContact = ""
+        
+        @State var receptorRfc = ""
+        
+        @State var receptorRazon = ""
+        
+        @State var fiscalUse: FiscalUse? = nil
+        
+        @State var paymentForm: FiscalPaymentMeths? = nil
+        
+        /// Documet data
+        @State var docid: UUID? = nil
+        
+        @State var docuuid = ""
+        
+        @State var docFolio = ""
+        
+        @State var docSerie = ""
+        
+        @State var total = ""
+        
+        @State var internalCost: Int64 = 0
+        
+        @State var balance = ""
+        
+        @State var officialDate = ""
 
-    @State var vendorFolio = ""
-    
-    @State var businessName = ""
-    
-    @State var vendorRfc = ""
-    
-    @State var vendorRazon = ""
-    
-    @State var finaceContact = ""
-    
-    @State var oporationContact = ""
-    
-    @State var receptorRfc = ""
-    
-    @State var receptorRazon = ""
-    
-    @State var fiscalUse: FiscalUse? = nil
-    
-    @State var paymentForm: FiscalPaymentMeths? = nil
-    
-    /// Documet data
-    @State var docid: UUID? = nil
-    
-    @State var docuuid = ""
-    
-    @State var docFolio = ""
-    
-    @State var docSerie = ""
-    
-    @State var total = ""
-    
-    @State var internalCost: Int64 = 0
-    
-    @State var balance = ""
-    
-    @State var officialDate = ""
-    
+        @State var dueDate = ""
+        
+        @State var totalUnits: Int = 0
 
         /* MARK: Kart */
         @State var balanceString =  "0.00"
@@ -92,6 +94,8 @@ extension CustConcessionView {
         
         @State var searchTerm = ""
         
+        @State var bodegaListener = ""
+
         lazy var searchBox = InputText($searchTerm)
             .custom("background", "url('images/barcode.png') no-repeat scroll 7px 7px rgb(29, 32, 38)")
             .placeholder("Ingrese UPC/SKU/POC o Referencia")
@@ -129,7 +133,30 @@ extension CustConcessionView {
         }
         .width(100.percent)
         .color(.white)
+
+         lazy var serieField = InputText(self.$docSerie)
+        .class(.textFiledBlackDark)
+        .placeholder("Serie")
+        .width(90.percent)
+        .fontSize(23.px)
+        .height(28.px)
+
+         lazy var folioField = InputText(self.$docFolio)
+        .class(.textFiledBlackDark)
+        .placeholder("Folio")
+        .width(90.percent)
+        .fontSize(23.px)
+        .height(28.px)
         
+        lazy var bodegaSelect = Select(self.$bodegaListener)
+        .body {
+            Option("Selecione Bodega")
+            .value("")
+        }
+        .custom("width","calc(100% - 24px)")
+        .class(.textFiledBlackDark)
+        .height(31.px)
+
         @DOM override var body: DOM.Content {
             
             Div{
@@ -152,9 +179,11 @@ extension CustConcessionView {
                     Div().class(.clear)
                 }
                 
-                Div().class(.clear).marginTop(3.px)
+                Div().clear(.both).height(3.px)
             
                 self.resultBox
+
+                Div().clear(.both).height(3.px)
 
                 /*. Fiscal Profiles */
                 Div {
@@ -344,22 +373,20 @@ extension CustConcessionView {
                                 .color(.gray)
                             
                             Div{
-                                
-                                Span(self.$docSerie.map{ $0.isEmpty ? "Serie" : $0 })
-                                    .color(self.$docSerie.map{ $0.isEmpty ? .grayContrast : .white })
-                                
-                                Span("/")
-                                    .color(self.$docFolio.map{ $0.isEmpty ? .grayContrast : .white })
-                                
-                                Span(self.$docFolio.map{ $0.isEmpty ? "Folio" : $0 })
-                                    .color(self.$docFolio.map{ $0.isEmpty ? .grayContrast : .white })
-                                
+                                Div{
+                                    self.serieField
+                                }
+                                .width(50.percent)
+                                .float(.left)
+
+                                Div{
+                                    self.folioField
+                                }
+                                .width(50.percent)
+                                .float(.left)
                             }
-                            .color(self.$vendorRfc.map{ $0.isEmpty ? .grayContrast : .white })
-                            .class(.textFiledBlackDarkReadMode, .oneLineText)
-                            .fontSize(18.px)
-                            
-                        }.class(.section)
+
+                        }
                         
                         /// Forma de Pago
                         Div{
@@ -382,48 +409,7 @@ extension CustConcessionView {
                     
                     /// Document
                     Div{
-                    
-                        Div{
-                            
-                            /// Ofical Date
-                            Div{
-                                
-                                Label("Fecha de Emision")
-                                    .color(.gray)
-                                    .fontSize(14.px)
-                                
-                                Div( self.$officialDate.map{ $0.isEmpty ? "DD/MM/AAAA" : $0 } )
-                                    .color(self.$officialDate.map{ $0.isEmpty ? .grayContrast : .white })
-                                .class(.textFiledBlackDarkReadMode, .oneLineText)
-                                .fontSize(18.px)
-                                
-                            }.marginBottom(3.px)
-                            
-                        }
-                        .width(50.percent)
-                        .float(.left)
-                        Div{
-                            
-                            /// Due Date
-                            Div{
-                                
-                                Label("Fecha de Pago")
-                                    .color(.gray)
-                                    .fontSize(14.px)
-                                
-                                Div( self.$dueDate.map{ $0.isEmpty ? "DD/MM/AAAA" : $0 } )
-                                    .color(self.$dueDate.map{ $0.isEmpty ? .grayContrast : .white })
-                                .class(.textFiledBlackDarkReadMode, .oneLineText)
-                                .fontSize(18.px)
-                                
-                            }
-                            
-                        }
-                        .width(50.percent)
-                        .float(.left)
-                        
-                        Div().clear(.both)
-                        
+
                         /// Total
                         Div{
                             
@@ -442,24 +428,6 @@ extension CustConcessionView {
                         }.paddingBottom(3.px).class(.section)
                         
                         /// Balance
-                        Div{
-                            
-                            Label("Balance")
-                                .padding(all: 3.px)
-                                .paddingLeft(0.px)
-                                .marginLeft(0.px)
-                                .fontSize(18.px)
-                                .color(.gray)
-                            
-                            Div( self.$balance.map{ $0.isEmpty ? "0.00" : $0 } )
-                                .color(self.$balance.map{ $0.isEmpty ? .grayContrast : .white })
-                                .class(.textFiledBlackDarkReadMode, .oneLineText)
-                                .fontSize(18.px)
-                            
-                        }
-                        .paddingBottom(3.px).class(.section)
-                        .hidden(self.$ingresoManual.map{ $0 == true })
-                        
                         /// Costos
                         Div{
                             
@@ -475,9 +443,7 @@ extension CustConcessionView {
                                 .class(.textFiledBlackDarkReadMode, .oneLineText)
                                 .fontSize(18.px)
                         }
-                        .hidden(self.$ingresoManual.map{ $0 != true })
                         .paddingBottom(3.px).class(.section)
-                        
                         
                         /// Numero de Unidades
                         Div{
@@ -489,12 +455,17 @@ extension CustConcessionView {
                                 .marginLeft(0.px)
                                 .fontSize(18.px)
                             
-                            Div( self.$totalUnits.map{ $0 == 0 ? "" : $0.toString } )
+                            Div( self.$totalUnits.map{ $0 == 0 ? "0" : $0.toString } )
                                 .color(self.$total.map{ $0.isEmpty ? .grayContrast : .white })
                                 .class(.textFiledBlackDarkReadMode, .oneLineText)
                                 .fontSize(18.px)
                             
                         }.paddingBottom(3.px).class(.section)
+                        
+                        Div{
+                            self.bodegaSelect
+                        }
+                        .hidden(self.$bodegas.map{ $0.isEmpty })
                         
                     
                     }
@@ -505,13 +476,14 @@ extension CustConcessionView {
                     Div().class(.clear)
                     
                 }.height(175.px)
-                
+
+                Div().clear(.both).height(3.px)                
 
                 //Price Grid
                 Div{
                     self.itemGrid
                 }
-                .custom("height", "calc(100% - 400px)")
+                .custom("height", "calc(100% - 300px)")
                 .padding(all: 7.px)
                 .class(.roundDarkBlue)
                 .overflow(.auto)
@@ -554,7 +526,33 @@ extension CustConcessionView {
             width(100.percent)
             left(0.px)
             top(0.px)
+
+            vendorFolio = vendor.folio
             
+            businessName = vendor.businessName
+            
+            vendorRfc = vendor.rfc
+            
+            vendorRazon = vendor.razon
+            
+            finaceContact = "\(vendor.firstName) \(vendor.lastName)"
+            
+            oporationContact = vendor.fiscalPOCMobile
+            
+            receptorRfc = account.fiscalRfc
+            
+            receptorRazon = account.fiscalRazon
+            
+            fiscalUse = account.cfdiUse
+            
+
+            bodegas.forEach { item in
+                bodegaSelect.appendChild(
+                    Option(item.name)
+                    .value(item.id.uuidString)
+                )
+            }
+
         }
         
         override func didAddToDOM() {
@@ -751,7 +749,13 @@ extension CustConcessionView {
                     API.custAccountV1.addCustomerManualConcession(
                         storeId: custCatchStore,
                         accountId: self.account.id,
-                        items: items
+                        items: items,
+                        documentName: self.newDocumentName,
+                        documentSerie: self.docSerie,
+                        documentFolio: self.docFolio,
+                        vendorId: self.vendor.id,
+                        profileId: self.profile.id,
+                        bodega: UUID(uuidString: self.bodegaListener)
                     ) { resp in
                         
                         loadingView(show: false)
@@ -771,9 +775,9 @@ extension CustConcessionView {
                             return
                         }
 
-                        let control = payload.control
+                        let control: CustFiscalInventoryControl = payload.control
 
-                        let cardex = payload.cardex
+                        let cardex: [CustPOCCardex] = payload.cardex
 
                         self.appendChild(ConcessionConfirmationView(
                             accountid: self.account.id,
@@ -786,7 +790,7 @@ extension CustConcessionView {
                             cardex: cardex
                         ))
                         
-                        self.kart = []
+                        self.kart.removeAll()
                         
                         self.itemGrid.innerHTML = ""
                         

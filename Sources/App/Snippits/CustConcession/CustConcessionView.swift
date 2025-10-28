@@ -396,6 +396,16 @@ class CustConcessionView: Div {
 
                                     let view = StartManualInventory { name, vendor, profile in
 
+                                            let view = AddManualInventorieView(
+                                                account: self.account,
+                                                newDocumentName: name,
+                                                vendor: vendor,
+                                                profile: profile,
+                                                bodegas: self.bodegas
+                                            )
+
+                                            addToDom(view)
+
                                     }
 
                                     addToDom(view)
