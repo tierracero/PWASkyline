@@ -16,7 +16,6 @@ class CustConcessionView: Div {
     
     let account: CustAcct
 
-
     public var items: [CustPOCInventorySoldObject]
     
     public var pocs: [CustPOCQuick]
@@ -401,6 +400,47 @@ class CustConcessionView: Div {
                             .float(.left)
 
                             Div().class(.clear).marginTop(7.px)
+
+                            Div{
+                                Div{
+                                     Img()
+                                        .src("skyline/media/add.png")
+                                        .marginRight(12.px)
+                                        .cursor(.pointer)
+                                        .height(18.px)
+
+                                    Span("Agregar Bodega")
+                                }
+                                .custom("width", "calc(100% - 14px)")
+                                .align(.center)
+                                .class(.uibtn)
+                                .onClick {
+
+                                    let view = CreateBodegaView(
+                                        storeid: self.account.id,
+                                        storeName: "\(self.account.fiscalRazon) \(self.account.businessName)",
+                                        bodegaId: nil,
+                                        bodegaName: "",
+                                        bodegaDescription: "",
+                                        createTo: .other
+                                    ) { bodega in
+
+                                    }
+
+                                    addToDom(view)
+                                }
+                            }
+                            .width(50.percent)
+                            .float(.left)
+
+                            Div{
+                                
+                            }
+                            .width(50.percent)
+                            .float(.left)
+
+                            Div().class(.clear).marginTop(7.px)
+
 
                         }
                         
