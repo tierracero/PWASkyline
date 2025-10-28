@@ -246,11 +246,11 @@ class CreateSectionView: Div {
         
         loadingView(show: true)
         
-        API.custAPIV1.createBodegaSection(
+        API.custAPIV1.createSection(
+            storeId: storeid,
+            bodegaId: bodid,
             name: name,
-            description: description,
-            store: storeid,
-            bodega: bodid
+            description: description
         ) { resp in
             
             loadingView(show: false)

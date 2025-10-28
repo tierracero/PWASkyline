@@ -234,7 +234,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                             self.remove()
                         }
                     
-                    H2("Conpras Historicas")
+                    H2("Compras Historicas")
                     .color(.lightBlueText)
                     
                 }

@@ -24,8 +24,10 @@ class CreateBodegaView: Div {
     
     @State var bodegaDescription: String
     
+    var createTo: CreateRelationTo
+
     private var callback: ((
-        _ section: CustStoreBodegasSinc
+        _ bodega: CustStoreBodegasSinc
     ) -> ())
     
     init(
@@ -34,8 +36,9 @@ class CreateBodegaView: Div {
         bodegaId: UUID?,
         bodegaName: String,
         bodegaDescription: String,
+        createTo: CreateRelationTo,
         callback: @escaping ((
-            _ section: CustStoreBodegasSinc
+            _ bodega: CustStoreBodegasSinc
         ) -> ())
     ) {
         self.storeid = storeid
@@ -43,6 +46,7 @@ class CreateBodegaView: Div {
         self.bodegaId = bodegaId
         self.bodegaName = bodegaName
         self.bodegaDescription = bodegaDescription
+        self.createTo = createTo
         self.callback = callback
         
         super.init()
@@ -52,7 +56,7 @@ class CreateBodegaView: Div {
         fatalError("init() has not been implemented")
     }
     
-    lazy var newSectionName = InputText(self.$bodegaName)
+    lazy var newBodegaField = InputText(self.$bodegaName)
         .class(.textFiledBlackDark)
         .placeholder("Ingrese Nueva Seccion")
         .width(90.percent)
@@ -62,14 +66,14 @@ class CreateBodegaView: Div {
             self.checkSectionAvailability()
         }
     
-    lazy var newSectionDescription = InputText(self.$bodegaDescription)
+    lazy var newBodegaDescriptionField = InputText(self.$bodegaDescription)
         .class(.textFiledBlackDark)
         .placeholder("Descripcion, que va a incluir.")
         .width(90.percent)
         .fontSize(23.px)
         .height(28.px)
         .onEnter { tf in
-            self.createSection()
+            self.saveBodega()
         }
     
     @DOM override var body: DOM.Content {
@@ -84,7 +88,7 @@ class CreateBodegaView: Div {
                         self.remove()
                     }
                  
-                H2("Crear Seccion")
+                H2("Crear Bodega")
                     .maxWidth(90.percent)
                     .class(.oneLineText)
                     .marginLeft(7.px)
@@ -102,12 +106,12 @@ class CreateBodegaView: Div {
             
             Div{
                 
-                Label("Nueva Seccion")
+                Label("Nueva Bodega")
                     .fontSize(18.px)
                     .color(.gray)
                 
                 Div{
-                    self.newSectionName
+                    self.newBodegaField
                 }
             }
             .class(.section)
@@ -121,7 +125,7 @@ class CreateBodegaView: Div {
                     .color(.gray)
                 
                 Div{
-                    self.newSectionDescription
+                    self.newBodegaDescriptionField
                 }
             }
             .class(.section)
@@ -129,10 +133,10 @@ class CreateBodegaView: Div {
             Div().class(.clear).height(7.px)
             
             Div{
-                Div("Crear Seccion")
+                Div(self.$bodegaId.map{ ($0 == nil) ? "Crear Bodega" : "Guardar Datos"} )
                 .class(.uibtnLargeOrange)
                 .onClick {
-                    self.createSection()
+                    self.saveBodega()
                 }
             }
             .align(.right)
@@ -165,23 +169,23 @@ class CreateBodegaView: Div {
     
     func checkSectionAvailability(){
         
-        let term: String = self.sectionName.purgeSpaces.pseudo.capitalizingFirstLetters()
+        let term: String = self.bodegaName.purgeSpaces.pseudo.capitalizingFirstLetters()
 
         if term.count < 2 {
             return
         }
 
-        newSectionName.removeClass(.isOk)
-        newSectionName.removeClass(.isNok)
-        newSectionName.class(.isLoading)
-        
-        API.custAPIV1.seccionNameAvalability(
-            name: term,
-            bodegaID: bodid,
-            seccionID: nil
+        newBodegaField.removeClass(.isOk)
+        newBodegaField.removeClass(.isNok)
+        newBodegaField.class(.isLoading)
+
+        API.custAPIV1.bodegaNameAvalability(
+            storeId: storeid,
+            bodegaId: bodegaId,
+            name: term
         ) { resp in
 
-            self.newSectionName.removeClass(.isLoading)
+            self.newBodegaField.removeClass(.isLoading)
 
             guard let resp else {
                 showError(.errorDeCommunicacion, .serverConextionError)
@@ -201,62 +205,101 @@ class CreateBodegaView: Div {
             if payload.term == term {
 
                 if payload.free {
-                    self.newSectionName.class(.isOk)
+                    self.newBodegaField.class(.isOk)
                 }
                 else{
-                    self.newSectionName.class(.isNok)
+                    self.newBodegaField.class(.isNok)
                 }
 
             }
         }
     }
     
-    func createSection(){
+    func saveBodega(){
         
-        let name = self.sectionName.purgeSpaces.pseudo.capitalizingFirstLetters()
+        let name = self.bodegaName.purgeSpaces.pseudo.capitalizingFirstLetters()
         
         if name.count < 3 {
-            newSectionName.select()
+            newBodegaField.select()
             return
         }
         
-        let description = self.sectionDescription.purgeSpaces
+        let description = self.bodegaDescription.purgeSpaces
         
         loadingView(show: true)
         
-        API.custAPIV1.createBodegaSection(
-            name: name,
-            description: description,
-            store: storeid,
-            bodega: bodid
-        ) { resp in
-            
-            loadingView(show: false)
+        if let bodegaId {
+           
+            API.custAPIV1.saveBodegaDetails(
+                id: bodegaId,
+                name: name
+            ) { resp in
 
-            guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
-                return
-            }
+                loadingView(show: false)
 
-            guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
-                return
+                guard let resp else {
+                    showError(.errorDeCommunicacion, .serverConextionError)
+                    return
+                }
+
+                guard resp.status == .ok else {
+                    showError(.errorGeneral, resp.msg)
+                    return
+                }
+                
             }
             
-            guard let section = resp.data else {
-                showError( .errorGeneral, .unexpenctedMissingPayload)
-                return
-            }
-            
-            print("⭐️  seccion  ⭐️")
-            
-            print(section)
-            
-            self.callback(section)
-            
-            self.remove()
-            
+
         }
+        else {
+
+             API.custAPIV1.createBodega(
+                name: name,
+                description: description,
+                storeId: storeid,
+                suportsSections: (createTo == .store)
+            ) { resp in
+
+                loadingView(show: false)
+
+                guard let resp else {
+                    showError(.errorDeCommunicacion, .serverConextionError)
+                    return
+                }
+
+                guard resp.status == .ok else {
+                    showError(.errorGeneral, resp.msg)
+                    return
+                }
+                
+                guard let bodega = resp.data else {
+                    showError( .errorGeneral, .unexpenctedMissingPayload)
+                    return
+                }
+                
+                print("⭐️  bodega  ⭐️")
+                
+                print(bodega)
+                
+                self.callback(.init(
+                    id: bodega.id,
+                    modifiedAt: bodega.modifiedAt,
+                    custStore: bodega.custStore,
+                    name: bodega.name
+                ))
+                
+                self.remove()
+            }
+
         
+        }
+    
+    }
+
+}
+extension CreateBodegaView {
+    enum CreateRelationTo  {
+        case store
+        case other
     }
 }

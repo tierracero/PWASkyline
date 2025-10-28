@@ -114,13 +114,13 @@ class CreateStoreLevelDepartement: Div {
                     .color(.lightBlueText)
             }
             
-            Div().class(.clear).marginBottom(7.px)
+            Div().class(.clear).height(7.px)
             
             Div{
                 
                 Label("Nombre de Departamento")
                     
-                Div().class(.clear).marginBottom(7.px)
+                Div().class(.clear).height(7.px)
                 
                 self.nameField
                     .onEnter {
@@ -131,7 +131,7 @@ class CreateStoreLevelDepartement: Div {
                 
                 Label("Descripcion Corta")
                     
-                Div().class(.clear).marginBottom(7.px)
+                Div().class(.clear).height(7.px)
                 
                 self.descriptionField
                     
@@ -145,7 +145,7 @@ class CreateStoreLevelDepartement: Div {
                 
                 Label("Avatar")
                 
-                Div().class(.clear).marginBottom(7.px)
+                Div().class(.clear).height(7.px)
                 
                 Div{
                     
@@ -183,11 +183,12 @@ class CreateStoreLevelDepartement: Div {
             .width(30.percent)
             .float(.left)
             
-            Div().class(.clear).marginBottom(7.px)
+            Div().class(.clear).height(7.px)
             
             Div{
                 
-                Div("Tienda Publica")
+                Div("Depertamento Publico")
+                .fontSize(23.px)
                 .width(50.percent)
                 .align(.left)
                 .float(.left)
@@ -202,7 +203,7 @@ class CreateStoreLevelDepartement: Div {
                 Div().clear(.both)
             }
 
-            Div().class(.clear).marginBottom(7.px)
+            Div().class(.clear).height(7.px)
             
             Div{
 
@@ -226,7 +227,7 @@ class CreateStoreLevelDepartement: Div {
             }
             .align(.right)
             
-            Div().class(.clear).marginBottom(7.px)
+            Div().class(.clear).height(7.px)
                 
         
                  

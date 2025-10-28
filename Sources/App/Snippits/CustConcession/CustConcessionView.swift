@@ -15,22 +15,39 @@ class CustConcessionView: Div {
     override class var name: String { "div" }
     
     let account: CustAcct
+
+
+    public var items: [CustPOCInventorySoldObject]
+    
+    public var pocs: [CustPOCQuick]
+    
+    @State var controls: [CustFiscalInventoryControl]
+    
+    @State var sales: [CustSaleQuick]
+    
+    @State  var bodegas: [CustStoreBodegasQuick]
     
     init(
-        account: CustAcct
+        account: CustAcct,
+        items: [CustPOCInventorySoldObject],
+        pocs: [CustPOCQuick],
+        controls: [CustFiscalInventoryControl],
+        sales: [CustSaleQuick],
+        bodegas: [CustStoreBodegasQuick]
     ) {
         self.account = account
+        self.items = items
+        self.pocs = pocs
+        self.controls = controls
+        self.sales = sales
+        self.bodegas = bodegas
         super.init()
     }
     
     required init() {
         fatalError("init() has not been implemented")
     }
-    
-    @State var sales: [CustSaleQuick] = []
-    
-    @State var controls: [CustFiscalInventoryControl] = []
-    
+
     //// CustPOCInventorySoldObject.id : isCheked
     @State var selectedItemsState: [UUID:State<Bool>] = [:]
     
@@ -57,7 +74,7 @@ class CustConcessionView: Div {
         .height(31.px)
     
     lazy var productDiv = Div()
-        .custom("height", "calc(100% - 42px)")
+        .custom("height", "calc(100% - 100px)")
         .class(.roundDarkBlue)
         .padding(all: 3.px)
         .overflow(.auto)
@@ -130,7 +147,83 @@ class CustConcessionView: Div {
                             Div().clear(.both).height(7.px)
                             
                             self.productDiv
+                            
+                            Div().clear(.both).height(12.px)
+
+                            Div{
+
+                                Div{
+
+                                    Div("Unidades Select.")
+                                    .class(.oneLineText)
+                                    .width(75.percent)
+                                    .float(.left)
+
+                                    Div(self.$totalItemCount.map{ $0.toString })
+                                    .class(.oneLineText)
+                                    .width(25.percent)
+                                    .align(.right)
+                                    .float(.left)
+
+                                    Div().clear(.both)
+
+                                }
+                                .width(30.percent)
+                                .fontSize(18.px)
+                                .float(.left)
+
+                                Div{
+
+                                    Div("Precio Total")
+                                    .class(.oneLineText)
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div(self.$totalItemAmount.map{ $0.formatMoney })
+                                    .class(.oneLineText)
+                                    .width(50.percent)
+                                    .align(.right)
+                                    .float(.left)
+
+                                    Div().clear(.both)
+
+                                }
+                                .width(30.percent)
+                                .fontSize(18.px)
+                                .float(.left)
                                 
+                                Div{
+
+                                    Div{
+                                        Span("Vender")
+                                    }
+                                    .marginRight(7.px)
+                                    .class(.uibtn)
+                                    .float(.left)
+                                    .onClick {
+                                        self.removeFromConcession(isSale: true)
+                                    }
+                                    
+                                    Div{
+                                        Span("Devolución")
+                                    }
+                                    .marginRight(7.px)
+                                    .class(.uibtn)
+                                    .float(.left)
+                                    .onClick {
+                                        self.removeFromConcession(isSale: false)
+                                    }
+                                    
+                                    Div().clear(.both)
+                                }
+                                .width(40.percent)
+                                .align(.right)
+                                .float(.left)
+
+
+                                Div().clear(.both)
+                            }
+
                         }
                         .hidden(self.$itemsPOCRefrence.map{ $0.isEmpty })
                         .height(100.percent)
@@ -260,89 +353,59 @@ class CustConcessionView: Div {
                     
                         Div{
                             
-                            Div{
-                                Span("Auditar")
-                            }
-                            .marginRight(7.px)
-                            .class(.uibtn)
-                            .float(.right)
-                            .onClick {
-                                addToDom(ProductManagerView.AuditView(auditType: .concessionaire(self.account)))
-                            }
-                            
-                            Div{
-                                Span("+ Agregar")
-                            }
-                            .marginRight(7.px)
-                            .class(.uibtn)
-                            .float(.right)
-                            .onClick {
-                                addToDom(AddManualInventorieView(account: self.account))
-                            }
-                            
                             H2("Herramientas")
-                                .color(.white)
                                 .float(.left)
-                            Div().class(.clear)
+
+                            Div().class(.clear).marginTop(7.px)
+
+                            Div{
+    
+                                Div{
+                                     Img()
+                                        .src("skyline/media/zoom.png")
+                                        .marginRight(12.px)
+                                        .cursor(.pointer)
+                                        .height(18.px)
+
+                                    Span("Auditar")
+                                }
+                                .custom("width", "calc(100% - 14px)")
+                                .align(.center)
+                                .class(.uibtn)
+
+                                .onClick {
+                                    addToDom(ProductManagerView.AuditView(auditType: .concessionaire(self.account)))
+                                }
+                            }
+                            .width(50.percent)
+                            .float(.left)
+                            
+                            Div{
+                                Div{
+                                     Img()
+                                        .src("skyline/media/add.png")
+                                        .marginRight(12.px)
+                                        .cursor(.pointer)
+                                        .height(18.px)
+
+                                    Span("Agregar Manual")
+                                }
+                                .custom("width", "calc(100% - 14px)")
+                                .align(.center)
+                                .class(.uibtn)
+                                .onClick {
+                                    addToDom(AddManualInventorieView(account: self.account))
+                                }
+                            }
+                            .width(50.percent)
+                            .float(.left)
+
+                            Div().class(.clear).marginTop(7.px)
+
                         }
                         
                         Div().class(.clear).marginTop(7.px)
                         
-                        Div{
-                            Div("Unidades Seleccionadas")
-                                .width(50.percent)
-                                .color(.white)
-                                .float(.left)
-                            
-                            Div().marginTop(7.px)
-                            
-                            Div(self.$totalItemCount.map{ $0.toString })
-                                .width(50.percent)
-                                .color(.goldenRod)
-                                .float(.left)
-                            
-                            Div().height(7.px).clear(.both)
-                            
-                            Div("Precio Total")
-                                .width(50.percent)
-                                .color(.white)
-                                .float(.left)
-                            
-                            Div(self.$totalItemAmount.map{ $0.formatMoney })
-                                .width(50.percent)
-                                .color(.goldenRod)
-                                .float(.left)
-                            
-                            Div().clear(.both).height(7.px)
-                            
-                            Div{
-                                
-                                Div{
-                                    Span("Vender")
-                                }
-                                .marginRight(7.px)
-                                .class(.uibtn)
-                                .float(.left)
-                                .onClick {
-                                    self.removeFromConcession(isSale: true)
-                                }
-                                
-                                Div{
-                                    Span("Devolución")
-                                }
-                                .marginRight(7.px)
-                                .class(.uibtn)
-                                .float(.left)
-                                .onClick {
-                                    self.removeFromConcession(isSale: false)
-                                }
-                                
-                                Div().clear(.both)
-                            }
-                            
-                        }
-                        .custom("height", "calc(50% - 35px)")
-                        .overflow(.auto)
                         
                     }
                     .height(100.percent)
@@ -375,30 +438,11 @@ class CustConcessionView: Div {
         position(.absolute)
         height(100.percent)
         width(100.percent)
+        color(.white)
         left(0.px)
         top(0.px)
-        
-        loadingView(show: true)
-        
-        API.custAccountV1.loadConcessions(id: account.id) { resp in
-        
-            loadingView(show: false)
-            
-            guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
-                return
-            }
-            
-            guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
-                return
-            }
-            
-            guard let payload = resp.data else {
-                showError( .unexpectedResult, .payloadDecodError)
-                return
-            }
-            
+        /*
+
             self.sales = payload.sales
             
             self.pocRefrence = Dictionary(uniqueKeysWithValues: payload.pocs.map{ value in ( value.id, value ) })
@@ -418,7 +462,22 @@ class CustConcessionView: Div {
             
             self.processRecrenceItems()
             
+        */
+        self.pocRefrence = Dictionary(uniqueKeysWithValues: pocs.map{ value in ( value.id, value ) })
+        
+        self.itemsRefrence = Dictionary(uniqueKeysWithValues: items.map{ value in ( value.id, value ) })
+        
+        items.forEach { item in
+            if let _ = self.itemsPOCRefrence[item.POC] {
+                self.itemsPOCRefrence[item.POC]?.append(item)
+            }
+            else {
+                self.itemsPOCRefrence[item.POC] = [item]
+            }
         }
+        
+        self.processRecrenceItems()
+            
     }
     
     func processRecrenceItems(){

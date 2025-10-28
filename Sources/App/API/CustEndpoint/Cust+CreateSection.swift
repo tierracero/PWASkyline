@@ -1,5 +1,5 @@
 //
-//  Cust+CreateBodegaSection.swift
+//  Cust+CreateSection.swift
 //  
 //
 //  Created by Victor Cantu on 12/14/22.
@@ -11,31 +11,30 @@ import TCFireSignal
 
 extension CustAPIEndpointV1 {
     
-    static func createBodegaSection(
+    static func createSection(
+        storeId: UUID,
+        bodegaId: UUID,
         name: String,
         description: String,
-        store: UUID,
-        bodega: UUID,
         callback: @escaping ( (_ resp: APIResponseGeneric<CustStoreSeccionesSinc>?) -> () )
     ) {
         sendPost(
             rout,
             version,
-            "createBodegaSection",
-            CreateBodegaSectionRequest(
+            "createSection",
+            CreateSectionRequest(
+                storeId: storeId,
+                bodegaId: bodegaId,
                 name: name,
-                description: description,
-                store: store,
-                bodega: bodega
+                description: description
             )
-        ) { payload in
-            guard let data = payload else{
+        ) { data in
+            guard let data else{
                 callback(nil)
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<CustStoreSeccionesSinc>?.self, from: data)
-                callback(resp)
+                callback(try JSONDecoder().decode(APIResponseGeneric<CustStoreSeccionesSinc>?.self, from: data))
             }
             catch{
                 print("🔴 API_DECODING_ERROR")

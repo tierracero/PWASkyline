@@ -270,7 +270,7 @@ class AccountView: PageController {
         .fontSize(24.px)
     
     lazy var businessNameText = Div(self.$businessName.map{ $0.isEmpty ? "Nombre Negocio" : $0 })
-        .color(self.$username.map{ $0.isEmpty ? Color(r: 81, g: 85, b: 94) : .lightGray })
+        .color(self.$businessName.map{ $0.isEmpty ? Color(r: 81, g: 85, b: 94) : .lightGray })
         .class(.oneLineText)
         .fontSize(24.px)
     
@@ -333,7 +333,7 @@ class AccountView: PageController {
         .fontSize(24.px)
     
     lazy var curpText = Div(self.$curp.map{ $0.isEmpty ? "CURP" : $0 })
-        .color(self.$username.map{ $0.isEmpty ? Color(r: 81, g: 85, b: 94) : .lightGray })
+        .color(self.$curp.map{ $0.isEmpty ? Color(r: 81, g: 85, b: 94) : .lightGray })
         .class(.oneLineText)
         .fontSize(24.px)
     
@@ -725,7 +725,7 @@ class AccountView: PageController {
                         .class(.oneLineText)
                 }
                 
-                Div().class(.clear).marginBottom(3.px)
+                Div().class(.clear).height(3.px)
                 
                 Div{
                     
@@ -743,7 +743,7 @@ class AccountView: PageController {
                         .color(.goldenRod)
                         .fontSize(26.px)
                 }
-                Div().class(.clear).marginBottom(7.px)
+                Div().class(.clear).height(7.px)
                 
                 /// Tarjeta de Lealtad y usuario
                 Div{
@@ -1200,7 +1200,7 @@ class AccountView: PageController {
                 .width(50.percent)
                 .float(.left)
                 
-                Div().class(.clear).marginBottom(7.px)
+                Div().class(.clear).height(7.px)
                 
                 H3("Contacto General")
                     .color(.lightBlueText)
@@ -1234,7 +1234,7 @@ class AccountView: PageController {
                 .width(50.percent)
                 .float(.left)
                 
-                Div().class(.clear).marginBottom(7.px)
+                Div().class(.clear).height(7.px)
                 
                 H3("Datos y Contacto Fiscal")
                     .color(.lightBlueText)
@@ -1247,7 +1247,7 @@ class AccountView: PageController {
                 
                 self.businessNameText
                 
-                Div().class(.clear).marginBottom(7.px)
+                Div().class(.clear).height(7.px)
                 
                 /// fiscalProfileText
                 if !fiscalProfiles.isEmpty {
@@ -1266,7 +1266,7 @@ class AccountView: PageController {
                         .fontSize(26.px)
                 }
                 
-                Div().class(.clear).marginBottom(7.px)
+                Div().class(.clear).height(7.px)
                 
                 Label(LString(String.razon))
                 Div().class(.clear)
@@ -1309,13 +1309,13 @@ class AccountView: PageController {
                 }
                 Div().class(.clear)
                 
-                Div().class(.clear).marginBottom(7.px)
+                Div().class(.clear).height(7.px)
                 
                 H3("Contacto Fiscal")
                     .color(.lightBlueText)
                     .class(.oneLineText)
                 
-                Div().class(.clear).marginBottom(3.px)
+                Div().class(.clear).height(3.px)
                 
                 Div{
                     Label("Nombre")
@@ -1513,7 +1513,41 @@ class AccountView: PageController {
                 .class(.uibtn)
                 .float(.right)
                 .onClick{
-                    addToDom(CustConcessionView(account: self.account))
+
+                    loadingView(show: true)
+                    
+                    API.custAccountV1.loadConcessions(id: self.account.id) { resp in
+                    
+                        loadingView(show: false)
+                        
+                        guard let resp else {
+                            showError(.errorDeCommunicacion, .serverConextionError)
+                            return
+                        }
+                        
+                        guard resp.status == .ok else {
+                            showError(.errorGeneral, resp.msg)
+                            return
+                        }
+                        
+                        guard let payload = resp.data else {
+                            showError( .unexpectedResult, .payloadDecodError)
+                            return
+                        }
+
+                        let view = CustConcessionView(
+                                    account: self.account,
+                                    items: payload.items,
+                                    pocs: payload.pocs,
+                                    controls: payload.controls,
+                                    sales: payload.sales,
+                                    bodegas: payload.bodegas
+                                )
+
+                        addToDom(view)
+
+                    }
+                    
                 }
                 
                 H3("Cargos y Finanzas")
