@@ -24,10 +24,18 @@ class CreateBodegaView: Div {
     
     @State var bodegaDescription: String
     
-    var createTo: CreateRelationTo
+    @State var sectionName: String
+
+    var relationType: API.custAPIV1.CreateBodegaRelationType
+
+    // bodegaName: String,
+    //     bodegaDescription: String,
+    //     : String,
+    //     relationType: ,
 
     private var callback: ((
-        _ bodega: CustStoreBodegasSinc
+        _ bodega: CustStoreBodegasSinc,
+        _ seccion: CustStoreSeccionesQuickRef
     ) -> ())
     
     init(
@@ -36,9 +44,11 @@ class CreateBodegaView: Div {
         bodegaId: UUID?,
         bodegaName: String,
         bodegaDescription: String,
-        createTo: CreateRelationTo,
+        sectionName: String,
+        relationType: API.custAPIV1.CreateBodegaRelationType,
         callback: @escaping ((
-            _ bodega: CustStoreBodegasSinc
+            _ bodega: CustStoreBodegasSinc,
+            _ seccion: CustStoreSeccionesQuickRef
         ) -> ())
     ) {
         self.storeid = storeid
@@ -46,7 +56,8 @@ class CreateBodegaView: Div {
         self.bodegaId = bodegaId
         self.bodegaName = bodegaName
         self.bodegaDescription = bodegaDescription
-        self.createTo = createTo
+        self.sectionName = sectionName
+        self.relationType = relationType
         self.callback = callback
         
         super.init()
@@ -76,6 +87,16 @@ class CreateBodegaView: Div {
             self.saveBodega()
         }
     
+    lazy var newSeccionField = InputText(self.$sectionName)
+        .class(.textFiledBlackDark)
+        .placeholder("Nombre la primera seccion")
+        .width(90.percent)
+        .fontSize(23.px)
+        .height(28.px)
+        .onKeyUp {
+            self.checkSectionAvailability()
+        }
+
     @DOM override var body: DOM.Content {
         Div{
             
@@ -130,7 +151,24 @@ class CreateBodegaView: Div {
             }
             .class(.section)
             
+            
             Div().class(.clear).height(7.px)
+
+            Div{
+                
+                Label("Seccion")
+                    .fontSize(18.px)
+                    .color(.gray)
+                
+                Div{
+                    self.newSeccionField
+                }
+            }
+            .class(.section)
+            .hidden(self.$bodegaId.map { $0 != nil})
+            
+            Div().class(.clear).height(7.px)
+            .hidden(self.$bodegaId.map { $0 != nil})
             
             Div{
                 Div(self.$bodegaId.map{ ($0 == nil) ? "Crear Bodega" : "Guardar Datos"} )
@@ -253,11 +291,19 @@ class CreateBodegaView: Div {
         }
         else {
 
-             API.custAPIV1.createBodega(
-                name: name,
-                description: description,
-                storeId: storeid,
-                suportsSections: (createTo == .store)
+            let sectionName = sectionName.purgeSpaces
+
+            if sectionName.isEmpty {
+                showError(.campoRequerido, "Ingrese nombre de la seccion")
+                newSeccionField.select()
+                return
+            }
+
+            API.custAPIV1.createBodega(
+                bodegaName: name,
+                bodegaDescription: description,
+                sectionName: sectionName,
+                relationType: relationType
             ) { resp in
 
                 loadingView(show: false)
@@ -272,21 +318,26 @@ class CreateBodegaView: Div {
                     return
                 }
                 
-                guard let bodega = resp.data else {
+                guard let payload = resp.data else {
                     showError( .errorGeneral, .unexpenctedMissingPayload)
                     return
                 }
                 
                 print("⭐️  bodega  ⭐️")
                 
-                print(bodega)
-                
-                self.callback(.init(
-                    id: bodega.id,
-                    modifiedAt: bodega.modifiedAt,
-                    custStore: bodega.custStore,
-                    name: bodega.name
-                ))
+                self.callback(
+                    .init(
+                        id: payload.bodega.id,
+                        modifiedAt: payload.bodega.modifiedAt,
+                        custStore: payload.bodega.custStore,
+                        name: payload.bodega.name
+                    ),
+                    .init(
+                        id: payload.section.id,
+                        name: payload.section.name,
+                        custStoreBodegas: payload.section.custStoreBodegas
+                    )
+                )
                 
                 self.remove()
             }
@@ -296,10 +347,4 @@ class CreateBodegaView: Div {
     
     }
 
-}
-extension CreateBodegaView {
-    enum CreateRelationTo  {
-        case store
-        case other
-    }
 }

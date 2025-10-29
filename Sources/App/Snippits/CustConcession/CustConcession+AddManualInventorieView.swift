@@ -25,19 +25,23 @@ extension CustConcessionView {
         let profile: FiscalEndpointV1.Profile
 
         @State var bodegas: [CustStoreBodegasQuick]
+
+        @State var seccions: [CustStoreSeccionesQuickRef]
         
         init(
             account: CustAcct,
             newDocumentName: String,
             vendor: CustVendorsQuick,
             profile: FiscalEndpointV1.Profile,
-            bodegas: [CustStoreBodegasQuick]
+            bodegas: [CustStoreBodegasQuick],
+            seccions: [CustStoreSeccionesQuickRef]
         ) {
             self.account = account
             self.newDocumentName = newDocumentName
             self.vendor = vendor
             self.profile = profile
             self.bodegas = bodegas
+            self.seccions = seccions
             super.init()
         }
         
@@ -96,6 +100,8 @@ extension CustConcessionView {
         
         @State var bodegaListener = ""
 
+        @State var sectionListener = ""
+
         lazy var searchBox = InputText($searchTerm)
             .custom("background", "url('images/barcode.png') no-repeat scroll 7px 7px rgb(29, 32, 38)")
             .placeholder("Ingrese UPC/SKU/POC o Referencia")
@@ -149,6 +155,15 @@ extension CustConcessionView {
         .height(28.px)
         
         lazy var bodegaSelect = Select(self.$bodegaListener)
+        .body {
+            Option("Selecione Bodega")
+            .value("")
+        }
+        .custom("width","calc(100% - 24px)")
+        .class(.textFiledBlackDark)
+        .height(31.px)
+
+        lazy var sectionSelect = Select(self.$sectionListener)
         .body {
             Option("Selecione Bodega")
             .value("")
@@ -733,7 +748,19 @@ extension CustConcessionView {
                     if !isConfirmed {
                         return
                     }
-                    
+
+                    // CreateManualProductObject
+
+
+                // CreateManualProductObject(pocId: UUID, description: String, units: SoldObjectUnits, price: Int64?)
+                    let items: [CreateManualProductObject] = self.kart.map{ .init(
+                        pocId: $0.data.id,
+                        description: "\($0.data.name) \($0.data.brand) \($0.data.model)".purgeSpaces,
+                        units: .units(Int($0.data.units.fromCents)),
+                        price: nil
+                    ) }
+
+                    /*
                     let items: [SaleObjectItem] = self.kart.map{ .init(
                         id: $0.data.id,
                         store: custCatchStore,
@@ -745,7 +772,8 @@ extension CustConcessionView {
                         serie: nil,
                         description: "\($0.data.name) \($0.data.brand) \($0.data.model)".purgeSpaces
                     )}
-                    
+                    */
+                  
                     API.custAccountV1.addCustomerManualConcession(
                         storeId: custCatchStore,
                         accountId: self.account.id,
@@ -755,7 +783,8 @@ extension CustConcessionView {
                         documentFolio: self.docFolio,
                         vendorId: self.vendor.id,
                         profileId: self.profile.id,
-                        bodega: UUID(uuidString: self.bodegaListener)
+                        bodegaId: UUID(uuidString: self.bodegaListener),
+                        sectionId: UUID(uuidString: self.sectionListener)
                     ) { resp in
                         
                         loadingView(show: false)
@@ -804,6 +833,7 @@ extension CustConcessionView {
                             Td("S. Total").width(100)
                         })
                     }
+            
                 })
             )
         }

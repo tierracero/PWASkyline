@@ -12,15 +12,16 @@ import TCFireSignal
 extension CustAccountEndpointV1 {
     
     public static func addCustomerManualConcession(
-        storeId: UUID,
-        accountId: UUID,
-        items: [SaleObjectItem],
-        documentName: String,
-        documentSerie: String,
-        documentFolio: String,
-        vendorId: UUID,
-        profileId: UUID,
-        bodega: UUID?,
+            storeId: UUID,
+            accountId: UUID,
+            items: [CreateManualProductObject],
+            documentName: String,
+            documentSerie: String,
+            documentFolio: String,
+            vendorId: UUID,
+            profileId: UUID,
+            bodegaId: UUID?,
+            sectionId: UUID?,
         callback: @escaping ( (_ resp: APIResponseGeneric<AddCustomerManualConcessionResponse>?) -> () )) {
         
         sendPost(
@@ -36,7 +37,8 @@ extension CustAccountEndpointV1 {
                 documentFolio: documentFolio,
                 vendorId: vendorId,
                 profileId: profileId,
-                bodega: bodega
+                bodegaId: bodegaId,
+                sectionId: sectionId
             )
         ) { data in
             

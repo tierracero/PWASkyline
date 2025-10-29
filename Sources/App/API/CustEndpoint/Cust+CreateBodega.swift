@@ -12,21 +12,21 @@ import TCFireSignal
 extension CustAPIEndpointV1 {
     
     static func createBodega(
-        name: String,
-        description: String,
-        storeId: UUID,
-        suportsSections: Bool,
-        callback: @escaping ( (_ resp: APIResponseGeneric<CustStoreBodegas>?) -> () )
+        bodegaName: String,
+        bodegaDescription: String,
+        sectionName: String,
+        relationType: CreateBodegaRelationType,
+        callback: @escaping ( (_ resp: APIResponseGeneric<CreateBodegaResponse>?) -> () )
     ) {
         sendPost(
             rout,
             version,
             "createBodega",
             CreateBodegaRequest(
-                name: name,
-                description: description,
-                storeId: storeId,
-                suportsSections: suportsSections
+                bodegaName: bodegaName,
+                bodegaDescription: bodegaDescription,
+                sectionName: sectionName,
+                relationType: relationType
             )
         ) { data in
             guard let data else{
@@ -34,7 +34,7 @@ extension CustAPIEndpointV1 {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<CustStoreBodegas>?.self, from: data))
+                callback(try JSONDecoder().decode(APIResponseGeneric<CreateBodegaResponse>?.self, from: data))
             }
             catch{
                 print("🔴 API_DECODING_ERROR")

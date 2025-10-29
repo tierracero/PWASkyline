@@ -25,6 +25,8 @@ class CustConcessionView: Div {
     @State var sales: [CustSaleQuick]
     
     @State  var bodegas: [CustStoreBodegasQuick]
+
+    @State var seccions: [CustStoreSeccionesQuickRef]
     
     init(
         account: CustAcct,
@@ -32,7 +34,8 @@ class CustConcessionView: Div {
         pocs: [CustPOCQuick],
         controls: [CustFiscalInventoryControl],
         sales: [CustSaleQuick],
-        bodegas: [CustStoreBodegasQuick]
+        bodegas: [CustStoreBodegasQuick],
+        seccions: [CustStoreSeccionesQuickRef]
     ) {
         self.account = account
         self.items = items
@@ -40,6 +43,7 @@ class CustConcessionView: Div {
         self.controls = controls
         self.sales = sales
         self.bodegas = bodegas
+        self.seccions = seccions
         super.init()
     }
     
@@ -47,15 +51,20 @@ class CustConcessionView: Div {
         fatalError("init() has not been implemented")
     }
 
+    @State var hasAnyActiveElement: Bool = false
+
     //// CustPOCInventorySoldObject.id : isCheked
     @State var selectedItemsState: [UUID:State<Bool>] = [:]
     
     /// [ CustPOCInventorySoldObject.id : CustPOCInventorySoldObject ]
     @State var itemsRefrence: [UUID:CustPOCInventorySoldObject] = [:]
     
-    ///POC Groop
+    /// [ CustPOCInventorySoldObject.POC : [CustPOCInventorySoldObject] ]
     @State var itemsPOCRefrence: [UUID:[CustPOCInventorySoldObject]] = [:]
     
+    /// [`Bodega.id`: [ CustPOCInventorySoldObject.POC : [CustPOCInventorySoldObject] ] ]
+    @State var itemsPOCRefrenceByBodega: [ UUID: [UUID:[CustPOCInventorySoldObject]] ] = [:]
+
     @State var totalItemCount: Int = 0
     
     @State var totalItemAmount: Int64 = 0
@@ -106,7 +115,7 @@ class CustConcessionView: Div {
                 Div{
                     Div{
                         Table().noResult(label: "🛒 No hay articulos en concesion.")
-                            .hidden(self.$itemsPOCRefrence.map{ !$0.isEmpty })
+                            .hidden(self.$hasAnyActiveElement)
                             .height(100.percent)
                         
                         Div{
@@ -224,7 +233,7 @@ class CustConcessionView: Div {
                             }
 
                         }
-                        .hidden(self.$itemsPOCRefrence.map{ $0.isEmpty })
+                        .hidden(self.$hasAnyActiveElement.map{ !$0 })
                         .height(100.percent)
                         
                     }
@@ -235,9 +244,10 @@ class CustConcessionView: Div {
                 .width(60.percent)
                 .float(.left)
                 
-                    
                 Div{
+
                     Div{
+
                         Div{
                             H2("Consessiones")
                                 .color(self.$currentSideView.map{ ($0 == .concesionView) ? .lightBlueText : .white })
@@ -378,7 +388,8 @@ class CustConcessionView: Div {
                             }
                             .width(50.percent)
                             .float(.left)
-                            
+
+                                                           
                             Div{
                                 Div{
                                      Img()
@@ -396,12 +407,13 @@ class CustConcessionView: Div {
 
                                     let view = StartManualInventory { name, vendor, profile in
 
-                                            let view = AddManualInventorieView(
+                                            let view: CustConcessionView.AddManualInventorieView = AddManualInventorieView(
                                                 account: self.account,
                                                 newDocumentName: name,
                                                 vendor: vendor,
                                                 profile: profile,
-                                                bodegas: self.bodegas
+                                                bodegas: self.bodegas,
+                                                seccions: self.seccions
                                             )
 
                                             addToDom(view)
@@ -415,7 +427,7 @@ class CustConcessionView: Div {
                             }
                             .width(50.percent)
                             .float(.left)
-
+                            
                             Div().class(.clear).height(12.px)
 
                             Div{
@@ -439,12 +451,16 @@ class CustConcessionView: Div {
                                         bodegaId: nil,
                                         bodegaName: "",
                                         bodegaDescription: "",
-                                        createTo: .other
-                                    ) { bodega in
+                                        sectionName: "",
+                                        relationType: .consessioner(self.account.id)
+                                    ) { bodega, seccion in
+
                                         self.bodegas.append(.init(
                                             id: bodega.id,
                                             name: bodega.name
                                         ))
+
+                                        self.seccions.append(seccion)
 
                                     }
 
@@ -453,7 +469,7 @@ class CustConcessionView: Div {
                             }
                             .width(50.percent)
                             .float(.left)
-
+                            
                             Div{
                                 
                             }
@@ -471,6 +487,7 @@ class CustConcessionView: Div {
                     }
                     .height(100.percent)
                     .margin(all: 3.px)
+                    
                 }
                 .height(100.percent)
                 .width(40.percent)
@@ -502,41 +519,28 @@ class CustConcessionView: Div {
         color(.white)
         left(0.px)
         top(0.px)
-        /*
 
-            self.sales = payload.sales
-            
-            self.pocRefrence = Dictionary(uniqueKeysWithValues: payload.pocs.map{ value in ( value.id, value ) })
-            
-            self.itemsRefrence = Dictionary(uniqueKeysWithValues: payload.items.map{ value in ( value.id, value ) })
-            
-            self.controls = payload.controls
-            
-            payload.items.forEach { item in
-                if let _ = self.itemsPOCRefrence[item.POC] {
-                    self.itemsPOCRefrence[item.POC]?.append(item)
-                }
-                else {
-                    self.itemsPOCRefrence[item.POC] = [item]
-                }
-            }
-            
-            self.processRecrenceItems()
-            
-        */
         self.pocRefrence = Dictionary(uniqueKeysWithValues: pocs.map{ value in ( value.id, value ) })
         
         self.itemsRefrence = Dictionary(uniqueKeysWithValues: items.map{ value in ( value.id, value ) })
         
         items.forEach { item in
+
+
+
             if let _ = self.itemsPOCRefrence[item.POC] {
                 self.itemsPOCRefrence[item.POC]?.append(item)
             }
             else {
                 self.itemsPOCRefrence[item.POC] = [item]
             }
+
+
+
         }
         
+        hasAnyActiveElement = ( !items.isEmpty || !bodegas.isEmpty)
+
         self.processRecrenceItems()
             
     }
@@ -726,7 +730,7 @@ class CustConcessionView: Div {
                 return true
             })
             
-            var tableBody = TBody ().hidden($viewItemsHidden)
+            let tableBody = TBody ().hidden($viewItemsHidden)
             
             items.forEach { item in
                 
@@ -789,11 +793,6 @@ class CustConcessionView: Div {
                                             
                                         }
                                         
-                                        @State var itemsRefrence: [UUID:CustPOCInventorySoldObject] = [:]
-                                        
-                                        ///POC Groop
-                                        @State var itemsPOCRefrence: [UUID:[CustPOCInventorySoldObject]] = [:]
-                                        
                                     }
                                     addToDom(view)
                                 }
@@ -813,6 +812,20 @@ class CustConcessionView: Div {
             self.productDiv.appendChild(table)
             
         }
+
+        bodegas.forEach{ bodega in
+
+            let view = BodegaView(
+                storeId: self.account.id,
+                storeName: "Conseccion \(self.account.businessName)",
+                bodega: bodega,
+                seccions: []
+            )
+
+            self.productDiv.appendChild(view)
+            
+        }
+
     }
     
     func calculateSelectedItems(){
