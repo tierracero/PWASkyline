@@ -23,7 +23,8 @@ class StoreItemPOCView: Div {
             _ title: String,
             _ subTitle: String,
             _ price: Int64,
-            _ avatar: String
+            _ avatar: String,
+            _ reqSeries: Bool
         ) -> (),
         _ deleted: @escaping (
         ) -> ()
@@ -37,7 +38,8 @@ class StoreItemPOCView: Div {
                 _ title: String,
                 _ subTitle: String,
                 _ price: Int64,
-                _ avatar: String
+                _ avatar: String,
+                _ reqSeries: Bool
             ) -> (),
             _ deleted: @escaping (
             ) -> ()
@@ -107,7 +109,7 @@ class StoreItemPOCView: Div {
         
         onClick {
             
-            self.callback { title, subTitle, price, avatar in
+            self.callback { title, subTitle, price, avatar, reqSeries in
                 
                 self.nameView.innerHTML = ""
                 
@@ -137,7 +139,7 @@ class StoreItemPOCView: Div {
             
         }
         
-        self.price = poc.p
+        self.price = poc.price
         
         
         if !poc.a.isEmpty {

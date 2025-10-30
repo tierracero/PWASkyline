@@ -241,7 +241,7 @@ class FiscalConceptManualView: Div {
                         pocid: self.pocid,
                         titleText: "",
                         quickView: true
-                    ) { pocid, upc, brand, model, name, cost, price, avatar in
+                    ) { pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
                         
                         self.upc = upc
                         self.brand = brand

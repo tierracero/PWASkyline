@@ -138,7 +138,7 @@ class BudgetEditItemView: Div {
                                 pocid: self.objectid,
                                 titleText: "",
                                 quickView: false
-                            ) {  _, _, _, _, _, _, _, _ in
+                            ) {  _, _, _, _, _, _, _, _, _ in
                                 
                             } deleted: {
                                 

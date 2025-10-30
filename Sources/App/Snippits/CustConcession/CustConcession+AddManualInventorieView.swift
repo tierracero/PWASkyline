@@ -149,14 +149,15 @@ extension CustConcessionView {
 
                         addToDom(ConfirmConcessionView(
                             item: .init(
-                                i: item.i,
-                                u: item.u,
-                                n: item.n,
-                                b: item.b,
-                                m: item.m,
-                                p: item.p,
-                                a: item.a,
-                                c: 0
+                                id: item.i,
+                                upc: item.u,
+                                name: item.n,
+                                brand: item.b,
+                                model: item.m,
+                                price: item.p,
+                                avatar: item.a,
+                                units: nil,
+                                reqSeries: nil
                             )
                         ){ item, units in
                             self.addItem(item: item, units: units)
@@ -289,18 +290,19 @@ extension CustConcessionView {
                                 pocid: nil,
                                 titleText: titleText,
                                 quickView: true
-                            ) { pocid, upc, brand, model, name, cost, price, avatar in
+                            ) { pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
                                 
                                 addToDom(ConfirmConcessionView(
                                     item: .init(
-                                        i: pocid,
-                                        u: upc,
-                                        n: name,
-                                        b: brand,
-                                        m: model,
-                                        p: price,
-                                        a: avatar.explode("/").last?.replace(from: "thump_", to: "") ?? "",
-                                        c: 0
+                                        id: pocid,
+                                        upc: upc,
+                                        name: name,
+                                        brand: brand,
+                                        model: model,
+                                        price: price,
+                                        avatar: avatar,
+                                        units: nil,
+                                        reqSeries: reqSeries
                                     )
                                 ){ item, units in
                                     self.addItem(
@@ -804,13 +806,13 @@ extension CustConcessionView {
                             self.kartItems = resp.map{ item in
                                 .init(
                                     t: .product,
-                                    i: item.i,
-                                    u: item.u,
-                                    n: item.n,
-                                    b: item.b,
-                                    m: item.m,
-                                    p: item.p,
-                                    a: item.a
+                                    i: item.id,
+                                    u: item.upc,
+                                    n: item.name,
+                                    b: item.brand,
+                                    m: item.model,
+                                    p: item.price,
+                                    a: item.avatar
                                 )
                             }
 
@@ -831,13 +833,13 @@ extension CustConcessionView {
                 price: 0,
                 data: .init(
                     t: .product,
-                    i: item.i,
-                    u: item.u,
-                    n: item.n,
-                    b: item.b,
-                    m: item.m,
+                    i: item.id,
+                    u: item.upc,
+                    n: item.name,
+                    b: item.brand,
+                    m: item.model,
                     p: 0,
-                    a: item.a
+                    a: item.avatar
                 )
             ) { id in
                 
@@ -862,7 +864,7 @@ extension CustConcessionView {
                     kartItemView: row,
                     data: .init(
                         type: .product,
-                        id: item.i,
+                        id: item.id,
                         store: custCatchStore,
                         ids: [],
                         series: [],
@@ -871,11 +873,11 @@ extension CustConcessionView {
                         unitPrice: 0,
                         subTotal: 0,
                         costType: .cost_a,
-                        name: item.n,
-                        brand: item.b,
-                        model: item.m,
+                        name: item.name,
+                        brand: item.brand,
+                        model: item.model,
                         pseudoModel: "",
-                        avatar: item.a,
+                        avatar: item.avatar,
                         fiscCode: "",
                         fiscUnit: "",
                         preRegister: false

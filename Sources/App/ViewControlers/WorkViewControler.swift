@@ -2077,7 +2077,7 @@ class WorkViewControler: PageController {
                             pocid: payload.objid,
                             titleText: "",
                             quickView: false
-                        ) { pocid, upc, brand, model, name, cost, price, avatar in
+                        ) { pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
                             
                         } deleted: { 
                             

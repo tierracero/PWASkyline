@@ -3547,6 +3547,7 @@ class ToolReciveSendInventory: Div {
         _ cost: Int64?,
         _ price: Int64,
         _ avatar: String,
+        _ reqSeries: Bool,
         _ items: [CustManualInventoryCatchInventory] = [],
         _ autoLoad: Bool = true
     ) {
@@ -3725,8 +3726,8 @@ class ToolReciveSendInventory: Div {
         
         addToDom(ToolReciveSendInventorySelectPOC(
             isManual: true,
-            selectedPOC: {  pocid, upc, brand, model, name, cost, price, avatar in
-                self.addPOC(pocid, upc, brand, model, name, cost, price, avatar)
+            selectedPOC: {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
+                self.addPOC(pocid, upc, brand, model, name, cost, price, avatar, reqSeries)
             },
             createPOC: { type, levelid, titleText in
                 
@@ -3737,8 +3738,8 @@ class ToolReciveSendInventory: Div {
                     pocid: nil,
                     titleText: titleText,
                     quickView: true
-                ) { pocid, upc, brand, model, name, cost, price, avatar in
-                    self.addPOC(pocid, upc, brand, model, name, nil, price, avatar)
+                ) { pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
+                    self.addPOC(pocid, upc, brand, model, name, nil, price, avatar, reqSeries)
                 } deleted: { }
                 
                 addToDom( view )
@@ -4000,6 +4001,7 @@ class ToolReciveSendInventory: Div {
                 item.name,
                 item.cost,
                 item.price,
+                item.reqSeries,
                 item.avatar,
                 item.intentory,
                 false

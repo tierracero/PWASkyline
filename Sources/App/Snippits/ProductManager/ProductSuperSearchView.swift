@@ -179,8 +179,8 @@ class ProductSuperSearchView: Div {
                                     pocid: item.i,
                                     titleText: "",
                                     quickView: false
-                                ) {  pocid, upc, brand, model, name, cost, price, avatar in
-                                    update( name, "\(upc) \(brand) \(model)", price, avatar)
+                                ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
+                                    update( name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
                                 } deleted: {
                                     deleted()
                                 }

@@ -105,8 +105,8 @@ extension CustConcessionView {
                         .marginBottom(3.px)
                         .color(.gray)
                     
-                    Div(self.item.n.isEmpty ? "SIN NOMBRE" : self.item.n)
-                        .color(self.item.n.isEmpty ? .gray : .white)
+                    Div(self.item.name.isEmpty ? "SIN NOMBRE" : self.item.name)
+                        .color(self.item.name.isEmpty ? .gray : .white)
                         .class(.oneLineText)
                         .marginBottom(7.px)
                     
@@ -114,8 +114,8 @@ extension CustConcessionView {
                         .marginBottom(3.px)
                         .color(.gray)
                     
-                    Div(self.item.b.isEmpty ? "SIN MARCA" : self.item.b)
-                        .color(self.item.b.isEmpty ? .gray : .white)
+                    Div(self.item.brand.isEmpty ? "SIN MARCA" : self.item.brand)
+                        .color(self.item.brand.isEmpty ? .gray : .white)
                         .class(.oneLineText)
                         .marginBottom(7.px)
                     
@@ -123,8 +123,8 @@ extension CustConcessionView {
                         .marginBottom(3.px)
                         .color(.gray)
                     
-                    Div(self.item.m.isEmpty ? "SIN MODELO" : self.item.m)
-                        .color(self.item.m.isEmpty ? .gray : .white)
+                    Div(self.item.model.isEmpty ? "SIN MODELO" : self.item.model)
+                        .color(self.item.model.isEmpty ? .gray : .white)
                         .class(.oneLineText)
                         .marginBottom(7.px)
                     
@@ -183,8 +183,8 @@ extension CustConcessionView {
             left(0.px)
             top(0.px)
             
-            if let pDir = customerServiceProfile?.account.pDir, !item.a.isEmpty {
-                avatarImg.load("https://intratc.co/cdn/\(pDir)/thump_\(item.a)")
+            if let pDir = customerServiceProfile?.account.pDir, !item.avatar.isEmpty {
+                avatarImg.load("https://intratc.co/cdn/\(pDir)/thump_\(item.avatar)")
             }
             
         }

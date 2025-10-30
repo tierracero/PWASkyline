@@ -382,7 +382,7 @@ class RequestTastView: Div {
         case .product:
             addToDom(ToolReciveSendInventorySelectPOC(
                 isManual: true,
-                selectedPOC: { pocid, upc, brand, model, name, cost, price, avatar in
+                selectedPOC: { pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
                     self.relationId = pocid
                     self.relationName = "\(brand) \(model) \(name)"
                 }, createPOC: { type, levelid, titleText in
@@ -393,7 +393,7 @@ class RequestTastView: Div {
                         pocid: nil,
                         titleText: titleText,
                         quickView: true
-                    ) { pocid, upc, brand, model, name, cost, price, avatar in
+                    ) { pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
                         self.relationId = pocid
                         self.relationName = "\(brand) \(model) \(name)"
                     } deleted: {

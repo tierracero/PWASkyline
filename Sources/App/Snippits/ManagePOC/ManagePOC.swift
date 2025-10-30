@@ -38,7 +38,8 @@ class ManagePOC: Div {
         _ name: String,
         _ cost: Int64,
         _ price: Int64,
-        _ avatar: String
+        _ avatar: String,
+        _ reqSeries: Bool
     ) -> ())
     
     private var deleted: ((
@@ -60,7 +61,8 @@ class ManagePOC: Div {
             _ name: String,
             _ cost: Int64,
             _ price: Int64,
-            _ avatar: String
+            _ avatar: String,
+            _ reqSeries: Bool
         ) -> ()),
         deleted: @escaping ( (
         ) -> ())
@@ -2608,7 +2610,7 @@ class ManagePOC: Div {
                 .load("\(_path)thump_\($0)")
             
             if let pocid = self.pocid {
-                self.callback( pocid, self.upc, self.brand, self.model, self.name, (Float(self.cost.replace(from: ",", to: "")) ?? 0).toCents, (Float(self.pricea.replace(from: ",", to: "")) ?? 0).toCents, $0)
+                self.callback( pocid, self.upc, self.brand, self.model, self.name, (Float(self.cost.replace(from: ",", to: "")) ?? 0).toCents, (Float(self.pricea.replace(from: ",", to: "")) ?? 0).toCents, $0, self.reqSeries)
             }
         }
         
@@ -4649,7 +4651,8 @@ class ManagePOC: Div {
                     self.name,
                     _cost.toCents,
                     _pricea.toCents,
-                    self.avatar
+                    self.avatar,
+                    self.reqSeries
                 )
                 
             }
@@ -4772,7 +4775,8 @@ class ManagePOC: Div {
                     self.name,
                     _cost.toCents,
                     _pricea.toCents,
-                    self.avatar
+                    self.avatar,
+                    self.reqSeries
                 )
                 
                 self.remove()

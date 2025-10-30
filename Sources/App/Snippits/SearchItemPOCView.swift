@@ -85,7 +85,7 @@ class SearchItemPOCView: Div {
                         .class(.oneLineText)
                         .color(.white)
 
-                        if let count = self.poc.c {
+                        if let count = self.poc.units {
                             Div("#\(count.toString)")
                             .class(.oneLineText)
                             .fontSize(18.px)
@@ -150,17 +150,17 @@ class SearchItemPOCView: Div {
             
         }
         
-        self.price = poc.p
+        self.price = poc.price
         
-        if !poc.a.isEmpty {
+        if !poc.avatar.isEmpty {
             if let pDir = customerServiceProfile?.account.pDir {
-                avatar.load("https://intratc.co/cdn/\(pDir)/thump_\(poc.a)")
+                avatar.load("https://intratc.co/cdn/\(pDir)/thump_\(poc.avatar)")
             }
         }
         
         let termParts = searchTerm.explode(" ")
         
-        var valueParts = self.poc.n.explode(" ")
+        var valueParts = self.poc.name.explode(" ")
         
         valueParts.forEach { _value in
             
@@ -263,7 +263,7 @@ class SearchItemPOCView: Div {
             
         }
      
-        valueParts = "\(self.poc.u) \(self.poc.b) \(self.poc.m)".purgeSpaces.explode(" ")
+        valueParts = "\(self.poc.upc) \(self.poc.brand) \(self.poc.model)".purgeSpaces.explode(" ")
         
         valueParts.forEach { _value in
             
