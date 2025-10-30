@@ -284,10 +284,8 @@ class StartManualInventory: Div {
 
     override func didAddToDOM() {
         super.didAddToDOM()
-
-        newDocumentNameField.select()
-
         
+        newDocumentNameField.select()
 
     }
 

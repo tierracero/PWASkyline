@@ -102,7 +102,14 @@ extension CustConcessionView {
 
         @State var sectionListener = ""
 
-        lazy var searchBox = InputText($searchTerm)
+        @State var kartItems: [SearchChargeResponse] = []
+
+        @State var currentSeccions: [CustStoreSeccionesQuickRef] = []
+
+        /// [ CustStoreBodegas.id: [CustStoreSeccionesQuickRef] ]
+        var seccionRefrence: [ UUID: [CustStoreSeccionesQuickRef] ] = [:]
+
+        lazy var searchBox = InputText(self.$searchTerm)
             .custom("background", "url('images/barcode.png') no-repeat scroll 7px 7px rgb(29, 32, 38)")
             .placeholder("Ingrese UPC/SKU/POC o Referencia")
             .backgroundSize(h: 18.px, v: 18.px)
@@ -115,12 +122,56 @@ extension CustConcessionView {
             .color(.white)
             .float(.left)
             .onFocus { tf in
-                self.resultBox.innerHTML = ""
-                tf.text = ""
+                self.kartItems.removeAll()
             }
         
-        lazy var resultBox = Div()
+        lazy var resultBox = Div{
+            Div{
+                ForEach(self.$kartItems) { item in
+                SearchChargeView(
+                        data: .init(
+                            t: .product,
+                            i: item.i,
+                            u: item.u,
+                            n: item.n,
+                            b: item.b,
+                            m: item.m,
+                            p: item.p,
+                            a: item.a
+                        ),
+                        costType: .cost_a
+                    ) { item in
+                        
+                        self.kartItems.removeAll()
+                        /*
+                        self.resultBox.innerHTML = ""
+                        */
+
+                        addToDom(ConfirmProductView(
+                            item: .init(
+                                i: item.i,
+                                u: item.u,
+                                n: item.n,
+                                b: item.b,
+                                m: item.m,
+                                p: item.p,
+                                a: item.a,
+                                c: 0
+                            )
+                        ){ item, units in
+                            self.addItem(item: item, units: units)
+                        })
+                        
+                    }
+                    .custom("width", "calc(50% - 28px)")
+                    .marginRight(3.px)
+                    .float(.left)
+                }
+            }
+            .margin(all: 3.px)
+        }
             .class(.transparantBlackBackGround, .roundDarkBlue)
+            .hidden(self.$kartItems.map{ $0.isEmpty })
             .maxHeight(70.percent)
             .position(.absolute)
             .overflow(.auto)
@@ -165,12 +216,24 @@ extension CustConcessionView {
 
         lazy var sectionSelect = Select(self.$sectionListener)
         .body {
-            Option("Selecione Bodega")
+            Option("Selecione Seccion")
             .value("")
         }
         .custom("width","calc(100% - 24px)")
         .class(.textFiledBlackDark)
         .height(31.px)
+        .hidden(self.$currentSeccions.map{ $0.isEmpty })
+
+        lazy var sectionSelectDisabled = Select()
+        .body {
+            Option("Selecione Seccion")
+            .value("")
+        }
+        .custom("width","calc(100% - 24px)")
+        .class(.textFiledBlackDark)
+        .disabled(true)
+        .height(31.px)
+        .hidden(self.$currentSeccions.map{ !$0.isEmpty })
 
         @DOM override var body: DOM.Content {
             
@@ -184,6 +247,27 @@ extension CustConcessionView {
                             self.remove()
                         }
                     
+                    Div{
+                        Div{
+                            Img()
+                                .src("/skyline/media/add.png")
+                                .height(24.px)
+                        }
+                        .paddingRight(7.px)
+                        .paddingTop(4.px)
+                        .float(.left)
+                        
+                        Span("Crear Nuevo Producto")
+                            .color(.gray)
+                        
+                        Div().clear(.both)
+
+                    }
+                    .class(.uibtnLarge)
+                    .onClick{
+                        
+                    }
+
                     H2("Agregar concesión del proveedor")
                         .color(.lightBlueText)
                         .marginLeft(7.px)
@@ -224,8 +308,8 @@ extension CustConcessionView {
                                 .fontSize(18.px)
                                 .color(.gray)
                             
-                            Div( self.$receptorRfc.map{ $0.isEmpty ? "XAXX010101000" : $0 } )
-                                .color(self.$receptorRfc.map{ $0.isEmpty ? .grayContrast : .white })
+                            Div( self.$receptorRfc.map{ $0.purgeSpaces.isEmpty ? "XAXX010101000" : $0 } )
+                                .color(self.$receptorRfc.map{ $0.purgeSpaces.isEmpty ? .grayContrast : .white })
                             .class(.textFiledBlackDarkReadMode, .oneLineText)
                             .fontSize(18.px)
                             
@@ -237,8 +321,8 @@ extension CustConcessionView {
                                 .color(.gray)
                                 .fontSize(14.px)
                             
-                            Div(self.$receptorRazon.map { $0.isEmpty ? "Razon Social" : $0 })
-                                .color(self.$receptorRazon.map{ $0.isEmpty ? .grayContrast : .white })
+                            Div(self.$receptorRazon.map { $0.purgeSpaces.isEmpty ? "Razon Social" : $0 })
+                                .color(self.$receptorRazon.map{ $0.purgeSpaces.isEmpty ? .grayContrast : .white })
                                 .class(.textFiledBlackDarkReadMode, .oneLineText)
                                 .fontSize(18.px)
                             
@@ -279,8 +363,8 @@ extension CustConcessionView {
                                 .fontSize(18.px)
                                 .color(.gray)
                             
-                            Div( self.$vendorFolio.map{ $0.isEmpty ? "veXX-0000" : $0 } )
-                                .color(self.$vendorFolio.map{ $0.isEmpty ? .grayContrast : .white })
+                            Div( self.$vendorFolio.map{ $0.purgeSpaces.isEmpty ? "veXX-0000" : $0 } )
+                                .color(self.$vendorFolio.map{ $0.purgeSpaces.isEmpty ? .grayContrast : .white })
                             .class(.textFiledBlackDarkReadMode, .oneLineText)
                             .fontSize(18.px)
                             
@@ -297,8 +381,8 @@ extension CustConcessionView {
                                 .fontSize(18.px)
                                 .color(.gray)
                             
-                            Div(self.$vendorRfc.map { $0.isEmpty ? "XAXX010101000" : $0 })
-                                .color(self.$vendorRfc.map{ $0.isEmpty ? .grayContrast : .white })
+                            Div(self.$vendorRfc.map { $0.purgeSpaces.isEmpty ? "XAXX010101000" : $0 })
+                                .color(self.$vendorRfc.map{ $0.purgeSpaces.isEmpty ? .grayContrast : .white })
                                 .class(.textFiledBlackDarkReadMode, .oneLineText)
                                 .fontSize(18.px)
                             
@@ -310,8 +394,8 @@ extension CustConcessionView {
                                 .color(.gray)
                                 .fontSize(14.px)
                             
-                            Div(self.$vendorRazon.map { $0.isEmpty ? "Razon Social" : $0 })
-                                .color(self.$vendorRazon.map{ $0.isEmpty ? .grayContrast : .white })
+                            Div(self.$vendorRazon.map { $0.purgeSpaces.isEmpty ? "Razon Social" : $0 })
+                                .color(self.$vendorRazon.map{ $0.purgeSpaces.isEmpty ? .grayContrast : .white })
                                 .class(.textFiledBlackDarkReadMode, .oneLineText)
                                 .fontSize(18.px)
                             
@@ -324,8 +408,8 @@ extension CustConcessionView {
                                 .color(.gray)
                                 .fontSize(14.px)
                             
-                            Div(self.$businessName.map { $0.isEmpty ? "Nombre Empresa" : $0 })
-                                .color(self.$businessName.map{ $0.isEmpty ? .grayContrast : .white })
+                            Div(self.$businessName.map { $0.purgeSpaces.isEmpty ? "Nombre Empresa" : $0 })
+                                .color(self.$businessName.map{ $0.purgeSpaces.isEmpty ? .grayContrast : .white })
                                 .class(.textFiledBlackDarkReadMode, .oneLineText)
                                 .fontSize(18.px)
                             
@@ -348,17 +432,17 @@ extension CustConcessionView {
                             
                             Div{//
                                 
-                                Span(self.$finaceContact.map{ $0.isEmpty ? "8341230000" : $0 })
-                                    .color(self.$finaceContact.map{ $0.isEmpty ? .grayContrast : .white })
+                                Span(self.$finaceContact.map{ $0.purgeSpaces.isEmpty ? "8341230000" : $0 })
+                                    .color(self.$finaceContact.map{ $0.purgeSpaces.isEmpty ? .grayContrast : .white })
                                 
                                 Span(" / ")
-                                    .color(self.$oporationContact.map{ $0.isEmpty ? .grayContrast : .white })
+                                    .color(self.$oporationContact.map{ $0.purgeSpaces.isEmpty ? .grayContrast : .white })
                                 
-                                Span(self.$oporationContact.map{ $0.isEmpty ? "8341230000" : $0 })
-                                    .color(self.$oporationContact.map{ $0.isEmpty ? .grayContrast : .white })
+                                Span(self.$oporationContact.map{ $0.purgeSpaces.isEmpty ? "8341230000" : $0 })
+                                    .color(self.$oporationContact.map{ $0.purgeSpaces.isEmpty ? .grayContrast : .white })
                                 
                             }
-                            .color(self.$docuuid.map{ $0.isEmpty ? .grayContrast : .white })
+                            .color(self.$docuuid.map{ $0.purgeSpaces.isEmpty ? .grayContrast : .white })
                             .class(.textFiledBlackDarkReadMode, .oneLineText)
                             
                         }.marginBottom(3.px)
@@ -370,8 +454,8 @@ extension CustConcessionView {
                                 .fontSize(14.px)
                                 .color(.gray)
                             
-                            Div(self.$docuuid.map{ $0.isEmpty ? "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" : $0 })
-                                .color(self.$docuuid.map{ $0.isEmpty ? .grayContrast : .white })
+                            Div(self.$docuuid.map{ $0.purgeSpaces.isEmpty ? "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" : $0 })
+                                .color(self.$docuuid.map{ $0.purgeSpaces.isEmpty ? .grayContrast : .white })
                                 .class(.textFiledBlackDarkReadMode, .oneLineText)
                                 .fontSize(12.px)
                             
@@ -400,23 +484,7 @@ extension CustConcessionView {
                                 .width(50.percent)
                                 .float(.left)
                             }
-
                         }
-                        
-                        /// Forma de Pago
-                        Div{
-                            
-                            Label("Forma de Pago")
-                                .color(.gray)
-                                .fontSize(14.px)
-                            
-                            Div(self.$paymentForm.map { ($0 == nil) ? "Forma de Pago" : ($0?.description ?? "") })
-                                .color(self.$paymentForm.map{ ($0 == nil) ? .grayContrast : .white })
-                                .class(.textFiledBlackDarkReadMode, .oneLineText)
-                                .fontSize(18.px)
-                                
-                        }
-                        
                     }
                     .marginRight(1.percent)
                     .width(24.percent)
@@ -435,10 +503,10 @@ extension CustConcessionView {
                                 .marginLeft(0.px)
                                 .fontSize(18.px)
                             
-                            Div( self.$total.map{ $0.isEmpty ? "0.00" : $0 } )
-                                .color(self.$total.map{ $0.isEmpty ? .grayContrast : .white })
-                            .class(.textFiledBlackDarkReadMode, .oneLineText)
-                            .fontSize(18.px)
+                            Div( self.$total.map{ $0.purgeSpaces.isEmpty ? "0.00" : $0 } )
+                                .color(self.$total.map{ $0.purgeSpaces.isEmpty ? .grayContrast : .white })
+                                .class(.textFiledBlackDarkReadMode, .oneLineText)
+                                .fontSize(18.px)
                             
                         }.paddingBottom(3.px).class(.section)
                         
@@ -471,7 +539,7 @@ extension CustConcessionView {
                                 .fontSize(18.px)
                             
                             Div( self.$totalUnits.map{ $0 == 0 ? "0" : $0.toString } )
-                                .color(self.$total.map{ $0.isEmpty ? .grayContrast : .white })
+                                .color(self.$total.map{ $0.purgeSpaces.isEmpty ? .grayContrast : .white })
                                 .class(.textFiledBlackDarkReadMode, .oneLineText)
                                 .fontSize(18.px)
                             
@@ -479,10 +547,21 @@ extension CustConcessionView {
                         
                         Div{
                             self.bodegaSelect
+
+                            Div().height(7.px)
                         }
                         .hidden(self.$bodegas.map{ $0.isEmpty })
+
+                        Div{
+
+                            self.sectionSelect
+
+                            self.sectionSelectDisabled
+
+                            Div().height(7.px)
+                        }
+                        .hidden(self.$seccions.map{ $0.isEmpty })
                         
-                    
                     }
                     .marginRight(1.percent)
                     .width(24.percent)
@@ -498,23 +577,30 @@ extension CustConcessionView {
                 Div{
                     self.itemGrid
                 }
-                .custom("height", "calc(100% - 300px)")
+                .custom("height", "calc(100% - 310px)")
                 .padding(all: 7.px)
                 .class(.roundDarkBlue)
                 .overflow(.auto)
                 .onClick {
-                    self.resultBox.innerHTML = ""
+                    
+                    self.kartItems.removeAll()
+
                 }
                 
                 Div{
+
                     Div("Agregar Concesión")
                         .class(.uibtnLargeOrange)
+                        .marginRight(5.px)
                         .hidden(self.$kart.map{ $0.isEmpty })
+                        
                         .onClick {
                             self.addConcession()
                         }
+
                     Div("Agregar Concesión")
                         .class(.uibtnLarge)
+                        .marginRight(5.px)
                         .cursor(.default)
                         .opacity(0.5)
                         .hidden(self.$kart.map{ !$0.isEmpty })
@@ -542,6 +628,12 @@ extension CustConcessionView {
             left(0.px)
             top(0.px)
 
+            $kartItems.listen {
+                if $0.isEmpty {
+                    self.searchTerm = ""
+                }
+            }   
+
             vendorFolio = vendor.folio
             
             businessName = vendor.businessName
@@ -560,7 +652,6 @@ extension CustConcessionView {
             
             fiscalUse = account.cfdiUse
             
-
             bodegas.forEach { item in
                 bodegaSelect.appendChild(
                     Option(item.name)
@@ -568,44 +659,93 @@ extension CustConcessionView {
                 )
             }
 
+            seccions.forEach { item in
+                if let _ = seccionRefrence[item.custStoreBodegas] {
+                    seccionRefrence[item.custStoreBodegas]?.append( item )
+                }
+                else {
+                    seccionRefrence[item.custStoreBodegas] = [item]
+                }
+            }
+
         }
         
         override func didAddToDOM() {
             super.didAddToDOM()
             
+            $bodegaListener.listen {
+                
+                print("🟢  ch bod")
+
+                self.sectionListener = ""
+
+                if let id: UUID = UUID(uuidString: $0) {
+                    print("🟢  found od")
+                    self.currentSeccions = self.seccionRefrence[id] ?? []
+
+                    print("🟢  sec count")
+
+                    print(self.currentSeccions.count)
+
+                }
+                
+            }
+
+            $currentSeccions.listen {
+
+                self.sectionSelect.innerHTML = ""
+ 
+                self.sectionSelect.appendChild(
+                    Option("Selecione Seccion")
+                    .value("")
+                )
+
+                $0.forEach { item in
+                    self.sectionSelect.appendChild(
+                        Option(item.name)
+                        .value(item.id.uuidString)
+                    )
+                }
+
+            }
+
             searchBox.select()
         }
         
         func searchTermAct() {
             
-            if searchBox.text.isEmpty {
-                self.resultBox.innerHTML = ""
+            if searchTerm.isEmpty {
+                kartItems.removeAll()
                 return
             }
             
-            let term = searchBox.text.purgeSpaces
+            let term = searchTerm.purgeSpaces
             
             Dispatch.asyncAfter(0.37) {
-                
-                if term == self.searchBox.text.purgeSpaces {
-                    
+
+                self.searchBox.class(.isLoading)
+
+                if term == self.searchTerm.purgeSpaces {
+
                     // TODO: properly parse currentCodeIds
                     searchPOC(
-                        term: self.searchBox.text,
+                        term: self.searchTerm,
                         costType: .cost_a,
                         getCount: false
                     ) { term, resp in
                         
-                        if self.searchBox.text == term {
-                            
-                            self.resultBox.innerHTML = ""
-                            
+                        self.searchBox.removeClass(.isLoading)
+
+                        if self.searchTerm == term {
+
                             if resp.count == 1 {
                                 
                                 guard let item = resp.first else {
                                     return
                                 }
-                                
+
+                                self.kartItems.removeAll()
+
                                 addToDom(ConfirmProductView(item: item){ item, units in
                                     self.addItem(
                                         item: item,
@@ -616,7 +756,21 @@ extension CustConcessionView {
                                 return
                                 
                             }
-                            
+
+                            self.kartItems = resp.map{ item in
+                                .init(
+                                    t: .product,
+                                    i: item.i,
+                                    u: item.u,
+                                    n: item.n,
+                                    b: item.b,
+                                    m: item.m,
+                                    p: item.p,
+                                    a: item.a
+                                )
+                            }
+
+                            /*
                             resp.forEach { item in
                                 
                                 let view = SearchChargeView(
@@ -633,7 +787,7 @@ extension CustConcessionView {
                                     costType: .cost_a
                                 ) { item in
                                     
-                                    self.searchBox.text = ""
+                                    self.searchTerm = ""
                                     
                                     self.resultBox.innerHTML = ""
                                     
@@ -659,6 +813,7 @@ extension CustConcessionView {
                                 
                                 self.resultBox.appendChild(view)
                             }
+                            */
                         }
                     }
                 }
@@ -760,20 +915,6 @@ extension CustConcessionView {
                         price: nil
                     ) }
 
-                    /*
-                    let items: [SaleObjectItem] = self.kart.map{ .init(
-                        id: $0.data.id,
-                        store: custCatchStore,
-                        ids: [],
-                        quant: $0.data.units.fromCents,
-                        price: 0,
-                        subtotal: 0,
-                        costType: .cost_a,
-                        serie: nil,
-                        description: "\($0.data.name) \($0.data.brand) \($0.data.model)".purgeSpaces
-                    )}
-                    */
-                  
                     API.custAccountV1.addCustomerManualConcession(
                         storeId: custCatchStore,
                         accountId: self.account.id,
@@ -820,9 +961,7 @@ extension CustConcessionView {
                         ))
                         
                         self.kart.removeAll()
-                        
-                        self.itemGrid.innerHTML = ""
-                        
+
                         self.itemGrid.appendChild(Tr {
                             Td().width(50)
                             Td("Marca").width(200)

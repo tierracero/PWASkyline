@@ -70,6 +70,9 @@ class CustConcessionView: Div {
     @State var totalItemAmount: Int64 = 0
     
     var pocRefrence: [UUID:CustPOCQuick] = [:]
+
+    /// [ CustStoreBodegas.id: [CustStoreSeccionesQuickRef] ]
+    var seccionRefrence: [ UUID: [CustStoreSeccionesQuickRef] ] = [:]
     
     @State var codeFilter: String = ""
     
@@ -233,6 +236,7 @@ class CustConcessionView: Div {
                             }
 
                         }
+                        
                         .hidden(self.$hasAnyActiveElement.map{ !$0 })
                         .height(100.percent)
                         
@@ -422,7 +426,6 @@ class CustConcessionView: Div {
 
                                     addToDom(view)
                                     
-                                    // addToDom(AddManualInventorieView(account: self.account))
                                 }
                             }
                             .width(50.percent)
@@ -539,6 +542,15 @@ class CustConcessionView: Div {
 
         }
         
+        seccions.forEach { item in
+            if let _ = seccionRefrence[item.custStoreBodegas] {
+                seccionRefrence[item.custStoreBodegas]?.append( item )
+            }
+            else {
+                seccionRefrence[item.custStoreBodegas] = [item]
+            }
+        }
+
         hasAnyActiveElement = ( !items.isEmpty || !bodegas.isEmpty)
 
         self.processRecrenceItems()
