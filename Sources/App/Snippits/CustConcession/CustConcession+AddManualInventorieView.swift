@@ -265,7 +265,42 @@ extension CustConcessionView {
                     }
                     .class(.uibtnLarge)
                     .onClick{
+                        let view = SelectStoreDepartment { type, levelid, titleText in
                         
+                            let view = ManagePOC(
+                                leveltype: type,
+                                levelid: levelid,
+                                levelName: titleText,
+                                pocid: nil,
+                                titleText: titleText,
+                                quickView: true
+                            ) { pocid, upc, brand, model, name, cost, price, avatar in
+                                
+                                addToDom(ConfirmProductView(
+                                    item: .init(
+                                        i: pocid,
+                                        u: upc,
+                                        n: name,
+                                        b: brand,
+                                        m: model,
+                                        p: price,
+                                        a: avatar,
+                                        c: 0
+                                    )
+                                ){ item, units in
+                                    self.addItem(
+                                        item: item,
+                                        units: units
+                                    )
+                                })
+                                
+                            } deleted: { }
+                            
+                            addToDom( view )
+
+                        }
+
+                        addToDom( view )
                     }
 
                     H2("Agregar concesión del proveedor")
@@ -745,7 +780,7 @@ extension CustConcessionView {
                                 }
 
                                 self.kartItems.removeAll()
-
+                                
                                 addToDom(ConfirmProductView(item: item){ item, units in
                                     self.addItem(
                                         item: item,
