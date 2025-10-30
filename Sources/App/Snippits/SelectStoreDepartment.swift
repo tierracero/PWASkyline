@@ -434,6 +434,8 @@ class SelectStoreDepartment: Div {
         top(0.px)
         left(0.px)
         
+        loadDeps()
+
     }
     
     override func didAddToDOM() {

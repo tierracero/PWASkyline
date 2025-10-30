@@ -238,6 +238,8 @@ extension CustConcessionView {
         @DOM override var body: DOM.Content {
             
             Div{
+                Div().clear(.both).height(3.px)
+
                 /// Header
                 Div{
                     
@@ -247,23 +249,36 @@ extension CustConcessionView {
                             self.remove()
                         }
                     
+                    H2("Agregar concesión del proveedor")
+                        .color(.lightBlueText)
+                        .marginLeft(7.px)
+                        .float(.left)
+                    
+                    self.searchBox
+                    
+                    // MARK: Add product butt on
                     Div{
                         Div{
                             Img()
                                 .src("/skyline/media/add.png")
-                                .height(24.px)
+                                .height(18.px)
                         }
-                        .paddingRight(7.px)
-                        .paddingTop(4.px)
                         .float(.left)
                         
                         Span("Crear Nuevo Producto")
+                            .paddingTop(4.px)
+                            .paddingLeft(7.px)
+                            .fontSize(16.px)
                             .color(.gray)
+                            .float(.left)
                         
                         Div().clear(.both)
 
                     }
                     .class(.uibtnLarge)
+                    .marginTop(-7.px)
+                    .marginLeft(7.px)
+                    .float(.left)
                     .onClick{
                         let view = SelectStoreDepartment { type, levelid, titleText in
                         
@@ -303,13 +318,7 @@ extension CustConcessionView {
                         addToDom( view )
                     }
 
-                    H2("Agregar concesión del proveedor")
-                        .color(.lightBlueText)
-                        .marginLeft(7.px)
-                        .float(.left)
-                    
-                    self.searchBox
-                    
+
                     Div().class(.clear)
                 }
                 
