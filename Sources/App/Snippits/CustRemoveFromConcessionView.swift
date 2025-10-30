@@ -803,7 +803,7 @@ class CustRemoveFromConcessionView: Div {
             
             let total: Int64 = items.map{ ($0.soldPrice ?? 0) }.reduce(0, +)
             
-            var table = Table{
+            let table = Table{
                 THead {
                     Tr{
                         Td()
@@ -836,7 +836,7 @@ class CustRemoveFromConcessionView: Div {
             .width(100.percent)
             .color(.white)
             
-            var tableBody = TBody()
+            let tableBody = TBody()
             
             items.forEach { item in
                 

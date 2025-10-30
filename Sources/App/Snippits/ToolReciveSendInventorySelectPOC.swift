@@ -24,7 +24,8 @@ class ToolReciveSendInventorySelectPOC: Div {
         _ name: String,
         _ cost: Int64,
         _ price: Int64,
-        _ avatar: String
+        _ avatar: String,
+        _ reqSeries: Bool
     ) -> ())
     
     private var createPOC: ((
@@ -43,7 +44,8 @@ class ToolReciveSendInventorySelectPOC: Div {
             _ name: String,
             _ cost: Int64,
             _ price: Int64,
-            _ avatar: String
+            _ avatar: String,
+            _ reqSeries: Bool
         ) -> ()),
         createPOC: @escaping ((
             _ type: CustProductType,
@@ -241,14 +243,15 @@ class ToolReciveSendInventorySelectPOC: Div {
                             }
                             
                             self.confirmSelectedProduct(
-                                pocid: item.i,
-                                upc: item.u,
-                                brand: item.b,
-                                model: item.m,
-                                name: item.n,
+                                pocid: item.id,
+                                upc: item.upc,
+                                brand: item.brand,
+                                model: item.model,
+                                name: item.name,
                                 cost: cost,
-                                price: item.p,
-                                avatar: item.a
+                                price: item.price,
+                                avatar: item.avatar
+                                reqSeries: item.reqSeries ?? false
                             )
                         }
                         
@@ -271,10 +274,11 @@ class ToolReciveSendInventorySelectPOC: Div {
         name: String,
         cost: Int64,
         price: Int64,
-        avatar: String
+        avatar: String,
+        reqSeries: Bool
     ) {
         if isManual {
-            self.selectedPOC(pocid, upc, brand, model, name, cost, price, avatar)
+            self.selectedPOC(pocid, upc, brand, model, name, cost, price, avatar, reqSeries)
             self.remove()
         }
         else{
@@ -285,7 +289,7 @@ class ToolReciveSendInventorySelectPOC: Div {
                 message: "\(brand) \(model) \(name)",
                 callback: { isConfirmed, comment in
                     if isConfirmed {
-                        self.selectedPOC(pocid, upc, brand, model, name, cost, price, avatar)
+                        self.selectedPOC(pocid, upc, brand, model, name, cost, price, avatar, reqSeries)
                         self.remove()
                     }
                     else{

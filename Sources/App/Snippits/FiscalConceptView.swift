@@ -351,7 +351,7 @@ class FiscalConceptView: Div {
     
     func selectPOCAction(){
         
-        addToDom(ToolReciveSendInventorySelectPOC(isManual: false, selectedPOC: { pocid, upc, brand, model, name, cost, price, avatar in
+        addToDom(ToolReciveSendInventorySelectPOC(isManual: false, selectedPOC: { pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
             
             self.pocid = pocid
             self.upc = upc
@@ -415,7 +415,7 @@ class FiscalConceptView: Div {
                 pocid: nil,
                 titleText: titleText,
                 quickView: true
-            ) { pocid, upc, brand, model, name, cost, price, avatar in
+            ) { pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
                 
                 self.pocid = pocid
                 self.upc = upc

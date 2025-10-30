@@ -124,11 +124,11 @@ extension ProductManagerView.AuditView {
                         return "1 Producto"
                     }
                     
-                    if !poc.u.isEmpty {
+                    if !poc.upc.isEmpty {
                         return poc.u
                     }
                     else {
-                        return "\(poc.u) \(poc.b) \(poc.m) \(poc.n)"
+                        return "\(poc.upc) \(poc.brand) \(poc.model) \(poc.name)"
                     }
                     
                 }
@@ -490,7 +490,7 @@ extension ProductManagerView.AuditView {
             
             var endAtUTS: Int64? = nil
             
-            var ids = parsablePOCs.map{ $0.i }
+            var ids = parsablePOCs.map{ $0.id }
             
             if type.dateRangable {
                 
@@ -2590,14 +2590,15 @@ extension ProductManagerView.AuditView {
                         let view = SearchItemPOCView(
                             searchTerm: "",
                             poc: .init(
-                                i: poc.id,
-                                u: poc.upc,
-                                n: poc.name,
-                                b: poc.brand,
-                                m: poc.model,
-                                p: poc.pricea,
-                                a: poc.avatar,
-                                c: 0
+                                id: poc.id,
+                                upc: poc.upc,
+                                name: poc.name,
+                                brand: poc.brand,
+                                model: poc.model,
+                                price: poc.price,
+                                avatar: poc.avatar,
+                                price: nil,
+                                reqSeries: poc.reqSeries
                             ),
                             callback: { update, deleted in
                                 
@@ -2608,8 +2609,8 @@ extension ProductManagerView.AuditView {
                                     pocid: poc.id,
                                     titleText: "",
                                     quickView: false
-                                ) {  pocid, upc, brand, model, name, cost, price, avatar in
-                                    //update( name, "\(upc) \(brand) \(model)", price, avatar)
+                                ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
+                                    //update( name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
                                 } deleted: {
                                     //deleted()
                                 }
@@ -2680,14 +2681,15 @@ extension ProductManagerView.AuditView {
                     let view = SearchItemPOCView(
                         searchTerm: "",
                         poc: .init(
-                            i: poc.id,
-                            u: poc.upc,
-                            n: poc.name,
-                            b: poc.brand,
-                            m: poc.model,
-                            p: poc.pricea,
-                            a: poc.avatar,
-                            c: 0
+                            id: poc.id,
+                            upc: poc.upc,
+                            name: poc.name,
+                            brand: poc.brand,
+                            model: poc.model,
+                            price: poc.price,
+                            avatar: poc.avatar,
+                            price: nil,
+                            reqSeries: poc.reqSeries
                         ),
                         callback: { update, deleted in
                             
@@ -2698,8 +2700,8 @@ extension ProductManagerView.AuditView {
                                 pocid: poc.id,
                                 titleText: "",
                                 quickView: false
-                            ) {  pocid, upc, brand, model, name, cost, price, avatar in
-                                //update( name, "\(upc) \(brand) \(model)", price, avatar)
+                            ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
+                                //update( name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
                             } deleted: {
                                 //deleted()
                             }

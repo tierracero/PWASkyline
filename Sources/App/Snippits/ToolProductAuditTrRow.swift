@@ -170,7 +170,7 @@ class ToolProductAuditTrRow: Tr {
                                 pocid: self.item.pocid,
                                 titleText: "",
                                 quickView: false
-                            ){ pocid, upc, brand, model, name, cost, price, avatar in
+                            ){ pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
                                 self.price = price.formatMoney
                             } deleted: {
                                 self.remove()

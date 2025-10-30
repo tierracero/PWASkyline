@@ -873,7 +873,7 @@ class CustConcessionView: Div {
             }
         }
         
-        var container = Div{
+        let container = Div{
             Table{
                 Tr{
                     Td{
@@ -955,7 +955,7 @@ class CustConcessionView: Div {
             }
             .width(100.percent)
             
-            var tableBody = TBody ()
+            let tableBody = TBody ()
             
             items.forEach { item in
                 

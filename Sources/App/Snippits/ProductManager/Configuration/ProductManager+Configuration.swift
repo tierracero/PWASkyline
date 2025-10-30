@@ -341,7 +341,7 @@ extension ProductManagerView {
                     pocid: item.poc.id,
                     titleText: "Editar \(name)",
                     quickView: false
-                ) { pocid, upc, brand, model, newName, cost, price, avatar in
+                ) { pocid, upc, brand, model, newName, cost, price, avatar, reqSeries in
                     name = newName
                 } deleted: {
                     

@@ -574,7 +574,7 @@ class SearchHistoricalPurchaseDetailedView: Div {
         
         let view = ToolReciveSendInventorySelectPOC(
             isManual: false
-        ) { pocid, upc, brand, model, name, cost, price, avatar in
+        ) { pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
             
             self.poc = .init(
                 id: pocid,
@@ -595,7 +595,7 @@ class SearchHistoricalPurchaseDetailedView: Div {
                 pocid: nil,
                 titleText: titleText,
                 quickView: true
-            ){ pocid, upc, brand, model, name, cost, price, avatar in
+            ){ pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
                 
                 self.poc = .init(
                     id: pocid,
@@ -644,7 +644,7 @@ class SearchHistoricalPurchaseDetailedView: Div {
             pocid: pocid,
             titleText: "",
             quickView: false
-        ) {  pocid, upc, brand, model, name, cost, price, avatar in
+        ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
             
             self.poc = .init(
                 id: pocid,
