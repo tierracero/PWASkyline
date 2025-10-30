@@ -64,18 +64,6 @@ class ToolReciveSendInventorySelectPOC: Div {
     
     @State var searchTerm: String = ""
     
-    @State var selectedDepartmentId: UUID? = nil
-    
-    @State var selectedDepartment = ""
-    
-    @State var selectedCategoryId: UUID? = nil
-    
-    @State var selectedCategory = ""
-    
-    @State var selectedLineId: UUID? = nil
-    
-    @State var selectedLine = ""
-    
     var items: [Div] = []
     
     var lastSerchedTerm = ""
@@ -165,7 +153,10 @@ class ToolReciveSendInventorySelectPOC: Div {
                     }
                     .class(.uibtnLarge)
                     .onClick{
-
+                        let view = SelectStoreDepartment { type, levelid, titleText in
+                            self.createPOC(type, levelid, titleText)
+                            self.remove()
+                        }
                     }
                 }
                 .align(.center)

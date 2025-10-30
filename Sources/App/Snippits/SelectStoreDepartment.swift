@@ -13,13 +13,45 @@ import Web
 class SelectStoreDepartment: Div {
 
     override class var name: String { "div" }
+
+    private var createPOC: ((
+        _ type: CustProductType,
+        _ levelid: UUID?,
+        _ titleText: String
+    ) -> ())
+
+    init(
+        createPOC: @escaping ((
+            _ type: CustProductType,
+            _  levelid: UUID?,
+            _ titleText: String
+        ) -> ())
+        
+    ) {
+        self.createPOC = createPOC
+        super.init()
+    }
     
     required init() {
         fatalError("init() has not been implemented")
     }
     
-    @State var titleText: String = ""
-
+    @State var activeMode: ActiveMode = .searchProduct
+    
+    @State var titleText: String = "Seleccionar Departamento"
+    
+    @State var selectedDepartmentId: UUID? = nil
+    
+    @State var selectedDepartment = ""
+    
+    @State var selectedCategoryId: UUID? = nil
+    
+    @State var selectedCategory = ""
+    
+    @State var selectedLineId: UUID? = nil
+    
+    @State var selectedLine = ""
+    
     @State var hasDeps: Bool = false
     
     @State var hasCats: Bool = false
@@ -197,7 +229,7 @@ class SelectStoreDepartment: Div {
                             break
                         case .selectCat:
                             
-                            self.titleText = "Buscar Producto"
+                            self.titleText = "Seleccionar Departamento"
                             self.activeMode = .selectDep
                             
                             self.selectedDepartmentId = nil
@@ -208,7 +240,7 @@ class SelectStoreDepartment: Div {
                             
                         case .selectLine:
                             
-                            self.titleText = "Seleccionar Departamento"
+                            self.titleText = "Seleccionar Categoria"
                             self.activeMode = .selectCat
                             
                             self.selectedCategoryId = nil
