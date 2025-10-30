@@ -147,7 +147,7 @@ extension CustConcessionView {
                         self.resultBox.innerHTML = ""
                         */
 
-                        addToDom(ConfirmProductView(
+                        addToDom(ConfirmConcessionView(
                             item: .init(
                                 i: item.i,
                                 u: item.u,
@@ -291,7 +291,7 @@ extension CustConcessionView {
                                 quickView: true
                             ) { pocid, upc, brand, model, name, cost, price, avatar in
                                 
-                                addToDom(ConfirmProductView(
+                                addToDom(ConfirmConcessionView(
                                     item: .init(
                                         i: pocid,
                                         u: upc,
@@ -299,7 +299,7 @@ extension CustConcessionView {
                                         b: brand,
                                         m: model,
                                         p: price,
-                                        a: avatar,
+                                        a: avatar.explode("/").last?.replace(from: "thump_", to: "") ?? "",
                                         c: 0
                                     )
                                 ){ item, units in
@@ -790,7 +790,7 @@ extension CustConcessionView {
 
                                 self.kartItems.removeAll()
                                 
-                                addToDom(ConfirmProductView(item: item){ item, units in
+                                addToDom(ConfirmConcessionView(item: item){ item, units in
                                     self.addItem(
                                         item: item,
                                         units: units
@@ -814,50 +814,6 @@ extension CustConcessionView {
                                 )
                             }
 
-                            /*
-                            resp.forEach { item in
-                                
-                                let view = SearchChargeView(
-                                    data: .init(
-                                        t: .product,
-                                        i: item.i,
-                                        u: item.u,
-                                        n: item.n,
-                                        b: item.b,
-                                        m: item.m,
-                                        p: item.p,
-                                        a: item.a
-                                    ),
-                                    costType: .cost_a
-                                ) { item in
-                                    
-                                    self.searchTerm = ""
-                                    
-                                    self.resultBox.innerHTML = ""
-                                    
-                                    addToDom(ConfirmProductView(
-                                        item: .init(
-                                            i: item.i,
-                                            u: item.u,
-                                            n: item.n,
-                                            b: item.b,
-                                            m: item.m,
-                                            p: item.p,
-                                            a: item.a,
-                                            c: 0
-                                        )
-                                    ){ item, units in
-                                        self.addItem(item: item, units: units)
-                                    })
-                                    
-                                }
-                                .custom("width", "calc(50% - 28px)")
-                                .marginRight(3.px)
-                                .float(.left)
-                                
-                                self.resultBox.appendChild(view)
-                            }
-                            */
                         }
                     }
                 }
@@ -1005,6 +961,8 @@ extension CustConcessionView {
                         ))
                         
                         self.kart.removeAll()
+
+                        self.itemGrid.innerHTML = ""
 
                         self.itemGrid.appendChild(Tr {
                             Td().width(50)

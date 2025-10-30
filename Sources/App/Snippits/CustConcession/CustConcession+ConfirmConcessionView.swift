@@ -1,5 +1,5 @@
 //
-//  CustConcession+ConfirmProductView.swift
+//  CustConcession+ConfirmConcessionView.swift
 //
 //
 //  Created by Victor Cantu on 7/11/24.
@@ -12,7 +12,7 @@ import Web
 
 extension CustConcessionView {
     
-    class ConfirmProductView: Div {
+    class ConfirmConcessionView: Div {
         
         override class var name: String { "div" }
         
