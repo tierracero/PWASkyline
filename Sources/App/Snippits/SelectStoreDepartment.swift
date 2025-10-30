@@ -31,12 +31,12 @@ class SelectStoreDepartment: Div {
         self.createPOC = createPOC
         super.init()
     }
-    
+
     required init() {
         fatalError("init() has not been implemented")
     }
     
-    @State var activeMode: ActiveMode = .searchProduct
+    @State var activeMode: ActiveMode = .selectDep
     
     @State var titleText: String = "Seleccionar Departamento"
     
