@@ -1,5 +1,5 @@
 //
-//  CustAccount+AddCustomerManualConcession.swift
+//  CustPOC+AddManualInventory.swift
 //
 //
 //  Created by Victor Cantu on 7/12/24.
