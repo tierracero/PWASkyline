@@ -113,7 +113,8 @@ class KartItemView: Tr {
                                     b: self.data.b,
                                     m: self.data.m,
                                     p: price,
-                                    a: self.data.a
+                                    a: self.data.a,
+                                    reqSeries: self.data.reqSeries
                                 )
 
                                 self.editManualCharge(self.id, units, description, price, cost)

@@ -700,7 +700,8 @@ extension SalePointView {
                             b: poc.brand,
                             m: poc.model,
                             p: item.soldPrice ?? 0,
-                            a: poc.avatar
+                            a: poc.avatar,
+                            reqSeries: poc.reqSeries
                         )
                     )
                         
@@ -738,7 +739,8 @@ extension SalePointView {
                             b: "",
                             m: "",
                             p: charge.price,
-                            a: ""
+                            a: "",
+                            reqSeries: false
                         ),
                         deleteButton: false
                     ) { id in

@@ -359,7 +359,7 @@ class BudgetEditItemView: Div {
                         }
 
                         guard resp.status == .ok else {
-                            showError(.errorGeneral, resp.errcode)
+                            showError(.errorGeneral, resp.msg)
                             return
                         }
                         

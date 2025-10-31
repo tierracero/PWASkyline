@@ -278,6 +278,24 @@ class POCStorageControlAddInventoryView: Div {
             if isConfirmed {
                 
                 loadingView(show: true)
+
+                /*
+                API.custAccountV1.addCustomerManualConcession(
+                    storeId: UUID,
+                    accountId: UUID,
+                    items: [CreateManualProductObject],
+                    documentName: String,
+                    documentSerie: String,
+                    documentFolio: String,
+                    vendorId: UUID,
+                    profileId: UUID,
+                    bodegaId: UUID?,
+                    sectionId: UUID?
+                ) { resp in
+
+                }
+                */
+
                 API.custPOCV1.addInventory(
                     pocid: self.pocid,
                     units: units,
@@ -298,7 +316,7 @@ class POCStorageControlAddInventoryView: Div {
                     }
 
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.errcode)
+                        showError(.errorGeneral, resp.msg)
                         return
                     }
                     

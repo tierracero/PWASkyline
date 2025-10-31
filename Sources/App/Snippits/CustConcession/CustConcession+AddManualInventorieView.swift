@@ -137,7 +137,8 @@ extension CustConcessionView {
                             b: item.b,
                             m: item.m,
                             p: item.p,
-                            a: item.a
+                            a: item.a,
+                            reqSeries: item.reqSeries
                         ),
                         costType: .cost_a
                     ) { item in
@@ -157,7 +158,7 @@ extension CustConcessionView {
                                 price: item.p,
                                 avatar: item.a,
                                 units: nil,
-                                reqSeries: nil
+                                reqSeries: item.reqSeries
                             )
                         ){ item, units in
                             self.addItem(item: item, units: units)
@@ -812,7 +813,8 @@ extension CustConcessionView {
                                     b: item.brand,
                                     m: item.model,
                                     p: item.price,
-                                    a: item.avatar
+                                    a: item.avatar,
+                                    reqSeries: item.reqSeries
                                 )
                             }
 
@@ -839,7 +841,8 @@ extension CustConcessionView {
                     b: item.brand,
                     m: item.model,
                     p: 0,
-                    a: item.avatar
+                    a: item.avatar,
+                    reqSeries: item.reqSeries
                 )
             ) { id in
                 

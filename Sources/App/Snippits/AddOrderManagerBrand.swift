@@ -142,7 +142,7 @@ class AddOrderManagerBrand: Div {
             }
 
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.errcode)
+                showError(.errorGeneral, resp.msg)
                 return
             }
             guard let data = resp.data else {

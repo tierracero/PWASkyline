@@ -847,7 +847,8 @@ class ProductTransferView: Div {
                         b: poc.brand,
                         m: poc.model,
                         p: price,
-                        a: poc.avatar
+                        a: poc.avatar,
+                        reqSeries: poc.reqSeries
                     )
                 ) { id in
                     

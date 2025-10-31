@@ -834,6 +834,17 @@ class ProductManagerView: Div {
                         } deleted: {
                             deleted()
                         }
+                        /*
+                                _ pocid: UUID,
+        _ upc: String,
+        _ brand: String,
+        _ model: String,
+        _ name: String,
+        _ cost: Int64,
+        _ price: Int64,
+        _ avatar: String,
+        _ reqSeries: Bool
+                        */
                         
                         addToDom(view)
                     }.border(
@@ -1392,7 +1403,7 @@ class ProductManagerView: Div {
                 titleText: "Categoria \(categoryName)",
                 quickView: false
             ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
-
+                
                 let view = StoreItemPOCView(
                     searchTerm: "",
                     poc: .init(

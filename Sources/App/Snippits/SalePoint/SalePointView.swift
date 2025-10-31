@@ -197,7 +197,8 @@ class SalePointView: Div {
                                 b: "",
                                 m: "",
                                 p: price,
-                                a: ""
+                                a: "",
+                                reqSeries: false
                             )
                         ) { id in
                             
@@ -709,7 +710,8 @@ class SalePointView: Div {
                                 b: poc.brand,
                                 m: poc.model,
                                 p: price,
-                                a: poc.avatar
+                                a: poc.avatar,
+                                reqSeries: poc.reqSeries
                             )
                         ) { id in
                             
@@ -795,7 +797,8 @@ class SalePointView: Div {
                                 b: "",
                                 m: "",
                                 p: item.unitPrice,
-                                a: ""
+                                a: "",
+                                reqSeries: false
                             )
                         ) { id in
                             
@@ -908,7 +911,8 @@ class SalePointView: Div {
                                 b: "",
                                 m: "",
                                 p: item.unitPrice,
-                                a: ""
+                                a: "",
+                                reqSeries: false
                             )
                         ) { id in
                             
@@ -1914,7 +1918,8 @@ class SalePointView: Div {
                                 b: poc.brand,
                                 m: poc.model,
                                 p: price,
-                                a: poc.avatar
+                                a: poc.avatar,
+                                reqSeries: poc.reqSeries
                             )
                         ) { id in
                             
@@ -2016,7 +2021,8 @@ class SalePointView: Div {
                                 b: poc.brand,
                                 m: poc.model,
                                 p: price,
-                                a: poc.avatar
+                                a: poc.avatar,
+                                reqSeries: poc.reqSeries
                             ),
                             missingInventory: true
                         ) { id in
@@ -2102,7 +2108,8 @@ class SalePointView: Div {
                             b: poc.brand,
                             m: poc.model,
                             p: price,
-                            a: poc.avatar
+                            a: poc.avatar,
+                            reqSeries: poc.reqSeries
                         )
                     ) { id in
                         
@@ -2207,7 +2214,8 @@ class SalePointView: Div {
                    b: "",
                    m: "",
                    p: soc.price,
-                   a: ""
+                   a: "",
+                   reqSeries: false
                )
            ) { id in
                

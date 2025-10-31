@@ -1217,7 +1217,8 @@ class CustRemoveFromConcessionView: Div {
                             b: poc.brand,
                             m: poc.model,
                             p: poc.pricea,
-                            a: poc.avatar
+                            a: poc.avatar,
+                            reqSeries: poc.reqSeries
                         ),
                         deleteButton: false,
                         missingInventory: false,
@@ -1395,7 +1396,8 @@ class CustRemoveFromConcessionView: Div {
                             b: poc.brand,
                             m: poc.model,
                             p: poc.pricea,
-                            a: poc.avatar
+                            a: poc.avatar,
+                            reqSeries: poc.reqSeries
                         ),
                         deleteButton: false,
                         missingInventory: false,
