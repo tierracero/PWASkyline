@@ -830,7 +830,7 @@ class ProductManagerView: Div {
                             titleText: "",
                             quickView: false
                         ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
-                            update( name, "\(upc) \(brand) \(model)", price, avatar)
+                            update( name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
                         } deleted: {
                             deleted()
                         }
@@ -892,7 +892,7 @@ class ProductManagerView: Div {
                             price: poc.pricea,
                             avatar: poc.avatar,
                             units: nil,
-                            reqSeries: poc.reqSeries,
+                            reqSeries: poc.reqSeries
                         )
                     )
                     { update, deleted in
@@ -927,7 +927,7 @@ class ProductManagerView: Div {
                             titleText: "",
                             quickView: false
                         ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
-                            update( name, "\(upc) \(brand) \(model)", price, avatar)
+                            update( name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
                         } deleted: {
                             deleted()
                         }
@@ -1321,7 +1321,7 @@ class ProductManagerView: Div {
                         model: model,
                         price: price,
                         avatar: avatar,
-                        price: nil,
+                        units: nil,
                         reqSeries: reqSeries
                     )
                 ) { update, deleted in
@@ -1392,7 +1392,7 @@ class ProductManagerView: Div {
                 titleText: "Categoria \(categoryName)",
                 quickView: false
             ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
-                
+
                 let view = StoreItemPOCView(
                     searchTerm: "",
                     poc: .init(
@@ -1404,7 +1404,7 @@ class ProductManagerView: Div {
                         price: price,
                         avatar: avatar,
                         units: nil,
-                        reqSerires: reqSeries
+                        reqSeries: reqSeries
                     )
                 ) { update, deleted in
                     
@@ -1485,7 +1485,7 @@ class ProductManagerView: Div {
                         model: model,
                         price: price,
                         avatar: avatar,
-                        price: nil,
+                        units: nil,
                         reqSeries: reqSeries
                     )
                 ) { update, deleted in
@@ -1569,10 +1569,10 @@ class ProductManagerView: Div {
                     name: poc.name,
                     brand: poc.brand,
                     model: poc.model,
-                    price: poc.price,
+                    price: poc.pricea,
                     avatar: poc.avatar,
-                    reqSeries: poc.reqSeries,
-                    price: nil
+                    units: nil,
+                    reqSeries: poc.reqSeries
                 )
             ) { update, deleted in
                 
@@ -1637,10 +1637,10 @@ class ProductManagerView: Div {
                     name: poc.name,
                     brand: poc.brand,
                     model: poc.model,
-                    price: poc.price,
+                    price: poc.pricea,
                     avatar: poc.avatar,
-                    reqSeries: poc.reqSeries,
-                    price: nil
+                    units: nil,
+                    reqSeries: poc.reqSeries
                 )
             ) { update, deleted in
                 

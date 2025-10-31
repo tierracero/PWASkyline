@@ -176,7 +176,7 @@ class ProductSuperSearchView: Div {
                                     leveltype: CustProductType.all,
                                     levelid: nil,
                                     levelName: "",
-                                    pocid: item.i,
+                                    pocid: item.id,
                                     titleText: "",
                                     quickView: false
                                 ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in

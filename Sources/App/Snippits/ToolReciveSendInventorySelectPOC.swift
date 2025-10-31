@@ -235,7 +235,7 @@ class ToolReciveSendInventorySelectPOC: Div {
                         poc: item
                     ) { update, deleted in
                         
-                        API.custPOCV1.getPOCCost(id: item.i) { resp in
+                        API.custPOCV1.getPOCCost(id: item.id) { resp in
                             
                             guard let cost = resp?.data else {
                                 showError(.errorDeCommunicacion, .serverConextionError)
@@ -250,7 +250,7 @@ class ToolReciveSendInventorySelectPOC: Div {
                                 name: item.name,
                                 cost: cost,
                                 price: item.price,
-                                avatar: item.avatar
+                                avatar: item.avatar,
                                 reqSeries: item.reqSeries ?? false
                             )
                         }

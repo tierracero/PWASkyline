@@ -787,7 +787,7 @@ class ProductTransferView: Div {
                                searchTerm: _term,
                                poc: item,
                                callback: { _, _ in
-                                   self.confirmProductView(pocid: item.i)
+                                   self.confirmProductView(pocid: item.id)
                                }
                            )
                            

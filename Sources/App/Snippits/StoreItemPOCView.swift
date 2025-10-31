@@ -142,16 +142,16 @@ class StoreItemPOCView: Div {
         self.price = poc.price
         
         
-        if !poc.a.isEmpty {
+        if !poc.avatar.isEmpty {
             if let pDir = customerServiceProfile?.account.pDir {
-                avatar.load("https://intratc.co/cdn/\(pDir)/thump_\(poc.a)")
+                avatar.load("https://intratc.co/cdn/\(pDir)/thump_\(poc.avatar)")
             }
         }
         
         
         let termParts = searchTerm.explode(" ")
         
-        var valueParts = self.poc.n.explode(" ")
+        var valueParts = self.poc.name.explode(" ")
         
         valueParts.forEach { _value in
             
@@ -254,7 +254,7 @@ class StoreItemPOCView: Div {
             
         }
      
-        valueParts = "\(self.poc.u) \(self.poc.b) \(self.poc.m)".purgeSpaces.explode(" ")
+        valueParts = "\(self.poc.upc) \(self.poc.brand) \(self.poc.model)".purgeSpaces.explode(" ")
         
         valueParts.forEach { _value in
             

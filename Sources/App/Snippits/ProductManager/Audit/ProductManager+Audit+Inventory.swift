@@ -125,7 +125,7 @@ extension ProductManagerView.AuditView {
                     }
                     
                     if !poc.upc.isEmpty {
-                        return poc.u
+                        return poc.upc
                     }
                     else {
                         return "\(poc.upc) \(poc.brand) \(poc.model) \(poc.name)"
@@ -2595,9 +2595,9 @@ extension ProductManagerView.AuditView {
                                 name: poc.name,
                                 brand: poc.brand,
                                 model: poc.model,
-                                price: poc.price,
+                                price: poc.pricea,
                                 avatar: poc.avatar,
-                                price: nil,
+                                units: nil,
                                 reqSeries: poc.reqSeries
                             ),
                             callback: { update, deleted in
@@ -2686,9 +2686,9 @@ extension ProductManagerView.AuditView {
                             name: poc.name,
                             brand: poc.brand,
                             model: poc.model,
-                            price: poc.price,
+                            price: poc.pricea,
                             avatar: poc.avatar,
-                            price: nil,
+                            units: nil,
                             reqSeries: poc.reqSeries
                         ),
                         callback: { update, deleted in

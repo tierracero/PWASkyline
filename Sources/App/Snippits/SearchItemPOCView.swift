@@ -23,7 +23,8 @@ class SearchItemPOCView: Div {
             _ title: String,
             _ subTitle: String,
             _ price: Int64,
-            _ avatar: String
+            _ avatar: String,
+            _ reqSeries: Bool
         ) -> (),
         _ deleted: @escaping (
         ) -> ()
@@ -37,7 +38,8 @@ class SearchItemPOCView: Div {
                 _ title: String,
                 _ subTitle: String,
                 _ price: Int64,
-                _ avatar: String
+                _ avatar: String,
+                _ reqSeries: Bool
             ) -> (),
             _ deleted: @escaping (
             ) -> ()
@@ -120,7 +122,7 @@ class SearchItemPOCView: Div {
         float(.left)
         onClick {
             
-            self.callback { title, subTitle, price, avatar in
+            self.callback { title, subTitle, price, avatar, reqSeries in
                 
                 self.nameView.innerHTML = ""
                 

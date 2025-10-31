@@ -108,7 +108,7 @@ extension ProductManagerView.AuditView {
                 Div{
                     ForEach(self.parsablePOCs){ item in
                         ProductItemRow(poc: item) {
-                            self.removeItem(id: item.i)
+                            self.removeItem(id: item.id)
                         }
                     }
                 }
@@ -144,10 +144,10 @@ extension ProductManagerView.AuditView {
             top(0.px)
             
             parsablePOCs.listen {
-                self.currentIds = $0.map{ $0.i }
+                self.currentIds = $0.map{ $0.id }
             }
             
-            self.currentIds = parsablePOCs.wrappedValue.map{ $0.i }
+            self.currentIds = parsablePOCs.wrappedValue.map{ $0.id }
             
         }
         
@@ -190,7 +190,7 @@ extension ProductManagerView.AuditView {
                      
                      resp.forEach { item in
                          
-                         if self.currentIds.contains(item.i) {
+                         if self.currentIds.contains(item.id) {
                              return
                          }
                          
@@ -201,12 +201,12 @@ extension ProductManagerView.AuditView {
                                 poc: item
                             ) { _, _ in
                                 
-                                if self.currentIds.contains(item.i) {
+                                if self.currentIds.contains(item.id) {
                                     return
                                 }
                                 
                                 self.parsablePOCs.wrappedValue.append(item)
-                            }.hidden(self.$currentIds.map{ $0.contains(item.i) })
+                            }.hidden(self.$currentIds.map{ $0.contains(item.id) })
                             
                          )
                      }
@@ -219,7 +219,7 @@ extension ProductManagerView.AuditView {
             var items: [SearchPOCResponse] = []
             
             parsablePOCs.wrappedValue.forEach { item in
-                if item.i == id {
+                if item.id == id {
                     return
                 }
                 items.append(item)

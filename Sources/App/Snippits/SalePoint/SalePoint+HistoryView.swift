@@ -178,11 +178,11 @@ extension SalePointView {
                         return "1 Producto"
                     }
                     
-                    if !poc.u.isEmpty {
-                        return poc.u
+                    if !poc.upc.isEmpty {
+                        return poc.upc
                     }
                     else {
-                        return "\(poc.u) \(poc.b) \(poc.m) \(poc.n)"
+                        return "\(poc.upc) \(poc.brand) \(poc.model) \(poc.name)"
                     }
                     
                 }
@@ -673,7 +673,7 @@ extension SalePointView {
                     showError(.errorGeneral, "Seleccione productos a auditar")
                     return
                 }
-                ids = parsablePOCs.map{ $0.i }
+                ids = parsablePOCs.map{ $0.id }
             case .byService:
                 guard !parsableSOCs.isEmpty else {
                     showError(.errorGeneral, "Seleccione servicios a auditar")

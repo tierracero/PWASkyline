@@ -53,14 +53,14 @@ extension ProductManagerView.AuditView {
             Div{
                 Div{
                     
-                    Div(self.poc.n)
+                    Div(self.poc.name)
                         .custom("width", "calc(100% - 110px)")
                         .class(.oneLineText)
                         .fontSize(20.px)
                         .float(.left)
                     
                     Div{
-                        Div(self.poc.p.formatMoney)
+                        Div(self.poc.price.formatMoney)
                             .class(.oneLineText)
                             .fontSize(20.px)
                             .color(.white)
@@ -75,7 +75,7 @@ extension ProductManagerView.AuditView {
                 
                 Div().clear(.both)
                 
-                Div("\(self.poc.u) \(self.poc.b) \(self.poc.m)")
+                Div("\(self.poc.upc) \(self.poc.brand) \(self.poc.model)")
                     .class(.oneLineText)
                     .fontSize(16.px)
                 
@@ -120,9 +120,9 @@ extension ProductManagerView.AuditView {
             margin(all: 3.px)
             float(.left)
             
-            if !poc.a.isEmpty {
+            if !poc.avatar.isEmpty {
                 if let pDir = customerServiceProfile?.account.pDir {
-                    avatar.load("https://intratc.co/cdn/\(pDir)/thump_\(poc.a)")
+                    avatar.load("https://intratc.co/cdn/\(pDir)/thump_\(poc.avatar)")
                 }
             }
             

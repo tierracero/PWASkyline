@@ -1275,7 +1275,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                                     titleText: "",
                                     quickView: false
                                 ) {  pocid, upc, brand, model, name, cost, price, avatar in
-                                    //update( name, "\(upc) \(brand) \(model)", price, avatar)
+                                    //update( name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
                                 } deleted: {
                                     //deleted()
                                 }
@@ -1364,8 +1364,8 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                                 pocid: poc.id,
                                 titleText: "",
                                 quickView: false
-                            ) {  pocid, upc, brand, model, name, cost, price, avatar in
-                                //update( name, "\(upc) \(brand) \(model)", price, avatar)
+                            ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
+                                //update( name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
                             } deleted: {
                                 //deleted()
                             }

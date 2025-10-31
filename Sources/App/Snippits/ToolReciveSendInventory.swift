@@ -4001,8 +4001,8 @@ class ToolReciveSendInventory: Div {
                 item.name,
                 item.cost,
                 item.price,
-                item.reqSeries,
                 item.avatar,
+                false,
                 item.intentory,
                 false
             )
