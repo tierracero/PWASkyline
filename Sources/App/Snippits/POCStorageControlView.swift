@@ -7,6 +7,7 @@
 
 import Foundation
 import TCFundamentals
+import TCFireSignal
 import Web
 
 class POCStorageControlView: Div {
@@ -14,6 +15,10 @@ class POCStorageControlView: Div {
     override class var name: String { "div" }
     
     let pocid: UUID
+
+    let pocName: String
+
+    var reqSeries: Bool
     
     let storeId: UUID
     
@@ -39,6 +44,8 @@ class POCStorageControlView: Div {
     
     init(
         pocid: UUID,
+        pocName: String,
+        reqSeries: Bool,
         storeId: UUID,
         store: CustStore,
         storagePlace: CustStoreProductSection,
@@ -55,6 +62,8 @@ class POCStorageControlView: Div {
         ) -> ())
     ) {
         self.pocid = pocid
+        self.pocName = pocName
+        self.reqSeries = reqSeries
         self.storeId = storeId
         self.store = store
         self.storagePlace = storagePlace
@@ -144,45 +153,56 @@ class POCStorageControlView: Div {
                 .class(.uibtn)
                 .float(.left)
                 .onClick{ div in
-                    
-                    addToDom(POCStorageControlAddInventoryView(
-                        pocid: self.pocid,
-                        storeid: self.store.id,
-                        storeName: self.store.name,
-                        currentbod: self.bodegaid,
-                        currentsec: self.seccionid
-                    ){ newitems in
-                        
-                        self.items.append(contentsOf: newitems)
-                        
-                        newitems.forEach { item in
+
+                    let view: StartManualInventory = StartManualInventory { name, vendor, profile in
+
+                        let view: POCStorageControlAddInventoryView = POCStorageControlAddInventoryView(
+                            pocId: self.pocid,
+                            pocName: self.pocName,
+                            reqSeries: self.reqSeries,
+                            storeId: self.storeId,
+                            storeName: self.store.name,
+                            bodegaId: self.storagePlace.bodid,
+                            sectionId: self.storagePlace.secid,
+                            documentName: name,
+                            vendor: vendor,
+                            profile: profile
+                        ) { items in
+                             
+                             self.updateInventoryCount(items.count)
+                             
+                             self.items.append(contentsOf: items)
+                                     
+                            self.countListener.wrappedValue = items.count
                             
-                            let view = POCStorageControlItemView(item: item)
-                            
-                            self.itemViews.append(view)
-                            
-                            self.itemsGrid.appendChild(view)
-                            
-                            
-                        }
-                        
-                        self.countListener.wrappedValue = self.items.count
-                        
-                        self.updateInventoryCount(self.items.count)
-                        
-                    })
-                     
-                    
-                    /*
-                    addToDom(ToolReciveSendInventoryManualDispertionsView(
-                        load: { doc in
-                            //self.loadManualDispertion(doc)
-                        },
-                        new: {
+                            items.forEach { item in
+                                
+                                let view = POCStorageControlItemView(item: item)
+                                
+                                self.itemViews.append(view)
+                                
+                                self.itemsGrid.appendChild(view)
+                                
+                            }
                             
                         }
-                    ))
-                     */
+
+                        let date = Date()
+
+                        view.documentSerie = date.year.toString
+
+                        view.documentFolio = "\(date.month.toString)\(date.day.toString)-\(callKey(5))"
+
+                        addToDom(view)
+
+                    }
+                    
+                    let date = Date()
+
+                    view.newDocumentName = "Ingreso manual \(self.store.name) \(self.pocName) \(date.formatedShort)"
+
+                    addToDom(view)
+                    
                 }
                 
                 Div{

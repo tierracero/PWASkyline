@@ -43,6 +43,19 @@ class StartManualInventory: Div {
         .class(.textFiledBlackDark)
         .overflow(.auto)
         .height(31.px)
+        .onEnter {
+            if self.newDocumentName.isEmpty {
+                return
+            }
+
+            if self.vendor == nil {
+                self.selectVendor()
+                return
+            }
+
+            self.createDocument()
+
+        }
 
     lazy var choseFiscalProfilesView = Div()
         .custom("height", "calc(100% - 45px)")
@@ -94,10 +107,7 @@ class StartManualInventory: Div {
                 .fontSize(18.px)
                 .class(.uibtn)
                 .onClick {
-                    
-                    addToDom( SearchVendorView(loadBy: nil) { account in
-                        self.vendor = account
-                    })
+                    self.selectVendor()
                 }
             
             Div{
@@ -109,9 +119,7 @@ class StartManualInventory: Div {
                         
                         self.vendor = nil
                         
-                        addToDom( SearchVendorView(loadBy: nil) { account in
-                            self.vendor = account
-                        })
+                        self.selectVendor()
                         
                         event.stopPropagation()
                         
@@ -351,6 +359,21 @@ class StartManualInventory: Div {
             
             profile = _prof
         }
+    }
+
+    func selectVendor() {
+        addToDom( SearchVendorView(loadBy: nil) { account in
+
+            self.vendor = account
+
+            if self.newDocumentName.purgeSpaces.isEmpty {
+                self.newDocumentNameField.select()
+                return
+            }
+
+            self.createDocument()
+
+        })
     }
     
 }

@@ -7,42 +7,62 @@
 
 import Foundation
 import TCFundamentals
+import TCFireSignal
 import Web
 
 class POCStorageControlAddInventoryView: Div {
     
     override class var name: String { "div" }
     
-    let pocid: UUID
+    let pocId: UUID
+
+    let pocName: String
+
+    let reqSeries: Bool
     
-    let storeid: UUID
-    
+    let storeId: UUID
+
     let storeName: String
     
-    var currentbod: UUID?
+    var bodegaId: UUID
     
-    var currentsec: UUID?
+    var sectionId: UUID
     
+    @State var documentName: String
+
+    @State var vendor: CustVendorsQuick
+
+    var profile: FiscalEndpointV1.Profile
+
     private var callback: ((
         _ items: [CustPOCInventoryIDSale]
     ) -> ())
     
-    
     init(
-        pocid: UUID,
-        storeid: UUID,
+        pocId: UUID,
+        pocName: String,
+        reqSeries: Bool,
+        storeId: UUID,
         storeName: String,
-        currentbod: UUID?,
-        currentsec: UUID?,
+        bodegaId: UUID,
+        sectionId: UUID,
+        documentName: String,
+        vendor: CustVendorsQuick,
+        profile: FiscalEndpointV1.Profile,
         callback: @escaping ((
             _ items: [CustPOCInventoryIDSale]
         ) -> ())
     ) {
-        self.pocid = pocid
-        self.storeid = storeid
+        self.pocId = pocId
+        self.pocName = pocName
+        self.reqSeries = reqSeries
+        self.storeId = storeId
         self.storeName = storeName
-        self.currentbod = currentbod
-        self.currentsec = currentsec
+        self.bodegaId = bodegaId
+        self.sectionId = sectionId
+        self.documentName = documentName
+        self.vendor = vendor
+        self.profile = profile
         self.callback = callback
         super.init()
     }
@@ -50,14 +70,21 @@ class POCStorageControlAddInventoryView: Div {
     required init() {
         fatalError("init() has not been implemented")
     }
-    
+
+    @State var bodegaName = ""
+
+    @State var sectionName = ""
+
     @State var unitsString = "0"
-    
-    var bods: [CustStoreBodegasSinc] = []
-    
+
+    @State var documentSerie: String = ""
+
+    @State var documentFolio: String = ""
+
     lazy var unitsField = InputText(self.$unitsString)
         .class(.textFiledBlackDark)
         .placeholder("0.00")
+        .textAlign(.right)
         .height(28.px)
         .onKeyDown({ tf, event in
             guard let _ = Float(event.key) else {
@@ -70,15 +97,22 @@ class POCStorageControlAddInventoryView: Div {
         .onFocus { tf in
             tf.select()
         }
-    
-    
-    lazy var storeBodegaSelect = Select()
+        .onEnter {
+            self.addInventory()
+        }
+
+    lazy var documentSerieField = InputText(self.$documentSerie)
         .class(.textFiledBlackDark)
+        .placeholder("0331-001")
+        .textAlign(.right)
         .height(28.px)
-        .width(200.px)
-    
-    lazy var sectionSelectDiv = Div()
-    
+
+    lazy var documentFolioField = InputText(self.$documentFolio)
+        .class(.textFiledBlackDark)
+        .placeholder("2025")
+        .textAlign(.right)
+        .height(28.px)
+
     @DOM override var body: DOM.Content {
         
         Div{
@@ -102,57 +136,139 @@ class POCStorageControlAddInventoryView: Div {
                 H2(self.storeName)
                     .color(.darkOrange)
                     .height(35.px)
+                    .color(.white)
                     .float(.left)
                 
             }
-            
-            
-            Div().class(.clear).marginBottom(7.px)
-            
+          
+            Div{
+               Div{
+                    Label("Bodega")
+                        .color(.gray)
+
+                    Div().class(.clear).height(3.px)
+
+                    H2(self.$bodegaName)
+                    .color(.white)
+
+                }
+                .width(50.percent)
+                .float(.left)
+
+                Div{
+                    Label("Seccion")   
+                        .color(.gray)
+
+                    Div().class(.clear).height(3.px)
+
+                    H2(self.$sectionName)
+                    .color(.white)
+                }
+                .width(50.percent)
+                .float(.left)
+            }
+
+            Div().class(.clear).height(7.px)
             
             Div{
-                Label("Ingrese Unidades")
-                    .color(.gray)
+               Div{
+                    Label("Serie")
+                        .color(.gray)
+
+                    Div().class(.clear).height(3.px)
+
+                    self.documentSerieField
+
+                }
+                .width(50.percent)
+                .float(.left)
+
+                Div{
+                    Label("Folio")   
+                        .color(.gray)
+
+                    Div().class(.clear).height(3.px)
+
+                    self.documentFolioField
+                }
+                .width(50.percent)
+                .float(.left)
+            }
+
+            Div().class(.clear).height(7.px)
+                        
+            Div {
+                
+                Img()
+                    .closeButton(.uiView2)
+                    .marginTop(3.px)
+                    .onClick({ _, event in
+                        
+                        addToDom( SearchVendorView(loadBy: nil) { account in
+                            self.vendor = account
+                        })
+                        
+                        event.stopPropagation()
+                        
+                    })
                 
                 Div{
-                    self.unitsField
+                    Span(self.$vendor.map{ $0.folio })
+                        .marginRight(7.px)
+                    
+                    Span(self.$vendor.map{ $0.businessName })
+                        .marginRight(7.px)
+                        .hidden(self.$vendor.map{ ($0.businessName ).isEmpty })
+                    
+                    Span(self.$vendor.map{ $0.razon })
+                        .marginRight(7.px)
                 }
-            }
-            .class(.section)
-            
-            
-            Div().class(.clear).marginBottom(7.px)
-            
-            Div{
-                Label("Bodega")
-                    .color(.gray)
+                .custom("width", "calc(100% - 35px)")
+                .class(.oneLineText)
                 
+            }
+            .color(.yellowTC)
+            .paddingBottom(7.px)
+            .marginBottom(7.px)
+            .width(97.percent)
+            .paddingTop(7.px)
+            .fontSize(18.px)
+            .class(.uibtn)
+            .onClick {
+                
+                addToDom( SearchVendorView(loadBy: .account(self.vendor)) { account in
+                    self.vendor = account
+                })
+
+            }
+            
+
+            Div().class(.clear).height(7.px)
+
+
+
+
+            Div {
+
                 Div{
-                    self.storeBodegaSelect
-                        .disabled(true)
+                    H2("Ingrese Unidades")
+                    .color(.gray)    
                 }
+                .width(50.percent)
+                .float(.left)
+
+                Div{
+                    self.unitsField                    
+                }
+                .width(50.percent)
+                .float(.left)
+
+                Div().class(.clear)
+
             }
-            .class(.section)
             
-            Div().class(.clear).marginBottom(7.px)
             
-            Div{
-                Label("Seccion")
-                    .paddingTop(11.px)
-                    .width(30.percent)
-                    .marginLeft(5.px)
-                    .marginTop(2.px)
-                    .float(.left)
-                    .color(.gray)
-                
-                self.sectionSelectDiv
-                .marginLeft(35.percent)
-                .paddingTop(5.px)
-            }
-            .position(.relative)
-            .zIndex(1)
-            
-            Div().class(.clear).marginBottom(7.px)
+            Div().class(.clear).height(7.px)
             
             Div{
                 Div("+ Agregar")
@@ -187,44 +303,9 @@ class POCStorageControlAddInventoryView: Div {
         left(0.px)
         top(0.px)
         
-        bodegas.forEach { id, bod in
-            if bod.custStore == storeid {
-                
-                bods.append(bod)
-                
-                storeBodegaSelect.appendChild(
-                    Option(bod.name)
-                        .value(bod.id.uuidString)
-                )
-            }
-        }
+        bodegaName = bodegas[bodegaId]?.name ?? "NOT_FOUND"
         
-        guard let bodega = bods.first else {
-            showError(.errorGeneral, "No se localizo bodega de la tienda. Refresque o asegurese que su configuracion sea la correcta.")
-            return
-        }
-        
-        currentbod = bodega.id
-        
-        let view = SectionSelectField(
-            storeid: storeid,
-            storeName: stores[storeid]?.name ?? "",
-            bodid: bodega.id,
-            bodName: bodega.name,
-            callback: { section in
-                self.currentsec = section.id
-            })
-            .position(.relative)
-        
-        sectionSelectDiv.appendChild(view)
-        
-        if let sectid = currentsec {
-            if let place = seccions[sectid] {
-                
-                view.sectionSelectText = place.name
-                view.sectionSelectId = place.id
-            }
-        }
+        sectionName = seccions[sectionId]?.name ?? "NOT_FOUND"
         
     }
     
@@ -237,11 +318,12 @@ class POCStorageControlAddInventoryView: Div {
     
     func addInventory(){
         
-        guard let units = Float(unitsString)?.toCents else {
+        guard let units = Float(unitsString)?.toInt else {
             showError(.formatoInvalido, "Ingrese unidades validas")
             unitsField.select()
             return
         }
+        /*
         
         guard let store = stores[storeid] else {
             showError(.unexpectedResult, "No se localizo teinda, refresque el sistema.")
@@ -268,49 +350,117 @@ class POCStorageControlAddInventoryView: Div {
             showError(.unexpectedResult, "No se localizo seccion, refresque el sistema.")
             return
         }
+        */
+
+        if reqSeries {
+            let view = POCStorageControlAddInventorySeriesView(
+                pocName: pocName,
+                units: units
+            ) { series in
+
+                addToDom(ConfirmationView(
+                    type: .acceptDeny,
+                    title: "Confirme Accion",
+                    message: "¿Quiere agregar \(units.toString) unidades?"
+                ) { isConfirmed, comment in
+                    
+                    if isConfirmed {
+                        
+                        loadingView(show: true)
+
+                        API.custPOCV1.addManualInventory(
+                            storeId: self.storeId,
+                            relationType: .store,
+                            items: [.init(
+                                pocId: self.pocId,
+                                description: self.pocName,
+                                units: .serilized(series),
+                                price: nil
+                            )],
+                            documentName: self.documentName,
+                            documentSerie: self.documentSerie,
+                            documentFolio: self.documentFolio,
+                            vendorId: self.vendor.id,
+                            profileId: self.profile.id,
+                            bodegaId: self.bodegaId,
+                            sectionId: self.sectionId
+                        ) { resp in
+
+                            loadingView(show: false)
+                            
+                            guard let resp else {
+                                showError(.errorDeCommunicacion, .serverConextionError)
+                                return
+                            }
+
+                            guard resp.status == .ok else {
+                                showError(.errorGeneral, resp.msg)
+                                return
+                            }
+                            
+                            
+                            guard let payload = resp.data else {
+                                showError(.errorGeneral, .unexpenctedMissingPayload)
+                                return
+                            }
+                            
+                            showSuccess(.operacionExitosa, "Se agrego inventario")
+                            
+                            let items: [CustPOCInventoryIDSale] = payload.items.map { .init(
+                                id: $0.id,
+                                custStore: self.storeId,
+                                custStoreBodegas: self.bodegaId,
+                                custStoreSecciones: self.sectionId,
+                                series: $0.series
+                            ) }
+                            
+                            self.callback(items)
+                            
+                            self.remove()
+                            
+                        }
+                    }
+                    
+                })
         
-        addToDom(ConfirmView(
+            }
+
+            addToDom(view)    
+
+            return
+        }
+        
+        addToDom(ConfirmationView(
             type: .acceptDeny,
             title: "Confirme Accion",
-            message: "¿Quiere agregar \(unitsString) unidadesd?"
+            message: "¿Quiere agregar \(units.toString) unidades?"
         ) { isConfirmed, comment in
             
             if isConfirmed {
                 
                 loadingView(show: true)
 
-                /*
-                API.custAccountV1.addCustomerManualConcession(
-                    storeId: UUID,
-                    accountId: UUID,
-                    items: [CreateManualProductObject],
-                    documentName: String,
-                    documentSerie: String,
-                    documentFolio: String,
-                    vendorId: UUID,
-                    profileId: UUID,
-                    bodegaId: UUID?,
-                    sectionId: UUID?
+                API.custPOCV1.addManualInventory(
+                    storeId: self.storeId,
+                    relationType: .store,
+                    items: [.init(
+                        pocId: self.pocId,
+                        description: self.pocName,
+                        units: .units(units),
+                        price: nil
+                    )],
+                    documentName: self.documentName,
+                    documentSerie: self.documentSerie,
+                    documentFolio: self.documentFolio,
+                    vendorId: self.vendor.id,
+                    profileId: self.profile.id,
+                    bodegaId: self.bodegaId,
+                    sectionId: self.sectionId
                 ) { resp in
 
-                }
-                */
-
-                API.custPOCV1.addInventory(
-                    pocid: self.pocid,
-                    units: units,
-                    storeid: store.id,
-                    storeName: store.name,
-                    bodid: bodega.id,
-                    bodName: bodega.name,
-                    secid: seccion.id,
-                    secName: seccion.name,
-                    series: []
-                ) { resp in
-                    
                     loadingView(show: false)
                     
-                    guard let resp = resp else {
+                    guard let resp else {
                         showError(.errorDeCommunicacion, .serverConextionError)
                         return
                     }
@@ -321,19 +471,19 @@ class POCStorageControlAddInventoryView: Div {
                     }
                     
                     
-                    guard let data = resp.data else {
+                    guard let payload = resp.data else {
                         showError(.errorGeneral, .unexpenctedMissingPayload)
                         return
                     }
                     
                     showSuccess(.operacionExitosa, "Se agrego inventario")
                     
-                    let items: [CustPOCInventoryIDSale] = data.map { .init(
-                        id: $0,
-                        custStore: self.storeid,
-                        custStoreBodegas: bodega.id,
-                        custStoreSecciones: seccion.id,
-                        series: ""
+                    let items: [CustPOCInventoryIDSale] = payload.items.map { .init(
+                        id: $0.id,
+                        custStore: self.storeId,
+                        custStoreBodegas: self.bodegaId,
+                        custStoreSecciones: self.sectionId,
+                        series: $0.series
                     ) }
                     
                     self.callback(items)
@@ -342,6 +492,7 @@ class POCStorageControlAddInventoryView: Div {
                     
                 }
             }
+            
         })
         
     }

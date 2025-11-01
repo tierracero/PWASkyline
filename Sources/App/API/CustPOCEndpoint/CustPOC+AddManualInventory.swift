@@ -9,11 +9,11 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustAccountEndpointV1 {
+extension CustPOCEndpointV1 {
     
-    public static func addCustomerManualConcession(
+    public static func addManualInventory(
             storeId: UUID,
-            accountId: UUID,
+            relationType: AddManualInventoryType,
             items: [CreateManualProductObject],
             documentName: String,
             documentSerie: String,
@@ -22,15 +22,15 @@ extension CustAccountEndpointV1 {
             profileId: UUID,
             bodegaId: UUID?,
             sectionId: UUID?,
-        callback: @escaping ( (_ resp: APIResponseGeneric<AddCustomerManualConcessionResponse>?) -> () )) {
+        callback: @escaping ( (_ resp: APIResponseGeneric<AddManualInventoryResponse>?) -> () )) {
         
         sendPost(
             rout,
             version,
-            "addCustomerManualConcession",
-            AddCustomerManualConcessionRequest(
+            "addManualInventory",
+            AddManualInventoryRequest(
                 storeId: storeId,
-                accountId: accountId,
+                relationType: relationType,
                 items: items,
                 documentName: documentName,
                 documentSerie: documentSerie,
@@ -48,7 +48,7 @@ extension CustAccountEndpointV1 {
             }
             
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<AddCustomerManualConcessionResponse>.self, from: data))
+                callback(try JSONDecoder().decode(APIResponseGeneric<AddManualInventoryResponse>.self, from: data))
             }
             catch{
                 print("⭕️ load \(#function)")

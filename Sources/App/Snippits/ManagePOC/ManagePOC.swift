@@ -757,8 +757,6 @@ class ManagePOC: Div {
     
     lazy var maximizeBox = InputCheckbox().toggle(self.$maximize)
     
-    
-    
     lazy var levelSelect = Select(self.$level)
         .custom("width", "calc(100% - 16px)")
         .class(.textFiledBlackDark)
@@ -843,7 +841,6 @@ class ManagePOC: Div {
         .width(95.percent)
         .minHeight(70.px)
         .overflow(.auto)
-    
     
     /// ItemConditions
     lazy var conditionsSelect = Select(self.$conditions)
@@ -2876,6 +2873,12 @@ class ManagePOC: Div {
             self.calcCredit()
         }
         
+        $reqSeries.listen { isRequired in
+            self.storageControles.forEach { view in
+                view.reqSeries = isRequired
+            }
+        }
+
         WebApp.current.wsevent.listen {
             
             if $0.isEmpty { return }
@@ -3581,9 +3584,10 @@ class ManagePOC: Div {
                                                     showError(.unexpectedResult, "No se localizo  id del producto refreaque la pnatalla para cagar la nueva seccion.")
                                                     return
                                                 }
-                                                
                                                 let view = POCStorageControlView(
                                                     pocid: pocid,
+                                                    pocName: "\(self.upc) \(self.name) \(self.model)".purgeSpaces,
+                                                    reqSeries: self.reqSeries,
                                                     storeId: storeid,
                                                     store: store,
                                                     storagePlace: storagePlace,
@@ -3722,6 +3726,8 @@ class ManagePOC: Div {
         
         let view = POCStorageControlView(
             pocid: pocid,
+            pocName: "\(self.upc) \(self.name) \(self.model)".purgeSpaces,
+            reqSeries: self.reqSeries,
             storeId: storeid,
             store: store,
             storagePlace: storagePlace,

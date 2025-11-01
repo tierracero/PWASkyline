@@ -128,7 +128,7 @@ extension CustConcessionView {
         lazy var resultBox = Div{
             Div{
                 ForEach(self.$kartItems) { item in
-                SearchChargeView(
+                    SearchChargeView(
                         data: .init(
                             t: .product,
                             i: item.i,
@@ -144,9 +144,6 @@ extension CustConcessionView {
                     ) { item in
                         
                         self.kartItems.removeAll()
-                        /*
-                        self.resultBox.innerHTML = ""
-                        */
 
                         addToDom(ConfirmConcessionView(
                             item: .init(
@@ -161,6 +158,9 @@ extension CustConcessionView {
                                 reqSeries: item.reqSeries
                             )
                         ){ item, units in
+
+                            
+
                             self.addItem(item: item, units: units)
                         })
                         
@@ -863,29 +863,29 @@ extension CustConcessionView {
             .color(.white)
             
             self.kart.append(.init(
-                    id: id,
-                    kartItemView: row,
-                    data: .init(
-                        type: .product,
-                        id: item.id,
-                        store: custCatchStore,
-                        ids: [],
-                        series: [],
-                        cost: 0,
-                        units: units,
-                        unitPrice: 0,
-                        subTotal: 0,
-                        costType: .cost_a,
-                        name: item.name,
-                        brand: item.brand,
-                        model: item.model,
-                        pseudoModel: "",
-                        avatar: item.avatar,
-                        fiscCode: "",
-                        fiscUnit: "",
-                        preRegister: false
-                    )
-                ))
+                id: id,
+                kartItemView: row,
+                data: .init(
+                    type: .product,
+                    id: item.id,
+                    store: custCatchStore,
+                    ids: [],
+                    series: [],
+                    cost: 0,
+                    units: units,
+                    unitPrice: 0,
+                    subTotal: 0,
+                    costType: .cost_a,
+                    name: item.name,
+                    brand: item.brand,
+                    model: item.model,
+                    pseudoModel: "",
+                    avatar: item.avatar,
+                    fiscCode: "",
+                    fiscUnit: "",
+                    preRegister: false
+                )
+            ))
             
             self.itemGrid.appendChild(row)
             
@@ -909,10 +909,6 @@ extension CustConcessionView {
                         return
                     }
 
-                    // CreateManualProductObject
-
-
-                // CreateManualProductObject(pocId: UUID, description: String, units: SoldObjectUnits, price: Int64?)
                     let items: [CreateManualProductObject] = self.kart.map{ .init(
                         pocId: $0.data.id,
                         description: "\($0.data.name) \($0.data.brand) \($0.data.model)".purgeSpaces,
@@ -920,9 +916,9 @@ extension CustConcessionView {
                         price: nil
                     ) }
 
-                    API.custAccountV1.addCustomerManualConcession(
+                    API.custPOCV1.addManualInventory(
                         storeId: custCatchStore,
-                        accountId: self.account.id,
+                        relationType: .conssesion(self.account.id),
                         items: items,
                         documentName: self.newDocumentName,
                         documentSerie: self.docSerie,

@@ -324,6 +324,13 @@ class CreateBodegaView: Div {
                 }
                 
                 print("⭐️  bodega  ⭐️")
+
+                bodegas[payload.bodega.id] = .init(
+                    id: payload.bodega.id,
+                    modifiedAt: payload.bodega.modifiedAt,
+                    custStore: payload.bodega.custStore,
+                    name: payload.bodega.name
+                 )
                 
                 self.callback(
                     .init(

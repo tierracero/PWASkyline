@@ -106,6 +106,20 @@ class SearchVendorView: Div {
                 self.search()
             }
         }
+        .onEnter {
+            
+            print("🟢  ON_ENTER")
+
+            print("🟢  \(self.results.count)")
+
+            if self.results.count == 1 {
+                if let vendor = self.results.first {
+                    print("🟢  \(vendor.rfc)")
+                    self.callback(vendor)
+                    self.remove()
+                }
+            }
+        }
     
     lazy var noResultDiv = Div{
         Table{

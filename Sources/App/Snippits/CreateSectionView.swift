@@ -270,6 +270,14 @@ class CreateSectionView: Div {
                 return
             }
             
+            seccions[section.id] = .init(
+                id: section.id,
+                modifiedAt: section.modifiedAt,
+                custStore: section.custStore,
+                custStoreBodegas: section.custStoreBodegas,
+                name: section.name
+            )
+
             print("⭐️  seccion  ⭐️")
             
             print(section)

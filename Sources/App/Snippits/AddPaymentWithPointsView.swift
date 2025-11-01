@@ -316,16 +316,6 @@ extension AddPaymentFormView {
                     return
                 }
                 
-                /*
-                _ code: FiscalPaymentCodes,
-                _ description: String,
-                _ amount: Float,
-                _ provider: String,
-                _ lastFour: String,
-                _ auth: String,
-                _ uts: Int64?
-                */
-                
                 self.callback(.dineroElectronico, "Puntos Premier", thisPayment.fromCents, "", "", "", nil)
          
                 self.remove()
