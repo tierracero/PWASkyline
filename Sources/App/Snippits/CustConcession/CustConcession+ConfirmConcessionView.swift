@@ -19,15 +19,13 @@ extension CustConcessionView {
         let item: SearchPOCResponse
         
         private var callback: ((
-            _ item: SearchPOCResponse,
-            _ units: Int64
+            _ item: CreateManualProductObject
         ) -> ())
         
         init(
             item: SearchPOCResponse,
             callback: @escaping ((
-                _ item: SearchPOCResponse,
-                _ units: Int64
+                _ item: CreateManualProductObject
             ) -> ())
         ) {
             self.item = item
@@ -197,12 +195,45 @@ extension CustConcessionView {
         
         func addItems(){
             
-            guard let units = Int64(unitsToAdd), units > 0 else {
+            guard let units = Int(unitsToAdd), units > 0 else {
                 showError( .errorGeneral, "Ingrese unidades validas")
                 return
             }
-            
-            self.callback(item, (units * 100))
+
+            let itemName = "\(item.upc) \(item.name) \(item.model)"
+
+            if let reqSeries = item.reqSeries, (reqSeries) {
+
+                let view = POCStorageControlAddInventorySeriesView(
+                    pocName: itemName,
+                    units: units,
+                    requier: .required
+                ) { series in
+
+                    self.callback(.init(
+                        pocId: self.item.id,
+                        description: itemName,
+                        units: .serilized(series),
+                        series: .required,
+                        price: nil
+                    ))
+                    
+                    self.remove()
+                }
+
+                addToDom(view)
+
+                return
+
+            }
+
+            self.callback(.init(
+                pocId: item.id,
+                description: itemName,
+                units: .units(units),
+                series: .doesNotContain,
+                price: nil
+            ))
             
             self.remove()
             

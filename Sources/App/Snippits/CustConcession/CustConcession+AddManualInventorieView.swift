@@ -94,7 +94,7 @@ extension CustConcessionView {
         /* MARK: Kart */
         @State var balanceString =  "0.00"
         
-        @State var kart: [SalePointObject] = []
+        @State var kart: [UUID : AddManualInventorieRow] = [:]
         
         @State var searchTerm = ""
         
@@ -102,6 +102,7 @@ extension CustConcessionView {
 
         @State var sectionListener = ""
 
+        /// List of found items by prduct search
         @State var kartItems: [SearchChargeResponse] = []
 
         @State var currentSeccions: [CustStoreSeccionesQuickRef] = []
@@ -157,11 +158,8 @@ extension CustConcessionView {
                                 units: nil,
                                 reqSeries: item.reqSeries
                             )
-                        ){ item, units in
-
-                            
-
-                            self.addItem(item: item, units: units)
+                        ){ item in
+                            self.addItem(item: item)
                         })
                         
                     }
@@ -305,11 +303,8 @@ extension CustConcessionView {
                                         units: nil,
                                         reqSeries: reqSeries
                                     )
-                                ){ item, units in
-                                    self.addItem(
-                                        item: item,
-                                        units: units
-                                    )
+                                ){ item in
+                                    self.addItem(item: item)
                                 })
                                 
                             } deleted: { }
@@ -793,11 +788,8 @@ extension CustConcessionView {
 
                                 self.kartItems.removeAll()
                                 
-                                addToDom(ConfirmConcessionView(item: item){ item, units in
-                                    self.addItem(
-                                        item: item,
-                                        units: units
-                                    )
+                                addToDom(ConfirmConcessionView(item: item){ item in
+                                    self.addItem(item: item)
                                 })
                                 
                                 return
@@ -824,73 +816,23 @@ extension CustConcessionView {
             }
         }
         
-        func addItem( item: SearchPOCResponse, units: Int64) {
+        func addItem( item: CreateManualProductObject) {
             
-            let id = UUID()
-            
-            let row = KartItemView(
-                id: id,
-                cost: 0,
-                quant: (units / 100),
-                price: 0,
-                data: .init(
-                    t: .product,
-                    i: item.id,
-                    u: item.upc,
-                    n: item.name,
-                    b: item.brand,
-                    m: item.model,
-                    p: 0,
-                    a: item.avatar,
-                    reqSeries: item.reqSeries
-                )
-            ) { id in
-                
-                var _kart: [SalePointObject] = []
-                
-                self.kart.forEach { item in
-                    if item.id != id {
-                        _kart.append(item)
-                    }
+            let view = AddManualInventorieRow(item: item) {  viewId in
+
+                if let view = self.kart[viewId] {
+                    view.remove()
                 }
-                
-                self.kart = _kart
-                
-            } 
-            editManualCharge: { _, _, _, _, _ in
-                // MARK: No editd are suported / required
+
+                self.kart.removeValue(forKey: viewId)
+
             }
-            .color(.white)
+
+            kart[view.viewId] = view
+
+            itemGrid.appendChild(view)
             
-            self.kart.append(.init(
-                id: id,
-                kartItemView: row,
-                data: .init(
-                    type: .product,
-                    id: item.id,
-                    store: custCatchStore,
-                    ids: [],
-                    series: [],
-                    cost: 0,
-                    units: units,
-                    unitPrice: 0,
-                    subTotal: 0,
-                    costType: .cost_a,
-                    name: item.name,
-                    brand: item.brand,
-                    model: item.model,
-                    pseudoModel: "",
-                    avatar: item.avatar,
-                    fiscCode: "",
-                    fiscUnit: "",
-                    preRegister: false
-                )
-            ))
-            
-            self.itemGrid.appendChild(row)
-            
-            self.searchBox.select()
-            
+            searchBox.select()        
         }
         
         func addConcession(){
@@ -909,12 +851,7 @@ extension CustConcessionView {
                         return
                     }
 
-                    let items: [CreateManualProductObject] = self.kart.map{ .init(
-                        pocId: $0.data.id,
-                        description: "\($0.data.name) \($0.data.brand) \($0.data.model)".purgeSpaces,
-                        units: .units(Int($0.data.units.fromCents)),
-                        price: nil
-                    ) }
+                    let items: [CreateManualProductObject] = self.kart.map{  $0.value.item }
 
                     API.custPOCV1.addManualInventory(
                         storeId: custCatchStore,
@@ -957,7 +894,7 @@ extension CustConcessionView {
                             purchaseManager: control.id,
                             subTotal: self.balanceString,
                             document: control,
-                            kart: self.kart,
+                            //kart: ,
                             cardex: cardex
                         ))
                         
@@ -980,4 +917,46 @@ extension CustConcessionView {
             )
         }
     }
+}
+extension CustConcessionView {
+    
+    class AddManualInventorieRow: Tr {
+
+        override class var name: String { "tr" }
+
+        let viewId: UUID = .init()
+
+        var item: CreateManualProductObject
+        
+        private var removeItem: ((
+            _ viewId: UUID
+        ) -> ())
+        
+        init(
+            item: CreateManualProductObject,
+            removeItem: @escaping ((
+                _ viewId: UUID
+            ) -> ())
+        ) {
+            self.item = item
+            self.removeItem = removeItem
+            super.init()
+        }
+        
+        required init() {
+            fatalError("init() has not been implemented")
+        }
+
+        @DOM override var body: DOM.Content { 
+                Tr {
+                    Td().width(50)
+                    Td("Marca").width(200)
+                    Td("Modelo / Nombre")
+                    Td("Units").width(100)
+                    Td("C. Uni").width(100)
+                    Td("S. Total").width(100)
+                }
+        }
+    }
+        
 }

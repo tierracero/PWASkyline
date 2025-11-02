@@ -1261,7 +1261,7 @@ class CustRemoveFromConcessionView: Div {
                     purchaseManager: payload.document.id,
                     subTotal: self.items.map{ ( $0.soldPrice ?? 0 ) }.reduce(0, +).formatMoney,
                     document: payload.document,
-                    kart: kart,
+                    //kart: kart,
                     cardex: payload.cardex
                 )
                 

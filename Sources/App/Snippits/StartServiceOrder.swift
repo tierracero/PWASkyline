@@ -716,7 +716,7 @@ class StartServiceOrder: Div {
     
     @State var equipments: [EquipmentObject] = []
     
-    var payChargeRef: [UUID:ChargeTrRow] = [:]
+    var payChargeRef: [ UUID : OldChargeTrRow ] = [:]
     
     @DOM override var body: DOM.Content {
         Div{
@@ -1572,7 +1572,7 @@ class StartServiceOrder: Div {
                                         
                                         if currentUnits > 0 {
                                             
-                                            let tr = ChargeTrRow(
+                                            let tr = OldChargeTrRow(
                                                 preCharge: true,
                                                 isCharge: true,
                                                 id: id,
@@ -1629,7 +1629,7 @@ class StartServiceOrder: Div {
                                         price = (price * -1)
                                     }
                                     
-                                    let tr = ChargeTrRow(
+                                    let tr = OldChargeTrRow(
                                         preCharge: true,
                                         isCharge: true,
                                         id: id,
@@ -1715,7 +1715,7 @@ class StartServiceOrder: Div {
                                     
                                     let id = refid
                                 
-                                    let tr = ChargeTrRow(
+                                    let tr = OldChargeTrRow(
                                         preCharge: true,
                                         isCharge: false,
                                         id: id,

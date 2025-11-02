@@ -1,5 +1,5 @@
 //
-//  ChargeTrRow.swift
+//  OldChargeTrRow.swift
 //
 //
 //  Created by Victor Cantu on 4/25/22.
@@ -8,8 +8,8 @@
 import TCFundamentals
 import Foundation
 import Web
-
-class ChargeTrRow: Tr {
+@available(*, deprecated, message: "Uee FinaceTrRow insted")
+class OldChargeTrRow: Tr {
     
     override class var name: String { "tr" }
     

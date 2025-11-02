@@ -26,7 +26,7 @@ class ConcessionConfirmationView: Div {
     
     var document: CustFiscalInventoryControl
     
-    var kart: [SalePointObject]
+    //var items: [CreateManualProductObject]
     
     let cardex: [CustPOCCardex]
     
@@ -37,7 +37,7 @@ class ConcessionConfirmationView: Div {
         purchaseManager: UUID,
         subTotal: String,
         document: CustFiscalInventoryControl,
-        kart: [SalePointObject],
+        //items: [CreateManualProductObject],
         cardex: [CustPOCCardex]
     ) {
         self.accountid = accountid
@@ -46,7 +46,7 @@ class ConcessionConfirmationView: Div {
         self.purchaseManager = purchaseManager
         self.subTotal = subTotal
         self.document = document
-        self.kart = kart
+        //self.items = items
         self.cardex = cardex
         super.init()
     }

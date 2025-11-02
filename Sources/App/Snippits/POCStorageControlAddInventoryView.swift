@@ -355,7 +355,8 @@ class POCStorageControlAddInventoryView: Div {
         if reqSeries {
             let view = POCStorageControlAddInventorySeriesView(
                 pocName: pocName,
-                units: units
+                units: units,
+                requier: .required
             ) { series in
 
                 addToDom(ConfirmationView(
@@ -375,6 +376,7 @@ class POCStorageControlAddInventoryView: Div {
                                 pocId: self.pocId,
                                 description: self.pocName,
                                 units: .serilized(series),
+                                series: self.reqSeries ? .required : .doesNotContain,
                                 price: nil
                             )],
                             documentName: self.documentName,
@@ -447,7 +449,9 @@ class POCStorageControlAddInventoryView: Div {
                         pocId: self.pocId,
                         description: self.pocName,
                         units: .units(units),
+                        series: self.reqSeries ? .required : .doesNotContain,
                         price: nil
+                                
                     )],
                     documentName: self.documentName,
                     documentSerie: self.documentSerie,

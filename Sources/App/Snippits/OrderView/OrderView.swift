@@ -161,7 +161,7 @@ class OrderView: Div {
     
     @State var onWorkUsername = ""
     
-    var chargesRefrence: [UUID: ChargeTrRow] = [:]
+    var chargesRefrence: [ UUID: OldChargeTrRow ] = [:]
     
     var rentalViewRefrence: [UUID:OrderRentalView] = [:]
     
@@ -438,7 +438,7 @@ class OrderView: Div {
                                     }
                                     
                                     
-                                    let tr = ChargeTrRow(pocs: pocs) { viewId in
+                                    let tr = OldChargeTrRow(pocs: pocs) { viewId in
                                         self.editPoc(viewId: viewId, ids: items.map{ $0.id })
                                     }
                                         .color(.gray)
@@ -545,7 +545,7 @@ class OrderView: Div {
                                     price = (price * -1)
                                 }
                                 
-                                 let tr = ChargeTrRow(
+                                 let tr = OldChargeTrRow(
                                      isCharge: true,
                                      id: id,
                                      name: soc.description,
@@ -2774,7 +2774,7 @@ class OrderView: Div {
             total += stotal
             chas += stotal
             
-            let tr = ChargeTrRow(
+            let tr = OldChargeTrRow(
                 isCharge: true,
                 id: obj.id,
                 name: obj.name,
@@ -2826,7 +2826,7 @@ class OrderView: Div {
                 
                 chas += soldPrice
                 
-                let tr = ChargeTrRow(pocs: items) { viewId in
+                let tr = OldChargeTrRow(pocs: items) { viewId in
                     self.editPoc(viewId: viewId, ids: items.map{ $0.id })
                 }
                     .color(.gray)
@@ -2848,7 +2848,7 @@ class OrderView: Div {
             
             chas += obj.soldPrice
             
-            let tr = ChargeTrRow(
+            let tr = OldChargeTrRow(
                 isCharge: true,
                 id: obj.id,
                 name: "\(obj.name.prefix(50)) \(obj.ecoNumber)",
@@ -2874,7 +2874,7 @@ class OrderView: Div {
             
             pays += obj.cost
             
-            let tr = ChargeTrRow(
+            let tr = OldChargeTrRow(
                 isCharge: false,
                 id: obj.id,
                 name: obj.description,
@@ -4873,7 +4873,7 @@ class OrderView: Div {
                 self.total += stotal
                 self.chas += stotal
                 
-                let tr = ChargeTrRow(
+                let tr = OldChargeTrRow(
                     isCharge: true,
                     id: obj.id,
                     name: obj.name,
@@ -4923,7 +4923,7 @@ class OrderView: Div {
                     
                     self.chas += soldPrice
                     
-                    let tr = ChargeTrRow(pocs: items) { viewId in
+                    let tr = OldChargeTrRow(pocs: items) { viewId in
                         self.editPoc(viewId: viewId, ids: items.map{ $0.id })
                     }
                         .color(.gray)
@@ -5147,7 +5147,7 @@ class OrderView: Div {
                 status: BillingStatus.unbilled
             )
             
-            let tr = ChargeTrRow(
+            let tr = OldChargeTrRow(
                 isCharge: false,
                 id: obj.id,
                 name: obj.description,
@@ -5224,7 +5224,7 @@ class OrderView: Div {
                 status: BillingStatus.unbilled
             )
             
-            let tr = ChargeTrRow(
+            let tr = OldChargeTrRow(
                 isCharge: false,
                 id: obj.id,
                 name: obj.description,

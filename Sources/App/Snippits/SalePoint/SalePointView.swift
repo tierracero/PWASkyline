@@ -1325,7 +1325,7 @@ class SalePointView: Div {
                                     purchaseManager: control.id,
                                     subTotal: self.balanceString,
                                     document: control,
-                                    kart: self.kart,
+                                    //kart: self.kart,
                                     cardex: cardex
                                 ))
                                 

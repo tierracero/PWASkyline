@@ -424,6 +424,10 @@ class CustConcessionView: Div {
 
                                     }
 
+                                    let date = Date()
+
+                                    view.newDocumentName = "\(date.dateStamp)"
+
                                     addToDom(view)
                                     
                                 }

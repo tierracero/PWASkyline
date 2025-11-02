@@ -15,7 +15,10 @@ class POCStorageControlAddInventorySeriesView: Div {
     override class var name: String { "div" }
 
     let pocName: String
+
     let units: Int
+
+    let seriesRequiermentType: SeriesRequiermentType
 
     private var callback: ((
         _ series: [String]
@@ -24,12 +27,14 @@ class POCStorageControlAddInventorySeriesView: Div {
     init(
         pocName: String,
         units: Int,
+        requier: SeriesRequiermentType,
         callback: @escaping ((
             _ series: [String]
         ) -> ())
     ) {
         self.pocName = pocName
         self.units = units
+        self.seriesRequiermentType = requier
         self.callback = callback
         super.init()
     }
@@ -163,7 +168,7 @@ class POCStorageControlAddInventorySeriesView: Div {
 
             let serie = view.input.text.purgeSpaces.uppercased()
 
-            if serie.isEmpty {
+            if serie.isEmpty && seriesRequiermentType == .required {
                 invalidField = view.input
                 break
             }
