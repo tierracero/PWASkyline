@@ -820,7 +820,7 @@ class ProductTransferView: Div {
             blockMultipleStores: true,
             blockPurchaseOrders: true,
             storeId: (self.currentView == .mermInventory) ? self.selectedStore?.id : custCatchStore,
-            callback: { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder in
+            callback: { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
                 
                 /// ``Remeber NO PURCHASE ORDERS ARE SUPPORTED``
             

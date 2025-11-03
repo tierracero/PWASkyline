@@ -3217,7 +3217,7 @@ extension ToolFiscal {
                                     costType: .cost_a,
                                     pocid: pocid,
                                     selectedInventoryIDs: []
-                                ) { poc, price, costType, _units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder in
+                                ) { poc, price, costType, _units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
                                     
                                     /// ``⚠️ ALERT `` should come in cents not hole units
                                     let units:Int64 = _units * 1000000

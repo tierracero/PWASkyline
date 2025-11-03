@@ -15,7 +15,9 @@ extension CustAccountEndpointV1 {
         socid: UUID,
         accountid: UUID,
         price: Int64,
-        callback: @escaping ( (_ resp: APIResponseGeneric<CustAcctChargesQuick>?) -> () )) {
+        callback: @escaping ( (
+            _ resp: APIResponseGeneric<CustAcctChargesQuick>?
+        ) -> () )) {
         
         sendPost(
             rout,

@@ -373,32 +373,32 @@ class OrderView: Div {
                                 blockPurchaseOrders: false,
                                 isWarenty: isWarenty,
                                 internalWarenty: internalWarenty
-                            ) { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder in
+                            ) { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
                                 
+                                /// internal, external
+                                var warenty: SoldObjectWarenty? = nil
+
+                                if isWarenty {
+                                    warenty = internalWarenty ? .internal : .external
+                                }
+
                                 guard let storeid = self.order.store else {
                                     showError(.errorGeneral, "No se localizo tenda para venta")
                                     return
                                 }
                                 
                                 loadingView(show: true)
-                                
+                                                             
                                 API.custOrderV1.addCharge(
-                                    orderid: self.order.id,
-                                    store: storeid,
-                                    id: poc.id,
-                                    ids: items.map{ $0.id },
-                                    series: nil,
-                                    type: .product,
-                                    fiscCode: poc.fiscCode,
-                                    fiscUnit: poc.fiscUnit,
-                                    code: poc.upc,
-                                    description: poc.description,
-                                    quant: units.fromCents,
-                                    price: price.fromCents,
-                                    cost: poc.cost.fromCents,
-                                    isWarenty: isWarenty,
-                                    internalWarenty: internalWarenty,
-                                    generateRepositionOrder: generateRepositionOrder
+                                    orderId: self.order.id,
+                                    item: .product(.init(
+                                        description: "\(poc.upc) \(poc.name) \(poc.model)".purgeSpaces,
+                                        pocId: poc.id,
+                                        from: soldObjectFrom,
+                                        units: .units(items.count),
+                                        price: price.fromCents,
+                                        warenty: warenty
+                                    ))
                                 ) { resp in
                                          
                                     loadingView(show: false)
@@ -488,9 +488,13 @@ class OrderView: Div {
                         }
                         addSoc: { soc, codeType, isWarenty, internalWarenty in
                             
+                            var charge: API.custOrderV1.AddChargeType =  .manual()
+
                             //service, product, manual, payment
                             var type: ChargeType = .manual
                             
+                                
+
                             if let _ = soc.id {
                                 //showAlert(.alerta, "Contacte a Soporte TC ya que el protocolo completo aun no es soportado.")
                                 type = .service
@@ -498,24 +502,28 @@ class OrderView: Div {
                             
                             loadingView(show: true)
                             
+                            // API.custOrderV1.addCharge(
+                            //     orderid: self.order.id,
+                            //     store: self.order.store ?? custCatchStore,
+                            //     id: soc.id,
+                            //     ids: [],
+                            //     series: nil,
+                            //     type: type,
+                            //     fiscCode: soc.fiscCode,
+                            //     fiscUnit: soc.fiscUnit,
+                            //     code: soc.code,
+                            //     description: soc.description,
+                            //     quant: soc.units.fromCents,
+                            //     price: soc.price.fromCents,
+                            //     cost: soc.cost?.fromCents,
+                            //     isWarenty: isWarenty,
+                            //     internalWarenty: internalWarenty,
+                            //     generateRepositionOrder: nil
+                            // ) { resp in
                             API.custOrderV1.addCharge(
-                                orderid: self.order.id,
-                                store: self.order.store ?? custCatchStore,
-                                id: soc.id,
-                                ids: [],
-                                series: nil,
-                                type: type,
-                                fiscCode: soc.fiscCode,
-                                fiscUnit: soc.fiscUnit,
-                                code: soc.code,
-                                description: soc.description,
-                                quant: soc.units.fromCents,
-                                price: soc.price.fromCents,
-                                cost: soc.cost?.fromCents,
-                                isWarenty: isWarenty,
-                                internalWarenty: internalWarenty,
-                                generateRepositionOrder: nil
-                            ) { resp in
+                                    orderId: self.order.id,
+                                    item: .service(.init(id: UUID, units: Int, price: Int64))
+                                ) { resp in
                                 
                                 loadingView(show: false)
                                 

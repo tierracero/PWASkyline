@@ -972,7 +972,7 @@ class BudgetView: Div {
             costType: costType,
             pocid: id,
             selectedInventoryIDs: []
-        ) { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder in
+        ) { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
             
             loadingView(show: true)
             

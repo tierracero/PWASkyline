@@ -41,7 +41,8 @@ class ConfirmProductView: Div {
         _ storeid: UUID,
         _ isWarenty: Bool,
         _ internalWarenty: Bool?,
-        _ generateRepositionOrder: Bool?
+        _ generateRepositionOrder: Bool?,
+        _ soldObjectFrom: SoldObjectFrom
     ) -> ())
     
     init(
@@ -63,7 +64,8 @@ class ConfirmProductView: Div {
             _ storeid: UUID,
             _ isWarenty: Bool,
             _ internalWarenty: Bool?,
-            _ generateRepositionOrder: Bool?
+            _ generateRepositionOrder: Bool?,
+            _ soldObjectFrom: SoldObjectFrom
         ) -> ())
     ) {
         self.accountId = accountId
@@ -837,6 +839,36 @@ class ConfirmProductView: Div {
         
         print("cuant \(cuant)")
         
+
+        storeIdSelectListener
+
+        var from: SoldObjectFrom? = nil
+
+        if storeIdSelectListener == "concession" {
+                guard let accountId else {
+                    showError(.errorGeneral, "No se localizo la cuenta del concesionario")
+                    return 
+                }
+
+                from = .consessionId(accountId)
+                
+        }
+        else {
+
+            guard let storeId = UUID(uuidString: storeIdSelectListener) else {
+                showError(.errorGeneral, "No se localizo la tienda seleccionada")
+                return 
+            }
+            
+            from = .storeId(storeId)
+        }
+
+        guard let from else {
+            showError(.unexpectedResult, "No se pudo establecer oringen del producto.")
+            return
+        }
+
+
         if (items.count < cuant){
             
             if blockPurchaseOrders {
@@ -845,10 +877,15 @@ class ConfirmProductView: Div {
             }
         
             if storeIdSelectListener == "concession" {
-                showError(.errorGeneral, "No se pueden generar Ordenes de Compra de la bodegade concesión. Seleccione un producto del inventario general y seleccion \"Generar Orden de Repuesto\"")
+                showError(.errorGeneral, "No se pueden generar Ordenes de Compra de la bodega de concesión. Seleccione un producto del inventario general y seleccion \"Generar Orden de Repuesto\"")
                 return
             }
-            
+
+            if poc.reqSeries {
+                showError(.errorGeneral, "No se pueden generar Ordenes de Compra en productos que requeiren serie.")
+                return
+            }
+
             addToDom(LowInventoryView(generatePurchaseOrder: {
                 self.callback(
                     poc,
@@ -859,7 +896,8 @@ class ConfirmProductView: Div {
                     ( UUID(uuidString: self.storeIdSelectListener) ?? custCatchStore ),
                     self.isWarenty,
                     self.internalWarenty,
-                    self.generateRepositionOrder
+                    self.generateRepositionOrder,
+                    from
                 )
                 self.remove()
             }))
@@ -876,7 +914,8 @@ class ConfirmProductView: Div {
             storeid,
             isWarenty,
             internalWarenty,
-            generateRepositionOrder
+            generateRepositionOrder,
+            from
         )
         
         self.remove()

@@ -1883,7 +1883,7 @@ class SalePointView: Div {
             costType: custAcct?.costType ?? .cost_a,
             pocid: pocid,
             selectedInventoryIDs: self.selectedInventoryIDs,
-            callback: { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder in
+            callback: { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
                 
                 if (units.toInt / 100) > items.count {
                     

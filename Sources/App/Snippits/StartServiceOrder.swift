@@ -1542,7 +1542,7 @@ class StartServiceOrder: Div {
                                         costType: self.custAcct.costType,
                                         pocid: pocid,
                                         selectedInventoryIDs: selectedInventoryIDs
-                                    ) { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder in
+                                    ) { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
                                         
                                         let _poc: ChargeObject = .init(
                                             refid: .init(),
