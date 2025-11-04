@@ -976,9 +976,8 @@ extension CustConcessionView {
         override func buildUI() {
             super.buildUI()
 
-
-
         }
+        
     }
         
 }
