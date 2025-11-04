@@ -341,274 +341,7 @@ class OrderView: Div {
                     .class(.uibtn)
                     .float(.right)
                     .onClick { _ in
-                        
-                        var socIds: [UUID] = []
-                        
-                        self.charges.forEach { charge in
-                            
-                            guard charge.type == .service else {
-                                return
-                            }
-                            
-                            guard let id = charge.codeid else {
-                                return
-                            }
-                            
-                            socIds.append(id)
-                        }
-                        
-                        let addChargeFormView = AddChargeFormView(
-                            allowManualCharges: true,
-                            allowWarrantyCharges: true,
-                            socCanLoadAction: true,
-                            costType: self.accountView.account?.costType ?? .cost_a, 
-                            currentSOCMasters: socIds
-                        ){ id, isWarenty, internalWarenty in
-                            
-                            let view = ConfirmProductView(
-                                accountId: self.order.custAcct,
-                                costType: self.accountView.account?.costType ?? .cost_a,
-                                pocid: id,
-                                selectedInventoryIDs: [],
-                                blockPurchaseOrders: false,
-                                isWarenty: isWarenty,
-                                internalWarenty: internalWarenty
-                            ) { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
-                                
-                                /// internal, external
-                                var warenty: SoldObjectWarenty? = nil
-
-                                if isWarenty {
-                                    warenty = internalWarenty ? .internal : .external
-                                }
-
-                                guard let storeid = self.order.store else {
-                                    showError(.errorGeneral, "No se localizo tenda para venta")
-                                    return
-                                }
-                                
-                                loadingView(show: true)
-                                                             
-                                API.custOrderV1.addCharge(
-                                    orderId: self.order.id,
-                                    item: .product(.init(
-                                        description: "\(poc.upc) \(poc.name) \(poc.model)".purgeSpaces,
-                                        pocId: poc.id,
-                                        from: soldObjectFrom,
-                                        units: .units(items.count),
-                                        price: price.fromCents,
-                                        warenty: warenty
-                                    ))
-                                ) { resp in
-                                         
-                                    loadingView(show: false)
-                                    
-                                    guard let resp else {
-                                        showError(.errorDeCommunicacion, .serverConextionError)
-                                        return
-                                    }
-
-                                    guard resp.status == .ok else {
-                                        showError(.errorGeneral, resp.msg)
-                                        return
-                                    }
-                                    
-                                    var pocs:[CustPOCInventoryOrderView] = []
-                                    
-                                    items.forEach { item in
-                                        pocs.append(.init(
-                                            id: item.id,
-                                            POC: poc.id,
-                                            soldType: .order,
-                                            custStore: storeid,
-                                            custStoreBodegas: item.custStoreBodegas,
-                                            custStoreSecciones: item.custStoreSecciones,
-                                            comision: 0,
-                                            points: 0,
-                                            premierPoints: 0,
-                                            series: item.series,
-                                            warentSelfTo: nil,
-                                            warentFabricTo: nil,
-                                            soldPrice: price,
-                                            name: poc.name,
-                                            brand: poc.brand,
-                                            model: poc.model,
-                                            status: .sold
-                                        ))
-                                    }
-                                    
-                                    
-                                    let tr = OldChargeTrRow(pocs: pocs) { viewId in
-                                        self.editPoc(viewId: viewId, ids: items.map{ $0.id })
-                                    }
-                                        .color(.gray)
-                                    
-                                    self.chargesRefrence[tr.viewId] = tr
-                                    
-                                    self.chargesTable.appendChild(tr)
-                                
-                                    items.forEach { item in
-                                        
-                                        let obj: CustPOCInventoryOrderView = .init(
-                                            id: item.id,
-                                            POC: poc.id,
-                                            soldType: .order,
-                                            custStore: storeid,
-                                            custStoreBodegas: item.custStoreBodegas,
-                                            custStoreSecciones: item.custStoreSecciones,
-                                            comision: 0,
-                                            points: 0,
-                                            premierPoints: 0,
-                                            series: item.series,
-                                            warentSelfTo: nil,
-                                            warentFabricTo: nil,
-                                            soldPrice: price,
-                                            name: poc.name,
-                                            brand: poc.brand,
-                                            model: poc.model, 
-                                            status: .sold
-                                        )
-                                        
-                                        pocsCatch[self.order.id]?.append(obj)
-                                        
-                                        self.pocs.append(obj)
-                                        
-                                    }
-                                    
-                                    if items.isEmpty {
-                                        showSuccess(.operacionExitosa, "Producto agregado, refreque el folio para ver los cambios")
-                                    }
-                                    
-                                    self.calcBalance()
-                                    
-                                }
-                            }
-                            
-                            self.appendChild(view)
-                        }
-                        addSoc: { soc, codeType, isWarenty, internalWarenty in
-                            
-                            var charge: API.custOrderV1.AddChargeType =  .manual()
-
-                            //service, product, manual, payment
-                            var type: ChargeType = .manual
-                            
-                                
-
-                            if let _ = soc.id {
-                                //showAlert(.alerta, "Contacte a Soporte TC ya que el protocolo completo aun no es soportado.")
-                                type = .service
-                            }
-                            
-                            loadingView(show: true)
-                            
-                            // API.custOrderV1.addCharge(
-                            //     orderid: self.order.id,
-                            //     store: self.order.store ?? custCatchStore,
-                            //     id: soc.id,
-                            //     ids: [],
-                            //     series: nil,
-                            //     type: type,
-                            //     fiscCode: soc.fiscCode,
-                            //     fiscUnit: soc.fiscUnit,
-                            //     code: soc.code,
-                            //     description: soc.description,
-                            //     quant: soc.units.fromCents,
-                            //     price: soc.price.fromCents,
-                            //     cost: soc.cost?.fromCents,
-                            //     isWarenty: isWarenty,
-                            //     internalWarenty: internalWarenty,
-                            //     generateRepositionOrder: nil
-                            // ) { resp in
-                            API.custOrderV1.addCharge(
-                                    orderId: self.order.id,
-                                    item: .service(.init(id: UUID, units: Int, price: Int64))
-                                ) { resp in
-                                
-                                loadingView(show: false)
-                                
-                                guard let resp else {
-                                    showError(.errorDeCommunicacion, .serverConextionError)
-                                    return
-                                }
-                                
-                                guard resp.status == .ok else {
-                                    showError(.errorGeneral, resp.msg)
-                                    return
-                                }
-
-                                guard let id = resp.id else {
-                                    showError(.errorGeneral, "No se pudo obtenr id del producto")
-                                    return
-                                }
-                                
-                                guard let payload = resp.data else {
-                                    showError(.unexpectedResult, .unexpenctedMissingPayload)
-                                    return
-                                }
-                                
-                                var price = soc.price
-                                
-                                if codeType == .adjustment{
-                                    price = (price * -1)
-                                }
-                                
-                                 let tr = OldChargeTrRow(
-                                     isCharge: true,
-                                     id: id,
-                                     name: soc.description,
-                                     cuant: 100,
-                                     price: price,
-                                     puerchaseOrder: false
-                                 ) { viewId in
-                                     
-                                     self.editCharge(
-                                        viewId: viewId,
-                                        ids: [id],
-                                        type: (soc.id == nil) ? .manual : .service
-                                     )
-                                     
-                                 }.color(.gray)
-                                 
-                                self.chargesRefrence[tr.viewId] = tr
-                                 
-                                 self.chargesTable.appendChild (tr)
-                                 
-                                let obj: CustOrderLoadFolioCharges = .init(
-                                    id: id,
-                                    codeid: soc.id,
-                                    type: (soc.id == nil) ? .manual : .service,
-                                    name: soc.description,
-                                    cuant: soc.units,
-                                    price: price,
-                                    status: .unbilled
-                                )
-                                
-                                chargesCatch[self.order.id]?.append(obj)
-                                
-                                self.charges.append(obj)
-                                
-                                self.calcBalance()
-                                
-                                payload.addedEfects.forEach { efect in
-                                    
-                                    switch efect {
-                                    case .mediaContatacLocation:
-                                        break
-                                    case .highPriority:
-                                        OrderCatchControler.shared.updateParameter(self.order.id, .hightPriorityStatus(true))
-                                        self.order.highPriority = true
-                                        self.isHighPriority = true
-                                    }
-                                    
-                                }
-                            }
-                        }
-                        
-                        self.appendChild(addChargeFormView)
-                        
-                        addChargeFormView.searchTermInput.select()
-                        
+                        self.addCharge()
                     }
                     
                     if self.order.type == .folio {
@@ -3450,6 +3183,283 @@ class OrderView: Div {
         
     }
     
+/*
+        /// POC Data
+        _ poc: CustPOC,
+        _ cost: Int64,
+        _ costType: CustAcctCostTypes,
+        _ units: Int64,
+        _ items: [CustPOCInventoryMin],
+        _ storeid: UUID,
+        _ isWarenty: Bool,
+        _ internalWarenty: Bool?,
+        _ generateRepositionOrder: Bool?,
+        _ soldObjectFrom: SoldObjectFrom
+*/
+
+    func addCharge() {
+
+        var socIds: [UUID] = []
+        
+        self.charges.forEach { charge in
+            
+            guard charge.type == .service else {
+                return
+            }
+            
+            guard let id = charge.codeid else {
+                return
+            }
+            
+            socIds.append(id)
+        }
+        
+        let addChargeFormView = AddChargeFormView(
+            allowManualCharges: true,
+            allowWarrantyCharges: true,
+            socCanLoadAction: true,
+            costType: self.accountView.account?.costType ?? .cost_a, 
+            currentSOCMasters: socIds
+        ){ id, isWarenty, internalWarenty in
+            
+            let view = ConfirmProductView(
+                accountId: self.order.custAcct,
+                costType: self.accountView.account?.costType ?? .cost_a,
+                pocid: id,
+                selectedInventoryIDs: [],
+                blockPurchaseOrders: false,
+                isWarenty: isWarenty,
+                internalWarenty: internalWarenty
+            ) { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
+                
+                /// internal, external
+                var warenty: SoldObjectWarenty? = nil
+
+                if isWarenty, let internalWarenty {
+                    warenty = internalWarenty ? .internal : .external
+                }
+
+                guard let storeid = self.order.store else {
+                    showError(.errorGeneral, "No se localizo tenda para venta")
+                    return
+                }
+                
+                loadingView(show: true)
+                                                
+                API.custOrderV1.addCharge(
+                    orderId: self.order.id,
+                    item: .product(.init(
+                        description: "\(poc.upc) \(poc.name) \(poc.model)".purgeSpaces,
+                        pocId: poc.id,
+                        from: soldObjectFrom,
+                        units: .units(items.count),
+                        price: price,
+                        warenty: warenty
+                    ))
+                ) { resp in
+                            
+                    loadingView(show: false)
+                    
+                    guard let resp else {
+                        showError(.errorDeCommunicacion, .serverConextionError)
+                        return
+                    }
+
+                    guard resp.status == .ok else {
+                        showError(.errorGeneral, resp.msg)
+                        return
+                    }
+                    
+                    var pocs:[CustPOCInventoryOrderView] = []
+                    
+                    items.forEach { item in
+                        pocs.append(.init(
+                            id: item.id,
+                            POC: poc.id,
+                            soldType: .order,
+                            custStore: storeid,
+                            custStoreBodegas: item.custStoreBodegas,
+                            custStoreSecciones: item.custStoreSecciones,
+                            comision: 0,
+                            points: 0,
+                            premierPoints: 0,
+                            series: item.series,
+                            warentSelfTo: nil,
+                            warentFabricTo: nil,
+                            soldPrice: price,
+                            name: poc.name,
+                            brand: poc.brand,
+                            model: poc.model,
+                            status: .sold
+                        ))
+                    }
+                    
+                    
+                    let tr = OldChargeTrRow(pocs: pocs) { viewId in
+                        self.editPoc(viewId: viewId, ids: items.map{ $0.id })
+                    }
+                        .color(.gray)
+                    
+                    self.chargesRefrence[tr.viewId] = tr
+                    
+                    self.chargesTable.appendChild(tr)
+                
+                    items.forEach { item in
+                        
+                        let obj: CustPOCInventoryOrderView = .init(
+                            id: item.id,
+                            POC: poc.id,
+                            soldType: .order,
+                            custStore: storeid,
+                            custStoreBodegas: item.custStoreBodegas,
+                            custStoreSecciones: item.custStoreSecciones,
+                            comision: 0,
+                            points: 0,
+                            premierPoints: 0,
+                            series: item.series,
+                            warentSelfTo: nil,
+                            warentFabricTo: nil,
+                            soldPrice: price,
+                            name: poc.name,
+                            brand: poc.brand,
+                            model: poc.model, 
+                            status: .sold
+                        )
+                        
+                        pocsCatch[self.order.id]?.append(obj)
+                        
+                        self.pocs.append(obj)
+                        
+                    }
+                    
+                    if items.isEmpty {
+                        showSuccess(.operacionExitosa, "Producto agregado, refreque el folio para ver los cambios")
+                    }
+                    
+                    self.calcBalance()
+                    
+                }
+            }
+            
+            self.appendChild(view)
+            
+        }
+        addSoc: { soc, codeType, isWarenty, internalWarenty in
+            
+            //service, product, manual, payment
+            var type: API.custOrderV1.AddChargeType = .manual(.init(
+                fiscCode: soc.fiscCode,
+                fiscUnit: soc.fiscUnit,
+                description: soc.description,
+                units: soc.units.fromCents.toInt,
+                price: soc.price,
+                cost: soc.cost
+            ))
+            
+            if let socId = soc.id {
+                //showAlert(.alerta, "Contacte a Soporte TC ya que el protocolo completo aun no es soportado.")
+                type = .service(.init(
+                    id: socId,
+                    units: soc.units.fromCents.toInt,
+                    price: soc.price
+                ))
+
+            }
+            
+            loadingView(show: true)
+            
+            API.custOrderV1.addCharge(
+                    orderId: self.order.id,
+                    item: type
+            ) { resp in
+                
+                loadingView(show: false)
+                
+                guard let resp else {
+                    showError(.errorDeCommunicacion, .serverConextionError)
+                    return
+                }
+                
+                guard resp.status == .ok else {
+                    showError(.errorGeneral, resp.msg)
+                    return
+                }
+
+                guard let id = resp.id else {
+                    showError(.errorGeneral, "No se pudo obtenr id del producto")
+                    return
+                }
+                
+                guard let payload = resp.data else {
+                    showError(.unexpectedResult, .unexpenctedMissingPayload)
+                    return
+                }
+                
+                var price = soc.price
+                
+                if codeType == .adjustment{
+                    price = (price * -1)
+                }
+                
+                    let tr = OldChargeTrRow(
+                        isCharge: true,
+                        id: id,
+                        name: soc.description,
+                        cuant: 100,
+                        price: price,
+                        puerchaseOrder: false
+                    ) { viewId in
+                        
+                        self.editCharge(
+                        viewId: viewId,
+                        ids: [id],
+                        type: (soc.id == nil) ? .manual : .service
+                        )
+                        
+                    }.color(.gray)
+                    
+                self.chargesRefrence[tr.viewId] = tr
+                    
+                self.chargesTable.appendChild (tr)
+                    
+                let obj: CustOrderLoadFolioCharges = .init(
+                    id: id,
+                    codeid: soc.id,
+                    type: (soc.id == nil) ? .manual : .service,
+                    name: soc.description,
+                    cuant: soc.units,
+                    price: price,
+                    status: .unbilled
+                )
+                
+                chargesCatch[self.order.id]?.append(obj)
+                
+                self.charges.append(obj)
+                
+                self.calcBalance()
+                
+                payload.addedEfects.forEach { efect in
+                    
+                    switch efect {
+                    case .mediaContatacLocation:
+                        break
+                    case .highPriority:
+                        OrderCatchControler.shared.updateParameter(self.order.id, .hightPriorityStatus(true))
+                        self.order.highPriority = true
+                        self.isHighPriority = true
+                    }
+                    
+                }
+            }
+            
+        }
+        
+        self.appendChild(addChargeFormView)
+        
+        addChargeFormView.searchTermInput.select()
+        
+    }
+
     // MARK: Charges Modification
     func removeCharge(viewId: UUID, id: UUID, name: String, amount: Int64) {
         self.appendChild(
