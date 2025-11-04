@@ -426,7 +426,7 @@ class CustConcessionView: Div {
 
                                     let date = Date()
 
-                                    view.newDocumentName = "\(date.dateStamp)"
+                                    view.newDocumentName = " Ingreso a concession manual \(date.dateStamp)"
 
                                     addToDom(view)
                                     

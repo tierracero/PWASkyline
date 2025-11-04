@@ -179,10 +179,10 @@ extension CustConcessionView {
         
         lazy var itemGrid = Table{
             Tr {
+                Td().width(35)
                 Td().width(50)
                 Td("Marca").width(200)
                 Td("Modelo / Nombre")
-                //Td("Hubicación").width(200)
                 Td("Units").width(100)
                 Td("C. Uni").width(100)
                 Td("S. Total").width(100)
@@ -947,15 +947,37 @@ extension CustConcessionView {
             fatalError("init() has not been implemented")
         }
 
-        @DOM override var body: DOM.Content { 
-                Tr {
-                    Td().width(50)
-                    Td("Marca").width(200)
-                    Td("Modelo / Nombre")
-                    Td("Units").width(100)
-                    Td("C. Uni").width(100)
-                    Td("S. Total").width(100)
-                }
+        lazy var avatar = Img()
+            .src("skyline/media/512.png")
+            .height(100.percent)
+            .width(100.percent)
+            .objectFit(.contain)
+
+        @DOM override var body: DOM.Content {
+            Td{
+                Img()
+                        .src("/skyline/media/cross.png")
+                        .marginTop(7.px)
+                        .cursor(.pointer)
+                        .onClick {
+                            self.removeItem(self.viewId)
+                        }
+            }
+            Td{
+                self.avatar
+            }
+            Td(self.item.description)
+            .colSpan(2)
+            Td(self.item.units.count.toString).width(100)
+            Td(self.item.price?.formatMoney ?? "0").width(100)
+            Td( ( self.item.units.count.toInt64 * (self.item.price ?? 0) ).formatMoney ).width(100)
+        }
+
+        override func buildUI() {
+            super.buildUI()
+
+
+
         }
     }
         
