@@ -215,7 +215,7 @@ extension CustConcessionView {
                         description: itemName,
                         units: .serilized(series),
                         series: .required,
-                        price: nil
+                        price: self.item.price
                     ))
                     
                     self.remove()
@@ -232,7 +232,7 @@ extension CustConcessionView {
                 description: itemName,
                 units: .units(units),
                 series: .doesNotContain,
-                price: nil
+                price: self.item.price
             ))
             
             self.remove()
@@ -240,4 +240,5 @@ extension CustConcessionView {
         }
         
     }
+    
 }

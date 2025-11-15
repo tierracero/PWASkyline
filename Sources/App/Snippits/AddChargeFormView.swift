@@ -12,6 +12,8 @@ import Web
 class AddChargeFormView: Div {
     
     override class var name: String { "div" }
+
+    let accountId: UUID?
     
     let allowManualCharges: Bool
     
@@ -36,8 +38,14 @@ class AddChargeFormView: Div {
         _ isWarenty: Bool,
         _ internalWarenty: Bool?
     ) -> ())
-    
+
+    private var addItem: ((
+        _ item: SearchChargeResponse,
+        _ warenty: SoldObjectWarenty?
+    ) -> ())
+
     init(
+        accountId: UUID?,
         allowManualCharges: Bool,
         allowWarrantyCharges: Bool,
         socCanLoadAction: Bool,
@@ -54,8 +62,13 @@ class AddChargeFormView: Div {
             _ codeType: SOCCodeType,
             _ isWarenty: Bool,
             _ internalWarenty: Bool?
+        ) -> ()),
+        addItem: @escaping ((
+            _ item: SearchChargeResponse,
+            _ warenty: SoldObjectWarenty?
         ) -> ())
     ) {
+        self.accountId = accountId
         self.allowManualCharges = allowManualCharges
         self.allowWarrantyCharges = allowWarrantyCharges
         self.socCanLoadAction = socCanLoadAction
@@ -63,6 +76,7 @@ class AddChargeFormView: Div {
         self.currentSOCMasters = currentSOCMasters
         self.addPoc = addPoc
         self.addSoc = addSoc
+        self.addItem = addItem
     }
     
     required init() {
@@ -617,7 +631,8 @@ class AddChargeFormView: Div {
             searchCharge(
                 term: term,
                 costType: self.costType,
-                currentCodeIds: self.currentSOCMasters
+                currentCodeIds: self.currentSOCMasters,
+                accountId: self.accountId
             ) { term, resp in
                 self.searchTermInput.removeClass(.isLoading)
                 //searchChargeCatch[term] = resp
@@ -631,43 +646,61 @@ class AddChargeFormView: Div {
         
         resultBox.innerHTML = ""
         
-        if payload.count == 1 {
+        if WebApp.shared.window.location.hostname == "localhost"  {
+            print("🟢 payload ")
+            print(payload.count)
+            payload.forEach { item in
+                print(item)
+            }
+        }
+
+        if payload.count == 1, canAutoLoad {
             
-            if canAutoLoad {
-                
-                guard let charge = payload.first else {
-                    return
-                }
-                
-                if self.processAsWarenty {
-                    guard let _ = self.processAsInternalWarenty else {
-                        showError(.campoRequerido, "Seleccione el tipo de garantia")
-                        return
-                    }
-                }
-                
-                switch charge.t {
-                case .product:
-                    self.addPoc(charge.i, self.processAsWarenty, self.processAsInternalWarenty)
-                    self.remove()
-                case .service:
-                    self.loadSOC(soc: charge)
-                case .manual:
-                    break
-                case .rental:
-                    break
-                }
-                
+            guard let charge = payload.first else {
+                return
             }
             
+            if self.processAsWarenty {
+                guard let _ = self.processAsInternalWarenty else {
+                    showError(.campoRequerido, "Seleccione el tipo de garantia")
+                    return
+                }
+            }
+            
+            switch charge.t {
+            case .product:
+                self.addPoc(charge.i, self.processAsWarenty, self.processAsInternalWarenty)
+                self.remove()
+            case .service:
+                self.loadSOC(soc: charge)
+            case .manual:
+                break
+            case .rental:
+                break
+            case .inventory:
+                
+                var warenty: SoldObjectWarenty? = nil
+
+                if self.processAsWarenty, let processAsInternalWarenty = self.processAsInternalWarenty {
+                    warenty = processAsInternalWarenty ? .internal : .external
+                }
+
+                self.addItem(charge, warenty)
+
+                self.remove()
+                
+            }
+
             canAutoLoad = false
            
             return
+
         }
         
         payload.forEach { data in
             
             resultBox.appendChild(
+                
                 SearchChargeView(data: data, costType: self.costType, callback: { charge in
                     
                     if self.processAsWarenty {
@@ -687,6 +720,8 @@ class AddChargeFormView: Div {
                     case .manual:
                         break
                     case .rental:
+                        break
+                    case .inventory:
                         break
                     }
                     

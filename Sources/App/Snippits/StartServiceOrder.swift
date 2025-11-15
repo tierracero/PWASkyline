@@ -1507,174 +1507,7 @@ class StartServiceOrder: Div {
                             .class(.uibutton)
                             .float(.left)
                             .onClick { _ in
-                                
-                                var socIds: [UUID] = []
-                                
-                                self.charges.forEach { charge in
-                                    
-                                    guard charge.type == .service else {
-                                        return
-                                    }
-                                    
-                                    guard let id = charge.id else {
-                                        return
-                                    }
-                                    
-                                    socIds.append(id)
-                                }
-                                
-                                let addChargeFormView = AddChargeFormView(
-                                    allowManualCharges: true,
-                                    allowWarrantyCharges: true,
-                                    socCanLoadAction: true,
-                                    costType: self.custAcct.costType,
-                                    currentSOCMasters: socIds
-                                ) { pocid, isWarenty, internalWarenty in
-                                    
-                                    var selectedInventoryIDs: [UUID] = []
-                                    
-                                    self.charges.forEach { item in
-                                        selectedInventoryIDs.append(contentsOf: item.ids)
-                                    }
-                                    
-                                    let view = ConfirmProductView(
-                                        accountId: self.custAcct.id,
-                                        costType: self.custAcct.costType,
-                                        pocid: pocid,
-                                        selectedInventoryIDs: selectedInventoryIDs
-                                    ) { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
-                                        
-                                        let _poc: ChargeObject = .init(
-                                            refid: .init(),
-                                            id: poc.id,
-                                            fiscCode: poc.fiscCode,
-                                            fiscUnit: poc.fiscUnit,
-                                            code: poc.upc,
-                                            units: units,
-                                            price: price,
-                                            description: "\(poc.brand) \(poc.model) \(poc.name)",
-                                            type: .product,
-                                            cost: poc.cost,
-                                            productionTime: 0,
-                                            ids: items.map{ $0.id },
-                                            saleAction: [],
-                                            serviceAction: [],
-                                            isWarenty: isWarenty,
-                                            internalWarenty: internalWarenty,
-                                            generateRepositionOrder: generateRepositionOrder
-                                        )
-                                        
-                                        self.charges.append(_poc)
-                                        
-                                        let id = _poc.refid
-                                        
-                                        let currentUnits = items.count.toFloat.toCents
-                                        
-                                        if currentUnits > 0 {
-                                            
-                                            let tr = OldChargeTrRow(
-                                                preCharge: true,
-                                                isCharge: true,
-                                                id: id,
-                                                name: "\(poc.brand) \(poc.model) \(poc.name)",
-                                                cuant: units,
-                                                price: price,
-                                                puerchaseOrder: (units / 100) != items.map{ $0.id }.count
-                                            ) { viewId in
-                                                
-                                                if let tf = self.payChargeRef[viewId] {
-                                                    tf.remove()
-                                                }
-                                                
-                                                var _charges: [ChargeObject] = []
-                                                
-                                                self.charges.forEach { charge in
-                                                    
-                                                    if charge.refid == viewId {
-                                                        return
-                                                    }
-                                                    
-                                                    _charges.append(charge)
-                                                }
-                                                
-                                                self.charges = _charges
-                                                
-                                                self.calcBalance()
-                                                
-                                            }
-                                            .color(.gray)
-                                            
-                                            self.payChargeRef[tr.viewId] = tr
-                                            
-                                            self.chargesTable.appendChild(tr)
-                                            
-                                        }
-                                        
-                                        self.calcBalance()
-                                        
-                                    }
-                                    
-                                    self.appendChild(view)
-                                    
-                                }
-                                addSoc: { soc, codeType, isWarenty, internalWarenty in
-                                    
-                                    self.charges.append(soc)
-                                    
-                                    let id = soc.refid
-                                    
-                                    var price = soc.price
-                                    
-                                    if codeType == .adjustment{
-                                        price = (price * -1)
-                                    }
-                                    
-                                    let tr = OldChargeTrRow(
-                                        preCharge: true,
-                                        isCharge: true,
-                                        id: id,
-                                        name: soc.description,
-                                        cuant: soc.units,
-                                        price: price,
-                                        puerchaseOrder: false
-                                    ) {viewId in
-                                        
-                                        if let tf = self.payChargeRef[viewId] {
-                                            tf.remove()
-                                        }
-                                        
-                                        var _charges: [ChargeObject] = []
-                                        
-                                        self.charges.forEach { charge in
-                                            
-                                            if charge.refid == id {
-                                                return
-                                            }
-                                            
-                                            _charges.append(charge)
-                                        }
-                                        
-                                        self.charges = _charges
-                                        
-                                        print(_charges)
-                                        
-                                        self.calcBalance()
-                                        
-                                    }
-                                    .color(.gray)
-                                    
-                                    self.payChargeRef[tr.viewId] = tr
-                                    
-                                    self.chargesTable.appendChild(tr)
-                                    
-                                    self.calcBalance()
-                                    
-                                }
-                                
-                                self.appendChild(addChargeFormView)
-                                
-                                addChargeFormView.searchTermInput.select()
-                                
+                                self.addCharge()
                             }
                         
                             /// payment
@@ -3816,6 +3649,181 @@ class StartServiceOrder: Div {
         }
     }
     
+    func addCharge() {
+                
+        var socIds: [UUID] = []
+        
+        charges.forEach { charge in
+            
+            guard charge.type == .service else {
+                return
+            }
+            
+            guard let id = charge.id else {
+                return
+            }
+            
+            socIds.append(id)
+        }
+        
+        let addChargeFormView = AddChargeFormView(
+            accountId: custAcct.id,
+            allowManualCharges: true,
+            allowWarrantyCharges: true,
+            socCanLoadAction: true,
+            costType: custAcct.costType,
+            currentSOCMasters: socIds
+        ) { pocid, isWarenty, internalWarenty in
+            
+            var selectedInventoryIDs: [UUID] = []
+            
+            self.charges.forEach { item in
+                selectedInventoryIDs.append(contentsOf: item.ids)
+            }
+            
+            let view = ConfirmProductView(
+                accountId: self.custAcct.id,
+                costType: self.custAcct.costType,
+                pocid: pocid,
+                selectedInventoryIDs: selectedInventoryIDs
+            ) { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
+                
+                let _poc: ChargeObject = .init(
+                    refid: .init(),
+                    id: poc.id,
+                    fiscCode: poc.fiscCode,
+                    fiscUnit: poc.fiscUnit,
+                    code: poc.upc,
+                    units: units,
+                    price: price,
+                    description: "\(poc.brand) \(poc.model) \(poc.name)",
+                    type: .product,
+                    cost: poc.cost,
+                    productionTime: 0,
+                    ids: items.map{ $0.id },
+                    saleAction: [],
+                    serviceAction: [],
+                    isWarenty: isWarenty,
+                    internalWarenty: internalWarenty,
+                    generateRepositionOrder: generateRepositionOrder
+                )
+                
+                self.charges.append(_poc)
+                
+                let id = _poc.refid
+                
+                let currentUnits = items.count.toFloat.toCents
+                
+                if currentUnits > 0 {
+                    
+                    let tr = OldChargeTrRow(
+                        preCharge: true,
+                        isCharge: true,
+                        id: id,
+                        name: "\(poc.brand) \(poc.model) \(poc.name)",
+                        cuant: units,
+                        price: price,
+                        puerchaseOrder: (units / 100) != items.map{ $0.id }.count
+                    ) { viewId in
+                        
+                        if let tf = self.payChargeRef[viewId] {
+                            tf.remove()
+                        }
+                        
+                        var _charges: [ChargeObject] = []
+                        
+                        self.charges.forEach { charge in
+                            
+                            if charge.refid == viewId {
+                                return
+                            }
+                            
+                            _charges.append(charge)
+                        }
+                        
+                        self.charges = _charges
+                        
+                        self.calcBalance()
+                        
+                    }
+                    .color(.gray)
+                    
+                    self.payChargeRef[tr.viewId] = tr
+                    
+                    self.chargesTable.appendChild(tr)
+                    
+                }
+                
+                self.calcBalance()
+                
+            }
+            
+            self.appendChild(view)
+            
+        }
+        addSoc: { soc, codeType, isWarenty, internalWarenty in
+            
+            self.charges.append(soc)
+            
+            let id = soc.refid
+            
+            var price = soc.price
+            
+            if codeType == .adjustment{
+                price = (price * -1)
+            }
+            
+            let tr = OldChargeTrRow(
+                preCharge: true,
+                isCharge: true,
+                id: id,
+                name: soc.description,
+                cuant: soc.units,
+                price: price,
+                puerchaseOrder: false
+            ) {viewId in
+                
+                if let tf = self.payChargeRef[viewId] {
+                    tf.remove()
+                }
+                
+                var _charges: [ChargeObject] = []
+                
+                self.charges.forEach { charge in
+                    
+                    if charge.refid == id {
+                        return
+                    }
+                    
+                    _charges.append(charge)
+                }
+                
+                self.charges = _charges
+                
+                print(_charges)
+                
+                self.calcBalance()
+                
+            }
+            .color(.gray)
+            
+            self.payChargeRef[tr.viewId] = tr
+            
+            self.chargesTable.appendChild(tr)
+            
+            self.calcBalance()
+            
+        }
+        addItem: { item, warenty in
+            
+        }
+        
+        addToDom(addChargeFormView)
+        
+        addChargeFormView.searchTermInput.select()
+        
+    }
+
 }
 
 

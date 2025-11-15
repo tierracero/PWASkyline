@@ -158,8 +158,11 @@ extension CustConcessionView {
                                 units: nil,
                                 reqSeries: item.reqSeries
                             )
-                        ){ item in
-                            self.addItem(item: item)
+                        ){ payload in
+                            self.addItem(
+                                item: payload,
+                                avatar: item.a
+                            )
                         })
                         
                     }
@@ -177,19 +180,7 @@ extension CustConcessionView {
             .overflow(.auto)
             .width(1000.px)
         
-        lazy var itemGrid = Table{
-            Tr {
-                Td().width(35)
-                Td().width(50)
-                Td("Marca").width(200)
-                Td("Modelo / Nombre")
-                Td("Units").width(100)
-                Td("C. Uni").width(100)
-                Td("S. Total").width(100)
-            }
-        }
-        .width(100.percent)
-        .color(.white)
+        lazy var itemGrid = TBody()
 
          lazy var serieField = InputText(self.$docSerie)
         .class(.textFiledBlackDark)
@@ -304,7 +295,10 @@ extension CustConcessionView {
                                         reqSeries: reqSeries
                                     )
                                 ){ item in
-                                    self.addItem(item: item)
+                                    self.addItem(
+                                        item: item,
+                                        avatar: avatar
+                                    )
                                 })
                                 
                             } deleted: { }
@@ -617,7 +611,26 @@ extension CustConcessionView {
 
                 //Price Grid
                 Div{
-                    self.itemGrid
+                    Table{
+
+                        THead {
+                            Tr {
+                                Td().width(35)
+                                Td().width(50)
+                                Td("Marca").width(200)
+                                Td("Modelo / Nombre")
+                                Td("Units").width(100)
+                                Td("C. Uni").width(100)
+                                Td("S. Total").width(100)
+                            }
+                        }
+
+                        self.itemGrid
+                       
+                    }
+                    .width(100.percent)
+                    .color(.white)
+                    
                 }
                 .custom("height", "calc(100% - 310px)")
                 .padding(all: 7.px)
@@ -782,14 +795,17 @@ extension CustConcessionView {
 
                             if resp.count == 1 {
                                 
-                                guard let item = resp.first else {
+                                guard let payload = resp.first else {
                                     return
                                 }
 
                                 self.kartItems.removeAll()
                                 
-                                addToDom(ConfirmConcessionView(item: item){ item in
-                                    self.addItem(item: item)
+                                addToDom(ConfirmConcessionView(item: payload){ item in
+                                    self.addItem(
+                                        item: item,
+                                        avatar: payload.avatar
+                                    )
                                 })
                                 
                                 return
@@ -816,9 +832,12 @@ extension CustConcessionView {
             }
         }
         
-        func addItem( item: CreateManualProductObject) {
+        func addItem( item: CreateManualProductObject, avatar: String) {
             
-            let view = AddManualInventorieRow(item: item) {  viewId in
+            let view = AddManualInventorieRow(
+                item: item,
+                avatar: avatar
+            ) {  viewId in
 
                 if let view = self.kart[viewId] {
                     view.remove()
@@ -897,20 +916,13 @@ extension CustConcessionView {
                             //kart: ,
                             cardex: cardex
                         ))
-                        
+
+                        self.kart.forEach { _, view in
+                            view.remove()
+                        }
+
                         self.kart.removeAll()
 
-                        self.itemGrid.innerHTML = ""
-
-                        self.itemGrid.appendChild(Tr {
-                            Td().width(50)
-                            Td("Marca").width(200)
-                            Td("Modelo / Nombre")
-                            //Td("Hubicación").width(200)
-                            Td("Units").width(100)
-                            Td("C. Uni").width(100)
-                            Td("S. Total").width(100)
-                        })
                     }
             
                 })
@@ -926,19 +938,23 @@ extension CustConcessionView {
 
         let viewId: UUID = .init()
 
-        var item: CreateManualProductObject
+        let item: CreateManualProductObject
         
+        let avatar: String
+
         private var removeItem: ((
             _ viewId: UUID
         ) -> ())
         
         init(
             item: CreateManualProductObject,
+            avatar: String,
             removeItem: @escaping ((
                 _ viewId: UUID
             ) -> ())
         ) {
             self.item = item
+            self.avatar = avatar
             self.removeItem = removeItem
             super.init()
         }
@@ -947,11 +963,37 @@ extension CustConcessionView {
             fatalError("init() has not been implemented")
         }
 
-        lazy var avatar = Img()
+        lazy var avatarImg = Img()
             .src("skyline/media/512.png")
-            .height(100.percent)
-            .width(100.percent)
+            .cursor( self.avatar.isEmpty ? .default : .pointer )
+            .borderRadius(all: 12.px)
             .objectFit(.contain)
+            .height(50.px)
+            .width(50.px)
+            .onClick {
+                
+                guard let pDir = customerServiceProfile?.account.pDir else {
+                    return
+                }
+
+                if self.avatar.isEmpty {
+                    return
+                }
+
+                addToDom(MediaViewer(
+                    relid: self.item.pocId,
+                    type: .product,
+                    url: "https://intratc.co/cdn/\(pDir)/",
+                    files: [.init(
+                        fileId: nil,
+                        file: self.avatar,
+                        avatar: self.avatar,
+                        type: .image
+                    )],
+                    currentView: 0
+                ))
+
+            }
 
         @DOM override var body: DOM.Content {
             Td{
@@ -964,7 +1006,7 @@ extension CustConcessionView {
                         }
             }
             Td{
-                self.avatar
+                self.avatarImg
             }
             Td(self.item.description)
             .colSpan(2)
@@ -976,7 +1018,9 @@ extension CustConcessionView {
         override func buildUI() {
             super.buildUI()
 
-
+            if let pDir = customerServiceProfile?.account.pDir, !avatar.isEmpty {
+                avatarImg.load("https://intratc.co/cdn/\(pDir)/thump_\(avatar)")
+            }
 
         }
     }

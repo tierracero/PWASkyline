@@ -211,6 +211,30 @@ class EditChargePOCView: Div {
                     self.remove()
                 }
             
+            if self.type == .product {
+                Div("Ver Detalles")
+                .marginRight(7.px)
+                .class(.uibtn)
+                .float(.right)
+                .onClick {
+
+                    guard let id = self.ids.first else {
+                        showError(.unexpectedResult, "No se localizo id del cargo a editar")
+                        self.remove()
+                        return
+                    }
+        
+                    let view = InventoryItemDetailView(
+                        itemid: id
+                    ){ updatedCost in
+
+                    }
+                    
+                    addToDom(view)
+
+                }
+            }
+
             /// Editar Manual
             /// Editar Servicio
             /// Editar Producto

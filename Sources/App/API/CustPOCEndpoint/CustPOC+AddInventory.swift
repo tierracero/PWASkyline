@@ -8,7 +8,7 @@
 import Foundation
 import TCFundamentals
 import TCFireSignal
-
+/*
 extension CustPOCEndpointV1 {
     
     static func addInventory(
@@ -58,3 +58,4 @@ extension CustPOCEndpointV1 {
     }
 }
 
+*/

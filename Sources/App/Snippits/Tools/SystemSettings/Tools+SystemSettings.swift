@@ -9,6 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 import Web
+import XMLHttpRequest
 
 extension ToolsView {
     
@@ -39,6 +40,18 @@ extension ToolsView {
         // general
         lazy var generalDiv = Div()
             .hidden(self.$selectedSetting.map{ $0 != .general })
+            .height(100.percent)
+            .width(100.percent)
+
+        // advance configuration
+        lazy var advancedlDiv = Div{
+            Div("Descargar Respaldo")
+            .class(.uibtn)
+            .onClick {
+                self.downloadBackup()
+            }
+        }
+            .hidden(self.$selectedSetting.map{ $0 != .advancesConfiguration })
             .height(100.percent)
             .width(100.percent)
         
@@ -127,6 +140,19 @@ extension ToolsView {
                                     .onClick {
                                         self.selectedSetting = .general
                                     }
+
+                                /// Advanced
+                                Div("Avanzado")
+                                    .border(
+                                        width: .medium,
+                                        style: self.$selectedSetting.map{ $0 == .advancesConfiguration ? .solid : .none },
+                                        color: .skyBlue
+                                    )
+                                    .class(.uibtnLarge)
+                                    .width(95.percent)
+                                    .onClick {
+                                        self.selectedSetting = .advancesConfiguration
+                                    }
                             }
                             
                         }
@@ -141,6 +167,7 @@ extension ToolsView {
                         self.seviceTagsDiv
                         self.storeProductDiv
                         self.generalDiv
+                        self.advancedlDiv
                     }
                     .height(100.percent)
                     .width(75.percent)
@@ -244,6 +271,169 @@ extension ToolsView.SystemSettings {
         ///  ConfigStoreProduct
         case storeProduct
         
+        case  advancesConfiguration
+
+    }
+
+    func downloadBackup() {
+
+        let url = baseAPIUrl( "https://intratc.co/api/cust/v1/downloadBackup")
+        
+        print(url)
+
+        _ = JSObject.global.goToURL!(url)
+
+        /*
+        do {
+
+            let data = try JSONEncoder().encode(APIHeader(
+                AppID: thisAppID,
+                AppToken: thisAppToken,
+                user: custCatchUser,
+                mid: custCatchMid,
+                key: custCatchKey,
+                token: custCatchToken,
+                tcon: .web,
+                applicationType: .customer
+            ))
+
+            let token = data.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0))
+            Console.clear()
+
+            print("token")
+
+            print(token)
+
+            var header: [String:String] = [
+                "Authorization": token
+            ]
+            // 
+            _ = JSObject.global.downloadWithHeader!("https://intratc.co/a[i/cust/v1/downloadBackup", header)
+
+        }
+        catch {
+            showError(.unexpectedResult, "Error al crear header DATA")
+            return
+        }
+    */
+        
+
+
+
+        /*
+
+        if let base64Encoded = utf8str?.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0)) {
+
+        guard let json = String(data: data, encoding: .utf8) else {
+            showError(.unexpectedResult, "Error al crear header JSON")
+            return
+        }
+
+        downloadWithHeader("")
+
+        var xhr = XMLHttpRequest();
+
+        xhr.open(method: "GET", url: "")
+
+        xhr.responseType = .blob
+
+        xhr.setRequestHeader("Accept", "application/json")
+        
+        if let jsonData = try? JSONEncoder().encode(APIHeader(
+            AppID: thisAppID,
+            AppToken: thisAppToken,
+            user: custCatchUser,
+            mid: custCatchMid,
+            key: custCatchKey,
+            token: custCatchToken,
+            tcon: .web,
+            applicationType: .customer
+        )){
+            if let str = String(data: jsonData, encoding: .utf8) {
+                let utf8str = str.data(using: .utf8)
+                if let base64Encoded = utf8str?.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0)) {
+                    xhr.setRequestHeader("Authorization", base64Encoded)
+                }
+            }
+        }
+        
+        xhr.onLoad {
+            
+            print("xhr.responseType")
+
+            print(xhr.responseType)
+            
+
+            var blob = xhr.response
+        }
+
+        /*
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                const blob = xhr.response;
+                const url = window.URL.createObjectURL(blob);
+
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = "report.pdf";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            } else {
+                console.error("Download failed:", xhr.status, xhr.statusText);
+            }
+        };
+        */
+        
+        xhr.send();
+        */
     }
     
 }
+func _downloadBackup(
+    /// Term to Search
+    term: String,
+    callback: @escaping ((_ term: String, _ resp: [APISearchResultsGeneral])->())
+){
+    
+    let _term = (term.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")
+        .replace(from: "/", to: "%2f")
+        .replace(from: "+", to: "%2b")
+        .replace(from: "=", to: "%3d")
+    
+    let xhr = XMLHttpRequest()
+    
+    let url = baseAPIUrl("https://intratc.co/api/v1/getFiscalUnitPesos") + "&term=\(_term)"
+    
+    xhr.open(method: "GET", url: url)
+    
+    xhr.setRequestHeader("Accept", "application/json")
+        .setRequestHeader("Content-Type", "application/json")
+
+    xhr.send("")
+    
+    xhr.onError {
+        print("error")
+        print(xhr.responseText ?? "")
+        callback(term,[])
+    }
+    xhr.onLoad {
+        
+        if let data = xhr.responseText?.data(using: .utf8) {
+            do {
+                let resp = try JSONDecoder().decode([APISearchResultsGeneral].self, from: data)
+                
+                callback(term,resp)
+                
+            } catch  {
+                print(error)
+                callback(term,[])
+            }
+        }
+        else{
+            callback(term,[])
+        }
+    }
+}
+

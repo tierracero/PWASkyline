@@ -155,10 +155,14 @@ class ToolReciveSendInventorySelectPOC: Div {
                     }
                     .class(.uibtnLarge)
                     .onClick{
+
                         let view = SelectStoreDepartment { type, levelid, titleText in
                             self.createPOC(type, levelid, titleText)
                             self.remove()
                         }
+
+                        addToDom(view)
+                        
                     }
                 }
                 .align(.center)

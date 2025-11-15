@@ -14,7 +14,7 @@ import XMLHttpRequest
 class BudgetView: Div {
     
     override class var name: String { "div" }
-    
+
     let accountId: UUID
     
     var budgetStatus: State<CustBudgetManagerStatus?>
@@ -901,7 +901,8 @@ class BudgetView: Div {
             searchCharge(
                 term: term,
                 costType: self.costType,
-                currentCodeIds: []
+                currentCodeIds: [],
+                accountId: self.accountId
             ) { term, resp in
                 self.searchTermInput.removeClass(.isLoading)
                 searchChargeCatch[term] = resp
@@ -934,6 +935,8 @@ class BudgetView: Div {
                     break
                 case .rental:
                     break
+                case .inventory:
+                    break
                 }
                 
             }
@@ -955,6 +958,8 @@ class BudgetView: Div {
                     case .manual:
                         break
                     case .rental:
+                        break
+                    case .inventory:
                         break
                     }
                     

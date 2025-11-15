@@ -16,11 +16,10 @@ import XMLHttpRequest
 ///   - priceType: CustAcctCostTypes cost_a, cost_b, cost_c
 ///   - callback: [SearchChargeResponse]
 func searchCharge(
-    /// Term to Search
     term: String,
-    /// cost_a, cost_b, cost_c
     costType: CustAcctCostTypes,
     currentCodeIds: [UUID],
+    accountId: UUID?,
     callback: @escaping ((_ term: String, _ resp: [SearchChargeResponse])->())
 ){
     
@@ -53,11 +52,24 @@ func searchCharge(
     
     let xhr = XMLHttpRequest()
     
-    let url = baseAPIUrl("https://intratc.co/api/cust/v1/searchCharge") +
+    var url = baseAPIUrl("https://intratc.co/api/cust/v1/searchCharge") +
     "&term=\(_term)" +
     "&costType=\(_costType)" +
     "&currentCodes=\(_ids)"
     
+    if let accountId {
+        let _accountId = (accountId.uuidString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")
+        .replace(from: "/", to: "%2f")
+        .replace(from: "+", to: "%2b")
+        .replace(from: "=", to: "%3d")
+
+        url += "&accountId=\(_accountId)"
+    }
+
+    if WebApp.shared.window.location.hostname == "localhost" {
+        print(url)
+    }
+
     xhr.open(method: "GET", url: url)
     
     xhr.setRequestHeader("Accept", "application/json")

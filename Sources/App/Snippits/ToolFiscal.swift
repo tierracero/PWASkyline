@@ -3205,6 +3205,7 @@ extension ToolFiscal {
                             }
                             
                             let addChargeFormView = AddChargeFormView(
+                                accountId: nil,
                                 allowManualCharges: false,
                                 allowWarrantyCharges: false,
                                 socCanLoadAction: false,
@@ -3298,7 +3299,9 @@ extension ToolFiscal {
                                 ))
                                 
                             }
-                            
+                            addItem: { item, warenty in
+                                
+                            }
                             self.appendChild(addChargeFormView)
                             
                             addChargeFormView.searchTermInput.select()

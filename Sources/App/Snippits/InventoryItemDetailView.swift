@@ -487,10 +487,7 @@ class InventoryItemDetailView: Div {
                 return
             }
             
-            guard let item = payload.prod else{
-                print("🔴  no prod")
-                return
-            }
+            let item = payload.prod
             
             if let _ = item.soldBy {
                 
@@ -578,13 +575,13 @@ class InventoryItemDetailView: Div {
                
             }
             
-            if let bodid = payload.prod?.custStoreBodegas {
+            if let bodid = payload.prod.custStoreBodegas {
                 if let name = bodegas[bodid] {
                     self.locaition = name.name
                 }
             }
             
-            if let secid = payload.prod?.custStoreSecciones {
+            if let secid = payload.prod.custStoreSecciones {
                 if let name = seccions[secid] {
                     self.locaition += "/\(name.name)"
                 }

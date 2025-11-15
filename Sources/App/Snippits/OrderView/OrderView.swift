@@ -171,18 +171,7 @@ class OrderView: Div {
     
     lazy var fiscalView = Div()
     
-    lazy var chargesTable = Table {
-        Tr{
-            Td().width(20.px)
-            Td("Unis").width(50.px)
-            Td("Description")
-            Td("CUni").width(70.px)
-            Td("STotal").width(70.px)
-        }
-        .color(.lightGray)
-    }
-        .width(100.percent)
-        .fontSize(18.px)
+    lazy var chargesTable = TBody()
     
     lazy var equipmentView = Div()
         .backgroundColor(r: 22, g: 25, b: 30)
@@ -390,7 +379,26 @@ class OrderView: Div {
                 Div().class(.clear).height(3.px)
                 
                 Div{
-                    self.chargesTable
+
+                    Table {
+                        
+                        THead {
+                            Tr{
+                                Td().width(20.px)
+                                Td("Unis").width(50.px)
+                                Td("Description")
+                                Td("CUni").width(70.px)
+                                Td("STotal").width(70.px)
+                            }
+                            .color(.lightGray)
+                        }
+
+                        self.chargesTable
+                        
+                    }
+                    .width(100.percent)
+                    .fontSize(18.px)
+                    
                 }
                 .custom("width", "calc(100% - 240px)")
                 .custom("height", "calc(100% - 46px)")
@@ -2556,6 +2564,12 @@ class OrderView: Div {
             }
             
         }
+
+        print("🟢  pocsRefrence")
+        print("🟢  pocsRefrence")
+
+        print(pocsRefrence)
+
         
         pocsRefrence.forEach { pocId, priceRefrence in
         
@@ -3215,6 +3229,7 @@ class OrderView: Div {
         }
         
         let addChargeFormView = AddChargeFormView(
+            accountId: self.order.custAcct,
             allowManualCharges: true,
             allowWarrantyCharges: true,
             socCanLoadAction: true,
@@ -3224,7 +3239,7 @@ class OrderView: Div {
             
             let view = ConfirmProductView(
                 accountId: self.order.custAcct,
-                costType: self.accountView.account?.costType ?? .cost_a,
+                costType: .cost_a,
                 pocid: id,
                 selectedInventoryIDs: [],
                 blockPurchaseOrders: false,
@@ -3243,7 +3258,7 @@ class OrderView: Div {
                     showError(.errorGeneral, "No se localizo tenda para venta")
                     return
                 }
-                
+
                 loadingView(show: true)
                                                 
                 API.custOrderV1.addCharge(
@@ -3294,7 +3309,6 @@ class OrderView: Div {
                         ))
                     }
                     
-                    
                     let tr = OldChargeTrRow(pocs: pocs) { viewId in
                         self.editPoc(viewId: viewId, ids: items.map{ $0.id })
                     }
@@ -3339,6 +3353,8 @@ class OrderView: Div {
                     self.calcBalance()
                     
                 }
+            
+
             }
             
             self.appendChild(view)
@@ -3453,12 +3469,75 @@ class OrderView: Div {
             }
             
         }
-        
+        addItem: { item, warenty in
+
+            loadingView(show: true)
+
+            API.custAPIV1.pocInventoryDetails(
+                id: item.i
+            ) { resp in
+
+                loadingView(show: false)
+                
+                guard let resp = resp else {
+                    showError(.errorDeCommunicacion, .serverConextionError)
+                    return
+                }
+                
+                guard resp.status == .ok else {
+                    showError(.errorGeneral, resp.msg)
+                    return
+                }
+                
+                guard let payload = resp.data else {
+                    showError( .unexpectedResult, .unexpenctedMissingPayload)
+                    return
+                }
+
+                loadingView(show: true)
+
+                let view = ConfirmProductItemView(
+                    poc: item,
+                    item: payload.prod,
+                    warenty: warenty
+                ) { item in
+                    
+                    API.custOrderV1.addCharge(
+                        orderId: self.order.id,
+                        item: .product(item)
+                    ) { resp in
+
+                        loadingView(show: false)
+                        
+                        guard let resp = resp else {
+                            showError(.errorDeCommunicacion, .serverConextionError)
+                            return
+                        }
+                        
+                        guard resp.status == .ok else {
+                            showError(.errorGeneral, resp.msg)
+                            return
+                        }
+                        
+                        guard let payload = resp.data else {
+                            showError( .unexpectedResult, .unexpenctedMissingPayload)
+                            return
+                        }
+
+                    }
+
+                }
+
+                addToDom(view)
+                           
+            }
+        }
         self.appendChild(addChargeFormView)
         
         addChargeFormView.searchTermInput.select()
         
     }
+
 
     // MARK: Charges Modification
     func removeCharge(viewId: UUID, id: UUID, name: String, amount: Int64) {

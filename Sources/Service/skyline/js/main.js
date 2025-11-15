@@ -1822,7 +1822,7 @@ function renderElements(grid){
     return string
 }
 
-function download(name,content) {
+function download(name, content) {
     
     let mimes = {
         "aac":"audio/aac",
@@ -3014,3 +3014,29 @@ function searchMap(mapId, domian, street, city, state, zip, country, updateLocat
     });
 
 }
+
+function downloadWithHeader(url, headers) {
+    /*
+    $.ajax({
+        url: url,
+        type: "GET",
+        headers: headers
+    }).done(function() {
+        
+    });
+    */
+   $.ajax({
+        url: url,
+        type: "GET", // Or "get", case-insensitive
+        headers: headers,
+        success: function(data) {
+            // Request successful, process data
+            console.log(data);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            // Handle error
+            console.error("Error:", textStatus, errorThrown);
+        }
+    });
+}
+

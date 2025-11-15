@@ -120,6 +120,8 @@ class SearchChargeView: Div {
             break
         case .rental:
             break
+        case .inventory:
+            break
         }
         
     }

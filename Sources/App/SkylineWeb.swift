@@ -16,9 +16,9 @@ public struct SkylineWeb {
     
 	public private(set) var version = 0
 	
-	public private(set) var revision = 16
+	public private(set) var revision = 17
     
-    public private(set) var fix = 2
+    public private(set) var fix = 0
 	
 	public init() {}
     

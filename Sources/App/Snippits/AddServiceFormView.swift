@@ -547,6 +547,8 @@ class AddServiceFormView: Div {
                     break
                 case .rental:
                     break
+                case .inventory:
+                    break
                 }
                 
             }
@@ -569,6 +571,8 @@ class AddServiceFormView: Div {
                     case .manual:
                         break
                     case .rental:
+                        break
+                    case .inventory:
                         break
                     }
                     

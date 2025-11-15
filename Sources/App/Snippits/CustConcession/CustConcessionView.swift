@@ -16,11 +16,13 @@ class CustConcessionView: Div {
     
     let account: CustAcct
 
-    public var items: [CustPOCInventorySoldObject]
+    var items: [CustPOCInventorySoldObject]
     
-    public var pocs: [CustPOCQuick]
+    var pocs: [CustPOCQuick]
     
-    @State var controls: [CustFiscalInventoryControl]
+    var managers: [CustInventoryPurchaseManager]
+
+    @State  var controls: [CustFiscalInventoryControl]
     
     @State var sales: [CustSaleQuick]
     
@@ -32,6 +34,7 @@ class CustConcessionView: Div {
         account: CustAcct,
         items: [CustPOCInventorySoldObject],
         pocs: [CustPOCQuick],
+        managers: [CustInventoryPurchaseManager],
         controls: [CustFiscalInventoryControl],
         sales: [CustSaleQuick],
         bodegas: [CustStoreBodegasQuick],
@@ -40,6 +43,7 @@ class CustConcessionView: Div {
         self.account = account
         self.items = items
         self.pocs = pocs
+        self.managers = managers
         self.controls = controls
         self.sales = sales
         self.bodegas = bodegas
@@ -90,8 +94,23 @@ class CustConcessionView: Div {
         .padding(all: 3.px)
         .overflow(.auto)
     
-    @State var currentSideView : SideView = .concesionView
+    @State var sideView: SideView = .incomingView
     
+    @State var sideViewSelectIsHiden: Bool = true
+
+    lazy var sideMenuItems = Div()
+
+
+
+    /// administartes: concession, purchases, unconcession
+    @State var inoutItems: [ControlManagerItem] = []
+
+    /// order, sold
+    @State var soldItems: [CustFiscalInventoryControl] = []
+
+    /// merm,  returnToVendor, missingFromVendor
+    @State var otherItems: [CustFiscalInventoryControl] = []
+
     @DOM override var body: DOM.Content {
         
         Div{
@@ -115,6 +134,7 @@ class CustConcessionView: Div {
             Div().class(.clear).marginTop(3.px)
             
             Div{
+                
                 Div{
                     Div{
                         Table().noResult(label: "🛒 No hay articulos en concesion.")
@@ -253,25 +273,36 @@ class CustConcessionView: Div {
                     Div{
 
                         Div{
-                            H2("Consessiones")
-                                .color(self.$currentSideView.map{ ($0 == .concesionView) ? .lightBlueText : .white })
-                                .borderBottom(width: .thin, style: .solid, color: self.$currentSideView.map{ ($0 == .concesionView) ? .lightBlueText : .transparent})
-                                .marginRight(7.px)
-                                .cursor(.pointer)
-                                .float(.left)
-                                .onClick {
-                                    self.currentSideView = .concesionView
+
+
+                            Div{
+                                
+                                Span(self.$sideView.map{ $0.documentableName })
+                                
+                                Div{
+                                    Img()
+                                        .src(self.$sideViewSelectIsHiden.map{ $0 ? "/skyline/media/dropDown.png" : "/skyline/media/dropDownClose.png"  })
+                                        .class(.iconWhite)
+                                        .paddingTop(7.px)
+                                        .width(18.px)
                                 }
-                            
-                            H2("Ventas")
-                                .color(self.$currentSideView.map{ ($0 == .salesView) ? .lightBlueText : .white })
-                                .borderBottom(width: .thin, style: .solid, color: self.$currentSideView.map{ ($0 == .salesView) ? .lightBlueText : .transparent})
-                                .cursor(.pointer)
-                                .float(.left)
-                                .onClick {
-                                    self.currentSideView = .salesView
-                                }
-                            
+                                .borderLeft(width: BorderWidthType.thin, style: .solid, color: .gray)
+                                .paddingRight(3.px)
+                                .paddingLeft(7.px)
+                                .marginLeft(7.px)
+                                .float(.right)
+                                
+                                Div().clear(.both)
+                                
+                            }
+                            .width(250.px)
+                            .class(.uibtn)
+                            .float(.left)
+                            .onClick { _, event in
+                                self.sideViewSelectIsHiden = !self.sideViewSelectIsHiden
+                                event.stopPropagation()
+                            }
+
                             Img()
                                 .src("skyline/media/history_color.png")
                                 .marginRight(18.px)
@@ -283,6 +314,35 @@ class CustConcessionView: Div {
                                 }
                             
                             Div().class(.clear)
+
+                            Div()
+                            .position(.absolute)
+                            .height(100.percent)
+                            .width(100.percent)
+                            .left(0.px)
+                            .top(0.px)
+                            .hidden(self.$sideViewSelectIsHiden)
+                            .onClick {
+                                self.sideViewSelectIsHiden = true
+                                $1.stopPropagation()
+                            }
+
+                            Div{
+                                self.sideMenuItems
+                            }
+                            .hidden(self.$sideViewSelectIsHiden)
+                            .backgroundColor(.transparentBlack)
+                            .position(.absolute)
+                            .borderRadius(12.px)
+                            .padding(all: 3.px)
+                            .margin(all: 3.px)
+                            .marginTop(7.px)
+                            .width(300.px)
+                            .zIndex(1)
+                            .onClick { _, event in
+                                event.stopPropagation()
+                            }
+
                         }
                         
                         Div().class(.clear).marginTop(3.px)
@@ -320,7 +380,14 @@ class CustConcessionView: Div {
                                 }
                                 .hidden(self.$controls.map{ $0.isEmpty })
                             }
-                            .hidden(self.$currentSideView.map{ $0 != .concesionView })
+                            .hidden(self.$sideView.map{ $0 != .incomingView })
+                            .height(100.percent)
+                            .margin(all: 3.px)
+                            
+                            Div{
+
+                            }
+                            .hidden(self.$sideView.map{ $0 != .outgoingView })
                             .height(100.percent)
                             .margin(all: 3.px)
                             
@@ -353,10 +420,17 @@ class CustConcessionView: Div {
                                 }
                                 .hidden(self.$sales.map{ $0.isEmpty })
                             }
-                            .hidden(self.$currentSideView.map{ $0 != .salesView })
+                            .hidden(self.$sideView.map{ $0 != .salesView })
                             .height(100.percent)
                             .margin(all: 3.px)
                             
+                            Div{
+
+                            }
+                            .hidden(self.$sideView.map{ $0 != .otherView })
+                            .height(100.percent)
+                            .margin(all: 3.px)
+
                         }
                         .custom("height", "calc(50% - 35px)")
                         .class(.roundGrayBlackDark)
@@ -490,7 +564,6 @@ class CustConcessionView: Div {
                         
                         Div().class(.clear).height(7.px)
                         
-                        
                     }
                     .height(100.percent)
                     .margin(all: 3.px)
@@ -513,10 +586,10 @@ class CustConcessionView: Div {
         .width(90.percent)
         .left(5.percent)
         .top(25.px)
+
     }
     
     override func buildUI() {
-        
         super.buildUI()
         
         self.class(.transparantBlackBackGround)
@@ -527,23 +600,38 @@ class CustConcessionView: Div {
         left(0.px)
         top(0.px)
 
+        SideView.allCases.forEach { item in
+        
+            let view = Div {
+                Div(item.documentableName)
+                .paddingRight(7.px)
+                .paddingLeft(7.px)
+                .width(95.percent)
+                .class(.uibtn)
+                .onClick {
+                    self.sideView = item
+                    self.sideViewSelectIsHiden = true
+                }
+
+                Div().height(7.px)
+
+            }
+
+            sideMenuItems.appendChild(view)
+
+        }
+        
         self.pocRefrence = Dictionary(uniqueKeysWithValues: pocs.map{ value in ( value.id, value ) })
         
         self.itemsRefrence = Dictionary(uniqueKeysWithValues: items.map{ value in ( value.id, value ) })
         
         items.forEach { item in
-
-
-
             if let _ = self.itemsPOCRefrence[item.POC] {
                 self.itemsPOCRefrence[item.POC]?.append(item)
             }
             else {
                 self.itemsPOCRefrence[item.POC] = [item]
             }
-
-
-
         }
         
         seccions.forEach { item in
@@ -556,9 +644,118 @@ class CustConcessionView: Div {
         }
 
         hasAnyActiveElement = ( !items.isEmpty || !bodegas.isEmpty)
-
+        
+        /// Will porceess  inventorie items
         self.processRecrenceItems()
-            
+
+        let managerRefrence: [ UUID : CustInventoryPurchaseManager ] = Dictionary.init(uniqueKeysWithValues: managers.map{ ($0.id, $0) })
+
+        // let controlRefrence: [ UUID : CustFiscalInventoryControl ] = Dictionary.init(uniqueKeysWithValues: controls.map{ ($0.id, $0) })
+
+        var inoutItems: [ControlManagerItem] = []
+
+        // var sales: [CustFiscalInventoryControl] = []
+
+        controls.forEach { control in
+
+            print(control.disperseType.rawValue)
+            // outgoing
+            switch control.disperseType {
+                case .store:
+                
+                    /*
+                    guard let managerId = control.managerId, let manager = managerRefrence[managerId] else {
+                        fatalError("🔴  COULD NOT GET MANAGER \(control.disperseType.description)")
+                    }
+
+                    if  control.toStore == account.id {
+
+                        inoutItems.append(.in coming(.init(
+                            manager: manager,
+                            control: control
+                        )))
+
+                    }
+                    else {
+
+                        inoutItems.append(.out going(.init(
+                            manager: manager,
+                            control: control
+                        )))
+
+                    }*/
+
+                    fatalError("\(control.disperseType.description) is not a case senerio that should apply to a concessioner")
+
+                case .order:
+
+                    inoutItems.append(.outevent(.sale(control)))
+
+                case .sold:
+
+                    inoutItems.append(.outevent(.order(control)))
+
+                case .merm:
+
+                    inoutItems.append(.outevent(.merm(control)))
+                    
+                case .returnToVendor, .missingFromVendor:
+                    /*
+
+                    guard let managerId = control.managerId, let manager = managerRefrence[managerId] else {
+                        fatalError("🔴  COULD NOT GET MANAGER \(control.disperseType.description)")
+                    }
+
+                    inoutItems.append(.out going(.init(
+                        manager: manager,
+                        control: control
+                    )))
+                    
+                    */
+                    fatalError("\(control.disperseType.description) is not a case senerio that should apply to a concessioner")
+
+                case .concession:
+
+                    var manager: CustInventoryPurchaseManager? = nil
+
+                    if let managerId = control.managerId {
+                        manager = managerRefrence[managerId]
+                    }
+
+                    inoutItems.append(.concession(.init(
+                        manager: manager,
+                        control: control
+                    )))
+
+                case .unconcession:
+                    
+                    inoutItems.append(.outevent(.unconcession(control)))
+
+            }
+        }
+
+        
+        /// [ CustInventoryPurchaseManager.id :  [CustFiscalInventoryControl] ]
+        // var managerRefrence: [ UUID : [CustFiscalInventoryControl]] = [:]
+
+        //
+
+        // let controlRefrence: [ UUID : CustFiscalInventoryControl ] = Dictionary.init(uniqueKeysWithValues: controls.map{ ($0.id, $0) })
+
+
+
+        /*
+
+    /// administartes: concession, purchases, unconcession
+    @State var inoutItems: [ControlManagerItem] = []
+
+    /// order, sold
+    @State var soldItems: [CustFiscalInventoryControl] = []
+
+    /// merm,  returnToVendor, missingFromVendor
+    @State var otherItems: [CustFiscalInventoryControl] = []
+
+        */
     }
     
     func processRecrenceItems(){
@@ -1135,13 +1332,96 @@ class CustConcessionView: Div {
         processRecrenceItems()
     }
     
-    
 }
 
 
 extension CustConcessionView {
-    enum SideView {
-        case concesionView
+            
+    enum SideView: String, CaseIterable {
+
+        /// administartes concession, purchases
+        /// 
+        case incomingView
+
+        /// unconcession,  order, sold
+        case outgoingView
+
         case salesView
+
+        /// merm,  returnToVendor, missingFromVendor
+        case otherView
+
+        var documentableName: String {
+            switch self {                
+            case .incomingView:
+                return "Entradas"
+            case .outgoingView:
+                return "Salidas"
+            case .salesView:
+                return "Lista de Ventas"
+            case .otherView:
+                return "Otras"
+            }
+        }
+
     }
+
+    struct ControlManager{
+
+        let manager: CustInventoryPurchaseManager?
+
+        let control:  CustFiscalInventoryControl
+        
+        init(
+            manager: CustInventoryPurchaseManager?,
+            control:  CustFiscalInventoryControl
+        ) {
+            self.manager = manager
+            self.control = control
+        }
+
+    }
+
+    /*
+    struct SaleItem {
+
+        let sale: CustSaleQuick
+
+        let control:  CustFiscalInventoryControl
+        
+        init(
+            sale: CustSaleQuick,
+            control:  CustFiscalInventoryControl
+        ) {
+            self.sale = sale
+            self.control = control
+        }
+    }
+    */
+
+    /// merm, unconcession, sale, order
+    enum ControlManagerOutEvent {
+
+        case merm (CustFiscalInventoryControl)
+
+        case unconcession (CustFiscalInventoryControl)
+
+        case sale (CustFiscalInventoryControl)
+
+        case order (CustFiscalInventoryControl)
+
+    }
+
+    var otherItems: [CustFiscalInventoryControl]
+
+    enum ControlManagerItem {
+
+        /// concession, purchases (includes manual purchases)
+        case concession (ControlManager)
+
+        /// merm, unconcession, sale, order
+        case outevent (ControlManagerOutEvent)
+
+    }
+
 }

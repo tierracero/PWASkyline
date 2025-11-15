@@ -1044,7 +1044,8 @@ class SalePointView: Div {
                 searchCharge(
                     term: self.searchBox.text,
                     costType: .cost_a,
-                    currentCodeIds: []
+                    currentCodeIds: [],
+                    accountId: self.custAcct?.id
                 ) { term, resp in
                     
                     if self.searchBox.text == term {
@@ -1068,6 +1069,8 @@ class SalePointView: Div {
                                 break
                             case .rental:
                                 break
+                            case .inventory:
+                                break
                             }
                             
                             return
@@ -1089,6 +1092,8 @@ class SalePointView: Div {
                                 case .manual:
                                     break
                                 case .rental:
+                                    break
+                                case .inventory:
                                     break
                                 }
                                 

@@ -1539,6 +1539,7 @@ class AccountView: PageController {
                                     account: self.account,
                                     items: payload.items,
                                     pocs: payload.pocs,
+                                    managers: payload.managers,
                                     controls: payload.controls,
                                     sales: payload.sales,
                                     bodegas: payload.bodegas,
