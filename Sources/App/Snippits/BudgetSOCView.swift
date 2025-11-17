@@ -146,7 +146,7 @@ class BudgetSOCView: Div {
                     }
                     .hidden(self.$actionItems.map{ ($0.count != 0) })
                 
-                H2("Ingresar Cargo")
+                H2("Ingresar Presupuesto")
                     .color(.lightBlueText)
                 
                 Div().class(.clear)

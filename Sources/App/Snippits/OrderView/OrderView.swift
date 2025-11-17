@@ -2523,7 +2523,7 @@ class OrderView: Div {
             total += stotal
             chas += stotal
             
-            let tr = OldChargeTrRow(
+            let tr = OldChargeTrRow( 
                 isCharge: true,
                 id: obj.id,
                 name: obj.name,
@@ -2549,18 +2549,18 @@ class OrderView: Div {
         
         pocs.forEach { obj in
             
-            if let _ = pocsRefrence[obj.POC] {
+            if let _ = pocsRefrence[obj.pocId] {
                 
-                if let _ = pocsRefrence[obj.POC]?[(obj.soldPrice ?? 0)] {
-                    pocsRefrence[obj.POC]?[(obj.soldPrice ?? 0)]?.append(obj)
+                if let _ = pocsRefrence[obj.pocId]?[(obj.soldPrice ?? 0)] {
+                    pocsRefrence[obj.pocId]?[(obj.soldPrice ?? 0)]?.append(obj)
                 }
                 else {
-                    pocsRefrence[obj.POC]?[(obj.soldPrice ?? 0)] = [obj]
+                    pocsRefrence[obj.pocId]?[(obj.soldPrice ?? 0)] = [obj]
                 }
                 
             }
             else {
-                pocsRefrence[obj.POC] = [(obj.soldPrice ?? 0) : [obj]]
+                pocsRefrence[obj.pocId] = [(obj.soldPrice ?? 0) : [obj]]
             }
             
         }
@@ -2582,7 +2582,7 @@ class OrderView: Div {
                 chas += soldPrice
                 
                 let tr = OldChargeTrRow(pocs: items) { viewId in
-                    self.editPoc(viewId: viewId, ids: items.map{ $0.id })
+                    self.editPoc(viewId: viewId, ids: items.map{ $0.itemId })
                 }
                     .color(.gray)
                 
@@ -3288,7 +3288,9 @@ class OrderView: Div {
                     var pocs:[CustPOCInventoryOrderView] = []
                     
                     items.forEach { item in
+
                         pocs.append(.init(
+                            itemId: item.id,
                             id: item.id,
                             POC: poc.id,
                             soldType: .order,
@@ -3302,11 +3304,14 @@ class OrderView: Div {
                             warentSelfTo: nil,
                             warentFabricTo: nil,
                             soldPrice: price,
+                            pocId: poc.id,
+                            upc: poc.upc,
                             name: poc.name,
                             brand: poc.brand,
                             model: poc.model,
                             status: .sold
                         ))
+
                     }
                     
                     let tr = OldChargeTrRow(pocs: pocs) { viewId in
@@ -3321,6 +3326,7 @@ class OrderView: Div {
                     items.forEach { item in
                         
                         let obj: CustPOCInventoryOrderView = .init(
+                          itemId: item.id,
                             id: item.id,
                             POC: poc.id,
                             soldType: .order,
@@ -3334,9 +3340,11 @@ class OrderView: Div {
                             warentSelfTo: nil,
                             warentFabricTo: nil,
                             soldPrice: price,
+                            pocId: poc.id,
+                            upc: poc.upc,
                             name: poc.name,
                             brand: poc.brand,
-                            model: poc.model, 
+                            model: poc.model,
                             status: .sold
                         )
                         
@@ -3723,7 +3731,7 @@ class OrderView: Div {
                         
                         self.pocs.forEach { obj in
                             
-                            if ids.contains(obj.id) {
+                            if ids.contains(obj.itemId) {
                                 return
                             }
                             _pocs.append(obj)
@@ -3753,11 +3761,12 @@ class OrderView: Div {
                 
                 self.pocs.forEach { obj in
                     
-                    if ids.contains(obj.id) {
+                    if ids.contains(obj.itemId) {
                         _pocs.append(
                             .init(
+                                itemId: obj.itemId,
                                 id: obj.id,
-                                POC: obj.POC,
+                                POC: obj.pocId,
                                 soldType: obj.soldType,
                                 custStore: obj.custStore,
                                 custStoreBodegas: obj.custStoreBodegas,
@@ -3769,6 +3778,8 @@ class OrderView: Div {
                                 warentSelfTo: obj.warentSelfTo,
                                 warentFabricTo: obj.warentFabricTo,
                                 soldPrice: price,
+                                pocId: obj.pocId,
+                                upc: obj.upc,
                                 name: name,
                                 brand: obj.brand,
                                 model: obj.model,
@@ -4994,18 +5005,18 @@ class OrderView: Div {
             
             items.pocs.forEach { obj in
                 
-                if let _ = pocsRefrence[obj.POC] {
+                if let _ = pocsRefrence[obj.pocId] {
                     
-                    if let _ = pocsRefrence[obj.POC]?[(obj.soldPrice ?? 0)] {
-                        pocsRefrence[obj.POC]?[(obj.soldPrice ?? 0)]?.append(obj)
+                    if let _ = pocsRefrence[obj.pocId]?[(obj.soldPrice ?? 0)] {
+                        pocsRefrence[obj.pocId]?[(obj.soldPrice ?? 0)]?.append(obj)
                     }
                     else {
-                        pocsRefrence[obj.POC]?[(obj.soldPrice ?? 0)] = [obj]
+                        pocsRefrence[obj.pocId]?[(obj.soldPrice ?? 0)] = [obj]
                     }
                     
                 }
                 else {
-                    pocsRefrence[obj.POC] = [(obj.soldPrice ?? 0) : [obj]]
+                    pocsRefrence[obj.pocId] = [(obj.soldPrice ?? 0) : [obj]]
                 }
                 
             }
@@ -5021,7 +5032,7 @@ class OrderView: Div {
                     self.chas += soldPrice
                     
                     let tr = OldChargeTrRow(pocs: items) { viewId in
-                        self.editPoc(viewId: viewId, ids: items.map{ $0.id })
+                        self.editPoc(viewId: viewId, ids: items.map{ $0.itemId })
                     }
                         .color(.gray)
                     

@@ -22,9 +22,9 @@ class CustConcessionView: Div {
     
     var managers: [CustInventoryPurchaseManager]
 
-    @State  var controls: [CustFiscalInventoryControl]
+    var controls: [CustFiscalInventoryControl]
     
-    @State var sales: [CustSaleQuick]
+    @State  var sales: [CustSaleQuick]
     
     @State  var bodegas: [CustStoreBodegasQuick]
 
@@ -100,17 +100,15 @@ class CustConcessionView: Div {
 
     lazy var sideMenuItems = Div()
 
+    /// administartes: concession, purchases (includes manual purcases)
+    @State var inItems: [ControlManager] = []
 
+    /// unconcession, order, sold
+    @State var outItems: [CustFiscalInventoryControl] = []
 
-    /// administartes: concession, purchases, unconcession
-    @State var inoutItems: [ControlManagerItem] = []
-
-    /// order, sold
-    @State var soldItems: [CustFiscalInventoryControl] = []
-
-    /// merm,  returnToVendor, missingFromVendor
-    @State var otherItems: [CustFiscalInventoryControl] = []
-
+    /// merm
+    @State var mermItems: [CustFiscalInventoryControl] = []
+    
     @DOM override var body: DOM.Content {
         
         Div{
@@ -274,7 +272,6 @@ class CustConcessionView: Div {
 
                         Div{
 
-
                             Div{
                                 
                                 Span(self.$sideView.map{ $0.documentableName })
@@ -346,45 +343,36 @@ class CustConcessionView: Div {
                         }
                         
                         Div().class(.clear).marginTop(3.px)
-                        
+
                         Div{
+                            
                             Div{
                                 Table().noResult(label: "🗳️ No existen conseciones")
-                                    .hidden(self.$controls.map{ !$0.isEmpty })
+                                    .hidden(self.$inItems.map{ !$0.isEmpty })
                                 
-                                ForEach(self.$controls) { control in
-                                    Div{
-                                        
-                                        Div(control.items.count.toString)
-                                            .marginRight(3.px)
-                                            .float(.right)
-                                        
-                                        Div(control.folio)
-                                            .float(.left)
-                                        
-                                        
-                                        Div({ (control.disperseType == .concession) ? "+" : "-" }())
-                                            .marginRight(3.px)
-                                            .float(.left)
-                                        
-                                        Div(getDate(control.createdAt).formatedShort)
-                                            .marginRight(3.px)
-                                            .float(.left)
-                                        
-                                    }
-                                    .class(.uibtnLarge)
-                                    .width(97.percent)
-                                    .onClick {
-                                        self.openConcession(controlId: control.id)
-                                    }
+                                ForEach(self.$inItems) { item in
+
+                                    self.outItemDiv(item)
+                                   
                                 }
-                                .hidden(self.$controls.map{ $0.isEmpty })
+                                .hidden(self.$inItems.map{ $0.isEmpty })
+                                
                             }
                             .hidden(self.$sideView.map{ $0 != .incomingView })
                             .height(100.percent)
                             .margin(all: 3.px)
                             
                             Div{
+
+                                Table().noResult(label: "🗳️ No existen salidas")
+                                    .hidden(self.$outItems.map{ !$0.isEmpty })
+
+                                ForEach(self.$outItems) { control in
+
+                                    self.controlItemDiv(control)
+                                   
+                                }
+                                .hidden(self.$outItems.map{ $0.isEmpty })
 
                             }
                             .hidden(self.$sideView.map{ $0 != .outgoingView })
@@ -419,6 +407,7 @@ class CustConcessionView: Div {
                                     }
                                 }
                                 .hidden(self.$sales.map{ $0.isEmpty })
+                                
                             }
                             .hidden(self.$sideView.map{ $0 != .salesView })
                             .height(100.percent)
@@ -426,6 +415,17 @@ class CustConcessionView: Div {
                             
                             Div{
 
+
+                                Table().noResult(label: "🗳️ No existen mermados")
+                                    .hidden(self.$mermItems.map{ !$0.isEmpty })
+
+                                ForEach(self.$mermItems) { control in
+
+                                    self.controlItemDiv(control)
+                                   
+                                }
+                                .hidden(self.$mermItems.map{ $0.isEmpty })
+                                
                             }
                             .hidden(self.$sideView.map{ $0 != .otherView })
                             .height(100.percent)
@@ -645,21 +645,19 @@ class CustConcessionView: Div {
 
         hasAnyActiveElement = ( !items.isEmpty || !bodegas.isEmpty)
         
-        /// Will porceess  inventorie items
+        // MARK:  porceess CURRENT INVENTORIE items
         self.processRecrenceItems()
 
+        // MARK: process DOCUMENTS
+
         let managerRefrence: [ UUID : CustInventoryPurchaseManager ] = Dictionary.init(uniqueKeysWithValues: managers.map{ ($0.id, $0) })
-
-        // let controlRefrence: [ UUID : CustFiscalInventoryControl ] = Dictionary.init(uniqueKeysWithValues: controls.map{ ($0.id, $0) })
-
+        
         var inoutItems: [ControlManagerItem] = []
-
-        // var sales: [CustFiscalInventoryControl] = []
 
         controls.forEach { control in
 
             print(control.disperseType.rawValue)
-            // outgoing
+
             switch control.disperseType {
                 case .store:
                 
@@ -732,30 +730,62 @@ class CustConcessionView: Div {
                     inoutItems.append(.outevent(.unconcession(control)))
 
             }
+        
         }
 
-        
-        /// [ CustInventoryPurchaseManager.id :  [CustFiscalInventoryControl] ]
-        // var managerRefrence: [ UUID : [CustFiscalInventoryControl]] = [:]
+        /// administartes: concession, purchases (includes manual purcases)
+        var inItems: [ControlManager] = []
 
-        //
+        /// unconcession, order, sold
+        var outItems: [CustFiscalInventoryControl] = []
 
-        // let controlRefrence: [ UUID : CustFiscalInventoryControl ] = Dictionary.init(uniqueKeysWithValues: controls.map{ ($0.id, $0) })
+        /// merm
+        var mermItems: [CustFiscalInventoryControl] = []
 
+        inoutItems.forEach { io in 
+            switch io  {
+                /// let item: ControlManager
+                /// concession, purchases (includes manual purchases)
+                case .concession(let  item):
+                
+                inItems.append(item)
 
+                /// let item: ControlManagerOutEvent
+                /// merm, unconcession, sale, order
+                case .outevent(let item):
+                
+                    switch item {
+                    /// let control: CustFiscalInventoryControl
+                    case .merm (let control):
 
-        /*
+                        mermItems.append(control)
 
-    /// administartes: concession, purchases, unconcession
-    @State var inoutItems: [ControlManagerItem] = []
+                    /// let control: CustFiscalInventoryControl
+                    case .unconcession (let control):
 
-    /// order, sold
-    @State var soldItems: [CustFiscalInventoryControl] = []
+                        outItems.append(control)
+                    
+                    /// let control: CustFiscalInventoryControl
+                    case .sale (let control):
 
-    /// merm,  returnToVendor, missingFromVendor
-    @State var otherItems: [CustFiscalInventoryControl] = []
+                        outItems.append(control)
 
-        */
+                    /// let control: CustFiscalInventoryControl
+                    case .order (let control):
+
+                        outItems.append(control)
+                    
+                    }
+
+                }
+        }
+
+        self.inItems = inItems
+
+        self.outItems = outItems
+
+        self.mermItems = mermItems
+
     }
     
     func processRecrenceItems(){
@@ -799,7 +829,7 @@ class CustConcessionView: Div {
                 self.calculateSelectedItems()
             }
             
-            var table = Table{
+            let table: Table = Table{
                 THead {
                     Tr{
                         Td{
@@ -1102,9 +1132,9 @@ class CustConcessionView: Div {
             
             var avatar = "/skyline/media/skylineapp.svg"
             
-            var url = ""
+//            var url = ""
             
-            var mainAvatar = ""
+            //var mainAvatar = ""
             
             if let image = poc?.avatar {
                 
@@ -1112,9 +1142,9 @@ class CustConcessionView: Div {
                     
                     if let pDir = customerServiceProfile?.account.pDir {
                         
-                        url = "https://intratc.co/cdn/\(pDir)/"
+                        // url = "https://intratc.co/cdn/\(pDir)/"
                         
-                        mainAvatar = image
+                        // mainAvatar = image
                         
                         avatar = "https://intratc.co/cdn/\(pDir)/thump_\(image)"
                     }
@@ -1334,7 +1364,6 @@ class CustConcessionView: Div {
     
 }
 
-
 extension CustConcessionView {
             
     enum SideView: String, CaseIterable {
@@ -1348,7 +1377,7 @@ extension CustConcessionView {
 
         case salesView
 
-        /// merm,  returnToVendor, missingFromVendor
+        /// merm
         case otherView
 
         var documentableName: String {
@@ -1366,7 +1395,9 @@ extension CustConcessionView {
 
     }
 
-    struct ControlManager{
+    struct ControlManager: Hashable, Equatable{
+
+        private let id: UUID
 
         let manager: CustInventoryPurchaseManager?
 
@@ -1376,13 +1407,20 @@ extension CustConcessionView {
             manager: CustInventoryPurchaseManager?,
             control:  CustFiscalInventoryControl
         ) {
+            self.id = .init()
             self.manager = manager
             self.control = control
         }
 
+        static func == (lhs: Self, rhs: Self) -> Bool {
+            lhs.id == rhs.id
+        }
+        
+        func hash (into hasher: inout Hasher) {
+            hasher.combine(id)
+        }
     }
 
-    /*
     struct SaleItem {
 
         let sale: CustSaleQuick
@@ -1397,7 +1435,6 @@ extension CustConcessionView {
             self.control = control
         }
     }
-    */
 
     /// merm, unconcession, sale, order
     enum ControlManagerOutEvent {
@@ -1412,8 +1449,6 @@ extension CustConcessionView {
 
     }
 
-    var otherItems: [CustFiscalInventoryControl]
-
     enum ControlManagerItem {
 
         /// concession, purchases (includes manual purchases)
@@ -1422,6 +1457,304 @@ extension CustConcessionView {
         /// merm, unconcession, sale, order
         case outevent (ControlManagerOutEvent)
 
+    }
+
+    func  outItemDiv(_ item: ControlManager) -> Div {
+
+        let control = item.control 
+
+        return  Div{
+            
+            if let manager = item.manager {
+
+                Div{
+                    
+                    Div{
+                            
+                        Div{
+
+                            Div("Tipo de adquisición:")
+                            .marginBottom(3.px)
+                            .class(.oneLineText)
+                            .fontSize(12.px)
+                            .color(.gray)
+
+                            Div(manager.type.description)
+                            .class(.oneLineText)
+                            .fontSize(18.px)
+
+                        }
+                        .width(50.percent)
+                        .float(.left)
+                        
+                        Div{
+                            
+                            Div("Folio de adquisición:")
+                            .marginBottom(3.px)
+                            .class(.oneLineText)
+                            .fontSize(12.px)
+                            .color(.gray)
+
+                            Div(manager.folio)
+                            .class(.oneLineText)
+                            .fontSize(18.px)
+
+                        }
+                        .width(50.percent)
+                        .float(.left)
+
+                    }
+                }
+
+                Div()
+                .borderBottom(width: .thin, style: .solid, color: .init(r: 64, g: 64, b: 64))
+                .height(3.px)
+                .clear(.both)
+
+                Div()
+                .height(3.px)
+                .clear(.both)
+
+            }
+
+            Div{
+
+                Div {
+                    Div{
+
+                        Div("Folio de Control:")
+                        .marginBottom(3.px)
+                        .class(.oneLineText)
+                        .fontSize(12.px)
+                        .color(.gray)
+
+                        Div(control.folio)
+                        .class(.oneLineText)
+                        .fontSize(18.px)
+
+                    }
+                    .custom("width", "calc(50% - 50px)")
+                    .float(.left)
+
+                    Div{
+                        
+                        Div("Fecha:")
+                        .marginBottom(3.px)
+                        .class(.oneLineText)
+                        .fontSize(12.px)
+                        .color(.gray)
+
+                        Div(getDate(control.createdAt).formatedShort)
+                        .class(.oneLineText)
+                        .fontSize(18.px)
+
+                    }
+                    .custom("width", "calc(50% - 50px)")
+                    .float(.left)
+
+                    Div{
+                        
+                        Div("Unis:")
+                        .marginBottom(3.px)
+                        .fontSize(12.px)
+                        .align(.right)
+                        .color(.gray)
+
+                        Div(control.items.count.toString)
+                        .class(.oneLineText)
+                        .fontSize(18.px)
+                        .align(.right)
+
+                    }
+                    .width(100.px)
+                    .float(.left)                    
+                }
+
+                Div().clear(.both).height(3.px)
+
+                Div{
+
+                        Div("Nombre:")
+                        .marginBottom(3.px)
+                        .fontSize(12.px)
+                        .color(.gray)
+
+                        Div(control.description)
+                        .class(.oneLineText)
+                        .fontSize(18.px)
+                }
+            
+                Div().clear(.both).height(3.px)
+
+                Div{
+
+                    Div{
+
+                        Div("Serie Externa:")
+                        .marginBottom(3.px)
+                        .class(.oneLineText)
+                        .fontSize(12.px)
+                        .color(.gray)
+
+                        Div(control.vendorSerie ?? "N/A")
+                        .class(.oneLineText)
+                        .fontSize(18.px)
+
+                    }
+                    .width(50.percent)
+                    .float(.left)
+
+                    Div{
+
+                        Div("Folio Externa:")
+                        .marginBottom(3.px)
+                        .class(.oneLineText)
+                        .fontSize(12.px)
+                        .color(.gray)
+
+                        Div(control.vendorFolio ?? "N/A")
+                        .class(.oneLineText)
+                        .fontSize(18.px)
+
+                    }
+                    .width(50.percent)
+                    .float(.left)
+
+                }
+
+            }
+
+        }
+        .custom("width", "calc(100% - 32px)")
+        .padding(all: 7.px)
+        .margin(all: 7.px)
+        .marginBottom(12.px)
+        .class(.uibtnLarge)
+        .onClick {
+            self.openConcession(controlId: item.control.id)
+        }
+    }
+    
+    func  controlItemDiv(_ control: CustFiscalInventoryControl) -> Div {
+
+        return  Div{
+            
+            Div{
+
+                Div {
+                    Div{
+
+                        Div("Folio de Control:")
+                        .marginBottom(3.px)
+                        .class(.oneLineText)
+                        .fontSize(12.px)
+                        .color(.gray)
+
+                        Div(control.folio)
+                        .class(.oneLineText)
+                        .fontSize(18.px)
+
+                    }
+                    .custom("width", "calc(50% - 50px)")
+                    .float(.left)
+
+                    Div{
+                        
+                        Div("Fecha:")
+                        .marginBottom(3.px)
+                        .class(.oneLineText)
+                        .fontSize(12.px)
+                        .color(.gray)
+
+                        Div(getDate(control.createdAt).formatedShort)
+                        .class(.oneLineText)
+                        .fontSize(18.px)
+
+                    }
+                    .custom("width", "calc(50% - 50px)")
+                    .float(.left)
+
+                    Div{
+                        
+                        Div("Unis:")
+                        .marginBottom(3.px)
+                        .fontSize(12.px)
+                        .align(.right)
+                        .color(.gray)
+
+                        Div(control.items.count.toString)
+                        .class(.oneLineText)
+                        .fontSize(18.px)
+                        .align(.right)
+
+                    }
+                    .width(100.px)
+                    .float(.left)                    
+                }
+
+                Div().clear(.both).height(3.px)
+
+                Div{
+
+                        Div("Nombre:")
+                        .marginBottom(3.px)
+                        .fontSize(12.px)
+                        .color(.gray)
+
+                        Div(control.description)
+                        .class(.oneLineText)
+                        .fontSize(18.px)
+                }
+            
+                Div().clear(.both).height(3.px)
+
+                Div{
+
+                    Div{
+
+                        Div("Serie Externa:")
+                        .marginBottom(3.px)
+                        .class(.oneLineText)
+                        .fontSize(12.px)
+                        .color(.gray)
+
+                        Div(control.vendorSerie ?? "N/A")
+                        .class(.oneLineText)
+                        .fontSize(18.px)
+
+                    }
+                    .width(50.percent)
+                    .float(.left)
+
+                    Div{
+
+                        Div("Folio Externa:")
+                        .marginBottom(3.px)
+                        .class(.oneLineText)
+                        .fontSize(12.px)
+                        .color(.gray)
+
+                        Div(control.vendorFolio ?? "N/A")
+                        .class(.oneLineText)
+                        .fontSize(18.px)
+
+                    }
+                    .width(50.percent)
+                    .float(.left)
+
+                }
+
+            }
+
+        }
+        .custom("width", "calc(100% - 32px)")
+        .padding(all: 7.px)
+        .margin(all: 7.px)
+        .marginBottom(12.px)
+        .class(.uibtnLarge)
+        .onClick {
+            self.openConcession(controlId: control.id)
+        }
     }
 
 }

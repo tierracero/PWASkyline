@@ -160,7 +160,7 @@ class AddServiceFormView: Div {
                     }
                     .hidden(self.$actionItems.map{ ($0.count != 0) })
                 
-                H2("Ingresar Cargo")
+                H2("Ingresar Cargo Servicio")
                     .color(.lightBlueText)
                 
                 Div().class(.clear)

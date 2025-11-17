@@ -268,18 +268,18 @@ class OrderPrintServiceLeterEngine: Div {
         
         pocs.forEach { obj in
             
-            if let _ = pocsRefrence[obj.POC] {
+            if let _ = pocsRefrence[obj.pocId] {
                 
-                if let _ = pocsRefrence[obj.POC]?[(obj.soldPrice ?? 0)] {
-                    pocsRefrence[obj.POC]?[(obj.soldPrice ?? 0)]?.append(obj)
+                if let _ = pocsRefrence[obj.pocId]?[obj.soldPrice] {
+                    pocsRefrence[obj.pocId]?[obj.soldPrice]?.append(obj)
                 }
                 else {
-                    pocsRefrence[obj.POC]?[(obj.soldPrice ?? 0)] = [obj]
+                    pocsRefrence[obj.pocId]?[obj.soldPrice] = [obj]
                 }
                 
             }
             else {
-                pocsRefrence[obj.POC] = [(obj.soldPrice ?? 0) : [obj]]
+                pocsRefrence[obj.pocId] = [obj.soldPrice : [obj]]
             }
             
         }

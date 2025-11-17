@@ -13,6 +13,10 @@ class MainStyle: Stylesheet {
 	@Rules
 	override var rules: Rules.Content {
         
+        Rule(THead.pointer)
+        .position(.fixed)
+        .top(0.px)
+
         Rule(Class.oneLineText)
             .textOverflow(.ellipsis)
             .overflow(.hidden)

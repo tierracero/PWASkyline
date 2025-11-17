@@ -68,13 +68,14 @@ class OldChargeTrRow: Tr {
         self.isCharge = true
         self.id = nil
         self.pocs = pocs
-        self.name = pocs.first?.name ?? "N/A"
+        self.name = ( (pocs.first?.upc ?? "") + " " + (pocs.first?.name ?? "N/A")).purgeSpaces
         self.cuant = (pocs.count.toInt64 * 100)
         self.price = (pocs.first?.soldPrice ?? 0)
         self.puerchaseOrder = false
         self.edit = edit
         
         super.init()
+
     }
     
     required init() {
