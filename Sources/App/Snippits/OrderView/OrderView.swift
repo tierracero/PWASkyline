@@ -5057,7 +5057,9 @@ class OrderView: Div {
         let view = OrderImageView(
             id: nil,
             name: "",
-            url: "skyline/media/tierraceroRoundLogoWhite.svg") { id, name in
+            url: "skyline/media/tierraceroRoundLogoWhite.svg"
+        ) { id, name in
+
         }
         
         fileViewCatch[view.viewId] = view
@@ -5166,6 +5168,8 @@ class OrderView: Div {
         
         formData.append("orderFolio", self.order.folio)
         */
+
+        let fileName = safeFileName(name: file.name, to: .order, folio: self.order.folio)
         
         formData.append("eventid", view.viewId.uuidString)
         
@@ -5175,9 +5179,9 @@ class OrderView: Div {
         
         formData.append("folio", self.order.folio)
 
-        formData.append("file", file, filename: file.name)
+        formData.append("file", file, filename: fileName)
         
-        formData.append("fileName", file.name)
+        formData.append("fileName", fileName)
 
         formData.append("connid", custCatchChatConnID)
         
@@ -5191,6 +5195,7 @@ class OrderView: Div {
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,
             AppToken: thisAppToken,
+            url: custCatchUrl,
             user: custCatchUser,
             mid: custCatchMid,
             key: custCatchKey,

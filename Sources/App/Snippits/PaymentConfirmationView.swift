@@ -573,6 +573,7 @@ class PaymentConfirmationView: Div {
             if let jsonData = try? JSONEncoder().encode(APIHeader(
                 AppID: thisAppID,
                 AppToken: thisAppToken,
+                url: custCatchUrl,
                 user: custCatchUser,
                 mid: custCatchMid,
                 key: custCatchKey,

@@ -93,7 +93,12 @@ class SideMenuView: Div {
                 self.callback(caller)
             }
             
-            Div("Tierra Cero Skyline [\(SkylineWeb().mode) \(SkylineWeb().version).\(SkylineWeb().revision).\(SkylineWeb().fix)]")
+            Div("Tierra Cero Skyline [" +
+            "\(SkylineWeb().version.mode.rawValue) " +
+            "\(SkylineWeb().version.major.toString)." +
+            "\(SkylineWeb().version.minor.toString)." +
+            "\(SkylineWeb().version.patch.toString)" +
+            "]")
                 .position(.absolute)
                 .float(.right)
                 .bottom(7.px)

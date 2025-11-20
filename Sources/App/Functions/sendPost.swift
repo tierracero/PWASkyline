@@ -69,6 +69,8 @@ public func sendPost<T: Codable> (
     
     xhr.setRequestHeader("Accept", "application/json")
         .setRequestHeader("Content-Type", "application/json")
+        .setRequestHeader("AppName", applicationName)
+        .setRequestHeader("AppVersion", SkylineWeb().version.description)
         .setRequestHeader("Authorization", auth)
     
     print("PAYLOAD: \(WebApp.shared.window.location.hostname)")
@@ -143,10 +145,13 @@ public func sendPost<T: Codable> (
 	
 	xhr.setRequestHeader("Accept", "application/json")
 		.setRequestHeader("Content-Type", "application/json")
+        .setRequestHeader("AppName", applicationName)
+        .setRequestHeader("AppVersion", SkylineWeb().version.description)
     
     if let jsonData = try? JSONEncoder().encode(APIHeader(
         AppID: thisAppID,
         AppToken: thisAppToken,
+        url: custCatchUrl,
         user: custCatchUser,
         mid: custCatchMid,
         key: custCatchKey,
@@ -219,10 +224,13 @@ public func sendPost<T: Codable> (
     
     xhr.setRequestHeader("Accept", "application/json")
         .setRequestHeader("Content-Type", "application/json")
+        .setRequestHeader("AppName", applicationName)
+        .setRequestHeader("AppVersion", SkylineWeb().version.description)
     
     if let jsonData = try? JSONEncoder().encode(APIHeader(
         AppID: thisAppID,
         AppToken: thisAppToken,
+        url: custCatchUrl,
         user: custCatchUser,
         mid: custCatchMid,
         key: custCatchKey,

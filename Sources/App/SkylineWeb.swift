@@ -12,17 +12,18 @@ let localTestIp = "192.168.0.111"
 
 public struct SkylineWeb {
 	
-	public private(set) var mode = "beta"
-    
-	public private(set) var version = 0
-	
-	public private(set) var revision = 17
-    
-    public private(set) var fix = 0
+	public private(set) var version: VersionControl = .init(
+        mode: .beta,
+        major: 0,
+        minor: 17,
+        patch: 2
+    )
 	
 	public init() {}
     
 }
+
+var applicationName = "PWASkyline"
 
 var developmentMode: ApplicationAPIMode = .produccion
 

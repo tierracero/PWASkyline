@@ -71,7 +71,7 @@ deps.appendFromMain("git@github.com:tierracero/LanguagePack.git",
 deps.appendFromMain("git@github.com:tierracero/WaWebAPICore.git",
                 targets: .product(name: "WaWebAPICore", package: "WaWebAPICore"))
 
-let package = Package(
+let package: Package = Package(
     name: "Tierra Cero | Skyline2.0",
     platforms: [
        .macOS(.v11)

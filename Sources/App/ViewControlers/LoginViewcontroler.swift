@@ -361,7 +361,12 @@ public class LoginViewcontroler: PageController {
 		.top(0.px)
 		.left(0.px)
 		
-		P("Bienvenidos a Tierra Cero Skyline [\(SkylineWeb().mode) \(SkylineWeb().version).\(SkylineWeb().revision).\(SkylineWeb().fix)] Gracias por usar  la version beta. Usese bajo su propio riesgo >_<")
+		P("Bienvenidos a Tierra Cero Skyline [" +
+        "\(SkylineWeb().version.mode.rawValue) " +
+        "\(SkylineWeb().version.major.toString)." +
+        "\(SkylineWeb().version.minor.toString)." +
+        "\(SkylineWeb().version.patch.toString)" +
+        "] Gracias por usar  la version beta. Usese bajo su propio riesgo >_<")
 			.marginLeft(24.px)
 			.marginRight(24.px)
 			.position(.absolute)
