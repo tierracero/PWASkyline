@@ -44,6 +44,8 @@ extension MailEndpointV1 {
         
         xhr.setRequestHeader("Accept", "application/json")
             .setRequestHeader("Content-Type", "application/json")
+        .setRequestHeader("AppName", applicationName)
+        .setRequestHeader("AppVersion", SkylineWeb().version.description)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,
@@ -64,9 +66,9 @@ extension MailEndpointV1 {
             }
         }
         
-        var _subject: String = subject.purgeSpaces
+        let _subject: String = subject.purgeSpaces
         
-        var _body: String = body.purgeSpaces
+        let _body: String = body.purgeSpaces
         
         var json = ""
         

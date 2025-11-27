@@ -45,6 +45,8 @@ extension MailEndpointV1 {
         
         xhr.setRequestHeader("Accept", "application/json")
             .setRequestHeader("Content-Type", "application/json")
+            .setRequestHeader("AppName", applicationName)
+            .setRequestHeader("AppVersion", SkylineWeb().version.description)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,

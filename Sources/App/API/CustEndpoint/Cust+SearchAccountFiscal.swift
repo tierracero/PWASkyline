@@ -34,6 +34,8 @@ func searchAccountFiscal(
     
     xhr.setRequestHeader("Accept", "application/json")
         .setRequestHeader("Content-Type", "application/json")
+        .setRequestHeader("AppName", applicationName)
+        .setRequestHeader("AppVersion", SkylineWeb().version.description)
 
     xhr.send()
     
