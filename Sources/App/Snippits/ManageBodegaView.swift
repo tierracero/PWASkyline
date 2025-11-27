@@ -1,5 +1,5 @@
 //
-//  CreateSectionView.swift
+//  ManageBodegaView.swift
 //  
 //
 //  Created by Victor Cantu on 2/1/23.
@@ -10,56 +10,85 @@ import TCFundamentals
 import TCFireSignal
 import Web
 
-class CreateBodegaView: Div {
+class ManageBodegaView: Div {
     
     override class var name: String { "div" }
     
-    let storeid: UUID
-    
-    let storeName: String
-    
-    @State var bodegaId: UUID?
-
-    @State var bodegaName: String
-    
-    @State var bodegaDescription: String
-    
-    @State var sectionName: String
-
     var relationType: API.custAPIV1.CreateBodegaRelationType
+    
+    let relationName: String
 
-    // bodegaName: String,
-    //     bodegaDescription: String,
-    //     : String,
-    //     relationType: ,
-
-    private var callback: ((
+    private var onCreate: ((
         _ bodega: CustStoreBodegasSinc,
-        _ seccion: CustStoreSeccionesQuickRef
-    ) -> ())
+        _ seccion: CustStoreSeccionesQuickRef?
+    ) -> ())?
+
+    private var onUpdate: ((
+        _ name: String,
+        _ description: String
+    ) -> ())?
     
     init(
-        storeid: UUID,
-        storeName: String,
-        bodegaId: UUID?,
-        bodegaName: String,
-        bodegaDescription: String,
-        sectionName: String,
         relationType: API.custAPIV1.CreateBodegaRelationType,
-        callback: @escaping ((
+        relationName: String,
+        loadBy: LoadManageBodegaView,
+        onCreate: @escaping(
             _ bodega: CustStoreBodegasSinc,
-            _ seccion: CustStoreSeccionesQuickRef
+            _ seccion: CustStoreSeccionesQuickRef?
+        ) -> ()
+    ) {
+
+        self.relationType = relationType
+        self.relationName = relationName
+
+        switch loadBy {
+        case .createForConcession:
+            self.sectionable = false
+        case .createForStore:
+            self.sectionable = true
+        case .bodega(let payload):
+            self.bodegaId = payload.bodega.id
+            self.bodegaName = payload.bodega.name
+            self.bodegaDescription = payload.bodega.description
+            self.sectionable = payload.bodega.sectionable
+        }
+
+        self.onCreate = onCreate
+
+        self.onUpdate =  nil
+        
+        super.init()
+    }
+
+    init(
+        relationType: API.custAPIV1.CreateBodegaRelationType,
+        relationName: String,
+        loadBy: LoadManageBodegaView,
+        onUpdate: @escaping ((
+             _ name: String,
+            _ description: String
         ) -> ())
     ) {
-        self.storeid = storeid
-        self.storeName = storeName
-        self.bodegaId = bodegaId
-        self.bodegaName = bodegaName
-        self.bodegaDescription = bodegaDescription
-        self.sectionName = sectionName
+
         self.relationType = relationType
-        self.callback = callback
-        
+        self.relationName = relationName
+
+        switch loadBy {
+        case .createForConcession:
+            self.sectionable = false
+        case .createForStore:
+            self.sectionable = true
+        case .bodega(let payload):
+            self.bodegaId = payload.bodega.id
+            self.bodegaName = payload.bodega.name
+            self.bodegaDescription = payload.bodega.description
+            self.sectionable = payload.bodega.sectionable
+        }
+
+        self.onCreate =  nil
+
+        self.onUpdate = onUpdate
+
         super.init()
     }
     
@@ -67,6 +96,16 @@ class CreateBodegaView: Div {
         fatalError("init() has not been implemented")
     }
     
+    @State var bodegaId: UUID? = nil
+
+    @State var bodegaName: String = ""
+    
+    @State var bodegaDescription: String = ""
+    
+    @State var sectionName: String = ""
+    
+    @State var sectionable: Bool = true
+
     lazy var newBodegaField = InputText(self.$bodegaName)
         .class(.textFiledBlackDark)
         .placeholder("Nombre de la nueva bodega")
@@ -119,7 +158,7 @@ class CreateBodegaView: Div {
             .paddingBottom(3.px)
             
             Div().class(.clear)
-            
+            /*
             H2( self.storeName )
                 .color(.white)
             
@@ -151,7 +190,6 @@ class CreateBodegaView: Div {
             }
             .class(.section)
             
-            
             Div().class(.clear).height(7.px)
 
             Div{
@@ -178,7 +216,7 @@ class CreateBodegaView: Div {
                 }
             }
             .align(.right)
-            
+            */
         }
         .backgroundColor(.grayBlack)
         .borderRadius(all: 24.px)
@@ -216,7 +254,7 @@ class CreateBodegaView: Div {
         newBodegaField.removeClass(.isOk)
         newBodegaField.removeClass(.isNok)
         newBodegaField.class(.isLoading)
-
+        /*
         API.custAPIV1.bodegaNameAvalability(
             storeId: storeid,
             bodegaId: bodegaId,
@@ -251,6 +289,8 @@ class CreateBodegaView: Div {
 
             }
         }
+    
+        */
     }
     
     func saveBodega(){
@@ -332,19 +372,19 @@ class CreateBodegaView: Div {
                     name: payload.bodega.name
                  )
                 
-                self.callback(
-                    .init(
-                        id: payload.bodega.id,
-                        modifiedAt: payload.bodega.modifiedAt,
-                        custStore: payload.bodega.custStore,
-                        name: payload.bodega.name
-                    ),
-                    .init(
-                        id: payload.section.id,
-                        name: payload.section.name,
-                        custStoreBodegas: payload.section.custStoreBodegas
-                    )
-                )
+                // self.callback(
+                //     .init(
+                //         id: payload.bodega.id,
+                //         modifiedAt: payload.bodega.modifiedAt,
+                //         custStore: payload.bodega.custStore,
+                //         name: payload.bodega.name
+                //     ),
+                //     .init(
+                //         id: payload.section.id,
+                //         name: payload.section.name,
+                //         custStoreBodegas: payload.section.custStoreBodegas
+                //     )
+                // )
                 
                 self.remove()
             }
@@ -353,5 +393,73 @@ class CreateBodegaView: Div {
         }
     
     }
+}
+
+extension ManageBodegaView {
+
+    struct ViewPayload {
+
+        let bodega: CustStoreBodegas
+
+        let secciones: [CustStoreSeccionesQuick]
+        
+        init(
+            bodega: CustStoreBodegas,
+            secciones: [CustStoreSeccionesQuick]
+        ) {
+            self.bodega = bodega
+            self.secciones = secciones
+        }
+
+    }
+
+    enum LoadManageBodegaView {
+
+        case createForConcession
+
+        case createForStore
+
+        case bodega(ViewPayload)
+        
+    }
+
+    struct CallbackActionUpdate {
+
+        let name: String
+    
+        let description: String
+            
+        init(
+            name: String,
+            description: String
+        ) {
+            self.name = name
+            self.description = description
+        }
+    
+    }
+
+    struct CallbackActionCreate {
+
+        let bodega: CustStoreBodegasSinc
+
+        let section: CustStoreSeccionesQuickRef?
+
+        init(
+            bodega: CustStoreBodegasSinc,
+            section: CustStoreSeccionesQuickRef?
+        ) {
+            self.bodega = bodega
+            self.section = section
+        }
+    }
+    
+     enum CallbackAction {
+
+        case update (CallbackActionUpdate)
+
+        case create (CallbackActionCreate)
+        
+     }
 
 }

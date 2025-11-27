@@ -526,26 +526,30 @@ class CustConcessionView: Div {
                                 .class(.uibtn)
                                 .onClick {
 
-                                    let view = CreateBodegaView(
-                                        storeid: self.account.id,
-                                        storeName: "Crear bodega para concesionario",
-                                        bodegaId: nil,
-                                        bodegaName: "",
-                                        bodegaDescription: "",
-                                        sectionName: "",
-                                        relationType: .consessioner(self.account.id)
-                                    ) { bodega, seccion in
+                                    // let view = ManageBodegaView(
+                                    //     relationType: .consessioner(self.account.id),
+                                    //     relationName: "Crear bodega para concesionario",
+                                    //     loadBy: .createForConcession
+                                    // )
 
-                                        self.bodegas.append(.init(
-                                            id: bodega.id,
-                                            name: bodega.name
-                                        ))
+                                    // let view = ManageBodegaView(
+                                    //     storeid: self.account.id,
+                                    //     storeName: 
+                                    //     bodega: nil,
+                                    //     sectionName: "",
+                                    //     relationType: .consessioner(self.account.id)
+                                    // ) { bodega, seccion in
 
-                                        self.seccions.append(seccion)
+                                    //     self.bodegas.append(.init(
+                                    //         id: bodega.id,
+                                    //         name: bodega.name
+                                    //     ))
 
-                                    }
+                                    //     self.seccions.append(seccion)
 
-                                    addToDom(view)
+                                    // }
+
+                                    //addToDom(view)
                                 }
                             }
                             .width(50.percent)
