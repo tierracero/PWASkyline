@@ -525,11 +525,18 @@ class CustConcessionView: Div {
                                 .align(.center)
                                 .class(.uibtn)
                                 .onClick {
+                                    
+                                    let view = ManageBodegaView(
+                                        relationType: .consessioner(self.account.id),
+                                        relationName: "Crear bodega para concesionario",
+                                        loadBy: .createForConcession,
+                                        onCreate: { bodega, section in
+                                            
+                                        }
+                                    )
 
                                     // let view = ManageBodegaView(
-                                    //     relationType: .consessioner(self.account.id),
-                                    //     relationName: "Crear bodega para concesionario",
-                                    //     loadBy: .createForConcession
+                                         
                                     // )
 
                                     // let view = ManageBodegaView(
