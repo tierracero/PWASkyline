@@ -104,7 +104,7 @@ class ManageBodegaView: Div {
     
     @State var sectionName: String = ""
     
-    @State var sectionable: Bool = true
+    var sectionable: Bool = true
 
     lazy var newBodegaField = InputText(self.$bodegaName)
         .class(.textFiledBlackDark)
@@ -113,7 +113,7 @@ class ManageBodegaView: Div {
         .fontSize(23.px)
         .height(28.px)
         .onKeyUp {
-            self.checkSectionAvailability()
+            self.checkBodegaAvailability()
         }
     
     lazy var newBodegaDescriptionField = InputText(self.$bodegaDescription)
@@ -148,7 +148,7 @@ class ManageBodegaView: Div {
                         self.remove()
                     }
                  
-                H2("Crear Bodega")
+                H2(self.$bodegaId.map{ ($0 == nil) ? "Crear Bodega" : "EditarBodega" })
                     .maxWidth(90.percent)
                     .class(.oneLineText)
                     .marginLeft(7.px)
@@ -158,15 +158,15 @@ class ManageBodegaView: Div {
             .paddingBottom(3.px)
             
             Div().class(.clear)
-            /*
-            H2( self.storeName )
+            
+            H2( self.relationName )
                 .color(.white)
             
             Div().class(.clear).height(7.px)
             
             Div{
                 
-                Label("Nueva Bodega")
+                Label("Nombre")
                     .fontSize(18.px)
                     .color(.gray)
                 
@@ -177,7 +177,7 @@ class ManageBodegaView: Div {
             .class(.section)
             
             Div().class(.clear).height(7.px)
-            
+
             Div{
                 
                 Label("Descripcion")
@@ -192,22 +192,24 @@ class ManageBodegaView: Div {
             
             Div().class(.clear).height(7.px)
 
-            Div{
-                
-                Label("Seccion")
-                    .fontSize(18.px)
-                    .color(.gray)
-                
+            if self.sectionable {
+
                 Div{
-                    self.newSeccionField
+                    
+                    Label("Seccion")
+                        .fontSize(18.px)
+                        .color(.gray)
+                    
+                    Div{
+                        self.newSeccionField
+                    }
                 }
+                .class(.section)
+                
+                Div().class(.clear).height(7.px)
+
             }
-            .class(.section)
-            .hidden(self.$bodegaId.map { $0 != nil})
-            
-            Div().class(.clear).height(7.px)
-            .hidden(self.$bodegaId.map { $0 != nil})
-            
+
             Div{
                 Div(self.$bodegaId.map{ ($0 == nil) ? "Crear Bodega" : "Guardar Datos"} )
                 .class(.uibtnLargeOrange)
@@ -216,7 +218,7 @@ class ManageBodegaView: Div {
                 }
             }
             .align(.right)
-            */
+            
         }
         .backgroundColor(.grayBlack)
         .borderRadius(all: 24.px)
@@ -243,7 +245,7 @@ class ManageBodegaView: Div {
         super.didAddToDOM()
     }
     
-    func checkSectionAvailability(){
+    func checkBodegaAvailability(){
         
         let term: String = self.bodegaName.purgeSpaces.pseudo.capitalizingFirstLetters()
 
@@ -252,11 +254,13 @@ class ManageBodegaView: Div {
         }
 
         newBodegaField.removeClass(.isOk)
+
         newBodegaField.removeClass(.isNok)
+
         newBodegaField.class(.isLoading)
-        /*
+        
         API.custAPIV1.bodegaNameAvalability(
-            storeId: storeid,
+            storeId: relationType.id,
             bodegaId: bodegaId,
             name: term
         ) { resp in
@@ -283,14 +287,71 @@ class ManageBodegaView: Div {
                 if payload.free {
                     self.newBodegaField.class(.isOk)
                 }
-                else{
+                else {
                     self.newBodegaField.class(.isNok)
                 }
 
             }
+
         }
-    
-        */
+        
+    }
+
+    func checkSectionAvailability(){
+
+        newSeccionField.removeClass(.isOk)
+
+        newSeccionField.removeClass(.isNok)
+
+        newSeccionField.class(.isLoading)
+        
+        let name: String = self.sectionName.purgeSpaces.pseudo.capitalizingFirstLetters()
+
+        if name.count < 2 {
+            return
+        }
+        
+        guard let bodegaId else {
+            self.newSeccionField.class(.isOk)
+            return 
+        }
+
+        API.custAPIV1.seccionNameAvalability(
+            name: name,
+            bodegaID: bodegaId,
+            seccionID: nil
+        ) { resp in
+
+            self.newSeccionField.removeClass(.isLoading)
+
+            guard let resp else {
+                showError(.errorDeCommunicacion, .serverConextionError)
+                return
+            }
+
+            guard resp.status == .ok else {
+                showError(.errorGeneral, resp.msg)
+                return
+            }
+
+            guard let payload = resp.data else {
+                showError(.unexpectedResult, "no de obtuvo payload de respuesta, contacta a Soporte TC")
+                return
+            }
+
+            if payload.term == name {
+
+                if payload.free {
+                    self.newSeccionField.class(.isOk)
+                }
+                else {
+                    self.newSeccionField.class(.isNok)
+                }
+
+            }
+
+        }
+        
     }
     
     func saveBodega(){

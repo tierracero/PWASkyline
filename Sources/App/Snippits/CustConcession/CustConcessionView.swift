@@ -531,32 +531,20 @@ class CustConcessionView: Div {
                                         relationName: "Crear bodega para concesionario",
                                         loadBy: .createForConcession,
                                         onCreate: { bodega, section in
+                                        
+                                            self.bodegas.append(.init(
+                                                id: bodega.id,
+                                                name: bodega.name
+                                            ))
+
+                                            if let section {
+                                                self.seccions.append(section)
+                                            }
                                             
                                         }
                                     )
 
-                                    // let view = ManageBodegaView(
-                                         
-                                    // )
-
-                                    // let view = ManageBodegaView(
-                                    //     storeid: self.account.id,
-                                    //     storeName: 
-                                    //     bodega: nil,
-                                    //     sectionName: "",
-                                    //     relationType: .consessioner(self.account.id)
-                                    // ) { bodega, seccion in
-
-                                    //     self.bodegas.append(.init(
-                                    //         id: bodega.id,
-                                    //         name: bodega.name
-                                    //     ))
-
-                                    //     self.seccions.append(seccion)
-
-                                    // }
-
-                                    //addToDom(view)
+                                    addToDom(view)
                                 }
                             }
                             .width(50.percent)
@@ -1072,8 +1060,7 @@ class CustConcessionView: Div {
             let view = BodegaView(
                 storeId: self.account.id,
                 storeName: "Conseccion \(self.account.businessName)",
-                bodega: bodega,
-                seccions: []
+                bodega: bodega
             )
 
             self.productDiv.appendChild(view)

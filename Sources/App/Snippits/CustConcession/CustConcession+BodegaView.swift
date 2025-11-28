@@ -16,24 +16,20 @@ extension CustConcessionView {
         
         override class var name: String { "div" }
 
-        let storeId: UUID
+        let consetionId: UUID
         
-        let storeName: String
+        let consetionName: String
 
         let bodega: CustStoreBodegasQuick
 
-        @State var seccions: [CustStoreSeccionesQuickRef]
-
         init(
-            storeId: UUID,
-            storeName: String,
-            bodega: CustStoreBodegasQuick,
-            seccions: [CustStoreSeccionesQuickRef]
+            consetionId: UUID,
+            consetionName: String,
+            bodega: CustStoreBodegasQuick
         ) {
-            self.storeId = storeId
-            self.storeName = storeName
+            self.consetionId = consetionId
+            self.consetionName = consetionName
             self.bodega = bodega
-            self.seccions = seccions
         }
 
         required init() {
@@ -41,37 +37,55 @@ extension CustConcessionView {
         }
 
         @DOM override var body: DOM.Content {
-            Div("+Agregar Seccion")
-            .class(.uibtnLarge)
+            Div{
+                Img()
+                .src( "/skyline/media/pencil.png" )
+                .cursor(.pointer)
+                .marginLeft(7.px)
+                .height(18.px)
+            }
             .float(.right)
             .onClick {
-                let view = CreateSectionView(
-                    storeid: self.storeId,
-                    storeName: self.storeName,
-                    bodid: self.bodega.id,
-                    bodName: self.bodega.name,
-                    sectionName: ""
-                ) { section in
-                    self.seccions.append(.init(
-                        id: section.id,
-                        name: section.name,
-                        custStoreBodegas: self.bodega.id
-                    ))
+
+                loadingView(show: true)
+
+                API.custAPIV1.getBodegaDetails(
+                    bodegaId: bodega.id
+                ) { resp in
+
+                    loadingView(show: false)
+        
+                    guard let resp else {
+                        showError(.errorDeCommunicacion, .serverConextionError)
+                        return
+                    }
+                    
+                    guard resp.status == .ok else {
+                        showError(.errorGeneral, resp.msg)
+                        return
+                    }
+                    
+                    guard let payload = resp.data else {
+                        showError(.unexpectedResult, .unexpenctedMissingPayload)
+                        return
+                    }
+                    
+                    let view = ManageBodegaView(
+                        relationType: .consessioner(self.account.id),
+                        relationName: "Crear bodega para concesionario",
+                        loadBy: .createForConcession,
+                        onUpdate: { name, description in
+                        
+                            
+                        }
+                    )
+
+
                 }
 
-                addToDom(view)
             }
             H2(self.bodega.name)
-            
-            Div{
-                ForEach(self.$seccions) { item in
 
-                    Div(item.name)
-
-                    Div().clear(.both).height(7.px)
-
-                }
-            }
         }
 
 
