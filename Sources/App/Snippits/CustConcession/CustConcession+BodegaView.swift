@@ -79,8 +79,6 @@ extension CustConcessionView {
                             
                         }
                     )
-
-
                 }
 
             }
