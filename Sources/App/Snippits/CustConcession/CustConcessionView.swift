@@ -249,7 +249,6 @@ class CustConcessionView: Div {
                                 .align(.right)
                                 .float(.left)
 
-
                                 Div().clear(.both)
                             }
 
@@ -514,7 +513,7 @@ class CustConcessionView: Div {
                             Div{
                                 Div{
                                      Img()
-                                        .src("skyline/media/add.png")
+                                        .src("skyline/media/pencil.png")
                                         .marginRight(12.px)
                                         .cursor(.pointer)
                                         .height(18.px)
@@ -541,6 +540,15 @@ class CustConcessionView: Div {
                                                 self.seccions.append(section)
                                             }
                                             
+                                        },
+                                        onUpdate: { name, description in
+                                            var bodegas: [CustStoreBodegasQuick] = []
+
+                                            self.bodegas.forEach { bodega in
+                                                
+
+                                            }
+
                                         }
                                     )
 

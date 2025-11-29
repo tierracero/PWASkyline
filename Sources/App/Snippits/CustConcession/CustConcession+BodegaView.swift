@@ -72,7 +72,7 @@ extension CustConcessionView {
                         return
                     }
                     
-                    let view = ManageBodegaView(
+                    let view: ManageBodegaView = ManageBodegaView(
                         relationType: .consessioner(self.consetionId),
                         relationName: "Crear bodega para concesionario",
                         loadBy: .bodega(.init(
@@ -86,7 +86,8 @@ extension CustConcessionView {
                 }
 
             }
-            H2(self.bodega.name)
+            
+            H2(self.$bodegaName)
 
         }
 

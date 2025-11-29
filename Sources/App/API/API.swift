@@ -10,6 +10,7 @@ import TCFundamentals
 import TCFireSignal
 
 public struct API {
+    
     public typealias v1 = APIComponents
     public typealias adminV1 = AdminComponents
     public typealias authV1 = AuthComponents

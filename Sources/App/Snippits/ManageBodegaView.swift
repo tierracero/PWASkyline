@@ -24,9 +24,10 @@ class ManageBodegaView: Div {
     ) -> ())?
 
     private var onUpdate: ((
+        _ id: UUID,
         _ name: String,
         _ description: String
-    ) -> ())?
+    ) -> ())
     
     init(
         relationType: API.custAPIV1.CreateBodegaRelationType,
@@ -35,10 +36,16 @@ class ManageBodegaView: Div {
         onCreate: @escaping(
             _ bodega: CustStoreBodegasSinc,
             _ seccion: CustStoreSeccionesQuickRef?
-        ) -> ()
+        ) -> (),
+        onUpdate: @escaping ((
+            _ id: UUID,
+             _ name: String,
+            _ description: String
+        ) -> ())
     ) {
 
         self.relationType = relationType
+
         self.relationName = relationName
 
         switch loadBy {
@@ -55,7 +62,7 @@ class ManageBodegaView: Div {
 
         self.onCreate = onCreate
 
-        self.onUpdate =  nil
+        self.onUpdate =  onUpdate
         
         super.init()
     }
@@ -65,7 +72,8 @@ class ManageBodegaView: Div {
         relationName: String,
         loadBy: LoadManageBodegaView,
         onUpdate: @escaping ((
-             _ name: String,
+            _ id: UUID,
+            _ name: String,
             _ description: String
         ) -> ())
     ) {
@@ -148,7 +156,7 @@ class ManageBodegaView: Div {
                         self.remove()
                     }
                  
-                H2(self.$bodegaId.map{ ($0 == nil) ? "Crear Bodega" : "EditarBodega" })
+                H2(self.$bodegaId.map{ ($0 == nil) ? "Crear Bodega" : "Editar Bodega" })
                     .maxWidth(90.percent)
                     .class(.oneLineText)
                     .marginLeft(7.px)
@@ -224,8 +232,34 @@ class ManageBodegaView: Div {
         .borderRadius(all: 24.px)
         .position(.absolute)
         .padding(all: 12.px)
-        .width(40.percent)
-        .left(30.percent)
+        .width(self.$bodegaId.map{
+            
+            if  !self.sectionable {
+                return 40.percent
+            }
+
+            if $0 == nil  {
+                return 40.percent
+            }
+            else {
+                return 80.percent
+            }
+
+        })
+        .left(self.$bodegaId.map{
+            
+            if  !self.sectionable {
+                return 30.percent
+            }
+
+            if $0 == nil  {
+                return 30.percent
+            }
+            else {
+                return 10.percent
+            }
+
+        })
         .top(25.percent)
         .color(.white)
     }
@@ -294,7 +328,6 @@ class ManageBodegaView: Div {
             }
 
         }
-        
     }
 
     func checkSectionAvailability(){
@@ -386,9 +419,10 @@ class ManageBodegaView: Div {
                     return
                 }
                 
+                self.onUpdate(bodegaId, name, self.bodegaDescription)
+
             }
             
-
         }
         else {
 
@@ -423,8 +457,10 @@ class ManageBodegaView: Div {
                     showError( .errorGeneral, .unexpenctedMissingPayload)
                     return
                 }
-                
+
                 print("⭐️  bodega  ⭐️")
+
+                self.bodegaId = payload.bodega.id
 
                 bodegas[payload.bodega.id] = .init(
                     id: payload.bodega.id,
@@ -433,24 +469,24 @@ class ManageBodegaView: Div {
                     name: payload.bodega.name
                  )
                 
-                // self.callback(
-                //     .init(
-                //         id: payload.bodega.id,
-                //         modifiedAt: payload.bodega.modifiedAt,
-                //         custStore: payload.bodega.custStore,
-                //         name: payload.bodega.name
-                //     ),
-                //     .init(
-                //         id: payload.section.id,
-                //         name: payload.section.name,
-                //         custStoreBodegas: payload.section.custStoreBodegas
-                //     )
-                // )
-                
-                self.remove()
-            }
+                var seccion: CustStoreSeccionesQuickRef? = nil
 
-        
+                if let  sec = payload.section {
+                    seccion = .init(
+                        id: sec.id,
+                        name: sec.name,
+                        custStoreBodegas: sec.custStoreBodegas
+                    )
+                }
+
+                self.onCreate?(.init(
+                        id: payload.bodega.id,
+                        modifiedAt: payload.bodega.modifiedAt,
+                        custStore: payload.bodega.custStore,
+                        name: payload.bodega.name
+                    ), seccion )
+
+            }        
         }
     
     }
@@ -483,44 +519,4 @@ extension ManageBodegaView {
         case bodega(ViewPayload)
         
     }
-
-    struct CallbackActionUpdate {
-
-        let name: String
-    
-        let description: String
-            
-        init(
-            name: String,
-            description: String
-        ) {
-            self.name = name
-            self.description = description
-        }
-    
-    }
-
-    struct CallbackActionCreate {
-
-        let bodega: CustStoreBodegasSinc
-
-        let section: CustStoreSeccionesQuickRef?
-
-        init(
-            bodega: CustStoreBodegasSinc,
-            section: CustStoreSeccionesQuickRef?
-        ) {
-            self.bodega = bodega
-            self.section = section
-        }
-    }
-    
-     enum CallbackAction {
-
-        case update (CallbackActionUpdate)
-
-        case create (CallbackActionCreate)
-        
-     }
-
 }
