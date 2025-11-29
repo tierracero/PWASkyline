@@ -1058,8 +1058,8 @@ class CustConcessionView: Div {
         bodegas.forEach{ bodega in
 
             let view = BodegaView(
-                storeId: self.account.id,
-                storeName: "Conseccion \(self.account.businessName)",
+                consetionId: self.account.id,
+                consetionName: "Conseccion \(self.account.businessName)",
                 bodega: bodega
             )
 

@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 /*
-extension PapaContadorEndpointV1 {
+extension PapaContadorComponents {
     public static func loadFIAccounts(callback: @escaping ( (_ resp: APIResponseGeneric<[FIAccounts]>?) -> () )) {
         
         sendPost(

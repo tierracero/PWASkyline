@@ -9,7 +9,7 @@ import Foundation
 import MailAPICore
 import XMLHttpRequest
 
-extension MailEndpointV1 {
+extension MailComponents {
     /*
     func flag(
         

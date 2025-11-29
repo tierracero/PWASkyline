@@ -32,7 +32,7 @@ class POCStorageControlAddInventoryView: Div {
 
     @State var vendor: CustVendorsQuick
 
-    var profile: FiscalEndpointV1.Profile
+    var profile: FiscalComponents.Profile
 
     private var callback: ((
         _ items: [CustPOCInventoryIDSale]
@@ -48,7 +48,7 @@ class POCStorageControlAddInventoryView: Div {
         sectionId: UUID,
         documentName: String,
         vendor: CustVendorsQuick,
-        profile: FiscalEndpointV1.Profile,
+        profile: FiscalComponents.Profile,
         callback: @escaping ((
             _ items: [CustPOCInventoryIDSale]
         ) -> ())

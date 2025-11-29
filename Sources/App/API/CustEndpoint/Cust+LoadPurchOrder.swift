@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustAPIEndpointV1 {
+extension CustComponents {
         
     static func loadPurchOrder(
         id: HybridIdentifier,

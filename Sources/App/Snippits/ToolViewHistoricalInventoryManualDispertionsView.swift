@@ -1171,7 +1171,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
             
         }
         
-        func renderGenral(payload: CustPOCEndpointV1.AuditsResponse) {
+        func renderGenral(payload: CustPOCComponents.AuditsResponse) {
             
             var active: [CustPOCQuick] = []
             
@@ -1382,7 +1382,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
             
         }
         
-        func renderByProduct(payload: CustPOCEndpointV1.AuditsResponse, startAtUTS: Int64, endAtUTS: Int64) {
+        func renderByProduct(payload: CustPOCComponents.AuditsResponse, startAtUTS: Int64, endAtUTS: Int64) {
             
             var storeCostTotal: Int64 = 0
             
@@ -1589,7 +1589,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                 typealias MONTH = Int
                 typealias DAY = Int
                 
-                var itemRefrence: [ YEAR:[ MONTH:[ DAY:[CustPOCEndpointV1.AuditSaleObject] ]]] = [:]
+                var itemRefrence: [ YEAR:[ MONTH:[ DAY:[CustPOCComponents.AuditSaleObject] ]]] = [:]
                 
                 item.items.forEach { item in
                     
@@ -1760,7 +1760,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
             
         }
         
-        func renderBySales(payload: CustPOCEndpointV1.AuditsResponse, startAtUTS: Int64, endAtUTS: Int64) {
+        func renderBySales(payload: CustPOCComponents.AuditsResponse, startAtUTS: Int64, endAtUTS: Int64) {
             
             var itemRefrence: [UUID:[API.custPOCV1.AuditObject]] = [:]
             
@@ -2227,7 +2227,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
             
         }
         
-        func renderBySalesConcession(payload: CustPOCEndpointV1.AuditsResponse, startAtUTS: Int64, endAtUTS: Int64) {
+        func renderBySalesConcession(payload: CustPOCComponents.AuditsResponse, startAtUTS: Int64, endAtUTS: Int64) {
             
             self.accountRefrecnce = Dictionary(uniqueKeysWithValues: payload.accounts.map{ value in (value.id, value) })
             

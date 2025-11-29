@@ -10,7 +10,7 @@ import TCFundamentals
 import TCFireSignal
 
 
-extension CustOrderEndpointV1 {
+extension CustOrderComponents {
     
     static func alerted (
         orderId: UUID,

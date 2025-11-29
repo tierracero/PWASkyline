@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustPOCEndpointV1 {
+extension CustPOCComponents {
     
     /// Will delete image, if autoRemoval then it will restore image  form OG IMG
     static func removeMedia(

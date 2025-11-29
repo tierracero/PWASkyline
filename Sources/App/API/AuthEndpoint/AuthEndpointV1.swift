@@ -1,5 +1,5 @@
 //
-//  AuthEndpointV1.swift
+//  AuthComponents.swift
 //  
 //
 //  Created by Victor Cantu on 2/16/22.
@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension AuthEndpointV1 {
+extension AuthComponents {
 	static var rout: ServerRouts = .auth
 	static var version: ServerVersion? = .v1
 }

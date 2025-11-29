@@ -20,12 +20,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         
         let userCard: UserCard
         
-        let data: CustAPIEndpointV1.GetUserResponse
+        let data: CustComponents.GetUserResponse
         
         init(
             store: CustStore,
             userCard: UserCard,
-            data: CustAPIEndpointV1.GetUserResponse
+            data: CustComponents.GetUserResponse
         ) {
             self.store = store
             self.userCard = userCard

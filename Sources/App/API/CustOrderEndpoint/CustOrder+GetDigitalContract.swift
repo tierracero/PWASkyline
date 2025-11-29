@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustOrderEndpointV1 {
+extension CustOrderComponents {
     static func getDigitalContract(
         orderId: UUID,
         callback: @escaping ( (_ resp: APIResponseGeneric<GetDigitalContractResponse>?) -> () )

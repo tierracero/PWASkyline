@@ -568,7 +568,7 @@ extension ToolsView.WebPage.MeetUsPage {
                 return
             }
                 
-            var files: [ThemeEndpointV1.FileObject] = []
+            var files: [ThemeComponents.FileObject] = []
             
             imageRefrence.forEach { viewId, view in
                 

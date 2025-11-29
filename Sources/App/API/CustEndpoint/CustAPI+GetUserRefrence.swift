@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustAPIEndpointV1 {
+extension CustComponents {
 	
 	static func getUserRefrence( id: HybridIdentifier?, callback: @escaping ( (_ resp: APIResponseGeneric<GetUserRefrenceResponse>?) -> () )) {
 		sendPost(

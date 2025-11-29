@@ -208,7 +208,7 @@ class ToolFiscalConfirmView: Div {
             buttonName = "Crear Carta Porte"
         }
         
-        var fiscalProfile: FiscalEndpointV1.Profile? = nil
+        var fiscalProfile: FiscalComponents.Profile? = nil
         
         fiscalProfiles.forEach { prof in
             if profile == prof.id {

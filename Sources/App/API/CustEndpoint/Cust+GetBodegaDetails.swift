@@ -6,11 +6,11 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustAPIEndpointV1 {
+extension CustComponents {
         
     static func getBodegaDetails(
         bodegaId: UUID,
-        callback: @escaping ( (_ resp: APIResponseGeneric<GetBodegaDetailsRequest>?) -> () )
+        callback: @escaping ( (_ resp: APIResponseGeneric<GetBodegaDetailsResponse>?) -> () )
     ) {
         
         sendPost(
@@ -29,7 +29,7 @@ extension CustAPIEndpointV1 {
             
             do{
                 
-                callback( try JSONDecoder().decode(APIResponseGeneric<GetBodegaDetailsRequest>.self, from: data) )
+                callback( try JSONDecoder().decode(APIResponseGeneric<GetBodegaDetailsResponse>.self, from: data) )
                 
             }
             catch {

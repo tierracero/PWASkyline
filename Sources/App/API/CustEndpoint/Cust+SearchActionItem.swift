@@ -11,7 +11,7 @@ import Web
 import XMLHttpRequest
 import TCFireSignal
 
-extension CustAPIEndpointV1 {
+extension CustComponents {
     
     /// Return a list of SOCs and POCs, generaly used to add a charge to an order
     /// - Parameters:

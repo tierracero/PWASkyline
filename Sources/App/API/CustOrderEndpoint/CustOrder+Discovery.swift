@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustOrderEndpointV1 {
+extension CustOrderComponents {
 	
 	struct CustOrderDiscoveryAPIv1: Codable {
 		var term: String

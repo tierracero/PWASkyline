@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustAPIEndpointV1 {
+extension CustComponents {
     static func getNominaProfiles(
         callback: @escaping ( (_ resp: APIResponseGeneric<GetNominaProfilesResponse>?) -> () )
     ) {

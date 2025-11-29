@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension AuthEndpointV1 {
+extension AuthComponents {
     
     static func getSocialWSToken(callback: @escaping ( (_ resp: APIResponseGeneric<GetChatTokenResponse>?) -> () )) {
         

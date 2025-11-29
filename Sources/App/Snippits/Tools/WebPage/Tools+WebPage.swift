@@ -1260,7 +1260,7 @@ extension ToolsView {
                    return
                }
                
-                /// let payload: ThemeEndpointV1.GetWebMeetUsResponse
+                /// let payload: ThemeComponents.GetWebMeetUsResponse
                guard let payload = resp.data else {
                    showError(.unexpectedResult, .unexpenctedMissingPayload)
                    return

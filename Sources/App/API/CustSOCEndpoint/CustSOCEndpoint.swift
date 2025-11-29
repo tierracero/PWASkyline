@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustSOCEndpointV1 {
+extension CustSOCComponents {
     static var rout: ServerRouts = .soc
     static var version: ServerVersion? = .v1
 }

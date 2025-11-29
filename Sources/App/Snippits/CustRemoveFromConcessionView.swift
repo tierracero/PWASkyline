@@ -94,9 +94,9 @@ class CustRemoveFromConcessionView: Div {
     
     @State var currentBalance: Int64 = 0
     
-    @State var profiles: [FiscalEndpointV1.Profile] = fiscalProfiles
+    @State var profiles: [FiscalComponents.Profile] = fiscalProfiles
     
-    @State var profile: FiscalEndpointV1.Profile? = nil
+    @State var profile: FiscalComponents.Profile? = nil
     
     @State var selectFiscalProfileIsHidden: Bool = true
     
@@ -1495,7 +1495,7 @@ class CustRemoveFromConcessionView: Div {
         }
         else{
             
-            var _prof: FiscalEndpointV1.Profile? = nil
+            var _prof: FiscalComponents.Profile? = nil
             profiles.forEach { prof in
                 if prof.id != profile?.id {
                     _prof = prof

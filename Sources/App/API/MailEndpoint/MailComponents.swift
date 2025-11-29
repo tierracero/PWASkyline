@@ -1,5 +1,5 @@
 //
-//  MailEndpointV1.swift
+//  MailComponents.swift
 //  
 //
 //  Created by Victor Cantu on 2/17/23.
@@ -7,4 +7,4 @@
 
 import Foundation
 
-public struct MailEndpointV1 {}
+public struct MailComponents {}

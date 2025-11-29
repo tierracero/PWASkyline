@@ -10,7 +10,7 @@ import TCFundamentals
 import TCSocialCore
 import TCFireSignal
 
-extension CustAPIEndpointV1 {
+extension CustComponents {
     
     static func addSocialComment(
         mainid: UUID,

@@ -297,7 +297,7 @@ class SocialManagerPostView: Div {
                         guard let payload = resp.data else {
                             return
                         }
-                        //CustAPIEndpointV1.GetSocialPostManagerResponse
+                        //CustComponents.GetSocialPostManagerResponse
                         
                         addToDom(SocialManagerPostManagerView(
                             caption: self.post.title,

@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension RewardsEndpointV1 {
+extension RewardsComponents {
     static var rout: ServerRouts = .rewards
     static var version: ServerVersion? = .v1
 }

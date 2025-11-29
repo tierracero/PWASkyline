@@ -12,7 +12,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension WSEndpointV1 {
+extension WSComponents {
     static var rout: ServerRouts = .ws
     static var version: ServerVersion? = .v1
 }

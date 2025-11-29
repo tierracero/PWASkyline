@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 /*
-extension PapaContadorEndpointV1 {
+extension PapaContadorComponents {
     static var rout: ServerRouts = .papaContador
     static var version: ServerVersion? = .v1
 }

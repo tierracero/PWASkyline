@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension WSEndpointV1 {
+extension WSComponents {
     
     public static func getChatRoom(
         roomid: HybridIdentifier,

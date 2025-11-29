@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustAccountEndpointV1 {
+extension CustAccountComponents {
     
     public static func load(
         id: HybridIdentifier,

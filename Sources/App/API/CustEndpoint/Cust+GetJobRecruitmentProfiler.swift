@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustAPIEndpointV1 {
+extension CustComponents {
         
     public static func getJobRecruitmentProfiler( // GetJobRecruitmentProfilerResponse
         callback: @escaping ( (_ resp: APIResponseGeneric<GetJobRecruitmentProfilerResponse>?) -> () )

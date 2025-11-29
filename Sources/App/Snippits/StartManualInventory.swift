@@ -10,14 +10,14 @@ class StartManualInventory: Div {
     private var callback: ((
         _ newDocumentName: String,
         _ vendor: CustVendorsQuick,
-        _ profile: FiscalEndpointV1.Profile
+        _ profile: FiscalComponents.Profile
     ) -> ())
 
     init(
         callback: @escaping (
             _ newDocumentName: String,
             _ vendor: CustVendorsQuick,
-            _ profile: FiscalEndpointV1.Profile
+            _ profile: FiscalComponents.Profile
         ) -> Void
     ) {
         self.callback = callback
@@ -31,11 +31,11 @@ class StartManualInventory: Div {
     
     @State var vendor: CustVendorsQuick? = nil
     
-    @State var profile: FiscalEndpointV1.Profile? = nil
+    @State var profile: FiscalComponents.Profile? = nil
     
     @State var selectFiscalProfileIsHidden = true
     
-    @State var profiles: [FiscalEndpointV1.Profile] = fiscalProfiles
+    @State var profiles: [FiscalComponents.Profile] = fiscalProfiles
     
     lazy var newDocumentNameField = InputText(self.$newDocumentName)
         .placeholder("Nombre de la orden de compra")
@@ -350,7 +350,7 @@ class StartManualInventory: Div {
         }
         else{
             
-            var _prof: FiscalEndpointV1.Profile? = nil
+            var _prof: FiscalComponents.Profile? = nil
             profiles.forEach { prof in
                 if prof.id != profile?.id {
                     _prof = prof

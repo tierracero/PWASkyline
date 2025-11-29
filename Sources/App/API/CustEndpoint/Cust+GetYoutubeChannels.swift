@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustAPIEndpointV1 {
+extension CustComponents {
         
     static func getYoutubeChannels(
         callback: @escaping ( (_ resp: APIResponseGeneric<API.custAPIV1.GetYoutubeChannelsResponse>?) -> () )

@@ -10,7 +10,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustAPIEndpointV1 {
+extension CustComponents {
         
     public static func workWithUsFinalize(
         profileid: UUID,

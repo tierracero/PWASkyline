@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension FiscalEndpointV1 {
+extension FiscalComponents {
     
     static func registerProfile(
         eMail: String,
@@ -42,7 +42,7 @@ extension FiscalEndpointV1 {
         serie: String,
         folio: String,
         logo: String,
-        callback: @escaping ( (_ resp: APIResponseGeneric<FiscalEndpointV1.Profile>?) -> () )
+        callback: @escaping ( (_ resp: APIResponseGeneric<FiscalComponents.Profile>?) -> () )
     ) {
         
         sendPost(
@@ -82,7 +82,7 @@ extension FiscalEndpointV1 {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<FiscalEndpointV1.Profile>.self, from: data)
+                let resp = try JSONDecoder().decode(APIResponseGeneric<FiscalComponents.Profile>.self, from: data)
                 callback(resp)
             }
             catch{

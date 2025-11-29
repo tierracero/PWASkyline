@@ -1,5 +1,5 @@
 //
-//  APIEndpointV1.swift
+//  APIComponents.swift
 //  
 //
 //  Created by Victor Cantu on 2/23/22.
@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension APIEndpointV1 {
+extension APIComponents {
 	static var rout: ServerRouts = .api
 	static var version: ServerVersion? = .v1
 }

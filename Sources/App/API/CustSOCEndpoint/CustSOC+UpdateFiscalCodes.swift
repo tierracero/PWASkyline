@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustSOCEndpointV1 {
+extension CustSOCComponents {
     
     static func updateFiscalCodes(
         id: UUID,

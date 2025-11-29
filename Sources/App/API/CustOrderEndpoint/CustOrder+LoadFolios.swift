@@ -10,7 +10,7 @@ import TCFundamentals
 import TCFireSignal
 import TCFundamentals
 
-extension CustOrderEndpointV1 {
+extension CustOrderComponents {
 	
 	static func loadFolios (
         storeid: UUID?,

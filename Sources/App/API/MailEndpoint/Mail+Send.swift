@@ -11,7 +11,7 @@ import MailAPICore
 import XMLHttpRequest
 import Web
 
-extension MailEndpointV1 {
+extension MailComponents {
     
     func send(
         uid: Int?,

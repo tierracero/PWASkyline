@@ -10,7 +10,7 @@ import TCFundamentals
 import TCFireSignal
 import Web
 
-extension CustAPIEndpointV1 {
+extension CustComponents {
     
     static func loadRentalStoreLevels(id: UUID?, full: Bool?, callback: @escaping ( (_ resp: APIResponseGeneric<[CustStoreDepsRental]>?) -> () )) {
         

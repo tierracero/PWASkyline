@@ -486,7 +486,7 @@ class SocialManagerView: Div {
         .height(31.px)
         .onChange { _, select in
             
-            if let type = CustAPIEndpointV1.GetFromDate(rawValue: select.value) {
+            if let type = CustComponents.GetFromDate(rawValue: select.value) {
                 self.loadPosts(type: type)
             }
             
@@ -788,7 +788,7 @@ class SocialManagerView: Div {
     override func didAddToDOM() {
         super.didAddToDOM()
         
-        CustAPIEndpointV1.GetFromDate.allCases.forEach { type in
+        CustComponents.GetFromDate.allCases.forEach { type in
             loadPostBySelect.appendChild(
                 Option(type.description)
                     .value(type.rawValue)
@@ -1492,7 +1492,7 @@ class SocialManagerView: Div {
         
     }
     
-    func loadPosts(type: CustAPIEndpointV1.GetFromDate){
+    func loadPosts(type: CustComponents.GetFromDate){
         
         loadingView(show: true)
         

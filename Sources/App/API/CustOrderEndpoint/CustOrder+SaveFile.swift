@@ -10,6 +10,6 @@ import TCFundamentals
 import TCFireSignal
 import Web
 
-extension CustOrderEndpointV1 {
+extension CustOrderComponents {
     
 }

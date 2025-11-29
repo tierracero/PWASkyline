@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustPDVEndpointV1 {
+extension CustPDVComponents {
     
     static func cancelSale(
         type: SaleCancelationType,

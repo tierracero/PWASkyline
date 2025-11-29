@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustSOCEndpointV1 {
+extension CustSOCComponents {
     
     static func removeRelatedCode(
         currentId: UUID,

@@ -10,7 +10,7 @@ import TCFundamentals
 import TCFireSignal
 
 /*
-extension PapaContadorEndpointV1 {
+extension PapaContadorComponents {
     
     public static func changeSATPassword(
         id: UUID,

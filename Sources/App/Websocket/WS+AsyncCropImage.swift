@@ -10,7 +10,7 @@ import TCFundamentals
 import TCFireSignal
 
 extension WS {
-    func asyncCropImage(_ payload: String) -> CustAPIEndpointV1.UploadManagerFileObject? {
+    func asyncCropImage(_ payload: String) -> CustComponents.UploadManagerFileObject? {
         
         if let data = payload.data(using: .utf8) {
             do {

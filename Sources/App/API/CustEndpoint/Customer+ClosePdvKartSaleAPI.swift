@@ -10,7 +10,7 @@ import TCFundamentals
 import TCFireSignal
 import TCFundamentals
 
-extension CustAPIEndpointV1 {
+extension CustComponents {
     
     static func closePdvKartSale(
         custAcct: UUID?,

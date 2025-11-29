@@ -2503,7 +2503,7 @@ extension ProductManagerView.AuditView {
 
         }
         
-        func renderGenral(payload: CustPOCEndpointV1.AuditsResponse) {
+        func renderGenral(payload: CustPOCComponents.AuditsResponse) {
             
             print("⚠️ renderGenral")
 
@@ -2718,7 +2718,7 @@ extension ProductManagerView.AuditView {
             
         }
         
-        func renderByProduct(payload: CustPOCEndpointV1.AuditsResponse, startAtUTS: Int64, endAtUTS: Int64) {
+        func renderByProduct(payload: CustPOCComponents.AuditsResponse, startAtUTS: Int64, endAtUTS: Int64) {
             
             print("⚠️ renderByProduct")
 
@@ -2938,7 +2938,7 @@ extension ProductManagerView.AuditView {
                 typealias MONTH = Int
                 typealias DAY = Int
                 
-                var itemRefrence: [ YEAR:[ MONTH:[ DAY:[CustPOCEndpointV1.AuditSaleObject] ]]] = [:]
+                var itemRefrence: [ YEAR:[ MONTH:[ DAY:[CustPOCComponents.AuditSaleObject] ]]] = [:]
                 
                 item.items.forEach { item in
                     
@@ -3109,7 +3109,7 @@ extension ProductManagerView.AuditView {
             
         }
         
-        func renderBySales(payload: CustPOCEndpointV1.AuditsResponse, startAtUTS: Int64, endAtUTS: Int64) {
+        func renderBySales(payload: CustPOCComponents.AuditsResponse, startAtUTS: Int64, endAtUTS: Int64) {
             
             print("⚠️ renderBySales")
             
@@ -3621,7 +3621,7 @@ extension ProductManagerView.AuditView {
             
         }
         
-        func renderBySalesConcession(payload: CustPOCEndpointV1.AuditsResponse, startAtUTS: Int64, endAtUTS: Int64) {
+        func renderBySalesConcession(payload: CustPOCComponents.AuditsResponse, startAtUTS: Int64, endAtUTS: Int64) {
             
             print("⚠️ renderBySalesConcession")
 

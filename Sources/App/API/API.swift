@@ -10,28 +10,28 @@ import TCFundamentals
 import TCFireSignal
 
 public struct API {
-    public typealias v1 = APIEndpointV1
-    public typealias adminV1 = AdminEndpointV1
-    public typealias authV1 = AuthEndpointV1
-    public typealias cloudUserV1 = CloudUserEndpointV1
-    public typealias custAccountV1 = CustAccountEndpointV1
-    public typealias custPDVV1 = CustPDVEndpointV1
-    public typealias custPOCV1 = CustPOCEndpointV1
-    public typealias custSOCV1 = CustSOCEndpointV1
-    public typealias custOrderV1 = CustOrderEndpointV1
-    public typealias custRouteV1 = CustRouteEndpointV1
-    public typealias custAPIV1 = CustAPIEndpointV1
-    //public typealias customerV1 = CustomerEndpointV1
-    public typealias domainV1 = DomainEndpointV1
+    public typealias v1 = APIComponents
+    public typealias adminV1 = AdminComponents
+    public typealias authV1 = AuthComponents
+    public typealias cloudUserV1 = CloudUserComponents
+    public typealias custAccountV1 = CustAccountComponents
+    public typealias custPDVV1 = CustPDVComponents
+    public typealias custPOCV1 = CustPOCComponents
+    public typealias custSOCV1 = CustSOCComponents
+    public typealias custOrderV1 = CustOrderComponents
+    public typealias custRouteV1 = CustRouteComponents
+    public typealias custAPIV1 = CustComponents
+    //public typealias customerV1 = CustomerComponents
+    public typealias domainV1 = DomainComponents
     
-    public typealias fiscalV1 = FiscalEndpointV1
-    public var mailV1 = MailEndpointV1()
-    public typealias notificationV1 = NotificationEndpointV1
-    public typealias saleManagerV1 = SaleManagerEndpointV1
-    public typealias themeV1 = ThemeEndpointV1
-    //public typealias papaContadorV1 = PapaContadorEndpointV1
-    public typealias wsV1 = WSEndpointV1
+    public typealias fiscalV1 = FiscalComponents
+    public var mailV1 = MailComponents()
+    public typealias notificationV1 = NotificationComponents
+    public typealias saleManagerV1 = SaleManagerComponents
+    public typealias themeV1 = ThemeComponents
+    //public typealias papaContadorV1 = PapaContadorComponents
+    public typealias wsV1 = WSComponents
     
-    public typealias rewardsV1 = RewardsEndpointV1
+    public typealias rewardsV1 = RewardsComponents
     
 }

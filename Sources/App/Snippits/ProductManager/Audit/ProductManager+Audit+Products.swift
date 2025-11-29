@@ -725,7 +725,7 @@ extension ProductManagerView.AuditView {
             }
         }
         
-        func downloadCardexReport(_ documentType:  DocumentType, startAt: Int64, endAt: Int64, storeId: UUID, payload: CustPOCEndpointV1.CardexResponse) {
+        func downloadCardexReport(_ documentType:  DocumentType, startAt: Int64, endAt: Int64, storeId: UUID, payload: CustPOCComponents.CardexResponse) {
             
             loadingView(show: true)
             

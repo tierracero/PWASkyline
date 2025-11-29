@@ -717,7 +717,7 @@ class MessageGrid: Div {
                 switch data {
                 case .processing(let payload):
                     /*
-                     CustAPIEndpointV1.UploadManagerProcessingObject
+                     CustComponents.UploadManagerProcessingObject
                      
                      public let fileName: String
                      
@@ -730,7 +730,7 @@ class MessageGrid: Div {
                 case .processed(let payload):
                     
                     /*
-                    CustAPIEndpointV1.UploadManagerFileObject
+                    CustComponents.UploadManagerFileObject
                     
                     public var eventid: UUID
                     

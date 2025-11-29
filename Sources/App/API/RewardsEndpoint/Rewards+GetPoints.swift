@@ -10,7 +10,7 @@ import TCFundamentals
 import TCFireSignal
 import SiweAPICore
 
-extension RewardsEndpointV1 {
+extension RewardsComponents {
     
     public static func getPoints(
         cardId: String,

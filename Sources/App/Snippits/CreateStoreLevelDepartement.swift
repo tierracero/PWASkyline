@@ -472,7 +472,7 @@ class CreateStoreLevelDepartement: Div {
             do {
                 self.uploadPercent = nil
                 
-                let resp = try JSONDecoder().decode(APIResponseGeneric<CustAPIEndpointV1.UploadMediaResponse>.self, from: data)
+                let resp = try JSONDecoder().decode(APIResponseGeneric<CustComponents.UploadMediaResponse>.self, from: data)
                 
                 guard resp.status == .ok else {
                     print("🔴 UPLAD ERROR")

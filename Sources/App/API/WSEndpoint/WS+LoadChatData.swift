@@ -11,7 +11,7 @@ import TCFireSignal
 
 /// userToUser, public, userToSiwe, siweToSiwe, customerService, social
 /// siwe, facebook, instagram, youtube, tiktok, pintrest, twitter, snapchat, googleplus, general
-extension WSEndpointV1 {
+extension WSComponents {
     
     public static func loadChatData(
         type: RoomType,

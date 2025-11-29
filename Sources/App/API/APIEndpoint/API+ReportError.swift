@@ -11,7 +11,7 @@ import TCFundamentals
 import TCFireSignal
 import Web
 
-extension APIEndpointV1 {
+extension APIComponents {
     
     static func reportError(
         errorTitle: String,

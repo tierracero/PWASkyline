@@ -88,9 +88,9 @@ class ToolFiscal: Div {
     
     @State var selectPackage: CustTCSOCObject? = nil
     
-    @State var profiles: [FiscalEndpointV1.Profile] = fiscalProfiles
+    @State var profiles: [FiscalComponents.Profile] = fiscalProfiles
     
-    @State var profile: FiscalEndpointV1.Profile? = nil
+    @State var profile: FiscalComponents.Profile? = nil
     
     @State var reciver: CustAcctFiscal? = nil
     
@@ -1832,7 +1832,7 @@ class ToolFiscal: Div {
             showError(.campoRequerido, "Seleccione perfil de facturacion")
             return
         }
-        /// FiscalEndpointV1.Profile
+        /// FiscalComponents.Profile
         guard let profile = profile else {
             showError(.campoRequerido, "Seleccione cliente")
             return
@@ -2761,7 +2761,7 @@ class ToolFiscal: Div {
         $fiscalProfileListener
         
         
-        var prof: FiscalEndpointV1.Profile? = nil
+        var prof: FiscalComponents.Profile? = nil
         
         profiles.forEach { _prof in
             if fiscalProfileListener == _prof.rfc {
@@ -4290,7 +4290,7 @@ extension ToolFiscal {
         }
         else{
             
-            var _prof: FiscalEndpointV1.Profile? = nil
+            var _prof: FiscalComponents.Profile? = nil
             profiles.forEach { prof in
                 if prof.id != profile?.id {
                     _prof = prof
@@ -4400,7 +4400,7 @@ extension ToolFiscal {
     
     func addComplento(){
         
-        var prof: FiscalEndpointV1.Profile? = nil
+        var prof: FiscalComponents.Profile? = nil
         
         profiles.forEach { _prof in
             if fiscalProfileListener == _prof.rfc {

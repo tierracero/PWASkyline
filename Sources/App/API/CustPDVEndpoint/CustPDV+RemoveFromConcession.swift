@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustPDVEndpointV1 {
+extension CustPDVComponents {
     
     /// Send products linked to a cutomer that are curently in consession
     /// - Parameters:

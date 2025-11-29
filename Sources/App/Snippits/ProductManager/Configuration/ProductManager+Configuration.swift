@@ -197,7 +197,7 @@ extension ProductManagerView {
             }
         }
         
-        func pocItemView(item: CustPOCEndpointV1.GetToDiscontinueItem) -> Div {
+        func pocItemView(item: CustPOCComponents.GetToDiscontinueItem) -> Div {
             
             @State var name = "\(item.poc.name) \(item.poc.model) \(item.poc.brand)".purgeSpaces
             

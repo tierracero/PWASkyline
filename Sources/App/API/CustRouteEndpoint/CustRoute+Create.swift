@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustRouteEndpointV1 {
+extension CustRouteComponents {
     
     static func create(
         storeId: UUID,

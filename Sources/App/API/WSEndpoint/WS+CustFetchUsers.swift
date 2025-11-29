@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension WSEndpointV1 {
+extension WSComponents {
     
     
     /// Returns list of private and public chats

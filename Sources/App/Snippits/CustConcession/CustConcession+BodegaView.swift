@@ -32,6 +32,8 @@ extension CustConcessionView {
             self.bodega = bodega
         }
 
+        @State var bodegaName = ""
+
         required init() {
             fatalError("init() has not been implemented")
         }
@@ -50,7 +52,7 @@ extension CustConcessionView {
                 loadingView(show: true)
 
                 API.custAPIV1.getBodegaDetails(
-                    bodegaId: bodega.id
+                    bodegaId: self.bodega.id
                 ) { resp in
 
                     loadingView(show: false)
@@ -71,14 +73,16 @@ extension CustConcessionView {
                     }
                     
                     let view = ManageBodegaView(
-                        relationType: .consessioner(self.account.id),
+                        relationType: .consessioner(self.consetionId),
                         relationName: "Crear bodega para concesionario",
-                        loadBy: .createForConcession,
-                        onUpdate: { name, description in
-                        
-                            
-                        }
-                    )
+                        loadBy: .bodega(.init(
+                            bodega: payload.bodega,
+                            secciones: payload.sections
+                        )),
+                        onUpdate: { name, _ in
+                            self.bodegaName = name
+                        })
+                    addToDom(view)
                 }
 
             }
@@ -91,6 +95,8 @@ extension CustConcessionView {
             super.buildUI()
             self.class(.uibtnLarge)
             custom("width", "calc(100% - 14px)")
+
+            bodegaName = bodega.name
         }
 
     }

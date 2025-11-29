@@ -10,7 +10,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustOrderEndpointV1 {
+extension CustOrderComponents {
     
     ///  Send OrderID to retive notes
     static func getOrderManagerItems (

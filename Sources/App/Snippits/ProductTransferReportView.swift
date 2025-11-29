@@ -728,7 +728,7 @@ class ProductTransferReportView: Div {
         }
     }
     
-    func downloadReport(from: Int64, to: Int64, id: UUID, payload: CustPOCEndpointV1.GetInventoryTransferReportResponse) {
+    func downloadReport(from: Int64, to: Int64, id: UUID, payload: CustPOCComponents.GetInventoryTransferReportResponse) {
         
         loadingView(show: true)
         

@@ -10,7 +10,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension APIEndpointV1 {
+extension APIComponents {
     
     static func storePOCs(
         id: UUID?,

@@ -11,7 +11,7 @@ import TCFireSignal
 import XMLHttpRequest
 import Web
 
-extension APIEndpointV1 {
+extension APIComponents {
     
     static func jwt(callback: @escaping ( (_ resp: String?) -> () )){
         

@@ -141,7 +141,7 @@ class ToolReciveSendInventory: Div {
     
     @State var manualPurchaseManager: CustInventoryPurchaseManagerDecoded? = nil
     
-    var profile: FiscalEndpointV1.Profile? = nil
+    var profile: FiscalComponents.Profile? = nil
     
     lazy var fileInput = InputFile()
         .multiple(false)

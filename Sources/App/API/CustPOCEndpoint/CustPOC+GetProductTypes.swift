@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustPOCEndpointV1 {
+extension CustPOCComponents {
     
     static func getProductTypes(
         callback: @escaping ( (_ resp: APIResponseGeneric<[String]>?) -> () )

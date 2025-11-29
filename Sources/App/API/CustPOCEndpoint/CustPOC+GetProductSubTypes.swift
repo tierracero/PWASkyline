@@ -8,7 +8,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustPOCEndpointV1 {
+extension CustPOCComponents {
     
     static func getProductSubTypes(
         productType: String,

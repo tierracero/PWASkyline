@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension APIEndpointV1 {
+extension APIComponents {
 	
 	
 	static func requestMobileAuth( mobile: String, token: String, callback: @escaping ( (_ resp: APIResponse?) -> () ) ) {

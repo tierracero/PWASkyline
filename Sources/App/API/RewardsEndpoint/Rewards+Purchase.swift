@@ -10,7 +10,7 @@ import TCFundamentals
 import TCFireSignal
 import TaecelAPICore
 
-extension RewardsEndpointV1 {
+extension RewardsComponents {
     
     public static func purchase(
         cardId: String,

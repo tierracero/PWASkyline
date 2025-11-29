@@ -22,7 +22,7 @@ extension CustConcessionView {
 
         let vendor: CustVendorsQuick
 
-        let profile: FiscalEndpointV1.Profile
+        let profile: FiscalComponents.Profile
 
         @State var bodegas: [CustStoreBodegasQuick]
 
@@ -32,7 +32,7 @@ extension CustConcessionView {
             account: CustAcct,
             newDocumentName: String,
             vendor: CustVendorsQuick,
-            profile: FiscalEndpointV1.Profile,
+            profile: FiscalComponents.Profile,
             bodegas: [CustStoreBodegasQuick],
             seccions: [CustStoreSeccionesQuickRef]
         ) {

@@ -22,7 +22,7 @@ class ManageFiscalProfile: Div {
     var socs: [CustTCSOCObject]
     
     private var callback: ((
-        _ profile: FiscalEndpointV1.Profile
+        _ profile: FiscalComponents.Profile
     ) -> ())
     
     init(
@@ -30,7 +30,7 @@ class ManageFiscalProfile: Div {
         packid: UUID?,
         socs: [CustTCSOCObject],
         callback: @escaping ((
-            _ profile: FiscalEndpointV1.Profile
+            _ profile: FiscalComponents.Profile
         ) -> ())
     ) {
         self.fiscid = fiscid

@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustPOCEndpointV1 {
+extension CustPOCComponents {
 	
 	static func loadDepPOCInventory(depid: UUID, storeid: UUID, uts: Int64, highPriority: Bool, callback: @escaping ( (_ resp: APIResponseGeneric<LoadDepPOCInventoryResponse>?) -> () )) {
 		

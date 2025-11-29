@@ -11,7 +11,7 @@ import TCFireSignal
 
 
 
-extension CustAPIEndpointV1 {
+extension CustComponents {
     static func changeCustJobPostAvailability(
         jobId: UUID,
         state: Bool,

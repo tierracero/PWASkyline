@@ -10,7 +10,7 @@ import TCFundamentals
 import TCFireSignal
 import Web
 
-extension APIEndpointV1 {
+extension APIComponents {
 	
 	static func getBanks( callback: @escaping ( (_ resp: [BanksItem]?) -> () )) {
 		

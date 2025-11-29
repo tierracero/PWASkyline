@@ -10,7 +10,7 @@ import TCFundamentals
 import TCFireSignal
 import TaecelAPICore
 
-extension ThemeEndpointV1 {
+extension ThemeComponents {
     
     public static func saveWebCalendar(
         configLanguage: LanguageCode,

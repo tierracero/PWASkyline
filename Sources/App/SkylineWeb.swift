@@ -111,9 +111,9 @@ public var custOperationWorkProfile: CustOperationWorkProfile = .init()
 
 public var configStore: ConfigStore = .init()
 
-public var fiscalProfile: FiscalEndpointV1.GetProfileResponse? = nil
+public var fiscalProfile: FiscalComponents.GetProfileResponse? = nil
 
-public var fiscalProfiles: [FiscalEndpointV1.Profile] = []
+public var fiscalProfiles: [FiscalComponents.Profile] = []
 
 public var stores: [UUID:CustStore] = [:]
 

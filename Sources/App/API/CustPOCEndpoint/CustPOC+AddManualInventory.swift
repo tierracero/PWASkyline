@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustPOCEndpointV1 {
+extension CustPOCComponents {
     
     public static func addManualInventory(
             storeId: UUID,

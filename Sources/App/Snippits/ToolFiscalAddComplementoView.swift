@@ -12,8 +12,8 @@ import Web
 
 class ToolFiscalAddComplementoView: Div {
     override class var name: String { "div" }
-    
-    var profile: FiscalEndpointV1.Profile // = fiscalProfiles
+    /// fiscalProfiles
+    var profile: FiscalComponents.Profile
     
     var docs: [FIAccountsServices]
     
@@ -22,7 +22,7 @@ class ToolFiscalAddComplementoView: Div {
     ) -> ())
     
     init(
-        profile: FiscalEndpointV1.Profile,
+        profile: FiscalComponents.Profile,
         docs: [FIAccountsServices],
         callback: @escaping ((
             _ item: [UUID]

@@ -10,7 +10,7 @@ import Foundation
 import MailAPICore
 import XMLHttpRequest
 
-extension MailEndpointV1 {
+extension MailComponents {
     
     public struct OpenRequest: Codable {
         

@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension FiscalEndpointV1 {
+extension FiscalComponents {
     
     static func getFiscalOperators(
         callback: @escaping ( (_ resp: APIResponseGeneric<[CustFiscalOperator]>?) -> () )

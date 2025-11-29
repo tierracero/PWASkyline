@@ -10,7 +10,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 /*
-extension PapaContadorEndpointV1 {
+extension PapaContadorComponents {
     
     public static func getFiscPaymentOrders(
         fiaccount: UUID,

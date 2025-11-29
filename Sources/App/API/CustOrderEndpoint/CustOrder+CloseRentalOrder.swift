@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustOrderEndpointV1 {
+extension CustOrderComponents {
 	/*
 	struct CustOrderCreate: Codable {
 		let type: FolioTypes

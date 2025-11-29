@@ -1101,7 +1101,7 @@ extension SalePointView {
             
         }
         
-        func renderByDefault(payload: CustPDVEndpointV1.GetSalesResponse, startAtUTS: Int64, endAtUTS: Int64) {
+        func renderByDefault(payload: CustPDVComponents.GetSalesResponse, startAtUTS: Int64, endAtUTS: Int64) {
             
             resultDiv.innerHTML = ""
             
@@ -1198,7 +1198,7 @@ extension SalePointView {
             
         }
         
-        func renderByProduct(payload: CustPOCEndpointV1.AuditsResponse, startAtUTS: Int64, endAtUTS: Int64) {
+        func renderByProduct(payload: CustPOCComponents.AuditsResponse, startAtUTS: Int64, endAtUTS: Int64) {
             
             var storeCostTotal: Int64 = 0
             
@@ -1413,7 +1413,7 @@ extension SalePointView {
                 typealias MONTH = Int
                 typealias DAY = Int
                 
-                var itemRefrence: [ YEAR:[ MONTH:[ DAY:[CustPOCEndpointV1.AuditSaleObject] ]]] = [:]
+                var itemRefrence: [ YEAR:[ MONTH:[ DAY:[CustPOCComponents.AuditSaleObject] ]]] = [:]
                 
                 item.items.forEach { item in
                     
@@ -1586,7 +1586,7 @@ extension SalePointView {
             
         }
         
-        func renderByService(payload: CustPDVEndpointV1.GetSalesResponse, startAtUTS: Int64, endAtUTS: Int64) {
+        func renderByService(payload: CustPDVComponents.GetSalesResponse, startAtUTS: Int64, endAtUTS: Int64) {
             
             var storeCostTotal: Int64 = 0
             

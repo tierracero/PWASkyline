@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension ThemeEndpointV1 {
+extension ThemeComponents {
     
     public static func getViewDiploma(
         id: UUID,

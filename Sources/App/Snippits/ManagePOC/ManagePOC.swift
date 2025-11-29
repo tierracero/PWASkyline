@@ -3188,7 +3188,7 @@ class ManagePOC: Div {
         }
     }
 
-    func loadPOCData(payload data: CustPOCEndpointV1.GetPOCReponse) {
+    func loadPOCData(payload data: CustPOCComponents.GetPOCReponse) {
         
         if let id = data.poc.custStoreLines {
             levelid = id
@@ -4519,7 +4519,7 @@ class ManagePOC: Div {
         
         if let pocid {
             
-            var secs: [CustPOCEndpointV1.ProdInventorySecction] = []
+            var secs: [CustPOCComponents.ProdInventorySecction] = []
             
             var error: String? = nil
             
@@ -4564,7 +4564,7 @@ class ManagePOC: Div {
                 return
             }
             
-            var imgs: [CustPOCEndpointV1.ImagesMetaData] = []
+            var imgs: [CustPOCComponents.ImagesMetaData] = []
             
             imageRefrence.forEach { id, view in
                 

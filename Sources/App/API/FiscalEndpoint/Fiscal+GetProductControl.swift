@@ -8,7 +8,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension FiscalEndpointV1 {
+extension FiscalComponents {
     
     static func getProductControl(
         id: UUID,

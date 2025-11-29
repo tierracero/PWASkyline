@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustAPIEndpointV1 {
+extension CustComponents {
     
     static func custFreeTerm(term: String, type: CustFreeTermTypes, custAcct: UUID?, callback: @escaping ( (_ resp: APIResponseGeneric<FreeTermResponse>?) -> () )) {
         

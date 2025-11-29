@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
-extension CustAPIEndpointV1 {
+extension CustComponents {
         
     static func getFacebookPages(
         callback: @escaping ( (_ resp: [API.custAPIV1.GetPageList]) -> () )

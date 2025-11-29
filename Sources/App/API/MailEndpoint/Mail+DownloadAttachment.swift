@@ -10,7 +10,7 @@ import TCFundamentals
 import MailAPICore
 import Web
 
-extension MailEndpointV1 {
+extension MailComponents {
     
     struct GetMessageAttachment: Codable {
         
