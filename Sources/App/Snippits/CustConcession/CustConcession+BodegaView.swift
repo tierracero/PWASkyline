@@ -22,8 +22,8 @@ extension CustConcessionView {
 
         let bodega: CustStoreBodegasQuick
 
-        let bodegas: [CustStoreBodegasQuick]
-        
+        var bodegas: [CustStoreBodegasQuick]
+
         private var relinquishItems: ((
             _ items: CustPOCInventorySoldObject,
             _ alocatedTo: UUID?
