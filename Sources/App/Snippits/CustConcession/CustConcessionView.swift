@@ -10,7 +10,7 @@ import TCFundamentals
 import TCFireSignal
 import Web
 
-open class CustConcessionView: Div {
+class CustConcessionView: Div {
     
     override class var name: String { "div" }
     
@@ -543,6 +543,9 @@ open class CustConcessionView: Div {
                                                 name: bodega.name
                                             ))
 
+                                            self.bodegaRefrence.forEach { view in
+                                                view.bodegas = self.bodegas
+                                            }
                                             
                                         },
                                         onUpdate: { id, name, _ in
@@ -570,7 +573,8 @@ open class CustConcessionView: Div {
                                             let view = BodegaView(
                                                 consetionId: self.account.id,
                                                 consetionName: "Conseccion \(self.account.businessName)",
-                                                bodega: .init(id: id, name: name)
+                                                bodega: .init(id: id, name: name) ,
+                                                bodegas: self.bodegas
                                             ) { items, alocatedTo in
 
                                             }
@@ -1103,9 +1107,10 @@ open class CustConcessionView: Div {
             let view = BodegaView(
                 consetionId: self.account.id,
                 consetionName: "Conseccion \(self.account.businessName)",
-                bodega: bodega
+                bodega: bodega,
+                bodegas: self.bodegas
             ) { items, alocatedTo in
-            
+
             }
 
             productDiv.appendChild(view)

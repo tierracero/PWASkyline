@@ -21,6 +21,8 @@ extension CustConcessionView {
         let consetionName: String
 
         let bodega: CustStoreBodegasQuick
+
+        var bodegas: [CustStoreBodegasQuick]
         
         private var relinquishItems: ((
             _ items: CustPOCInventorySoldObject,
@@ -31,6 +33,7 @@ extension CustConcessionView {
             consetionId: UUID,
             consetionName: String,
             bodega: CustStoreBodegasQuick,
+            bodegas: [CustStoreBodegasQuick],
             relinquishItems: @escaping ((
                 _ items: CustPOCInventorySoldObject,
                 _ alocatedTo: UUID?
@@ -39,6 +42,7 @@ extension CustConcessionView {
             self.consetionId = consetionId
             self.consetionName = consetionName
             self.bodega = bodega
+            self.bodegas = bodegas
             self.relinquishItems = relinquishItems
         }
 
