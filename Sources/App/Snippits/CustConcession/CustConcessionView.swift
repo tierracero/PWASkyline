@@ -28,8 +28,6 @@ class CustConcessionView: Div {
     
     @State  var bodegas: [CustStoreBodegasQuick]
 
-    @State var seccions: [CustStoreSeccionesQuickRef]
-    
     init(
         account: CustAcct,
         items: [CustPOCInventorySoldObject],
@@ -37,8 +35,7 @@ class CustConcessionView: Div {
         managers: [CustInventoryPurchaseManager],
         controls: [CustFiscalInventoryControl],
         sales: [CustSaleQuick],
-        bodegas: [CustStoreBodegasQuick],
-        seccions: [CustStoreSeccionesQuickRef]
+        bodegas: [CustStoreBodegasQuick]
     ) {
         self.account = account
         self.items = items
@@ -47,7 +44,6 @@ class CustConcessionView: Div {
         self.controls = controls
         self.sales = sales
         self.bodegas = bodegas
-        self.seccions = seccions
         super.init()
     }
     
@@ -66,8 +62,8 @@ class CustConcessionView: Div {
     /// [ CustPOCInventorySoldObject.POC : [CustPOCInventorySoldObject] ]
     @State var itemsPOCRefrence: [UUID:[CustPOCInventorySoldObject]] = [:]
     
-    /// [`Bodega.id`: [ CustPOCInventorySoldObject.POC : [CustPOCInventorySoldObject] ] ]
-    @State var itemsPOCRefrenceByBodega: [ UUID: [UUID:[CustPOCInventorySoldObject]] ] = [:]
+    /// [ CustStoreBodega.id : [CustPOCInventorySoldObject] ]
+    var itemsInBodegas: [ UUID : [CustPOCInventorySoldObject] ] = [:]
 
     @State var totalItemCount: Int = 0
     
@@ -109,6 +105,9 @@ class CustConcessionView: Div {
     /// merm
     @State var mermItems: [CustFiscalInventoryControl] = []
     
+    var bodegaRefrence: [ UUID : BodegaView ] = [:]
+
+
     @DOM override var body: DOM.Content {
         
         Div{
@@ -414,7 +413,6 @@ class CustConcessionView: Div {
                             
                             Div{
 
-
                                 Table().noResult(label: "🗳️ No existen mermados")
                                     .hidden(self.$mermItems.map{ !$0.isEmpty })
 
@@ -489,8 +487,7 @@ class CustConcessionView: Div {
                                                 newDocumentName: name,
                                                 vendor: vendor,
                                                 profile: profile,
-                                                bodegas: self.bodegas,
-                                                seccions: self.seccions
+                                                bodegas: self.bodegas
                                             )
 
                                             addToDom(view)
@@ -529,16 +526,13 @@ class CustConcessionView: Div {
                                         relationType: .consessioner(self.account.id),
                                         relationName: "Crear bodega para concesionario",
                                         loadBy: .createForConcession,
-                                        onCreate: { bodega, section in
+                                        onCreate: { bodega, _ in
                                         
                                             self.bodegas.append(.init(
                                                 id: bodega.id,
                                                 name: bodega.name
                                             ))
 
-                                            if let section {
-                                                self.seccions.append(section)
-                                            }
                                             
                                         },
                                         onUpdate: { id, name, _ in
@@ -562,11 +556,22 @@ class CustConcessionView: Div {
                                             }
 
                                             self.bodegas = bodegas
+
+                                            let view = BodegaView(
+                                                consetionId: self.account.id,
+                                                consetionName: "Conseccion \(self.account.businessName)",
+                                                bodega: .init(id: id, name: name)
+                                            )
+
+                                            self.productDiv.appendChild(view)
+
+                                            self.bodegaRefrence[id] = view
                                             
                                         }
                                     )
 
                                     addToDom(view)
+
                                 }
                             }
                             .width(50.percent)
@@ -647,6 +652,18 @@ class CustConcessionView: Div {
         self.itemsRefrence = Dictionary(uniqueKeysWithValues: items.map{ value in ( value.id, value ) })
         
         items.forEach { item in
+
+            if let bodegaId = item.alocatedTo {
+                if let _ = itemsInBodegas[bodegaId]  {
+                    itemsInBodegas[bodegaId]?.append(item)
+                }
+                else {
+                    itemsInBodegas[bodegaId] = [item]
+                }
+                return
+            }
+            //
+
             if let _ = self.itemsPOCRefrence[item.POC] {
                 self.itemsPOCRefrence[item.POC]?.append(item)
             }
@@ -655,14 +672,6 @@ class CustConcessionView: Div {
             }
         }
         
-        seccions.forEach { item in
-            if let _ = seccionRefrence[item.custStoreBodegas] {
-                seccionRefrence[item.custStoreBodegas]?.append( item )
-            }
-            else {
-                seccionRefrence[item.custStoreBodegas] = [item]
-            }
-        }
 
         hasAnyActiveElement = ( !items.isEmpty || !bodegas.isEmpty)
         
@@ -1077,7 +1086,7 @@ class CustConcessionView: Div {
             
         }
 
-        bodegas.forEach{ bodega in
+        bodegas.forEach{ bodega in 
 
             let view = BodegaView(
                 consetionId: self.account.id,
@@ -1085,10 +1094,24 @@ class CustConcessionView: Div {
                 bodega: bodega
             )
 
-            self.productDiv.appendChild(view)
+            productDiv.appendChild(view)
+
+            bodegaRefrence[bodega.id] = view
             
         }
+    
+//     var bodegaRefrence: [ UUID : BodegaView ] = [:]
+// takeInItems
+        itemsInBodegas.forEach { bodegaId, items in
 
+            guard let view = bodegaRefrence[bodegaId] else {
+                showError(.errorGeneral, "No se puco localizr una de las bodegas, refresque e eintente de nuevo. Si el problema persiste contacte a soporte.")
+                return
+            }
+
+            view.takeInItems(items: items)
+
+        }
     }
     
     func calculateSelectedItems(){

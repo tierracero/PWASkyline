@@ -22,6 +22,7 @@ extension CustPOCComponents {
             profileId: UUID,
             bodegaId: UUID?,
             sectionId: UUID?,
+            alocatedTo: UUID?,
         callback: @escaping ( (_ resp: APIResponseGeneric<AddManualInventoryResponse>?) -> () )) {
         
         sendPost(
@@ -38,7 +39,8 @@ extension CustPOCComponents {
                 vendorId: vendorId,
                 profileId: profileId,
                 bodegaId: bodegaId,
-                sectionId: sectionId
+                sectionId: sectionId,
+                alocatedTo: alocatedTo
             )
         ) { data in
             

@@ -1542,8 +1542,7 @@ class AccountView: PageController {
                                     managers: payload.managers,
                                     controls: payload.controls,
                                     sales: payload.sales,
-                                    bodegas: payload.bodegas,
-                                    seccions: payload.seccions
+                                    bodegas: payload.bodegas
                                 )
 
                         addToDom(view)

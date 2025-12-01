@@ -385,7 +385,8 @@ class POCStorageControlAddInventoryView: Div {
                             vendorId: self.vendor.id,
                             profileId: self.profile.id,
                             bodegaId: self.bodegaId,
-                            sectionId: self.sectionId
+                            sectionId: self.sectionId,
+                            alocatedTo: nil
                         ) { resp in
 
                             loadingView(show: false)
@@ -459,7 +460,8 @@ class POCStorageControlAddInventoryView: Div {
                     vendorId: self.vendor.id,
                     profileId: self.profile.id,
                     bodegaId: self.bodegaId,
-                    sectionId: self.sectionId
+                    sectionId: self.sectionId,
+                    alocatedTo: nil
                 ) { resp in
 
                     loadingView(show: false)

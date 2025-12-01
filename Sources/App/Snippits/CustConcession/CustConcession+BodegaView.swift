@@ -38,7 +38,20 @@ extension CustConcessionView {
             fatalError("init() has not been implemented")
         }
 
+        @State var items: [CustPOCInventorySoldObject] = []
+
         @DOM override var body: DOM.Content {
+
+            Div{
+                Div("Unidades")
+                .color(.gray)
+
+                Div(self.$items.map{ $0.count.toString })
+                .fontSize(28.px)
+            }
+            .marginRight(7.px)
+            .float(.right)
+
             Div{
                 Img()
                 .src( "/skyline/media/pencil.png" )
@@ -90,14 +103,16 @@ extension CustConcessionView {
             H2(self.$bodegaName)
 
         }
-
-
         override func buildUI() {
             super.buildUI()
             self.class(.uibtnLarge)
             custom("width", "calc(100% - 14px)")
 
             bodegaName = bodega.name
+        }
+
+        func takeInItems(items: [CustPOCInventorySoldObject]) {
+            self.items = items
         }
 
     }

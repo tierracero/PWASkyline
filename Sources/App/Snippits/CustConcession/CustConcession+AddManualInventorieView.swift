@@ -26,22 +26,18 @@ extension CustConcessionView {
 
         @State var bodegas: [CustStoreBodegasQuick]
 
-        @State var seccions: [CustStoreSeccionesQuickRef]
-        
         init(
             account: CustAcct,
             newDocumentName: String,
             vendor: CustVendorsQuick,
             profile: FiscalComponents.Profile,
-            bodegas: [CustStoreBodegasQuick],
-            seccions: [CustStoreSeccionesQuickRef]
+            bodegas: [CustStoreBodegasQuick]
         ) {
             self.account = account
             self.newDocumentName = newDocumentName
             self.vendor = vendor
             self.profile = profile
             self.bodegas = bodegas
-            self.seccions = seccions
             super.init()
         }
         
@@ -105,7 +101,6 @@ extension CustConcessionView {
         /// List of found items by prduct search
         @State var kartItems: [SearchChargeResponse] = []
 
-        @State var currentSeccions: [CustStoreSeccionesQuickRef] = []
 
         /// [ CustStoreBodegas.id: [CustStoreSeccionesQuickRef] ]
         var seccionRefrence: [ UUID: [CustStoreSeccionesQuickRef] ] = [:]
@@ -205,26 +200,6 @@ extension CustConcessionView {
         .class(.textFiledBlackDark)
         .height(31.px)
 
-        lazy var sectionSelect = Select(self.$sectionListener)
-        .body {
-            Option("Selecione Seccion")
-            .value("")
-        }
-        .custom("width","calc(100% - 24px)")
-        .class(.textFiledBlackDark)
-        .height(31.px)
-        .hidden(self.$currentSeccions.map{ $0.isEmpty })
-
-        lazy var sectionSelectDisabled = Select()
-        .body {
-            Option("Selecione Seccion")
-            .value("")
-        }
-        .custom("width","calc(100% - 24px)")
-        .class(.textFiledBlackDark)
-        .disabled(true)
-        .height(31.px)
-        .hidden(self.$currentSeccions.map{ !$0.isEmpty })
 
         @DOM override var body: DOM.Content {
             
@@ -587,16 +562,6 @@ extension CustConcessionView {
                             Div().height(7.px)
                         }
                         .hidden(self.$bodegas.map{ $0.isEmpty })
-
-                        Div{
-
-                            self.sectionSelect
-
-                            self.sectionSelectDisabled
-
-                            Div().height(7.px)
-                        }
-                        .hidden(self.$seccions.map{ $0.isEmpty })
                         
                     }
                     .marginRight(1.percent)
@@ -714,15 +679,6 @@ extension CustConcessionView {
                 )
             }
 
-            seccions.forEach { item in
-                if let _ = seccionRefrence[item.custStoreBodegas] {
-                    seccionRefrence[item.custStoreBodegas]?.append( item )
-                }
-                else {
-                    seccionRefrence[item.custStoreBodegas] = [item]
-                }
-            }
-
         }
         
         override func didAddToDOM() {
@@ -731,37 +687,7 @@ extension CustConcessionView {
             $bodegaListener.listen {
                 
                 print("🟢  ch bod")
-
-                self.sectionListener = ""
-
-                if let id: UUID = UUID(uuidString: $0) {
-                    print("🟢  found od")
-                    self.currentSeccions = self.seccionRefrence[id] ?? []
-
-                    print("🟢  sec count")
-
-                    print(self.currentSeccions.count)
-
-                }
                 
-            }
-
-            $currentSeccions.listen {
-
-                self.sectionSelect.innerHTML = ""
- 
-                self.sectionSelect.appendChild(
-                    Option("Selecione Seccion")
-                    .value("")
-                )
-
-                $0.forEach { item in
-                    self.sectionSelect.appendChild(
-                        Option(item.name)
-                        .value(item.id.uuidString)
-                    )
-                }
-
             }
 
             searchBox.select()
@@ -881,8 +807,9 @@ extension CustConcessionView {
                         documentFolio: self.docFolio,
                         vendorId: self.vendor.id,
                         profileId: self.profile.id,
-                        bodegaId: UUID(uuidString: self.bodegaListener),
-                        sectionId: UUID(uuidString: self.sectionListener)
+                        bodegaId: nil,
+                        sectionId: nil,
+                        alocatedTo: UUID(uuidString: self.bodegaListener)
                     ) { resp in
                         
                         loadingView(show: false)
