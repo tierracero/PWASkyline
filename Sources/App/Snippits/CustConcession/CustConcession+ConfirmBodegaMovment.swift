@@ -54,7 +54,7 @@ extension CustConcessionView {
             .height(48.px)
             .body {
                 Option( (self.bodega == nil) ? "Mantener en General" : "Mover a General" )
-                .value
+                .value("")
             }
 
         @DOM override var body: DOM.Content {
@@ -145,7 +145,7 @@ extension CustConcessionView {
             }
 
             if let bodega {
-                selectListener  =  bodega.id
+                selectListener  =  bodega.id.uuidString
             }
 
         }
