@@ -10,7 +10,7 @@ import TCFundamentals
 import TCFireSignal
 import Web
 
-class CustConcessionView: Div {
+open class CustConcessionView: Div {
     
     override class var name: String { "div" }
     

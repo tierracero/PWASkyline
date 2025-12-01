@@ -21,19 +21,25 @@ extension CustConcessionView {
         let consetionName: String
 
         let bodega: CustStoreBodegasQuick
-
-        let concessionView = CustConcessionView
+        
+        private var relinquishItems: ((
+            _ items: CustPOCInventorySoldObject,
+            _ alocatedTo: UUID?
+        ) -> ())
 
         init(
             consetionId: UUID,
             consetionName: String,
             bodega: CustStoreBodegasQuick,
-            concessionView: CustConcessionView
+            relinquishItems: @escaping ((
+                _ items: CustPOCInventorySoldObject,
+                _ alocatedTo: UUID?
+            ) -> ())
         ) {
             self.consetionId = consetionId
             self.consetionName = consetionName
             self.bodega = bodega
-            self.concessionView = concessionView
+            self.relinquishItems = relinquishItems
         }
 
         @State var bodegaName = ""

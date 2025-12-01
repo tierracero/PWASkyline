@@ -31,7 +31,7 @@ extension CustConcessionView {
             consetionName: String,
             bodega: CustStoreBodegasQuick,
             items: [CustPOCInventorySoldObject],
-            callback: @escaping ((
+            relinquishItems: @escaping ((
                 _ items: CustPOCInventorySoldObject,
                 _ alocatedTo: UUID?
             ) -> ())
@@ -40,7 +40,20 @@ extension CustConcessionView {
             self.consetionName = consetionName
             self.bodega = bodega
             self.items = items
-            self.callback = callback
+            self.relinquishItems = relinquishItems
+        }
+
+        required init() {
+            fatalError("init() has not been implemented")
+        }
+
+        @DOM override var body: DOM.Content {
+            Div()
+        }
+
+
+        override func buildUI() {
+            super.buildUI()
         }
 
     }
