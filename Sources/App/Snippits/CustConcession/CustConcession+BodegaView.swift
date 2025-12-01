@@ -22,14 +22,18 @@ extension CustConcessionView {
 
         let bodega: CustStoreBodegasQuick
 
+        let concessionView = CustConcessionView
+
         init(
             consetionId: UUID,
             consetionName: String,
-            bodega: CustStoreBodegasQuick
+            bodega: CustStoreBodegasQuick,
+            concessionView = CustConcessionView
         ) {
             self.consetionId = consetionId
             self.consetionName = consetionName
             self.bodega = bodega
+            self.concessionView = concessionView
         }
 
         @State var bodegaName = ""
@@ -41,16 +45,6 @@ extension CustConcessionView {
         @State var items: [CustPOCInventorySoldObject] = []
 
         @DOM override var body: DOM.Content {
-
-            Div{
-                Div("Unidades")
-                .color(.gray)
-
-                Div(self.$items.map{ $0.count.toString })
-                .fontSize(28.px)
-            }
-            .marginRight(7.px)
-            .float(.right)
 
             Div{
                 Img()
@@ -100,9 +94,22 @@ extension CustConcessionView {
 
             }
             
+            Div{
+                Div("Unidades")
+                .marginBottom(7.px)
+                .fontSize(12.px)
+                .color(.gray)
+
+                Div(self.$items.map{ $0.count.toString })
+                .fontSize(28.px)
+            }
+            .marginRight(7.px)
+            .float(.right)
+
             H2(self.$bodegaName)
 
         }
+        
         override func buildUI() {
             super.buildUI()
             self.class(.uibtnLarge)

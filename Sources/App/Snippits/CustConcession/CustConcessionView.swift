@@ -85,7 +85,7 @@ class CustConcessionView: Div {
         .height(31.px)
     
     lazy var productDiv = Div()
-        .custom("height", "calc(100% - 100px)")
+        .custom("height", "calc(100% - 150px)")
         .class(.roundDarkBlue)
         .padding(all: 3.px)
         .overflow(.auto)
@@ -184,34 +184,35 @@ class CustConcessionView: Div {
 
                                     Div("Unidades Select.")
                                     .class(.oneLineText)
-                                    .width(75.percent)
-                                    .float(.left)
+                                    .marginBottom(12.px)
+                                    .padding(all: 3.px)
+                                    .fontSize(18.px)
 
                                     Div(self.$totalItemCount.map{ $0.toString })
                                     .class(.oneLineText)
-                                    .width(25.percent)
+                                    .padding(all: 3.px)
+                                    .fontSize(48.px)
                                     .align(.right)
-                                    .float(.left)
 
                                     Div().clear(.both)
 
                                 }
                                 .width(30.percent)
-                                .fontSize(18.px)
                                 .float(.left)
 
                                 Div{
 
                                     Div("Precio Total")
                                     .class(.oneLineText)
-                                    .width(50.percent)
-                                    .float(.left)
+                                    .marginBottom(12.px)
+                                    .padding(all: 3.px)
+                                    .fontSize(18.px)
 
                                     Div(self.$totalItemAmount.map{ $0.formatMoney })
                                     .class(.oneLineText)
-                                    .width(50.percent)
+                                    .padding(all: 3.px)
+                                    .fontSize(48.px)
                                     .align(.right)
-                                    .float(.left)
 
                                     Div().clear(.both)
 
@@ -241,8 +242,17 @@ class CustConcessionView: Div {
                                     .onClick {
                                         self.removeFromConcession(isSale: false)
                                     }
+
+                                    Div{
+                                        Span("Mover a Bod.")
+                                    }
+                                    .marginRight(7.px)
+                                    .class(.uibtn)
+                                    .float(.left)
+                                    .onClick {
+                                        
+                                    }
                                     
-                                    Div().clear(.both)
                                 }
                                 .width(40.percent)
                                 .align(.right)
@@ -560,7 +570,8 @@ class CustConcessionView: Div {
                                             let view = BodegaView(
                                                 consetionId: self.account.id,
                                                 consetionName: "Conseccion \(self.account.businessName)",
-                                                bodega: .init(id: id, name: name)
+                                                bodega: .init(id: id, name: name),
+                                                concessionView: self
                                             )
 
                                             self.productDiv.appendChild(view)
@@ -1091,7 +1102,8 @@ class CustConcessionView: Div {
             let view = BodegaView(
                 consetionId: self.account.id,
                 consetionName: "Conseccion \(self.account.businessName)",
-                bodega: bodega
+                bodega: bodega,
+                concessionView: self
             )
 
             productDiv.appendChild(view)
@@ -1100,8 +1112,7 @@ class CustConcessionView: Div {
             
         }
     
-//     var bodegaRefrence: [ UUID : BodegaView ] = [:]
-// takeInItems
+        // var bodegaRefrence: [ UUID : BodegaView ] = [:]
         itemsInBodegas.forEach { bodegaId, items in
 
             guard let view = bodegaRefrence[bodegaId] else {
