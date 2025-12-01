@@ -570,9 +570,10 @@ open class CustConcessionView: Div {
                                             let view = BodegaView(
                                                 consetionId: self.account.id,
                                                 consetionName: "Conseccion \(self.account.businessName)",
-                                                bodega: .init(id: id, name: name),
-                                                concessionView: self
-                                            )
+                                                bodega: .init(id: id, name: name)
+                                            ) { items, alocatedTo in
+
+                                            }
 
                                             self.productDiv.appendChild(view)
 
@@ -1102,9 +1103,10 @@ open class CustConcessionView: Div {
             let view = BodegaView(
                 consetionId: self.account.id,
                 consetionName: "Conseccion \(self.account.businessName)",
-                bodega: bodega,
-                concessionView: self
-            )
+                bodega: bodega
+            ) { items, alocatedTo in
+            
+            }
 
             productDiv.appendChild(view)
 
