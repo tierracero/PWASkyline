@@ -72,14 +72,14 @@ extension CustConcessionView {
                         return
                     }
                     
-                    let view: ManageBodegaView = ManageBodegaView(
+                    let view: ManageBodegaView = .init(
                         relationType: .consessioner(self.consetionId),
                         relationName: "Crear bodega para concesionario",
                         loadBy: .bodega(.init(
                             bodega: payload.bodega,
                             secciones: payload.sections
                         )),
-                        onUpdate: { name, _ in
+                        onUpdate: { id, name, _ in
                             self.bodegaName = name
                         })
                     addToDom(view)

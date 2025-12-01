@@ -166,57 +166,102 @@ class ManageBodegaView: Div {
             .paddingBottom(3.px)
             
             Div().class(.clear)
-            
-            H2( self.relationName )
-                .color(.white)
-            
-            Div().class(.clear).height(7.px)
-            
-            Div{
-                
-                Label("Nombre")
-                    .fontSize(18.px)
-                    .color(.gray)
-                
-                Div{
-                    self.newBodegaField
-                }
-            }
-            .class(.section)
-            
-            Div().class(.clear).height(7.px)
 
             Div{
-                
-                Label("Descripcion")
-                    .fontSize(18.px)
-                    .color(.gray)
-                
-                Div{
-                    self.newBodegaDescriptionField
-                }
-            }
-            .class(.section)
-            
-            Div().class(.clear).height(7.px)
 
-            if self.sectionable {
-
+                H2( self.relationName )
+                    .color(.white)
+                
+                Div().class(.clear).height(7.px)
+                
                 Div{
                     
-                    Label("Seccion")
+                    Label("Nombre")
                         .fontSize(18.px)
                         .color(.gray)
                     
                     Div{
-                        self.newSeccionField
+                        self.newBodegaField
                     }
                 }
                 .class(.section)
                 
                 Div().class(.clear).height(7.px)
 
+                Div{
+                    
+                    Label("Descripcion")
+                        .fontSize(18.px)
+                        .color(.gray)
+                    
+                    Div{
+                        self.newBodegaDescriptionField
+                    }
+                }
+                .class(.section)
+                
+                Div().class(.clear).height(7.px)
+
+                if self.sectionable {
+                    Div{
+                        Div{
+                            
+                            Label("Seccion")
+                                .fontSize(18.px)
+                                .color(.gray)
+                            
+                            Div{
+                                self.newSeccionField
+                            }
+                        }
+                        .class(.section)
+                        
+                        Div().class(.clear).height(7.px)
+                    }
+                    .hidden(self.$bodegaId.map{ $0 != nil })
+
+                }
+
             }
+            .width(self.$bodegaId.map{
+               
+                if !self.sectionable {
+                    return 100.percent
+                }
+
+                if  $0 == nil {
+                    return 100.percent
+                }
+                else {
+                    return 50.percent
+                }
+
+            })
+            .float(self.$bodegaId.map{
+                
+                if !self.sectionable {
+                    return .none
+                }
+
+                if  $0 == nil {
+                    return .none
+                }
+                else {
+                    return .left
+                }
+
+            })
+            if self.sectionable {
+                Div{
+                    H1("desarollar seccion de secciones")
+                    .color(.white)
+                }
+                .hidden(self.$bodegaId.map{ $0 == nil })
+                .width(50.percent)
+                .float(.left)
+            }
+            
+            Div().class(.clear)
 
             Div{
                 Div(self.$bodegaId.map{ ($0 == nil) ? "Crear Bodega" : "Guardar Datos"} )

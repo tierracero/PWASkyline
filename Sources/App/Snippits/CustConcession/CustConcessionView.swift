@@ -525,7 +525,7 @@ class CustConcessionView: Div {
                                 .class(.uibtn)
                                 .onClick {
                                     
-                                    let view = ManageBodegaView(
+                                    let view: ManageBodegaView = .init(
                                         relationType: .consessioner(self.account.id),
                                         relationName: "Crear bodega para concesionario",
                                         loadBy: .createForConcession,
@@ -541,14 +541,28 @@ class CustConcessionView: Div {
                                             }
                                             
                                         },
-                                        onUpdate: { name, description in
+                                        onUpdate: { id, name, _ in
+
                                             var bodegas: [CustStoreBodegasQuick] = []
 
                                             self.bodegas.forEach { bodega in
                                                 
+                                                if bodega.id  == id  {
+                                                    
+                                                    bodegas.append(.init(
+                                                        id: id,
+                                                        name: name
+                                                    ) )
+
+                                                    return
+                                                }
+
+                                                bodegas.append(bodega)
 
                                             }
 
+                                            self.bodegas = bodegas
+                                            
                                         }
                                     )
 

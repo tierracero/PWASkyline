@@ -98,4 +98,5 @@ let package: Package = Package(
                 .copy("js"),
                 .copy("css")
             ]),
-    ])
+    ]
+)
