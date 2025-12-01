@@ -16,149 +16,121 @@ extension CustConcessionView {
         
         override class var name: String { "div" }
 
-        let bodega: CustStoreBodegasQuick?
+        let consetionId: UUID
+        
+        let consetionName: String
+
+        let bodega: CustStoreBodegasQuick
 
         let bodegas: [CustStoreBodegasQuick]
-
-        let selectedItems:[CustPOCInventorySoldObject]
         
-        private var moveItemsTo: ((
+        private var relinquishItems: ((
             _ items: CustPOCInventorySoldObject,
             _ alocatedTo: UUID?
         ) -> ())
 
         init(
-            bodega: CustStoreBodegasQuick?,
+            consetionId: UUID,
+            consetionName: String,
+            bodega: CustStoreBodegasQuick,
             bodegas: [CustStoreBodegasQuick],
-            selectedItems: [CustPOCInventorySoldObject],
-            moveItemsTo: @escaping ((
+            relinquishItems: @escaping ((
                 _ items: CustPOCInventorySoldObject,
                 _ alocatedTo: UUID?
             ) -> ())
         ) {
+            self.consetionId = consetionId
+            self.consetionName = consetionName
             self.bodega = bodega
             self.bodegas = bodegas
-            self.selectedItems = selectedItems
-            self.moveItemsTo = moveItemsTo
+            self.relinquishItems = relinquishItems
         }
+
+        @State var bodegaName = ""
 
         required init() {
             fatalError("init() has not been implemented")
         }
 
-        @State var selectId: UUID? = nil
-
-        @State var selectListener = ""
-        
-        lazy var select = Select($selectListener)
-            .class(.textFiledBlackDarkLarge)
-            .marginBottom(7.px)
-            .width(99.percent)
-            .fontSize(32.px)
-            .height(48.px)
-            .body {
-                Option( (self.bodega == nil) ? "Mantener en General" : "Mover a General" )
-                .value
-            }
+        @State var items: [CustPOCInventorySoldObject] = []
 
         @DOM override var body: DOM.Content {
 
             Div{
-                /// Header
-                Div {
-                    
-                    Img()
-                        .closeButton(.uiView2)
-                        .onClick{
-                            self.remove()
-                        }
-                    
-                    H2("Seleccione nueva hubicación")
-                        .color(.lightBlueText)
-                        .height(35.px)
-                    
-                }
-                
-                Div{
-                    
-                    Span("Seleccione se la siguiente lista")
-                        .color(.gray)
-                    
-                    Div()
-                        .marginBottom(7.px)
-                        .class(.clear)
-                    
-                    self.select
-                    
-                    Div()
-                        .marginBottom(7.px)
-                        .class(.clear)
-                    
-                    Div{
-
-                        Div("Seleccionar Ubicación")
-                            .class(.uibtnLargeOrange)
-                            .cursor(.default)
-                            .hidden( self.$selectId.map{  $0 !=  self.bodega?.id } )
-
-                        Div("Mover Productos")
-                            .class(.uibtnLargeOrange)
-                            .hidden( self.$selectId.map{  $0 ==  self.bodega?.id } )
-                            .onClick {
-                                
-                                self.selectNewPlacement()
-                                
-                            }
-                    }
-                    .align(.right)
-                    
-                }
-                .position(.relative)
-                .overflow(.hidden)
-                
+                Img()
+                .src( "/skyline/media/pencil.png" )
+                .cursor(.pointer)
+                .marginLeft(7.px)
+                .height(18.px)
             }
-            .custom("left", "calc(50% - 274px)")
-            .custom("top", "calc(50% - 274px)")
-            .backgroundColor(.grayBlack)
-            .borderRadius(all: 24.px)
-            .position(.absolute)
-            .padding(all: 12.px)
-            .width(500.px)
+            .float(.right)
+            .onClick {
+
+                loadingView(show: true)
+
+                API.custAPIV1.getBodegaDetails(
+                    bodegaId: self.bodega.id
+                ) { resp in
+
+                    loadingView(show: false)
+        
+                    guard let resp else {
+                        showError(.errorDeCommunicacion, .serverConextionError)
+                        return
+                    }
+                    
+                    guard resp.status == .ok else {
+                        showError(.errorGeneral, resp.msg)
+                        return
+                    }
+                    
+                    guard let payload = resp.data else {
+                        showError(.unexpectedResult, .unexpenctedMissingPayload)
+                        return
+                    }
+                    
+                    let view: ManageBodegaView = .init(
+                        relationType: .consessioner(self.consetionId),
+                        relationName: "Crear bodega para concesionario",
+                        loadBy: .bodega(.init(
+                            bodega: payload.bodega,
+                            secciones: payload.sections
+                        )),
+                        onUpdate: { id, name, _ in
+                            self.bodegaName = name
+                        })
+                    addToDom(view)
+                }
+
+            }
             
+            Div{
+                Div("Unidades")
+                .marginBottom(7.px)
+                .fontSize(12.px)
+                .color(.gray)
+
+                Div(self.$items.map{ $0.count.toString })
+                .fontSize(28.px)
+            }
+            .marginRight(7.px)
+            .float(.right)
+
+            H2(self.$bodegaName)
+
         }
         
         override func buildUI() {
             super.buildUI()
-            
-            self.class(.transparantBlackBackGround)
-            position(.absolute)
-            height(100.percent)
-            width(100.percent)
-            left(0.px)
-            top(0.px)
+            self.class(.uibtnLarge)
+            custom("width", "calc(100% - 14px)")
 
-            bodegas.forEach { bodega in
-                select.appendChild(
-                    Option(bodega.name)
-                        .value(bodega.id.uuidString)
-                )
-            }
-
-            $selectListener.listen {
-                self.selectId = UUID(uuidString: $0)
-            }
-
-            if let bodega {
-                selectListener  =  bodega.id
-            }
-
-            
-
+            bodegaName = bodega.name
         }
 
-        func selectNewPlacement () {
-
+        func takeInItems(items: [CustPOCInventorySoldObject]) {
+            self.items = items
         }
-    
+
     }
 }

@@ -246,11 +246,12 @@ class CustConcessionView: Div {
                                     Div{
                                         Span("Mover a Bod.")
                                     }
+                                    .hidden(self.$bodegas.map{ $0.isEmpty })
                                     .marginRight(7.px)
                                     .class(.uibtn)
                                     .float(.left)
                                     .onClick {
-                                        
+                                        self.moveItemsTo()
                                     }
                                     
                                 }
@@ -1193,19 +1194,11 @@ class CustConcessionView: Div {
             
             var avatar = "/skyline/media/skylineapp.svg"
             
-//            var url = ""
-            
-            //var mainAvatar = ""
-            
             if let image = poc?.avatar {
                 
                 if !image.isEmpty {
                     
                     if let pDir = customerServiceProfile?.account.pDir {
-                        
-                        // url = "https://intratc.co/cdn/\(pDir)/"
-                        
-                        // mainAvatar = image
                         
                         avatar = "https://intratc.co/cdn/\(pDir)/thump_\(image)"
                     }
@@ -1423,6 +1416,45 @@ class CustConcessionView: Div {
         processRecrenceItems()
     }
     
+    func moveItemsTo() {
+        
+        var selectedItems:[CustPOCInventorySoldObject] = []
+        
+        var hasError = false
+        
+        selectedItemsState.forEach { itemId, state in
+            if state.wrappedValue {
+                
+                guard let item = itemsRefrence[itemId] else {
+                    hasError = true
+                    return
+                }
+                selectedItems.append(item)
+            }
+        }
+        
+        if hasError {
+            showError(.errorGeneral, "Hay inconsistencias en la peticion, refresque la pantalla e intente de nuevo.")
+            return
+        }
+        
+        if selectedItems.isEmpty {
+            showError(.errorGeneral, "Seleccione elementos para Mover")
+            return
+        }
+
+        let view = ConfirmBodegaMovment(
+            bodega: nil,
+            bodegas: self.bodegas,
+            selectedItems: selectedItems
+        ) { items, to  in
+
+        }
+
+        addToDom(view)
+        
+    }
+
 }
 
 extension CustConcessionView {
