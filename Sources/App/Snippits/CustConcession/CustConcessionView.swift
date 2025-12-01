@@ -226,7 +226,7 @@ class CustConcessionView: Div {
                                     Div{
                                         Span("Vender")
                                     }
-                                    .marginRight(7.px)
+                                    .margin(all: 7.px)
                                     .class(.uibtn)
                                     .float(.left)
                                     .onClick {
@@ -236,7 +236,7 @@ class CustConcessionView: Div {
                                     Div{
                                         Span("Devolución")
                                     }
-                                    .marginRight(7.px)
+                                    .margin(all: 7.px)
                                     .class(.uibtn)
                                     .float(.left)
                                     .onClick {
@@ -247,7 +247,7 @@ class CustConcessionView: Div {
                                         Span("Mover a Bod.")
                                     }
                                     .hidden(self.$bodegas.map{ $0.isEmpty })
-                                    .marginRight(7.px)
+                                    .margin(all: 7.px)
                                     .class(.uibtn)
                                     .float(.left)
                                     .onClick {
