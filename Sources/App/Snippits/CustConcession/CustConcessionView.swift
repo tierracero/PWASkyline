@@ -542,15 +542,14 @@ class CustConcessionView: Div {
                                                 id: bodega.id,
                                                 name: bodega.name
                                             ))
-                                            /*
-                                            self.bodegaRefrence.forEach { view in
+                                            
+                                            self.bodegaRefrence.forEach { _, view in
                                                 view.bodegas = self.bodegas
                                             }
-                                            */
+                                            
                                         },
                                         onUpdate: { id, name, _ in
 
-                                        /*
                                             var bodegas: [CustStoreBodegasQuick] = []
 
                                             self.bodegas.forEach { bodega in
@@ -583,7 +582,7 @@ class CustConcessionView: Div {
                                             self.productDiv.appendChild(view)
 
                                             self.bodegaRefrence[id] = view
-                                            */
+                                            
                                         }
                                     )
 
