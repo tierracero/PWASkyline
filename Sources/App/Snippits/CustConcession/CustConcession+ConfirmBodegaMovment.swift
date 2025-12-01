@@ -94,6 +94,7 @@ extension CustConcessionView {
 
                         Div("Seleccionar Ubicación")
                             .class(.uibtnLargeOrange)
+                            .opacity(0.5)
                             .cursor(.default)
                             .hidden( self.$selectId.map{  $0 !=  self.bodega?.id } )
 
