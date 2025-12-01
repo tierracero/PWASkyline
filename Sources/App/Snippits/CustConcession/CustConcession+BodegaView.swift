@@ -28,7 +28,7 @@ extension CustConcessionView {
             consetionId: UUID,
             consetionName: String,
             bodega: CustStoreBodegasQuick,
-            concessionView = CustConcessionView
+            concessionView: CustConcessionView
         ) {
             self.consetionId = consetionId
             self.consetionName = consetionName
