@@ -104,7 +104,7 @@ extension CustConcessionView {
                 
                 Div{
                     Div{
-                        /*
+                        
                         Table().noResult(label: "🛒 No hay articulos en concesion.")
                             .hidden(self.$hasAnyActiveElement)
                             .height(100.percent)
@@ -125,6 +125,7 @@ extension CustConcessionView {
                                     .float(.right)
                                     .height(24.px)
                                     .onClick {
+                                        
                                         if self.itemsRefrence.isEmpty {
                                             return
                                         }
@@ -215,7 +216,7 @@ extension CustConcessionView {
                         }
                         .hidden(self.$hasAnyActiveElement.map{ !$0 })
                         .height(100.percent)
-                        */
+                        
                     }
                     .custom("height", "calc(100% - 35px)")
                     .margin(all: 3.px)
@@ -759,7 +760,7 @@ extension CustConcessionView {
                 self.itemsPOCRefrence = itemsPOCRefrence
 
                 self.processRecrenceItems()
-                
+
                 self.relinquishItems(items, to)
 
             }
