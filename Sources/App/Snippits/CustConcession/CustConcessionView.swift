@@ -602,7 +602,6 @@ class CustConcessionView: Div {
 
                             Div().class(.clear).height(7.px)
 
-
                         }
                         
                         Div().class(.clear).height(7.px)
@@ -1450,6 +1449,25 @@ class CustConcessionView: Div {
             selectedItems: selectedItems
         ) { items, to  in
 
+            let itemIds: [UUID] = items.map{  $0.id} }
+
+            /// [ CustPOCInventorySoldObject.POC : [CustPOCInventorySoldObject] ]
+            var itemsPOCRefrence: [UUID:[CustPOCInventorySoldObject]] = [:]
+
+            // Remove items
+            // pocId, [itema]
+            self.itemsPOCRefrence.forEach { _, items. in
+
+                var newItems: [CustPOCInventorySoldObject] = []
+
+                items.forEach { item in
+                    if !itemIds.contains(item.id) {
+                        newItems.append(item)
+                    }
+                }
+            }
+
+            //processRecrenceItems
         }
 
         addToDom(view)

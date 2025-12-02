@@ -21,7 +21,7 @@ extension CustConcessionView {
         let selectedItems:[CustPOCInventorySoldObject]
         
         private var moveItemsTo: ((
-            _ items: CustPOCInventorySoldObject,
+            _ items: [CustPOCInventorySoldObject],
             _ alocatedTo: UUID?
         ) -> ())
 
@@ -31,7 +31,7 @@ extension CustConcessionView {
             bodegas: [CustStoreBodegasQuick],
             selectedItems: [CustPOCInventorySoldObject],
             moveItemsTo: @escaping ((
-                _ items: CustPOCInventorySoldObject,
+                _ items: [CustPOCInventorySoldObject],
                 _ alocatedTo: UUID?
             ) -> ())
         ) {
@@ -186,12 +186,19 @@ extension CustConcessionView {
                             return
                         }
 
+                        self.moveItemsTo(
+                            self.selectedItems,
+                            self.selectId
+                        )
+
+                        self.remove()
 
                     }
                 }
 
             }
 
+            addToDom(view)
 
         }
  
