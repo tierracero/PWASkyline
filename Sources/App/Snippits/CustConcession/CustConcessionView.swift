@@ -571,7 +571,8 @@ class CustConcessionView: Div {
                                                 consetionId: self.account.id,
                                                 consetionName: "Conseccion \(self.account.businessName)",
                                                 bodega: .init(id: id, name: name) ,
-                                                bodegas: self.bodegas
+                                                bodegas: self.bodegas,
+                                                pocs: self.pocs
                                             ) { items, alocatedTo in
 
                                             }
@@ -1100,11 +1101,20 @@ class CustConcessionView: Div {
 
         bodegas.forEach{ bodega in 
 
+            /*
+            consetionId: UUID,
+            consetionName: String,
+            bodega: CustStoreBodegasQuick,
+            bodegas: [CustStoreBodegasQuick],
+            pocs: [CustPOCQuick],
+            */
+
             let view = BodegaView(
                 consetionId: self.account.id,
                 consetionName: "Conseccion \(self.account.businessName)",
                 bodega: bodega,
-                bodegas: self.bodegas
+                bodegas: self.bodegas,
+                pocs: self.pocs
             ) { items, alocatedTo in
 
             }
