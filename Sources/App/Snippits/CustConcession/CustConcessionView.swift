@@ -1449,14 +1449,14 @@ class CustConcessionView: Div {
             selectedItems: selectedItems
         ) { items, to  in
 
-            let itemIds: [UUID] = items.map{  $0.id} }
+            let itemIds: [UUID] = items.map{ $0.id } 
 
             /// [ CustPOCInventorySoldObject.POC : [CustPOCInventorySoldObject] ]
             var itemsPOCRefrence: [UUID:[CustPOCInventorySoldObject]] = [:]
 
             // Remove items
             // pocId, [itema]
-            self.itemsPOCRefrence.forEach { _, items. in
+            self.itemsPOCRefrence.forEach { pocId, items in
 
                 var newItems: [CustPOCInventorySoldObject] = []
 
@@ -1465,12 +1465,23 @@ class CustConcessionView: Div {
                         newItems.append(item)
                     }
                 }
+
+                itemsPOCRefrence[pocId] = newItems
+                
             }
 
-            //processRecrenceItems
-        }
+            self.itemsPOCRefrence = itemsPOCRefrence
 
+            // MARK: Top level ciontainer, transition 
+            guard let to else {
+                return
+            }
+
+
+        }
+        
         addToDom(view)
+
         
     }
 
