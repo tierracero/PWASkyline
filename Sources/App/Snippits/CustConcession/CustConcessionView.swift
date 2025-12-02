@@ -24,9 +24,9 @@ class CustConcessionView: Div {
 
     var controls: [CustFiscalInventoryControl]
     
-    @State  var sales: [CustSaleQuick]
+    @State var sales: [CustSaleQuick]
     
-    @State  var bodegas: [CustStoreBodegasQuick]
+    @State var bodegas: [CustStoreBodegasQuick]
 
     init(
         account: CustAcct,
@@ -71,9 +71,6 @@ class CustConcessionView: Div {
     
     var pocRefrence: [UUID:CustPOCQuick] = [:]
 
-    /// [ CustStoreBodegas.id: [CustStoreSeccionesQuickRef] ]
-    var seccionRefrence: [ UUID: [CustStoreSeccionesQuickRef] ] = [:]
-    
     @State var codeFilter: String = ""
     
     lazy var codeFilterField = InputText(self.$codeFilter)
@@ -106,7 +103,6 @@ class CustConcessionView: Div {
     @State var mermItems: [CustFiscalInventoryControl] = []
     
     var bodegaRefrence: [ UUID : BodegaView ] = [:]
-
 
     @DOM override var body: DOM.Content {
         
@@ -1477,6 +1473,7 @@ class CustConcessionView: Div {
                 return
             }
 
+            self.bodegaRefrence[to]?.takeInItems(items: items)
 
         }
         
