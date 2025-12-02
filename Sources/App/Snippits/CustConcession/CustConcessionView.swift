@@ -575,6 +575,20 @@ class CustConcessionView: Div {
                                                 pocs: self.pocs
                                             ) { items, alocatedTo in
 
+                                                if let alocatedTo {
+                                                    self.bodegaRefrence[alocatedTo]?.takeInItems(items)
+                                                }
+                                                else {
+                                                    items.forEach { item in
+                                                        if let _ = self.itemsRefrence[item.POC] {
+                                                            self.itemsRefrence[item.POC]?.append(item)
+                                                        }
+                                                        else {
+                                                            self.itemsRefrence[item.POC] = [item]
+                                                        }
+                                                    }
+                                                }
+                                                
                                             }
 
                                             self.productDiv.appendChild(view)
@@ -1117,6 +1131,20 @@ class CustConcessionView: Div {
                 pocs: self.pocs
             ) { items, alocatedTo in
 
+                if let alocatedTo {
+                    self.bodegaRefrence[alocatedTo]?.takeInItems(items)
+                }
+                else {
+                    items.forEach { item in
+                        if let _ = self.itemsRefrence[item.POC] {
+                            self.itemsRefrence[item.POC]?.append(item)
+                        }
+                        else {
+                            self.itemsRefrence[item.POC] = [item]
+                        }
+                    }
+                }
+                                                
             }
 
             productDiv.appendChild(view)

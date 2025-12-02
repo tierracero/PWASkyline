@@ -27,7 +27,7 @@ extension CustConcessionView {
         var pocs: [CustPOCQuick]
 
         private var relinquishItems: ((
-            _ items: CustPOCInventorySoldObject,
+            _ items: [CustPOCInventorySoldObject],
             _ alocatedTo: UUID?
         ) -> ())
 
@@ -38,7 +38,7 @@ extension CustConcessionView {
             bodegas: [CustStoreBodegasQuick],
             pocs: [CustPOCQuick],
             relinquishItems: @escaping ((
-                _ items: CustPOCInventorySoldObject,
+                _ items: [CustPOCInventorySoldObject],
                 _ alocatedTo: UUID?
             ) -> ())
         ) {
@@ -137,6 +137,20 @@ extension CustConcessionView {
                     bodega: self.bodega,
                     bodegas: self.bodegas
                 ) { items, to in
+
+                    var newItems: [CustPOCInventorySoldObject] = []
+
+                    let swappedItems = items.map(\.id)
+
+                    self.items.forEach{ item in
+                        if !swappedItems.contains(item.id) {
+                            newItems.append(item)
+                        }
+                    }
+
+                    self.items = newItems
+
+                    self.relinquishItems(items, to)
 
                 }
 
