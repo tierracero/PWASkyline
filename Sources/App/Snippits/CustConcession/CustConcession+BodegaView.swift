@@ -139,6 +139,9 @@ extension CustConcessionView {
                 ) { items, to in
 
                 }
+
+                addToDom(view)
+
             }
             bodegaName = bodega.name
         }

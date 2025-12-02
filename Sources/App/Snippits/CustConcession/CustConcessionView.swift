@@ -517,7 +517,7 @@ class CustConcessionView: Div {
                             Div{
                                 Div{
                                      Img()
-                                        .src("skyline/media/pencil.png")
+                                        .src("skyline/media/add.png")
                                         .marginRight(12.px)
                                         .cursor(.pointer)
                                         .height(18.px)
