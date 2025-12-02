@@ -12,6 +12,8 @@ extension CustConcessionView {
     
         override class var name: String { "div" }
 
+        let accountId: UUID
+
         let bodega: CustStoreBodegasQuick?
 
         let bodegas: [CustStoreBodegasQuick]
@@ -24,6 +26,7 @@ extension CustConcessionView {
         ) -> ())
 
         init(
+            accountId: UUID,
             bodega: CustStoreBodegasQuick?,
             bodegas: [CustStoreBodegasQuick],
             selectedItems: [CustPOCInventorySoldObject],
@@ -32,6 +35,7 @@ extension CustConcessionView {
                 _ alocatedTo: UUID?
             ) -> ())
         ) {
+            self.accountId = accountId
             self.bodega = bodega
             self.bodegas = bodegas
             self.selectedItems = selectedItems
@@ -152,6 +156,42 @@ extension CustConcessionView {
         }
 
         func selectNewPlacement () {
+
+            let view = ConfirmationView(
+                type: ConfirmViewButton.yesNo,
+                title: "Confirme Accion",
+                message: "Va acambiar \(self.selectedItems.count) piezas"
+            ) { isConfirmed, comment in
+
+                if isConfirmed {
+
+                    loadingView(show: true)
+
+                    API.custPOCV1.moveConcessionInventory(
+                        accountId: self.accountId,
+                        itemIds: self.selectedItems.map{  $0.id },
+                        bodegaId: self.selectId
+                    ) { resp in
+
+                        loadingView(show: false)
+
+
+                        guard let resp else {
+                            showError(.errorDeCommunicacion, .serverConextionError)
+                            return
+                        }
+
+                        guard resp.status == .ok else {
+                            showError(.errorGeneral, resp.msg)
+                            return
+                        }
+
+
+                    }
+                }
+
+            }
+
 
         }
  

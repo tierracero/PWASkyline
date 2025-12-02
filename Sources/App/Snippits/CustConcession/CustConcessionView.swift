@@ -1444,6 +1444,7 @@ class CustConcessionView: Div {
         }
 
         let view = ConfirmBodegaMovment(
+            accountId: self.account.id,
             bodega: nil,
             bodegas: self.bodegas,
             selectedItems: selectedItems
