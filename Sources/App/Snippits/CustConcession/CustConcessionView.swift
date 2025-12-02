@@ -1469,7 +1469,7 @@ class CustConcessionView: Div {
                 itemsPOCRefrence[pocId] = newItems
                 
             }
-
+            
             self.itemsPOCRefrence = itemsPOCRefrence
 
             // MARK: Top level ciontainer, transition 
