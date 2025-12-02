@@ -14,32 +14,36 @@ extension CustConcessionView {
         override class var name: String { "div" }
 
         let account: CustAcct
-
-        let bodega: CustStoreBodegasQuick
         
         let pocs: [CustPOCQuick]
         
         let items: [CustPOCInventorySoldObject]
 
+        let bodega: CustStoreBodegasQuick
+
+        let bodegas: [CustStoreBodegasQuick]
+
         private var relinquishItems: ((
-            _ items: CustPOCInventorySoldObject,
+            _ items: [CustPOCInventorySoldObject],
             _ alocatedTo: UUID?
         ) -> ())
 
         init(
             account: CustAcct,
-            bodega: CustStoreBodegasQuick,
             pocs: [CustPOCQuick],
             items: [CustPOCInventorySoldObject],
+            bodega: CustStoreBodegasQuick,
+            bodegas: [CustStoreBodegasQuick],
             relinquishItems: @escaping ((
-                _ items: CustPOCInventorySoldObject,
+                _ items: [CustPOCInventorySoldObject],
                 _ alocatedTo: UUID?
             ) -> ())
         ) {
             self.account = account
-            self.bodega = bodega
             self.pocs = pocs
             self.items = items
+            self.bodega = bodega
+            self.bodegas = bodegas
             self.relinquishItems = relinquishItems
         }
 
@@ -92,7 +96,7 @@ extension CustConcessionView {
                             self.remove()
                         }
                     
-                    H2("Seleccione nueva hubicación")
+                    H2("Concesión \(self.account.businessName.isEmpty ? self.account.fiscalRazon : self.account.businessName ) | \(self.bodega.name)")
                         .color(.lightBlueText)
                         .height(35.px)
                     
@@ -100,6 +104,7 @@ extension CustConcessionView {
                 
                 Div{
                     Div{
+                        /*
                         Table().noResult(label: "🛒 No hay articulos en concesion.")
                             .hidden(self.$hasAnyActiveElement)
                             .height(100.percent)
@@ -190,29 +195,8 @@ extension CustConcessionView {
                                 Div{
 
                                     Div{
-                                        Span("Vender")
-                                    }
-                                    .margin(all: 7.px)
-                                    .class(.uibtn)
-                                    .float(.left)
-                                    .onClick {
-                                        self.removeFromConcession(isSale: true)
-                                    }
-                                    
-                                    Div{
-                                        Span("Devolución")
-                                    }
-                                    .margin(all: 7.px)
-                                    .class(.uibtn)
-                                    .float(.left)
-                                    .onClick {
-                                        self.removeFromConcession(isSale: false)
-                                    }
-
-                                    Div{
                                         Span("Mover a Bod.")
                                     }
-                                    .hidden(self.$bodegas.map{ $0.isEmpty })
                                     .margin(all: 7.px)
                                     .class(.uibtn)
                                     .float(.left)
@@ -229,10 +213,9 @@ extension CustConcessionView {
                             }
 
                         }
-                        
                         .hidden(self.$hasAnyActiveElement.map{ !$0 })
                         .height(100.percent)
-                        
+                        */
                     }
                     .custom("height", "calc(100% - 35px)")
                     .margin(all: 3.px)
@@ -707,6 +690,84 @@ extension CustConcessionView {
         func downloadCurrentConcession(){
             
         }
-        
+            
+        func moveItemsTo() {
+            
+            var selectedItems:[CustPOCInventorySoldObject] = []
+            
+            var hasError = false
+            
+            selectedItemsState.forEach { itemId, state in
+                if state.wrappedValue {
+                    
+                    guard let item = itemsRefrence[itemId] else {
+                        hasError = true
+                        return
+                    }
+                    selectedItems.append(item)
+                }
+            }
+            
+            if hasError {
+                showError(.errorGeneral, "Hay inconsistencias en la peticion, refresque la pantalla e intente de nuevo.")
+                return
+            }
+            
+            if selectedItems.isEmpty {
+                showError(.errorGeneral, "Seleccione elementos para Mover")
+                return
+            }
+
+            let view = ConfirmBodegaMovment(
+                accountId: self.account.id,
+                bodega: nil,
+                bodegas: self.bodegas,
+                selectedItems: selectedItems
+            ) { items, to  in
+
+                Console.clear()
+
+                print("⚠️ will update")
+
+                print(items.count)
+
+                print(to?.uuidString ?? "N/A")
+
+                print("- - - - - - - -")
+
+                let itemIds: [UUID] = items.map{ $0.id } 
+
+                /// [ CustPOCInventorySoldObject.POC : [CustPOCInventorySoldObject] ]
+                var itemsPOCRefrence: [UUID:[CustPOCInventorySoldObject]] = [:]
+
+                // Remove items
+                // pocId, [itema]
+                self.itemsPOCRefrence.forEach { pocId, items in
+
+                    var newItems: [CustPOCInventorySoldObject] = []
+
+                    items.forEach { item in
+                        if !itemIds.contains(item.id) {
+                            newItems.append(item)
+                        }
+                    }
+
+                    itemsPOCRefrence[pocId] = newItems
+                    
+                }
+                
+                self.itemsPOCRefrence = itemsPOCRefrence
+
+                self.processRecrenceItems()
+                
+                self.relinquishItems(items, to)
+
+            }
+            
+            addToDom(view)
+
+            
+        }
+
     }
 }

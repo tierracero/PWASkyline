@@ -117,9 +117,9 @@ class CustConcessionView: Div {
                         self.remove()
                     }
                 
-                H2("Concesión") 
-                    .marginLeft(7.px)
+                H2("Concesión \(self.account.businessName.isEmpty ? self.account.fiscalRazon : self.account.businessName )")
                     .color(.lightBlueText)
+                    .marginLeft(7.px)
                 
                 Div().class(.clear)
             }
@@ -1477,6 +1477,8 @@ class CustConcessionView: Div {
             }
             
             self.itemsPOCRefrence = itemsPOCRefrence
+
+            self.processRecrenceItems()
 
             // MARK: Top level ciontainer, transition 
             guard let to else {
