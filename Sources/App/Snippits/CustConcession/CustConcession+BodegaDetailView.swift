@@ -13,7 +13,9 @@ extension CustConcessionView {
 
         override class var name: String { "div" }
 
-        let account: CustAcct
+        let consetionId: UUID
+        
+        let consetionName: String
         
         let pocs: [CustPOCQuick]
         
@@ -29,7 +31,8 @@ extension CustConcessionView {
         ) -> ())
 
         init(
-            account: CustAcct,
+            consetionId: UUID,
+            consetionName: String,
             pocs: [CustPOCQuick],
             items: [CustPOCInventorySoldObject],
             bodega: CustStoreBodegasQuick,
@@ -39,7 +42,8 @@ extension CustConcessionView {
                 _ alocatedTo: UUID?
             ) -> ())
         ) {
-            self.account = account
+            self.consetionId = consetionId
+            self.consetionName = consetionName
             self.pocs = pocs
             self.items = items
             self.bodega = bodega
@@ -96,7 +100,7 @@ extension CustConcessionView {
                             self.remove()
                         }
                     
-                    H2("Concesión \(self.account.businessName.isEmpty ? self.account.fiscalRazon : self.account.businessName ) | \(self.bodega.name)")
+                    H2("Concesión \(self.consetionName) | \(self.bodega.name)")
                         .color(.lightBlueText)
                         .height(35.px)
                     
@@ -580,7 +584,7 @@ extension CustConcessionView {
                             }
                         }
                         Td{
-                            Div("\(self.account.fiscalRfc) \(self.account.fiscalRazon)")
+                            Div("\(self.consetionName)")
                                 .textAlign(.center)
                         }
                         Td{
@@ -720,7 +724,7 @@ extension CustConcessionView {
             }
 
             let view = ConfirmBodegaMovment(
-                accountId: self.account.id,
+                accountId: self.consetionId,
                 bodega: nil,
                 bodegas: self.bodegas,
                 selectedItems: selectedItems

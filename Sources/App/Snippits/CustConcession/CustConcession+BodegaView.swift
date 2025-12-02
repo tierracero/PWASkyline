@@ -23,6 +23,8 @@ extension CustConcessionView {
         let bodega: CustStoreBodegasQuick
 
         var bodegas: [CustStoreBodegasQuick]
+        
+        var pocs: [CustPOCQuick]
 
         private var relinquishItems: ((
             _ items: CustPOCInventorySoldObject,
@@ -34,6 +36,7 @@ extension CustConcessionView {
             consetionName: String,
             bodega: CustStoreBodegasQuick,
             bodegas: [CustStoreBodegasQuick],
+            pocs: [CustPOCQuick],
             relinquishItems: @escaping ((
                 _ items: CustPOCInventorySoldObject,
                 _ alocatedTo: UUID?
@@ -43,6 +46,7 @@ extension CustConcessionView {
             self.consetionName = consetionName
             self.bodega = bodega
             self.bodegas = bodegas
+            self.pocs = pocs
             self.relinquishItems = relinquishItems
         }
 
@@ -124,7 +128,18 @@ extension CustConcessionView {
             super.buildUI()
             self.class(.uibtnLarge)
             custom("width", "calc(100% - 14px)")
+            onClick {
+                let view = BodegaDetailView(
+                    consetionId: self.consetionId,
+                    consetionName: self.consetionName,
+                    pocs: self.pocs,
+                    items: self.items,
+                    bodega: self.bodega,
+                    bodegas: self.bodegas
+                ) { items, to in
 
+                }
+            }
             bodegaName = bodega.name
         }
 

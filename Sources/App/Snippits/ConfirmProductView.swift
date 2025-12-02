@@ -790,8 +790,9 @@ class ConfirmProductView: Div {
                         
                         items.append(.init(
                             id: item.id,
-                            custStoreBodegas: item.custStoreBodegas,
+                            custStoreBodegas: nil,
                             custStoreSecciones: nil,
+                            alocatedTo: item.alocatedTo,
                             series: item.series
                         ))
                         
