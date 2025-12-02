@@ -150,6 +150,7 @@ class CustConcessionView: Div {
                                     .float(.right)
                                     .height(24.px)
                                     .onClick {
+
                                         if self.itemsRefrence.isEmpty {
                                             return
                                         }
@@ -579,12 +580,14 @@ class CustConcessionView: Div {
                                                     self.bodegaRefrence[alocatedTo]?.takeInItems(items: items)
                                                 }
                                                 else {
+
                                                     items.forEach { item in
-                                                        if let _ = self.itemsRefrence[item.POC] {
-                                                            self.itemsRefrence[item.POC]?.append(item)
+
+                                                        if let _ = self.itemsPOCRefrence[item.POC] {
+                                                            self.itemsPOCRefrence[item.POC]?.append(item)
                                                         }
                                                         else {
-                                                            self.itemsRefrence[item.POC] = [item]
+                                                            self.itemsPOCRefrence[item.POC] = [item]
                                                         }
                                                     }
                                                 }
@@ -1069,6 +1072,7 @@ class CustConcessionView: Div {
                                 .cursor(.pointer)
                                 .height(18.px)
                                 .onClick {
+                                    
                                     let view = InventoryItemDetailView(itemid: item.id){ price in
                                         
                                         soldPrice = price
@@ -1132,17 +1136,21 @@ class CustConcessionView: Div {
             ) { items, alocatedTo in
 
                 if let alocatedTo {
+
                     self.bodegaRefrence[alocatedTo]?.takeInItems(items: items)
+
                 }
                 else {
+
                     items.forEach { item in
-                        if let _ = self.itemsRefrence[item.POC] {
-                            self.itemsRefrence[item.POC]?.append(item)
+                        if let _ = self.itemsPOCRefrence[item.POC] {
+                            self.itemsPOCRefrence[item.POC]?.append(item)
                         }
                         else {
-                            self.itemsRefrence[item.POC] = [item]
+                            self.itemsPOCRefrence[item.POC] = [item]
                         }
                     }
+                    
                 }
                                                 
             }
@@ -1242,7 +1250,7 @@ class CustConcessionView: Div {
             
             let total: Int64 = items.map{ ($0.soldPrice ?? 0) }.reduce(0, +)
             
-            var table = Table{
+            let table = Table{
                 THead {
                     Tr{
                         Td()
