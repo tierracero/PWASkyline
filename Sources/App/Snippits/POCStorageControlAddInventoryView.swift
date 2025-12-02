@@ -414,6 +414,7 @@ class POCStorageControlAddInventoryView: Div {
                                 custStore: self.storeId,
                                 custStoreBodegas: self.bodegaId,
                                 custStoreSecciones: self.sectionId,
+                                alocatedTo: self.bodegaId,
                                 series: $0.series
                             ) }
                             
@@ -461,7 +462,7 @@ class POCStorageControlAddInventoryView: Div {
                     profileId: self.profile.id,
                     bodegaId: self.bodegaId,
                     sectionId: self.sectionId,
-                    alocatedTo: nil
+                    alocatedTo: self.bodegaId
                 ) { resp in
 
                     loadingView(show: false)
@@ -476,7 +477,6 @@ class POCStorageControlAddInventoryView: Div {
                         return
                     }
                     
-                    
                     guard let payload = resp.data else {
                         showError(.errorGeneral, .unexpenctedMissingPayload)
                         return
@@ -489,6 +489,7 @@ class POCStorageControlAddInventoryView: Div {
                         custStore: self.storeId,
                         custStoreBodegas: self.bodegaId,
                         custStoreSecciones: self.sectionId,
+                        alocatedTo: nil,
                         series: $0.series
                     ) }
                     
