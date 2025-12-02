@@ -129,7 +129,8 @@ extension CustConcessionView {
         }
 
         func takeInItems(items: [CustPOCInventorySoldObject]) {
-            self.items = items
+            print("🟢 takeInItems")
+            self.items.append(contentsOf: items)
         }
 
     }
