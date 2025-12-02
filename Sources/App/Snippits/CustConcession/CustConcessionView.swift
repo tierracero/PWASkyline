@@ -576,7 +576,7 @@ class CustConcessionView: Div {
                                             ) { items, alocatedTo in
 
                                                 if let alocatedTo {
-                                                    self.bodegaRefrence[alocatedTo]?.takeInItems(items)
+                                                    self.bodegaRefrence[alocatedTo]?.takeInItems(items: items)
                                                 }
                                                 else {
                                                     items.forEach { item in
@@ -1132,7 +1132,7 @@ class CustConcessionView: Div {
             ) { items, alocatedTo in
 
                 if let alocatedTo {
-                    self.bodegaRefrence[alocatedTo]?.takeInItems(items)
+                    self.bodegaRefrence[alocatedTo]?.takeInItems(items: items)
                 }
                 else {
                     items.forEach { item in
