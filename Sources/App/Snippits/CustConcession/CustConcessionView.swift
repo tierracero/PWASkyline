@@ -1445,6 +1445,16 @@ class CustConcessionView: Div {
             selectedItems: selectedItems
         ) { items, to  in
 
+            Console.clear()
+
+            print("⚠️ will update")
+
+            print(items.count)
+
+            print(to?.uuidString ?? "N/A")
+
+            print("- - - - - - - -")
+
             let itemIds: [UUID] = items.map{ $0.id } 
 
             /// [ CustPOCInventorySoldObject.POC : [CustPOCInventorySoldObject] ]
