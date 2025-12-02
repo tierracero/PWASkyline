@@ -70,9 +70,9 @@ extension CustConcessionView {
             .placeholder("POC/SKU/UPC")
             .class(.textFiledBlackDark)
             .marginRight(7.px)
-            .float(.right)
             .width(250.px)
             .height(31.px)
+            .float(.right)
         
         lazy var productDiv = Div()
             .custom("height", "calc(100% - 150px)")
@@ -238,6 +238,7 @@ extension CustConcessionView {
                     .margin(all: 3.px)
                 }
                 .height(100.percent)
+
             }
             .backgroundColor(.backGroundGraySlate)
             .borderRadius(all: 24.px)
@@ -253,9 +254,9 @@ extension CustConcessionView {
             super.buildUI()
             
             self.class(.transparantBlackBackGround)
-            position(.absolute)
             height(100.percent)
             width(100.percent)
+            position(.absolute)
             color(.white)
             left(0.px)
             top(0.px)
