@@ -269,7 +269,49 @@ extension CustConcessionView {
             self.processRecrenceItems()
 
         }
+                    
+        /// This function remove form UI items that where proceed out
+        func removeItemsFromConcession(ids: [UUID]){
+            
+            totalItemCount = 0
+            
+            totalItemAmount = 0
+            
+            var newSelectedItemsState: [UUID:State<Bool>] = selectedItemsState
+            
+            var newItemsRefrence: [UUID:CustPOCInventorySoldObject] = itemsRefrence
+            
+            var newItemsPOCRefrence: [UUID:[CustPOCInventorySoldObject]] = [:]
+            
+            itemsPOCRefrence.forEach { pocIds, items in
                 
+                var newItems: [CustPOCInventorySoldObject] = []
+                
+                items.forEach { item in
+                    if ids.contains(item.id) {
+                        return
+                    }
+                    newItems.append(item)
+                }
+                
+                newItemsPOCRefrence[pocIds] = newItems
+                
+            }
+            
+            ids.forEach { id in
+                newSelectedItemsState.removeValue(forKey: id)
+                newItemsRefrence.removeValue(forKey: id)
+            }
+            
+            itemsRefrence = newItemsRefrence
+
+            itemsPOCRefrence = newItemsPOCRefrence
+            
+            selectedItemsState = newSelectedItemsState
+            
+            processRecrenceItems()
+        }
+        
         func processRecrenceItems(){
             
             self.productDiv.innerHTML = ""
@@ -725,45 +767,12 @@ extension CustConcessionView {
 
             let view = ConfirmBodegaMovment(
                 accountId: self.consetionId,
-                bodega: nil,
+                bodega: self.bodega,
                 bodegas: self.bodegas,
                 selectedItems: selectedItems
             ) { items, to  in
 
-                Console.clear()
-
-                print("⚠️ will update")
-
-                print(items.count)
-
-                print(to?.uuidString ?? "N/A")
-
-                print("- - - - - - - -")
-
-                let itemIds: [UUID] = items.map{ $0.id } 
-
-                /// [ CustPOCInventorySoldObject.POC : [CustPOCInventorySoldObject] ]
-                var itemsPOCRefrence: [UUID:[CustPOCInventorySoldObject]] = [:]
-
-                // Remove items
-                // pocId, [itema]
-                self.itemsPOCRefrence.forEach { pocId, items in
-
-                    var newItems: [CustPOCInventorySoldObject] = []
-
-                    items.forEach { item in
-                        if !itemIds.contains(item.id) {
-                            newItems.append(item)
-                        }
-                    }
-
-                    itemsPOCRefrence[pocId] = newItems
-                    
-                }
-                
-                self.itemsPOCRefrence = itemsPOCRefrence
-
-                self.processRecrenceItems()
+                self.removeItemsFromConcession(ids: items.map( \.id ))
 
                 self.relinquishItems(items, to)
 

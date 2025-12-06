@@ -64,8 +64,8 @@ extension CustConcessionView {
                 Img()
                 .src( "/skyline/media/pencil.png" )
                 .cursor(.pointer)
-                .marginLeft(7.px)
-                .height(18.px)
+                .margin(all: 12.px)
+                .height(24.px)
             }
             .float(.right)
             .onClick {
@@ -106,6 +106,8 @@ extension CustConcessionView {
                     addToDom(view)
                 }
 
+                $1.stopPropagation()
+                
             }
             
             Div{
@@ -129,6 +131,7 @@ extension CustConcessionView {
             self.class(.uibtnLarge)
             custom("width", "calc(100% - 14px)")
             onClick {
+
                 let view = BodegaDetailView(
                     consetionId: self.consetionId,
                     consetionName: self.consetionName,
@@ -147,6 +150,15 @@ extension CustConcessionView {
                             newItems.append(item)
                         }
                     }
+
+                    print("current")
+                    print(self.items.map(\.id))
+
+                    print("swappedItems")
+                    print(swappedItems)
+                    
+                    print("left")
+                    print(newItems.map(\.id))
 
                     self.items = newItems
 

@@ -3237,7 +3237,7 @@ class OrderView: Div {
             currentSOCMasters: socIds
         ){ id, isWarenty, internalWarenty in
             
-            let view = ConfirmProductView(
+            let view = ConfirmProductViewNew(
                 accountId: self.order.custAcct,
                 costType: .cost_a,
                 pocid: id,
@@ -3245,7 +3245,7 @@ class OrderView: Div {
                 blockPurchaseOrders: false,
                 isWarenty: isWarenty,
                 internalWarenty: internalWarenty
-            ) { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
+            ) { poc, price, costType, units, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
                 
                 /// internal, external
                 var warenty: SoldObjectWarenty? = nil
@@ -3267,7 +3267,7 @@ class OrderView: Div {
                         description: "\(poc.upc) \(poc.name) \(poc.model)".purgeSpaces,
                         pocId: poc.id,
                         from: soldObjectFrom,
-                        units: .units(items.count),
+                        units: units,
                         price: price,
                         warenty: warenty
                     ))
@@ -3284,23 +3284,28 @@ class OrderView: Div {
                         showError(.errorGeneral, resp.msg)
                         return
                     }
-                    
+
+                    guard let payload = resp.data else {
+                        showError(.errorGeneral, .unexpenctedMissingPayload)
+                        return
+                    }
+                
                     var pocs:[CustPOCInventoryOrderView] = []
                     
-                    items.forEach { item in
+                    payload.chargeIds.forEach { id in
 
                         pocs.append(.init(
-                            itemId: item.id,
-                            id: item.id,
+                            itemId: id,
+                            id: id,
                             POC: poc.id,
                             soldType: .order,
                             custStore: storeid,
-                            custStoreBodegas: item.custStoreBodegas,
-                            custStoreSecciones: item.custStoreSecciones,
+                            custStoreBodegas: nil,
+                            custStoreSecciones: nil,
                             comision: 0,
                             points: 0,
                             premierPoints: 0,
-                            series: item.series,
+                            series: "",
                             warentSelfTo: nil,
                             warentFabricTo: nil,
                             soldPrice: price,
@@ -3315,7 +3320,7 @@ class OrderView: Div {
                     }
                     
                     let tr = OldChargeTrRow(pocs: pocs) { viewId in
-                        self.editPoc(viewId: viewId, ids: items.map{ $0.id })
+                        self.editPoc(viewId: viewId, ids: payload.chargeIds )
                     }
                         .color(.gray)
                     
@@ -3323,20 +3328,20 @@ class OrderView: Div {
                     
                     self.chargesTable.appendChild(tr)
                 
-                    items.forEach { item in
+                    payload.chargeIds.forEach { id in
                         
                         let obj: CustPOCInventoryOrderView = .init(
-                          itemId: item.id,
-                            id: item.id,
+                          itemId: id,
+                            id: id,
                             POC: poc.id,
                             soldType: .order,
                             custStore: storeid,
-                            custStoreBodegas: item.custStoreBodegas,
-                            custStoreSecciones: item.custStoreSecciones,
+                            custStoreBodegas: nil,
+                            custStoreSecciones: nil,
                             comision: 0,
                             points: 0,
                             premierPoints: 0,
-                            series: item.series,
+                            series: "",
                             warentSelfTo: nil,
                             warentFabricTo: nil,
                             soldPrice: price,
@@ -3354,13 +3359,14 @@ class OrderView: Div {
                         
                     }
                     
-                    if items.isEmpty {
+                    if payload.chargeIds.isEmpty {
                         showSuccess(.operacionExitosa, "Producto agregado, refreque el folio para ver los cambios")
                     }
                     
                     self.calcBalance()
                     
                 }
+                
             
 
             }

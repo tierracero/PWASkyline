@@ -82,10 +82,8 @@ class CustConcessionView: Div {
         .height(31.px)
     
     lazy var productDiv = Div()
-        .custom("height", "calc(100% - 150px)")
-        .class(.roundDarkBlue)
-        .padding(all: 3.px)
-        .overflow(.auto)
+
+    lazy var bodegaDiv = Div()
     
     @State var sideView: SideView = .incomingView
     
@@ -171,7 +169,14 @@ class CustConcessionView: Div {
                             
                             Div().clear(.both).height(7.px)
                             
-                            self.productDiv
+                            Div {
+                                self.productDiv
+                                self.bodegaDiv
+                            }
+                            .custom("height", "calc(100% - 150px)")
+                            .class(.roundDarkBlue)
+                            .padding(all: 3.px)
+                            .overflow(.auto)
                             
                             Div().clear(.both).height(12.px)
 
@@ -472,7 +477,6 @@ class CustConcessionView: Div {
                             .width(50.percent)
                             .float(.left)
 
-                                                           
                             Div{
                                 Div{
                                      Img()
@@ -577,24 +581,19 @@ class CustConcessionView: Div {
                                             ) { items, alocatedTo in
 
                                                 if let alocatedTo {
+
                                                     self.bodegaRefrence[alocatedTo]?.takeInItems(items: items)
+
                                                 }
                                                 else {
 
-                                                    items.forEach { item in
+                                                    self.addItemsToConcession(items: items)
 
-                                                        if let _ = self.itemsPOCRefrence[item.POC] {
-                                                            self.itemsPOCRefrence[item.POC]?.append(item)
-                                                        }
-                                                        else {
-                                                            self.itemsPOCRefrence[item.POC] = [item]
-                                                        }
-                                                    }
                                                 }
                                                 
                                             }
 
-                                            self.productDiv.appendChild(view)
+                                            self.bodegaDiv.appendChild(view)
 
                                             self.bodegaRefrence[id] = view
                                             
@@ -848,7 +847,7 @@ class CustConcessionView: Div {
 
     }
     
-    func processRecrenceItems(){
+    func processRecrenceItems(firstLoad: Bool = true){
         
         self.productDiv.innerHTML = ""
         
@@ -1072,7 +1071,7 @@ class CustConcessionView: Div {
                                 .cursor(.pointer)
                                 .height(18.px)
                                 .onClick {
-                                    
+
                                     let view = InventoryItemDetailView(itemid: item.id){ price in
                                         
                                         soldPrice = price
@@ -1117,6 +1116,10 @@ class CustConcessionView: Div {
             
         }
 
+        guard firstLoad else {
+            return
+        }
+
         bodegas.forEach{ bodega in 
 
             /*
@@ -1135,27 +1138,26 @@ class CustConcessionView: Div {
                 pocs: self.pocs
             ) { items, alocatedTo in
 
+                print("⚠️ BodegaView Move ")
+
                 if let alocatedTo {
+
+                    print("alocatedTo \(alocatedTo.uuid)")
 
                     self.bodegaRefrence[alocatedTo]?.takeInItems(items: items)
 
                 }
                 else {
 
-                    items.forEach { item in
-                        if let _ = self.itemsPOCRefrence[item.POC] {
-                            self.itemsPOCRefrence[item.POC]?.append(item)
-                        }
-                        else {
-                            self.itemsPOCRefrence[item.POC] = [item]
-                        }
-                    }
+                    print("MAIN SECCTION")
+
+                    self.addItemsToConcession(items: items)
                     
                 }
                                                 
             }
 
-            productDiv.appendChild(view)
+            bodegaDiv.appendChild(view)
 
             bodegaRefrence[bodega.id] = view
             
@@ -1172,6 +1174,7 @@ class CustConcessionView: Div {
             view.takeInItems(items: items)
 
         }
+
     }
     
     func calculateSelectedItems(){
@@ -1418,6 +1421,7 @@ class CustConcessionView: Div {
         
     }
     
+    /// This function remove form UI items that where proceed out
     func removeItemsFromConcession(ids: [UUID]){
         
         totalItemCount = 0
@@ -1450,11 +1454,32 @@ class CustConcessionView: Div {
             newItemsRefrence.removeValue(forKey: id)
         }
         
+        itemsRefrence = newItemsRefrence
+
         itemsPOCRefrence = newItemsPOCRefrence
         
         selectedItemsState = newSelectedItemsState
         
-        processRecrenceItems()
+        processRecrenceItems( firstLoad: false )
+    }
+    
+    /// This function adds to UI items that where proceed in
+    func addItemsToConcession(items: [CustPOCInventorySoldObject]){
+
+        items.forEach { item in
+
+            itemsRefrence[item.id] = item
+
+            if let _ = self.itemsPOCRefrence[item.POC] {
+                self.itemsPOCRefrence[item.POC]?.append(item)
+            }
+            else {
+                self.itemsPOCRefrence[item.POC] = [item]
+            }
+        }
+
+        processRecrenceItems(firstLoad: false)
+
     }
     
     func moveItemsTo() {
@@ -1470,6 +1495,7 @@ class CustConcessionView: Div {
                     hasError = true
                     return
                 }
+
                 selectedItems.append(item)
             }
         }
@@ -1501,30 +1527,9 @@ class CustConcessionView: Div {
 
             print("- - - - - - - -")
 
-            let itemIds: [UUID] = items.map{ $0.id } 
+            self.removeItemsFromConcession(ids: items.map(\.id) )
 
-            /// [ CustPOCInventorySoldObject.POC : [CustPOCInventorySoldObject] ]
-            var itemsPOCRefrence: [UUID:[CustPOCInventorySoldObject]] = [:]
-
-            // Remove items
-            // pocId, [itema]
-            self.itemsPOCRefrence.forEach { pocId, items in
-
-                var newItems: [CustPOCInventorySoldObject] = []
-
-                items.forEach { item in
-                    if !itemIds.contains(item.id) {
-                        newItems.append(item)
-                    }
-                }
-
-                itemsPOCRefrence[pocId] = newItems
-                
-            }
-            
-            self.itemsPOCRefrence = itemsPOCRefrence
-
-            self.processRecrenceItems()
+            self.processRecrenceItems(firstLoad: false)
 
             // MARK: Top level ciontainer, transition 
             guard let to else {
