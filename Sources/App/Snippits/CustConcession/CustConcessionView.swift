@@ -930,7 +930,7 @@ class CustConcessionView: Div {
                     .onBlur { tf, _ in
                         
                         items.forEach { item in
-                            self.c[item.id] = false
+                            self.selectedItems[item.id] = false
                         }
                         
                         guard var int = Int(tf.text) else {
@@ -1338,14 +1338,33 @@ class CustConcessionView: Div {
         
     }
     
+    /// This function adds to UI items that where proceed in
+    func addItemsToConcession(items: [CustPOCInventorySoldObject]){
+
+        items.forEach { item in
+
+            itemsRefrence[item.id] = item
+
+            if let _ = self.itemsPOCRefrence[item.POC] {
+                self.itemsPOCRefrence[item.POC]?.append(item)
+            }
+            else {
+                self.itemsPOCRefrence[item.POC] = [item]
+            }
+        }
+
+        processRefrenceItems(firstLoad: false)
+
+    }
+    
     func removeFromConcession(isSale: Bool){
         
         var selectedItems:[CustPOCInventorySoldObject] = []
         
         var hasError = false
         
-        selectedItems.forEach { itemId, state in
-            if state.wrappedValue {
+        self.selectedItems.forEach { itemId, state in
+            if state {
                 
                 guard let item = itemsRefrence[itemId] else {
                     hasError = true
@@ -1433,7 +1452,7 @@ class CustConcessionView: Div {
          
         totalItemAmount = 0
         
-        var newSelectedItems: [UUID:State<Bool>] = selectedItems
+        var newSelectedItems: [UUID:Bool] = selectedItems
         
         var newItemsRefrence: [UUID:CustPOCInventorySoldObject] = itemsRefrence
         
@@ -1474,8 +1493,8 @@ class CustConcessionView: Div {
         
         var hasError = false
         
-        selectedItems.forEach { itemId, state in
-            if state.wrappedValue {
+        self.selectedItems.forEach { itemId, state in
+            if state {
                 
                 guard let item = itemsRefrence[itemId] else {
                     hasError = true
@@ -1514,6 +1533,8 @@ class CustConcessionView: Div {
             print("- - - - - - - -")
 
             self.removeItemsFromConcession(ids: items.map(\.id) )
+
+            let itemIds: [UUID] = items.map{ $0.id } 
 
             /// [ CustPOCInventorySoldObject.POC : [CustPOCInventorySoldObject] ]
             var itemsPOCRefrence: [UUID:[CustPOCInventorySoldObject]] = [:]
