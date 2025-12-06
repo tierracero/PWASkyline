@@ -54,7 +54,7 @@ class CustConcessionView: Div {
     @State var hasAnyActiveElement: Bool = false
 
     //// CustPOCInventorySoldObject.id : isCheked
-    @State var selectedItemsState: [UUID:State<Bool>] = [:]
+    @State var selectedItems: [UUID:Bool] = [:]
     
     /// [ CustPOCInventorySoldObject.id : CustPOCInventorySoldObject ]
     @State var itemsRefrence: [UUID:CustPOCInventorySoldObject] = [:]
@@ -81,10 +81,10 @@ class CustConcessionView: Div {
         .width(250.px)
         .height(31.px)
     
-    lazy var productDiv = Div()
+    lazy var productContainer = TBody()
 
-    lazy var bodegaDiv = Div()
-    
+    lazy var bodegaContainer = Div()
+        
     @State var sideView: SideView = .incomingView
     
     @State var sideViewSelectIsHiden: Bool = true
@@ -169,15 +169,38 @@ class CustConcessionView: Div {
                             
                             Div().clear(.both).height(7.px)
                             
-                            Div {
-                                self.productDiv
-                                self.bodegaDiv
+                            Div{
+
+                                Table {
+
+                                    THead {
+                                        Tr{
+                                            //
+                                            Td("")
+                                            Td("")
+                                            Td("POC/SKU/UPC")
+                                            Td("Marca")
+                                            Td("Modelo")
+                                            Td("Nombre")
+                                            Td("Unis.")
+                                            Td("Costo")
+                                            Td("")
+                                        }
+                                    }
+
+                                    self.productContainer
+
+                                }
+                                .width(100.percent)
+
+                                self.bodegaContainer
+
                             }
                             .custom("height", "calc(100% - 150px)")
                             .class(.roundDarkBlue)
                             .padding(all: 3.px)
-                            .overflow(.auto)
-                            
+                            .overflow(.auto)                            
+
                             Div().clear(.both).height(12.px)
 
                             Div{
@@ -593,7 +616,7 @@ class CustConcessionView: Div {
                                                 
                                             }
 
-                                            self.bodegaDiv.appendChild(view)
+                                            self.bodegaContainer.appendChild(view)
 
                                             self.bodegaRefrence[id] = view
                                             
@@ -705,7 +728,7 @@ class CustConcessionView: Div {
         hasAnyActiveElement = ( !items.isEmpty || !bodegas.isEmpty)
         
         // MARK:  porceess CURRENT INVENTORIE items
-        self.processRecrenceItems()
+        self.processRefrenceItems()
 
         // MARK: process DOCUMENTS
 
@@ -847,9 +870,9 @@ class CustConcessionView: Div {
 
     }
     
-    func processRecrenceItems(firstLoad: Bool = true){
+    func processRefrenceItems(){
         
-        self.productDiv.innerHTML = ""
+        self.productContainer.innerHTML = ""
         
         itemsPOCRefrence.forEach { pocId, items in
             
@@ -882,121 +905,103 @@ class CustConcessionView: Div {
             
             @State var itemsCount = "0"
             
-            @State var viewItemsHidden = true
-            
             $itemsCount.listen {
                 self.calculateSelectedItems()
             }
             
-            let table: Table = Table{
-                THead {
-                    Tr{
-                        Td{
-                            InputText($itemsCount)
-                                .textAlign(.right)
-                                .onKeyDown({ tf, event in
-                                    
-                                    print(event.key)
-                                    
-                                    guard let _ = Float(event.key) else {
-                                        if !ignoredKeys.contains(event.key) {
-                                            event.preventDefault()
-                                        }
-                                        return
-                                    }
-                                })
-                                .onFocus { tf in
-                                    tf.select()
-                                }
-                                .width(50)
-                                .onBlur { tf, _ in
-                                    
-                                    items.forEach { item in
-                                        self.selectedItemsState[item.id]?.wrappedValue = false
-                                    }
-                                    
-                                    guard var int = Int(tf.text) else {
-                                        return
-                                    }
-                                    
-                                    if int > items.count {
-                                        int = items.count
-                                        itemsCount = int.toString
-                                    }
-                                    
-                                    items.forEach { item in
-                                        
-                                        if int <= 0 {
-                                            return
-                                        }
-                                        
-                                        self.selectedItemsState[item.id]?.wrappedValue = true
-                                        
-                                        int -= 1
-                                        
-                                    }
-                                    
-                                    self.calculateSelectedItems()
-                                    
-                                }
+            let row: Tr = Tr {
+                InputText($itemsCount)
+                    .textAlign(.right)
+                    .onKeyDown({ tf, event in
+                        
+                        print(event.key)
+                        
+                        guard let _ = Float(event.key) else {
+                            if !ignoredKeys.contains(event.key) {
+                                event.preventDefault()
+                            }
+                            return
                         }
-                        Td("POC/SKU/UPC")
-                        Td("Marca")
-                        Td("Modelo")
-                        Td("Nombre")
-                        Td("Unis.")
-                        Td("Costo")
-                        Td{
-                            Img()
-                                .src($viewItemsHidden.map{ $0 ?  "/skyline/media/dropDownClose.png" : "/skyline/media/dropDown.png" })
-                                .class(.iconWhite)
-                                .height(24.px)
-                                .width(24.px)
-                                .onClick {
-                                    viewItemsHidden = !viewItemsHidden
-                                }
+                    })
+                    .onFocus { tf in
+                        tf.select()
+                    }
+                    .width(50)
+                    .onBlur { tf, _ in
+                        
+                        items.forEach { item in
+                            self.c[item.id] = false
                         }
+                        
+                        guard var int = Int(tf.text) else {
+                            return
+                        }
+                        
+                        if int > items.count {
+                            int = items.count
+                            itemsCount = int.toString
+                        }
+                        
+                        items.forEach { item in
+                            
+                            if int <= 0 {
+                                return
+                            }
+                            
+                            self.selectedItems[item.id] = true
+                            
+                            int -= 1
+                            
+                        }
+                        
+                        self.calculateSelectedItems()
+                        
                     }
-                    Tr{
-                        Td{
-                            Img()
-                                .src(avatar)
-                                .cursor( { url.isEmpty ? .default : .pointer }())
-                                .height(28.px)
-                                .width(28.px)
-                                .onClick {
-                                    
-                                    if url.isEmpty {
-                                        return
-                                    }
-                                    
-                                    addToDom(MediaViewer(
-                                        relid: nil,
-                                        type: .product,
-                                        url: url,
-                                        files: [.init(
-                                            fileId: nil,
-                                            file: mainAvatar,
-                                            avatar: mainAvatar,
-                                            type: .image
-                                        )],
-                                        currentView: 0
-                                    ))
-                                }
-                        }.align(.center)
-                        Td(poc?.upc ?? "")
-                        Td(poc?.brand ?? "")
-                        Td(poc?.model ?? "")
-                        Td(poc?.name ?? "")
-                        Td(items.count.toString)
-                        Td(total.formatMoney)
-                            .align(.center)
-                            .colSpan(2)
-                    }
+                Td{
+                    Img()
+                        .src(avatar)
+                        .cursor( { url.isEmpty ? .default : .pointer }())
+                        .height(28.px)
+                        .width(28.px)
+                        .onClick {
+                            
+                            if url.isEmpty {
+                                return
+                            }
+                            
+                            addToDom(MediaViewer(
+                                relid: nil,
+                                type: .product,
+                                url: url,
+                                files: [.init(
+                                    fileId: nil,
+                                    file: mainAvatar,
+                                    avatar: mainAvatar,
+                                    type: .image
+                                )],
+                                currentView: 0
+                            ))
+                        }
+                }.align(.center)
+                Td(poc?.upc ?? "")
+                Td(poc?.brand ?? "")
+                Td(poc?.model ?? "")
+                Td(poc?.name ?? "")
+                Td(items.count.toString)
+                Td(total.formatMoney)
+                    .align(.center)
+                    .colSpan(2)
+                Td{
+                    Img()
+                        .src("/skyline/media/maximizeWindow.png")
+                        .class(.iconWhite)
+                        .height(24.px)
+                        .width(24.px)
+                        .onClick {
+                            
+                        }
                 }
             }
-            .width(100.percent)
-            .color(.white)
             .hidden($codeFilter.map{
                 
                 guard let upc = poc?.upc.lowercased() else {
@@ -1031,7 +1036,7 @@ class CustConcessionView: Div {
                 
                 return true
             })
-            
+            /*
             let tableBody = TBody ().hidden($viewItemsHidden)
             
             items.forEach { item in
@@ -1040,7 +1045,7 @@ class CustConcessionView: Div {
                 
                 @State var soldPrice: Int64? = item.soldPrice
                 
-                self.selectedItemsState[item.id] = $isSelected
+                self.selectedItems[item.id] = $isSelected
                 
                 tableBody.appendChild(
                     Tr{
@@ -1111,8 +1116,8 @@ class CustConcessionView: Div {
             }
             
             table.appendChild(tableBody)
-            
-            self.productDiv.appendChild(table)
+            */
+            self.productContainer.appendChild(row)
             
         }
 
@@ -1157,7 +1162,7 @@ class CustConcessionView: Div {
                                                 
             }
 
-            bodegaDiv.appendChild(view)
+            bodegaContainer.appendChild(view)
 
             bodegaRefrence[bodega.id] = view
             
@@ -1181,9 +1186,9 @@ class CustConcessionView: Div {
         
         var soldPrices: [Int64] = []
         
-        selectedItemsState.forEach { itemId, state in
+        selectedItems.forEach { itemId, state in
             
-            if state.wrappedValue {
+            if state {
                 
                 guard let item = itemsRefrence[itemId] else {
                     return
@@ -1339,7 +1344,7 @@ class CustConcessionView: Div {
         
         var hasError = false
         
-        selectedItemsState.forEach { itemId, state in
+        selectedItems.forEach { itemId, state in
             if state.wrappedValue {
                 
                 guard let item = itemsRefrence[itemId] else {
@@ -1428,7 +1433,7 @@ class CustConcessionView: Div {
          
         totalItemAmount = 0
         
-        var newSelectedItemsState: [UUID:State<Bool>] = selectedItemsState
+        var newSelectedItems: [UUID:State<Bool>] = selectedItems
         
         var newItemsRefrence: [UUID:CustPOCInventorySoldObject] = itemsRefrence
         
@@ -1450,7 +1455,7 @@ class CustConcessionView: Div {
         }
         
         ids.forEach { id in
-            newSelectedItemsState.removeValue(forKey: id)
+            newSelectedItems.removeValue(forKey: id)
             newItemsRefrence.removeValue(forKey: id)
         }
         
@@ -1458,28 +1463,9 @@ class CustConcessionView: Div {
 
         itemsPOCRefrence = newItemsPOCRefrence
         
-        selectedItemsState = newSelectedItemsState
+        selectedItems = newSelectedItems
         
-        processRecrenceItems( firstLoad: false )
-    }
-    
-    /// This function adds to UI items that where proceed in
-    func addItemsToConcession(items: [CustPOCInventorySoldObject]){
-
-        items.forEach { item in
-
-            itemsRefrence[item.id] = item
-
-            if let _ = self.itemsPOCRefrence[item.POC] {
-                self.itemsPOCRefrence[item.POC]?.append(item)
-            }
-            else {
-                self.itemsPOCRefrence[item.POC] = [item]
-            }
-        }
-
-        processRecrenceItems(firstLoad: false)
-
+        processRefrenceItems()
     }
     
     func moveItemsTo() {
@@ -1488,7 +1474,7 @@ class CustConcessionView: Div {
         
         var hasError = false
         
-        selectedItemsState.forEach { itemId, state in
+        selectedItems.forEach { itemId, state in
             if state.wrappedValue {
                 
                 guard let item = itemsRefrence[itemId] else {
@@ -1529,7 +1515,28 @@ class CustConcessionView: Div {
 
             self.removeItemsFromConcession(ids: items.map(\.id) )
 
-            self.processRecrenceItems(firstLoad: false)
+            /// [ CustPOCInventorySoldObject.POC : [CustPOCInventorySoldObject] ]
+            var itemsPOCRefrence: [UUID:[CustPOCInventorySoldObject]] = [:]
+
+            // Remove items
+            // pocId, [itema]
+            self.itemsPOCRefrence.forEach { pocId, items in
+
+                var newItems: [CustPOCInventorySoldObject] = []
+
+                items.forEach { item in
+                    if !itemIds.contains(item.id) {
+                        newItems.append(item)
+                    }
+                }
+
+                itemsPOCRefrence[pocId] = newItems
+                
+            }
+            
+            self.itemsPOCRefrence = itemsPOCRefrence
+
+            self.processRefrenceItems()
 
             // MARK: Top level ciontainer, transition 
             guard let to else {
