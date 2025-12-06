@@ -870,7 +870,7 @@ class CustConcessionView: Div {
 
     }
     
-    func processRefrenceItems(){
+    func processRefrenceItems(firstLoad: Bool = true){
         
         self.productContainer.innerHTML = ""
         
@@ -1465,7 +1465,7 @@ class CustConcessionView: Div {
         
         selectedItems = newSelectedItems
         
-        processRefrenceItems()
+        processRefrenceItems(firstLoad: false)
     }
     
     func moveItemsTo() {
@@ -1536,7 +1536,7 @@ class CustConcessionView: Div {
             
             self.itemsPOCRefrence = itemsPOCRefrence
 
-            self.processRefrenceItems()
+            self.processRefrenceItems(firstLoad: false)
 
             // MARK: Top level ciontainer, transition 
             guard let to else {
