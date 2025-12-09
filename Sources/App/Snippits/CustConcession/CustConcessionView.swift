@@ -175,7 +175,6 @@ class CustConcessionView: Div {
 
                                     THead {
                                         Tr{
-                                            //
                                             Td("")
                                             Td("")
                                             Td("POC/SKU/UPC")
@@ -910,7 +909,9 @@ class CustConcessionView: Div {
             }
             
             let row: Tr = Tr {
-                InputText($itemsCount)
+                Td{
+
+                    InputText($itemsCount)
                     .textAlign(.right)
                     .onKeyDown({ tf, event in
                         
@@ -957,6 +958,8 @@ class CustConcessionView: Div {
                         self.calculateSelectedItems()
                         
                     }
+               
+                }
                 Td{
                     Img()
                         .src(avatar)
