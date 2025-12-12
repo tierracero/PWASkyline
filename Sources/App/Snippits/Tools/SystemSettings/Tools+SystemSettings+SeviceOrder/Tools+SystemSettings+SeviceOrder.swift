@@ -3723,11 +3723,15 @@ extension ToolsView.SystemSettings {
                 return
             }
             
+            guard let saleSerialization = SerializationSequenceType(rawValue: saleSerialization) else {
+                showError(.campoInvalido, "Error al establecer SERIALIZACION DE VENTAS. Contacte a Soporte TC")
+                return
+            }
+
             guard let orderSerialization = SerializationSequenceType(rawValue: orderSerialization) else {
                 showError(.campoInvalido, "Error al establecer SERIALIZACION DE ORDENES. Contacte a Soporte TC")
                 return
             }
-            
             
             guard let fiscalSerialization = SerializationSequenceType(rawValue: fiscalSerialization) else {
                 showError(.campoInvalido, "Error al establecer SERIALIZACION DE FACTURAS. Contacte a Soporte TC")
@@ -4108,7 +4112,8 @@ extension ToolsView.SystemSettings {
                 creditRequisitObject: creditRequisitObject,
                 rewardsPrograme: rewardsPrograme,
                 orderSerialization: orderSerialization,
-                fiscalSerialization: fiscalSerialization
+                fiscalSerialization: fiscalSerialization,
+                saleSerialization: saleSerialization
             )
             
             let configContactTags = ConfigContactTags(
