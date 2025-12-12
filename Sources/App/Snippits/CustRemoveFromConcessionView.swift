@@ -1449,6 +1449,7 @@ class CustRemoveFromConcessionView: Div {
                     accountid: self.account.id,
                     accountFolio: self.account.folio,
                     accountName: "\(self.account.fiscalRfc) \(self.account.fiscalRegime)",
+                    accountMobile: self.account.mobile,
                     subTotal: total.formatMoney,
                     payment: total.formatMoney,
                     change: "0",

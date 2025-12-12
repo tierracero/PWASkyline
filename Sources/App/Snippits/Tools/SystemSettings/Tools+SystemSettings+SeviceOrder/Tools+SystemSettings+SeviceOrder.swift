@@ -313,12 +313,15 @@ extension ToolsView.SystemSettings {
         /// ConfirmationMode required, recomended, optinal
         @State var newAccountCloseInscriptionMode: String = ConfirmationMode.optional.rawValue
         
-        /// The folio creation folio sequence type
+        /// The order creation folio sequence type
         /// SerializationSequenceType
         @State var orderSerialization: String = SerializationSequenceType.sequence.rawValue
         
+        /// The sale creation folio sequence type
+        /// SerializationSequenceType
+        @State var saleSerialization: String = SerializationSequenceType.sequence.rawValue
         
-        /// The folio creation folio sequence type
+        /// The fical document creation folio sequence type
         /// SerializationSequenceType
         @State var fiscalSerialization: String = SerializationSequenceType.sequence.rawValue
         
@@ -484,12 +487,14 @@ extension ToolsView.SystemSettings {
                 
             })
             
-        // orderSerialization: String =
-        
+        lazy var saleSerializationSelect = Select(self.$saleSerialization)
+            .class(.textFiledBlackDark)
+            .width(95.percent)
+
         lazy var orderSerializationSelect = Select(self.$orderSerialization)
             .class(.textFiledBlackDark)
             .width(95.percent)
-        
+
         lazy var fiscalSerializationSelect = Select(self.$fiscalSerialization)
             .class(.textFiledBlackDark)
             .width(95.percent)
@@ -1241,7 +1246,22 @@ extension ToolsView.SystemSettings {
                 ///
                 Div{
                     Div{
-                        Label("Serialozacion de Ordens")
+                        Label("Serializacion de Ventas")
+                            .color(.lightGray)
+                    }
+                    .class(.oneHalf)
+                    Div{
+                        self.saleSerializationSelect
+                    }
+                    .class(.oneHalf)
+                }
+                Div().clear(.both).height(7.px)
+
+                
+                ///
+                Div{
+                    Div{
+                        Label("Serializacion de Ordens")
                             .color(.lightGray)
                     }
                     .class(.oneHalf)
@@ -1256,7 +1276,7 @@ extension ToolsView.SystemSettings {
                 ///
                 Div{
                     Div{
-                        Label("Serialozacion de Facturas")
+                        Label("Serializacion de Facturas")
                             .color(.lightGray)
                     }
                     .class(.oneHalf)
@@ -2882,6 +2902,9 @@ extension ToolsView.SystemSettings {
             }
             
             SerializationSequenceType.allCases.forEach { item in
+                saleSerializationSelect.appendChild(
+                    Option(item.description).value(item.rawValue)
+                )
                 orderSerializationSelect.appendChild(
                     Option(item.description).value(item.rawValue)
                 )
@@ -3460,6 +3483,8 @@ extension ToolsView.SystemSettings {
             
             self.creditRequisitObject = configStoreProcessing.creditRequisitObject
             
+            self.saleSerialization = configStoreProcessing.saleSerialization.rawValue
+
             self.orderSerialization = configStoreProcessing.orderSerialization.rawValue
             
             self.fiscalSerialization = configStoreProcessing.fiscalSerialization.rawValue

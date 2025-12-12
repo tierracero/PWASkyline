@@ -1817,7 +1817,7 @@ extension ProductManagerView.AuditView {
             
             loadingView(show: true)
             
-            print("🟢  type: \(type.rawValue)")
+            print("🟢  type: \(type.rawValue)") 
 
             switch type {
             case .general:
@@ -1883,7 +1883,8 @@ extension ProductManagerView.AuditView {
             catchItems.append(contentsOf: nocodeRefrence)
 
             let tableHeader: [String] = [
-                "POC/SKU/UPC Nombre Marca",
+                "POC/SKU/UPC",
+                "Nombre Marca",
                 "Modelo",
                 "DiaZero",
                 "Mas Antiguo",
@@ -1926,7 +1927,8 @@ extension ProductManagerView.AuditView {
                 }
                 
                 let row: [String] = [
-                        "\(poc?.upc ?? "N/D"),\(poc?.name ?? "N/D"),\(poc?.brand ?? "N/D")",
+                        "\(poc?.upc ?? "N/D")",
+                        "\(poc?.name ?? "N/D"),\(poc?.brand ?? "N/D")",
                         poc?.model ?? "N/D",
                         item.zeroDay?.toString ?? "---",
                         oldestItem,
@@ -1947,6 +1949,7 @@ extension ProductManagerView.AuditView {
             }
             
             let row:[String] = [
+                "",
                 "",
                 "",
                 "",
@@ -2033,7 +2036,8 @@ extension ProductManagerView.AuditView {
             }
             
             let tableHeader: [String] = [
-                "POC/SKU/UPC | Nombre | Marca",
+                "POC/SKU/UPC",
+                "Nombre | Marca",
                 "Modelo",
                 "DiaZero",
                 "Mas Antig.",
@@ -2121,18 +2125,19 @@ extension ProductManagerView.AuditView {
                 }
 
                 let row: [String] = [
-                        "\(poc?.upc ?? "N/D") \(poc?.name ?? "") \(poc?.brand ?? "")".purgeSpaces,
-                        "\(poc?.model ?? "N/D")",
-                        "\(item.zeroDay?.toString ?? "---")",
-                        "\(oldestItem)",
-                        "\(newestItem)",
-                        "\(item.items.count.toString)",
-                        "\(_costSubTotal.formatMoney)",
-                        "\(_costTaxTrasladados.formatMoney)",
-                        "\(itemCostTotal.formatMoney)",
-                        "\(_priceSubTotal.formatMoney)",
-                        "\(_priceTaxTrasladados.formatMoney)",
-                        "\(itemPriceTotal.formatMoney)"
+                    "\(poc?.upc)",
+                    "\(poc?.name ?? "") \(poc?.brand ?? "")".purgeSpaces,
+                    "\(poc?.model ?? "N/D")",
+                    "\(item.zeroDay?.toString ?? "---")",
+                    "\(oldestItem)",
+                    "\(newestItem)",
+                    "\(item.items.count.toString)",
+                    "\(_costSubTotal.formatMoney)",       
+                    "\(_costTaxTrasladados.formatMoney)",
+                    "\(itemCostTotal.formatMoney)",
+                    "\(_priceSubTotal.formatMoney)",
+                    "\(_priceTaxTrasladados.formatMoney)",
+                    "\(itemPriceTotal.formatMoney)"
                 ]
 
                 tableBody.append(row)
@@ -2163,12 +2168,10 @@ extension ProductManagerView.AuditView {
                     "",
                     "",
                     "",
-                    "",
                     "\(costSubTotal.formatMoney)",
                     "\(costTaxTotal.formatMoney)",
                     "\(storeCostTotal.formatMoney)",
                     "\(priceSubTotal.formatMoney)",
-
                     "\(priceTaxTotal.formatMoney)",
                     "\(storePriceTotal.formatMoney)"
                 ]
@@ -2193,7 +2196,8 @@ extension ProductManagerView.AuditView {
         func downloadBySalesConcession(type: DocumentType, name: String, item: [API.custPOCV1.AuditObject], title: String) {
 
             let tableHeader: [String] = [
-                "POC/SKU/UPC | Nombre | Marca",
+                "POC/SKU/UPC",
+                "Nombre | Marca",
                 "Modelo",
                 "DiaZero",
                 "Mas Antig.",
@@ -2312,7 +2316,8 @@ extension ProductManagerView.AuditView {
                 }
                 
                 let row: [String] = [
-                        "\(poc?.upc ?? "N/D") \(poc?.name ?? "") \(poc?.brand ?? "")".purgeSpaces,
+                        "\(poc?.upc ?? "N/D")",
+                        "\(poc?.name ?? "") \(poc?.brand ?? "")".purgeSpaces,
                         poc?.model ?? "N/D",
                         item.zeroDay?.toString ?? "---",
                         oldestItem,
@@ -2355,6 +2360,7 @@ extension ProductManagerView.AuditView {
                     "",
                     "",
                     "",
+                    "",
                     costSubTotal.formatMoney,
                     costTaxTotal.formatMoney,
                     storeCostTotal.formatMoney,
@@ -2383,7 +2389,8 @@ extension ProductManagerView.AuditView {
         func downloadByConcession(type: DocumentType, name: String, item: [API.custPOCV1.AuditObject], title: String) {
             
             let tableHeader: [String] = [
-                "POC/SKU/UPC | Nombre | Marca",
+                "POC/SKU/UPC",
+                "Nombre | Marca",
                 "Modelo",
                 "DiaZero",
                 "Mas Antig.",
@@ -2453,7 +2460,8 @@ extension ProductManagerView.AuditView {
                 }
 
                 let row: [String] =  [
-                    "\(poc?.upc ?? "") \(poc?.name ?? "") \(poc?.brand ?? "")".purgeSpaces,
+                    "\(poc?.upc ?? "")",
+                    "\(poc?.name ?? "") \(poc?.brand ?? "")".purgeSpaces,
                     poc?.model ?? "",
                     item.zeroDay?.toString ?? "---",
                     oldestItem,
@@ -2481,6 +2489,7 @@ extension ProductManagerView.AuditView {
                 "",
                 "",
                 "",
+                "",
                 storeUnitsTotal.toString,
                 storeCostTotal.formatMoney,
                 storePriceTotal.formatMoney,
@@ -2493,7 +2502,7 @@ extension ProductManagerView.AuditView {
             switch type {
                 case .csv:
             
-                _ = JSObject.global.download!( name, contents)
+                _ = JSObject.global.download!( "\(name).cvs", contents)
 
                 case .pdf:
                 

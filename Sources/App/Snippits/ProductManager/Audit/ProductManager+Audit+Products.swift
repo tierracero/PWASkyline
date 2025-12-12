@@ -732,7 +732,8 @@ extension ProductManagerView.AuditView {
             var name = ""
             
             let tableHeader: [String] = [
-                "POC/SKU/UPC | Nombre | Marca",
+                "POC/SKU/UPC",
+                "Nombre | Marca",
                 "Modelo",
                 "Costo",
                 "Precio",
@@ -807,8 +808,7 @@ extension ProductManagerView.AuditView {
                 contents += row.map{ $0.replace(from: ",", to: "") }.joined(separator: ",") +  "\n"
     
             }
-            
-            
+                  
             let costTaxSI = calcSubTotal(
                 substractedTaxCalculation: true,
                 units: 100 * 10000,

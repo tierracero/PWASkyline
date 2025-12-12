@@ -8,6 +8,7 @@
 import TCFundamentals
 import Foundation
 import Web
+import XMLHttpRequest
 
 extension SalePointView {
     
@@ -271,7 +272,9 @@ extension SalePointView {
                                 Span("Ticket")
                             }
                             .class(.uibtnLargeOrange)
+                            .marginRight(12.px)
                             .marginTop(0.px)
+                            .float(.left)
                             .onClick {
                                 
                                 if configStore.printPdv.document == .miniprinter {
@@ -293,6 +296,27 @@ extension SalePointView {
                                 }
                                 
                             }
+                    
+                            Div{
+                                
+                                Img()
+                                    .src("/skyline/media/whatsapp.png")
+                                    .class(.iconWhite)
+                                    .marginRight(7.px)
+                                    .cursor(.pointer)
+                                    .height(18.px)
+                                Span("Enviar")
+                            }
+                            .class(.uibtnLargeOrange)
+                            .marginTop(0.px)
+                            .float(.left)
+                            .onClick {
+                                
+                                self.sendSaleByMessage()  
+                                
+                            }
+                        
+
                         }
                         
                     }
@@ -1154,5 +1178,102 @@ extension SalePointView {
             
             addToDom(view)
         }
+
+        func sendSaleByMessage(){
+
+            let view = ConfirmMobilePhone(term: self.custAcct?.mobile ?? "" ){ mobile in
+
+
+                loadingView(show: true)
+
+                guard let custSale = self.custSale  else {
+                    showError(.errorGeneral, "No se localizo venta")
+                    return
+                }
+
+                let url = baseAPIUrl("https://tierracero.com/dev/skyline/api.php") +
+                        "&ie=sendPDVSale" +
+                        "&id=" + (custSale.id.uuidString) + 
+                        "&firstName=CLIENTE" +
+                        "&mobile=" + mobile
+
+                let xhr = XMLHttpRequest()
+                
+                xhr.open(method: "POST", url: url)
+                
+                xhr.setRequestHeader("Accept", "application/json")
+                    .setRequestHeader("Content-Type", "application/json")
+                    .setRequestHeader("AppName", applicationName)
+                    .setRequestHeader("AppVersion", SkylineWeb().version.description)
+                
+                if let jsonData = try? JSONEncoder().encode(APIHeader(
+                    AppID: thisAppID,
+                    AppToken: thisAppToken,
+                    url: custCatchUrl,
+                    user: custCatchUser,
+                    mid: custCatchMid,
+                    key: custCatchKey,
+                    token: custCatchToken,
+                    tcon: .web, 
+                    applicationType: .customer
+                )){
+                    if let str = String(data: jsonData, encoding: .utf8) {
+                        let utf8str = str.data(using: .utf8)
+                        if let base64Encoded = utf8str?.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0)) {
+                            xhr.setRequestHeader("Authorization", base64Encoded)
+                        }
+                    }
+                }
+                
+                xhr.send()
+                
+                xhr.onError {
+                    print("error")
+                    print(xhr.responseText ?? "")
+                }
+                
+                xhr.onLoad {
+
+                    if let data = xhr.responseText?.data(using: .utf8) {
+
+                        print("🟢  sendPDVSale")
+
+                        print(String(data: data, encoding: .utf8) ?? "N/A")
+
+                    }
+
+                    /*
+                    if let data = xhr.responseText?.data(using: .utf8) {
+                        do {
+                            let resp = try JSONDecoder().decode(MailAPIResponset<[MailBox]>.self, from: data)
+                            callback(resp)
+                        } catch  {
+                            print("📩  📩  📩  📩  📩  📩  📩  \(#function)")
+                            print(error)
+                            print(xhr.responseText!)
+                            callback(nil)
+                        }
+                    }
+                    else{
+                        callback(nil)
+                    }
+                    */
+
+                    loadingView(show: false)
+
+                    showSuccess(.operacionExitosa, "Enviado")
+                    //showSuccess(.operacionExitosa, "Elemento Enviado")
+                }
+            
+
+                
+
+            }
+
+        addToDom(view)
+            
+
+        }
+
     }
 }

@@ -487,11 +487,7 @@ class AnaliticsView: PageController {
             Script()
                 .src("skyline/js/main.js")
                 .type("text/javascript")
-                .onLoad {
-                    
-                }
-            
-        
+                
             Script()
                 .src("https://tierracero.com/dev/core/js/OPayV2.js")
                 .type("text/javascript")

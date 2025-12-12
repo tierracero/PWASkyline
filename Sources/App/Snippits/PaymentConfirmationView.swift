@@ -29,6 +29,8 @@ class PaymentConfirmationView: Div {
     @State var accountFolio: String?
     
     @State var accountName: String?
+
+    @State var accountMobile: String?
     
     let subTotal: String
     
@@ -45,7 +47,8 @@ class PaymentConfirmationView: Div {
         saleFolio: String,
         accountid: UUID?,
         accountFolio: String?,
-        accountName: String,
+        accountName: String?,
+        accountMobile: String?,
         subTotal: String,
         payment: String,
         change: String,
@@ -57,6 +60,7 @@ class PaymentConfirmationView: Div {
         self.accountid = accountid
         self.accountFolio = accountFolio
         self.accountName = accountName
+        self.accountMobile = accountMobile
         self.subTotal = subTotal
         self.payment = payment
         self.change = change
@@ -296,22 +300,26 @@ class PaymentConfirmationView: Div {
         left(0.px)
         top(0.px)
         
-        if configStore.printPdv.document == .miniprinter {
-            
-            printTicket()
+        if configStore.printPdv.button == .direct {
+
+            if configStore.printPdv.document == .miniprinter {
+                
+                printTicket()
+                
+            }
+            else{
+                
+                let url = baseAPIUrl("https://tierracero.com/dev/skyline/api.php") +
+                "&ie=printPDVSale&id=" + self.saleId.uuidString
+                
+                print(url)
+                
+                _ = JSObject.global.goToURL!(url)
+                
+            }
             
         }
-        else{
-            
-            let url = baseAPIUrl("https://tierracero.com/dev/skyline/api.php") +
-            "&ie=printPDVSale&id=" + self.saleId.uuidString
-            
-            print(url)
-            
-            _ = JSObject.global.goToURL!(url)
-            
-        }
-        
+
     }
     
     func facturar(){
@@ -544,14 +552,7 @@ class PaymentConfirmationView: Div {
     
     func sendSaleByMessage(){
 
-        /*
-        guard accountid != nil else {
-            searchAccount()
-            return
-        }
-        */
-
-        let view = ConfirmMobilePhone(term: "" ){ mobile in
+        let view = ConfirmMobilePhone(term: self.accountMobile ?? "" ){ mobile in
 
 
             loadingView(show: true)
