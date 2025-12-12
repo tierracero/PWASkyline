@@ -256,7 +256,6 @@ class ManageSOCView: Div {
         .custom("width", "calc(100% - 75px)")
         .class(.textFiledBlackDark)
         .placeholder("COUN01")
-        .disabled(true)
         .height(28.px)
         .onFocus { tf in
             tf.select()
@@ -2915,7 +2914,7 @@ class ManageSOCView: Div {
          
             print("x004")
 
-            self.delete(socid)
+            self.delete(socid) 
 
             self.remove()
             

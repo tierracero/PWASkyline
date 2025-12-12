@@ -72,8 +72,10 @@ class CustConcessionView: Div {
     var pocRefrence: [UUID:CustPOCQuick] = [:]
 
     @State var codeFilter: String = ""
+
+    @State var codeFilterListener: String = ""
     
-    lazy var codeFilterField = InputText(self.$codeFilter)
+    lazy var codeFilterField = InputText(self.$codeFilterListener)
         .placeholder("POC/SKU/UPC")
         .class(.textFiledBlackDark)
         .marginRight(7.px)
@@ -677,6 +679,16 @@ class CustConcessionView: Div {
         left(0.px)
         top(0.px)
 
+        $codeFilterListener.listen {
+            let currentString = $0
+            Dispatch.asyncAfter(0.3) {
+                if self.codeFilterListener == currentString {
+                    self.codeFilter =  currentString
+                }
+            }
+        }
+
+
         SideView.allCases.forEach { item in
         
             let view = Div {
@@ -723,7 +735,6 @@ class CustConcessionView: Div {
             }
         }
         
-
         hasAnyActiveElement = ( !items.isEmpty || !bodegas.isEmpty)
         
         // MARK:  porceess CURRENT INVENTORIE items
@@ -866,6 +877,8 @@ class CustConcessionView: Div {
         self.outItems = outItems
 
         self.mermItems = mermItems
+
+        
 
     }
     

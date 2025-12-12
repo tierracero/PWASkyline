@@ -137,87 +137,15 @@ extension ToolsView {
             .width(370.px)
             .float(.left)
         
+        var serviceRowRefrence: [ UUID : ServiceItemSOCView ] = [:]
             
+        lazy var serviceContiner = Div()
+
         lazy var rightView = Div{
             
             Div{
                 
-                ForEach(self.$services){ soc in
-                    
-                    ServiceItemSOCView(soc: soc) { update in
-                        
-                        let view = ManageSOCView(
-                            type: .dep,
-                            levelid: self.selectedDepatment?.id,
-                            levelName: self.selectedDepatment?.name ?? "",
-                            socid: soc.id,
-                            titleText: "",
-                            quickView: false
-                        ) { socid, name, price, avatar in
-                            update(name, "", price, avatar)
-                            
-                            if let depid = self.selectedDepatment?.id {
-                                
-                                if let refs = self.sericesRefrences[depid] {
-                                    
-                                    var new: [CustSOCQuick] = []
-                                    
-                                    refs.forEach { _soc in
-                                        ///  self.sericesRefrences[levelid]?.append(soc)
-                                        if _soc.id == soc.id {
-                                            new.append(CustSOCQuick(
-                                                id: soc.id,
-                                                name: name,
-                                                pseudoName: name.pseudo,
-                                                pricea: price,
-                                                priceb: soc.pricea,
-                                                pricec: soc.priceb,
-                                                avatar: avatar,
-                                                status: soc.status
-                                            ))
-                                        }
-                                        else{
-                                            new.append(_soc)
-                                        }
-                                    }
-                                    
-                                    self.sericesRefrences[depid] = new
-                                    
-                                }
-                                
-                            }
-                            
-                        } created: { soc in
-                            /// this is being edited  wont be added
-                        } delete: { id in
-
-                            print(" 🟢  🗳️  delete 001")
-
-                            var services: [CustSOCQuick] = []
-
-                            self.services.forEach { service in
-                                
-                                if service.id == id {
-                                    return
-                                }
-
-                                services.append(service)
-
-                            }
-
-                            self.services = services
-                                
-                            if let depId = self.selectedDepatment?.id {
-                                self.sericesRefrences[depId]  = services
-                            }
-                            
-                        }
-                        
-                        addToDom(view)
-                        
-                    }
-                    
-                }
+                self.serviceContiner
                 .hidden(self.$services.map{ $0.isEmpty })
                 
                 Table().noResult(label: "Agregue un nuevo servicio.")
@@ -309,8 +237,13 @@ extension ToolsView {
                             ) { socid, name, price, avatar in
                                 // No row to update since new product
                             } created: { soc in
+
                                 self.services.append(soc)
+
                                 self.sericesRefrences[levelid]?.append(soc)
+
+                                self.addServiceItem(soc: soc, levelid: levelid)
+                                
                             } delete: { id in
                                 
                                 print(" 🟢  🗳️  delete 002")
@@ -327,8 +260,13 @@ extension ToolsView {
 
                                 }
 
+                                if let depId = self.selectedDepatment?.id {
+                                    self.sericesRefrences[depId]  = services
+                                }
+                                
                                 self.services = services
 
+                                self.serviceRowRefrence[id]?.remove()
 
                             }
 
@@ -382,7 +320,7 @@ extension ToolsView {
                 
                 self.deps = data
             }
-            
+
         }
         
         override public func didAddToDOM() {
@@ -400,6 +338,11 @@ extension ToolsView {
             if let svcs = sericesRefrences[dep.id] {
                 if svcs.count > 0 {
                     services = svcs
+                    serviceContiner.innerHTML = ""
+                    svcs.forEach { svc in
+                        addServiceItem(soc: svc, levelid: dep.id)
+                    }
+
                     return
                 }
             }
@@ -430,9 +373,107 @@ extension ToolsView {
                 self.sericesRefrences[dep.id] = data
                 
                 self.services = data
-                
+                self.serviceContiner.innerHTML = ""
+                data.forEach { svc in
+                    self.addServiceItem(soc: svc, levelid: dep.id)
+                }
+                    
             }
         }
+
+        func addServiceItem(soc: CustSOCQuick, levelid: UUID) {
+            
+            let view = ServiceItemSOCView(soc: soc) { update in
+                
+                let view = ManageSOCView(
+                    type: .dep,
+                    levelid: levelid,
+                    levelName: self.selectedDepatment?.name ?? "",
+                    socid: soc.id,
+                    titleText: "",
+                    quickView: false
+                ) { socid, name, price, avatar in
+
+                    update(name, "", price, avatar)
+                    
+                    if let depid = self.selectedDepatment?.id {
+                        
+                        if let refs = self.sericesRefrences[depid] {
+                            
+                            var new: [CustSOCQuick] = []
+                            
+                            refs.forEach { _soc in
+                                ///  self.sericesRefrences[levelid]?.append(soc)
+                                if _soc.id == soc.id {
+                                    new.append(CustSOCQuick(
+                                        id: soc.id,
+                                        name: name,
+                                        pseudoName: name.pseudo,
+                                        pricea: price,
+                                        priceb: soc.pricea,
+                                        pricec: soc.priceb,
+                                        avatar: avatar,
+                                        status: soc.status
+                                    ))
+                                }
+                                else{
+                                    new.append(_soc)
+                                }
+                            }
+                            
+                            self.services = new
+
+                            self.sericesRefrences[depid] = new
+                            
+                        }
+                        
+                    }
+                    
+                } created: { soc in
+
+                    self.services.append(soc)
+
+                    self.sericesRefrences[levelid]?.append(soc)
+
+                    self.addServiceItem(soc: soc, levelid: levelid)
+
+                } delete: { id in
+
+                    var services: [CustSOCQuick] = []
+
+                    self.services.forEach { service in
+                        
+                        if service.id == id {
+                            print("🚧   no_add")
+                            return
+                        }
+
+                        print("🟢   add")
+
+                        services.append(service)
+
+                    }
+
+                    self.services = services
+                        
+                    if let depId = self.selectedDepatment?.id {
+                        self.sericesRefrences[depId]  = services
+                    }
+
+                    self.serviceRowRefrence[id]?.remove()
+                    
+                }
+                
+                addToDom(view)
+                
+            }
+
+            serviceRowRefrence[soc.id] = view
+
+            serviceContiner.appendChild(view)
+                    
+        }
+
     }
 }
 
