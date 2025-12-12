@@ -82,6 +82,9 @@ class CustConcessionView: Div {
         .float(.right)
         .width(250.px)
         .height(31.px)
+        .onFocus{ tf in
+            tf.select()
+        }
     
     lazy var productContainer = TBody()
 
@@ -681,7 +684,7 @@ class CustConcessionView: Div {
 
         $codeFilterListener.listen {
             let currentString = $0
-            Dispatch.asyncAfter(0.3) {
+            Dispatch.asyncAfter(0.7) {
                 if self.codeFilterListener == currentString {
                     self.codeFilter =  currentString
                 }

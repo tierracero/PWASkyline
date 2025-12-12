@@ -64,7 +64,7 @@ extension CustConcessionView {
         @DOM override var body: DOM.Content {
 
             Div{
-                /// Header
+                // MARK:  Header
                 Div {
                     
                     Img()
@@ -79,52 +79,64 @@ extension CustConcessionView {
                     
                 }
                 
-                Div{
-                    
-                    Span("Seleccione se la siguiente lista")
-                        .color(.gray)
-                    
-                    Div()
-                        .marginBottom(7.px)
-                        .class(.clear)
-                    
-                    self.select
-                    
-                    Div()
-                        .marginBottom(7.px)
-                        .class(.clear)
-                    
+                Div {
+
+                    // MARK:  Item Preview
                     Div{
 
-                        Div("Seleccionar Ubicación")
-                            .class(.uibtnLargeOrange)
-                            .opacity(0.5)
-                            .cursor(.default)
-                            .hidden( self.$selectId.map{  $0 !=  self.bodega?.id } )
-
-                        Div("Mover Productos")
-                            .class(.uibtnLargeOrange)
-                            .hidden( self.$selectId.map{  $0 ==  self.bodega?.id } )
-                            .onClick {
-                                
-                                self.selectNewPlacement()
-                                
-                            }
                     }
-                    .align(.right)
-                    
+                    .width(50.percent)
+                    .float(.left)
+
+                    // MARK:  Bodega seleccion && details
+                    Div{
+
+                        Span("Seleccione de la siguiente lista")
+                            .color(.gray)
+                        
+                        Div()
+                            .marginBottom(7.px)
+                            .class(.clear)
+                        
+                        self.select
+                        
+                        Div()
+                            .marginBottom(7.px)
+                            .class(.clear)
+                        
+                        Div{
+
+                            Div("Seleccionar Ubicación")
+                                .class(.uibtnLargeOrange)
+                                .opacity(0.5)
+                                .cursor(.default)
+                                .hidden( self.$selectId.map{  $0 !=  self.bodega?.id } )
+
+                            Div("Mover Productos")
+                                .class(.uibtnLargeOrange)
+                                .hidden( self.$selectId.map{  $0 ==  self.bodega?.id } )
+                                .onClick {
+                                    
+                                    self.selectNewPlacement()
+                                    
+                                }
+                        }
+                        .align(.right)
+
+
+                    }
+                    .width(50.percent)
+                    .float(.left)
                 }
-                .position(.relative)
-                .overflow(.hidden)
                 
             }
-            .custom("left", "calc(50% - 274px)")
+            .custom("left", "calc(50% - 424px)")
             .custom("top", "calc(50% - 274px)")
             .backgroundColor(.grayBlack)
             .borderRadius(all: 24.px)
             .position(.absolute)
             .padding(all: 12.px)
-            .width(500.px)
+            .width(800.px)
             
         }
         
