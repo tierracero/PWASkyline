@@ -688,7 +688,6 @@ class CustConcessionView: Div {
             }
         }
 
-
         SideView.allCases.forEach { item in
         
             let view = Div {
@@ -877,9 +876,7 @@ class CustConcessionView: Div {
         self.outItems = outItems
 
         self.mermItems = mermItems
-
         
-
     }
     
     func processRefrenceItems(firstLoad: Bool = true){
