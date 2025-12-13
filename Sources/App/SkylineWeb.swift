@@ -15,7 +15,7 @@ public struct SkylineWeb {
 	public private(set) var version: VersionControl = .init(
         mode: .beta,
         major: 0,
-        minor: 17,
+        minor: 18,
         patch: 5
     )
 	

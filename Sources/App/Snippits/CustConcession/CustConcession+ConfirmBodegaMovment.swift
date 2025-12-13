@@ -19,6 +19,8 @@ extension CustConcessionView {
         let bodegas: [CustStoreBodegasQuick]
 
         let selectedItems:[CustPOCInventorySoldObject]
+
+        let pocs:[CustPOCQuick]
         
         private var moveItemsTo: ((
             _ items: [CustPOCInventorySoldObject],
@@ -30,6 +32,7 @@ extension CustConcessionView {
             bodega: CustStoreBodegasQuick?,
             bodegas: [CustStoreBodegasQuick],
             selectedItems: [CustPOCInventorySoldObject],
+            pocs: [CustPOCQuick],
             moveItemsTo: @escaping ((
                 _ items: [CustPOCInventorySoldObject],
                 _ alocatedTo: UUID?
@@ -39,6 +42,7 @@ extension CustConcessionView {
             self.bodega = bodega
             self.bodegas = bodegas
             self.selectedItems = selectedItems
+            self.pocs = pocs
             self.moveItemsTo = moveItemsTo
         }
 
@@ -61,6 +65,10 @@ extension CustConcessionView {
                 .value("")
             }
 
+        lazy var productContainer = TBody()
+
+        var pocRefrence: [UUID:CustPOCQuick] = [:]
+
         @DOM override var body: DOM.Content {
 
             Div{
@@ -80,28 +88,93 @@ extension CustConcessionView {
                 }
                 
                 Div {
-
                     // MARK:  Item Preview
                     Div{
+                        Div {
+                            H3("Productos")
+                                .color(.white)
 
+                                Div()
+                                    .height(7.px)
+                                    .class(.clear)
+
+                                Table {
+                                    THead {
+                                        Tr {
+                                            Td("Unidades")
+                                            Td("UPC")
+                                            Td("Descripcion")
+                                            Td("Total")
+                                        }
+                                    }
+                                    self.productContainer
+                                }
+                            
+                        }
+                        .margin(all: 7.px)
                     }
-                    .width(50.percent)
+                    .width(60.percent)
+                    .overflow(.auto)
                     .float(.left)
 
                     // MARK:  Bodega seleccion && details
                     Div{
 
+                        Div{
+                            
+                            Div{
+                                H3("Unidades:")
+                                .color(.white)
+                            }
+                            .width(50.percent)
+                            .float(.left)
+
+                            Div{
+                                H3(self.selectedItems.count.toString)
+                                .color(.white)
+                            }
+                            .width(50.percent)
+                            .float(.left)
+                            
+                            Div().clear(.both)
+                        }
+
+                        Div()
+                            .height(7.px)
+                            .class(.clear)
+
+                        Div{
+                            Div{
+                                H3("Total:")
+                                .color(.white)
+                            }
+                            .width(50.percent)
+                            .float(.left)
+                            Div{
+                                H3(self.selectedItems.map{ ($0.soldPrice ?? 0) }.reduce(0,+).formatMoney)
+                                .color(.white)
+                            }
+                            .width(50.percent)
+                            .float(.left)
+                            
+                            Div().clear(.both)
+                        }
+
+                        Div()
+                            .height(7.px)
+                            .class(.clear)
+
                         Span("Seleccione de la siguiente lista")
                             .color(.gray)
                         
                         Div()
-                            .marginBottom(7.px)
+                            .height(7.px)
                             .class(.clear)
                         
                         self.select
                         
                         Div()
-                            .marginBottom(7.px)
+                            .height(7.px)
                             .class(.clear)
                         
                         Div{
@@ -123,9 +196,8 @@ extension CustConcessionView {
                         }
                         .align(.right)
 
-
                     }
-                    .width(50.percent)
+                    .width(40.percent)
                     .float(.left)
                 }
                 
@@ -143,6 +215,10 @@ extension CustConcessionView {
         override func buildUI() {
             super.buildUI()
             
+            pocs.forEach { poc in
+                pocRefrence[poc.id] = poc
+            }
+
             self.class(.transparantBlackBackGround)
             position(.absolute)
             height(100.percent)
@@ -163,6 +239,32 @@ extension CustConcessionView {
 
             if let bodega {
                 selectListener  =  bodega.id.uuidString
+            }
+
+            var itemRefrence: [ UUID : [CustPOCInventorySoldObject] ] = [:]
+
+            selectedItems.forEach{ item in
+                if let _ = itemRefrence[item.POC] {
+                    itemRefrence[item.POC]?.append(item)
+                }
+                else {
+                    itemRefrence[item.POC] = [item]
+                }
+            }
+
+            itemRefrence.forEach { pocId, items in 
+
+                guard let data = self.pocRefrence[pocId] else {
+                    return
+                }
+
+                self.productContainer.appendChild(Tr{
+                    Td(items.count.toString)
+                    Td(data.upc)
+                    Td("\(data.name) \(data.model) ")
+                    Td( items.map{ ($0.soldPrice ?? 0) }.reduce(0, +).formatMoney )
+                }) 
+
             }
 
         }

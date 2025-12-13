@@ -1507,6 +1507,8 @@ class CustConcessionView: Div {
         
         var selectedItems:[CustPOCInventorySoldObject] = []
         
+        var pocs: [CustPOCQuick] = []
+    
         var hasError = false
         
         self.selectedItems.forEach { itemId, state in
@@ -1531,11 +1533,20 @@ class CustConcessionView: Div {
             return
         }
 
+        selectedItems.forEach{ item in
+        
+            if let poc = pocRefrence[item.POC] {
+                pocs.append(poc)
+            }
+
+        }
+
         let view = ConfirmBodegaMovment(
             accountId: self.account.id,
             bodega: nil,
             bodegas: self.bodegas,
-            selectedItems: selectedItems
+            selectedItems: selectedItems,
+            pocs: pocs
         ) { items, to  in
 
             Console.clear()

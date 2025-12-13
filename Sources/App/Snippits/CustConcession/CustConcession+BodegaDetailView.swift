@@ -741,6 +741,8 @@ extension CustConcessionView {
         func moveItemsTo() {
             
             var selectedItems:[CustPOCInventorySoldObject] = []
+
+            var pocs: [CustPOCQuick] = []
             
             var hasError = false
             
@@ -755,6 +757,14 @@ extension CustConcessionView {
                 }
             }
             
+            selectedItems.forEach{ item in
+            
+                if let poc = pocRefrence[item.POC] {
+                    pocs.append(poc)
+                }
+
+            }
+
             if hasError {
                 showError(.errorGeneral, "Hay inconsistencias en la peticion, refresque la pantalla e intente de nuevo.")
                 return
@@ -769,7 +779,8 @@ extension CustConcessionView {
                 accountId: self.consetionId,
                 bodega: self.bodega,
                 bodegas: self.bodegas,
-                selectedItems: selectedItems
+                selectedItems: selectedItems,
+                pocs: pocs
             ) { items, to  in
 
                 self.removeItemsFromConcession(ids: items.map( \.id ))
