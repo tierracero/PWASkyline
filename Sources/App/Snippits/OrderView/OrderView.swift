@@ -5194,7 +5194,8 @@ class OrderView: Div {
         formData.append("remoteCamera", false.description)
         
         //xhr.open(method: "POST", url: "https://intratc.co/api/custOrder/v1/saveFile")
-        xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadManager")
+        // xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadManager")
+        xhr.open(method: "POST", url: "http://localhost:8800/api/cust/v1/uploadManager")
         
         xhr.setRequestHeader("Accept", "application/json")
         
