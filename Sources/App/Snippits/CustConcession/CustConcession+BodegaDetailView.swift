@@ -100,7 +100,7 @@ extension CustConcessionView {
                             self.remove()
                         }
                     
-                    H2("Concesión \(self.consetionName) | \(self.bodega.name)")
+                    H2("\(self.consetionName) | \(self.bodega.name)")
                         .color(.lightBlueText)
                         .height(35.px)
                     
@@ -563,6 +563,7 @@ extension CustConcessionView {
                                         }
                                         addToDom(view)
                                     }
+                            
                             }
                             .align(.center)
                             Td($soldPrice.map{ $0?.formatMoney ?? "" })

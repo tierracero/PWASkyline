@@ -648,6 +648,10 @@ extension CustConcessionView {
             left(0.px)
             top(0.px)
 
+            //WebApp.skyline
+
+            //customerServiceProfile.
+
             $kartItems.listen {
                 if $0.isEmpty {
                     self.searchTerm = ""
@@ -788,7 +792,7 @@ extension CustConcessionView {
             
             addToDom(ConfirmationView(
                 type: .yesNo,
-                title: "Agregar Concession Manuel",
+                title: "Agregar Concession Manual",
                 message: "Confirme la marcacia agregada",
                 callback: { isConfirmed, comment in
                     

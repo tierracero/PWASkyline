@@ -817,27 +817,27 @@ class MessageGrid: Div {
         let formData = FormData()
         
         let fileName = safeFileName(name: file.name, to: .webNote, folio: self.folio)
-        
-        print("fileName \(fileName)")
-        
-        formData.append("eventid", view.viewid.uuidString)
-        
-        formData.append("to", ImagePickerTo.webNote.rawValue)
-        
-        formData.append("id", self.orderid.uuidString)
-        
-        formData.append("folio", self.folio)
 
         formData.append("file", file, filename: fileName)
         
-        formData.append("fileName", fileName)
-
-        formData.append("connid", custCatchChatConnID)
-        
-        formData.append("remoteCamera", false.description)
+        print("fileName \(fileName)")
         
         // xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadMedia")
         xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadManager")
+        
+        xhr.setRequestHeader("x-eventid", view.viewid.uuidString)
+        
+        xhr.setRequestHeader("x-to", ImagePickerTo.webNote.rawValue)
+        
+        xhr.setRequestHeader("x-id", self.orderid.uuidString)
+        
+        xhr.setRequestHeader("x-folio", self.folio)
+        
+        xhr.setRequestHeader("x-filename", fileName)
+
+        xhr.setRequestHeader("x-connid", custCatchChatConnID)
+        
+        xhr.setRequestHeader("x-remotecamera", false.description)
         
         xhr.setRequestHeader("Accept", "application/json")
         

@@ -3906,23 +3906,23 @@ class ManagePOC: Div {
         
         let formData = FormData()
         
-        formData.append("eventid", view.viewid.uuidString)
-        
-        formData.append("to", ImagePickerTo.product.rawValue)
-        
-        if let id = self.pocid?.uuidString {
-            formData.append("id", id)
-        }
-        
         formData.append("file", file, filename: fileName)
         
-        formData.append("fileName", fileName)
-        
-        formData.append("connid", custCatchChatConnID)
-        
-        formData.append("remoteCamera", false.description)
-        
         xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadManager")
+        
+        xhr.setRequestHeader("x-eventid", view.viewid.uuidString)
+        
+        xhr.setRequestHeader("x-to", ImagePickerTo.product.rawValue)
+        
+        if let id = self.pocid?.uuidString {
+            xhr.setRequestHeader("x-id", id)
+        }
+        
+        xhr.setRequestHeader("x-filename", fileName)
+        
+        xhr.setRequestHeader("x-connid", custCatchChatConnID)
+        
+        xhr.setRequestHeader("x-remotecamera", false.description)
         
         xhr.setRequestHeader("Accept", "application/json")
         

@@ -1563,6 +1563,8 @@ extension ToolsView.WebPage {
         let fileName =  safeFileName(name: file.name, to: nil, folio: nil)
 
         let formData = FormData()
+
+        formData.append("file", file, filename: fileName)
         
         var to: ImagePickerTo? =  nil
         
@@ -1623,28 +1625,26 @@ extension ToolsView.WebPage {
             return
         }
         
-        formData.append("eventid", view.viewId.uuidString)
+        xhr.setRequestHeader("x-eventid", view.viewId.uuidString)
         
         /// products, service, album, webService... general...
-        formData.append("to", to.rawValue)
+        xhr.setRequestHeader("x-to", to.rawValue)
         
         /// EG: product id
         if let id = toId?.uuidString {
-            formData.append("id", id)
+            xhr.setRequestHeader("x-id", id)
         }
         
         /// EG: webContent -> serviceImgOne
         if let subId {
-            formData.append("subId", subId.rawValue)
+            xhr.setRequestHeader("x-subid", subId.rawValue)
         }
         
-        formData.append("file", file, filename: fileName)
+        xhr.setRequestHeader("x-filename", fileName)
         
-        formData.append("fileName", fileName)
+        xhr.setRequestHeader("x-connid", custCatchChatConnID)
         
-        formData.append("connid", custCatchChatConnID)
-        
-        formData.append("remoteCamera", false.description)
+        xhr.setRequestHeader("x-remotecamera", false.description)
         
         xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadManager")
         
