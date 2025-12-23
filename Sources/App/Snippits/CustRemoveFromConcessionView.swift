@@ -32,13 +32,19 @@ class CustRemoveFromConcessionView: Div {
     /// return, sale(RemoveFromConcessionPayment)
     let isSale: Bool
     
-    let items: [CustPOCInventorySoldObject]
+    @State var items: [CustPOCInventorySoldObject]
     
     let pocRefrence: [UUID:CustPOCQuick]
     
     private var deletedItems: ((
         _ ids: [UUID],
         _ control: CustFiscalInventoryControl?
+    ) -> ())
+
+
+    private var updateItem: ((
+        _ itemId: UUID,
+        _ price: Int64
     ) -> ())
     
     init(
@@ -49,6 +55,10 @@ class CustRemoveFromConcessionView: Div {
         deletedItems: @escaping ((
             _ ids: [UUID],
             _ control: CustFiscalInventoryControl?
+        ) -> ()),
+        updateItem: @escaping ((
+            _ itemId: UUID,
+            _ price: Int64
         ) -> ())
     ) {
         self.account = account
@@ -56,6 +66,7 @@ class CustRemoveFromConcessionView: Div {
         self.pocRefrence = pocRefrence
         self.items = items
         self.deletedItems = deletedItems
+        self.updateItem = updateItem
         
         super.init()
         
@@ -99,6 +110,8 @@ class CustRemoveFromConcessionView: Div {
     @State var profile: FiscalComponents.Profile? = nil
     
     @State var selectFiscalProfileIsHidden: Bool = true
+
+    @State var grandTotal = "-.--"
     
     /// Payment States Inputs START
     lazy var paymentFormsSelect = Select($paymentFormListener)
@@ -533,11 +546,11 @@ class CustRemoveFromConcessionView: Div {
                             
                             Div{
                                 
-                                H2("Total")
+                                H2("Total A")
                                     .color(.white)
                                     .float(.left)
                                 
-                                H2( self.items.map{ ($0.soldPrice ?? 0) }.reduce(0, +).formatMoney )
+                                H2( self.$grandTotal )
                                     .color(.yellowTC)
                                     .float(.right)
                                 
@@ -616,11 +629,11 @@ class CustRemoveFromConcessionView: Div {
                         
                         Div{
                             
-                            H2("Total")
+                            H2("Total B")
                                 .color(.white)
                                 .float(.left)
                             
-                            H2( self.items.map{ ($0.soldPrice ?? 0) }.reduce(0, +).formatMoney )
+                            H2( self.$grandTotal )
                                 .color(.yellowTC)
                                 .float(.right)
                             
@@ -745,7 +758,13 @@ class CustRemoveFromConcessionView: Div {
         width(100.percent)
         left(0.px)
         top(0.px)
+
+        grandTotal = items.map{ ($0.soldPrice ?? 0) }.reduce(0, +).formatMoney 
         
+        $items.listen {
+            self.grandTotal = $0.map{ ($0.soldPrice ?? 0) }.reduce(0, +).formatMoney 
+        }
+
         /// Payment Form Setting
         $paymentFormListener.listen {
         
@@ -840,12 +859,57 @@ class CustRemoveFromConcessionView: Div {
             
             items.forEach { item in
                 
+                @State var viewPrice = (item.soldPrice ?? 0).formatMoney
+
                 tableBody.appendChild(
                     Tr{
-                        Td()
+                        Td {
+
+                            Img()
+                            .src("/skyline/media/maximizeWindow.png")
+                            .class(.iconWhite)
+                            .cursor(.pointer)
+                            .height(18.px)
+                            .onClick {
+
+                                let view = InventoryItemDetailView(itemid: item.id){ price in
+
+                                    viewPrice = price.formatMoney
+
+                                    var items: [CustPOCInventorySoldObject] = []
+
+                                    Console.clear()
+
+                                    self.items.forEach { nitem in
+                                        if item.id == nitem.id {
+
+                                            var nitem = nitem
+
+                                            nitem.soldPrice = price
+
+                                            print(nitem)
+
+                                            items.append(nitem)
+
+                                        }
+                                        else {
+                                            items.append(nitem)
+                                        }
+                                    }
+
+
+                                    self.items = items
+
+                                }
+
+                                addToDom(view)
+
+                            }
+                            
+                        }
                         Td("SERIE:").colSpan(2)
                         Td(item.series).colSpan(3)
-                        Td((item.soldPrice ?? 0).formatMoney)
+                        Td($viewPrice)
                             .align(.center)
                             .colSpan(2)
                         

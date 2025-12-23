@@ -422,20 +422,6 @@ class MessageObject: Div {
                         self.mediaImage
                             .width(100.percent)
                             .cursor(.pointer)
-                            .onClick {
-                                addToDom(MediaViewer(
-                                    relid: self.relid,
-                                    type: self.type,
-                                    url: "https://\(custCatchUrl)/fileNet/",
-                                    files: [.init(
-                                        fileId: nil,
-                                        file: self.note.activity,
-                                        avatar: self.note.activity,
-                                        type: .image
-                                    )],
-                                    currentView: 0
-                                ))
-                            }
                     }
                     .width(70.percent)
                     .float(.right)

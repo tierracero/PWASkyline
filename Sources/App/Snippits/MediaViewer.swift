@@ -101,24 +101,7 @@ class MediaViewer: Div {
             
             Div{
                 Div{
-                    
-                    Span{
-                        
-                        Img()
-                            .src("/skyline/media/cross.png")
-                            .marginRight(7.px)
-                            .height(18.px)
-                        
-                        Span("Eliminar")
-                            .color(.white)
-                        
-                    }
-                    .cursor(.pointer)
-                    .float(.left)
-                    .onClick {
-                        self.deleteMedia()
-                    }
-                    
+
                     Img()
                         .src("/skyline/media/rotateCounterClockwise.png")
                         .marginRight(12.px)
@@ -162,6 +145,16 @@ class MediaViewer: Div {
                         .onClick {
                             self.downloadMedia(size: .oneForthSize)
                         }
+
+                    Img()
+                        .src("/skyline/media/cross.png")
+                        .marginRight(12.px)
+                        .cursor(.pointer)
+                        .height(18.px)
+                        .onClick {
+                            self.deleteMedia()
+                        }
+
                 }
                 .padding(all: 7.px)
                 .margin(all: 7.px)

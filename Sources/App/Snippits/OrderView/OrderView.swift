@@ -5165,37 +5165,29 @@ class OrderView: Div {
         
         let formData = FormData()
         
-        /*
-        formData.append("file", file, filename: file.name)
-
-        formData.append("accountid", self.order.custAcct.uuidString)
-        
-        formData.append("orderid", self.order.id.uuidString)
-        
-        formData.append("orderFolio", self.order.folio)
-        */
-
         let fileName = safeFileName(name: file.name, to: .order, folio: self.order.folio)
         
-        formData.append("eventid", view.viewId.uuidString)
-        
-        formData.append("to", ImagePickerTo.order.rawValue)
-        
-        formData.append("id", self.order.id.uuidString)
-        
-        formData.append("folio", self.order.folio)
-
         formData.append("file", file, filename: fileName)
         
-        formData.append("fileName", fileName)
-
-        formData.append("connid", custCatchChatConnID)
-        
-        formData.append("remoteCamera", false.description)
+        print(fileName)
         
         //xhr.open(method: "POST", url: "https://intratc.co/api/custOrder/v1/saveFile")
         // xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadManager")
         xhr.open(method: "POST", url: "http://localhost:8800/api/cust/v1/uploadManager")
+        
+        xhr.setRequestHeader("x-folio", self.order.folio)
+        
+        xhr.setRequestHeader("x-eventid", view.viewId.uuidString)
+
+        xhr.setRequestHeader("x-to", ImagePickerTo.order.rawValue)
+
+        xhr.setRequestHeader("x-id", self.order.id.uuidString)
+
+        xhr.setRequestHeader("x-filename", fileName)
+
+        xhr.setRequestHeader("x-connid", custCatchChatConnID)
+        
+        xhr.setRequestHeader("x-remotecamera", false.description)
         
         xhr.setRequestHeader("Accept", "application/json")
         

@@ -1052,87 +1052,7 @@ class CustConcessionView: Div {
                 
                 return true
             })
-            /*
-            let tableBody = TBody ().hidden($viewItemsHidden)
-            
-            items.forEach { item in
-                
-                @State var isSelected = false
-                
-                @State var soldPrice: Int64? = item.soldPrice
-                
-                self.selectedItems[item.id] = $isSelected
-                
-                tableBody.appendChild(
-                    Tr{
-                        Td{
-                            InputCheckbox($isSelected)
-                                .onChange { _, cb in
-                                    
-                                    guard var int = Int(itemsCount) else {
-                                        return
-                                    }
-                                    
-                                    if cb.checked {
-                                        int += 1
-                                    }
-                                    else {
-                                        int -= 1
-                                    }
-                                    
-                                    itemsCount = int.toString
-                                }
-                        }.align(.center)
-                        Td("SERIE:")
-                        Td("\(item.id.suffix)\({item.series.isEmpty ? "" : " - \(item.series)" }())").colSpan(3)
-                        Td{
-                            Img()
-                                .src("/skyline/media/maximizeWindow.png")
-                                .class(.iconWhite)
-                                .cursor(.pointer)
-                                .height(18.px)
-                                .onClick {
 
-                                    let view = InventoryItemDetailView(itemid: item.id){ price in
-                                        
-                                        soldPrice = price
-                                        
-                                        self.itemsRefrence[item.id]?.soldPrice = price
-                                        
-                                        if let _items = self.itemsPOCRefrence[item.POC] {
-                                            var nitems: [CustPOCInventorySoldObject] = []
-                                            
-                                            
-                                            _items.forEach { _item in
-                                                var _item = _item
-                                                
-                                                if item.id == _item.id {
-                                                    _item.soldPrice = price
-                                                }
-                                                
-                                                nitems.append(_item)
-                                            }
-                                            
-                                            self.itemsPOCRefrence[item.POC] = nitems
-                                            
-                                        }
-                                        
-                                    }
-                                    addToDom(view)
-                                }
-                        }
-                        .align(.center)
-                        Td($soldPrice.map{ $0?.formatMoney ?? "" })
-                            .align(.center)
-                            .colSpan(2)
-                        
-                    }
-                )
-                
-            }
-            
-            table.appendChild(tableBody)
-            */
             self.productContainer.appendChild(row)
             
         }
@@ -1404,15 +1324,47 @@ class CustConcessionView: Div {
             account: self.account,
             isSale: isSale,
             pocRefrence: pocRefrence,
-            items: selectedItems
-        ){ ids, control in
+            items: selectedItems,
+            deletedItems: { ids, control in
+                
+                if let control {
+                    self.controls.insert(control, at: 0)
+                }
+                
+                self.removeItemsFromConcession(ids: ids)
+            },
+            updateItem: { itemId, price in
+
+                self.itemsRefrence[itemId]?.soldPrice = price
+
+                var newItemsPOCRefrence: [UUID:[CustPOCInventorySoldObject]] = [:]
             
-            if let control {
-                self.controls.insert(control, at: 0)
+                self.itemsPOCRefrence.forEach { pocIds, items in
+                    
+                    var newItems: [CustPOCInventorySoldObject] = []
+                    
+                    items.forEach { item in
+                        
+                        var item = item
+                        
+                        if item.id == itemId {
+                            
+                            item.soldPrice = price
+                            
+                        }
+
+                        newItems.append(item)
+                        
+                    }
+                    
+                    newItemsPOCRefrence[pocIds] = newItems
+                    
+                }
+
+                self.itemsPOCRefrence = newItemsPOCRefrence
+
             }
-            
-            self.removeItemsFromConcession(ids: ids)
-        }
+        )
         
         addToDom(view)
         
@@ -1994,5 +1946,6 @@ extension CustConcessionView {
             self.openConcession(controlId: control.id)
         }
     }
+
 
 }

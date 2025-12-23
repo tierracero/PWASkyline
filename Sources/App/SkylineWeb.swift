@@ -15,8 +15,8 @@ public struct SkylineWeb {
 	public private(set) var version: VersionControl = .init(
         mode: .beta,
         major: 0,
-        minor: 18,
-        patch: 5
+        minor: 19,
+        patch: 0
     )
 	
 	public init() {}
@@ -236,15 +236,21 @@ public var productSubTypeRefrence: [String:[String]] = [:]
 
 let hCaptchaSiteKey = "e1e6c3cd-cade-41e4-92f4-8caf3e9c1cda"
 
-
 private var _skyline: _SkyLine = .init()
 
-class _SkyLine {
+open class _SkyLine {
     
-	static var shared: _SkyLine { _skyline }
+	public static var shared: _SkyLine { _skyline }
+
+	public private(set) var version: VersionControl = .init(
+        mode: .beta,
+        major: 0,
+        minor: 19,
+        patch: 0
+    )
 	
     /// .init(.rgba(0, 0, 0, 0.7))
-	lazy var loadingView = Div{
+	public lazy var loadingView = Div{
 			Table {
 				Tr {
 					Td {
@@ -283,13 +289,13 @@ class _SkyLine {
     .left(0.px)
     .top(0.px)
     
-    lazy var minimizedGrid = Div()
+    public lazy var minimizedGrid = Div()
         .position(.absolute)
         .bottom(12)
         .left(24)
         .id("minimizedGrid")
     
-	lazy var messageGrid = Div()
+	public lazy var messageGrid = Div()
 		.position(.absolute)
         .zIndex(999999999)
 		.bottom(24)
@@ -297,9 +303,13 @@ class _SkyLine {
 		.id("messageGrid")
     
     @State var wsevent = ""
+
+    public var orcScripts: [OCRCustomeScript] = []
 	
 }
 extension WebApp {
+
+    public var skyline:  _SkyLine { _SkyLine.shared }
     
     public var loadingView: Div { _SkyLine.shared.loadingView }
     
@@ -308,6 +318,7 @@ extension WebApp {
     public var minimizedGrid: Div { _SkyLine.shared.minimizedGrid }
     
     public var wsevent: State<String> {_SkyLine.shared.$wsevent}
+
 }
 
 //class SkylineApp: WebApp{

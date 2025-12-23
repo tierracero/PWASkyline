@@ -2023,6 +2023,7 @@ class WorkViewControler: PageController {
             case .sendToMobile:
                 
                 if let payload = self.ws.sendToMobile($0) {
+
                     switch payload.type {
                     case .payment:
                         break
@@ -2085,7 +2086,7 @@ class WorkViewControler: PageController {
                         
                         addToDom(view)
                         
-                    case .scanner, .ocr, .paymentOrder, .paymentAccount, .paymentSale, .authTask,  .notifyTask, .social, .orderFiles, .orderMessage, .orderSendToUser, .customerMessage, .tierraceroMessage, .papacontadorMessage, .useCamaraForProduct, .useCamaraForOrder, .useCamaraForUser, .debugMode, .useCamaraForAsset:
+                    case .scanner, .ocr, .paymentOrder, .paymentAccount, .paymentSale, .authTask,  .notifyTask, .social, .orderFiles, .orderMessage, .orderSendToUser, .customerMessage, .tierraceroMessage, .papacontadorMessage, .useCamaraForProduct, .useCamaraForOrder, .useCamaraForUser, .debugMode, .useCamaraForAsset, .useCamaraForOCR:
                         break
                     }
                     
