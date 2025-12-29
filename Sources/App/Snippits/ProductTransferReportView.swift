@@ -268,7 +268,7 @@ class ProductTransferReportView: Div {
         case .byStores:
             reportName = "Reporte por Tienda"
         case .byConcessionaire(let custAcct):
-            reportName = "Reporte por Consecionario"
+            reportName = "Reporte por Consecionario \(custAcct.businessName.isEmpty ? ( "\(custAcct.fiscalRazon)" ) :  custAcct.businessName )"
         }
         
     }

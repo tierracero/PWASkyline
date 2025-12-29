@@ -1464,6 +1464,16 @@ extension ToolsView.WebPage {
     
     static func loadMedia(file: File, to toType: LoadMediaType, imageView view: ImageWebView, imageContainer container: Div ) {
         
+        let fileSize = (file.size / 1000 / 1000)
+
+        if file.type.contains("video") || file.type.contains("image") {
+            if  fileSize > 30 {
+                showError(.errorGeneral, "No se pueden subir archivoa de mas de 30 mb")
+
+                return 
+            }
+        }
+
         let xhr = XMLHttpRequest()
         
         xhr.onLoadStart { event in
@@ -1563,8 +1573,6 @@ extension ToolsView.WebPage {
         let fileName =  safeFileName(name: file.name, to: nil, folio: nil)
 
         let formData = FormData()
-
-        formData.append("file", file, filename: fileName)
         
         var to: ImagePickerTo? =  nil
         
@@ -1625,26 +1633,28 @@ extension ToolsView.WebPage {
             return
         }
         
-        xhr.setRequestHeader("x-eventid", view.viewId.uuidString)
+        formData.append("eventid", view.viewId.uuidString)
         
         /// products, service, album, webService... general...
-        xhr.setRequestHeader("x-to", to.rawValue)
+        formData.append("to", to.rawValue)
         
         /// EG: product id
         if let id = toId?.uuidString {
-            xhr.setRequestHeader("x-id", id)
+            formData.append("id", id)
         }
         
         /// EG: webContent -> serviceImgOne
         if let subId {
-            xhr.setRequestHeader("x-subid", subId.rawValue)
+            formData.append("subId", subId.rawValue)
         }
         
-        xhr.setRequestHeader("x-filename", fileName)
+        formData.append("file", file, filename: fileName)
         
-        xhr.setRequestHeader("x-connid", custCatchChatConnID)
+        formData.append("fileName", fileName)
         
-        xhr.setRequestHeader("x-remotecamera", false.description)
+        formData.append("connid", custCatchChatConnID)
+        
+        formData.append("remoteCamera", false.description)
         
         xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadManager")
         
