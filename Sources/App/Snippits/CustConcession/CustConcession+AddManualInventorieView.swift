@@ -789,7 +789,9 @@ extension CustConcessionView {
             if kart.isEmpty {
                 return
             }
-            
+
+            let items: [CreateManualProductObject] = self.kart.map{  $0.value.item }
+
             addToDom(ConfirmationView(
                 type: .yesNo,
                 title: "Agregar Concession Manual",
@@ -799,8 +801,6 @@ extension CustConcessionView {
                     if !isConfirmed {
                         return
                     }
-
-                    let items: [CreateManualProductObject] = self.kart.map{  $0.value.item }
 
                     API.custPOCV1.addManualInventory(
                         storeId: custCatchStore,

@@ -180,7 +180,6 @@ extension ProductManagerView {
                     .borderRadius(12.px)
                     .marginTop(7.px)
                     
-                    
                 case .concessionaire(let _):
                     Div()
                 }
@@ -209,7 +208,6 @@ extension ProductManagerView {
             if custCatchHerk > 2 {
                 currentView = .inventoryView
             }
-            
             
         }
     }

@@ -339,6 +339,16 @@ class CustConcessionView: Div {
                             }
 
                             Img()
+                                .src("skyline/media/zoom.png")
+                                .marginRight(18.px)
+                                .cursor(.pointer)
+                                .height(24.px)
+                                .float(.right)
+                                .onClick {
+                                    
+                                }
+
+                            Img()
                                 .src("skyline/media/history_color.png")
                                 .marginRight(18.px)
                                 .cursor(.pointer)
@@ -491,7 +501,7 @@ class CustConcessionView: Div {
                                         .cursor(.pointer)
                                         .height(18.px)
 
-                                    Span("Auditar")
+                                    Span("Auditar / Kardex")
                                 }
                                 .custom("width", "calc(100% - 14px)")
                                 .align(.center)

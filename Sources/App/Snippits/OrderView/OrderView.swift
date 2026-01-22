@@ -5057,7 +5057,17 @@ class OrderView: Div {
     }
     
     func loadMedia(_ file: File) {
-        
+
+        // let fileSize = (file.size / 1000 / 1000)
+
+        // if file.type.contains("video") || file.type.contains("image") {
+        //     if  fileSize > 30 {
+        //         showError(.errorGeneral, "No se pueden subir archivoa de mas de 30 mb")
+
+        //         return 
+        //     }
+        // }
+
         let xhr = XMLHttpRequest()
         
         let view = OrderImageView(
@@ -5067,7 +5077,7 @@ class OrderView: Div {
         ) { id, name in
 
         }
-        
+
         fileViewCatch[view.viewId] = view
         
         xhr.onLoadStart {
@@ -5169,25 +5179,41 @@ class OrderView: Div {
         
         formData.append("file", file, filename: fileName)
         
+        //xhr.open(method: "POST", url: "https://intratc.co/api/custOrder/v1/saveFile")
+        xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
+        // xhr.open(method: "POST", url: "http://localhost:8800/api/cust/v1/uploadManager")
+        
+        print("🚧 001")
+
+        formData.append("eventid", view.viewId.uuidString)
+
+        print("🚧 002")
+
+        formData.append("to", ImagePickerTo.order.rawValue)
+
+        print("🚧 003")
+
+        formData.append("id", self.order.id.uuidString)
+        
+        print("🚧 004")
+
+        formData.append("folio", self.order.folio)
+        
+        print("🚧 005")
+
         print(fileName)
         
-        //xhr.open(method: "POST", url: "https://intratc.co/api/custOrder/v1/saveFile")
-        // xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadManager")
-        xhr.open(method: "POST", url: "http://localhost:8800/api/cust/v1/uploadManager")
+        formData.append("fileName", fileName)
+
+        print("🚧 006")
+
+        formData.append("connid", custCatchChatConnID)
         
-        xhr.setRequestHeader("x-folio", self.order.folio)
+        print("🚧 007")
         
-        xhr.setRequestHeader("x-eventid", view.viewId.uuidString)
-
-        xhr.setRequestHeader("x-to", ImagePickerTo.order.rawValue)
-
-        xhr.setRequestHeader("x-id", self.order.id.uuidString)
-
-        xhr.setRequestHeader("x-filename", fileName)
-
-        xhr.setRequestHeader("x-connid", custCatchChatConnID)
+        formData.append("remoteCamera", false.description)
         
-        xhr.setRequestHeader("x-remotecamera", false.description)
+        print("🚧 008")
         
         xhr.setRequestHeader("Accept", "application/json")
         

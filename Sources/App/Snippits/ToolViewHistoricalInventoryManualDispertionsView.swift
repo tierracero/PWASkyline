@@ -88,90 +88,123 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
             Table().noResult(label: "No hay resultados para esta busqueda")
             .hidden(self.$docs.map{ !$0.isEmpty })
 
-            ForEach(self.$docs) { item in
-                
+            Div{
+
                 Div{
-                    Div{
+                    ForEach(self.$docs) { item in
+                        
                         Div{
-                            
-                            Span(item.folio)
-                            
-                            Img()
-                                .src("/skyline/media/download2.png")
-                                .marginRight(12.px)
-                                .marginTop(2.px)
-                                .height(24.px)
-                                .float(.right)
-                                .onClick { _, event in
+                            Div{
+                                Div{
                                     
-                                    loadingView(show: true)
+                                    Span(item.folio)
                                     
-                                    downloadManualInventoryControlOrders(id: item.id, detailed: true)
+                                    Img()
+                                        .src("/skyline/media/download2.png")
+                                        .marginRight(12.px)
+                                        .marginTop(2.px)
+                                        .height(24.px)
+                                        .float(.right)
+                                        .onClick { _, event in
+                                            
+                                            loadingView(show: true)
+                                            
+                                            downloadManualInventoryControlOrders(id: item.id, detailed: true)
+                                            
+                                            Dispatch.asyncAfter(3.0) {
+                                                loadingView(show: false)
+                                            }
+                                            event.stopPropagation()
+                                        }
                                     
-                                    Dispatch.asyncAfter(3.0) {
-                                        loadingView(show: false)
-                                    }
-                                    event.stopPropagation()
                                 }
+                                .custom("width", "calc(100% - 150px)")
+                                .class(.oneLineText)
+                                .float(.left)
+                                
+                                Div(getDate(item.createdAt).formatedLong)
+                                    .width(150.px)
+                                    .float(.left)
+                                
+                                Div().clear(.both)
+                            }
+                            .marginBottom(7.px)
+                            .fontSize(20.px)
+                            .color(.gray)
+                            
+                            Div{
+                                
+                                Div(item.name)
+                                    .custom("width", "calc(100% - 140px)")
+                                    .class(.oneLineText)
+                            }
+                            .marginBottom(7.px)
+                            .fontSize(22.px)
+                            
+                            Div{
+                                Div("\(item.vendor.businessName) \(item.vendor.razon)")
+                                    .custom("width", "calc(100% - 140px)")
+                                    .class(.oneLineText)
+                                    .float(.left)
+                                
+                                Div(item.status.description)
+                                    .width(140.px)
+                                    .float(.left)
+                                
+                                Div().clear(.both)
+                            }
+                            .fontSize(16.px)
+                            
+                            Div().height(7.px).clear(.both)
                             
                         }
-                        .custom("width", "calc(100% - 150px)")
-                        .class(.oneLineText)
-                        .float(.left)
-                        
-                        Div(getDate(item.createdAt).formatedLong)
-                            .width(150.px)
-                            .float(.left)
-                        
-                        Div().clear(.both)
-                    }
-                    .marginBottom(7.px)
-                    .fontSize(20.px)
-                    .color(.gray)
-                    
-                    Div{
-                        
-                        Div(item.name)
-                            .custom("width", "calc(100% - 140px)")
-                            .class(.oneLineText)
-                    }
-                    .marginBottom(7.px)
-                    .fontSize(22.px)
-                    
-                    Div{
-                        Div("\(item.vendor.businessName) \(item.vendor.razon)")
-                            .custom("width", "calc(100% - 140px)")
-                            .class(.oneLineText)
-                            .float(.left)
-                        
-                        Div(item.status.description)
-                            .width(140.px)
-                            .float(.left)
-                        
-                        Div().clear(.both)
-                    }
-                    .fontSize(16.px)
-                    
-                    Div().height(7.px).clear(.both)
-                    
-                }
-                .width(96.percent)
-                .marginTop(12.px)
-                .class(.uibtn)
-                .border(width: .thin, style: .solid, color: self.$selectedDoc.map { ($0 == item.id) ? .cornflowerBlue : .transparent })
-                .onClick {
+                        .width(96.percent)
+                        .marginTop(12.px)
+                        .class(.uibtn)
+                        .border(width: .thin, style: .solid, color: self.$selectedDoc.map { ($0 == item.id) ? .cornflowerBlue : .transparent })
+                        .onClick {
 
-                    self.selectedDoc = item.id
+                            self.selectedDoc = item.id
 
-                    self.loadDocument(id: item.id)
+                            self.loadDocument(id: item.id)
+                        }
+                        
+                    }
                 }
-                
+                .custom("height", "calc(100% - 56px)")
+                .overflow(.auto)
+
+                Div{
+
+                    
+
+                    Img()
+                        .src("/skyline/media/excel.png")
+                        .marginRight(24.px)
+                        .paddingTop(7.px)
+                        .float(.right)
+                        .width(36.px)
+                        .onClick {
+                            
+                        }
+                    
+                    Img()
+                        .src("/skyline/media/pdf.png")
+                        .marginRight(24.px)
+                        .paddingTop(7.px)
+                        .float(.right)
+                        .width(36.px)
+                        .onClick {
+                            
+                        }
+                }
+                .align(.right)
             }
-                .hidden(self.$docs.map{ $0.isEmpty })
+            .hidden(self.$docs.map{ $0.isEmpty })
+            .height(100.percent)
 
         }
             .height(100.percent)
-            .overflow(.auto)
 
         lazy var searchResultView  = Div{
             Div{

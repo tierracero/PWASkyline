@@ -77,6 +77,19 @@ class ProductTransferReportView: Div {
     .custom("height", "calc(100% - 85px)")
     .overflow(.auto)
     
+
+    @State var filter = ""
+
+    @State var filterListener = ""
+    
+    lazy var filterField = InputText(self.$filterListener)
+        .placeholder("Filtre Resustaldos")
+        .class(.textFiledBlackDark)
+        .marginRight(12.px)
+        .fontSize(22.px)
+        .width(180.px)
+        .height(34.px)
+
     @DOM override var body: DOM.Content {
         
         Div{
@@ -264,11 +277,38 @@ class ProductTransferReportView: Div {
             
         }
         
+        $filterListener.listen {
+
+            let initialTerm =  $0.pseudo.purgeSpaces
+
+            if initialTerm.count < 3 {
+                self.filter = ""
+                return
+            }
+
+            Dispatch.asyncAfter(0.4) {
+
+                let currentTerm = self.filterListener.pseudo.purgeSpaces
+
+                print(initialTerm, "VS", currentTerm)
+                guard  initialTerm == currentTerm else {
+                    print("🔴")
+                    return
+                }
+
+                print("🟢")
+
+                self.filter = currentTerm
+
+            }
+
+        }
+
         switch reportType {
         case .byStores:
             reportName = "Reporte por Tienda"
         case .byConcessionaire(let custAcct):
-            reportName = "Reporte por Consecionario"
+            reportName = "Reporte por Consecionario \(custAcct.businessName.isEmpty ? ( "\(custAcct.fiscalRazon)" ) :  custAcct.businessName )"
         }
         
     }
@@ -469,9 +509,9 @@ class ProductTransferReportView: Div {
             
             let itemRefrence: [UUID:CustPOCInventorySoldObject] = Dictionary(uniqueKeysWithValues: payload.items.map{ item in ( item.id, item ) })
             
-            var tableBody = TBody()
+            let tableBody = TBody()
             
-            var table = Table {
+            let table = Table {
                 THead {
                     Tr{
                         Td("Date")
@@ -668,18 +708,90 @@ class ProductTransferReportView: Div {
                         }
                     }
                     
-                    tableBody.appendChild(Tr{
-                        Td(getDate(control.createdAt).formatedLong)
-                        Td(control.folio)
-                        Td(control.items.count.toString)
-                        Td(control.disperseType.description)
-                        Td(_costSubTotal.formatMoney)
-                        Td(_costTaxes.formatMoney)
-                        Td(_costTotal.formatMoney)
-                        Td(_priceSubTotal.formatMoney)
-                        Td(_priceTaxes.formatMoney)
-                        Td(_priceTotal.formatMoney)
-                    })
+                    tableBody.appendChild(
+                        Tr{
+                            Td(getDate(control.createdAt).formatedLong)
+                            Td{
+                                Div(control.folio)
+                                .class(.uibtn)
+                                .onClick {
+
+                                    loadingView(show: true)
+                                    
+                                    API.custPOCV1.getTransferInventory(identifier: .id(control.id)) { resp in
+                                        
+                                        loadingView(show: false)
+                                        
+                                        guard let resp = resp else {
+                                            showError(.errorDeCommunicacion, .serverConextionError)
+                                            return
+                                        }
+
+                                        guard resp.status == .ok else{
+                                            showError(.errorGeneral, resp.msg)
+                                            return
+                                        }
+                                        
+                                        guard let data = resp.data else {
+                                            showError(.unexpectedResult, "No se pudo obtener documento")
+                                            return
+                                        }
+                                        
+                                        addToDom(InventoryControlView(
+                                            control: data.control,
+                                            items: data.items,
+                                            pocs: data.pocs,
+                                            places: data.places,
+                                            notes: data.notes,
+                                            fromStore: data.fromStore,
+                                            toStore: data.toStore,
+                                            hasRecived: {
+                                                
+                                            },
+                                            hasIngressed: {
+                                                
+                                            })
+                                        )
+                                        
+                                    }
+                                    
+                                }
+                            }
+                            Td(control.items.count.toString)
+                            Td("\(control.disperseType.description)  \(control.vendorSerie ?? "") \(control.vendorFolio ?? "")".purgeSpaces)
+                            Td(_costSubTotal.formatMoney)
+                            Td(_costTaxes.formatMoney)
+                            Td(_costTotal.formatMoney)
+                            Td(_priceSubTotal.formatMoney)
+                            Td(_priceTaxes.formatMoney)
+                            Td(_priceTotal.formatMoney)
+                        }
+                        .hidden(self.$filter.map{
+                            
+                            
+                            
+                            let filter = $0.purgeSpaces.pseudo
+
+                            print("filter \(filter)")
+
+                            if filter.isEmpty {
+                                print("🚧 01")
+                                return false
+                            }
+
+                            let pseudoString = "\(control.folio) \(control.disperseType.description)  \(control.vendorSerie ?? "") \(control.vendorFolio ?? "")".purgeSpaces.pseudo
+
+                            if pseudoString.contains(filter) {
+                                print("🚧 02")
+                                return false 
+                            }
+
+                            print("🚧 03")
+
+                            return true
+
+                        }) 
+                    )
                     
                     totalCostSub += _costSubTotal
                     
@@ -710,15 +822,29 @@ class ProductTransferReportView: Div {
             }.color(.goldenRod))
             
             self.resultDiv.appendChild(Div{
+
+                Div{
+
+                    Span("Filtrar")
+                    .marginRight(12.px)
+                    .fontSize(23.px)
+                    .color(.white)
+
+                    self.filterField
+
+                    Div("Descargar")
+                        .class(.uibtn)
+                        .float(.right)
+                        .onClick {
+                            self.downloadReport(from: startAtUTS, to: endAtUTS, id: id, payload: payload)
+                        }
+                }
+                .float(.right)
+
                 H2("Reporte")
                     .color(.yellowTC)
                 
-                Div("Descargar")
-                    .class(.uibtn)
-                    .float(.right)
-                    .onClick {
-                        self.downloadReport(from: startAtUTS, to: endAtUTS, id: id, payload: payload)
-                    }
+                
             })
             
             self.resultDiv.appendChild(table)

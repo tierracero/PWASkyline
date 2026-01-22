@@ -3753,6 +3753,16 @@ class ManagePOC: Div {
     
     func loadMedia(_ file: File) {
         
+        let fileSize = (file.size / 1000 / 1000)
+
+        if file.type.contains("video") || file.type.contains("image") {
+            if  fileSize > 30 {
+                showError(.errorGeneral, "No se pueden subir archivoa de mas de 30 mb")
+
+                return 
+            }
+        }
+
         let xhr = XMLHttpRequest()
         
         let view: ImagePOCContainer = .init(

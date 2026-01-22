@@ -87,7 +87,7 @@ class KartSoldItemView: Tr {
         self.padding(all: 12.px)
         self.color(.black)
         
-        name = "\(data.m) \(data.n)"
+        name = "\(data.u) \(data.m) \(data.n)"
         
     }
     

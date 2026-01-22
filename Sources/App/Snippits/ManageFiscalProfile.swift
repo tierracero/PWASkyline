@@ -729,7 +729,7 @@ class ManageFiscalProfile: Div {
             
             do {
                 
-                let resp = try JSONDecoder().decode(APIResponseGeneric<API.custPOCV1.UploadMediaResponse>.self, from: data)
+                let resp = try JSONDecoder().decode(APIResponseGeneric<API.custAPIV1.UploadMediaResponse>.self, from: data)
                 
                 guard resp.status == .ok else {
                     showError(.errorGeneral, resp.msg)

@@ -266,7 +266,6 @@ class CreateNewCustomerDataView: Div {
                 .value("")
         }
     
-    
     lazy var cityField = InputText(self.$city)
         .autocomplete(.off)
         .placeholder("Cuidad")
@@ -629,7 +628,6 @@ class CreateNewCustomerDataView: Div {
                         .class(.clear)
                         .marginTop(3.px)
                     
-                    
                 }
                 .class(self.$requierServiceAddress.map{
                     $0 ? .oneHalf : .fullWidth
@@ -659,7 +657,6 @@ class CreateNewCustomerDataView: Div {
                     Div {
                         
                         Div{
-                            
                             
                             Div{
                                 Div{
@@ -2072,9 +2069,9 @@ class CreateNewCustomerDataView: Div {
                 return
             }
             
-            
             if data.isEmpty {
                 showError(.errorGeneral, "No se localizo información, intente unn codigo nuevo o un ingreso manual.")
+                return
             }
             
             self.searchZipCodeString = ""
@@ -2132,6 +2129,11 @@ class CreateNewCustomerDataView: Div {
             self.streetResultField.select()
             
         }
+
+
+
     }
+
+
     
 }
