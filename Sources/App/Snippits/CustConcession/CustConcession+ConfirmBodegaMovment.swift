@@ -109,6 +109,7 @@ extension CustConcessionView {
                                     }
                                     self.productContainer
                                 }
+                                .color(.white)
                             
                         }
                         .margin(all: 7.px)

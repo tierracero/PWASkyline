@@ -2865,7 +2865,38 @@ extension ProductManagerView.AuditView {
                                         addToDom(SalePointView.DetailView(saleId: .id(item.channelId)))
                                         
                                     case .order:
-                                        return
+
+                                        OrderCatchControler.shared.loadFolio(orderid: item.channelId) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                                            
+                                            let accoutOverview = AccoutOverview (
+                                                id: .id(order.custAcct)
+                                            )
+                                            
+                                            accoutOverview.loadOrder(
+                                                account: account,
+                                                order: order,
+                                                notes: notes,
+                                                payments: payments,
+                                                charges: charges,
+                                                pocs: pocs,
+                                                files: files,
+                                                equipments: equipments,
+                                                rentals: rentals,
+                                                transferOrder: transferOrder,
+                                                orderHighPriorityNote: orderHighPriorityNote,
+                                                accountHighPriorityNote: accountHighPriorityNote,
+                                                tasks: tasks,
+                                                orderRoute: route,
+                                                loadFromCatch: loadFromCatch
+                                            )
+                                            
+                                            self.appendChild(accoutOverview)
+                                            
+                                            minViewAcctRefrence[order.custAcct] = accoutOverview
+                                            
+                                        }
+                
+
                                     case .eSale:
                                         return
                                     case .default:

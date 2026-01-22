@@ -11,6 +11,7 @@ import Web
 
 class ManualAddressSearch: Div {
     
+    /// byCountry(Countries), byAddress(AddressItem)
     let loadBy: LoadType
     
     private var callback: ((
@@ -40,7 +41,6 @@ class ManualAddressSearch: Div {
     required init() {
         fatalError("init() has not been implemented")
     }
-    
     
     @State var state = ""
     
@@ -174,7 +174,7 @@ class ManualAddressSearch: Div {
                     }
                     .hidden(self.$settelment.map{ $0.isEmpty })
                 }
-                .hidden(self.$cities.map{ $0.isEmpty })
+                //.hidden(self.$cities.map{ $0.isEmpty })
                 
             }
             .hidden(self.$cities.map{ $0.isEmpty })
@@ -198,7 +198,6 @@ class ManualAddressSearch: Div {
         width(100.percent)
         left(0.px)
         top(0.px)
-        
         
         CountryStatesMexico.allCases.forEach { state in
             statesResultSelect.appendChild(
@@ -625,6 +624,7 @@ class ManualAddressSearch: Div {
             }
         }
     }
+
 }
 
 extension ManualAddressSearch {
@@ -657,6 +657,7 @@ extension ManualAddressSearch {
         
     }
     
+    /// byCountry(Countries), byAddress(AddressItem)
     enum LoadType {
         case byCountry(Countries)
         

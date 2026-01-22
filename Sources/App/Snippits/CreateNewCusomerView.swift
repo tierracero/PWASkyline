@@ -31,7 +31,7 @@ class CreateNewCusomerView: Div {
         /// general, business
         custType: CreateNewCusomerType,
         callback: @escaping ((
-            ///personal, empresaFisica, empresaMoral, organizacion
+            ///personal, empresaFisica, empresaMoral, organizacionq
             _ acctType: CustAcctTypes,
             /// general, business
             _ custType: CreateNewCusomerType,
@@ -78,6 +78,9 @@ class CreateNewCusomerView: Div {
                             .marginLeft(10.percent)
                             .marginRight(25.px)
                         
+                        Span("Cuenta")
+                        .marginRight(12.percent)
+
                         B("P")
                             .color(.highlighBlue)
                         Span("ersonal")
@@ -90,7 +93,6 @@ class CreateNewCusomerView: Div {
                     .onClick {
                         self.createCustForm(acctType: .personal)
                     }
-                    
                     
                     Div()
                         .class(.clear)

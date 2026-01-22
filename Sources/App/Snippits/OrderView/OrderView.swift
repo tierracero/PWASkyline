@@ -5180,8 +5180,8 @@ class OrderView: Div {
         formData.append("file", file, filename: fileName)
         
         //xhr.open(method: "POST", url: "https://intratc.co/api/custOrder/v1/saveFile")
-        // xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadManager")
-        xhr.open(method: "POST", url: "http://localhost:8800/api/cust/v1/uploadManager")
+        xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
+        // xhr.open(method: "POST", url: "http://localhost:8800/api/cust/v1/uploadManager")
         
         print("🚧 001")
 

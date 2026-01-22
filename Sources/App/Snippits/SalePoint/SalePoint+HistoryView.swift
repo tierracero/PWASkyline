@@ -21,7 +21,11 @@ extension SalePointView {
         
         var pocRefrence: [UUID:CustPOCQuick] = [:]
         
+        var repotType: SalesReportTypes? = nil
+
         @State var sales: [CustSaleQuick] = []
+
+        var charges: [CustAcctChargesQuick] = []
         
         @State var salesWithOutFiscalDocumets: [CustSaleQuick] = []
         
@@ -824,6 +828,8 @@ extension SalePointView {
                     ids: ids
                 ) { resp in
                     
+                    self.reportType = type
+
                     loadingView(show: false)
                     
                     guard let resp else {
@@ -864,6 +870,10 @@ extension SalePointView {
                     requestedIds: ids
                 ) { resp in
                 
+                    self.reportType = type
+
+                    
+
                     loadingView(show: false)
                     
                     guard let resp else {
@@ -983,10 +993,10 @@ extension SalePointView {
         
         func printDocument(){
             
-            if sales.isEmpty {
+            if sales.isEmpty && charges.isEmpty {
                 return
             }
-            
+        
             var logo = ""
             
             if let _logo = custWebFilesLogos?.logoIndexWhite.avatar {
@@ -995,20 +1005,9 @@ extension SalePointView {
                 }
             }
             
-            print("🟢  logo \(logo)")
-            print("🟢  logo \(logo)")
-            print("🟢  logo \(logo)")
-            print("🟢  logo \(logo)")
-            
-            print(custWebFilesLogos)
-            
-            print(custWebFilesLogos)
-            
-            
-            var tableBody = TBody()
+            let tableBody = TBody()
             
             let printBody = Div{
-                
                 Div{
                     Div{
                         if !logo.isEmpty {
@@ -1044,64 +1043,127 @@ extension SalePointView {
                 Div()
                     .height(7.px)
                     .clear(.both)
+            }
+
+            if reportType == .byStore || reportType == .byUser {
+
+                printBody.appendChild(
+                    Table{
+                        THead{
+                            Tr{
+                                Td("Folio")
+                                Td("Fecha")
+                                Td("Cliente").width(300.px)
+                                Td("ODC")
+                                Td("ODE")
+                                Td("Total")
+                                Td("Balance")
+                                Td("status")
+                            }
+                        }
+                        tableBody
+                    }
+                    .width(100.percent)
+                    .fontSize(14.px)
+                )
                 
-                Table{
-                    THead{
+                printBody.appendChild(Div().height(7.px).clear(.both))
+                    
+                printBody.appendChild(
+                    Div{
+                        H2("TOTAL \(self.totalBalance)")
+                            .float(.right)
+                    }
+                )
+                
+                self.sales.forEach { item in
+                    
+                    tableBody.appendChild(Tr{
+                        Td(item.folio)
+                        Td("\(getDate(item.createdAt).day.toString)/\(getDate(item.createdAt).month.toString)/\(getDate(item.createdAt).year.toString.suffix(2)) \(getDate(item.createdAt).time)")
+                        Td{
+                            if let accountId = item.custAcct {
+                                Div("\(self.accountRefrence[accountId]?.folio ?? "") \(self.accountRefrence[accountId]?.businessName ?? "") \(self.accountRefrence[accountId]?.firstName ?? "") \(self.accountRefrence[accountId]?.firstName ?? "")".purgeSpaces)
+                                    .class(.twoLineText)
+                                    .width(300.px)
+                            }
+                            else {
+                                Span("")
+                            }
+                        }
+                        Td({ (item.purchesOrder == nil) ? "Si" : "No"}())
+                        Td({ item.pickupOrder.isEmpty ? "No" : "Si" }())
+                        Td(item.total.formatMoney)
+                        Td(item.balance.formatMoney)
+                        Td({ (item.status == .canceled) ? "Cancelado" : "Activo" }())
+                    })
+                    
+                }
+                
+            }
+            else {
+
+                printBody.appendChild(
+                    Table{
+                        THead{
+                            Tr{
+                                Td("Fecha")
+                                Td("Descripcion")
+                                Td("Tipo")
+                                Td("TDP")
+                                Td("Costo")
+                                Td("Precio")
+                            }
+                        }
+                        tableBody
+                    }
+                    .width(100.percent)
+                    .fontSize(14.px)
+                )
+
+                var storeCostTotal: Int64 = 0
+                
+                var storePriceTotal: Int64 = 0
+                
+                var productionTimeTotal: Int64 = 0
+
+                charges.forEach { charge in
+                    
+                    storeCostTotal += charge.cost
+                    
+                    storePriceTotal += charge.price
+                    
+                    productionTimeTotal += charge.productionTime
+                    
+                    tableBody.appendChild(
                         Tr{
-                            Td("Folio")
-                            Td("Fecha")
-                            Td("Cliente")
-                                .width(300.px)
-                            Td("ODC")
-                            Td("ODE")
-                            Td("Total")
-                            Td("Balance")
-                            Td("status")
+                            Td(getDate(charge.createdAt).formatedLong)
+                            Td(charge.name)
+                            Td("Cargo")
+                            Td(charge.productionTime.toString)
+                            Td(charge.cost.formatMoney)
+                            Td(charge.price.formatMoney)
                         }
-                    }
-                    tableBody
+                    )
+                    
                 }
-                .width(100.percent)
-                .fontSize(14.px)
-                
-                Div().height(7.px).clear(.both)
-                
-                Div{
-                    H2("TOTAL \(self.totalBalance)")
-                        .float(.right)
-                }
-                
+
+                printBody.appendChild(Div().height(7.px).clear(.both))
+
             }
-            
-            self.sales.forEach { item in
-                
-                tableBody.appendChild(Tr{
-                    Td(item.folio)
-                    Td("\(getDate(item.createdAt).day.toString)/\(getDate(item.createdAt).month.toString)/\(getDate(item.createdAt).year.toString.suffix(2)) \(getDate(item.createdAt).time)")
-                    Td{
-                        if let accountId = item.custAcct {
-                            Div("\(self.accountRefrence[accountId]?.folio ?? "") \(self.accountRefrence[accountId]?.businessName ?? "") \(self.accountRefrence[accountId]?.firstName ?? "") \(self.accountRefrence[accountId]?.firstName ?? "")".purgeSpaces)
-                                .class(.twoLineText)
-                                .width(300.px)
-                        }
-                        else {
-                            Span("")
-                        }
-                    }
-                    Td({ (item.purchesOrder == nil) ? "Si" : "No"}())
-                    Td({ item.pickupOrder.isEmpty ? "No" : "Si" }())
-                    Td(item.total.formatMoney)
-                    Td(item.balance.formatMoney)
-                    Td({ (item.status == .canceled) ? "Cancelado" : "Activo" }())
-                })
-                
-            }
-            
+
+            Console.clear()
+
+            print(printBody.innerHTML)
+
             _ = JSObject.global.renderGeneralPrint!(custCatchUrl, "\(getDate(self.startAtResultDate).formatedLong) - \(getDate(self.endAtResultDate).formatedLong)", printBody.innerHTML)
-            
+                
+                
         }
         
         func renderByDefault(payload: CustPDVComponents.GetSalesResponse, startAtUTS: Int64, endAtUTS: Int64) {
+            
+            sales = payload.sales.reversed()
             
             resultDiv.innerHTML = ""
             
@@ -1181,8 +1243,6 @@ extension SalePointView {
                 .hidden(self.$sales.map{ $0.isEmpty })
                 
             })
-            
-            sales = payload.sales.reversed()
             
             payload.sales.forEach { sale in
                 
@@ -1493,7 +1553,7 @@ extension SalePointView {
                 
             })
             
-            var table = Table {
+            let table = Table {
                 THead{
                     Tr{
                         Td("POC/SKU/UPC")
@@ -1595,7 +1655,8 @@ extension SalePointView {
             var productionTimeTotal: Int64 = 0
             
             resultDiv.innerHTML = ""
-            
+
+            self.charges = payload.charges
             
             resultDiv.appendChild(Div{
                 
