@@ -408,7 +408,7 @@ class CreateNewCustomerDataView: Div {
     
     @DOM override var body: DOM.Content {
         
-        /// Persnoal Account
+        /// Personal Account
         if self.acctType == .personal {
             Div{
                 Div{
@@ -990,7 +990,8 @@ class CreateNewCustomerDataView: Div {
             
         }
         /// Buisness Account
-        else{
+        else {
+
             Div{
                 
                 Div{
