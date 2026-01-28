@@ -952,7 +952,7 @@ class ToolFiscalViewDocument: Div {
                 storeId: custCatchStore, 
                 ids: [self.doc.id],
                 description: description,
-                payment: amount.toCents,
+                payment: amount,
                 comment: "",
                 officialDate: uts,
                 forma: code,

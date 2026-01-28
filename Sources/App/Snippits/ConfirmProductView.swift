@@ -606,8 +606,7 @@ class ConfirmProductView: Div {
                     }
             }
             .align(.right)
-            
-            
+                   
         }
         .padding(all: 3.px)
         .borderRadius(all: 24.px)

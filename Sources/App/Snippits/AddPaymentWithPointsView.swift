@@ -29,7 +29,7 @@ extension AddPaymentFormView {
         private var callback: ((
             _ code: FiscalPaymentCodes,
             _ description: String,
-            _ amount: Float,
+            _ amount: Int64,
             _ provider: String,
             _ lastFour: String,
             _ auth: String,
@@ -44,7 +44,7 @@ extension AddPaymentFormView {
             callback: @escaping ((
                 _ code: FiscalPaymentCodes,
                 _ description: String,
-                _ amount: Float,
+                _ amount: Int64,
                 _ provider: String,
                 _ lastFour: String,
                 _ auth: String,
@@ -288,7 +288,7 @@ extension AddPaymentFormView {
                 return
             }
             
-            guard let thisPayment = Float(payment.replace(from: ",", to: ""))?.toCents else{
+            guard let thisPayment = Double(payment.replace(from: ",", to: ""))?.toCents else{
                 showError(.errorGeneral, "Ingrese una cantidad valida")
                 return
             }
@@ -316,7 +316,7 @@ extension AddPaymentFormView {
                     return
                 }
                 
-                self.callback(.dineroElectronico, "Puntos Premier", thisPayment.fromCents, "", "", "", nil)
+                self.callback(.dineroElectronico, "Puntos Premier", thisPayment, "", "", "", nil)
          
                 self.remove()
                 
