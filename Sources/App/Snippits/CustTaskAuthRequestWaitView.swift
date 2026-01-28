@@ -13,7 +13,8 @@ import Web
 class CustTaskAuthRequestWaitView: Div {
     
     override class var name: String { "div" }
-    
+
+    /// service, product, manual, rental
     var type: ChargeType
     var id: UUID
     var requestedPrice: Int64
@@ -156,7 +157,15 @@ class CustTaskAuthRequestWaitView: Div {
                         /// Only prrice changaes can be auth
                         return
                     }
+
+                    guard let taskid = self.taskid else {
+                        return
+                    }
                     
+                    guard taskid == payload.id else {
+                        return
+                    }
+                            
                     self.callback(false)
                     
                     showError(.errorGeneral, "El cambio de precio no fue autorizado.")
@@ -169,6 +178,14 @@ class CustTaskAuthRequestWaitView: Div {
                     
                     if payload.alertType != .changePrice {
                         /// Only prrice changaes can be auth
+                        return
+                    }
+
+                    guard let taskid = self.taskid else {
+                        return
+                    }
+
+                    guard taskid == payload.id else {
                         return
                     }
                     

@@ -26,7 +26,7 @@ class AddPaymentFormView: Div {
     private var callback: ((
         _ code: FiscalPaymentCodes,
         _ description: String,
-        _ amount: Float,
+        _ amount: Int64,
         _ provider: String,
         _ lastFour: String,
         _ auth: String,
@@ -41,7 +41,7 @@ class AddPaymentFormView: Div {
         callback: @escaping ((
             _ code: FiscalPaymentCodes,
             _ description: String,
-            _ amount: Float,
+            _ amount: Int64,
             _ provider: String,
             _ lastFour: String,
             _ auth: String,
@@ -590,7 +590,7 @@ class AddPaymentFormView: Div {
                         self.calcNewBalance()
                     }
                     .onKeyDown({ tf, event in
-                        guard let _ = Float(event.key) else {
+                        guard let _ = Double(event.key) else {
                             if !ignoredKeys.contains(event.key) {
                                 event.preventDefault()
                             }
@@ -671,8 +671,6 @@ class AddPaymentFormView: Div {
                 Div().class(.clear).marginTop(12.px)
             }
             .hidden(self.$datePickerIsHidden)
-            
-            
             
             Div{
                 
@@ -870,7 +868,7 @@ class AddPaymentFormView: Div {
             break
         }
         
-        guard var thisPaymentFloat = Float(payment) else{
+        guard var thisPaymentFloat = Double(payment) else {
             self.paymentInput.select()
             showError(.formatoInvalido, "Ingrese un pago valido")
             return
@@ -891,20 +889,15 @@ class AddPaymentFormView: Div {
             return
         }
         
-        
-        
         var thisPayment = thisPaymentFloat.toCents
         
         if !self.isDownPayment {
-            if thisPayment < currentBalance {
-                thisPaymentFloat = thisPayment.fromCents
-            }
-            else{
+            if thisPayment > currentBalance {
+                
                 let change = currentBalance - thisPayment
                 
                 thisPayment = thisPayment - (change * -1)
                 
-                thisPaymentFloat = thisPayment.fromCents
             }
         }
         
@@ -920,7 +913,7 @@ class AddPaymentFormView: Div {
             
         }
         
-        self.callback(meth, payDescr, thisPaymentFloat, provider, lastFour, auth, uts)
+        self.callback(meth, payDescr, thisPayment, provider, lastFour, auth, uts)
         
         self.remove()
         
@@ -994,7 +987,7 @@ class AddPaymentFormView: Div {
             return
         }
         
-        guard let thisPayment = Float(payment)?.toCents else{
+        guard let thisPayment = Double(payment)?.toCents else{
             return
         }
         
@@ -1012,6 +1005,10 @@ class AddPaymentFormView: Div {
                 return
             }
             
+            print("currentBalance", currentBalance)
+
+            print("thisPayment", thisPayment)
+
             newBalance = (thisPayment - currentBalance).formatMoney
             
             if thisPayment >= currentBalance{

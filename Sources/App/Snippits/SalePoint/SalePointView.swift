@@ -1356,7 +1356,7 @@ class SalePointView: Div {
 
         addToDom(ConfirmView(type: .aproveDeny, title: "Confirme Accion", message: "¿Desea enviar esta compra a credito?"){ isConfirmed, _ in
             if isConfirmed {
-                self.closeSale(.porDefenir, "Venta a Credito", currentBalance.fromCents, "", "", "")
+                self.closeSale(.porDefenir, "Venta a Credito", currentBalance, "", "", "")
             }
         })
         
@@ -1410,7 +1410,7 @@ class SalePointView: Div {
         ) { code, description, amount, provider, lastFour, auth, uts in
             
             if code == .dineroElectronico {
-                self.payWithPoints(amount)
+                self.payWithPoints(amount.fromCents)
                 return
             }
             
@@ -1453,13 +1453,13 @@ class SalePointView: Div {
     func closeSale(
         _ fiscCode: FiscalPaymentCodes,
         _ description: String,
-        _ amount: Float,
+        _ amount: Int64,
         _ provider: String,
         _ lastFour: String,
         _ auth: String
     ) {
         
-        guard let currentBalance = Float(self.balanceString.replace(from: ",", to: "")) else{
+        guard let currentBalance = Double(self.balanceString.replace(from: ",", to: ""))?.toCents else {
             return
         }
         
@@ -1630,7 +1630,7 @@ class SalePointView: Div {
             saleType: .pdv,
             fiscCode: fiscCode,
             description: description,
-            amount: amount,
+            amount: amount.fromCents,
             provider: provider,
             lastFour: lastFour,
             auth: auth,
@@ -1657,7 +1657,7 @@ class SalePointView: Div {
             var cambio = ""
             
             if let _total = Float(self.balanceString.replace(from: ",", to: ""))?.toCents{
-                let _payment = amount.toCents
+                let _payment = amount
                 cambio = (_payment - _total).formatMoney
             }
             

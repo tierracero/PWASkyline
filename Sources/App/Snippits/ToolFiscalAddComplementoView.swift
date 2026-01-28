@@ -552,7 +552,7 @@ class ToolFiscalAddComplementoView: Div {
                 storeId: custCatchStore, 
                 ids: self.selectedDocumentsIds,
                 description: description,
-                payment: amount.toCents,
+                payment: amount,
                 comment: "",
                 officialDate: uts,
                 forma: code,

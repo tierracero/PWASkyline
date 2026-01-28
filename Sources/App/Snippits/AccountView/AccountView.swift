@@ -609,7 +609,7 @@ class AccountView: PageController {
         Div{
             
             Div{
-                
+                /*
                 Div{
                     
                     Img()
@@ -1359,7 +1359,7 @@ class AccountView: PageController {
                 
                 Div().class(.clear)
                     .marginBottom(12.px)
-                
+                */
             }
             .color(.gray)
         }
