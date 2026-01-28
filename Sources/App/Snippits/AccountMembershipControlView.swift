@@ -704,7 +704,7 @@ class AccountMembershipControlView: Div {
             
             self.payCode = code
             self.payDescription = description
-            self.payAmount = amount.toCents
+            self.payAmount = amount
             self.payProvider = provider
             self.payLastFour = lastFour
             self.payAuth = self.payAuth

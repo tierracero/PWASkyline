@@ -3762,7 +3762,7 @@ class StartServiceOrder: Div {
                                     cardId: self.cardId,
                                     currentBalance: self.total
                                 ) { code, description, amount, provider, lastFour, auth, uts in
-                                    /*
+                                    
                                     let refid: UUID = .init()
                                     
                                     self.payments.append(
@@ -3770,7 +3770,7 @@ class StartServiceOrder: Div {
                                             refid: refid,
                                             fiscCode: code,
                                             description: description,
-                                            amount: amount.fromCents,
+                                            amount: amount,
                                             reference: "",
                                             provider: provider,
                                             lastFour: lastFour,
@@ -3816,7 +3816,7 @@ class StartServiceOrder: Div {
                                     self.chargesTable.appendChild(tr)
                                     
                                     self.calcBalance()
-                                    */
+                                    
                                 }
                                 
                                 self.appendChild(pv)

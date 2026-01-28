@@ -609,7 +609,7 @@ class AccountView: PageController {
         Div{
             
             Div{
-                /*
+                
                 Div{
                     
                     Img()
@@ -1359,7 +1359,7 @@ class AccountView: PageController {
                 
                 Div().class(.clear)
                     .marginBottom(12.px)
-                */
+                
             }
             .color(.gray)
         }
@@ -1367,7 +1367,7 @@ class AccountView: PageController {
         .width(33.percent)
         .float(.left)
         .overflow(.auto)
-        /*
+        
         Div{
             
             Div{
@@ -1602,66 +1602,7 @@ class AccountView: PageController {
                         .float(.right)
                         .class(.uibtn)
                         .onClick {
-                            
-                            let _balance = (Float(self.balance) ?? 0).toCents
-                            
-                            let paymentView = AddPaymentFormView (
-                                accountId: self.account.id,
-                                cardId: self.CardID.wrappedValue,
-                                currentBalance: _balance
-                            ) { code, description, amount, provider, lastFour, auth, uts in
-                                
-                                loadingView(show: true)
-                                
-                                API.custAccountV1.addPayment(
-                                    accountid: self.account.id,
-                                    storeId: custCatchStore,
-                                    fiscCode: code,
-                                    description: description,
-                                    cost: amount,
-                                    provider: provider,
-                                    lastFour: lastFour,
-                                    auth: auth
-                                ) { resp in
-                                    
-                                    loadingView(show: false)
-                                    
-                                    guard let resp else{
-                                        showError(.errorDeCommunicacion, "No se pudieron cargar detalles de la cuenta.")
-                                        return
-                                    }
-                                    
-                                    guard resp.status == .ok else{
-                                        showError(.errorGeneral, "No se pudieron cargar detalles de la cuenta.")
-                                        return
-                                    }
-                                    
-                                    guard let payload = resp.data else {
-                                        showError(.unexpectedResult, "No se obtuvo data de la peticion.")
-                                        return
-                                    }
-                                    
-                                    switch self.pMode {
-                                    case .serviceOrder:
-                                        break
-                                    case .dates:
-                                        break
-                                    case .accounts:
-                                        break
-                                    case .clubMembership:
-                                        self.balance = payload.balance.formatMoney
-                                    }
-                                    
-                                    showSuccess(.operacionExitosa, "Pago exitoso \(payload.paymentFolio)")
-                                    
-                                }
-                                
-                            }
-                            
-                            paymentView.isDownPaymentDisabled = true
-                            
-                            addToDom(paymentView)
-                            
+                            self.addPayment()
                         }
                         
                         /// ``Add Charges``
@@ -1743,7 +1684,7 @@ class AccountView: PageController {
         .width(66.percent)
         .float(.left)
         .overflow(.auto)
-        */
+        
     }
     
     override func buildUI() {
@@ -2034,6 +1975,68 @@ class AccountView: PageController {
         ))
     }
 
+    func addPayment() {
+
+        let _balance = (Float(self.balance) ?? 0).toCents
+        
+        let paymentView = AddPaymentFormView (
+            accountId: self.account.id,
+            cardId: self.CardID.wrappedValue,
+            currentBalance: _balance
+        ) { code, description, amount, provider, lastFour, auth, uts in
+            
+            loadingView(show: true)
+            
+            API.custAccountV1.addPayment(
+                accountid: self.account.id,
+                storeId: custCatchStore,
+                fiscCode: code,
+                description: description,
+                cost: amount.fromCents,
+                provider: provider,
+                lastFour: lastFour,
+                auth: auth
+            ) { resp in
+                
+                loadingView(show: false)
+                
+                guard let resp else{
+                    showError(.errorDeCommunicacion, "No se pudieron cargar detalles de la cuenta.")
+                    return
+                }
+                
+                guard resp.status == .ok else{
+                    showError(.errorGeneral, "No se pudieron cargar detalles de la cuenta.")
+                    return
+                }
+                
+                guard let payload = resp.data else {
+                    showError(.unexpectedResult, "No se obtuvo data de la peticion.")
+                    return
+                }
+                
+                switch self.pMode {
+                case .serviceOrder:
+                    break
+                case .dates:
+                    break
+                case .accounts:
+                    break
+                case .clubMembership:
+                    self.balance = payload.balance.formatMoney
+                }
+                
+                showSuccess(.operacionExitosa, "Pago exitoso \(payload.paymentFolio)")
+                
+            }
+            
+        }
+        
+        paymentView.isDownPaymentDisabled = true
+        
+        addToDom(paymentView)
+        
+    }
     
     
 }

@@ -294,10 +294,10 @@ class OrderView: Div {
                             loadingView(show: true)
                             
                             if code == .dineroElectronico {
-                                self.proccessPaymentWithPoints(amount)
+                                self.proccessPaymentWithPoints(amount.fromCents)
                             }
                             else {
-                                self.proccessPayment(code, description, amount, provider, lastFour, auth, uts)
+                                self.proccessPayment(code, description, amount.fromCents, provider, lastFour, auth, uts)
                             }
                             
                         }
