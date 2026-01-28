@@ -136,6 +136,7 @@ class ConfirmProductViewNew: Div {
         .objectFit(.cover)
     
     lazy var quantInput = InputNumber(self.$cuant)
+        .placeholder("1")
         .custom("patern", "[0-9]*")
         .class(.textFiledLight)
         .textAlign(.center)
