@@ -1524,7 +1524,7 @@ class StartServiceOrder: Div {
                             .class(.uibutton)
                             .float(.left)
                             .onClick {
-                                
+                                /*
                                 let pv = AddPaymentFormView (
                                     accountId: self.custAcct.id,
                                     cardId: self.cardId,
@@ -1595,6 +1595,7 @@ class StartServiceOrder: Div {
                                 else{
                                     pv.paymentInput.select()
                                 }
+                                */
                             }
                                 
                             Span(self.$ttotal)
