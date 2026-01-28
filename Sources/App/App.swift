@@ -142,7 +142,8 @@ class App: WebApp {
         SKLogInStyle().disabled($theme.map { $0 != .login })
         
     }
-
+    
+    
 	public func configure(){
 		
         fiscCodesBase.forEach { code in
