@@ -1538,7 +1538,7 @@ class StartServiceOrder: Div {
                                             refid: refid,
                                             fiscCode: code,
                                             description: description,
-                                            amount: amount.toCents,
+                                            amount: amount.fromCents,
                                             reference: "",
                                             provider: provider,
                                             lastFour: lastFour,
@@ -1554,7 +1554,7 @@ class StartServiceOrder: Div {
                                         id: id,
                                         name: description,
                                         cuant: 100.toInt64,
-                                        price: amount.toCents,
+                                        price: amount,
                                         puerchaseOrder: false
                                     ) { viewId in
                                         

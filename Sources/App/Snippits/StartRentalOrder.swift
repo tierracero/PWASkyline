@@ -454,7 +454,7 @@ class StartRentalOrder: Div {
             cardId: custAcct.CardID,
             currentBalance: currentBalance
         ) { code, description, amount, provider, lastFour, auth, uts in
-            self.closeSale(code, description, amount, provider, lastFour, auth)
+            self.closeSale(code, description, amount.fromCents, provider, lastFour, auth)
         }
         
         self.appendChild(paymentView)

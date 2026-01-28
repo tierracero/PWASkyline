@@ -1367,7 +1367,7 @@ class AccountView: PageController {
         .width(33.percent)
         .float(.left)
         .overflow(.auto)
-        
+        /*
         Div{
             
             Div{
@@ -1743,7 +1743,7 @@ class AccountView: PageController {
         .width(66.percent)
         .float(.left)
         .overflow(.auto)
-        
+        */
     }
     
     override func buildUI() {
