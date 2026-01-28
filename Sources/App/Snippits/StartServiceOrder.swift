@@ -1524,78 +1524,7 @@ class StartServiceOrder: Div {
                             .class(.uibutton)
                             .float(.left)
                             .onClick {
-                                /*
-                                let pv = AddPaymentFormView (
-                                    accountId: self.custAcct.id,
-                                    cardId: self.cardId,
-                                    currentBalance: self.total
-                                ) { code, description, amount, provider, lastFour, auth, uts in
-                                    
-                                    let refid: UUID = .init()
-                                    
-                                    self.payments.append(
-                                        .init(
-                                            refid: refid,
-                                            fiscCode: code,
-                                            description: description,
-                                            amount: amount.fromCents,
-                                            reference: "",
-                                            provider: provider,
-                                            lastFour: lastFour,
-                                            auth: auth
-                                        )
-                                    )
-                                    
-                                    let id = refid
-                                
-                                    let tr = OldChargeTrRow(
-                                        preCharge: true,
-                                        isCharge: false,
-                                        id: id,
-                                        name: description,
-                                        cuant: 100.toInt64,
-                                        price: amount,
-                                        puerchaseOrder: false
-                                    ) { viewId in
-                                        
-                                        if let tf = self.payChargeRef[viewId] {
-                                            tf.remove()
-                                        }
-                                        
-                                        var _payments: [PaymentObject] = []
-                                        
-                                        self.payments.forEach { pay in
-                                            if pay.refid == id {
-                                                return
-                                            }
-                                            _payments.append(pay)
-                                        }
-                                        
-                                        self.payments = _payments
-                                        
-                                        print(_payments)
-                                        
-                                        self.calcBalance()
-                                        
-                                    }
-                                    
-                                    self.payChargeRef[tr.viewId] = tr
-                                    
-                                    self.chargesTable.appendChild(tr)
-                                    
-                                    self.calcBalance()
-                                    
-                                }
-                                
-                                self.appendChild(pv)
-                                
-                                if self.total <= 0 {
-                                    pv.paymentDescription.select()
-                                }
-                                else{
-                                    pv.paymentInput.select()
-                                }
-                                */
+                                self.addPayment()
                             }
                                 
                             Span(self.$ttotal)
@@ -3824,6 +3753,81 @@ class StartServiceOrder: Div {
         
         addChargeFormView.searchTermInput.select()
         
+    }
+
+    func addPayment(){
+
+                                let pv = AddPaymentFormView (
+                                    accountId: self.custAcct.id,
+                                    cardId: self.cardId,
+                                    currentBalance: self.total
+                                ) { code, description, amount, provider, lastFour, auth, uts in
+                                    /*
+                                    let refid: UUID = .init()
+                                    
+                                    self.payments.append(
+                                        .init(
+                                            refid: refid,
+                                            fiscCode: code,
+                                            description: description,
+                                            amount: amount.fromCents,
+                                            reference: "",
+                                            provider: provider,
+                                            lastFour: lastFour,
+                                            auth: auth
+                                        )
+                                    )
+                                    
+                                    let id = refid
+                                
+                                    let tr = OldChargeTrRow(
+                                        preCharge: true,
+                                        isCharge: false,
+                                        id: id,
+                                        name: description,
+                                        cuant: 100.toInt64,
+                                        price: amount,
+                                        puerchaseOrder: false
+                                    ) { viewId in
+                                        
+                                        if let tf = self.payChargeRef[viewId] {
+                                            tf.remove()
+                                        }
+                                        
+                                        var _payments: [PaymentObject] = []
+                                        
+                                        self.payments.forEach { pay in
+                                            if pay.refid == id {
+                                                return
+                                            }
+                                            _payments.append(pay)
+                                        }
+                                        
+                                        self.payments = _payments
+                                        
+                                        print(_payments)
+                                        
+                                        self.calcBalance()
+                                        
+                                    }
+                                    
+                                    self.payChargeRef[tr.viewId] = tr
+                                    
+                                    self.chargesTable.appendChild(tr)
+                                    
+                                    self.calcBalance()
+                                    */
+                                }
+                                
+                                self.appendChild(pv)
+                                
+                                if self.total <= 0 {
+                                    pv.paymentDescription.select()
+                                }
+                                else{
+                                    pv.paymentInput.select()
+                                }
+                                
     }
 
 }
