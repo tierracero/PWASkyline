@@ -466,17 +466,17 @@ class ImageEditor: Div {
             API.custPOCV1.getIconWaterMark { resp in
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let data = resp.data else {
-                    showError(.errorGeneral, .unexpenctedMissingPayload)
+                    showError(.generalError, .unexpenctedMissingPayload)
                     return
                 }
                 
@@ -529,7 +529,7 @@ class ImageEditor: Div {
                     
                 }
                 else {
-                    showError(.errorGeneral, .unexpenctedMissingPayload)
+                    showError(.generalError, .unexpenctedMissingPayload)
                     return
                 }
             default:
@@ -898,7 +898,7 @@ class ImageEditor: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
@@ -914,7 +914,7 @@ class ImageEditor: Div {
             catch {  }
 
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
 
@@ -943,7 +943,7 @@ class ImageEditor: Div {
         }
         
         xhr.onError { jsValue in
-            showError(.errorDeCommunicacion, .serverConextionError)
+            showError(.comunicationError, .serverConextionError)
             view.remove()
         }
         
@@ -952,13 +952,13 @@ class ImageEditor: Div {
             view.loadPercent = ""
             
             guard let responseText = xhr.responseText else {
-                showError(.errorGeneral, .serverConextionError + " 001")
+                showError(.generalError, .serverConextionError + " 001")
                 view.remove()
                 return
             }
             
             guard let data = responseText.data(using: .utf8) else {
-                showError(.errorGeneral, .serverConextionError + " 002")
+                showError(.generalError, .serverConextionError + " 002")
                 view.remove()
                 return
             }
@@ -968,13 +968,13 @@ class ImageEditor: Div {
                 let resp = try JSONDecoder().decode(APIResponseGeneric<API.custAPIV1.UploadMediaResponse>.self, from: data)
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     view.remove()
                     return
                 }
                 
                 guard let data = resp.data else {
-                    showError(.errorGeneral, "No se pudo cargar datos")
+                    showError(.generalError, "No se pudo cargar datos")
                     view.remove()
                     return
                 }
@@ -1003,7 +1003,7 @@ class ImageEditor: Div {
                 
             } catch {
                 
-                showError(.errorGeneral, .serverConextionError + " 003")
+                showError(.generalError, .serverConextionError + " 003")
                 view.remove()
                 print(error)
                 
@@ -1074,14 +1074,14 @@ class ImageEditor: Div {
             
             guard let resp else {
                 self.imageEditorProcessingViewText = ""
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 loadingView(show: false)
                 return
             }
             
             guard resp.status == .ok else {
                 self.imageEditorProcessingViewText = ""
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 loadingView(show: false)
                 return
             }
@@ -1110,12 +1110,12 @@ class ImageEditor: Div {
             ) { resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
              
@@ -1128,17 +1128,17 @@ class ImageEditor: Div {
                 case .active, .processed:
                     if wait > 20 {
                         self.watingBackgroundRemoval = false
-                        showError(.errorGeneral, "Fallo cargo del archivo.")
+                        showError(.generalError, "Fallo cargo del archivo.")
                         return
                     }
                     self.checkRemoveBackGroundState(wait: wait + 1)
                 case .error:
                     self.watingBackgroundRemoval = false
-                    showError(.errorGeneral, "Fallo cargo del archivo.")
+                    showError(.generalError, "Fallo cargo del archivo.")
                 case .done:
                     
                     guard var image = payload.image else {
-                        showError(.errorGeneral, "No se encontro imagen, refsque para cargarla.")
+                        showError(.generalError, "No se encontro imagen, refsque para cargarla.")
                         return
                     }
                     

@@ -695,7 +695,7 @@ class ManageFiscalProfile: Div {
         }
         
         xhr.onError { jsValue in
-            showError(.errorDeCommunicacion, .serverConextionError)
+            showError(.comunicationError, .serverConextionError)
             switch type {
             case .key:
                 self.logoUploadPercent = ""
@@ -718,12 +718,12 @@ class ManageFiscalProfile: Div {
             }
             
             guard let responseText = xhr.responseText else {
-                showError(.errorGeneral, .serverConextionError + " 001")
+                showError(.generalError, .serverConextionError + " 001")
                 return
             }
             
             guard let data = responseText.data(using: .utf8) else {
-                showError(.errorGeneral, .serverConextionError + " 002")
+                showError(.generalError, .serverConextionError + " 002")
                 return
             }
             
@@ -732,12 +732,12 @@ class ManageFiscalProfile: Div {
                 let resp = try JSONDecoder().decode(APIResponseGeneric<API.custAPIV1.UploadMediaResponse>.self, from: data)
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let data = resp.data else {
-                    showError(.errorGeneral, "No se pudo cargar datos")
+                    showError(.generalError, "No se pudo cargar datos")
                     return
                 }
                 
@@ -752,7 +752,7 @@ class ManageFiscalProfile: Div {
                 }
                 
             } catch {
-                showError(.errorGeneral, .serverConextionError + " 003")
+                showError(.generalError, .serverConextionError + " 003")
                 return
             }
             
@@ -821,97 +821,97 @@ class ManageFiscalProfile: Div {
         }
         
         guard let pack else {
-            showError(.errorDeCommunicacion, "No se seleccion paquete fiscal")
+            showError(.comunicationError, "No se seleccion paquete fiscal")
             return
         }
         
         guard !rfc.isEmpty else {
-            showError(.campoRequerido, .requierdValid("RFC"))
+            showError(.requiredField, .requierdValid("RFC"))
             rfcField.select()
             return
         }
         
         guard !razon.isEmpty else {
-            showError(.campoRequerido, .requierdValid("RFC"))
+            showError(.requiredField, .requierdValid("RFC"))
             razonField.select()
             return
         }
         
         guard !sat_web_pass.isEmpty else {
-            showError(.campoRequerido, .requierdValid("Contraseña SAT"))
+            showError(.requiredField, .requierdValid("Contraseña SAT"))
             satWebPassField.select()
             return
         }
         
         guard !nomComercial.isEmpty else {
-            showError(.campoRequerido, .requierdValid("Contraseña SAT"))
+            showError(.requiredField, .requierdValid("Contraseña SAT"))
             nomComercialField.select()
             return
         }
         
         guard let regimen else {
-            showError(.campoRequerido, "Seleccione Regimen")
+            showError(.requiredField, "Seleccione Regimen")
             return
         }
         
         guard !zipCode.isEmpty else {
-            showError(.campoRequerido, .requierdValid("Codigo Postal"))
+            showError(.requiredField, .requierdValid("Codigo Postal"))
             zipCodeField.select()
             return
         }
         
         guard let usoDeFact else {
-            showError(.campoRequerido, "Seleccione Uso de factura")
+            showError(.requiredField, "Seleccione Uso de factura")
             return
         }
         
         guard let tipoDePago else {
-            showError(.campoRequerido, "Seleccione Tipo de pago")
+            showError(.requiredField, "Seleccione Tipo de pago")
             return
         }
         
         guard let methDePago else {
-            showError(.campoRequerido, "Seleccione Metodo de pago")
+            showError(.requiredField, "Seleccione Metodo de pago")
             return
         }
         
         guard let tipoDeMoneda else {
-            showError(.campoRequerido, "Seleccione Tipo de moneda")
+            showError(.requiredField, "Seleccione Tipo de moneda")
             return
         }
         
         guard !fiscUnit.isEmpty else {
-            showError(.campoRequerido, .requierdValid("Unidad Fiscal"))
+            showError(.requiredField, .requierdValid("Unidad Fiscal"))
             fiscUnitField.fiscUnitField.select()
             return
         }
         
         guard !fiscCode.isEmpty else {
-            showError(.campoRequerido, .requierdValid("Codigo Postal"))
+            showError(.requiredField, .requierdValid("Codigo Postal"))
             fiscCodeField.fiscCodeField.select()
             return
         }
         
         guard let fielCer else {
-            showError(.campoRequerido, .requierdValid("Ingrese archivo .cer"))
+            showError(.requiredField, .requierdValid("Ingrese archivo .cer"))
             return
         }
         
         
         guard let fielKey else {
-            showError(.campoRequerido, .requierdValid("Ingrese archivo .key"))
+            showError(.requiredField, .requierdValid("Ingrese archivo .key"))
             return
         }
         
         
         guard !fielPass.isEmpty else {
-            showError(.campoRequerido, .requierdValid("Ingerse contraseña FIEL"))
+            showError(.requiredField, .requierdValid("Ingerse contraseña FIEL"))
             fielPassField.select()
             return
         }
         
         guard let theme else {
-            showError(.campoRequerido, .requierdValid("Escoja color del tema"))
+            showError(.requiredField, .requierdValid("Escoja color del tema"))
             return
         }
         
@@ -943,12 +943,12 @@ class ManageFiscalProfile: Div {
         ) { resp in
             
             guard let resp else{
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             

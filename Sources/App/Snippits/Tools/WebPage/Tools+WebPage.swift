@@ -783,12 +783,12 @@ extension ToolsView {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -959,12 +959,12 @@ extension ToolsView {
                             loadingView(show: false)
                             
                             guard let resp else {
-                                showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para completar operación")
+                                showError(.comunicationError, "No se pudo comunicar con el servir para completar operación")
                                 return
                             }
                             
                             guard resp.status == .ok else {
-                                showError(.errorGeneral, resp.msg)
+                                showError(.generalError, resp.msg)
                                 return
                             }
                             
@@ -1025,12 +1025,12 @@ extension ToolsView {
             ) { resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "No se pudo comunicar con el servir.")
+                    showError(.comunicationError, "No se pudo comunicar con el servir.")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -1158,12 +1158,12 @@ extension ToolsView {
                loadingView(show: false)
                
                guard let resp else {
-                   showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                   showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                    return
                }
                
                guard resp.status == .ok else {
-                   showError(.errorGeneral, resp.msg)
+                   showError(.generalError, resp.msg)
                    return
                }
                
@@ -1212,12 +1212,12 @@ extension ToolsView {
                loadingView(show: false)
                
                guard let resp else {
-                   showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                   showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                    return
                }
                
                guard resp.status == .ok else {
-                   showError(.errorGeneral, resp.msg)
+                   showError(.generalError, resp.msg)
                    return
                }
                
@@ -1251,12 +1251,12 @@ extension ToolsView {
                loadingView(show: false)
                
                guard let resp else {
-                   showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                   showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                    return
                }
                
                guard resp.status == .ok else {
-                   showError(.errorGeneral, resp.msg)
+                   showError(.generalError, resp.msg)
                    return
                }
                
@@ -1293,12 +1293,12 @@ extension ToolsView {
                loadingView(show: false)
                
                guard let resp else {
-                   showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                   showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                    return
                }
                
                guard resp.status == .ok else {
-                   showError(.errorGeneral, resp.msg)
+                   showError(.generalError, resp.msg)
                    return
                }
                
@@ -1333,12 +1333,12 @@ extension ToolsView {
                loadingView(show: false)
                
                guard let resp else {
-                   showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                   showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                    return
                }
                
                guard resp.status == .ok else {
-                   showError(.errorGeneral, resp.msg)
+                   showError(.generalError, resp.msg)
                    return
                }
                
@@ -1373,12 +1373,12 @@ extension ToolsView {
                 loadingView(show: false)
 
                guard let resp else {
-                   showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                   showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                    return
                }
                
                guard resp.status == .ok else {
-                   showError(.errorGeneral, resp.msg)
+                   showError(.generalError, resp.msg)
                    return
                }
                
@@ -1468,7 +1468,7 @@ extension ToolsView.WebPage {
 
         if file.type.contains("video") || file.type.contains("image") {
             if  fileSize > 30 {
-                showError(.errorGeneral, "No se pueden subir archivoa de mas de 30 mb")
+                showError(.generalError, "No se pueden subir archivoa de mas de 30 mb")
 
                 return 
             }
@@ -1482,7 +1482,7 @@ extension ToolsView.WebPage {
         }
         
         xhr.onError { jsValue in
-            showError(.errorDeCommunicacion, .serverConextionError)
+            showError(.comunicationError, .serverConextionError)
             view.remove()
         }
         
@@ -1493,13 +1493,13 @@ extension ToolsView.WebPage {
             view.loadPercent = ""
             
             guard let responseText = xhr.responseText else {
-                showError(.errorGeneral, .serverConextionError + " 001")
+                showError(.generalError, .serverConextionError + " 001")
                 view.remove()
                 return
             }
             
             guard let data = responseText.data(using: .utf8) else {
-                showError(.errorGeneral, .serverConextionError + " 002")
+                showError(.generalError, .serverConextionError + " 002")
                 view.remove()
                 return
             }
@@ -1509,13 +1509,13 @@ extension ToolsView.WebPage {
                 let resp = try JSONDecoder().decode(APIResponseGeneric<API.custAPIV1.UploadManagerResponse>.self, from: data)
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     view.remove()
                     return
                 }
                 
                 guard let process = resp.data else {
-                    showError(.errorGeneral, "No se pudo cargar datos")
+                    showError(.generalError, "No se pudo cargar datos")
                     view.remove()
                     return
                 }
@@ -1547,7 +1547,7 @@ extension ToolsView.WebPage {
                 
             }
             catch {
-                showError(.errorGeneral, .serverConextionError + " 003")
+                showError(.generalError, .serverConextionError + " 003")
                 view.remove()
                 return
             }

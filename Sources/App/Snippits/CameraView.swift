@@ -94,7 +94,7 @@ class CameraView: Div {
         .onClick {
             
             guard let currentPicture = self.currentPicture else {
-                showError(.errorGeneral, "Tome foto de nuevo")
+                showError(.generalError, "Tome foto de nuevo")
                 return
             }
             

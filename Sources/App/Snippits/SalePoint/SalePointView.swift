@@ -667,17 +667,17 @@ class SalePointView: Div {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
                     
                     guard resp.status == .ok else{
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
                     guard let payload = resp.data else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
                     
@@ -1164,17 +1164,17 @@ class SalePointView: Div {
         }
         
         guard let custAcct else {
-            showError(.errorGeneral, "Seleccione cuenta para continuar.")
+            showError(.generalError, "Seleccione cuenta para continuar.")
             return
         }
         
         guard custAcct.type != .personal else {
-            showError(.errorGeneral, "Lo sentimos, no se pueden generar consesiones a una cuenta personal")
+            showError(.generalError, "Lo sentimos, no se pueden generar consesiones a una cuenta personal")
             return
         }
         
         guard custAcct.crstatus == .active else {
-            showError(.errorGeneral, "El credito en esta cuenta actualmente no esta activa.")
+            showError(.generalError, "El credito en esta cuenta actualmente no esta activa.")
             return
         }
         
@@ -1254,22 +1254,22 @@ class SalePointView: Div {
         }
         
         guard services.isEmpty else {
-            showError(.errorGeneral, "No puede enviar sevicios a concesión")
+            showError(.generalError, "No puede enviar sevicios a concesión")
             return
         }
         
         guard manuals.isEmpty else {
-            showError(.errorGeneral, "No puede enviar cargos manuales a concesión")
+            showError(.generalError, "No puede enviar cargos manuales a concesión")
             return
         }
         
         if products.isEmpty {
-            showError(.errorGeneral, "No hay productos para evnviar a concesión")
+            showError(.generalError, "No hay productos para evnviar a concesión")
             return
         }
         
         if missingInventory {
-            showError(.errorGeneral, "No se pueden generar ordenes de compra sobre concesiones")
+            showError(.generalError, "No se pueden generar ordenes de compra sobre concesiones")
             return
         }
         
@@ -1304,12 +1304,12 @@ class SalePointView: Div {
                                 loadingView(show: false)
                                 
                                 guard let resp = resp else {
-                                    showError(.errorDeCommunicacion, "Error de comunicacion")
+                                    showError(.comunicationError, "Error de comunicacion")
                                     return
                                 }
                                 
                                 if resp.status != .ok {
-                                    showError(.errorGeneral, resp.msg)
+                                    showError(.generalError, resp.msg)
                                     return
                                 }
                                 
@@ -1382,7 +1382,7 @@ class SalePointView: Div {
                     case .required, .recomended:
                         
                         if orderCloseInscriptionMode == .required {
-                            showError(.errorGeneral, "Se requiere que incriba al cliente en el sistema de recompensas")
+                            showError(.generalError, "Se requiere que incriba al cliente en el sistema de recompensas")
                         }
                         
                         self.addLoyaltyCard( isRequiered: orderCloseInscriptionMode == .required ) {
@@ -1431,7 +1431,7 @@ class SalePointView: Div {
     func payWithPoints(_ points: Float) {
         
         if let rewadsPoints {
-            showError(.errorGeneral, "Ya esta usando \(rewadsPoints.toInt) pts" )
+            showError(.generalError, "Ya esta usando \(rewadsPoints.toInt) pts" )
             return
         }
         
@@ -1640,12 +1640,12 @@ class SalePointView: Div {
             loadingView(show: false)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, "Error de comunicacion")
+                showError(.comunicationError, "Error de comunicacion")
                 return
             }
             
             if resp.status != .ok {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -1747,7 +1747,7 @@ class SalePointView: Div {
     func saveBudgetDocument() {
     
         guard let custAcct else {
-            showError(.errorGeneral, "No se la localizado cuenta del cliente. Contacte a Soporte TC")
+            showError(.generalError, "No se la localizado cuenta del cliente. Contacte a Soporte TC")
             return
         }
        
@@ -1762,12 +1762,12 @@ class SalePointView: Div {
         ) { resp in
            
            guard let resp else {
-               showError(.errorDeCommunicacion, .serverConextionError)
+               showError(.comunicationError, .serverConextionError)
                return
            }
            
            guard resp.status == .ok else {
-               showError(.errorGeneral, resp.msg)
+               showError(.generalError, resp.msg)
                return
            }
            
@@ -2318,7 +2318,7 @@ class SalePointView: Div {
         
         if let custAcct {
             guard custAcct.type == .personal else {
-                showError(.errorGeneral, "Lo sentimos las cuentas \(custAcct.type.description) aun no es soportado.")
+                showError(.generalError, "Lo sentimos las cuentas \(custAcct.type.description) aun no es soportado.")
                 return
             }
         }

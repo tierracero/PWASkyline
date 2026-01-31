@@ -284,24 +284,24 @@ extension AddPaymentFormView {
         func usePoints(){
             
             if payment.isEmpty {
-                showError(.errorGeneral, "Ingrese una cantidad valida")
+                showError(.generalError, "Ingrese una cantidad valida")
                 return
             }
             
             guard let thisPayment = Double(payment.replace(from: ",", to: ""))?.toCents else{
-                showError(.errorGeneral, "Ingrese una cantidad valida")
+                showError(.generalError, "Ingrese una cantidad valida")
                 return
             }
             
             let newbal = currentBalance - thisPayment
             
             if newbal < 0 {
-                showError(.errorGeneral, "Los puntos deben ser igual o menor al balance de la cuenta")
+                showError(.generalError, "Los puntos deben ser igual o menor al balance de la cuenta")
                 return
             }
             
             if thisPayment.fromCents.toInt > points.balance {
-                showError(.errorGeneral, "No cuenta con puntos sufficientes")
+                showError(.generalError, "No cuenta con puntos sufficientes")
                 return
             }
             

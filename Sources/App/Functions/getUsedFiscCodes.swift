@@ -38,12 +38,12 @@ func getUsedFiscCodes(type: ChargeType, callback: @escaping (_ success: Bool) ->
             loadingView(show: false)
             
             guard let codes = codes else {
-                showError(.errorDeCommunicacion, "Error al obtener codigos de productos fiscales")
+                showError(.comunicationError, "Error al obtener codigos de productos fiscales")
                 return
             }
             
             guard let units = units else {
-                showError(.errorDeCommunicacion, "Error al obtener codigos de unidades fiscales")
+                showError(.comunicationError, "Error al obtener codigos de unidades fiscales")
                 return
             }
             

@@ -1060,12 +1060,12 @@ class ManagePOC: Div {
                                     loadingView(show: false)
                                     
                                     guard let resp else {
-                                        showError(.errorDeCommunicacion, .unexpenctedMissingPayload)
+                                        showError(.comunicationError, .unexpenctedMissingPayload)
                                         return
                                     }
                                     
                                     guard resp.status == .ok else {
-                                        showError(.errorGeneral, resp.msg)
+                                        showError(.generalError, resp.msg)
                                         return
                                     }
                                     
@@ -1245,12 +1245,12 @@ class ManagePOC: Div {
                                         loadingView(show: false)
                                         
                                         guard let resp else {
-                                            showError(.errorDeCommunicacion, .serverConextionError)
+                                            showError(.comunicationError, .serverConextionError)
                                             return
                                         }
                                         
                                         guard resp.status == .ok else {
-                                            showError(.errorGeneral, resp.msg)
+                                            showError(.generalError, resp.msg)
                                             return
                                         }
                                         
@@ -2027,14 +2027,14 @@ class ManagePOC: Div {
                                     }
                                     
                                     guard let pricea = Float(self.pricea.replace(from: ",", to: ""))?.toCents else {
-                                        showError(.formatoInvalido, "Ingrese  \"Precio Publico\" valido para usar esta herramienta.")
+                                        showError(.invalidFormat, "Ingrese  \"Precio Publico\" valido para usar esta herramienta.")
                                         self.priceaField.select()
                                         return
                                     }
                                             
                                     
                                     if self.upc.isEmpty {
-                                        showError(.campoRequerido, "Ingrese \"SKU / UPC / POC\" para usar esta herramienta")
+                                        showError(.requiredField, "Ingrese \"SKU / UPC / POC\" para usar esta herramienta")
                                         self.upcField.select()
                                         return
                                     }
@@ -3012,6 +3012,8 @@ class ManagePOC: Div {
                 
                 view.loadPercent = payload.message
                 
+            case .asyncFileOCR:
+                break
             case .asyncCropImage:
                 
                 guard let payload = self.ws.asyncCropImage($0) else {
@@ -3085,7 +3087,7 @@ class ManagePOC: Div {
             }
             
             guard let bodega = bods.first else {
-                showError(.errorGeneral, "No se localizo bodega de la tienda. Refresque o asegurese que su configuracion sea la correcta.")
+                showError(.generalError, "No se localizo bodega de la tienda. Refresque o asegurese que su configuracion sea la correcta.")
                 return
             }
             
@@ -3158,12 +3160,12 @@ class ManagePOC: Div {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError( .errorDeCommunicacion, .serverConextionError)
+                    showError( .comunicationError, .serverConextionError)
                     return
                 }
 
                 guard resp.status == .ok else {
-                    showError( .errorGeneral, resp.msg)
+                    showError( .generalError, resp.msg)
                     return
                 }
 
@@ -3757,7 +3759,7 @@ class ManagePOC: Div {
 
         if file.type.contains("video") || file.type.contains("image") {
             if  fileSize > 30 {
-                showError(.errorGeneral, "No se pueden subir archivoa de mas de 30 mb")
+                showError(.generalError, "No se pueden subir archivoa de mas de 30 mb")
 
                 return 
             }
@@ -3801,7 +3803,7 @@ class ManagePOC: Div {
         }
         
         xhr.onError { jsValue in
-            showError(.errorDeCommunicacion, .serverConextionError)
+            showError(.comunicationError, .serverConextionError)
             //self.uploadPercent = ""
             self.imageRefrence.removeValue(forKey: view.viewid)
             view.remove()
@@ -3814,14 +3816,14 @@ class ManagePOC: Div {
             view.loadPercent = ""
             
             guard let responseText = xhr.responseText else {
-                showError(.errorGeneral, .serverConextionError + " 001")
+                showError(.generalError, .serverConextionError + " 001")
                 self.imageRefrence.removeValue(forKey: view.viewid)
                 view.remove()
                 return
             }
             
             guard let data = responseText.data(using: .utf8) else {
-                showError(.errorGeneral, .serverConextionError + " 002")
+                showError(.generalError, .serverConextionError + " 002")
                 self.imageRefrence.removeValue(forKey: view.viewid)
                 view.remove()
                 return
@@ -3832,14 +3834,14 @@ class ManagePOC: Div {
                 let resp = try JSONDecoder().decode(APIResponseGeneric<API.custAPIV1.UploadManagerResponse>.self, from: data)
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     self.imageRefrence.removeValue(forKey: view.viewid)
                     view.remove()
                     return
                 }
                 
                 guard let process = resp.data else {
-                    showError(.errorGeneral, "No se pudo cargar datos")
+                    showError(.generalError, "No se pudo cargar datos")
                     self.imageRefrence.removeValue(forKey: view.viewid)
                     view.remove()
                     return
@@ -3888,7 +3890,7 @@ class ManagePOC: Div {
                 
             }
             catch {
-                showError(.errorGeneral, .serverConextionError + " 003")
+                showError(.generalError, .serverConextionError + " 003")
                 self.imageRefrence.removeValue(forKey: view.viewid)
                 view.remove()
                 return
@@ -3920,19 +3922,19 @@ class ManagePOC: Div {
         
         xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadManager")
         
-        xhr.setRequestHeader("x-eventid", view.viewid.uuidString)
+        xhr.setRequestHeader("eventid", view.viewid.uuidString)
         
-        xhr.setRequestHeader("x-to", ImagePickerTo.product.rawValue)
+        xhr.setRequestHeader("to", ImagePickerTo.product.rawValue)
         
         if let id = self.pocid?.uuidString {
-            xhr.setRequestHeader("x-id", id)
+            xhr.setRequestHeader("id", id)
         }
         
-        xhr.setRequestHeader("x-filename", fileName)
+        xhr.setRequestHeader("fileName", fileName)
         
-        xhr.setRequestHeader("x-connid", custCatchChatConnID)
+        xhr.setRequestHeader("connid", custCatchChatConnID)
         
-        xhr.setRequestHeader("x-remotecamera", false.description)
+        xhr.setRequestHeader("remoteCamera", false.description)
         
         xhr.setRequestHeader("Accept", "application/json")
         
@@ -4008,12 +4010,12 @@ class ManagePOC: Div {
             loadingView(show: false)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
 
             guard resp.status == .ok else{
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -4158,12 +4160,12 @@ class ManagePOC: Div {
                 .removeClass(.isLoading)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
 
             guard resp.status == .ok else{
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -4207,12 +4209,12 @@ class ManagePOC: Div {
                 .removeClass(.isLoading)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
 
             guard resp.status == .ok else{
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -4251,12 +4253,12 @@ class ManagePOC: Div {
                         loadingView(show: false)
                         
                         guard let resp = resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
 
                         guard resp.status == .ok else{
-                            showError(.errorGeneral, resp.msg)
+                            showError(.generalError, resp.msg)
                             return
                         }
                         
@@ -4355,7 +4357,7 @@ class ManagePOC: Div {
 
          //Modelo
          if model.isEmpty && name.isEmpty {
-             showError(.campoRequerido, "Ingrese modelo o nombre del producto")
+             showError(.requiredField, "Ingrese modelo o nombre del producto")
              return
          }
         
@@ -4366,24 +4368,24 @@ class ManagePOC: Div {
          
          //fiscode
          if fiscCode.isEmpty {
-             showError(.campoRequerido, "Codigo fiscal")
+             showError(.requiredField, "Codigo fiscal")
              return
          }
         
          //fiscunit
          if fiscUnit.isEmpty {
-             showError(.campoRequerido, "Unidad Fiscal")
+             showError(.requiredField, "Unidad Fiscal")
              return
          }
          //cost i
         
         guard let _cost = Float(cost.replace(from: ",", to: "")) else {
-            showError(.campoRequerido, "Costo Interno Requerido")
+            showError(.requiredField, "Costo Interno Requerido")
             return
         }
         
         guard let _pricea = Float(pricea.replace(from: ",", to: "")) else {
-            showError(.campoRequerido, "Precio A Requerido")
+            showError(.requiredField, "Precio A Requerido")
             return
         }
         
@@ -4414,17 +4416,17 @@ class ManagePOC: Div {
          if inCredit {
              
              guard _pricecr > 0 else{
-                 showError(.campoRequerido, "Para activar inCredit se requiere Costo Credito")
+                 showError(.requiredField, "Para activar inCredit se requiere Costo Credito")
                  return
              }
              
              guard _downPay > 0 else{
-                 showError(.campoRequerido, "Para activar inCredit se requiere Enganche")
+                 showError(.requiredField, "Para activar inCredit se requiere Enganche")
                  return
              }
              
              guard _monthToPay > 0 else{
-                 showError(.campoRequerido, "Para activar inCredit se requiere Mese de Credito")
+                 showError(.requiredField, "Para activar inCredit se requiere Mese de Credito")
                  return
              }
              
@@ -4455,7 +4457,7 @@ class ManagePOC: Div {
         }
         
         guard let conditions = ItemConditions(rawValue: self.conditions) else {
-            showError(.campoRequerido, "Seleccione estado de producto")
+            showError(.requiredField, "Seleccione estado de producto")
             return
         }
         
@@ -4480,7 +4482,7 @@ class ManagePOC: Div {
                     
                     /*
                     guard (_warentSelf > 0 || _warentProvider > 0) else {
-                        showError(.errorGeneral, "Ingrese por lo menos una garantia.")
+                        showError(.generalError, "Ingrese por lo menos una garantia.")
                         return
                     }
                     */
@@ -4500,12 +4502,12 @@ class ManagePOC: Div {
                     let isActive = mercadolibreControler.isActive
                     
                     if categoryId.isEmpty {
-                        showError(.errorGeneral, "Configure Categoria de Mercado Libre")
+                        showError(.generalError, "Configure Categoria de Mercado Libre")
                         return
                     }
                     
                     guard let price = PriceType(rawValue: mercadolibreControler.priceTypeListener) else {
-                        showError(.errorGeneral, "Selecicone el precio a usar en Mercado Libre")
+                        showError(.generalError, "Selecicone el precio a usar en Mercado Libre")
                         return
                     }
                     
@@ -4570,7 +4572,7 @@ class ManagePOC: Div {
             }
             
             if let error {
-                showError(.errorGeneral, error)
+                showError(.generalError, error)
                 return
             }
             
@@ -4649,12 +4651,12 @@ class ManagePOC: Div {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -4697,7 +4699,7 @@ class ManagePOC: Div {
             let inventory = Float(currentNewInventory) ?? 0
             
             if inventory > 0 && secName.isEmpty {
-                showError(.errorGeneral, "No ingrese seccion para el inventario.")
+                showError(.generalError, "No ingrese seccion para el inventario.")
                 return
             }
             
@@ -4770,17 +4772,17 @@ class ManagePOC: Div {
                 loadingView(show: false)
 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
 
                 guard resp.status == .ok else{
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
 
                 guard let pocid = resp.data?.pocid else {
-                    showError(.errorGeneral, "No se localizo id de la cuenta.")
+                    showError(.generalError, "No se localizo id de la cuenta.")
                     return
                 }
                 
@@ -4825,12 +4827,12 @@ class ManagePOC: Div {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else{
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -4865,12 +4867,12 @@ class ManagePOC: Div {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else{
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -4897,12 +4899,12 @@ class ManagePOC: Div {
            loadingView(show: false)
            
            guard let resp else {
-               showError(.errorDeCommunicacion, .serverConextionError)
+               showError(.comunicationError, .serverConextionError)
                return
            }
            
            guard resp.status == .ok else{
-               showError(.errorGeneral, resp.msg)
+               showError(.generalError, resp.msg)
                return
            }
            
@@ -5031,12 +5033,12 @@ class ManagePOC: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else{
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             

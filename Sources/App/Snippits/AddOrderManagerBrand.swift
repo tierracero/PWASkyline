@@ -137,12 +137,12 @@ class AddOrderManagerBrand: Div {
             loadingView(show: false)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
 
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             guard let data = resp.data else {
@@ -150,10 +150,7 @@ class AddOrderManagerBrand: Div {
                 return
             }
             
-            guard let brand = data.brand else {
-                showError(.unexpectedResult, "No se obtuvo nuevo objeto, contacte a Soporte TC")
-                return
-            }
+            let brand = data.brand
             
             orderManagerType.append(contentsOf: data.types)
             

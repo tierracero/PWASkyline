@@ -376,7 +376,7 @@ class AnaliticsView: PageController {
                     }
                     .onClick({
                         guard let tcaccount else{
-                            showError(.errorGeneral, "No se localizo cuenta vueba a cargar.")
+                            showError(.generalError, "No se localizo cuenta vueba a cargar.")
                             return
                         }
                         
@@ -538,17 +538,17 @@ class AnaliticsView: PageController {
                     loadingView(show: false)
                     
                     guard let resp else{
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
                     
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
                     guard let payload = resp.data else {
-                        showError(.errorGeneral, .unexpectedError("No se localizo data de la respueta"))
+                        showError(.generalError, .unexpectedError("No se localizo data de la respueta"))
                         return
                     }
                     
@@ -574,17 +574,17 @@ class AnaliticsView: PageController {
                 loadingView(show: false)
                 
                 guard let resp else{
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let payload = resp.data else {
-                    showError(.errorGeneral, .unexpectedError("No se localizo data de la respueta"))
+                    showError(.generalError, .unexpectedError("No se localizo data de la respueta"))
                     return
                 }
                 
@@ -635,17 +635,17 @@ class AnaliticsView: PageController {
                 loadingView(show: false)
                 
                 guard let resp else{
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let payload = resp.data else {
-                    showError(.errorGeneral, .unexpectedError("No se localizo data de la respueta"))
+                    showError(.generalError, .unexpectedError("No se localizo data de la respueta"))
                     return
                 }
                 
@@ -709,7 +709,7 @@ class AnaliticsView: PageController {
             loadingView(show: false)
             
             guard let data else {
-                showError(.errorGeneral, .serverConextionError)
+                showError(.generalError, .serverConextionError)
                 return
             }
             
@@ -730,7 +730,7 @@ class AnaliticsView: PageController {
                 
             }
             catch {
-                showError(.errorDeCommunicacion, "No se pudo generar referencia ")
+                showError(.comunicationError, "No se pudo generar referencia ")
                 print("🔴  error 🔴")
                 print(error)
                 

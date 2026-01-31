@@ -14,8 +14,6 @@ public func showError(_ title: ErrorMessagesTitles,_ msg: String,_ time: TimeLen
 	
 	let grid = ShowError(title: title.description, message: msg)
 	
-    
-    
     WebApp.current.messageGrid.appendChild(grid)
 	
 	grid.opacity(1)

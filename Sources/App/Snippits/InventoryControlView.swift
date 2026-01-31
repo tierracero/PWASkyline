@@ -619,17 +619,17 @@ class InventoryControlView: Div {
                         loadingView(show: false)
                         
                         guard let resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         if resp.status != .ok {
-                            showError(.campoRequerido, resp.msg)
+                            showError(.requiredField, resp.msg)
                             return
                         }
                         
                         guard let _pin = resp.folio else{
-                            showError(.campoRequerido, "No se obtuvo PIN de confirmacion")
+                            showError(.requiredField, "No se obtuvo PIN de confirmacion")
                             return
                         }
                         
@@ -682,13 +682,13 @@ class InventoryControlView: Div {
             
             guard let bod = item.bodid else {
                 hasError = true
-                showError(.campoRequerido, "Seleccione bodega para: \(item.poc.name) \(item.poc.model)")
+                showError(.requiredField, "Seleccione bodega para: \(item.poc.name) \(item.poc.model)")
                 return
             }
             
             guard let sec = item.secid else {
                 hasError = true
-                showError(.campoRequerido, "Seleccione seccion para: \(item.poc.name) \(item.poc.model)")
+                showError(.requiredField, "Seleccione seccion para: \(item.poc.name) \(item.poc.model)")
                 return
             }
             
@@ -723,12 +723,12 @@ class InventoryControlView: Div {
                         loadingView(show: false)
                         
                         guard let resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         if resp.status != .ok {
-                            showError(.campoRequerido, resp.msg)
+                            showError(.requiredField, resp.msg)
                             return
                         }
                         
@@ -780,17 +780,17 @@ class InventoryControlView: Div {
                         loadingView(show: false)
                         
                         guard let resp = resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         if resp.status != .ok {
-                            showError(.campoRequerido, resp.msg)
+                            showError(.requiredField, resp.msg)
                             return
                         }
                         
                         guard let _pin = resp.folio else{
-                            showError(.campoRequerido, "No se obtuvo PIN de confirmacion")
+                            showError(.requiredField, "No se obtuvo PIN de confirmacion")
                             return
                         }
                         
@@ -813,7 +813,7 @@ class InventoryControlView: Div {
             requiersComment: true, callback: { isConfirmed, reason in
                 
                 if reason.isEmpty {
-                    showError(.errorGeneral, "Ingrese rason por la cancelación")
+                    showError(.generalError, "Ingrese rason por la cancelación")
                     return
                 }
                 
@@ -829,12 +829,12 @@ class InventoryControlView: Div {
                         loadingView(show: false)
                         
                         guard let resp = resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         if resp.status != .ok {
-                            showError(.campoRequerido, resp.msg)
+                            showError(.requiredField, resp.msg)
                             return
                         }
                         

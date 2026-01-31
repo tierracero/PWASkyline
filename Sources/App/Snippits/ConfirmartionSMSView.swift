@@ -157,17 +157,17 @@ class ConfirmartionSMSView: Div {
     func confirmPin() {
         
         if pin.isEmpty {
-            showError(.errorGeneral, "Ingrese PIN")
+            showError(.generalError, "Ingrese PIN")
             return
         }
         
         guard let _ = Int(pin) else {
-            showError(.errorGeneral, "Ingrese PIN valido")
+            showError(.generalError, "Ingrese PIN valido")
             return
         }
         
         guard pin.count == 4 else {
-            showError(.errorGeneral, "Ingrese PIN valido (4 digitos)")
+            showError(.generalError, "Ingrese PIN valido (4 digitos)")
             return
         }
         
@@ -183,22 +183,22 @@ class ConfirmartionSMSView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, "Error de conexion al servidor")
+                showError(.comunicationError, "Error de conexion al servidor")
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
             guard let payload = resp.data else {
-                showError(.errorGeneral, "Error al obtener payload de data")
+                showError(.generalError, "Error al obtener payload de data")
                 return
             }
             
             if payload.expireSession {
-                showError(.errorGeneral, "PIN invalido, inicie de nuevo.")
+                showError(.generalError, "PIN invalido, inicie de nuevo.")
                 self.remove()
                 return
             }

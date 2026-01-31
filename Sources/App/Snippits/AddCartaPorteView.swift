@@ -1007,7 +1007,7 @@ class AddCartaPorteView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
@@ -1101,84 +1101,84 @@ class AddCartaPorteView: Div {
     func addCartaPorte(){
         
         if merchandise.isEmpty {
-            showError(.errorGeneral, "Agrege mercancia")
+            showError(.generalError, "Agrege mercancia")
             addMerchandise()
             return
         }
         
         if locations.count < 2 {
-            showError(.errorGeneral, "Agregue ubicaciones.")
+            showError(.generalError, "Agregue ubicaciones.")
             addLocations()
             return
         }
         
         guard let _operadorType = TipoOperador(rawValue: operadorType) else {
-            showError(.errorGeneral, "Seleccione tipo de operador")
+            showError(.generalError, "Seleccione tipo de operador")
             return
         }
         
         guard !operadorName.isEmpty else {
             operadorRfcField.codeField.select()
-            showError(.errorGeneral, "Ingrese Nombre del Operador")
+            showError(.generalError, "Ingrese Nombre del Operador")
             return
         }
         
         guard !operadorRfc.isEmpty else {
             operadorRfcField.codeField.select()
-            showError(.errorGeneral, "Ingrese RFC del Operador")
+            showError(.generalError, "Ingrese RFC del Operador")
             return
         }
         
         guard !operadorLicens.isEmpty else {
             operadorLicensField.select()
-            showError(.errorGeneral, "Ingrese Nombre/Razon del Operador")
+            showError(.generalError, "Ingrese Nombre/Razon del Operador")
             return
         }
         
         guard !vehicalType.isEmpty else {
-            showError(.errorGeneral, "Seleccione tipo de vehiculo")
+            showError(.generalError, "Seleccione tipo de vehiculo")
             vehicalTypeField.fiscUnitField.select()
             return
         }
         
         guard !vehicalLicensePlate.isEmpty else {
-            showError(.errorGeneral, "Ingrese placas del vehiculo")
+            showError(.generalError, "Ingrese placas del vehiculo")
             vehicalLicensePlateField.select()
             return
         }
         
         guard !vehicalYearModel.isEmpty else {
-            showError(.errorGeneral, "Ingrese Año (modelo) del vehiculo")
+            showError(.generalError, "Ingrese Año (modelo) del vehiculo")
             vehicalYearModelField.select()
             return
         }
         
         guard let _ = Int(vehicalYearModel) else {
-            showError(.errorGeneral, "Ingrese Año (modelo) valido del vehiculo")
+            showError(.generalError, "Ingrese Año (modelo) valido del vehiculo")
             vehicalYearModelField.select()
             return
         }
         
         guard vehicalYearModel.count == 4 else {
-            showError(.errorGeneral, "Ingrese Año (modelo) valido del vehiculo")
+            showError(.generalError, "Ingrese Año (modelo) valido del vehiculo")
             vehicalYearModelField.select()
             return
         }
         
         guard let vehicalWeight = Double(vehicalWeight) else {
-            showError(.errorGeneral, "Ingrese Año (modelo) valido del vehiculo")
+            showError(.generalError, "Ingrese Año (modelo) valido del vehiculo")
             vehicalYearModelField.select()
             return
         }
         
         
         guard let _permitType = TipoPermiso(rawValue: permitType) else {
-            showError(.errorGeneral, "Seleccione tipo de permiso")
+            showError(.generalError, "Seleccione tipo de permiso")
             return
         }
         
         guard !permitNumber.isEmpty else {
-            showError(.errorGeneral, "Ingrese numero de permiso")
+            showError(.generalError, "Ingrese numero de permiso")
             permitNumberField.select()
             return
         }
@@ -1188,7 +1188,7 @@ class AddCartaPorteView: Div {
         if let _tipoRemolqueA = TipoRemolque(rawValue: tipoRemolqueA) {
             
             if plcacasRemolqueA.isEmpty {
-                showError(.errorGeneral, "Ingrese placas del remolque A")
+                showError(.generalError, "Ingrese placas del remolque A")
                 plcacasRemolqueAField.select()
                 return
             }
@@ -1204,7 +1204,7 @@ class AddCartaPorteView: Div {
         if let _tipoRemolqueB = TipoRemolque(rawValue: tipoRemolqueB) {
             
             if plcacasRemolqueB.isEmpty {
-                showError(.errorGeneral, "Ingrese placas del remolque B")
+                showError(.generalError, "Ingrese placas del remolque B")
                 plcacasRemolqueBField.select()
                 return
             }
@@ -1217,7 +1217,7 @@ class AddCartaPorteView: Div {
         }
         
         if remolqueRequierd && remolques.isEmpty {
-            showError(.campoRequerido, "Para el tipo de vehiculo: \(vehicalType.description.uppercased()) se requiere que ingrese por lo menos un remolque.")
+            showError(.requiredField, "Para el tipo de vehiculo: \(vehicalType.description.uppercased()) se requiere que ingrese por lo menos un remolque.")
             return
         }
         
@@ -1225,7 +1225,7 @@ class AddCartaPorteView: Div {
         if hasDangerousMatirial {
             
             if insuranceAmbinetProvider.isEmpty {
-                showError(.errorGeneral, "Poliza ambinetal requerida con Material Peligroso")
+                showError(.generalError, "Poliza ambinetal requerida con Material Peligroso")
                 insuranceAmbinetProviderField.select()
                 return
             }

@@ -148,17 +148,17 @@ class QuickOrderSearch: Div {
             loadingView(show: false)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
             guard let order = resp.data?.orders.first else {
-                showError( .errorGeneral, "No se localizo folio, revice de nuevo.")
+                showError( .generalError, "No se localizo folio, revice de nuevo.")
                 return
             }
             

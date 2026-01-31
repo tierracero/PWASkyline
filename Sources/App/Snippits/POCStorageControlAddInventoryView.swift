@@ -319,7 +319,7 @@ class POCStorageControlAddInventoryView: Div {
     func addInventory(){
         
         guard let units = Float(unitsString)?.toInt else {
-            showError(.formatoInvalido, "Ingrese unidades validas")
+            showError(.invalidFormat, "Ingrese unidades validas")
             unitsField.select()
             return
         }
@@ -331,7 +331,7 @@ class POCStorageControlAddInventoryView: Div {
         }
         
         guard let currentbod else {
-            showError(.campoRequerido, "Seleccione Bodega")
+            showError(.requiredField, "Seleccione Bodega")
             return
         }
         
@@ -342,7 +342,7 @@ class POCStorageControlAddInventoryView: Div {
         }
         
         guard let currentsec else {
-            showError(.campoRequerido, "Seleccione Seccion")
+            showError(.requiredField, "Seleccione Seccion")
             return
         }
         
@@ -392,18 +392,18 @@ class POCStorageControlAddInventoryView: Div {
                             loadingView(show: false)
                             
                             guard let resp else {
-                                showError(.errorDeCommunicacion, .serverConextionError)
+                                showError(.comunicationError, .serverConextionError)
                                 return
                             }
 
                             guard resp.status == .ok else {
-                                showError(.errorGeneral, resp.msg)
+                                showError(.generalError, resp.msg)
                                 return
                             }
                             
                             
                             guard let payload = resp.data else {
-                                showError(.errorGeneral, .unexpenctedMissingPayload)
+                                showError(.generalError, .unexpenctedMissingPayload)
                                 return
                             }
                             
@@ -468,17 +468,17 @@ class POCStorageControlAddInventoryView: Div {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
 
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
                     guard let payload = resp.data else {
-                        showError(.errorGeneral, .unexpenctedMissingPayload)
+                        showError(.generalError, .unexpenctedMissingPayload)
                         return
                     }
                     

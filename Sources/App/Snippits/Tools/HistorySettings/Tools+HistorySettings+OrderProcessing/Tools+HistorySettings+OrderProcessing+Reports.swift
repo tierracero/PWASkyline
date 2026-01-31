@@ -289,7 +289,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
         func requestReport(){
             
             guard let reportType = OrderReportTypes(rawValue: reportTypeListener) else {
-                showError(.campoRequerido, "Ingrese tipo de reporte")
+                showError(.requiredField, "Ingrese tipo de reporte")
                 return
             }
             
@@ -306,7 +306,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
             else {
                 
                 if startAt.isEmpty {
-                    showError(.campoRequerido, "Ingrese fecha de Inicio")
+                    showError(.requiredField, "Ingrese fecha de Inicio")
                 }
                 
                 var dateParts = startAt.explode("/")
@@ -418,12 +418,12 @@ extension ToolsView.HistorySettings.OrderProcessing {
             }
             
             guard let startAtUTS else {
-                showError(.errorGeneral, "Ingrese fecha de inicion valida")
+                showError(.generalError, "Ingrese fecha de inicion valida")
                 return
             }
             
             guard let endAtUTS else {
-                showError(.errorGeneral, "Ingrese fecha de finalizacion valida")
+                showError(.generalError, "Ingrese fecha de finalizacion valida")
                 return
             }
             
@@ -444,17 +444,17 @@ extension ToolsView.HistorySettings.OrderProcessing {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let payload = resp.data else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
@@ -1008,7 +1008,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
             else {
                 
                 if startAt.isEmpty {
-                    showError(.campoRequerido, "Ingrese fecha de Inicio")
+                    showError(.requiredField, "Ingrese fecha de Inicio")
                 }
                 
                 var dateParts = startAt.explode("/")
@@ -1120,12 +1120,12 @@ extension ToolsView.HistorySettings.OrderProcessing {
             }
             
             guard let startAtUTS else {
-                showError(.errorGeneral, "Ingrese fecha de inicion valida")
+                showError(.generalError, "Ingrese fecha de inicion valida")
                 return
             }
             
             guard let endAtUTS else {
-                showError(.errorGeneral, "Ingrese fecha de finalizacion valida")
+                showError(.generalError, "Ingrese fecha de finalizacion valida")
                 return
             }
             

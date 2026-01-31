@@ -154,12 +154,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             ) { resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -194,12 +194,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                             loadingView(show: false)
                             
                             guard let resp else {
-                                showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                                showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                                 return
                             }
                             
                             guard resp.status == .ok else {
-                                showError(.errorGeneral, resp.msg)
+                                showError(.generalError, resp.msg)
                                 return
                             }
                             

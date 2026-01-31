@@ -298,13 +298,13 @@ extension MoneyManagerView.NewDailyCutView {
             }
             
             guard let _remainsInBox = Double(remainsInBox)?.toCents else {
-                showError(.formatoInvalido, "Ingrese balance de caja valido.")
+                showError(.invalidFormat, "Ingrese balance de caja valido.")
                 remainsInBoxField.select()
                 return
             }
             
             guard let _missingInBox = Double(missingInBox)?.toCents else {
-                showError(.formatoInvalido, "Ingrese balance faltante.")
+                showError(.invalidFormat, "Ingrese balance faltante.")
                 missingInBoxField.select()
                 return
             }
@@ -353,12 +353,12 @@ extension MoneyManagerView.NewDailyCutView {
                 loadingView(show: false)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 

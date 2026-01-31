@@ -181,7 +181,7 @@ class POCStorageControlAddInventorySeriesView: Div {
 
         if let invalidField {
             invalidField.select()
-            showError(.campoRequerido, "Incluya serie #\(cc.toString)")
+            showError(.requiredField, "Incluya serie #\(cc.toString)")
             return 
         }
 

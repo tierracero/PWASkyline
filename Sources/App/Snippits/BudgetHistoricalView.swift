@@ -145,7 +145,7 @@ class BudgetHistoricalView: Div {
     func loadDocument(doc: CustSaleAdditinalManagerQuick) {
         
         if doc.type == .budgetOrder {
-            showError(.errorGeneral, "No se pueden cargar presupuestos de orden aun")
+            showError(.generalError, "No se pueden cargar presupuestos de orden aun")
             return
         }
         

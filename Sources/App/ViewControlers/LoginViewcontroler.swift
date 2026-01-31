@@ -605,19 +605,19 @@ public class LoginViewcontroler: PageController {
     func login(){
         
         if self.username.isEmpty{
-            showError(.campoRequerido, "Ingrese Nombre de Usuario")
+            showError(.requiredField, "Ingrese Nombre de Usuario")
             self.usernameField.select()
             return
         }
         
         if !self.username.contains("@"){
-            showError(.campoInvalido, "Ingrese un nombre usuario valido.")
+            showError(.invalidField, "Ingrese un nombre usuario valido.")
             self.usernameField.select()
             return
         }
         
         if self.password.isEmpty{
-            showError(.campoRequerido, "Ingrese Contraseña")
+            showError(.requiredField, "Ingrese Contraseña")
             self.passwordField.select()
             return
         }
@@ -692,27 +692,27 @@ public class LoginViewcontroler: PageController {
             loadingView(show: false)
             
             guard let resp = payload else {
-                showError(.errorDeCommunicacion, "No se pudo comuicar con el servidor")
+                showError(.comunicationError, "No se pudo comuicar con el servidor")
                 return
             }
             
             if resp.status != .ok {
-                showError(.errorGeneral, "Revice sus credenciales")
+                showError(.generalError, "Revice sus credenciales")
                 return
             }
             
             guard let data = resp.data else {
-                showError(.errorGeneral, "No se obuvo el id del grupo de trabajo constacte a Soporte TC")
+                showError(.generalError, "No se obuvo el id del grupo de trabajo constacte a Soporte TC")
                 return
             }
             
             guard let store = data.store else {
-                showError(.errorGeneral, "No se obuvo el id de la tienda constacte a Soporte TC")
+                showError(.generalError, "No se obuvo el id de la tienda constacte a Soporte TC")
                 return
             }
             
             guard let groop = data.workGroop else {
-                showError(.errorGeneral, "No se obuvo el id del grupo de trabajo constacte a Soporte TC")
+                showError(.generalError, "No se obuvo el id del grupo de trabajo constacte a Soporte TC")
                 return
             }
             
@@ -785,22 +785,22 @@ public class LoginViewcontroler: PageController {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else{
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
             guard let data = resp.data else {
-                showError(.errorGeneral, .unexpenctedMissingPayload)
+                showError(.generalError, .unexpenctedMissingPayload)
                 return
             }
             
             if data.requestUrl {
-                showError(.errorGeneral, "No se localiza usuario.")
+                showError(.generalError, "No se localiza usuario.")
             }
             
             self.mobileConfirmationText = "Confirme su numero:\n \(data.confirmText)"
@@ -823,12 +823,12 @@ public class LoginViewcontroler: PageController {
             cell: self.mobile
         ) { resp in
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else{
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             

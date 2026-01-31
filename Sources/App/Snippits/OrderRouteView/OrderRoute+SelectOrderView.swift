@@ -491,12 +491,12 @@ extension OrderRouteView{
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -637,12 +637,12 @@ extension OrderRouteView{
             let code = order.zip.purgeSpaces
             
             if code.count < 4 {
-                showError(.campoInvalido, "Ingrese un codigo postal minimo de cuatro digitos")
+                showError(.invalidField, "Ingrese un codigo postal minimo de cuatro digitos")
                 return
             }
             
             guard let country = Countries(rawValue: (country.isEmpty ? "mexico" :  country) ), country == .mexico else {
-                showError(.campoInvalido, "Lo sentimos este servicio solo esta disponible para Mexico. Es posible que necesite corregir su ortografia o haga un ingreso manual.")
+                showError(.invalidField, "Lo sentimos este servicio solo esta disponible para Mexico. Es posible que necesite corregir su ortografia o haga un ingreso manual.")
                 return
             }
             
@@ -654,26 +654,26 @@ extension OrderRouteView{
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let codes = resp.data else {
-                    showError(.errorGeneral, "unexpected missing payload")
+                    showError(.generalError, "unexpected missing payload")
                     return
                 }
 
                 if codes.isEmpty {
-                    showError(.errorGeneral, "No se localizo información, intente unn codigo nuevo o un ingreso manual.")
+                    showError(.generalError, "No se localizo información, intente unn codigo nuevo o un ingreso manual.")
                 }
                 
                 guard let state = codes.first?.state else {
-                    showError(.errorGeneral, "Se le localizo el estado en la peticion")
+                    showError(.generalError, "Se le localizo el estado en la peticion")
                     return
                 }
                 
@@ -782,38 +782,38 @@ extension OrderRouteView{
             print("🟡 init map")
             
             if street.isEmpty {
-                showError(.campoRequerido, "Ingese Calle y Numero")
+                showError(.requiredField, "Ingese Calle y Numero")
                 streetField.select()
                 return
             }
             
             if colony.isEmpty {
-                showError(.campoRequerido, "Ingrese Colonia")
+                showError(.requiredField, "Ingrese Colonia")
                 colonyField.select()
                 return
             }
 
             if city.isEmpty {
-                showError(.campoRequerido, "Ingrese Cuidad")
+                showError(.requiredField, "Ingrese Cuidad")
                 cityField.select()
                 return
             }
 
             if state.isEmpty {
-                showError(.campoRequerido, "Ingrese Estado")
+                showError(.requiredField, "Ingrese Estado")
                 stateField.select()
                 return
             }
 
             if zip.isEmpty {
-                showError(.campoRequerido, "Ingrese Codigo Postal")
+                showError(.requiredField, "Ingrese Codigo Postal")
                 zipField.select()
                 return
             }
 
             if country.isEmpty {
                 countryField.select()
-                showError(.campoRequerido, "Ingrese Pais")
+                showError(.requiredField, "Ingrese Pais")
                 return
             }
             
@@ -823,7 +823,7 @@ extension OrderRouteView{
                 
                 guard let token else {
                     loadingView(show: false)
-                    showError(.errorDeCommunicacion, "No se pudo cargar token")
+                    showError(.comunicationError, "No se pudo cargar token")
                     return
                 }
             
@@ -870,7 +870,7 @@ extension OrderRouteView{
                 let payload = try JSONDecoder().decode([AppleMap].self, from: data)
                 
                 if payload.isEmpty {
-                    showError(.errorGeneral, "no hay resultado")
+                    showError(.generalError, "no hay resultado")
                     return
                 }
                 

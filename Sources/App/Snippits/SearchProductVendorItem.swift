@@ -169,12 +169,12 @@ class SearchProductVendorItem: Tr {
             loadingView(show: false)
          
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             

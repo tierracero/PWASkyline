@@ -217,7 +217,7 @@ class ToolFiscalConfirmView: Div {
         }
         
         guard let fiscalProfile else {
-            showError(.errorGeneral, "No se localizo perfil fiscal")
+            showError(.generalError, "No se localizo perfil fiscal")
             return
         }
         

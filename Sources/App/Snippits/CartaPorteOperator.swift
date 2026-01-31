@@ -175,19 +175,19 @@ class CartaPorteOperator: Div {
     func saveOperator(){
      
         if name.isEmpty {
-            showError(.campoRequerido, .requierdValid("nombre"))
+            showError(.requiredField, .requierdValid("nombre"))
             nameField.select()
             return
         }
         
         if rfc.isEmpty {
-            showError(.campoRequerido, .requierdValid("nombre"))
+            showError(.requiredField, .requierdValid("nombre"))
             rfcField.select()
             return
         }
         
         if licence.isEmpty {
-            showError(.campoRequerido, .requierdValid("nombre"))
+            showError(.requiredField, .requierdValid("nombre"))
             licenceField.select()
             return
         }
@@ -207,12 +207,12 @@ class CartaPorteOperator: Div {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -242,12 +242,12 @@ class CartaPorteOperator: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
 

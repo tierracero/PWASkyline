@@ -749,7 +749,7 @@ class AddPaymentFormView: Div {
                if mybanks.isEmpty {
                    
                    self.paymentMethodListener = FiscalPaymentCodes.efectivo.rawValue
-                   showError(.campoRequerido, "No tiene bancos. Ingrese a configuracion para agregar bancos.")
+                   showError(.requiredField, "No tiene bancos. Ingrese a configuracion para agregar bancos.")
                    
                    return
                }
@@ -815,28 +815,28 @@ class AddPaymentFormView: Div {
     func doPayment(){
         
         guard let meth = FiscalPaymentCodes(rawValue: paymentMethods.value) else{
-            showError(.campoRequerido, "Seleccione metodo de pago valido.")
+            showError(.requiredField, "Seleccione metodo de pago valido.")
             return
         }
         
         switch meth {
         case .chequeNominativo:
             if provider.isEmpty {
-                showError(.campoRequerido, "Seleccione Banco provedor de cheque")
+                showError(.requiredField, "Seleccione Banco provedor de cheque")
                 return
             }
             if self.auth.isEmpty {
-                showError(.campoRequerido, "Ingrese numero de cheque")
+                showError(.requiredField, "Ingrese numero de cheque")
                 return
             }
         case .transferenciaElectronicaDeFondos:
             let bank = myBanks.value
             if bank.isEmpty {
-                showError(.campoRequerido, "Seleccione Banco")
+                showError(.requiredField, "Seleccione Banco")
                 return
             }
             if self.auth.isEmpty {
-                showError(.campoRequerido, "Ingrese folio de transferencia")
+                showError(.requiredField, "Ingrese folio de transferencia")
                 return
             }
         case .tarjetaDeCredito, .tarjetaDeDebito, .tarjetaDeServicios:
@@ -844,17 +844,17 @@ class AddPaymentFormView: Div {
             let bank = cardProvider.value
             
             if bank.isEmpty {
-                showError(.campoRequerido, "Seleccione Banco")
+                showError(.requiredField, "Seleccione Banco")
                 return
             }
             
             if self.lastFour.isEmpty {
-                showError(.campoRequerido, "Ingrese custro ultimos de la trajeta")
+                showError(.requiredField, "Ingrese custro ultimos de la trajeta")
                 return
             }
             
             if self.auth.isEmpty {
-                showError(.campoRequerido, "Ingrese folio de autorización")
+                showError(.requiredField, "Ingrese folio de autorización")
                 return
             }
             
@@ -870,7 +870,7 @@ class AddPaymentFormView: Div {
         
         guard var thisPaymentFloat = Double(payment) else {
             self.paymentInput.select()
-            showError(.formatoInvalido, "Ingrese un pago valido")
+            showError(.invalidFormat, "Ingrese un pago valido")
             return
         }
         
@@ -885,7 +885,7 @@ class AddPaymentFormView: Div {
             }
             */
             self.paymentInput.select()
-            showError(.formatoInvalido, "Ingrese un pago valido")
+            showError(.invalidFormat, "Ingrese un pago valido")
             return
         }
         
@@ -922,17 +922,17 @@ class AddPaymentFormView: Div {
     func doPaymentWithPoints(){
         
         guard currentBalance > 0 else {
-            showError(.errorGeneral, "No hay balance a pagar.")
+            showError(.generalError, "No hay balance a pagar.")
             return
         }
         
         guard let accountId else {
-            showError(.errorGeneral, "No se ha localizado id de la cuenta.")
+            showError(.generalError, "No se ha localizado id de la cuenta.")
            return
         }
         
         guard let cardId, !cardId.isEmpty else {
-            showError(.errorGeneral, "No se ha vinculado tarjeta de recompensas")
+            showError(.generalError, "No se ha vinculado tarjeta de recompensas")
            return
         }
         
@@ -945,12 +945,12 @@ class AddPaymentFormView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -988,6 +988,9 @@ class AddPaymentFormView: Div {
         }
         
         guard let thisPayment = Double(payment)?.toCents else{
+
+            print("🚧  ERROR  payment ")
+
             return
         }
         
@@ -1111,12 +1114,12 @@ class AddPaymentFormView: Div {
                 .removeClass(.isLoading)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else{
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             

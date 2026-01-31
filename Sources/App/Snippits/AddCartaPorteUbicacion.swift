@@ -452,22 +452,22 @@ class AddCartaPorteUbicacion: Div {
     func addPlace(){
         
         guard !storeName.isEmpty else {
-            showError(.campoRequerido, "Nombre de la tienda")
+            showError(.requiredField, "Nombre de la tienda")
             return
         }
         
         guard !rfc.isEmpty else {
-            showError(.campoRequerido, "RFC")
+            showError(.requiredField, "RFC")
             return
         }
         
         guard !razon.isEmpty else {
-            showError(.campoRequerido, "Razon Social")
+            showError(.requiredField, "Razon Social")
             return
         }
         
         guard !date.isEmpty else {
-            showError(.campoRequerido, "Ingrese fecha de envio/recepcion")
+            showError(.requiredField, "Ingrese fecha de envio/recepcion")
             return
         }
         
@@ -531,7 +531,7 @@ class AddCartaPorteUbicacion: Div {
         }
         
         guard !time.isEmpty else {
-            showError(.campoRequerido, "Ingrese hora de envio/recepcion")
+            showError(.requiredField, "Ingrese hora de envio/recepcion")
             return
         }
         
@@ -594,7 +594,7 @@ class AddCartaPorteUbicacion: Div {
         }
         
         guard !zipCode.isEmpty else {
-            showError(.campoRequerido, "Ingrese Codigo Postal")
+            showError(.requiredField, "Ingrese Codigo Postal")
             return
         }
         
@@ -602,7 +602,7 @@ class AddCartaPorteUbicacion: Div {
         
         if placementType == .destino {
             if distance == nil {
-                showError(.campoRequerido, "Ingrese distancia recorrida del punto anterior")
+                showError(.requiredField, "Ingrese distancia recorrida del punto anterior")
                 return
             }
         }

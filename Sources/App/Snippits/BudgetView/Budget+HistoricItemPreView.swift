@@ -139,7 +139,7 @@ extension BudgetView {
                                 message: "Desea ligar el presipuesto a la orden", callback: { isConfirmed, comment in
                                     
                                     guard let manager = self.payload.manager else {
-                                        showError(.errorGeneral, "No se localizo id del manager")
+                                        showError(.generalError, "No se localizo id del manager")
                                         return
                                     }
                                     
@@ -151,12 +151,12 @@ extension BudgetView {
                                     ) { resp in
                                         
                                         guard let resp else {
-                                            showError(.errorDeCommunicacion, .serverConextionError)
+                                            showError(.comunicationError, .serverConextionError)
                                             return
                                         }
                                         
                                         guard resp.status == .ok else {
-                                            showError(.errorGeneral, resp.msg)
+                                            showError(.generalError, resp.msg)
                                             return
                                         }
                                         
@@ -222,7 +222,7 @@ extension BudgetView {
      
             
             guard let manager = self.payload.manager else {
-                showError(.errorGeneral, "No se localizo id del manager \(#function)")
+                showError(.generalError, "No se localizo id del manager \(#function)")
                 return
             }
             

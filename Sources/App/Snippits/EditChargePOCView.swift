@@ -362,17 +362,17 @@ class EditChargePOCView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
             guard let data = resp.data else {
-                showError( .errorGeneral, .unexpenctedMissingPayload)
+                showError( .generalError, .unexpenctedMissingPayload)
                 return
             }
             
@@ -445,7 +445,7 @@ class EditChargePOCView: Div {
              */
             
             guard let unitFloat = Float(self.units) else {
-                showError(.campoInvalido, "Ingrese una unidad valida")
+                showError(.invalidField, "Ingrese una unidad valida")
                 self.unitsField.select()
                 return
             }
@@ -456,7 +456,7 @@ class EditChargePOCView: Div {
                 .purgeHtml
             
             guard let costFloat = Float(_cost) else {
-                showError(.campoInvalido, "Ingrese un costo valida")
+                showError(.invalidField, "Ingrese un costo valida")
                 self.costField.select()
                 return
             }
@@ -467,25 +467,25 @@ class EditChargePOCView: Div {
                 .purgeHtml
             
             guard let priceFloat = Float(_price) else {
-                showError(.campoInvalido, "Ingrese un precio valida")
+                showError(.invalidField, "Ingrese un precio valida")
                 self.priceField.select()
                 return
             }
             
             guard !self.name.isEmpty else {
-                showError(.campoInvalido, "Ingrese un nombre valido")
+                showError(.invalidField, "Ingrese un nombre valido")
                 self.nameField.select()
                 return
             }
             
             guard !self.fiscCode.isEmpty else {
-                showError(.campoInvalido, "Ingrese un nombre valido")
+                showError(.invalidField, "Ingrese un nombre valido")
                 self.fiscCodeField.fiscCodeField.select()
                 return
             }
             
             guard !self.fiscUnit.isEmpty else {
-                showError(.campoInvalido, "Ingrese un nombre valido")
+                showError(.invalidField, "Ingrese un nombre valido")
                 self.fiscUnitField.fiscUnitField.select()
                 return
             }
@@ -517,7 +517,7 @@ class EditChargePOCView: Div {
                 .purgeHtml
             
             guard let costFloat = Float(_cost) else {
-                showError(.campoInvalido, "Ingrese un costo valida")
+                showError(.invalidField, "Ingrese un costo valida")
                 self.costField.select()
                 return
             }
@@ -528,25 +528,25 @@ class EditChargePOCView: Div {
                 .purgeHtml
             
             guard let priceFloat = Float(_price) else {
-                showError(.campoInvalido, "Ingrese un precio valida")
+                showError(.invalidField, "Ingrese un precio valida")
                 self.priceField.select()
                 return
             }
             
             guard !self.name.isEmpty else {
-                showError(.campoInvalido, "Ingrese un nombre valido")
+                showError(.invalidField, "Ingrese un nombre valido")
                 self.nameField.select()
                 return
             }
             
             guard !self.fiscCode.isEmpty else {
-                showError(.campoInvalido, "Ingrese un nombre valido")
+                showError(.invalidField, "Ingrese un nombre valido")
                 self.fiscCodeField.fiscCodeField.select()
                 return
             }
             
             guard !self.fiscUnit.isEmpty else {
-                showError(.campoInvalido, "Ingrese un nombre valido")
+                showError(.invalidField, "Ingrese un nombre valido")
                 self.fiscUnitField.fiscUnitField.select()
                 return
             }
@@ -576,7 +576,7 @@ class EditChargePOCView: Div {
                 .purgeHtml
             
             guard let costFloat = Float(_cost) else {
-                showError(.campoInvalido, "Ingrese un costo valida")
+                showError(.invalidField, "Ingrese un costo valida")
                 self.costField.select()
                 return
             }
@@ -587,14 +587,14 @@ class EditChargePOCView: Div {
                 .purgeHtml
             
             guard let priceFloat = Float(_price) else {
-                showError(.campoInvalido, "Ingrese un precio valida")
+                showError(.invalidField, "Ingrese un precio valida")
                 self.priceField.select()
                 return
             }
             
             
             guard !self.name.isEmpty else {
-                showError(.campoInvalido, "Ingrese un nombre valido")
+                showError(.invalidField, "Ingrese un nombre valido")
                 self.nameField.select()
                 return
             }
@@ -625,12 +625,12 @@ class EditChargePOCView: Div {
             loadingView(show: false)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
                         

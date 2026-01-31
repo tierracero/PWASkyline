@@ -204,12 +204,12 @@ extension ManagePOC {
         func selectProductCategorie(){
             
             if productType.wrappedValue.isEmpty {
-                showError(.campoRequerido, "Ingrese tipo de producto")
+                showError(.requiredField, "Ingrese tipo de producto")
                 return
             }
             
             if name.wrappedValue.isEmpty && brand.wrappedValue.isEmpty && model.wrappedValue.isEmpty {
-                showError(.campoRequerido, "Ingrese tipo de marca o modelo o nombre")
+                showError(.requiredField, "Ingrese tipo de marca o modelo o nombre")
                 return
             }
             
@@ -227,12 +227,12 @@ extension ManagePOC {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 

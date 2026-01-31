@@ -320,7 +320,7 @@ extension ToolsView.SystemSettings {
         func saveSetting() {
             
             guard let institutionalColor: ConfigConfigGeneralDocumentColor = .init(rawValue: institutionalColorListener) else {
-                showError(.campoRequerido, "Escoja un color institucional valido")
+                showError(.requiredField, "Escoja un color institucional valido")
                 return
             }
             
@@ -329,7 +329,7 @@ extension ToolsView.SystemSettings {
             let mantra: String? = self.mantra.isEmpty ? nil : self.mantra
             
             if commercialName.isEmpty {
-                showError(.campoRequerido, "Ingrese Nombre Comercial")
+                showError(.requiredField, "Ingrese Nombre Comercial")
                 return
             }
             
@@ -367,12 +367,12 @@ extension ToolsView.SystemSettings {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 

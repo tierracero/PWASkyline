@@ -342,13 +342,13 @@ class IMSocialChatView: Div {
             ) { resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     self.remove()
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     self.remove()
                     return
                 }
@@ -448,7 +448,7 @@ class IMSocialChatView: Div {
                     
                 if elapsedTime > 82800 {
                     
-                    showError(.errorGeneral, "No se pueden mandar mensajes 24 horas despues del ultimo mensaje del cliente.")
+                    showError(.generalError, "No se pueden mandar mensajes 24 horas despues del ultimo mensaje del cliente.")
                     
                     return
                     
@@ -550,7 +550,7 @@ class IMSocialChatView: Div {
                 let data = try JSONEncoder().encode(payload)
                 
                 guard let str = String(data: data, encoding: .utf8) else {
-                    showError(.errorGeneral, "No se pudo enviar mensaje 002")
+                    showError(.generalError, "No se pudo enviar mensaje 002")
                     return
                 }
                 
@@ -560,7 +560,7 @@ class IMSocialChatView: Div {
                 
             }
             catch {
-                showError(.errorGeneral, "No se pudo enviar mensaje 001")
+                showError(.generalError, "No se pudo enviar mensaje 001")
             }
         }
         
@@ -640,7 +640,7 @@ class IMSocialChatView: Div {
                         let data = try JSONEncoder().encode(payload)
                         
                         guard let str = String(data: data, encoding: .utf8) else {
-                            showError(.errorGeneral, "No se pudo enviar mensaje 002")
+                            showError(.generalError, "No se pudo enviar mensaje 002")
                             return
                         }
                         
@@ -650,7 +650,7 @@ class IMSocialChatView: Div {
                         
                     }
                     catch {
-                        showError(.errorGeneral, "No se pudo enviar mensaje 001")
+                        showError(.generalError, "No se pudo enviar mensaje 001")
                     }
                     
                 case .instagram:
@@ -710,13 +710,13 @@ class IMSocialChatView: Div {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         self.remove()
                         return
                     }
                     
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         self.remove()
                         return
                     }

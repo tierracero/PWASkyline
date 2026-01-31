@@ -438,7 +438,7 @@ extension OrderRouteView{
             
             if name.isEmpty {
                 print("🔴  No name")
-                showError(.campoRequerido, .requierdValid("Nombre"))
+                showError(.requiredField, .requierdValid("Nombre"))
                 nameField.select()
                 return
             }
@@ -469,7 +469,7 @@ extension OrderRouteView{
             
             
             guard let supervisor = UUID(uuidString: supervisor) else {
-                showError(.errorGeneral, "Seleccione Supervisor")
+                showError(.generalError, "Seleccione Supervisor")
                 return
             }
             

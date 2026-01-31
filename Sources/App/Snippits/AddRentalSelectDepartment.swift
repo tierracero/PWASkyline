@@ -95,7 +95,7 @@ class AddRentalSelectDepartment: Div {
             
             
              guard let data = resp.data else {
-                 showError(.errorGeneral, .unexpenctedMissingPayload)
+                 showError(.generalError, .unexpenctedMissingPayload)
                  return
              }
              
@@ -138,17 +138,17 @@ class AddRentalSelectDepartment: Div {
                                 loadingView(show: false)
                                 
                                 guard let resp = resp else {
-                                    showError(.errorDeCommunicacion, "No se pudo comuncar con del servidor")
+                                    showError(.comunicationError, "No se pudo comuncar con del servidor")
                                     return
                                 }
                                 
                                 guard resp.status == .ok else{
-                                    showError(.errorDeCommunicacion, "No se pudo comuncar con del servidor")
+                                    showError(.comunicationError, "No se pudo comuncar con del servidor")
                                     return
                                 }
                                 
                                  guard let data = resp.data else {
-                                     showError(.errorGeneral, .unexpenctedMissingPayload)
+                                     showError(.generalError, .unexpenctedMissingPayload)
                                      return
                                  }
                                  

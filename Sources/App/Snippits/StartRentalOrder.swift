@@ -411,7 +411,7 @@ class StartRentalOrder: Div {
         }
         
         guard self.uts > 0 else{
-            showError(.campoInvalido, "Seleccione fecha de renta")
+            showError(.invalidField, "Seleccione fecha de renta")
             return
         }
         
@@ -475,7 +475,7 @@ class StartRentalOrder: Div {
         let rentals: [RentalObject] = currentRentals.map{ $0.rental }
         
         if rentals.isEmpty {
-            showError(.formatoInvalido, "Ingrese productos de renta")
+            showError(.invalidFormat, "Ingrese productos de renta")
             return
         }
         
@@ -538,17 +538,17 @@ class StartRentalOrder: Div {
             loadingView(show: false)
         
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
 
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
             guard let id = resp.id else {
-                showError(.errorGeneral, .unexpectedMissingValue("id de folio"))
+                showError(.generalError, .unexpectedMissingValue("id de folio"))
                 return
             }
             

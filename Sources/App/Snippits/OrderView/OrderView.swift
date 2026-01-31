@@ -560,12 +560,12 @@ class OrderView: Div {
                                             loadingView(show: false)
                                             
                                             guard let resp else {
-                                                showError(.errorDeCommunicacion, .serverConextionError)
+                                                showError(.comunicationError, .serverConextionError)
                                                 return
                                             }
                                             
                                             guard resp.status == .ok else {
-                                                showError(.errorGeneral, resp.msg)
+                                                showError(.generalError, resp.msg)
                                                 return
                                             }
                                             
@@ -619,12 +619,12 @@ class OrderView: Div {
                                             loadingView(show: false)
                                             
                                             guard let resp else {
-                                                showError(.errorDeCommunicacion, .serverConextionError)
+                                                showError(.comunicationError, .serverConextionError)
                                                 return
                                             }
                                             
                                             guard resp.status == .ok else {
-                                                showError(.errorGeneral, resp.msg)
+                                                showError(.generalError, resp.msg)
                                                 return
                                             }
                                             
@@ -727,12 +727,12 @@ class OrderView: Div {
                             loadingView(show: false)
                             
                             guard let resp else {
-                                showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                                showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                                 return
                             }
                             
                             guard resp.status == .ok else {
-                                showError(.errorGeneral, resp.msg)
+                                showError(.generalError, resp.msg)
                                 return
                             }
                             
@@ -1067,12 +1067,12 @@ class OrderView: Div {
                                                 loadingView(show: false)
                                                 
                                                 guard let resp else {
-                                                    showError(.errorDeCommunicacion, .serverConextionError)
+                                                    showError(.comunicationError, .serverConextionError)
                                                     return
                                                 }
                                                 
                                                 guard resp.status == .ok else {
-                                                    showError(.errorGeneral, resp.msg)
+                                                    showError(.generalError, resp.msg)
                                                     return
                                                 }
                                                 
@@ -1779,12 +1779,12 @@ class OrderView: Div {
                                     loadingView(show: false)
                                     
                                     guard let resp = resp else {
-                                        showError(.errorDeCommunicacion, .serverConextionError)
+                                        showError(.comunicationError, .serverConextionError)
                                         return
                                     }
                                     
                                     guard resp.status == .ok else{
-                                        showError(.errorGeneral, resp.msg)
+                                        showError(.generalError, resp.msg)
                                         return
                                     }
                                     
@@ -2124,12 +2124,12 @@ class OrderView: Div {
             ){ resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -2316,7 +2316,7 @@ class OrderView: Div {
                     if self.accountView.cardId.isEmpty {
                         
                         if orderCloseInscriptionMode == .required {
-                            showError(.errorGeneral, "Se requiere que incriba al cliente en el sistema de recompensas")
+                            showError(.generalError, "Se requiere que incriba al cliente en el sistema de recompensas")
                         }
                         
                         self.addLoyaltyCard(isRequiered: orderCloseInscriptionMode == .required ){
@@ -2351,12 +2351,12 @@ class OrderView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else{
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -2384,7 +2384,7 @@ class OrderView: Div {
     func addLoyaltyCard(isRequiered: Bool, callback: @escaping (() -> ()) ){
         
         guard self.accountView.acctType == .personal else {
-            showError(.errorGeneral, "Lo sentimos las cuentas \(self.accountView.acctType.description) aun no es soportado.")
+            showError(.generalError, "Lo sentimos las cuentas \(self.accountView.acctType.description) aun no es soportado.")
             return
         }
         
@@ -2439,12 +2439,12 @@ class OrderView: Div {
                     loadingView(show: false)
 
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
                     
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
 
@@ -3094,12 +3094,12 @@ class OrderView: Div {
                     loadingView(show: false)
 
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
 
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
 
@@ -3255,7 +3255,7 @@ class OrderView: Div {
                 }
 
                 guard let storeid = self.order.store else {
-                    showError(.errorGeneral, "No se localizo tenda para venta")
+                    showError(.generalError, "No se localizo tenda para venta")
                     return
                 }
 
@@ -3276,17 +3276,17 @@ class OrderView: Div {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
 
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
 
                     guard let payload = resp.data else {
-                        showError(.errorGeneral, .unexpenctedMissingPayload)
+                        showError(.generalError, .unexpenctedMissingPayload)
                         return
                     }
                 
@@ -3406,17 +3406,17 @@ class OrderView: Div {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
 
                 guard let id = resp.id else {
-                    showError(.errorGeneral, "No se pudo obtenr id del producto")
+                    showError(.generalError, "No se pudo obtenr id del producto")
                     return
                 }
                 
@@ -3494,12 +3494,12 @@ class OrderView: Div {
                 loadingView(show: false)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -3524,12 +3524,12 @@ class OrderView: Div {
                         loadingView(show: false)
                         
                         guard let resp = resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         guard resp.status == .ok else {
-                            showError(.errorGeneral, resp.msg)
+                            showError(.generalError, resp.msg)
                             return
                         }
                         
@@ -3573,12 +3573,12 @@ class OrderView: Div {
                         loadingView(show: false)
                         
                         guard let resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         guard resp.status == .ok  else {
-                            showError(.errorGeneral, resp.msg)
+                            showError(.generalError, resp.msg)
                             return
                         }
 
@@ -3626,7 +3626,7 @@ class OrderView: Div {
                         }
                         
                         guard let view = self.chargesRefrence[viewId] else {
-                            showError(.errorGeneral, "No localizo cargo a remover")
+                            showError(.generalError, "No localizo cargo a remover")
                             return
                         }
                         
@@ -3719,12 +3719,12 @@ class OrderView: Div {
                         loadingView(show: false)
                         
                         guard let resp = resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         guard resp.status == .ok  else {
-                            showError(.errorGeneral, resp.msg)
+                            showError(.generalError, resp.msg)
                             return
                         }
 
@@ -3839,12 +3839,12 @@ class OrderView: Div {
                         loadingView(show: false)
                         
                         guard let resp = resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         guard resp.status == .ok  else {
-                            showError(.errorGeneral, resp.msg)
+                            showError(.generalError, resp.msg)
                             return
                         }
 
@@ -3884,12 +3884,12 @@ class OrderView: Div {
             callback: { viewId, _, cost, price, name, fiscCode, fiscUnit in
                 
                 guard let view = self.chargesRefrence[viewId] else {
-                    showError(.errorGeneral, "No localizo cargo a remover")
+                    showError(.generalError, "No localizo cargo a remover")
                     return
                 }
                 
                 guard let id = view.id else {
-                    showError(.errorGeneral, "No localizo id cargo a remover")
+                    showError(.generalError, "No localizo id cargo a remover")
                     return
                 }
                 
@@ -3943,12 +3943,12 @@ class OrderView: Div {
     func removePayment(id: UUID, name: String, amount: Int64) {
         
         guard let view = chargesRefrence[id] else {
-            showError(.errorGeneral, "No localizo cargo a remover")
+            showError(.generalError, "No localizo cargo a remover")
             return
         }
         
         guard let id = view.id else {
-            showError(.errorGeneral, "No localizo id cargo a remover")
+            showError(.generalError, "No localizo id cargo a remover")
             return
         }
         
@@ -3970,12 +3970,12 @@ class OrderView: Div {
                         loadingView(show: false)
                         
                         guard let resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         guard resp.status == .ok  else {
-                            showError(.errorGeneral, resp.msg)
+                            showError(.generalError, resp.msg)
                             return
                         }
                         
@@ -4075,12 +4075,12 @@ class OrderView: Div {
                         loadingView(show: false)
                         
                         guard let resp = resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         guard resp.status == .ok else{
-                            showError(.errorGeneral, resp.msg)
+                            showError(.generalError, resp.msg)
                             return
                         }
                         
@@ -4102,33 +4102,33 @@ class OrderView: Div {
     func saveOrderDetails(){
         
         if self.orderName.isEmpty {
-            showError(.errorGeneral, .requierdValid("nombre"))
+            showError(.generalError, .requierdValid("nombre"))
             return
         }
         
         if self.mobile.isEmpty {
-            showError(.errorGeneral, .requierdValid("movil"))
+            showError(.generalError, .requierdValid("movil"))
             return
         }
         
         let (isValid, reason) = isValidPhone(self.mobile)
         
         if !isValid {
-            showError(.formatoInvalido, reason)
+            showError(.invalidFormat, reason)
             return
         }
         
         if !self.telephone.isEmpty {
             let (isValid, reason) = isValidPhone(self.telephone)
             if !isValid {
-                showError(.formatoInvalido, reason)
+                showError(.invalidFormat, reason)
                 return
             }
         }
         
         if !self.email.isEmpty {
             if !isValidEmail(self.email) {
-                showError(.formatoInvalido, "Ingrese un correo valido")
+                showError(.invalidFormat, "Ingrese un correo valido")
                 return
             }
         }
@@ -4150,12 +4150,12 @@ class OrderView: Div {
         ) { resp in
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else{
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
 
@@ -4234,17 +4234,17 @@ class OrderView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
 
             guard let data = resp.data else  {
-                showError(.errorGeneral, "Un expected missing payload")
+                showError(.generalError, "Un expected missing payload")
                 return
             }
 
@@ -4294,17 +4294,17 @@ class OrderView: Div {
             loadingView(show: false)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
 
             guard let data = resp.data else {
-                showError(.errorGeneral, .unexpenctedMissingPayload)
+                showError(.generalError, .unexpenctedMissingPayload)
                 return
             }
             
@@ -4478,7 +4478,7 @@ class OrderView: Div {
                             if self.accountView.cardId.isEmpty {
                                 
                                 if orderCloseInscriptionMode == .required {
-                                    showError(.errorGeneral, "Se requiere que incriba al cliente en el sistema de recompensas")
+                                    showError(.generalError, "Se requiere que incriba al cliente en el sistema de recompensas")
                                 }
                                 
                                 self.addLoyaltyCard(isRequiered: orderCloseInscriptionMode == .required) {
@@ -4567,7 +4567,7 @@ class OrderView: Div {
                             if self.accountView.cardId.isEmpty {
                                 
                                 if orderCloseInscriptionMode == .required {
-                                    showError(.errorGeneral, "Se requiere que incriba al cliente en el sistema de recompensas")
+                                    showError(.generalError, "Se requiere que incriba al cliente en el sistema de recompensas")
                                 }
                                 
                                 self.addLoyaltyCard( isRequiered: orderCloseInscriptionMode == .required){
@@ -4606,12 +4606,12 @@ class OrderView: Div {
         API.custAccountV1.load(id: .id(self.order.custAcct)) { resp in
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else{
-                showError(.errorGeneral, "No se obtuvo datos de la cuenta.")
+                showError(.generalError, "No se obtuvo datos de la cuenta.")
                 return
             }
             
@@ -4646,12 +4646,12 @@ class OrderView: Div {
                             loadingView(show: false)
 
                             guard let resp else {
-                                showError(.errorDeCommunicacion, .serverConextionError)
+                                showError(.comunicationError, .serverConextionError)
                                 return
                             }
 
                             guard resp.status == .ok else {
-                                showError(.errorGeneral, resp.msg)
+                                showError(.generalError, resp.msg)
                                 return
                             }
 
@@ -4809,12 +4809,12 @@ class OrderView: Div {
             loadingView(show: false)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -4889,15 +4889,15 @@ class OrderView: Div {
         case .active:
             break
         case .pendingSpare:
-            showError(.errorGeneral, "Funcion no sopotada")
+            showError(.generalError, "Funcion no sopotada")
             return
             return
         case .canceled:
-            showError(.errorGeneral, "Funcion no sopotada")
+            showError(.generalError, "Funcion no sopotada")
             
         case .finalize:
             if self.status != .archive {
-                showError(.errorGeneral, "Funcion no sopotada")
+                showError(.generalError, "Funcion no sopotada")
                 return
             }
         case .archive:
@@ -4906,7 +4906,7 @@ class OrderView: Div {
             break
         case .sideStatus:
             if self.status != .archive {
-                showError(.errorGeneral, "Funcion no sopotada")
+                showError(.generalError, "Funcion no sopotada")
                 return
             }
             return
@@ -4915,7 +4915,7 @@ class OrderView: Div {
         }
         
         if let _ = order.transferManagement {
-            showError(.errorGeneral, "Funcion no sopotada")
+            showError(.generalError, "Funcion no sopotada")
         }
     
         let confirm = ChangeStatusView(
@@ -4936,12 +4936,12 @@ class OrderView: Div {
                 loadingView(show: false)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -5062,7 +5062,7 @@ class OrderView: Div {
 
         // if file.type.contains("video") || file.type.contains("image") {
         //     if  fileSize > 30 {
-        //         showError(.errorGeneral, "No se pueden subir archivoa de mas de 30 mb")
+        //         showError(.generalError, "No se pueden subir archivoa de mas de 30 mb")
 
         //         return 
         //     }
@@ -5086,7 +5086,7 @@ class OrderView: Div {
         }
         
         xhr.onError { jsValue in
-            showError(.errorDeCommunicacion, .serverConextionError)
+            showError(.comunicationError, .serverConextionError)
             view.remove()
         }
         
@@ -5095,13 +5095,13 @@ class OrderView: Div {
             view.loadPercent = ""
             
             guard let responseText = xhr.responseText else {
-                showError(.errorGeneral, .serverConextionError + " 001")
+                showError(.generalError, .serverConextionError + " 001")
                 view.remove()
                 return
             }
             
             guard let data = responseText.data(using: .utf8) else {
-                showError(.errorGeneral, .serverConextionError + " 002")
+                showError(.generalError, .serverConextionError + " 002")
                 view.remove()
                 return
             }
@@ -5111,13 +5111,13 @@ class OrderView: Div {
                 let resp = try JSONDecoder().decode(APIResponseGeneric<API.custAPIV1.UploadManagerResponse>.self, from: data)
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     view.remove()
                     return
                 }
                 
                 guard let mode = resp.data else {
-                    showError(.errorGeneral, "No se pudo cargar datos")
+                    showError(.generalError, "No se pudo cargar datos")
                     view.remove()
                     return
                 }
@@ -5157,7 +5157,7 @@ class OrderView: Div {
                 }
                 
             } catch {
-                showError(.errorGeneral, .serverConextionError + " 003")
+                showError(.generalError, .serverConextionError + " 003")
                 return
             }
             
@@ -5179,41 +5179,23 @@ class OrderView: Div {
         
         formData.append("file", file, filename: fileName)
         
-        //xhr.open(method: "POST", url: "https://intratc.co/api/custOrder/v1/saveFile")
         xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
         // xhr.open(method: "POST", url: "http://localhost:8800/api/cust/v1/uploadManager")
         
-        print("🚧 001")
 
         formData.append("eventid", view.viewId.uuidString)
 
-        print("🚧 002")
-
         formData.append("to", ImagePickerTo.order.rawValue)
 
-        print("🚧 003")
-
         formData.append("id", self.order.id.uuidString)
-        
-        print("🚧 004")
 
         formData.append("folio", self.order.folio)
         
-        print("🚧 005")
-
-        print(fileName)
-        
         formData.append("fileName", fileName)
-
-        print("🚧 006")
 
         formData.append("connid", custCatchChatConnID)
         
-        print("🚧 007")
-        
         formData.append("remoteCamera", false.description)
-        
-        print("🚧 008")
         
         xhr.setRequestHeader("Accept", "application/json")
         
@@ -5260,17 +5242,17 @@ class OrderView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
 
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
             guard let payload = resp.data else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -5322,7 +5304,7 @@ class OrderView: Div {
     func proccessPaymentWithPoints( _ amount: Float){
 
         if accountView.cardId.isEmpty {
-            showError(.errorGeneral, "No se activado una tarjeta de recompensas.")
+            showError(.generalError, "No se activado una tarjeta de recompensas.")
         }
         
         loadingView(show: true)
@@ -5337,12 +5319,12 @@ class OrderView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             

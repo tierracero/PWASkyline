@@ -651,7 +651,7 @@ extension SalePointView {
         func requestReport(){
             
             guard let type = SalesReportTypes(rawValue: reportTypeListener) else {
-                showError(.campoRequerido, "Ingrese tipo de reporte")
+                showError(.requiredField, "Ingrese tipo de reporte")
                 return
             }
             
@@ -662,25 +662,25 @@ extension SalePointView {
             switch type {
             case .byStore:
                 guard let tid = UUID(uuidString: storeSelectListener) else {
-                    showError(.errorGeneral, "Seleccione id de la tienda")
+                    showError(.generalError, "Seleccione id de la tienda")
                     return
                 }
                 id = tid
             case .byUser:
                 guard let tid = UUID(uuidString: userSelectListener) else {
-                    showError(.errorGeneral, "Seleccione id del usuario")
+                    showError(.generalError, "Seleccione id del usuario")
                     return
                 }
                 id = tid
             case .byProduct:
                 guard !parsablePOCs.isEmpty else {
-                    showError(.errorGeneral, "Seleccione productos a auditar")
+                    showError(.generalError, "Seleccione productos a auditar")
                     return
                 }
                 ids = parsablePOCs.map{ $0.id }
             case .byService:
                 guard !parsableSOCs.isEmpty else {
-                    showError(.errorGeneral, "Seleccione servicios a auditar")
+                    showError(.generalError, "Seleccione servicios a auditar")
                     return
                 }
                  ids = parsableSOCs.map{ $0.i }
@@ -697,7 +697,7 @@ extension SalePointView {
             else {
                 
                 if startAt.isEmpty {
-                    showError(.campoRequerido, "Ingrese fecha de Inicio")
+                    showError(.requiredField, "Ingrese fecha de Inicio")
                 }
                 
                 var dateParts = startAt.explode("/")
@@ -804,12 +804,12 @@ extension SalePointView {
             }
             
             guard let startAtUTS else {
-                showError( .errorGeneral, "Seleccione una fecha de inicio.")
+                showError( .generalError, "Seleccione una fecha de inicio.")
                 return
             }
             
             guard let endAtUTS else {
-                showError( .errorGeneral, "Seleccione una fecha de finalización.")
+                showError( .generalError, "Seleccione una fecha de finalización.")
                 return
             }
             
@@ -833,17 +833,17 @@ extension SalePointView {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
                     
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
                     guard let payload = resp.data else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
@@ -877,12 +877,12 @@ extension SalePointView {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
                     
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
@@ -940,17 +940,17 @@ extension SalePointView {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let payload = resp.data else {
-                    showError(.errorGeneral, .unexpenctedMissingPayload)
+                    showError(.generalError, .unexpenctedMissingPayload)
                     return
                 }
                 
@@ -1751,12 +1751,12 @@ extension SalePointView {
                 loadingView(show: false)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
 
                 guard resp.status == .ok else{
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 

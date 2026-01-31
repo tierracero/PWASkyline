@@ -774,7 +774,7 @@ class AccountView: PageController {
                                 .onClick { img, event in
                                     
                                     guard self.type.wrappedValue == .personal else {
-                                        showError(.errorGeneral, "Lo sentimos las cuentas \(self.type.wrappedValue.description) aun no es soportado.")
+                                        showError(.generalError, "Lo sentimos las cuentas \(self.type.wrappedValue.description) aun no es soportado.")
                                         return
                                     }
                                     
@@ -850,7 +850,7 @@ class AccountView: PageController {
                                 .onClick {
                                     
                                     if self.account.CardID.isEmpty {
-                                        showError(.errorGeneral, "Este cliente no tiene el programa activo.")
+                                        showError(.generalError, "Este cliente no tiene el programa activo.")
                                         return
                                     }
                                     print("⭐️  ⭐️  self.rewardsBalanceText \(self.rewardsBalanceText)")
@@ -1404,12 +1404,12 @@ class AccountView: PageController {
                                         loadingView(show: false)
                                         
                                         guard let resp else {
-                                            showError(.errorGeneral, .serverConextionError)
+                                            showError(.generalError, .serverConextionError)
                                             return
                                         }
                                         
                                         guard resp.status == .ok else {
-                                            showError(.errorGeneral, resp.msg)
+                                            showError(.generalError, resp.msg)
                                             return
                                         }
                                         
@@ -1521,12 +1521,12 @@ class AccountView: PageController {
                         loadingView(show: false)
                         
                         guard let resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         guard resp.status == .ok else {
-                            showError(.errorGeneral, resp.msg)
+                            showError(.generalError, resp.msg)
                             return
                         }
                         
@@ -1814,12 +1814,12 @@ class AccountView: PageController {
         API.custAccountV1.loadDetails(id: self.account.id) { resp in
             
             guard let resp else{
-                showError(.errorDeCommunicacion, "No se pudieron cargar detalles de la cuenta.")
+                showError(.comunicationError, "No se pudieron cargar detalles de la cuenta.")
                 return
             }
             
             guard resp.status == .ok else{
-                showError(.errorGeneral, "No se pudieron cargar detalles de la cuenta.")
+                showError(.generalError, "No se pudieron cargar detalles de la cuenta.")
                 return
             }
             
@@ -1857,7 +1857,7 @@ class AccountView: PageController {
             loadingView(show: true)
             
             guard let base64 = picture.explode(";base64,").last else {
-                showError(.errorGeneral, "No se obtuvo data de la imagen.")
+                showError(.generalError, "No se obtuvo data de la imagen.")
                 return
             }
             
@@ -1866,12 +1866,12 @@ class AccountView: PageController {
                 loadingView(show: false)
                 
                 guard let resp else{
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -1909,7 +1909,7 @@ class AccountView: PageController {
     func activateCredit(){
         
         if account.type == .personal {
-            showError(.errorGeneral, "Actualmente no se soporta Creditos Personales")
+            showError(.generalError, "Actualmente no se soporta Creditos Personales")
             return
         }
         
@@ -1927,32 +1927,32 @@ class AccountView: PageController {
     func activateBuissnessCreditFaceOne(){
         
         if self.businessName.isEmpty {
-            showError(.errorGeneral, .requierdValid("Nombre del Negocio"))
+            showError(.generalError, .requierdValid("Nombre del Negocio"))
             return
         }
         
         if self.fiscalRazon.isEmpty {
-            showError(.errorGeneral, .requierdValid("Razon Social"))
+            showError(.generalError, .requierdValid("Razon Social"))
             return
         }
         
         if self.fiscalRfc.isEmpty {
-            showError(.errorGeneral, .requierdValid("RFC Fiscal"))
+            showError(.generalError, .requierdValid("RFC Fiscal"))
             return
         }
         
         if self.fiscalPOCFirstName.isEmpty {
-            showError(.errorGeneral, .requierdValid("Primer Nombre de contacto fiscal"))
+            showError(.generalError, .requierdValid("Primer Nombre de contacto fiscal"))
             return
         }
         
         if self.fiscalPOCLastName.isEmpty {
-            showError(.errorGeneral, .requierdValid("Primer Apellido de contacto fiscal"))
+            showError(.generalError, .requierdValid("Primer Apellido de contacto fiscal"))
             return
         }
         
         if self.fiscalPOCMobile.isEmpty {
-            showError(.errorGeneral, .requierdValid("Movil de contacto fiscal"))
+            showError(.generalError, .requierdValid("Movil de contacto fiscal"))
             return
         }
         
@@ -2001,12 +2001,12 @@ class AccountView: PageController {
                 loadingView(show: false)
                 
                 guard let resp else{
-                    showError(.errorDeCommunicacion, "No se pudieron cargar detalles de la cuenta.")
+                    showError(.comunicationError, "No se pudieron cargar detalles de la cuenta.")
                     return
                 }
                 
                 guard resp.status == .ok else{
-                    showError(.errorGeneral, "No se pudieron cargar detalles de la cuenta.")
+                    showError(.generalError, "No se pudieron cargar detalles de la cuenta.")
                     return
                 }
                 

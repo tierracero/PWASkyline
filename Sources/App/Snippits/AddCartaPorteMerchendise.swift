@@ -497,49 +497,49 @@ class AddCartaPorteMerchendise: Div {
     func addMerchandise(){
         
         guard !descr.isEmpty else {
-            showError(.campoRequerido, .requierdValid("Descriopcion mercancia"))
+            showError(.requiredField, .requierdValid("Descriopcion mercancia"))
             descrField.select()
             return
         }
         
         guard let _units = Float(units)?.toCents else{
-            showError(.campoRequerido, "Ingrese Unidades")
+            showError(.requiredField, "Ingrese Unidades")
             unitsField.select()
             return
         }
         
         guard _units > 0 else {
-            showError(.campoRequerido, "Ingrese unidades valida")
+            showError(.requiredField, "Ingrese unidades valida")
             unitsField.select()
             return
         }
         
         guard let _kilos = Float(kilograms)?.toCents else{
-            showError(.campoRequerido, "Ingrese Kilogramos")
+            showError(.requiredField, "Ingrese Kilogramos")
             kilogramsField.select()
             return
         }
         
         
         guard _kilos > 0 else {
-            showError(.campoRequerido, "Ingrese peso valida")
+            showError(.requiredField, "Ingrese peso valida")
             kilogramsField.select()
             return
         }
         guard !toId.isEmpty else {
-            showError(.campoRequerido, "Seleccione Destino")
+            showError(.requiredField, "Seleccione Destino")
             kilogramsField.select()
             return
         }
         
         guard !fiscCode.isEmpty else {
-            showError(.campoRequerido, "Seleccione Destino")
+            showError(.requiredField, "Seleccione Destino")
             kilogramsField.select()
             return
         }
         
         guard !fiscUnit.isEmpty else {
-            showError(.campoRequerido, "Seleccione Destino")
+            showError(.requiredField, "Seleccione Destino")
             kilogramsField.select()
             return
         }
@@ -551,13 +551,13 @@ class AddCartaPorteMerchendise: Div {
             isDangerous = .si
             
             guard !dangerousMaterialCode.isEmpty else {
-                showError(.campoRequerido, "Seleccione Codigo de Material Peligroso")
+                showError(.requiredField, "Seleccione Codigo de Material Peligroso")
                 kilogramsField.select()
                 return
             }
             
             guard !packagingType.isEmpty else {
-                showError(.campoRequerido, "Para el material peligroso debe incluir el tipo de embalaje")
+                showError(.requiredField, "Para el material peligroso debe incluir el tipo de embalaje")
                 kilogramsField.select()
                 return
             }

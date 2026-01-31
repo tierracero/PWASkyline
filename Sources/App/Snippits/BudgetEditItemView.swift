@@ -285,13 +285,13 @@ class BudgetEditItemView: Div {
     func editCharge(){
         
         guard let updatedUnits = Float(units.replace(from: ",", to: ""))?.toCents else {
-            showError(.formatoInvalido, "Ingrese unidades validas.")
+            showError(.invalidFormat, "Ingrese unidades validas.")
             self.unitsField.select()
             return
         }
         
         guard let updatedCost = Float(price.replace(from: ",", to: ""))?.toCents else {
-            showError(.formatoInvalido, "Ingrese costo validas.")
+            showError(.invalidFormat, "Ingrese costo validas.")
             self.unitsField.select()
             return
         }
@@ -315,12 +315,12 @@ class BudgetEditItemView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
 
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -354,12 +354,12 @@ class BudgetEditItemView: Div {
                         loadingView(show: false)
                         
                         guard let resp = resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
 
                         guard resp.status == .ok else {
-                            showError(.errorGeneral, resp.msg)
+                            showError(.generalError, resp.msg)
                             return
                         }
                         

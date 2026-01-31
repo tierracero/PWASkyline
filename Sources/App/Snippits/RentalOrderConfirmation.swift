@@ -482,7 +482,7 @@ class RentalOrderConfirmation: Div {
         let time = self.dueDateHour
         
         if !time.contains(":") {
-            showError(.campoInvalido, .requierdValid("hora"))
+            showError(.invalidField, .requierdValid("hora"))
             self.timeField.select()
             return
         }
@@ -490,31 +490,31 @@ class RentalOrderConfirmation: Div {
         let part = time.explode(":")
         
         if part.count != 2 {
-            showError(.campoInvalido, .requierdValid("hora"))
+            showError(.invalidField, .requierdValid("hora"))
             self.timeField.select()
             return
         }
         
         guard let hour = Int(part[0]) else {
-            showError(.campoInvalido, .requierdValid("hora"))
+            showError(.invalidField, .requierdValid("hora"))
             self.timeField.select()
             return
         }
         
         guard hour >= 0 && hour < 24 else {
-            showError(.campoInvalido, .requierdValid("hora"))
+            showError(.invalidField, .requierdValid("hora"))
             self.timeField.select()
             return
         }
         
         guard let min = Int(part[1]) else {
-            showError(.campoInvalido, .requierdValid("hora"))
+            showError(.invalidField, .requierdValid("hora"))
             self.timeField.select()
             return
         }
         
         guard min >= 0 && min < 60 else {
-            showError(.campoInvalido, .requierdValid("hora"))
+            showError(.invalidField, .requierdValid("hora"))
             self.timeField.select()
             return
         }

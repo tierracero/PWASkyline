@@ -10,7 +10,7 @@ import Foundation
 public func parseDate(date: String, time: String) -> Int64? {
     
     guard !date.isEmpty else {
-        showError(.campoRequerido, "Ingrese fecha de envio/recepcion")
+        showError(.requiredField, "Ingrese fecha de envio/recepcion")
         return nil
     }
     
@@ -74,7 +74,7 @@ public func parseDate(date: String, time: String) -> Int64? {
     }
     
     guard !time.isEmpty else {
-        showError(.campoRequerido, "Ingrese hora de envio/recepcion")
+        showError(.requiredField, "Ingrese hora de envio/recepcion")
         return nil
     }
     

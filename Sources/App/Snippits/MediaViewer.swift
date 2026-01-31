@@ -227,7 +227,7 @@ class MediaViewer: Div {
     func downloadMedia(size: MediaDownloadSize){
         
         guard let file else {
-            showError(.errorGeneral, "No se ha selecionado archivo para descargar.")
+            showError(.generalError, "No se ha selecionado archivo para descargar.")
             return
         }
         
@@ -244,12 +244,12 @@ class MediaViewer: Div {
     func rotateClockwise(){
         
         guard let file else {
-            showError(.errorGeneral, "No se ha selecionado archivo para descargar.")
+            showError(.generalError, "No se ha selecionado archivo para descargar.")
             return
         }
         
         guard let relid else {
-            showError(.errorGeneral, "No se ha localizado el id relacionado.")
+            showError(.generalError, "No se ha localizado el id relacionado.")
             return
         }
         
@@ -264,12 +264,12 @@ class MediaViewer: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -305,12 +305,12 @@ class MediaViewer: Div {
     func rotateCounterClockwise(){
         
         guard let file else {
-            showError(.errorGeneral, "No se ha selecionado archivo para descargar.")
+            showError(.generalError, "No se ha selecionado archivo para descargar.")
             return
         }
         
         guard let relid else {
-            showError(.errorGeneral, "No se ha localizado el id relacionado.")
+            showError(.generalError, "No se ha localizado el id relacionado.")
             return
         }
         
@@ -325,12 +325,12 @@ class MediaViewer: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -396,12 +396,12 @@ class MediaViewer: Div {
                         loadingView(show: false)
                         
                         guard let resp else {
-                            showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                            showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                             return
                         }
                         
                         guard resp.status == .ok else {
-                            showError(.errorGeneral, resp.msg)
+                            showError(.generalError, resp.msg)
                             return
                         }
                         

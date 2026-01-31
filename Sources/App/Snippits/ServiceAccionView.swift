@@ -89,7 +89,7 @@ class ServiceAccionView: Div {
             ) { resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
@@ -401,17 +401,17 @@ class ServiceAccionView: Div {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let payload = resp.data else {
-                    showError(.errorGeneral, "Error al obtener payload de data.")
+                    showError(.generalError, "Error al obtener payload de data.")
                     return
                 }
                 
@@ -594,27 +594,27 @@ class ServiceAccionView: Div {
         name = name.purgeSpaces.capitalizingFirstLetters()
         
         if name.isEmpty {
-            showError(.campoRequerido, "Ingrese nombre de la accion")
+            showError(.requiredField, "Ingrese nombre de la accion")
             return
         }
         
         guard let _productionLevel = SaleActionDificultltyLevel(rawValue: productionLevel) else {
-            showError(.campoRequerido, "Seccione grado de dificultad")
+            showError(.requiredField, "Seccione grado de dificultad")
             return
         }
         
         guard let _workforceLevel = SaleActionEmployeeLevel(rawValue: workforceLevel) else {
-            showError(.campoRequerido, "Seccione tipo de mano de obra")
+            showError(.requiredField, "Seccione tipo de mano de obra")
             return
         }
         
         guard let _productionTime = Float(self.productionTime)?.toInt64 else {
-            showError(.campoRequerido, "Ingrese tiempo de produccion")
+            showError(.requiredField, "Ingrese tiempo de produccion")
             return
         }
         
         if objects.isEmpty && !forse {
-            showError( .campoRequerido, "Incluya Elementos en la Accion")
+            showError( .requiredField, "Incluya Elementos en la Accion")
             addToDom(ServiceAccionItemElementView(
                 element: nil,
                 callback: { element in
@@ -643,12 +643,12 @@ class ServiceAccionView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             

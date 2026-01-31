@@ -288,25 +288,25 @@ class ToolFiscalQuickAccountEdit: Div {
         zipCpde = zipCpde.pseudo.uppercased().purgeSpaces
         
         if razon.isEmpty {
-            showError(.campoRequerido, .requierdValid("Razon social"))
+            showError(.requiredField, .requierdValid("Razon social"))
             razonSocialInput.select()
             return
         }
         
         if rfc.isEmpty {
-            showError(.campoRequerido, .requierdValid("RFC"))
+            showError(.requiredField, .requierdValid("RFC"))
             rfcInput.select()
             return
         }
         
         if zipCpde.isEmpty {
-            showError(.campoRequerido, .requierdValid("Codigo Postal"))
+            showError(.requiredField, .requierdValid("Codigo Postal"))
             zipCodeInput.select()
             return
         }
         
         guard let newRegimen = FiscalRegimens(rawValue: reciverRegimen) else {
-            showError(.campoRequerido, .requierdValid("Regimen Fiscal"))
+            showError(.requiredField, .requierdValid("Regimen Fiscal"))
             return
         }
         
@@ -326,12 +326,12 @@ class ToolFiscalQuickAccountEdit: Div {
             loadingView(show: false)
 
             guard let resp else {
-               showError(.errorGeneral, .serverConextionError)
+               showError(.generalError, .serverConextionError)
                return
             }
 
             guard resp.status == .ok else {
-               showError(.errorGeneral, resp.msg)
+               showError(.generalError, resp.msg)
                return
             }
             

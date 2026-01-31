@@ -646,7 +646,7 @@ class ToolFiscal: Div {
                 .onClick { img, event in
                     
                     guard let reciver = self.reciver else {
-                        showError(.errorGeneral, "No se pudo cargar cuenta fiscal del cliente.")
+                        showError(.generalError, "No se pudo cargar cuenta fiscal del cliente.")
                         return
                     }
                     
@@ -1318,7 +1318,7 @@ class ToolFiscal: Div {
                if mybanks.isEmpty {
                    
                    self.paymentFormListener = FiscalPaymentCodes.efectivo.rawValue
-                   showError(.campoRequerido, "No tiene bancos. Ingrese a configuracion para agregar bancos.")
+                   showError(.requiredField, "No tiene bancos. Ingrese a configuracion para agregar bancos.")
                    
                    return
                }
@@ -1664,17 +1664,17 @@ class ToolFiscal: Div {
                 .removeClass(.isLoading)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else{
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
              guard let data = resp.data else {
-                 showError(.errorGeneral, .unexpenctedMissingPayload)
+                 showError(.generalError, .unexpenctedMissingPayload)
                  return
              }
              
@@ -1781,42 +1781,42 @@ class ToolFiscal: Div {
             case .chequeNominativo:
                 
                 if provider.isEmpty {
-                    showError(.campoRequerido, "Seleccione Banco provedor de cheque")
+                    showError(.requiredField, "Seleccione Banco provedor de cheque")
                     return
                 }
                 
                 if self.auth.isEmpty {
-                    showError(.campoRequerido, "Ingrese numero de cheque")
+                    showError(.requiredField, "Ingrese numero de cheque")
                     return
                 }
                 
             case .transferenciaElectronicaDeFondos:
                 
                 if provider.isEmpty {
-                    showError(.campoRequerido, "Seleccione Banco")
+                    showError(.requiredField, "Seleccione Banco")
                     return
                 }
                 
                 if self.auth.isEmpty {
-                    showError(.campoRequerido, "Ingrese folio de transferencia")
+                    showError(.requiredField, "Ingrese folio de transferencia")
                     return
                 }
                 
             case .tarjetaDeCredito, .tarjetaDeDebito, .tarjetaDeServicios:
                 
                 if provider.isEmpty {
-                    showError(.campoRequerido, "Seleccione Banco")
+                    showError(.requiredField, "Seleccione Banco")
                     return
                 }
                 
                 if self.lastFour.isEmpty {
-                    showError(.campoRequerido, "Ingrese utimos 4 de la tarjeta")
+                    showError(.requiredField, "Ingrese utimos 4 de la tarjeta")
                     return
                 }
 
                 
                 if self.auth.isEmpty {
-                    showError(.campoRequerido, "Ingrese folio de autorización")
+                    showError(.requiredField, "Ingrese folio de autorización")
                     return
                 }
 
@@ -1829,27 +1829,27 @@ class ToolFiscal: Div {
         
         /// CustAcctFiscal
         guard let reciver = reciver else {
-            showError(.campoRequerido, "Seleccione perfil de facturacion")
+            showError(.requiredField, "Seleccione perfil de facturacion")
             return
         }
         /// FiscalComponents.Profile
         guard let profile = profile else {
-            showError(.campoRequerido, "Seleccione cliente")
+            showError(.requiredField, "Seleccione cliente")
             return
         }
         
         guard !reciverZip.isEmpty else{
-            showError(.campoRequerido, .requierdValid("Codigo Postal Fiscal"))
+            showError(.requiredField, .requierdValid("Codigo Postal Fiscal"))
             return
         }
         
         guard let regimen = FiscalRegimens(rawValue: reciverRegimen) else{
-            showError(.campoRequerido, .requierdValid("Regime Fiscal"))
+            showError(.requiredField, .requierdValid("Regime Fiscal"))
             return
         }
         
         if itemViews.isEmpty {
-            showError(.errorGeneral, "Ingrese productos a facturar.")
+            showError(.generalError, "Ingrese productos a facturar.")
             return
         }
         
@@ -1914,7 +1914,7 @@ class ToolFiscal: Div {
         }
         
         if hasError {
-            showError(.errorGeneral, hasErrorMsg)
+            showError(.generalError, hasErrorMsg)
             return
         }
         
@@ -2083,14 +2083,14 @@ class ToolFiscal: Div {
                 self.infoDiv.color(.white)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     self.infoDiv.color(.gold)
                     self.infoDiv.appendChild(Div("Error de conexion al servidor"))
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     self.infoDiv.color(.gold)
                     self.infoDiv.appendChild(Div(resp.msg))
                     return
@@ -2206,12 +2206,12 @@ class ToolFiscal: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -2770,12 +2770,12 @@ class ToolFiscal: Div {
         }
         
         guard let emisorRfc = prof?.rfc else {
-            showError(.errorGeneral, "No se ha seleccionado perfil fiscal")
+            showError(.generalError, "No se ha seleccionado perfil fiscal")
             return
         }
         
         if documentFilter.count < 5 {
-            showError(.errorGeneral, "El terminos de busqueda debe de ser de minimo 5 caracteres.")
+            showError(.generalError, "El terminos de busqueda debe de ser de minimo 5 caracteres.")
             return
         }
         
@@ -2789,14 +2789,14 @@ class ToolFiscal: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 self.infoDiv.color(.gold)
                 self.infoDiv.appendChild(Div("Error de conexion al servidor"))
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -3471,12 +3471,12 @@ extension ToolFiscal {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else{
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -3764,12 +3764,12 @@ extension ToolFiscal {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else{
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -4163,13 +4163,13 @@ extension ToolFiscal {
 
 
             guard let primaryPaymentMethod = sortedDictByKey.first?.key else {
-                showError(.errorGeneral, "No se puedo establecer metodo de pago primario")
+                showError(.generalError, "No se puedo establecer metodo de pago primario")
                 return
             }
             
             /*
             guard let profile else {
-                showError(.errorGeneral, "No se puedo establecer perfil fiscal primario")
+                showError(.generalError, "No se puedo establecer perfil fiscal primario")
                 return
             }
             */
@@ -4409,12 +4409,12 @@ extension ToolFiscal {
         }
         
         guard let prof else {
-            showError(.errorGeneral, "No hay perfil fiscal seleccionado")
+            showError(.generalError, "No hay perfil fiscal seleccionado")
             return
         }
         
         guard var docs = due[prof.rfc] else {
-            showError(.errorGeneral, "No se localizaron documentos pendientes")
+            showError(.generalError, "No se localizaron documentos pendientes")
             return
         }
         
@@ -4733,14 +4733,14 @@ extension ToolFiscal {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     self.infoDiv.color(.gold)
                     self.infoDiv.appendChild(Div("Error de conexion al servidor"))
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     self.infoDiv.color(.gold)
                     self.infoDiv.appendChild(Div(resp.msg))
                     return
@@ -4818,17 +4818,17 @@ extension ToolFiscal {
             loadingView(show: false)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorDeCommunicacion, resp.msg)
+                showError(.comunicationError, resp.msg)
                 return
             }
             
              guard let data = resp.data else {
-                 showError(.errorGeneral, .unexpenctedMissingPayload)
+                 showError(.generalError, .unexpenctedMissingPayload)
                  return
              }
              

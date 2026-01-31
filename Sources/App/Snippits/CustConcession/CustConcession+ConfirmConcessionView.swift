@@ -196,7 +196,7 @@ extension CustConcessionView {
         func addItems(){
             
             guard let units = Int(unitsToAdd), units > 0 else {
-                showError( .errorGeneral, "Ingrese unidades validas")
+                showError( .generalError, "Ingrese unidades validas")
                 return
             }
 

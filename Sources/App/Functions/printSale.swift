@@ -30,11 +30,11 @@ func printSale(_ data: [SaleProductPDVObject],_ cust: CustPrintData){
              _ = JSObject.global.printPdv!(jsonString,custData)
         }
         else{
-            showError(.errorGeneral, "No se pudo iniciar impresion, Contacte a SoporteTC [001]")
+            showError(.generalError, "No se pudo iniciar impresion, Contacte a SoporteTC [001]")
         }
     }
     catch{
-        showError(.errorGeneral, "No se pudo iniciar impresion, Contacte a SoporteTC [001]")
+        showError(.generalError, "No se pudo iniciar impresion, Contacte a SoporteTC [001]")
     }
 }
 */

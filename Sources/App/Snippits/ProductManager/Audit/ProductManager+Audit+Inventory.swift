@@ -413,12 +413,12 @@ extension ProductManagerView.AuditView {
                 loadingView(show: false)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -476,7 +476,7 @@ extension ProductManagerView.AuditView {
         func requestReport(){
             
             guard let type = InventoryAuditTypes(rawValue: auditTypeListener) else {
-                showError(.campoRequerido, "Ingrese tipo de reporte")
+                showError(.requiredField, "Ingrese tipo de reporte")
                 return
             }
             
@@ -501,7 +501,7 @@ extension ProductManagerView.AuditView {
                 else {
                     
                     if startAt.isEmpty {
-                        showError(.campoRequerido, "Ingrese fecha de Inicio")
+                        showError(.requiredField, "Ingrese fecha de Inicio")
                     }
                     
                     var dateParts = startAt.explode("/")
@@ -615,14 +615,14 @@ extension ProductManagerView.AuditView {
                 break
             case .byDepartement:
                 guard depid != nil else {
-                    showError(.campoRequerido, "Seleccione departamento")
+                    showError(.requiredField, "Seleccione departamento")
                     return
                 }
             case .byStore:
                 break
             case .byProduct:
                 if ids.isEmpty {
-                    showError(.campoRequerido, "Seleccione pordutos a auditar.")
+                    showError(.requiredField, "Seleccione pordutos a auditar.")
                     return
                 }
             case .bySales:
@@ -658,17 +658,17 @@ extension ProductManagerView.AuditView {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let payload = resp.data else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -4461,12 +4461,12 @@ extension ProductManagerView.AuditView {
                 loadingView(show: false)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
 
                 guard resp.status == .ok else{
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 

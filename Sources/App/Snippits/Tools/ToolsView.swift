@@ -193,7 +193,7 @@ class ToolsView: Div {
                     .onClick {
                         
                         guard let tcaccount else {
-                            showError(.errorGeneral, "No se localizaron datos de la centa")
+                            showError(.generalError, "No se localizaron datos de la centa")
                             return
                         }
                         

@@ -449,12 +449,12 @@ extension RewardsView {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -474,19 +474,19 @@ extension RewardsView {
         func purchase(){
             
             if refrence.isEmpty {
-                showError( .errorGeneral, "Ingrese Referencia")
+                showError( .generalError, "Ingrese Referencia")
                 refrenceField.select()
                 return
             }
             
             if confirmRefrence.isEmpty {
-                showError( .errorGeneral, "Confirme Referencia")
+                showError( .generalError, "Confirme Referencia")
                 confirmRefrenceField.select()
                 return
             }
             
             if refrence != confirmRefrence {
-                showError( .errorGeneral, "Referencia no coinciden")
+                showError( .generalError, "Referencia no coinciden")
                 refrenceField.select()
                 confirmRefrence = ""
                 return
@@ -496,7 +496,7 @@ extension RewardsView {
             
             if self.categorie.categorieId == .services {
                 guard let _amount = Double(amount) else {
-                    showError( .errorGeneral, "Ingrese una cantidad valida")
+                    showError( .generalError, "Ingrese una cantidad valida")
                     amountField.select()
                     return
                 }
@@ -509,7 +509,7 @@ extension RewardsView {
             print("points.wrappedValue.toDouble \(points.wrappedValue.toDouble)")
             
             guard points.wrappedValue.toDouble >= (price * 2).rounded(.up) else {
-                showError( .errorGeneral, "Lo sentimos, no cuenta con los puntos suficentes para esta compra.")
+                showError( .generalError, "Lo sentimos, no cuenta con los puntos suficentes para esta compra.")
                 return
             }
             
@@ -532,12 +532,12 @@ extension RewardsView {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "No se pudo comunicar con el servidor")
+                    showError(.comunicationError, "No se pudo comunicar con el servidor")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     self.purchaseProcessingText = resp.msg
                     self.purchaseIsActive = false
                     return
@@ -575,7 +575,7 @@ extension RewardsView {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, "No se pudo comunicar con el servir")
+                        showError(.comunicationError, "No se pudo comunicar con el servir")
                         return
                     }
                     
@@ -585,7 +585,7 @@ extension RewardsView {
                         
                         self.purchaseProcessingText = resp.msg
                         
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
@@ -615,7 +615,7 @@ extension RewardsView {
                     case .fail(let message):
                         self.purchaseIsActive = false
                         self.purchaseProcessingText = message
-                        showError(.errorGeneral, message)
+                        showError(.generalError, message)
                     case .success(let payload):
                         
                         print(payload)

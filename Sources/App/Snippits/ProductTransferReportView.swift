@@ -341,7 +341,7 @@ class ProductTransferReportView: Div {
         else {
             
             if startAt.isEmpty {
-                showError(.campoRequerido, "Ingrese fecha de Inicio")
+                showError(.requiredField, "Ingrese fecha de Inicio")
             }
             
             var dateParts = startAt.explode("/")
@@ -447,22 +447,22 @@ class ProductTransferReportView: Div {
         }
         
         guard let type else {
-            showError(.campoRequerido, "")
+            showError(.requiredField, "")
             return
         }
         
         guard let id else {
-            showError(.campoRequerido, "")
+            showError(.requiredField, "")
             return
         }
         
         guard let startAtUTS else {
-            showError(.campoRequerido, "")
+            showError(.requiredField, "")
             return
         }
         
         guard let endAtUTS else {
-            showError(.campoRequerido, "")
+            showError(.requiredField, "")
             return
         }
         
@@ -477,19 +477,19 @@ class ProductTransferReportView: Div {
 
             guard let resp else {
                 loadingView(show: false)
-                showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                 return
             }
             
             guard resp.status == .ok else {
                 loadingView(show: false)
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
             guard let payload = resp.data else {
                 loadingView(show: false)
-                showError(.errorGeneral, .unexpenctedMissingPayload)
+                showError(.generalError, .unexpenctedMissingPayload)
                 return
             }
             
@@ -723,12 +723,12 @@ class ProductTransferReportView: Div {
                                         loadingView(show: false)
                                         
                                         guard let resp = resp else {
-                                            showError(.errorDeCommunicacion, .serverConextionError)
+                                            showError(.comunicationError, .serverConextionError)
                                             return
                                         }
 
                                         guard resp.status == .ok else{
-                                            showError(.errorGeneral, resp.msg)
+                                            showError(.generalError, resp.msg)
                                             return
                                         }
                                         

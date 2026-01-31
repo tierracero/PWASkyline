@@ -424,7 +424,7 @@ class AddChargeFormView: Div {
                             .onClick {
                                 
                                 guard let _price = Float(self.customeSalePriceInput.text.replace(from: ",", to: "") )?.toCents else {
-                                    showError(.errorGeneral, "Ingrese un precio  valido")
+                                    showError(.generalError, "Ingrese un precio  valido")
                                     self.customeSalePriceInput.select()
                                     return
                                 }
@@ -662,7 +662,7 @@ class AddChargeFormView: Div {
             
             if self.processAsWarenty {
                 guard let _ = self.processAsInternalWarenty else {
-                    showError(.campoRequerido, "Seleccione el tipo de garantia")
+                    showError(.requiredField, "Seleccione el tipo de garantia")
                     return
                 }
             }
@@ -705,7 +705,7 @@ class AddChargeFormView: Div {
                     
                     if self.processAsWarenty {
                         guard let _ = self.processAsInternalWarenty else {
-                            showError(.campoRequerido, "Seleccione el tipo de garantia")
+                            showError(.requiredField, "Seleccione el tipo de garantia")
                             return
                         }
                     }
@@ -768,12 +768,12 @@ class AddChargeFormView: Div {
             loadingView(show: false)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
 
@@ -870,7 +870,7 @@ class AddChargeFormView: Div {
         
         if processAsWarenty {
             guard let _ = processAsInternalWarenty else {
-                showError(.campoRequerido, "Seleccione el tipo de garantia")
+                showError(.requiredField, "Seleccione el tipo de garantia")
                 return
             }
         }
@@ -881,7 +881,7 @@ class AddChargeFormView: Div {
             
             action.objects.forEach { object in
                 if object.isRequired && object.value.isEmpty {
-                    showError(.campoRequerido, .requierdValid("\(action.name): \(object.title)"))
+                    showError(.requiredField, .requierdValid("\(action.name): \(object.title)"))
                     actionRequieredIsEmpty = true
                 }
             }
@@ -892,12 +892,12 @@ class AddChargeFormView: Div {
         }
         
         guard var amountFloat = Float(self.amount.replace(from: ",", to: "")) else {
-            showError(.errorGeneral, "Ingrese una cantidad valida")
+            showError(.generalError, "Ingrese una cantidad valida")
             return
         }
         
         guard let priceFloat = Float(self.price.replace(from: ",", to: "")) else {
-            showError(.errorGeneral, "Ingrese una precio valida")
+            showError(.generalError, "Ingrese una precio valida")
             return
         }
         

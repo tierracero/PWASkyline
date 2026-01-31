@@ -686,12 +686,12 @@ class WorkViewControler: PageController {
                             loadingView(show: false)
                             
                             guard let resp else {
-                                showError(.errorDeCommunicacion, .serverConextionError)
+                                showError(.comunicationError, .serverConextionError)
                                 return
                             }
                             
                             guard resp.status == .ok else {
-                                showError(.errorGeneral, resp.msg)
+                                showError(.generalError, resp.msg)
                                 return
                             }
                             
@@ -726,6 +726,7 @@ class WorkViewControler: PageController {
         
         // Work Grid
         Div{
+            
             if linkedProfile.contains(.bizODS) {
                 
                 /// Buttons
@@ -965,12 +966,12 @@ class WorkViewControler: PageController {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -1430,12 +1431,12 @@ class WorkViewControler: PageController {
                             ) { resp in
                                 
                                 guard let resp else {
-                                    showError(.errorDeCommunicacion, .serverConextionError)
+                                    showError(.comunicationError, .serverConextionError)
                                     return
                                 }
 
                                 guard resp.status == .ok else {
-                                    showError(.errorGeneral, resp.msg)
+                                    showError(.generalError, resp.msg)
                                     return
                                 }
 
@@ -1743,6 +1744,8 @@ class WorkViewControler: PageController {
                 break
             case .asyncFileUpdate:
                 break
+            case .asyncFileOCR:
+                break
             case .asyncRemoveBackground:
                 break
             case .asyncCropImage:
@@ -1941,12 +1944,12 @@ class WorkViewControler: PageController {
                                     loadingView(show: false)
 
                                     guard let resp else {
-                                        showError(.errorDeCommunicacion, .serverConextionError)
+                                        showError(.comunicationError, .serverConextionError)
                                         return
                                     }
 
                                     guard resp.status == .ok else {
-                                        showError(.errorGeneral, resp.msg)
+                                        showError(.generalError, resp.msg)
                                         return
                                     }
 
@@ -1956,7 +1959,7 @@ class WorkViewControler: PageController {
                                     }
 
                                     if payload.doc.tipoDeComprobante == .pago {
-                                        showError(.errorGeneral, "Documentos de pagos aun no son soportados.")
+                                        showError(.generalError, "Documentos de pagos aun no son soportados.")
                                     }
                                     
                                     let view = ToolFiscalViewDocument(
@@ -1978,7 +1981,7 @@ class WorkViewControler: PageController {
                                 addToDom(ToolReciveSendInventory(loadid: id))
                             }
                             else {
-                                showError(.errorGeneral, "Este documento no pertenece a ningun perfil fiscal de la ceunta")
+                                showError(.generalError, "Este documento no pertenece a ningun perfil fiscal de la ceunta")
                             }
                             
                         }
@@ -2486,17 +2489,17 @@ class WorkViewControler: PageController {
                 loadingView(show: false)
                 
                 guard let resp else{
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let payload = resp.data else {
-                    showError(.errorGeneral, .unexpectedError("No se localizo data de la respueta"))
+                    showError(.generalError, .unexpectedError("No se localizo data de la respueta"))
                     return
                 }
                 
@@ -3326,12 +3329,12 @@ class WorkViewControler: PageController {
                         loadingView(show: false)
                         
                         guard let resp = resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
 
                         guard resp.status == .ok else{
-                            showError(.errorGeneral, resp.msg)
+                            showError(.generalError, resp.msg)
                             return
                         }
                         
@@ -3455,12 +3458,12 @@ class WorkViewControler: PageController {
                         loadingView(show: false)
                         
                         guard let resp = resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
 
                         guard resp.status == .ok else{
-                            showError(.errorGeneral, resp.msg)
+                            showError(.generalError, resp.msg)
                             return
                         }
                         
@@ -3512,7 +3515,7 @@ class WorkViewControler: PageController {
             }
             
             if term.count < 4 {
-                showError(.formatoInvalido, "Al buscar por numero debe incluir cuatro digitos por lo menos")
+                showError(.invalidFormat, "Al buscar por numero debe incluir cuatro digitos por lo menos")
                 return
             }
             
@@ -3520,7 +3523,7 @@ class WorkViewControler: PageController {
         else {
             
             if term.count < 3 {
-                showError(.formatoInvalido, "Al buscar por numero debe incluir por lo menos 3 caracteres")
+                showError(.invalidFormat, "Al buscar por numero debe incluir por lo menos 3 caracteres")
                 return
             }
             
@@ -3543,12 +3546,12 @@ class WorkViewControler: PageController {
             loadingView(show: false)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
 
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -3875,7 +3878,7 @@ class WorkViewControler: PageController {
             }
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             

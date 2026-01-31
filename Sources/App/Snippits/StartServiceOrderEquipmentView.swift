@@ -1163,7 +1163,7 @@ class StartServiceOrderEquipmentView: Div {
         self.tag3ResultsView.hidden(true)
         
         guard let brandId = self.tag1SelctedItemID else {
-            showError(.errorGeneral, "No se pudo cargar el id de la marca")
+            showError(.generalError, "No se pudo cargar el id de la marca")
             return
         }
         
@@ -1370,7 +1370,7 @@ class StartServiceOrderEquipmentView: Div {
         var _curOrderManagerType: [CustOrderManagerType] = []
         
         guard let brandId = self.tag1SelctedItemID else {
-            showError(.errorGeneral, "Seleccione \(configServiceTags.idTagName.uppercased())")
+            showError(.generalError, "Seleccione \(configServiceTags.idTagName.uppercased())")
             return
         }
         
@@ -1488,7 +1488,7 @@ class StartServiceOrderEquipmentView: Div {
         var _curOrderManagerModel: [CustOrderManagerModel] = []
         
         guard let typeId = self.tag3SelctedItemID else {
-            showError(.errorGeneral, "Seleccione tipo objeto")
+            showError(.generalError, "Seleccione tipo objeto")
             return
         }
         
@@ -1600,7 +1600,7 @@ class StartServiceOrderEquipmentView: Div {
     func addEquipment(){
         
         if _descr.isEmpty {
-            showError(.campoRequerido, .requierdValid("Description"))
+            showError(.requiredField, .requierdValid("Description"))
             return
         }
         

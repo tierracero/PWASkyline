@@ -166,7 +166,7 @@ class ImageWebView: Div {
                             }
                             
                             if self.selectedAvatar.wrappedValue == image {
-                                showError(.errorGeneral, "No puede eliminar un avatar establesido, cambie de avatar para poder eliminar la imagen actual.")
+                                showError(.generalError, "No puede eliminar un avatar establesido, cambie de avatar para poder eliminar la imagen actual.")
                                 return
                             }
                             
@@ -179,12 +179,12 @@ class ImageWebView: Div {
                                 loadingView(show: false)
                                 
                                 guard let resp else {
-                                    showError(.errorDeCommunicacion, .serverConextionError)
+                                    showError(.comunicationError, .serverConextionError)
                                     return
                                 }
                                 
                                 guard resp.status == .ok else {
-                                    showError(.errorGeneral, resp.msg)
+                                    showError(.generalError, resp.msg)
                                     return
                                 }
                              
@@ -256,12 +256,12 @@ class ImageWebView: Div {
                         ) { resp in
                             
                             guard let resp else {
-                                showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                                showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                                 return
                             }
                             
                             guard resp.status == .ok else {
-                                showError(.errorGeneral, resp.msg)
+                                showError(.generalError, resp.msg)
                                 return
                             }
                             
@@ -415,6 +415,8 @@ class ImageWebView: Div {
                 
                 self.loadPercent = payload.message
                 
+            case .asyncFileOCR:
+                break
             case .asyncCropImage:
                 
                 guard let payload = self.ws.asyncCropImage($0) else {
@@ -532,7 +534,7 @@ class ImageWebView: Div {
                     }
                     
                     guard let payload = resp.data else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
@@ -590,12 +592,12 @@ class ImageWebView: Div {
             ) { resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
              
@@ -607,18 +609,18 @@ class ImageWebView: Div {
                 switch payload.status {
                 case .active, .processed:
                     if wait > 20 {
-                        showError(.errorGeneral, "Fallo cargo del archivo.")
+                        showError(.generalError, "Fallo cargo del archivo.")
                         return
                     }
                     self.chekUploadState(wait: wait + 1)
                 case .error:
-                    showError(.errorGeneral, "Fallo cargo del archivo.")
+                    showError(.generalError, "Fallo cargo del archivo.")
                     self.removeMe(self.viewId)
                     self.remove()
                 case .done:
                     
                     guard let image = payload.image else {
-                        showError(.errorGeneral, "No se encontro imagen, refsque para cargarla.")
+                        showError(.generalError, "No se encontro imagen, refsque para cargarla.")
                         return
                     }
                     
@@ -660,12 +662,12 @@ class ImageWebView: Div {
             ) { resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
              
@@ -677,18 +679,18 @@ class ImageWebView: Div {
                 switch payload.status {
                 case .active, .processed:
                     if wait > 20 {
-                        showError(.errorGeneral, "Fallo cargo del archivo.")
+                        showError(.generalError, "Fallo cargo del archivo.")
                         return
                     }
                     self.chekUploadState(wait: wait + 1)
                 case .error:
-                    showError(.errorGeneral, "Fallo cargo del archivo.")
+                    showError(.generalError, "Fallo cargo del archivo.")
                     self.removeMe(self.viewId)
                     self.remove()
                 case .done:
                     
                     guard let image = payload.image else {
-                        showError(.errorGeneral, "No se encontro imagen, refsque para cargarla.")
+                        showError(.generalError, "No se encontro imagen, refsque para cargarla.")
                         return
                     }
                     

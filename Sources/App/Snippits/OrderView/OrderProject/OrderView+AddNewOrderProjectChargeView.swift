@@ -194,19 +194,19 @@ extension OrderView {
         func addCharge(){
             
             guard !name.isEmpty else {
-                showError(.errorGeneral, "Ingrese nombre del cargo")
+                showError(.generalError, "Ingrese nombre del cargo")
                 nameField.select()
                 return
             }
             
             guard let units = Int(units) else {
-                showError(.errorGeneral, "Ingrese unidades validas")
+                showError(.generalError, "Ingrese unidades validas")
                 unitsField.select()
                 return
             }
             
             guard let cost = Double(cost)?.toCents else {
-                showError(.errorGeneral, "Ingrese costo valido")
+                showError(.generalError, "Ingrese costo valido")
                 unitsField.select()
                 return
             }
@@ -223,12 +223,12 @@ extension OrderView {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 

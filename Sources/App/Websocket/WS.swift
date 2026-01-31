@@ -32,6 +32,9 @@ public struct WS {
         /// Remove BackGround
         case asyncRemoveBackground
         
+        /// Proccess  OCR Documnet
+        case asyncFileOCR
+        
         case asyncCropImage
         case waMsgStatusUpdate
         case NotifyAddFacebookProfile
@@ -49,15 +52,18 @@ public struct WS {
         case requestMobileCamaraFail
         case requestMobileCamaraInitiate
         case requestMobileCamaraProgress
-        
-        
+
      
         /// Use camera to scan QR / Barcode
         case requestMobileScannerComplete
         
         /// Use camera to scan image text
         case requestMobileOCRComplete
-        
+        /* TODO: Cheke if needed
+        case requestMobileOCRFail
+        case requestMobileOCRInitiate
+        case requestMobileOCRProgress
+        */
         case custTaskAuthRequest
         
         case custTaskDenied

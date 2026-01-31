@@ -1679,38 +1679,38 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         func searchMap(){
             
             if street.isEmpty {
-                showError(.campoRequerido, "Ingese Calle y Numero")
+                showError(.requiredField, "Ingese Calle y Numero")
                 streetField.select()
                 return
             }
             
             if colony.isEmpty {
-                showError(.campoRequerido, "Ingrese Colonia")
+                showError(.requiredField, "Ingrese Colonia")
                 colonyField.select()
                 return
             }
 
             if city.isEmpty {
-                showError(.campoRequerido, "Ingrese Cuidad")
+                showError(.requiredField, "Ingrese Cuidad")
                 cityField.select()
                 return
             }
 
             if state.isEmpty {
-                showError(.campoRequerido, "Ingrese Estado")
+                showError(.requiredField, "Ingrese Estado")
                 stateField.select()
                 return
             }
 
             if zip.isEmpty {
-                showError(.campoRequerido, "Ingrese Codigo Postal")
+                showError(.requiredField, "Ingrese Codigo Postal")
                 zipField.select()
                 return
             }
 
             if country.isEmpty {
                 countryField.select()
-                showError(.campoRequerido, "Ingrese Pais")
+                showError(.requiredField, "Ingrese Pais")
                 return
             }
 
@@ -1752,129 +1752,129 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         func saveStore() {
 
             if storePrefix.isEmpty {
-                showError(.campoRequerido, "Prefijo de la tienda")
+                showError(.requiredField, "Prefijo de la tienda")
                 storePrefixField.select()
                 return
             }
 
             if storeName.isEmpty {
-                showError(.campoRequerido, "Nombre de la tienda")
+                showError(.requiredField, "Nombre de la tienda")
                 storeNameField.select()
                 return
             }
 
             if telephone.isEmpty {
-                showError(.campoRequerido, "Telefono Fijo")
+                showError(.requiredField, "Telefono Fijo")
                 telephoneField.select()
                 return
             }
 
 
             if mobile.isEmpty {
-                showError(.campoRequerido, "Telefono Celular")
+                showError(.requiredField, "Telefono Celular")
                 mobileField.select()
                 return
             }
 
             if email.isEmpty {
-                showError(.campoRequerido, "Correo Electronico")
+                showError(.requiredField, "Correo Electronico")
                 emailField.select()
                 return
             }
 
             if street.isEmpty {
-                showError(.campoRequerido, "Calle y numero")
+                showError(.requiredField, "Calle y numero")
                 streetField.select()
                 return
             }
 
             if colony.isEmpty {
-                showError(.campoRequerido, "Colonia")
+                showError(.requiredField, "Colonia")
                 colonyField.select()
                 return
             }
 
             if city.isEmpty {
-                showError(.campoRequerido, "Cuidad")
+                showError(.requiredField, "Cuidad")
                 cityField.select()
                 return
             }
 
             if state.isEmpty {
-                showError(.campoRequerido, "Estado")
+                showError(.requiredField, "Estado")
                 stateField.select()
                 return
             }
 
             if country.isEmpty {
-                showError(.campoRequerido, "Pais")
+                showError(.requiredField, "Pais")
                 countryField.select()
                 return
             }
 
             if zip.isEmpty {
-                showError(.campoRequerido, "Codigo postal")
+                showError(.requiredField, "Codigo postal")
                 zipField.select()
                 return
             }
 
             guard let location else {
-                showError(.campoRequerido, "Carge mapa")
+                showError(.requiredField, "Carge mapa")
                 return
             }
 
             guard let button = CustStorePrintButtonType(rawValue: orderButtonListener) else {
-                showError(.campoRequerido, "Tipo de boton (orden)")
+                showError(.requiredField, "Tipo de boton (orden)")
                 return
             }
 
             guard let document = CustStorePrintButtonOptions(rawValue: orderDocumentListener) else {
-                showError(.campoRequerido, "Tipo de impresion (orden)")
+                showError(.requiredField, "Tipo de impresion (orden)")
                 return
             }
 
             guard let image = CustStorePrintDocumentImage(rawValue: orderImageListener) else {
-                showError(.campoRequerido, "Image de impresion (orden)")
+                showError(.requiredField, "Image de impresion (orden)")
                 return
             }
 
             guard let lineBreak = Int(orderLineBreak) else {
-                showError(.campoRequerido, "Salto de impresion (orden)")
+                showError(.requiredField, "Salto de impresion (orden)")
                 return
             }
 
             guard let buttonPdv = CustStorePrintButtonType(rawValue: posButtonListener) else {
-                showError(.campoRequerido, "")
+                showError(.requiredField, "")
                 return
             }
 
             guard let documentPdv = CustStorePrintButtonOptions(rawValue: posDocumentListener) else {
-                showError(.campoRequerido, "")
+                showError(.requiredField, "")
                 return
             }
 
             guard let imagePdv = CustStorePrintDocumentImage(rawValue: posImageListener) else {
-                showError(.campoRequerido, "")
+                showError(.requiredField, "")
                 return
             }
 
             guard let lineBreakPdv = Int(posLineBreak) else {
-                showError(.campoRequerido, "")
+                showError(.requiredField, "")
                 return
             }
 
             guard let priceModifierPdv = Double(priceModifierPdv) else {
-                showError(.campoRequerido, "")
+                showError(.requiredField, "")
                 return
             }
 
             guard let priceModifierOrder = Double(priceModifierOrder) else {
-                showError(.campoRequerido, "")
+                showError(.requiredField, "")
                 return
             }
 
             guard let operationType = StoreOperationType(rawValue: operationTypeListener) else {
-                showError(.campoRequerido, "")
+                showError(.requiredField, "")
                 return
             }
 
@@ -1882,7 +1882,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             
             if operationType == .external {
                 if operationStore == nil {
-                    showError(.campoRequerido, "")
+                    showError(.requiredField, "")
                     return
                 }
             }
@@ -1954,7 +1954,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
             switch sunday.validate()  {
             case .invalid(let error):
-                showError(.errorGeneral, "Error de configuracion de horario: Domingo. \(error)")
+                showError(.generalError, "Error de configuracion de horario: Domingo. \(error)")
                 return
             case .valid:
                 break
@@ -1962,7 +1962,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
             switch monday.validate()  {
             case .invalid(let error):
-                showError(.errorGeneral, "Error de configuracion de horario: Lunes. \(error)")
+                showError(.generalError, "Error de configuracion de horario: Lunes. \(error)")
                 return
             case .valid:
                 break
@@ -1970,7 +1970,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
             switch tuesday.validate()  {
             case .invalid(let error):
-                showError(.errorGeneral, "Error de configuracion de horario: Martes. \(error)")
+                showError(.generalError, "Error de configuracion de horario: Martes. \(error)")
                 return
             case .valid:
                 break
@@ -1978,7 +1978,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
             switch wednesday.validate()  {
             case .invalid(let error):
-                showError(.errorGeneral, "Error de configuracion de horario: Miercoles. \(error)")
+                showError(.generalError, "Error de configuracion de horario: Miercoles. \(error)")
                 return
             case .valid:
                 break
@@ -1986,7 +1986,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
             switch thursday.validate()  {
             case .invalid(let error):
-                showError(.errorGeneral, "Error de configuracion de horario: Jueves. \(error)")
+                showError(.generalError, "Error de configuracion de horario: Jueves. \(error)")
                 return
             case .valid:
                 break
@@ -1994,7 +1994,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
             switch friday.validate()  {
             case .invalid(let error):
-                showError(.errorGeneral, "Error de configuracion de horario: Viernes. \(error)")
+                showError(.generalError, "Error de configuracion de horario: Viernes. \(error)")
                 return
             case .valid:
                 break
@@ -2002,7 +2002,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
             switch saturday.validate()  {
             case .invalid(let error):
-                showError(.errorGeneral, "Error de configuracion de horario: Sabado. \(error)")
+                showError(.generalError, "Error de configuracion de horario: Sabado. \(error)")
                 return
             case .valid:
                 break
@@ -2055,12 +2055,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
 
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
 
@@ -2113,27 +2113,27 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             else {
 
                 guard let supervisorId = UUID(uuidString: supervisorListener) else {
-                    showError(.campoRequerido, "Seleccione un supervisor")
+                    showError(.requiredField, "Seleccione un supervisor")
                     return
                 }
 
                 if storePrefix.isEmpty {
-                    showError(.campoRequerido, "Ingrese prefijo de la tienda")
+                    showError(.requiredField, "Ingrese prefijo de la tienda")
                     return
                 }
 
                 if groopName.isEmpty {
-                    showError(.campoRequerido, "Nombre del grupo")
+                    showError(.requiredField, "Nombre del grupo")
                     return
                 }
 
                 if bodegaName.isEmpty {
-                    showError(.campoRequerido, "Ingrese nombre de la bodega")
+                    showError(.requiredField, "Ingrese nombre de la bodega")
                     return
                 }
 
                 if seccion.isEmpty {
-                    showError(.campoRequerido, "Ingrese nombre de la seccion en la bodega ")
+                    showError(.requiredField, "Ingrese nombre de la seccion en la bodega ")
                     return
                 }
 
@@ -2187,12 +2187,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
 
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     

@@ -458,15 +458,15 @@ class FiscalDocumentRow: Div {
         case .ingreso:
             break
         case .egreso:
-            showError(.errorGeneral, "Documento no soportado")
+            showError(.generalError, "Documento no soportado")
             return
         case .nomina:
-            showError(.errorGeneral, "Documento no soportado")
+            showError(.generalError, "Documento no soportado")
             return
         case .pago:
             break
         case .traslado:
-            showError(.errorGeneral, "Documento no soportado")
+            showError(.generalError, "Documento no soportado")
             return
         }
         
@@ -477,12 +477,12 @@ class FiscalDocumentRow: Div {
             loadingView(show: false)
 
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
 
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
 

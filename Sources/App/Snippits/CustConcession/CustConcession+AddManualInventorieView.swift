@@ -15,6 +15,8 @@ extension CustConcessionView {
     class AddManualInventorieView: Div {
         
         override class var name: String { "div" }
+
+        let viewId: UUID = .init()
         
         let account: CustAcct
         
@@ -101,6 +103,7 @@ extension CustConcessionView {
         /// List of found items by prduct search
         @State var kartItems: [SearchChargeResponse] = []
 
+        @State var orcScript: OCRCustomeScript? = nil
 
         /// [ CustStoreBodegas.id: [CustStoreSeccionesQuickRef] ]
         var seccionRefrence: [ UUID: [CustStoreSeccionesQuickRef] ] = [:]
@@ -200,10 +203,83 @@ extension CustConcessionView {
         .class(.textFiledBlackDark)
         .height(31.px)
 
+        /*
+        override func buildUI() {
+            super.buildUI()
+
+            
+
+
+        }
+        */
+
+
+        override func buildUI() {
+            super.buildUI()
+            
+            self.class(.transparantBlackBackGround)
+            position(.absolute)
+            height(100.percent)
+            width(100.percent)
+            left(0.px)
+            top(0.px)
+
+            //WebApp.skyline
+
+            //customerServiceProfile.
+
+            $kartItems.listen {
+                if $0.isEmpty {
+                    self.searchTerm = ""
+                }
+            }   
+
+            vendorFolio = vendor.folio
+            
+            businessName = vendor.businessName
+            
+            vendorRfc = vendor.rfc
+            
+            vendorRazon = vendor.razon
+            
+            finaceContact = "\(vendor.firstName) \(vendor.lastName)"
+            
+            oporationContact = vendor.fiscalPOCMobile
+            
+            receptorRfc = account.fiscalRfc
+            
+            receptorRazon = account.fiscalRazon
+            
+            fiscalUse = account.cfdiUse
+            
+            bodegas.forEach { item in
+                bodegaSelect.appendChild(
+                    Option(item.name)
+                    .value(item.id.uuidString)
+                )
+            }
+
+            Console.clear()
+
+           WebApp.shared.skyline.orcScripts.forEach { script in 
+                //useCamaraForOCR
+
+                print(script.relType)
+                print(script.relId)
+                print(vendor.id)
+
+                if script.relType == .vendor && script.relId == vendor.id {
+                    orcScript = script
+                }
+
+            }
+
+        }
 
         @DOM override var body: DOM.Content {
             
             Div{
+                
                 Div().clear(.both).height(3.px)
 
                 /// Header
@@ -215,7 +291,44 @@ extension CustConcessionView {
                             self.remove()
                         }
                     
-                    H2("Agregar concesión del proveedor")
+                    Img()
+                        .hidden(self.$orcScript.map{ $0 == nil })
+                        .src("/skyline/media/mobileScannerWhite.png")
+                        .marginRight(12.px)
+                        .cursor(.pointer)
+                        .height(32.px)
+                        .float(.right)
+                        .onClick {
+                            
+                            // useCamaraForOCR
+
+                            API.custAPIV1.requestMobileCamara( 
+                                type: .useCamaraForOCR,
+                                connid: custCatchChatConnID,
+                                eventid: self.viewId,
+                                relatedid: self.orcScript?.id,
+                                relatedfolio: self.orcScript?.name ?? "",
+                                multipleTakes: false
+                            ) { resp in
+                                
+                                loadingView(show: false)
+                                
+                                guard let resp else {
+                                    showError(.comunicationError, .serverConextionError)
+                                    return
+                                }
+                                
+                                guard resp.status == .ok else {
+                                    showError(.generalError, resp.msg)
+                                    return
+                                }
+                                
+                                showSuccess(.operacionExitosa, "Entre en la notificacion en su movil.")
+                                
+                            }
+                        }
+
+                    H2("Agregar concesión")
                         .color(.lightBlueText)
                         .marginLeft(7.px)
                         .float(.left)
@@ -284,7 +397,6 @@ extension CustConcessionView {
 
                         addToDom( view )
                     }
-
 
                     Div().class(.clear)
                 }
@@ -638,63 +750,10 @@ extension CustConcessionView {
             .top(25.px)
         }
         
-        override func buildUI() {
-            super.buildUI()
-            
-            self.class(.transparantBlackBackGround)
-            position(.absolute)
-            height(100.percent)
-            width(100.percent)
-            left(0.px)
-            top(0.px)
-
-            //WebApp.skyline
-
-            //customerServiceProfile.
-
-            $kartItems.listen {
-                if $0.isEmpty {
-                    self.searchTerm = ""
-                }
-            }   
-
-            vendorFolio = vendor.folio
-            
-            businessName = vendor.businessName
-            
-            vendorRfc = vendor.rfc
-            
-            vendorRazon = vendor.razon
-            
-            finaceContact = "\(vendor.firstName) \(vendor.lastName)"
-            
-            oporationContact = vendor.fiscalPOCMobile
-            
-            receptorRfc = account.fiscalRfc
-            
-            receptorRazon = account.fiscalRazon
-            
-            fiscalUse = account.cfdiUse
-            
-            bodegas.forEach { item in
-                bodegaSelect.appendChild(
-                    Option(item.name)
-                    .value(item.id.uuidString)
-                )
-            }
-
-        }
-        
         override func didAddToDOM() {
             super.didAddToDOM()
-            
-            $bodegaListener.listen {
-                
-                print("🟢  ch bod")
-                
-            }
 
-            searchBox.select()
+            searchBox.select() 
         }
         
         func searchTermAct() {
@@ -819,12 +878,12 @@ extension CustConcessionView {
                         loadingView(show: false)
 
                         guard let resp else {
-                            showError(.errorDeCommunicacion, "Error de comunicacion")
+                            showError(.comunicationError, "Error de comunicacion")
                             return
                         }
 
                         if resp.status != .ok {
-                            showError(.errorGeneral, resp.msg)
+                            showError(.generalError, resp.msg)
                             return
                         }
 

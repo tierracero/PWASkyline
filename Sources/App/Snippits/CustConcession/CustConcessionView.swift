@@ -529,17 +529,22 @@ class CustConcessionView: Div {
                                 .class(.uibtn)
                                 .onClick {
 
+                                    print("🚧  000")
+
                                     let view = StartManualInventory { name, vendor, profile in
 
-                                            let view: CustConcessionView.AddManualInventorieView = AddManualInventorieView(
-                                                account: self.account,
-                                                newDocumentName: name,
-                                                vendor: vendor,
-                                                profile: profile,
-                                                bodegas: self.bodegas
-                                            )
+                                        print("🚧  001")
 
-                                            addToDom(view)
+
+                                        let view: CustConcessionView.AddManualInventorieView = AddManualInventorieView(
+                                            account: self.account,
+                                            newDocumentName: name,
+                                            vendor: vendor,
+                                            profile: profile,
+                                            bodegas: self.bodegas
+                                        )
+
+                                        addToDom(view)
 
                                     }
 
@@ -1118,7 +1123,7 @@ class CustConcessionView: Div {
         itemsInBodegas.forEach { bodegaId, items in
 
             guard let view = bodegaRefrence[bodegaId] else {
-                showError(.errorGeneral, "No se puco localizr una de las bodegas, refresque e eintente de nuevo. Si el problema persiste contacte a soporte.")
+                showError(.generalError, "No se puco localizr una de las bodegas, refresque e eintente de nuevo. Si el problema persiste contacte a soporte.")
                 return
             }
 
@@ -1321,12 +1326,12 @@ class CustConcessionView: Div {
         }
         
         if hasError {
-            showError(.errorGeneral, "Hay inconsistencias en la peticion, refresque la pantalla e intente de nuevo.")
+            showError(.generalError, "Hay inconsistencias en la peticion, refresque la pantalla e intente de nuevo.")
             return
         }
         
         if selectedItems.isEmpty {
-            showError(.errorGeneral, "Seleccione elementos para \({ isSale ? "la venta" : "la devolución" }()).")
+            showError(.generalError, "Seleccione elementos para \({ isSale ? "la venta" : "la devolución" }()).")
             return
         }
         
@@ -1389,12 +1394,12 @@ class CustConcessionView: Div {
             loadingView(show: false)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
 
             guard resp.status == .ok else{
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -1486,12 +1491,12 @@ class CustConcessionView: Div {
         }
         
         if hasError {
-            showError(.errorGeneral, "Hay inconsistencias en la peticion, refresque la pantalla e intente de nuevo.")
+            showError(.generalError, "Hay inconsistencias en la peticion, refresque la pantalla e intente de nuevo.")
             return
         }
         
         if selectedItems.isEmpty {
-            showError(.errorGeneral, "Seleccione elementos para Mover")
+            showError(.generalError, "Seleccione elementos para Mover")
             return
         }
 

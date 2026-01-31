@@ -122,7 +122,7 @@ class AddTagView: Div {
         var tag = self.term.purgeSpaces.pseudo.uppercased()
         
         if currentTags.contains(tag) {
-            showError(.errorGeneral, "\(tag) ya esta en la lista de etiquetas / aplicaciones.")
+            showError(.generalError, "\(tag) ya esta en la lista de etiquetas / aplicaciones.")
             termField.select()
             return
         }

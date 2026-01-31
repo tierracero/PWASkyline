@@ -155,13 +155,13 @@ class SearchCustomerFiscalView: Div {
                     
                     if let _ = Int(self.term) {
                         if self.term.count < 5 {
-                            showError(.formatoInvalido, "Si busca por telefono, debera ingrear 5 digitos por lo menos")
+                            showError(.invalidFormat, "Si busca por telefono, debera ingrear 5 digitos por lo menos")
                             return
                         }
                     }
                     else{
                         if self.term.count < 4 {
-                            showError(.formatoInvalido, "Busqueda debe incluir por lo menos 4 caracteres")
+                            showError(.invalidFormat, "Busqueda debe incluir por lo menos 4 caracteres")
                             return
                         }
                     }

@@ -31,7 +31,7 @@ extension WS {
         do {
             let data = try JSONEncoder().encode(payload)
             guard let str = String(data: data, encoding: .utf8) else {
-                showError(.errorGeneral, "No se pudo enviar mensaje 002")
+                showError(.generalError, "No se pudo enviar mensaje 002")
                 return
             }
             

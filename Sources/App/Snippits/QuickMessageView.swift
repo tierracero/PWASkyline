@@ -136,17 +136,17 @@ class QuickMessageView: Div {
             API.custOrderV1.getNotes(accountId: self.order.id) { resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let notes = resp.data?.notes else {
-                    showError(.errorGeneral, .unexpenctedMissingPayload)
+                    showError(.generalError, .unexpenctedMissingPayload)
                     return
                 }
                 

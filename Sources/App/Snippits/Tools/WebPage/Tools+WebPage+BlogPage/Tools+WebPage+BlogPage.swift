@@ -614,27 +614,27 @@ extension ToolsView.WebPage {
         func saveChanges() {
             
             if metaTitle.isEmpty {
-                showError(.campoRequerido, .requierdValid("meta titulo"))
+                showError(.requiredField, .requierdValid("meta titulo"))
             }
             
             if metaDescription.isEmpty {
-                showError(.campoRequerido, .requierdValid("meta descripción"))
+                showError(.requiredField, .requierdValid("meta descripción"))
             }
             
             if title.isEmpty {
-                showError(.campoRequerido, .requierdValid("Titulo"))
+                showError(.requiredField, .requierdValid("Titulo"))
             }
             
             if descr.isEmpty {
-                showError(.campoRequerido, .requierdValid("Descripción"))
+                showError(.requiredField, .requierdValid("Descripción"))
             }
             
             if mainText.isEmpty {
-                showError(.campoRequerido, .requierdValid("Texto Principal"))
+                showError(.requiredField, .requierdValid("Texto Principal"))
             }
             
             if subText.isEmpty {
-                showError(.campoRequerido, .requierdValid("Texto Secundario"))
+                showError(.requiredField, .requierdValid("Texto Secundario"))
             }
             
             loadingView(show: true)
@@ -652,12 +652,12 @@ extension ToolsView.WebPage {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -855,12 +855,12 @@ extension ToolsView.WebPage {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                        showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                         return
                     }
                     
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     

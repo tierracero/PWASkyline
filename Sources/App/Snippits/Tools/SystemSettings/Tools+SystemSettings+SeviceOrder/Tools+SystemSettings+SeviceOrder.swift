@@ -1665,29 +1665,29 @@ extension ToolsView.SystemSettings {
                                 }
                                 
                                 guard let  _upperRange = Double( range.upperRange.replace(from: ",", to: "") ) else {
-                                    showError(.errorGeneral, "Incluya rango superior")
+                                    showError(.generalError, "Incluya rango superior")
                                     range.lowerRangeField.select()
                                     return
                                 }
                                 
                                 guard _upperRange > _lowerRange else {
-                                    showError(.errorGeneral, "Rango superior debe ser mayor al rango menor")
+                                    showError(.generalError, "Rango superior debe ser mayor al rango menor")
                                     return
                                 }
                                 
                                 if range.pricea.isEmpty {
-                                    showError(.errorGeneral, "Incluya rango pordentaje a")
+                                    showError(.generalError, "Incluya rango pordentaje a")
                                     range.lowerRangeField.select()
                                     return
                                 }
                                 
                                 if range.priceb.isEmpty {
-                                    showError(.errorGeneral, "Incluya rango pordentaje b")
+                                    showError(.generalError, "Incluya rango pordentaje b")
                                     range.lowerRangeField.select()
                                     return
                                 }
                                 if range.pricec.isEmpty {
-                                    showError(.errorGeneral, "Incluya rango pordentaje c")
+                                    showError(.generalError, "Incluya rango pordentaje c")
                                     range.lowerRangeField.select()
                                     return
                                 }
@@ -1800,29 +1800,29 @@ extension ToolsView.SystemSettings {
                                 }
                                 
                                 guard let  _upperRange = Double( range.upperRange.replace(from: ",", to: "") ) else {
-                                    showError(.errorGeneral, "Incluya rango superior")
+                                    showError(.generalError, "Incluya rango superior")
                                     range.lowerRangeField.select()
                                     return
                                 }
                                 
                                 guard _upperRange > _lowerRange else {
-                                    showError(.errorGeneral, "Rango superior debe ser mayor al rango menor")
+                                    showError(.generalError, "Rango superior debe ser mayor al rango menor")
                                     return
                                 }
                                 
                                 if range.pricea.isEmpty {
-                                    showError(.errorGeneral, "Incluya rango pordentaje a")
+                                    showError(.generalError, "Incluya rango pordentaje a")
                                     range.lowerRangeField.select()
                                     return
                                 }
                                 
                                 if range.priceb.isEmpty {
-                                    showError(.errorGeneral, "Incluya rango pordentaje b")
+                                    showError(.generalError, "Incluya rango pordentaje b")
                                     range.lowerRangeField.select()
                                     return
                                 }
                                 if range.pricec.isEmpty {
-                                    showError(.errorGeneral, "Incluya rango pordentaje c")
+                                    showError(.generalError, "Incluya rango pordentaje c")
                                     range.lowerRangeField.select()
                                     return
                                 }
@@ -3613,128 +3613,128 @@ extension ToolsView.SystemSettings {
             }
             
             guard let gridView = CustOrderGridView(rawValue: gridView) else {
-                showError(.campoInvalido, "Error al establecer GRID VIEW. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer GRID VIEW. Contacte a Soporte TC")
                 return
             }
             
             guard let accountMobileConfirmationMode = ConfirmationMode(rawValue: accountMobileConfirmationMode) else {
-                showError(.campoInvalido, "Error al establecer ACCT MOBILE CONF. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer ACCT MOBILE CONF. Contacte a Soporte TC")
                 return
             }
             
             guard let accountIdConfirmationMode = ConfirmationMode(rawValue: accountIdConfirmationMode) else {
-                showError(.campoInvalido, "Error al establecer ACCT ID CONF. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer ACCT ID CONF. Contacte a Soporte TC")
                 return
             }
             
             guard let orderMobileConfirmationMode = ConfirmationMode(rawValue: orderMobileConfirmationMode) else {
-                showError(.campoInvalido, "Error al establecer ORDR MOBILE CON. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer ORDR MOBILE CON. Contacte a Soporte TC")
                 return
             }
             
             guard let orderIdConfirmationMode = ConfirmationMode(rawValue: orderIdConfirmationMode) else {
-                showError(.campoInvalido, "Error al establecer ORDR ID CONF. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer ORDR ID CONF. Contacte a Soporte TC")
                 return
             }
             guard let rentalMobileConfirmationMode = ConfirmationMode(rawValue: rentalMobileConfirmationMode) else {
-                showError(.campoInvalido, "Error al establecer RENTAL MOBILE CONF. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer RENTAL MOBILE CONF. Contacte a Soporte TC")
                 return
             }
             
             
             guard let rentalIdConfirmationMode = ConfirmationMode(rawValue: rentalIdConfirmationMode) else {
-                showError(.campoInvalido, "Error al establecer RENTAL ID CONF. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer RENTAL ID CONF. Contacte a Soporte TC")
                 return
             }
             
             guard let dateMobileConfirmationMode = ConfirmationMode(rawValue: dateMobileConfirmationMode) else {
-                showError(.campoInvalido, "Error al establecer DATE MOBILE CONF. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer DATE MOBILE CONF. Contacte a Soporte TC")
                 return
             }
             
             guard let dateIdConfirmationMode = ConfirmationMode(rawValue: dateIdConfirmationMode) else {
-                showError(.campoInvalido, "Error al establecer DATE ID CONF. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer DATE ID CONF. Contacte a Soporte TC")
                 return
             }
             
             guard let createPersonalAccountMode = CreateAccountMode(rawValue: createPersonalAccountMode) else {
-                showError(.campoInvalido, "Error al establecer modo de cracion de cuentas personales. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer modo de cracion de cuentas personales. Contacte a Soporte TC")
                 return
             }
             
             guard let createBuisnessAccountMode = CreateAccountMode(rawValue: createBuisnessAccountMode) else {
-                showError(.campoInvalido, "Error al establecer modo de cracion de cuentas empresariales. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer modo de cracion de cuentas empresariales. Contacte a Soporte TC")
                 return
             }
             
             guard let currency = Currencies(rawValue: currency) else {
-                showError(.campoInvalido, "Error al establecer CURRENCY. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer CURRENCY. Contacte a Soporte TC")
                 return
             }
             
             guard let restrictOrderCreation = Int(restrictOrderCreation) else {
                 
-                showError(.campoInvalido, "Error al establecer RESTRICT ORDER CREATE. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer RESTRICT ORDER CREATE. Contacte a Soporte TC")
                 return
             }
             
             guard let restrictOrderClosing = Int(restrictOrderClosing)?.value else {
-                showError(.campoInvalido, "Error al establecer RESTRICT ORDER CLOSE. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer RESTRICT ORDER CLOSE. Contacte a Soporte TC")
                 return
             }
             
             guard let restrictOrderCharges = Int(restrictOrderCharges)?.value else {
-                showError(.campoInvalido, "Error al establecer RESTRICT ORDER CHARGE. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer RESTRICT ORDER CHARGE. Contacte a Soporte TC")
                 return
             }
             
             guard let restrictSaleCharges = Int(restrictSaleCharges)?.value else {
-                showError(.campoInvalido, "Error al establecer RESTRICT SALE CHARGES. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer RESTRICT SALE CHARGES. Contacte a Soporte TC")
                 return
             }
             
             guard let restrictMermProduct = Int(restrictMermProduct)?.value else {
-                showError(.campoInvalido, "Error al establecer RESTRICT MERM PRODUCT. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer RESTRICT MERM PRODUCT. Contacte a Soporte TC")
                 return
             }
             
             guard let restrictDeleteCharges = Int(restrictDeleteCharges)?.value else {
-                showError(.campoInvalido, "Error al establecer RESTRICT DEL CHARGE. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer RESTRICT DEL CHARGE. Contacte a Soporte TC")
                 return
             }
             
             guard let restrictDeletePayments = Int(restrictDeletePayments)?.value else {
-                showError(.campoInvalido, "Error al establecer RESTRICT DEL PAY. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer RESTRICT DEL PAY. Contacte a Soporte TC")
                 return
             }
             
             guard let restrictDeleteFiscal = Int(restrictDeleteFiscal)?.value else {
-                showError(.campoInvalido, "Error al establecer RESTRICT DEL FISCAL. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer RESTRICT DEL FISCAL. Contacte a Soporte TC")
                 return
             }
             
             guard let autoDeleteCTAM = Int(autoDeleteCTAM)?.value else {
-                showError(.campoInvalido, "Error al establecer AUTO DEL CTAM. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer AUTO DEL CTAM. Contacte a Soporte TC")
                 return
             }
             
             guard let openFiscalInvoce = Int(openFiscalInvoce)?.value else {
-                showError(.campoInvalido, "Error al establecer FISCAL MANUAL PAY. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer FISCAL MANUAL PAY. Contacte a Soporte TC")
                 return
             }
             
             guard let saleSerialization = SerializationSequenceType(rawValue: saleSerialization) else {
-                showError(.campoInvalido, "Error al establecer SERIALIZACION DE VENTAS. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer SERIALIZACION DE VENTAS. Contacte a Soporte TC")
                 return
             }
 
             guard let orderSerialization = SerializationSequenceType(rawValue: orderSerialization) else {
-                showError(.campoInvalido, "Error al establecer SERIALIZACION DE ORDENES. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer SERIALIZACION DE ORDENES. Contacte a Soporte TC")
                 return
             }
             
             guard let fiscalSerialization = SerializationSequenceType(rawValue: fiscalSerialization) else {
-                showError(.campoInvalido, "Error al establecer SERIALIZACION DE FACTURAS. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer SERIALIZACION DE FACTURAS. Contacte a Soporte TC")
                 return
             }
             
@@ -3816,7 +3816,7 @@ extension ToolsView.SystemSettings {
             }
             
             guard let generalComision = Double(generalComision)?.toCents else {
-                showError(.campoInvalido, "Error al establecer GENERALCOMISION. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer GENERALCOMISION. Contacte a Soporte TC")
                 return
             }
             
@@ -3830,17 +3830,17 @@ extension ToolsView.SystemSettings {
             if orderPendingPickupLimitAlert {
                 
                 guard let _orderPendingPickupLimitStart = Int(self.orderPendingPickupLimitStart) else {
-                    showError(.campoInvalido, "Establesca dias en lo que iniciara recordatorios eq pend de entrega")
+                    showError(.invalidField, "Establesca dias en lo que iniciara recordatorios eq pend de entrega")
                     return
                 }
                 
                 guard let _orderPendingPickupLimitEnd = Int(self.orderPendingPickupLimitEnd) else {
-                    showError(.campoInvalido, "Establesca dias de intervalos de recordatorios eq pend de entrega")
+                    showError(.invalidField, "Establesca dias de intervalos de recordatorios eq pend de entrega")
                     return
                 }
                 
                 guard let _orderPendingPickupLimitEveryWhen = Int(self.orderPendingPickupLimitEveryWhen) else {
-                    showError(.campoInvalido, "Establesca dias en lo que iniciara recordatorios eq pend de entrega")
+                    showError(.invalidField, "Establesca dias en lo que iniciara recordatorios eq pend de entrega")
                     return
                 }
                 
@@ -3853,34 +3853,34 @@ extension ToolsView.SystemSettings {
             }
             
             guard let orderAddedProductDelivery = ProductDeliveryType(rawValue: orderAddedProductDelivery) else {
-                showError(.campoInvalido, "Error al establecer PROD DELIVERY TYPE. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer PROD DELIVERY TYPE. Contacte a Soporte TC")
                 return
             }
             
             guard let saleProductDelivery = ProductDeliveryType(rawValue: saleProductDelivery) else {
-                showError(.campoInvalido, "Error al establecer PROD DELIVERY TYPE. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer PROD DELIVERY TYPE. Contacte a Soporte TC")
                 return
             }
             
             guard let creditType = StoreCreditType(rawValue: creditType) else {
-                showError(.campoInvalido, "Error al establecer CREDIT TYPE. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer CREDIT TYPE. Contacte a Soporte TC")
                 return
             }
             
             guard let billingDate = Int(billingDate) else {
-                showError(.campoInvalido, "Establesca día de facturación")
+                showError(.invalidField, "Establesca día de facturación")
                 billingDateField.select()
                 return
             }
             
             guard let creditDays = Int( creditDays) else {
-                showError(.campoInvalido, "Establesca Fecha de Facturación")
+                showError(.invalidField, "Establesca Fecha de Facturación")
                 creditDaysField.select()
                 return
             }
             
             guard let initialCreditLimit = Double(initialCreditLimit)?.toCents else {
-                showError(.campoInvalido, "Establesca limite de credito")
+                showError(.invalidField, "Establesca limite de credito")
                 initialCreditLimitField.select()
                 return
             }
@@ -3890,31 +3890,31 @@ extension ToolsView.SystemSettings {
             if let rewardsStructureTypeHelper {
                 
                 guard let tierClubBreak = Double( rewardsTierClubBreak)?.toCents else {
-                    showError(.campoInvalido, "Ingrese Puntos para pertenecer al nivel CLUB")
+                    showError(.invalidField, "Ingrese Puntos para pertenecer al nivel CLUB")
                     rewardsTierClubBreakField.select()
                     return
                 }
                 
                 guard let tierBronceBreak = Double( rewardsTierBronceBreak)?.toCents else {
-                    showError(.campoInvalido, "Ingrese Puntos para pertenecer al nivel BRONCE")
+                    showError(.invalidField, "Ingrese Puntos para pertenecer al nivel BRONCE")
                     rewardsTierBronceBreakField.select()
                     return
                 }
                 
                 guard let tierSilverBreak = Double( rewardsTierSilverBreak)?.toCents else {
-                    showError(.campoInvalido, "Ingrese Puntos para pertenecer al nivel PLATA")
+                    showError(.invalidField, "Ingrese Puntos para pertenecer al nivel PLATA")
                     rewardsTierSilverBreakField.select()
                     return
                 }
                 
                 guard let tierGoldBreak = Double( rewardsTierGoldBreak)?.toCents else {
-                    showError(.campoInvalido, "Ingrese Puntos para pertenecer al nivel ORO")
+                    showError(.invalidField, "Ingrese Puntos para pertenecer al nivel ORO")
                     rewardsTierGoldBreakField.select()
                     return
                 }
                 
                 guard let tierDiamondBreak = Double( rewardsTierDiamondBreak)?.toCents else {
-                    showError(.campoInvalido, "Ingrese Puntos para pertenecer al nivel DIAMANTE")
+                    showError(.invalidField, "Ingrese Puntos para pertenecer al nivel DIAMANTE")
                     rewardsTierDiamondBreakField.select()
                     return
                 }
@@ -3922,31 +3922,31 @@ extension ToolsView.SystemSettings {
                 
                 
                 guard let percentProductTierClub = Double(rewardsPercentProductTierClub) else {
-                    showError(.campoInvalido, "Imgrese porcentaje de recompensa en productos al nivel CLUB")
+                    showError(.invalidField, "Imgrese porcentaje de recompensa en productos al nivel CLUB")
                     rewardsPercentProductTierClubField.select()
                     return
                 }
                 
                 guard let percentProductTierBronce = Double(rewardsPercentProductTierBronce) else {
-                    showError(.campoInvalido, "Imgrese porcentaje de recompensa en productos al nivel BRONCE")
+                    showError(.invalidField, "Imgrese porcentaje de recompensa en productos al nivel BRONCE")
                     rewardsPercentProductTierBronceField.select()
                     return
                 }
                 
                 guard let percentProductTierSilver = Double(rewardsPercentProductTierSilver) else {
-                    showError(.campoInvalido, "Imgrese porcentaje de recompensa en productos al nivel PLATA")
+                    showError(.invalidField, "Imgrese porcentaje de recompensa en productos al nivel PLATA")
                     rewardsPercentProductTierSilverField.select()
                     return
                 }
                 
                 guard let percentProductTierGold = Double(rewardsPercentProductTierGold) else {
-                    showError(.campoInvalido, "Imgrese porcentaje de recompensa en productos al nivel ORO")
+                    showError(.invalidField, "Imgrese porcentaje de recompensa en productos al nivel ORO")
                     rewardsPercentProductTierGoldField.select()
                     return
                 }
                 
                 guard let percentProductTierDiamond = Double(rewardsPercentProductTierDiamond) else {
-                    showError(.campoInvalido, "Imgrese porcentaje de recompensa en productos al nivel DIAMANTE")
+                    showError(.invalidField, "Imgrese porcentaje de recompensa en productos al nivel DIAMANTE")
                     rewardsPercentProductTierDiamondField.select()
                     return
                 }
@@ -3954,31 +3954,31 @@ extension ToolsView.SystemSettings {
                 
                 
                 guard let percentServiceTierClub = Double( rewardsPercentServiceTierClub) else {
-                    showError(.campoInvalido, "Ingrese porcentaje de recompensa en servicio al nivel CLUB")
+                    showError(.invalidField, "Ingrese porcentaje de recompensa en servicio al nivel CLUB")
                     rewardsPercentServiceTierClubField.select()
                     return
                 }
                 
                 guard let percentServiceTierBronce = Double( rewardsPercentServiceTierBronce) else {
-                    showError(.campoInvalido, "Ingrese porcentaje de recompensa en servicio al nivel BRONCE")
+                    showError(.invalidField, "Ingrese porcentaje de recompensa en servicio al nivel BRONCE")
                     rewardsPercentServiceTierBronceField.select()
                     return
                 }
                 
                 guard let percentServiceTierSilver = Double( rewardsPercentServiceTierSilver) else {
-                    showError(.campoInvalido, "Ingrese porcentaje de recompensa en servicio al nivel PLATA")
+                    showError(.invalidField, "Ingrese porcentaje de recompensa en servicio al nivel PLATA")
                     rewardsPercentServiceTierSilverField.select()
                     return
                 }
                 
                 guard let percentServiceTierGold = Double( rewardsPercentServiceTierGold) else {
-                    showError(.campoInvalido, "Ingrese porcentaje de recompensa en servicio al nivel ORO")
+                    showError(.invalidField, "Ingrese porcentaje de recompensa en servicio al nivel ORO")
                     rewardsPercentServiceTierGoldField.select()
                     return
                 }
                 
                 guard let percentServiceTierDiamond = Double( rewardsPercentServiceTierDiamond) else {
-                    showError(.campoInvalido, "Ingrese porcentaje de recompensa en servicio al nivel DIAMANTE")
+                    showError(.invalidField, "Ingrese porcentaje de recompensa en servicio al nivel DIAMANTE")
                     rewardsPercentServiceTierDiamondField.select()
                     return
                 }
@@ -3986,19 +3986,19 @@ extension ToolsView.SystemSettings {
                 
                 
                 guard let refrenceTierOne = Double(rewardsRefrenceTierOne)?.toCents else {
-                    showError(.campoInvalido, "Ingrese recompensa por referido nivel 1")
+                    showError(.invalidField, "Ingrese recompensa por referido nivel 1")
                     rewardsRefrenceTierOneField.select()
                     return
                 }
                 
                 guard let refrenceTierTwo = Double(rewardsRefrenceTierTwo)?.toCents else {
-                    showError(.campoInvalido, "Ingrese recompensa por referido nivel 2")
+                    showError(.invalidField, "Ingrese recompensa por referido nivel 2")
                     rewardsRefrenceTierTwoField.select()
                     return
                 }
                 
                 guard let refrenceTierThree = Double(rewardsRefrenceTierThree)?.toCents else {
-                    showError(.campoInvalido, "Ingrese recompensa por referido nivel 3")
+                    showError(.invalidField, "Ingrese recompensa por referido nivel 3")
                     rewardsRefrenceTierThreeField.select()
                     return
                 }
@@ -4037,27 +4037,27 @@ extension ToolsView.SystemSettings {
             /// `ConfigContactTags`
             
             guard let instituteTag = ConfigConfigContactTagsInstitudType(rawValue: instituteTag) else {
-                showError(.campoInvalido, "Error al establecer INTITUD TAG. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer INTITUD TAG. Contacte a Soporte TC")
                 return
             }
             
             guard let customerType = ConfigConfigContactTagsCustomerType(rawValue: customerType) else {
-                showError(.campoInvalido, "Error al establecer CUSTOMER TAG. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer CUSTOMER TAG. Contacte a Soporte TC")
                 return
             }
             
             guard let operationalContact = UUID(uuidString: operationalContact) else {
-                showError(.campoInvalido, "Error al establecer OP CONTACT. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer OP CONTACT. Contacte a Soporte TC")
                 return
             }
             
             guard let salesContact = UUID(uuidString: salesContact) else {
-                showError(.campoInvalido, "Error al establecer SALE CONTACT. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer SALE CONTACT. Contacte a Soporte TC")
                 return
             }
             
             guard let finacialContact = UUID(uuidString: finacialContact) else {
-                showError(.campoInvalido, "Error al establecer FINANCIAL CONTACT. Contacte a Soporte TC")
+                showError(.invalidField, "Error al establecer FINANCIAL CONTACT. Contacte a Soporte TC")
                 return
             }
             
@@ -4141,12 +4141,12 @@ extension ToolsView.SystemSettings {
                 loadingView(show: false)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 

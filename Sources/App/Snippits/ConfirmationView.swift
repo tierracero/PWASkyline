@@ -199,20 +199,20 @@ public class ConfirmationView: Div {
                 break
             case .required,.requiredBoth:
                 if self.reason.isEmpty {
-                    showError(.campoRequerido, "Comentario Requerido")
+                    showError(.requiredField, "Comentario Requerido")
                     return
                 }
             case .requiredExemptFromHerk(let herk):
                 if custCatchHerk < herk {
                     if self.reason.isEmpty {
-                        showError(.campoRequerido, "Comentario Requerido")
+                        showError(.requiredField, "Comentario Requerido")
                         return
                     }
                 }
             case .requiredBothExemptFromHerk(let herk):
                 if custCatchHerk < herk {
                     if self.reason.isEmpty {
-                        showError(.campoRequerido, "Comentario Requerido")
+                        showError(.requiredField, "Comentario Requerido")
                         return
                     }
                 }
@@ -234,7 +234,7 @@ public class ConfirmationView: Div {
                 break
             case .requiredBoth:
                 if self.reason.isEmpty {
-                    showError(.campoRequerido, "Comentario Requerido")
+                    showError(.requiredField, "Comentario Requerido")
                     return
                 }
             case .requiredExemptFromHerk(_):
@@ -242,7 +242,7 @@ public class ConfirmationView: Div {
             case .requiredBothExemptFromHerk(let herk):
                 if custCatchHerk < herk {
                     if self.reason.isEmpty {
-                        showError(.campoRequerido, "Comentario Requerido")
+                        showError(.requiredField, "Comentario Requerido")
                         return
                     }
                 }

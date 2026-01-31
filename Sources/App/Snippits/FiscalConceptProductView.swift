@@ -240,17 +240,17 @@ class FiscalConceptProductView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
             guard let payload = resp.data else {
-                showError(.errorGeneral, .unexpenctedMissingPayload)
+                showError(.generalError, .unexpenctedMissingPayload)
                 return
             }
             

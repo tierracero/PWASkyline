@@ -274,12 +274,12 @@ class EmailCompose: Div {
                             .onClick {
                                 
                                 if self.addContactName.isEmpty {
-                                    showError(.errorGeneral, "Ingrese nombre")
+                                    showError(.generalError, "Ingrese nombre")
                                     return
                                 }
                                 
                                 if self.addContactEmail.isEmpty {
-                                    showError(.errorGeneral, "Ingrese nombre")
+                                    showError(.generalError, "Ingrese nombre")
                                     return
                                 }
                                 
@@ -292,7 +292,7 @@ class EmailCompose: Div {
                                 }
                                 
                                 if duplicate {
-                                    showError(.errorGeneral, "Contacto Duplicado")
+                                    showError(.generalError, "Contacto Duplicado")
                                     return
                                 }
                                 
@@ -367,12 +367,12 @@ class EmailCompose: Div {
         //send
         
         if subject.isEmpty {
-            showError(.campoRequerido, "Incluya Asunto")
+            showError(.requiredField, "Incluya Asunto")
             return
         }
         
         if emailBody.isEmpty {
-            showError(.campoRequerido, "Incluya Mensaje")
+            showError(.requiredField, "Incluya Mensaje")
             return
         }
         
@@ -389,12 +389,12 @@ class EmailCompose: Div {
             loadingView(show: false)
             
             guard let resp else{
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -434,7 +434,7 @@ class EmailCompose: Div {
 
         xhr.onError { jsValue in
             
-            showError(.errorDeCommunicacion, .serverConextionError)
+            showError(.comunicationError, .serverConextionError)
             
             self.filesRefrence[view.viewid]?.remove()
             self.filesRefrence.removeValue(forKey: view.viewid)
@@ -445,7 +445,7 @@ class EmailCompose: Div {
             view.loadPercent = ""
 
             guard let responseText = xhr.responseText else {
-                showError(.errorGeneral, .serverConextionError + " 001")
+                showError(.generalError, .serverConextionError + " 001")
                 
                 self.filesRefrence[view.viewid]?.remove()
                 self.filesRefrence.removeValue(forKey: view.viewid)
@@ -459,7 +459,7 @@ class EmailCompose: Div {
             print(responseText)
             
             guard let data = responseText.data(using: .utf8) else {
-                showError(.errorGeneral, .serverConextionError + " 002")
+                showError(.generalError, .serverConextionError + " 002")
                 
                 self.filesRefrence[view.viewid]?.remove()
                 self.filesRefrence.removeValue(forKey: view.viewid)
@@ -475,7 +475,7 @@ class EmailCompose: Div {
                     self.filesRefrence[view.viewid]?.remove()
                     self.filesRefrence.removeValue(forKey: view.viewid)
                     
-                    showError(.errorGeneral, payload.msg)
+                    showError(.generalError, payload.msg)
                     
                 }
                 

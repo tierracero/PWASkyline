@@ -1387,7 +1387,7 @@ class AdvancesSearchViewControler: Div {
         var _curOrderManagerType: [CustOrderManagerType] = []
         
         guard let brandId = self.tag1SelctedItemID else {
-            showError(.errorGeneral, "Seleccione \(configServiceTags.idTagName.uppercased())")
+            showError(.generalError, "Seleccione \(configServiceTags.idTagName.uppercased())")
             return
         }
         
@@ -1505,7 +1505,7 @@ class AdvancesSearchViewControler: Div {
         var _curOrderManagerModel: [CustOrderManagerModel] = []
         
         guard let typeId = self.tag3SelctedItemID else {
-            showError(.errorGeneral, "Seleccione tipo objeto")
+            showError(.generalError, "Seleccione tipo objeto")
             return
         }
         
@@ -1627,7 +1627,7 @@ class AdvancesSearchViewControler: Div {
         else {
             
             if startAt.isEmpty {
-                showError(.campoRequerido, "Ingrese fecha de Inicio")
+                showError(.requiredField, "Ingrese fecha de Inicio")
             }
             
             var dateParts = startAt.explode("/")
@@ -1732,12 +1732,12 @@ class AdvancesSearchViewControler: Div {
         }
         
         guard let startAtUTS else {
-            showError(.campoRequerido, "Establezca fecha de inicio")
+            showError(.requiredField, "Establezca fecha de inicio")
             return
         }
         
         guard let endAtUTS else {
-            showError(.campoRequerido, "Establezca fecha de inicio")
+            showError(.requiredField, "Establezca fecha de inicio")
             return
         }
         
@@ -1773,17 +1773,17 @@ class AdvancesSearchViewControler: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
 
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
            
             guard let data = resp.data else {
-                showError(.errorGeneral, .unexpenctedMissingPayload)
+                showError(.generalError, .unexpenctedMissingPayload)
                 return
             }
             

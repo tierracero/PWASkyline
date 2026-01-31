@@ -188,14 +188,14 @@ extension SalePointView {
         func cancelDocument() {
             
             guard let type = SaleCancelationType(rawValue: typeListener) else {
-                showError(.errorGeneral, "Seleccione disposición de inventario.")
+                showError(.generalError, "Seleccione disposición de inventario.")
                 return
             }
             
             reason = reason.purgeSpaces()
             
             if reason.isEmpty {
-                showError(.errorGeneral, "Incluya razon de cancelacion")
+                showError(.generalError, "Incluya razon de cancelacion")
                 return
             }
         

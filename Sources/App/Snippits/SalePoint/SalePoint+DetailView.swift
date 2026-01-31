@@ -458,12 +458,12 @@ extension SalePointView {
                                                 loadingView(show: false)
 
                                                 guard let resp else {
-                                                    showError(.errorDeCommunicacion, .serverConextionError)
+                                                    showError(.comunicationError, .serverConextionError)
                                                     return
                                                 }
 
                                                 guard resp.status == .ok else {
-                                                    showError(.errorGeneral, resp.msg)
+                                                    showError(.generalError, resp.msg)
                                                     return
                                                 }
 
@@ -595,13 +595,13 @@ extension SalePointView {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     self.remove()
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     self.remove()
                     return
                 }
@@ -872,13 +872,13 @@ extension SalePointView {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     self.remove()
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     self.remove()
                     return
                 }
@@ -974,12 +974,12 @@ extension SalePointView {
                         loadingView(show: false)
                         
                         guard let resp else {
-                            showError(.errorDeCommunicacion, "Error de comunicacion")
+                            showError(.comunicationError, "Error de comunicacion")
                             return
                         }
                         
                         if resp.status != .ok {
-                            showError(.errorGeneral, resp.msg)
+                            showError(.generalError, resp.msg)
                             return
                         }
                         
@@ -1005,12 +1005,12 @@ extension SalePointView {
                         loadingView(show: false)
                         
                         guard let resp else {
-                            showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                            showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                             return
                         }
                         
                         guard resp.status == .ok else {
-                            showError(.errorGeneral, resp.msg)
+                            showError(.generalError, resp.msg)
                             return
                         }
                         
@@ -1048,12 +1048,12 @@ extension SalePointView {
                                     loadingView(show: false)
                                     
                                     guard let resp else {
-                                        showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                                        showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                                         return
                                     }
                                     
                                     guard resp.status == .ok else {
-                                        showError(.errorGeneral, resp.msg)
+                                        showError(.generalError, resp.msg)
                                         return
                                     }
                                     
@@ -1187,7 +1187,7 @@ extension SalePointView {
                 loadingView(show: true)
 
                 guard let custSale = self.custSale  else {
-                    showError(.errorGeneral, "No se localizo venta")
+                    showError(.generalError, "No se localizo venta")
                     return
                 }
 

@@ -84,12 +84,12 @@ extension ToolFiscal {
                                                         loadingView(show: false)
                                                         
                                                         guard let resp else {
-                                                            showError(.errorDeCommunicacion, .serverConextionError)
+                                                            showError(.comunicationError, .serverConextionError)
                                                             return
                                                         }
                                                         
                                                         guard resp.status == .ok else {
-                                                            showError(.errorGeneral, resp.msg)
+                                                            showError(.generalError, resp.msg)
                                                             return
                                                         }
                                                         
@@ -148,17 +148,17 @@ extension ToolFiscal {
                                 loadingView(show: false)
                                 
                                 guard let resp else {
-                                    showError(.errorDeCommunicacion, .serverConextionError)
+                                    showError(.comunicationError, .serverConextionError)
                                     return
                                 }
                                 
                                 guard resp.status == .ok else {
-                                    showError(.errorGeneral, resp.msg)
+                                    showError(.generalError, resp.msg)
                                     return
                                 }
                                 
                                 guard let payload = resp.data else {
-                                    showError(.errorGeneral, resp.msg)
+                                    showError(.generalError, resp.msg)
                                     return
                                 }
                                 
@@ -199,17 +199,17 @@ extension ToolFiscal {
             API.fiscalV1.getSavedManualDocuments { resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let items = resp.data else {
-                    showError(.errorGeneral, "Un expected missing payload")
+                    showError(.generalError, "Un expected missing payload")
                     return
                 }
 

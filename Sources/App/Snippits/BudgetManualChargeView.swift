@@ -180,7 +180,7 @@ class BudgetManualChargeView: Div {
                             
                             guard let _price = Double(self.price.replace(from: ",", to: "")) else {
                                 self.unitsField.select()
-                                showError(.errorGeneral, "Ingrese precio valido")
+                                showError(.generalError, "Ingrese precio valido")
                                 return
                             }
                             
@@ -208,7 +208,7 @@ class BudgetManualChargeView: Div {
                             
                             guard let _price = Double(self.price.replace(from: ",", to: "")) else {
                                 self.unitsField.select()
-                                showError(.errorGeneral, "Ingrese precio valido")
+                                showError(.generalError, "Ingrese precio valido")
                                 return
                             }
                             
@@ -312,19 +312,19 @@ class BudgetManualChargeView: Div {
     func addCharge(){
         guard let _units = Float(self.units.replace(from: ",", to: ""))?.toCents else {
             self.unitsField.select()
-            showError(.errorGeneral, "Ingrese Unidades valido")
+            showError(.generalError, "Ingrese Unidades valido")
             return
         }
         
         if self.descr.isEmpty {
             self.descriptionField.select()
-            showError(.errorGeneral, "Ingrese Description")
+            showError(.generalError, "Ingrese Description")
             return
         }
         
         guard let _price = Float(self.price.replace(from: ",", to: ""))?.toCents else {
             self.unitsField.select()
-            showError(.errorGeneral, "Ingrese precio valido")
+            showError(.generalError, "Ingrese precio valido")
             return
         }
         

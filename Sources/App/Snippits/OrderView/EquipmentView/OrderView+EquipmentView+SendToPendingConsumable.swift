@@ -186,13 +186,13 @@ extension OrderView.EquipmentView {
             loadingView(show: true)
             
             guard let days = Int(self.days) else {
-                showError(.errorGeneral, "Incluya un numero de dias validos")
+                showError(.generalError, "Incluya un numero de dias validos")
                 daysField.select()
                 return
             }
             
             guard days > 0 else {
-                showError(.errorGeneral, "Incluya el numero de dias paa recibir insumo/refacción")
+                showError(.generalError, "Incluya el numero de dias paa recibir insumo/refacción")
                 daysField.select()
                 return
             }
@@ -210,12 +210,12 @@ extension OrderView.EquipmentView {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .unexpenctedMissingPayload)
+                    showError(.comunicationError, .unexpenctedMissingPayload)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 

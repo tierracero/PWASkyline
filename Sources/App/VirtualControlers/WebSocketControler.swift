@@ -266,6 +266,8 @@ func connWebsocket(interval: Double){
                 break
             case .asyncFileUpdate:
                 break
+            case .asyncFileOCR:
+                break
             case .asyncRemoveBackground:
                 break
             case .asyncCropImage:
@@ -354,7 +356,7 @@ func heartBeat() {
         let data = try JSONEncoder().encode(payload)
         
         guard let str = String(data: data, encoding: .utf8) else {
-            showError(.errorGeneral, "No se pudo enviar mensaje.")
+            showError(.generalError, "No se pudo enviar mensaje.")
             return
         }
         
@@ -370,7 +372,7 @@ func heartBeat() {
         
     }
     catch {
-        showError(.errorGeneral, "No se pudo enviar mensaje 001")
+        showError(.generalError, "No se pudo enviar mensaje 001")
     }
     
 }

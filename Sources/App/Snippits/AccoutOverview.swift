@@ -125,12 +125,12 @@ public class AccoutOverview: Div {
                                     loadingView(show: false)
                                     
                                     guard let resp else {
-                                        showError(.errorDeCommunicacion, .serverConextionError)
+                                        showError(.comunicationError, .serverConextionError)
                                         return
                                     }
                                     
                                     guard resp.status == .ok else {
-                                        showError(.errorGeneral, resp.msg)
+                                        showError(.generalError, resp.msg)
                                         return
                                     }
                                     
@@ -207,12 +207,12 @@ public class AccoutOverview: Div {
                                     loadingView(show: false)
                                     
                                     guard let resp else {
-                                        showError(.errorDeCommunicacion, .unexpenctedMissingPayload)
+                                        showError(.comunicationError, .unexpenctedMissingPayload)
                                         return
                                     }
                                     
                                     guard resp.status == .ok else {
-                                        showError(.errorGeneral, resp.msg)
+                                        showError(.generalError, resp.msg)
                                         return
                                     }
                                     
@@ -433,12 +433,12 @@ public class AccoutOverview: Div {
                                     loadingView(show: false)
 
                                     guard let resp else {
-                                        showError(.errorDeCommunicacion, .serverConextionError)
+                                        showError(.comunicationError, .serverConextionError)
                                         return
                                     }
                                     
                                     guard resp.status == .ok else {
-                                        showError(.errorGeneral, resp.msg)
+                                        showError(.generalError, resp.msg)
                                         return
                                     }
         
@@ -758,13 +758,13 @@ public class AccoutOverview: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 self.remove()
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 self.remove()
                 return
             }
@@ -939,12 +939,12 @@ public class AccoutOverview: Div {
                 loadingView(show: false)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -1029,7 +1029,7 @@ public class AccoutOverview: Div {
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
             
@@ -1083,7 +1083,7 @@ public class AccoutOverview: Div {
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             

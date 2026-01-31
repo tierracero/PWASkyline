@@ -614,12 +614,12 @@ class AccountMembershipControlView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -799,17 +799,17 @@ class AccountMembershipControlView: Div {
         
         /// CustSOC
         guard let selectedSoc else {
-            showError(.errorGeneral, "No se localizo paquete seleccionado.")
+            showError(.generalError, "No se localizo paquete seleccionado.")
             return
         }
         
         guard let _price = Float(price)?.toCents else {
-            showError(.errorGeneral, "Seleccione precio de mebresia adecuado.")
+            showError(.generalError, "Seleccione precio de mebresia adecuado.")
             return
         }
         
         if initialDateUTS >= finishedDateUTS {
-            showError(.errorGeneral, "El rango de fechas es invalido, la fecha de inicio debe ser menor a la fecha de finalizacion")
+            showError(.generalError, "El rango de fechas es invalido, la fecha de inicio debe ser menor a la fecha de finalizacion")
             return
         }
         
@@ -834,17 +834,17 @@ class AccountMembershipControlView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
             guard let payload = resp.data else {
-                showError(.errorGeneral, "No se obtuvo payload de data")
+                showError(.generalError, "No se obtuvo payload de data")
                 return
             }
             

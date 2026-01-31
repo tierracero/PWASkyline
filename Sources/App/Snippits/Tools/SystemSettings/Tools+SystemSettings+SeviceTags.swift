@@ -1113,19 +1113,19 @@ extension ToolsView.SystemSettings {
 
             // ID Tag One
             if idTagName.isEmpty {
-                showError(.campoRequerido, .requierdValid(""), .short)
+                showError(.requiredField, .requierdValid(""), .short)
                 idTagNameField.select()
                 return
             }
 
             if idTagDescr.isEmpty {
-                showError(.campoRequerido, .requierdValid(""), .short)
+                showError(.requiredField, .requierdValid(""), .short)
                 idTagDescrField.select()
                 return
             }
 
             if idTagPlaceholder.isEmpty {
-                showError(.campoRequerido, .requierdValid(""), .short)
+                showError(.requiredField, .requierdValid(""), .short)
                 idTagPlaceholderField.select()
                 return
             }
@@ -1134,19 +1134,19 @@ extension ToolsView.SystemSettings {
             if secondIDTagRequiered {
 
                 if secondIDTagName.isEmpty {
-                    showError(.campoRequerido, .requierdValid(""), .short)
+                    showError(.requiredField, .requierdValid(""), .short)
                     secondIDTagNameField.select()
                     return
                 }
 
                 if secondIDTagDescr.isEmpty {
-                    showError(.campoRequerido, .requierdValid(""), .short)
+                    showError(.requiredField, .requierdValid(""), .short)
                     secondIDTagDescrField.select()
                     return
                 }
 
                 if secondIDTagPlaceholder.isEmpty {
-                    showError(.campoRequerido, .requierdValid(""), .short)
+                    showError(.requiredField, .requierdValid(""), .short)
                     secondIDTagPlaceholderField.select()
                     return
                 }
@@ -1156,13 +1156,13 @@ extension ToolsView.SystemSettings {
             if tag1 {
 
                 if tag1Name.isEmpty {
-                    showError(.campoRequerido, .requierdValid("Nombre de Campo Uno"), .short)
+                    showError(.requiredField, .requierdValid("Nombre de Campo Uno"), .short)
                     tag1NameField.select()
                     return
                 }
 
                 if tag1Placeholder.isEmpty {
-                    showError(.campoRequerido, .requierdValid("Texto de ayuda Campo Uno"), .short)
+                    showError(.requiredField, .requierdValid("Texto de ayuda Campo Uno"), .short)
                     tag1PlaceholderField.select()
                     return
                 }
@@ -1173,13 +1173,13 @@ extension ToolsView.SystemSettings {
             if tag2 {
 
                 if tag2Name.isEmpty {
-                    showError(.campoRequerido, .requierdValid("Nombre de Campo Dos"), .short)
+                    showError(.requiredField, .requierdValid("Nombre de Campo Dos"), .short)
                     tag2NameField.select()
                     return
                 }
 
                 if tag2Placeholder.isEmpty {
-                    showError(.campoRequerido, .requierdValid("Texto de ayuda Campo Dos"), .short)
+                    showError(.requiredField, .requierdValid("Texto de ayuda Campo Dos"), .short)
                     tag2PlaceholderField.select()
                     return
                 }
@@ -1190,13 +1190,13 @@ extension ToolsView.SystemSettings {
             if tag3 {
 
                 if tag3Name.isEmpty {
-                    showError(.campoRequerido, .requierdValid("Nombre de Campo Tres"), .short)
+                    showError(.requiredField, .requierdValid("Nombre de Campo Tres"), .short)
                     tag3NameField.select()
                     return
                 }
 
                 if tag3Placeholder.isEmpty {
-                    showError(.campoRequerido, .requierdValid("Texto de ayuda Campo Tres"), .short)
+                    showError(.requiredField, .requierdValid("Texto de ayuda Campo Tres"), .short)
                     tag3PlaceholderField.select()
                     return
                 }
@@ -1207,13 +1207,13 @@ extension ToolsView.SystemSettings {
             if tag4 {
 
                 if tag4Name.isEmpty {
-                    showError(.campoRequerido, .requierdValid("Nombre de Campo Cuatro"), .short)
+                    showError(.requiredField, .requierdValid("Nombre de Campo Cuatro"), .short)
                     tag4NameField.select()
                     return
                 }
 
                 if tag4Placeholder.isEmpty {
-                    showError(.campoRequerido, .requierdValid("Texto de ayuda Campo Cuatro"), .short)
+                    showError(.requiredField, .requierdValid("Texto de ayuda Campo Cuatro"), .short)
                     tag4PlaceholderField.select()
                     return
                 }
@@ -1224,13 +1224,13 @@ extension ToolsView.SystemSettings {
             if tag5 {
 
                 if tag5Name.isEmpty {
-                    showError(.campoRequerido, .requierdValid("Nombre de Campo Cinco"), .short)
+                    showError(.requiredField, .requierdValid("Nombre de Campo Cinco"), .short)
                     tag5NameField.select()
                     return
                 }
 
                 if tag5Placeholder.isEmpty {
-                    showError(.campoRequerido, .requierdValid("Texto de ayuda Campo Cinco"), .short)
+                    showError(.requiredField, .requierdValid("Texto de ayuda Campo Cinco"), .short)
                     tag5PlaceholderField.select()
                     return
                 }
@@ -1241,13 +1241,13 @@ extension ToolsView.SystemSettings {
             if tag6 {
 
                 if tag6Name.isEmpty {
-                    showError(.campoRequerido, .requierdValid("Nombre de Campo Seis"), .short)
+                    showError(.requiredField, .requierdValid("Nombre de Campo Seis"), .short)
                     tag6NameField.select()
                     return
                 }
 
                 if tag6Placeholder.isEmpty {
-                    showError(.campoRequerido, .requierdValid("Texto de ayuda Campo Seis"), .short)
+                    showError(.requiredField, .requierdValid("Texto de ayuda Campo Seis"), .short)
                     tag6PlaceholderField.select()
                     return
                 }
@@ -1256,42 +1256,42 @@ extension ToolsView.SystemSettings {
 
             // Checkbox One
             if checkTag1 && checkTag1Name.isEmpty{
-                showError(.campoRequerido, .requierdValid("Nombre Checkbox Uno"), .short)
+                showError(.requiredField, .requierdValid("Nombre Checkbox Uno"), .short)
                 checkTag1NameField.select()
                 return
             }
 
             // Checkbox Two
             if checkTag2 && checkTag2Name.isEmpty {
-                showError(.campoRequerido, .requierdValid("Nombre Checkbox Dos"), .short)
+                showError(.requiredField, .requierdValid("Nombre Checkbox Dos"), .short)
                 checkTag2NameField.select()
                 return
             }
 
             // Checkbox Three
             if checkTag3 && checkTag3Name.isEmpty{
-                showError(.campoRequerido, .requierdValid("Nombre Checkbox Tres"), .short)
+                showError(.requiredField, .requierdValid("Nombre Checkbox Tres"), .short)
                 checkTag3NameField.select()
                 return
             }
 
             // Checkbox Four
             if checkTag4 && checkTag4Name.isEmpty {
-                showError(.campoRequerido, .requierdValid("Nombre Checkbox Cuatro"), .short)
+                showError(.requiredField, .requierdValid("Nombre Checkbox Cuatro"), .short)
                 checkTag4NameField.select()
                 return
             }
 
             // Checkbox Five
             if checkTag5 && checkTag5Name.isEmpty {
-                showError(.campoRequerido, .requierdValid("Nombre Checkbox Cinco"), .short)
+                showError(.requiredField, .requierdValid("Nombre Checkbox Cinco"), .short)
                 checkTag5NameField.select()
                 return
             }
 
             // Checkbox Six
             if checkTag6 && checkTag6Name.isEmpty{
-                showError(.campoRequerido, .requierdValid("Nombre Checkbox Seis"), .short)
+                showError(.requiredField, .requierdValid("Nombre Checkbox Seis"), .short)
                 checkTag6NameField.select()
                 return
             }
@@ -1354,12 +1354,12 @@ extension ToolsView.SystemSettings {
                 loadingView(show: false)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 

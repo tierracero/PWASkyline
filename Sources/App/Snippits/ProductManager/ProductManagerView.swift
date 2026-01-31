@@ -986,17 +986,17 @@ class ProductManagerView: Div {
             loadingView(show: false)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
             guard let deps = resp.data?.deps else {
-                showError(.errorGeneral, .unexpenctedMissingPayload)
+                showError(.generalError, .unexpenctedMissingPayload)
                 return
             }
             
@@ -1059,17 +1059,17 @@ class ProductManagerView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
             guard let payload = resp.data else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -1132,12 +1132,12 @@ class ProductManagerView: Div {
             loadingView(show: false)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -1207,12 +1207,12 @@ class ProductManagerView: Div {
             loadingView(show: false)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -1235,17 +1235,17 @@ class ProductManagerView: Div {
     func transferProducts() {
         
         if selectedProductIds.isEmpty {
-            showError(.errorGeneral, "Seleccione Produtos a transferir")
+            showError(.generalError, "Seleccione Produtos a transferir")
             return
         }
         
         if storeDeps.isEmpty {
-            showError(.errorGeneral, "No hay departamentos para hacer una trasferencia.")
+            showError(.generalError, "No hay departamentos para hacer una trasferencia.")
             return
         }
         
         if storeDeps.count == 1 {
-            showError(.errorGeneral, "Debe haber más de un departamento para poder hacer una transferencia.")
+            showError(.generalError, "Debe haber más de un departamento para poder hacer una transferencia.")
             return
         }
         

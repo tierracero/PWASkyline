@@ -193,6 +193,8 @@ public func loadBasicConfiguration( callback: @escaping ( (
             
             MercadoLibreControler.shared.profile = settings.mercadoLibreProfile
             
+            WebApp.shared.skyline.orcScripts = settings.orcScripts
+            
             if settings.account.status != .active {
                 callback(settings.account.status)
                 return

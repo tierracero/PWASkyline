@@ -151,13 +151,13 @@ extension ToolsView.SystemSettings.SeviceOrder {
                         .onClick {
                             
                             guard let points = Double(points)?.rounded().toInt else {
-                                showError(.errorGeneral, "Ingrese pubtos a agreagr")
+                                showError(.generalError, "Ingrese pubtos a agreagr")
                                 pointsField.select()
                                 return
                             }
                             
                             guard points > 0 else {
-                                showError(.errorGeneral, "Ingrese pubtos a agreagr")
+                                showError(.generalError, "Ingrese pubtos a agreagr")
                                 pointsField.select()
                                 return
                             }

@@ -249,22 +249,22 @@ extension OrderView {
         func createTask() {
             
             guard let estimatedTimeDays = Double(estimatedTime) else {
-                showError(.campoInvalido, "Inlcuya un tiempo estima do en días valido")
+                showError(.invalidField, "Inlcuya un tiempo estima do en días valido")
                 return
             }
 
             guard estimatedTimeDays > 0 else {
-                showError(.campoInvalido, "El tiempo estimado debe ser mayor a cero")
+                showError(.invalidField, "El tiempo estimado debe ser mayor a cero")
                 return
             }
             
             if name.isEmpty {
-                showError(.campoRequerido, "Ingrese un nombre")
+                showError(.requiredField, "Ingrese un nombre")
                 return
             }
             
             if descr.isEmpty {
-                showError(.campoRequerido, "Ingrese descrippcion")
+                showError(.requiredField, "Ingrese descrippcion")
                 return
             }
             

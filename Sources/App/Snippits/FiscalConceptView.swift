@@ -370,12 +370,12 @@ class FiscalConceptView: Div {
             ) { resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "No se pudo obtener id del la articulo de compra")
+                    showError(.comunicationError, "No se pudo obtener id del la articulo de compra")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, "No se pudo obtener id del la articulo de compra")
+                    showError(.generalError, "No se pudo obtener id del la articulo de compra")
                     return
                 }
                 
@@ -396,11 +396,11 @@ class FiscalConceptView: Div {
                 ) { resp in
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, "No se pudo replacior el POC a la Compra")
+                        showError(.comunicationError, "No se pudo replacior el POC a la Compra")
                         return
                     }
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, "No se pudo replacior el POC a la Compra")
+                        showError(.generalError, "No se pudo replacior el POC a la Compra")
                         return
                     }
                 }
@@ -435,11 +435,11 @@ class FiscalConceptView: Div {
                 ) { resp in
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, "No se pudo obtener id del la articulo de compra")
+                        showError(.comunicationError, "No se pudo obtener id del la articulo de compra")
                         return
                     }
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, "No se pudo obtener id del la articulo de compra")
+                        showError(.generalError, "No se pudo obtener id del la articulo de compra")
                         return
                     }
                     
@@ -460,11 +460,11 @@ class FiscalConceptView: Div {
                     ) { resp in
                         
                         guard let resp else {
-                            showError(.errorDeCommunicacion, "No se pudo replacior el POC a la Compra")
+                            showError(.comunicationError, "No se pudo replacior el POC a la Compra")
                             return
                         }
                         guard resp.status == .ok else {
-                            showError(.errorGeneral, "No se pudo replacior el POC a la Compra")
+                            showError(.generalError, "No se pudo replacior el POC a la Compra")
                             return
                         }
                     }
@@ -585,11 +585,11 @@ class FiscalConceptView: Div {
         ) { resp in
             
             guard let resp else {
-                showError(.errorDeCommunicacion, "No se pudo guardar cambios temporales a \(self.item.descripcion), si el problema persiste contacte a Soporte TC")
+                showError(.comunicationError, "No se pudo guardar cambios temporales a \(self.item.descripcion), si el problema persiste contacte a Soporte TC")
                 return
             }
             guard resp.status == .ok else {
-                showError(.errorGeneral, "No se pudo guardar cambios temporales a \(self.item.descripcion), si el problema persiste contacte a Soporte TC")
+                showError(.generalError, "No se pudo guardar cambios temporales a \(self.item.descripcion), si el problema persiste contacte a Soporte TC")
                 return
             }
         }

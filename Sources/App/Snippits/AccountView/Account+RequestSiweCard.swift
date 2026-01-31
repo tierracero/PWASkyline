@@ -534,12 +534,12 @@ extension AccountView {
                 if !self.mobile.isEmpty {
                     
                     if firstName.isEmpty {
-                        showError(.errorGeneral, "Ingrese Primer Nombre")
+                        showError(.generalError, "Ingrese Primer Nombre")
                         return
                     }
                     
                     if lastName.isEmpty {
-                        showError(.errorGeneral, "Ingrese Primer Apellido")
+                        showError(.generalError, "Ingrese Primer Apellido")
                         return
                     }
                     
@@ -595,12 +595,12 @@ extension AccountView {
                         loadingView(show: false)
                         
                         guard let resp else {
-                            showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                            showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                             return
                         }
                         
                         guard resp.status == .ok else {
-                            showError(.errorGeneral, resp.msg)
+                            showError(.generalError, resp.msg)
                             return
                         }
                         
@@ -654,7 +654,7 @@ extension AccountView {
                     
                     self.searchMobileTermField.select()
                     
-                    showError(.errorGeneral, "Seleccione cuenta para iniciar")
+                    showError(.generalError, "Seleccione cuenta para iniciar")
                     
                 }
                 
@@ -662,34 +662,34 @@ extension AccountView {
             }
             
             if cardId.isEmpty {
-                showError(.errorGeneral, "Ingrese Numero de Tarjeta")
+                showError(.generalError, "Ingrese Numero de Tarjeta")
                 cardIdField.select()
                 return
             }
             
             guard let int = Int(countriesListener) else {
-                showError(.errorGeneral, "Seleccione Codigo de Pais")
+                showError(.generalError, "Seleccione Codigo de Pais")
                 return
             }
             
             guard let cc = Countries(rawValue: int) else {
-                showError(.errorGeneral, "Seleccione Codigo de Pais Valido")
+                showError(.generalError, "Seleccione Codigo de Pais Valido")
                 return
             }
             
             if mobile.isEmpty {
-                showError(.errorGeneral, "Ingrese Numero Movil")
+                showError(.generalError, "Ingrese Numero Movil")
                 cardIdField.select()
                 return
             }
             
             guard mobile.count == 10 else {
-                showError(.errorGeneral, "1ngrese Numero Movil a 10 Digitos")
+                showError(.generalError, "1ngrese Numero Movil a 10 Digitos")
                 return
             }
             
             guard let _ = Int64(mobile) else {
-                showError(.errorGeneral, "Ingrese Numero Movil Valido")
+                showError(.generalError, "Ingrese Numero Movil Valido")
                 return
             }
             
@@ -711,12 +711,12 @@ extension AccountView {
                 loadingView(show: false)
                 
                 guard let resp else{
-                    showError(.errorDeCommunicacion, "Error de comunicación")
+                    showError(.comunicationError, "Error de comunicación")
                     return
                 }
                 
                 guard resp.status == .ok else{
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -737,19 +737,19 @@ extension AccountView {
             let term = searchMobileTerm.purgeSpaces
             
             if term.isEmpty {
-                showError(.formatoInvalido, "Ingrese celular.")
+                showError(.invalidFormat, "Ingrese celular.")
                 searchMobileTermField.select()
                 return
             }
             
             guard let _ = Int64(term) else {
-                showError(.formatoInvalido, "Ingrese celular valido.")
+                showError(.invalidFormat, "Ingrese celular valido.")
                 searchMobileTermField.select()
                 return
             }
             
             guard term.count == 10 else {
-                showError(.formatoInvalido, "Ingrese celular a 10 digitos.")
+                showError(.invalidFormat, "Ingrese celular a 10 digitos.")
                 searchMobileTermField.select()
                 return
             }

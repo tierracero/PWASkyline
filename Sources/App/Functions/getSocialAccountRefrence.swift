@@ -56,7 +56,7 @@ func getSocialAccountRefrence(id: HybridIdentifier, callback: @escaping ( (_ use
     API.custAPIV1.getSocialAccountRefrence(id: id) { accounts in
 
         guard let account = accounts.first else {
-            showError(.errorGeneral, "No se localizar informacion del usuario solicitado")
+            showError(.generalError, "No se localizar informacion del usuario solicitado")
             return
         }
         

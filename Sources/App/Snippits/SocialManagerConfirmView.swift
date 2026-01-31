@@ -267,7 +267,7 @@ class SocialManagerConfirmView: Div {
         
         if originalImage.isEmpty {
             if caption.isEmpty {
-                showError(.campoRequerido, "Ingrese Texto de la publicación")
+                showError(.requiredField, "Ingrese Texto de la publicación")
                 return
             }
         }
@@ -288,12 +288,12 @@ class SocialManagerConfirmView: Div {
             loadingView(show: false)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
 

@@ -151,7 +151,7 @@ extension OrderView {
         func changeStatus(){
             
             if reason.isEmpty {
-                showError(.campoRequerido, "Ingrese razon del cambio.")
+                showError(.requiredField, "Ingrese razon del cambio.")
                 return
             }
             

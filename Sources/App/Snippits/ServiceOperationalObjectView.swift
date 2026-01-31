@@ -85,7 +85,7 @@ class ServiceOperationalObjectView: Div {
             ) { resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
@@ -441,19 +441,19 @@ class ServiceOperationalObjectView: Div {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     self.remove()
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     self.remove()
                     return
                 }
                 
                 guard let payload = resp.data else {
-                    showError(.errorGeneral, "Error al obtener payload de data.")
+                    showError(.generalError, "Error al obtener payload de data.")
                     self.remove()
                     return
                 }
@@ -510,31 +510,31 @@ class ServiceOperationalObjectView: Div {
         name = name.purgeSpaces
         
         if name.isEmpty {
-            showError(.campoInvalido, "Inlcuya nombre")
+            showError(.invalidField, "Inlcuya nombre")
             nameField.select()
             return
         }
         
         guard let productionUnits = Double(productionUnits)?.toCents else {
-            showError(.campoInvalido, "Ingrese unidades valido")
+            showError(.invalidField, "Ingrese unidades valido")
             productionUnitsField.select()
             return
         }
         
         guard let productionCost = Double(productionCost)?.toCents else {
-            showError(.campoInvalido, "Ingrese costo valido")
+            showError(.invalidField, "Ingrese costo valido")
             productionCostField.select()
             return
         }
         
         guard let productionTime = Double(productionTime)?.toCents else {
-            showError(.campoInvalido, "Ingrese Tiempo de produccion")
+            showError(.invalidField, "Ingrese Tiempo de produccion")
             productionTimeField.select()
             return
         }
         
         guard let workforceLevel = SaleActionEmployeeLevel(rawValue: workforceLevelListener) else {
-            showError(.campoInvalido, "Seleccione mano de obra")
+            showError(.invalidField, "Seleccione mano de obra")
             return
         }
         
@@ -556,12 +556,12 @@ class ServiceOperationalObjectView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             

@@ -487,17 +487,17 @@ class ToolViewFiscalXMLDocument: Div {
     func loadData(_ data: API.fiscalV1.FiscalXMLIngresoResponse) {
         
         guard let dateParts = data.document.fecha.explode("T").first?.explode("-") else {
-            showError(.errorGeneral, "No se pudo obtener fecha de creacion 001.")
+            showError(.generalError, "No se pudo obtener fecha de creacion 001.")
             return
         }
         
         guard dateParts.count == 3 else {
-            showError(.errorGeneral, "No se pudo obtener fecha de creacion 002.")
+            showError(.generalError, "No se pudo obtener fecha de creacion 002.")
             return
         }
         
         guard let uuid = data.document.complemento.timbreFiscalDigital?.uuid else {
-            showError(.errorGeneral, "No se pudo obtener uuid de doc")
+            showError(.generalError, "No se pudo obtener uuid de doc")
             return
         }
         
@@ -514,7 +514,7 @@ class ToolViewFiscalXMLDocument: Div {
         
         /// this is the ral life calander date  i cant go befor this date
         guard let uts = Calendar.current.date(from: thisMonthCalendarComponants)?.uts else {
-            showError(.errorGeneral, "No se pudo obtener fecha de creacion 003.")
+            showError(.generalError, "No se pudo obtener fecha de creacion 003.")
             return
         }
         
@@ -596,17 +596,17 @@ class ToolViewFiscalXMLDocument: Div {
         let data = doc
         
         guard let dateParts = data.document.fecha.explode("T").first?.explode("-") else {
-            showError(.errorGeneral, "No se pudo obtener fecha de creacion 001.")
+            showError(.generalError, "No se pudo obtener fecha de creacion 001.")
             return
         }
         
         guard dateParts.count == 3 else {
-            showError(.errorGeneral, "No se pudo obtener fecha de creacion 002.")
+            showError(.generalError, "No se pudo obtener fecha de creacion 002.")
             return
         }
         
         guard let uuid = data.document.complemento.timbreFiscalDigital?.uuid else {
-            showError(.errorGeneral, "No se pudo obtener uuid de doc")
+            showError(.generalError, "No se pudo obtener uuid de doc")
             return
         }
         
@@ -638,7 +638,7 @@ class ToolViewFiscalXMLDocument: Div {
         let document = data.document
         
         guard let timbreFiscalDigital = document.complemento.timbreFiscalDigital else {
-            showError(.errorGeneral, "No se pudo obtener Timbre Digital")
+            showError(.generalError, "No se pudo obtener Timbre Digital")
             return
         }
         

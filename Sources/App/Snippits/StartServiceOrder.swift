@@ -897,7 +897,7 @@ class StartServiceOrder: Div {
                             let (isValid,conflict) = isValidPhone(term)
                             
                             guard isValid else {
-                                showError(.formatoInvalido, conflict)
+                                showError(.invalidFormat, conflict)
                                 tf
                                     .removeClass(.isOk)
                                     .class(.isNok)
@@ -944,7 +944,7 @@ class StartServiceOrder: Div {
                                     .removeClass(.isOk)
                                     .class(.isOk)
                                 
-                                showError(.formatoInvalido, "Ingrese un correo valido")
+                                showError(.invalidFormat, "Ingrese un correo valido")
                                 return
                             }
                             
@@ -1150,7 +1150,7 @@ class StartServiceOrder: Div {
                             .onClick {
                                 
                                 guard let country = Countries(rawValue: self._country), country == .mexico else {
-                                    showError(.campoInvalido, "Lo sentimos este servicio solo esta disponible para Mexico. Es posible que necesite corregir su ortografia o haga un ingreso manual.")
+                                    showError(.invalidField, "Lo sentimos este servicio solo esta disponible para Mexico. Es posible que necesite corregir su ortografia o haga un ingreso manual.")
                                     return
                                 }
                                 
@@ -2571,7 +2571,7 @@ class StartServiceOrder: Div {
     func activateRewards(){
         
         guard custAcct.type == .personal else {
-          showError(.errorGeneral, "Lo sentimos las cuentas \(self.custAcct.type.description) aun no es soportado.")
+          showError(.generalError, "Lo sentimos las cuentas \(self.custAcct.type.description) aun no es soportado.")
           return
         }
 
@@ -2658,19 +2658,19 @@ class StartServiceOrder: Div {
     func createOrder(_ force: Bool = false){
         
         if _firstName.isEmpty {
-            showError(.campoRequerido, .requierdValid(.firstName))
+            showError(.requiredField, .requierdValid(.firstName))
             firstName.select()
             return
         }
         
         if _lastName.isEmpty {
-            showError(.campoRequerido, .requierdValid(.lastName))
+            showError(.requiredField, .requierdValid(.lastName))
             lastName.select()
             return
         }
         
         if _mobile.isEmpty {
-            showError(.campoRequerido, .requierdValid(.mobile))
+            showError(.requiredField, .requierdValid(.mobile))
             mobile.select()
             return
         }
@@ -2678,13 +2678,13 @@ class StartServiceOrder: Div {
         if !postalCodeResults.isEmpty && !manualAddressInput {
             
             if _street.isEmpty {
-                showError(.campoRequerido, .requierdValid(.streetNumber))
+                showError(.requiredField, .requierdValid(.streetNumber))
                 streetResultField.select()
                 return
             }
             
             if _colony.isEmpty {
-                showError(.campoRequerido, .requierdValid(.colony))
+                showError(.requiredField, .requierdValid(.colony))
                 return
             }
         }
@@ -2692,26 +2692,26 @@ class StartServiceOrder: Div {
         if configServiceTags.useBrandModelMode {
             
             if tag1SelctedItemID == nil {
-                showError(.campoRequerido, .requierdValid(configServiceTags.tag1Name))
+                showError(.requiredField, .requierdValid(configServiceTags.tag1Name))
                 tag1.select()
                 return
             }
             
             if tag3SelctedItemID == nil {
-                showError(.campoRequerido, .requierdValid(configServiceTags.tag3Name))
+                showError(.requiredField, .requierdValid(configServiceTags.tag3Name))
                 tag3.select()
                 return
             }
             
             if tag2SelctedItemID == nil {
-                showError(.campoRequerido, .requierdValid(configServiceTags.tag2Name))
+                showError(.requiredField, .requierdValid(configServiceTags.tag2Name))
                 tag2.select()
                 return
             }
         }
         
         if _descr.isEmpty {
-            showError(.campoRequerido, .requierdValid("Description"))
+            showError(.requiredField, .requierdValid("Description"))
             return
         }
         
@@ -2743,7 +2743,7 @@ class StartServiceOrder: Div {
                 case .required:
                     if self.cardId.isEmpty {
                         self.activateRewards()
-                        showError(.errorGeneral, "Se requiere que incriba al cliente en el sistema de recompensas")
+                        showError(.generalError, "Se requiere que incriba al cliente en el sistema de recompensas")
                         return
                     }
                 case .recomended:
@@ -2788,7 +2788,7 @@ class StartServiceOrder: Div {
         loadingView(show: true)
         
         self.loadPinPattern { error in
-            showError(.errorGeneral, error)
+            showError(.generalError, error)
             loadingView(show: false)
         } success: { fileName in
 
@@ -2839,17 +2839,17 @@ class StartServiceOrder: Div {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let id = resp.id else {
-                    showError(.errorGeneral, .unexpectedMissingValue("id de folio"))
+                    showError(.generalError, .unexpectedMissingValue("id de folio"))
                     return
                 }
                 
@@ -2906,7 +2906,7 @@ class StartServiceOrder: Div {
         }
         
         xhr.onError { jsValue in
-            showError(.errorDeCommunicacion, .serverConextionError)
+            showError(.comunicationError, .serverConextionError)
         }
         
         xhr.upload.addEventListener("progress", options: EventListenerAddOptions.init(capture: false, once: false, passive: false, mozSystemGroup: false)) { _event in
@@ -3018,7 +3018,7 @@ class StartServiceOrder: Div {
         self.tag3ResultsView.hidden(true)
         
         guard let brandId = self.tag1SelctedItemID else {
-            showError(.errorGeneral, "No se pudo cargar el id de la marca")
+            showError(.generalError, "No se pudo cargar el id de la marca")
             return
         }
         
@@ -3226,7 +3226,7 @@ class StartServiceOrder: Div {
         var _curOrderManagerType: [CustOrderManagerType] = []
         
         guard let brandId = self.tag1SelctedItemID else {
-            showError(.errorGeneral, "Seleccione \(configServiceTags.idTagName.uppercased())")
+            showError(.generalError, "Seleccione \(configServiceTags.idTagName.uppercased())")
             return
         }
         
@@ -3345,7 +3345,7 @@ class StartServiceOrder: Div {
         var _curOrderManagerModel: [CustOrderManagerModel] = []
         
         guard let typeId = self.tag3SelctedItemID else {
-            showError(.errorGeneral, "Seleccione tipo objeto")
+            showError(.generalError, "Seleccione tipo objeto")
             return
         }
         
@@ -3454,12 +3454,12 @@ class StartServiceOrder: Div {
         let code = searchZipCodeString.purgeSpaces
         
         if code.count < 4 {
-            showError(.campoInvalido, "Ingrese un codigo postal minimo de cuatro digitos")
+            showError(.invalidField, "Ingrese un codigo postal minimo de cuatro digitos")
             return
         }
         
         guard let country = Countries(rawValue: _country), country == .mexico else {
-            showError(.campoInvalido, "Lo sentimos este servicio solo esta disponible para Mexico. Es posible que necesite corregir su ortografia o haga un ingreso manual.")
+            showError(.invalidField, "Lo sentimos este servicio solo esta disponible para Mexico. Es posible que necesite corregir su ortografia o haga un ingreso manual.")
             return
         }
         
@@ -3471,22 +3471,22 @@ class StartServiceOrder: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
              guard let data = resp.data else {
-                 showError(.errorGeneral, .unexpenctedMissingPayload)
+                 showError(.generalError, .unexpenctedMissingPayload)
                  return
              }
              
             if data.isEmpty {
-                showError(.errorGeneral, "No se localizo información, intente unn codigo nuevo o un ingreso manual.")
+                showError(.generalError, "No se localizo información, intente unn codigo nuevo o un ingreso manual.")
             }
             
             self.searchZipCodeString = ""
@@ -3494,7 +3494,7 @@ class StartServiceOrder: Div {
             let codes = data
             
             guard let state = codes.first?.state else {
-                showError(.errorGeneral, "Se le localizo el estado en la peticion")
+                showError(.generalError, "Se le localizo el estado en la peticion")
                 return
             }
             

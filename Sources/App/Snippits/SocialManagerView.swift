@@ -615,12 +615,12 @@ class SocialManagerView: Div {
                         loadingView(show: false)
                         
                         guard let resp = resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         guard resp.status == .ok else {
-                            showError(.errorDeCommunicacion, resp.msg)
+                            showError(.comunicationError, resp.msg)
                             return
                         }
                         
@@ -693,17 +693,17 @@ class SocialManagerView: Div {
                         loadingView(show: false)
                         
                         guard let resp = resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         guard resp.status == .ok else {
-                            showError(.errorDeCommunicacion, resp.msg)
+                            showError(.comunicationError, resp.msg)
                             return
                         }
 
                         guard let data = resp.data else {
-                            showError(.errorDeCommunicacion, .unexpenctedMissingPayload)
+                            showError(.comunicationError, .unexpenctedMissingPayload)
                             return
                         }
                         
@@ -763,12 +763,12 @@ class SocialManagerView: Div {
             API.custPOCV1.getIconWaterMark { resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -891,7 +891,7 @@ class SocialManagerView: Div {
         
         xhr.onError { jsValue in
             loadingView(show: false)
-            showError(.errorDeCommunicacion, .serverConextionError)
+            showError(.comunicationError, .serverConextionError)
             self.uploadPercent = ""
             //view.remove()
         }
@@ -902,13 +902,13 @@ class SocialManagerView: Div {
             
             guard let responseText = xhr.responseText else {
                 loadingView(show: false)
-                showError(.errorGeneral, .serverConextionError + " 001")
+                showError(.generalError, .serverConextionError + " 001")
                 return
             }
             
             guard let data = responseText.data(using: .utf8) else {
                 loadingView(show: false)
-                showError(.errorGeneral, .serverConextionError + " 002")
+                showError(.generalError, .serverConextionError + " 002")
                 return
             }
             
@@ -918,13 +918,13 @@ class SocialManagerView: Div {
                 
                 guard resp.status == .ok else {
                     loadingView(show: false)
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let data = resp.data else {
                     loadingView(show: false)
-                    showError(.errorGeneral, "No se pudo cargar datos")
+                    showError(.generalError, "No se pudo cargar datos")
                     return
                 }
                 
@@ -943,7 +943,7 @@ class SocialManagerView: Div {
                 
                 guard let fileType = FileExtention(rawValue: data.file.explode(".").last ?? "") else {
                     loadingView(show: false)
-                    showError(.errorGeneral, "Archivo invalido, no se reconocio el archivo.")
+                    showError(.generalError, "Archivo invalido, no se reconocio el archivo.")
                     return
                 }
                 
@@ -1132,7 +1132,7 @@ class SocialManagerView: Div {
                 
             }
             catch {
-                showError(.errorGeneral, .serverConextionError + " 003")
+                showError(.generalError, .serverConextionError + " 003")
                 return
             }
             
@@ -1470,7 +1470,7 @@ class SocialManagerView: Div {
         }
         
         if _pages.isEmpty {
-            showError(.campoRequerido, "Seleccione pagina para publicar")
+            showError(.requiredField, "Seleccione pagina para publicar")
             return
         }
         
@@ -1501,12 +1501,12 @@ class SocialManagerView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
          

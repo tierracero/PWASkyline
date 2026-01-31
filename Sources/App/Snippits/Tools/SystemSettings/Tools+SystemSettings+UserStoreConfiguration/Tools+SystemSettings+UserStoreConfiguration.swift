@@ -381,7 +381,7 @@ extension ToolsView.SystemSettings {
             loadingView(show: true)
             
             guard let selectedStore else {
-                showError(.errorGeneral, "Seleccione tienda para configurar")
+                showError(.generalError, "Seleccione tienda para configurar")
                 return
             }
 
@@ -392,12 +392,12 @@ extension ToolsView.SystemSettings {
                     loadingView(show: false)
 
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
                     
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     

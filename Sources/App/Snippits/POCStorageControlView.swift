@@ -243,7 +243,7 @@ class POCStorageControlView: Div {
         }
         
         guard let bodega = bods.first else {
-            showError(.errorGeneral, "No se localizo bodega de la tienda. Refresque o asegurese que su configuracion sea la correcta.")
+            showError(.generalError, "No se localizo bodega de la tienda. Refresque o asegurese que su configuracion sea la correcta.")
             return
         }
         
@@ -303,7 +303,7 @@ class POCStorageControlView: Div {
         }
         
         if ids.isEmpty {
-            showError(.errorGeneral, "Seleccione inventario a mermar.")
+            showError(.generalError, "Seleccione inventario a mermar.")
             return
         }
         
@@ -326,13 +326,13 @@ class POCStorageControlView: Div {
                     
                         guard let resp else {
                             loadingView(show: false)
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         guard resp.status == .ok else {
                             loadingView(show: false)
-                            showError(.errorDeCommunicacion, resp.msg)
+                            showError(.comunicationError, resp.msg)
                             return
                         }
                         
@@ -351,12 +351,12 @@ class POCStorageControlView: Div {
                             loadingView(show: false)
                             
                             guard let resp = resp else {
-                                showError(.errorDeCommunicacion, .serverConextionError)
+                                showError(.comunicationError, .serverConextionError)
                                 return
                             }
                             
                             guard resp.status == .ok else{
-                                showError(.errorGeneral, resp.msg)
+                                showError(.generalError, resp.msg)
                                 return
                             }
                             

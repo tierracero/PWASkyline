@@ -382,7 +382,7 @@ class RewardsView: PageController {
     func getRewardsCategories(){
         
         guard let categorie else {
-            showError(.errorGeneral, "Seleccione Categoria")
+            showError(.generalError, "Seleccione Categoria")
             return
         }
         
@@ -432,17 +432,17 @@ class RewardsView: PageController {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
             guard let categories = resp.data else {
-                showError(.errorGeneral, "un expencted missing payload")
+                showError(.generalError, "un expencted missing payload")
                 return 
             }
 
@@ -454,12 +454,12 @@ class RewardsView: PageController {
     func getRewardsSubCategories(){
         
         guard let categorie else {
-            showError(.errorGeneral, "Seleccione Categoria")
+            showError(.generalError, "Seleccione Categoria")
             return
         }
         
         guard let subCategorie else {
-            showError(.errorGeneral, "Seleccione Sub Categoria")
+            showError(.generalError, "Seleccione Sub Categoria")
             return
         }
     
@@ -474,12 +474,12 @@ class RewardsView: PageController {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -498,7 +498,7 @@ class RewardsView: PageController {
     func getProducts(carrierId: String) {
         
         if carrierId.isEmpty {
-            showError(.errorGeneral, "Falta CarrierId")
+            showError(.generalError, "Falta CarrierId")
             return
         }
         
@@ -510,12 +510,12 @@ class RewardsView: PageController {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             

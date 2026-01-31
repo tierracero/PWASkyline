@@ -79,12 +79,12 @@ class CustTaskAuthRequestWaitView: Div {
                                 self.remove()
                                 
                                 guard let resp else {
-                                    showError(.errorDeCommunicacion, .serverConextionError)
+                                    showError(.comunicationError, .serverConextionError)
                                     return
                                 }
                                 
                                 guard resp.status == .ok else{
-                                    showError(.errorGeneral, resp.msg)
+                                    showError(.generalError, resp.msg)
                                     return
                                 }
                                 
@@ -168,7 +168,7 @@ class CustTaskAuthRequestWaitView: Div {
                             
                     self.callback(false)
                     
-                    showError(.errorGeneral, "El cambio de precio no fue autorizado.")
+                    showError(.generalError, "El cambio de precio no fue autorizado.")
                     
                     self.remove()
                     
@@ -211,12 +211,12 @@ class CustTaskAuthRequestWaitView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else{
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 self.remove()
                 return
             }

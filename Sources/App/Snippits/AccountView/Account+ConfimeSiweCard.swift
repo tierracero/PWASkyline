@@ -169,17 +169,17 @@ extension AccountView {
             pin = pin.purgeSpaces
             
             if pin.isEmpty {
-                showError(.errorGeneral, "Ingrese PIN")
+                showError(.generalError, "Ingrese PIN")
                 return
             }
             
             guard let _ = Int(pin) else {
-                showError(.errorGeneral, "Ingrese PIN valido")
+                showError(.generalError, "Ingrese PIN valido")
                 return
             }
             
             guard pin.count == 4 else {
-                showError(.errorGeneral, "Ingrese PIN valido (4 digitos)")
+                showError(.generalError, "Ingrese PIN valido (4 digitos)")
                 return
             }
             
@@ -197,12 +197,12 @@ extension AccountView {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "Error de comunicación")
+                    showError(.comunicationError, "Error de comunicación")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 

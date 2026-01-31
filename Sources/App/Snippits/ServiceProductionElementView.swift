@@ -66,7 +66,7 @@ class ServiceProductionElementView: Div {
             ) { resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
@@ -248,17 +248,17 @@ class ServiceProductionElementView: Div {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let payload = resp.data else {
-                    showError(.errorGeneral, "Error al obtener payload de data.")
+                    showError(.generalError, "Error al obtener payload de data.")
                     return
                 }
                 
@@ -298,13 +298,13 @@ class ServiceProductionElementView: Div {
         name = name.purgeSpaces
         
         if name.isEmpty {
-            showError(.campoInvalido, "Inlcuya nombre")
+            showError(.invalidField, "Inlcuya nombre")
             nameField.select()
             return
         }
         
         guard let cost = Double(cost)?.toCents else {
-            showError(.campoInvalido, "Ingrese  costo valido")
+            showError(.invalidField, "Ingrese  costo valido")
             costField.select()
             return
         }
@@ -323,12 +323,12 @@ class ServiceProductionElementView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             

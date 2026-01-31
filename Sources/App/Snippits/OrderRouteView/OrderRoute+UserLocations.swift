@@ -115,7 +115,7 @@ extension OrderRouteView {
                     
                     guard let token else {
                         loadingView(show: false)
-                        showError(.errorDeCommunicacion, "No se pudo cargar token")
+                        showError(.comunicationError, "No se pudo cargar token")
                         return
                     }
                     

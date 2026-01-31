@@ -246,37 +246,37 @@ class ToolProductAuditTrRow: Tr {
     func markAsReady(){
         
         guard !cost.isEmpty else {
-            showError(.errorGeneral, "Ingrese Costo")
+            showError(.generalError, "Ingrese Costo")
             self.costInput.select()
             return
         }
         
         guard let _cost = Float(self.cost)?.toCents else{
-            showError(.errorGeneral, "Ingrese Costo valido")
+            showError(.generalError, "Ingrese Costo valido")
             self.costInput.select()
             return
         }
         
         guard !price.isEmpty else {
-            showError(.errorGeneral, "Ingrese Precio")
+            showError(.generalError, "Ingrese Precio")
             self.priceInput.select()
             return
         }
         
         guard let _price = Float(self.price.replace(from: ",", to: "").replace(from: "$", to: ""))?.toCents else{
-            showError(.errorGeneral, "Ingrese Precio valido")
+            showError(.generalError, "Ingrese Precio valido")
             self.priceInput.select()
             return
         }
         
 //        guard !link1.isEmpty else {
-//            showError(.errorGeneral, "Ingrese Costo")
+//            showError(.generalError, "Ingrese Costo")
 //            //self.link1Input.select()
 //            return
 //        }
 
 //        guard !link2.isEmpty else {
-//            showError(.errorGeneral, "Ingrese Costo")
+//            showError(.generalError, "Ingrese Costo")
 //            //self.link2Input.select()
 //            return
 //        }
@@ -291,13 +291,13 @@ class ToolProductAuditTrRow: Tr {
             
             guard let resp = resp else {
                 loadingView(show: false)
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
                 loadingView(show: false)
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             

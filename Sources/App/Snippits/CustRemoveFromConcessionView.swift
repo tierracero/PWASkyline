@@ -782,7 +782,7 @@ class CustRemoveFromConcessionView: Div {
                if mybanks.isEmpty {
                    
                    self.paymentFormListener = FiscalPaymentCodes.efectivo.rawValue
-                   showError(.campoRequerido, "No tiene bancos. Ingrese a configuracion para agregar bancos.")
+                   showError(.requiredField, "No tiene bancos. Ingrese a configuracion para agregar bancos.")
                    
                    return
                }
@@ -1160,18 +1160,18 @@ class CustRemoveFromConcessionView: Div {
                 .removeClass(.isLoading)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else{
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
             
             guard let data = resp.data else {
-                showError( .errorGeneral, .unexpenctedMissingPayload)
+                showError( .generalError, .unexpenctedMissingPayload)
                 return
             }
             
@@ -1220,7 +1220,7 @@ class CustRemoveFromConcessionView: Div {
     func processReturn(){
         
         if items.isEmpty {
-            showError(.errorGeneral, "No hay productutos seleccionados.")
+            showError(.generalError, "No hay productutos seleccionados.")
             return
         }
         
@@ -1238,17 +1238,17 @@ class CustRemoveFromConcessionView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             if resp.status != .ok {
-                showError(.campoRequerido, resp.msg)
+                showError(.requiredField, resp.msg)
                 return
             }
             
             guard let data = resp.data else {
-                showError( .errorGeneral, .unexpenctedMissingPayload)
+                showError( .generalError, .unexpenctedMissingPayload)
                 return
             }
             
@@ -1346,7 +1346,7 @@ class CustRemoveFromConcessionView: Div {
     func processSale(){
         
         if items.isEmpty {
-            showError(.errorGeneral, "No hay productutos seleccionados.")
+            showError(.generalError, "No hay productutos seleccionados.")
             return
         }
         
@@ -1356,42 +1356,42 @@ class CustRemoveFromConcessionView: Div {
         case .chequeNominativo:
             
             if provider.isEmpty {
-                showError(.campoRequerido, "Seleccione Banco provedor de cheque")
+                showError(.requiredField, "Seleccione Banco provedor de cheque")
                 return
             }
             
             if self.auth.isEmpty {
-                showError(.campoRequerido, "Ingrese numero de cheque")
+                showError(.requiredField, "Ingrese numero de cheque")
                 return
             }
             
         case .transferenciaElectronicaDeFondos:
             
             if provider.isEmpty {
-                showError(.campoRequerido, "Seleccione Banco")
+                showError(.requiredField, "Seleccione Banco")
                 return
             }
             
             if self.auth.isEmpty {
-                showError(.campoRequerido, "Ingrese folio de transferencia")
+                showError(.requiredField, "Ingrese folio de transferencia")
                 return
             }
             
         case .tarjetaDeCredito, .tarjetaDeDebito, .tarjetaDeServicios:
             
             if provider.isEmpty {
-                showError(.campoRequerido, "Seleccione Banco")
+                showError(.requiredField, "Seleccione Banco")
                 return
             }
             
             if self.lastFour.isEmpty {
-                showError(.campoRequerido, "Ingrese utimos 4 de la tarjeta")
+                showError(.requiredField, "Ingrese utimos 4 de la tarjeta")
                 return
             }
 
             
             if self.auth.isEmpty {
-                showError(.campoRequerido, "Ingrese folio de autorización")
+                showError(.requiredField, "Ingrese folio de autorización")
                 return
             }
 
@@ -1422,12 +1422,12 @@ class CustRemoveFromConcessionView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             if resp.status != .ok {
-                showError(.campoRequerido, resp.msg)
+                showError(.requiredField, resp.msg)
                 return
             }
             

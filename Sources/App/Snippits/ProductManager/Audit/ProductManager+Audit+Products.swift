@@ -293,7 +293,7 @@ extension ProductManagerView.AuditView {
             switch typeSelectListener {
             case .store:
                 guard let storeId: UUID = UUID(uuidString: storeSelectListener) else {
-                    showError(.errorGeneral, "Seleccione una tienda valida.")
+                    showError(.generalError, "Seleccione una tienda valida.")
                     return
                 }
                 
@@ -302,7 +302,7 @@ extension ProductManagerView.AuditView {
             case .concessionaire:
                 
                 guard let selectCustomerId else {
-                    showError(.errorGeneral, "Seleccione una cliente concesionario.")
+                    showError(.generalError, "Seleccione una cliente concesionario.")
                     return
                 }
                 
@@ -325,7 +325,7 @@ extension ProductManagerView.AuditView {
             else {
                 
                 if startAt.isEmpty {
-                    showError(.campoRequerido, "Ingrese fecha de Inicio")
+                    showError(.requiredField, "Ingrese fecha de Inicio")
                 }
                 
                 var dateParts = startAt.explode("/")
@@ -431,12 +431,12 @@ extension ProductManagerView.AuditView {
             }
             
             guard let startAtUTS else {
-                showError(.errorGeneral, "Seleccione una fecha valida.")
+                showError(.generalError, "Seleccione una fecha valida.")
                 return
             }
             
             guard let endAtUTS else {
-                showError(.errorGeneral, "Seleccione una fecha valida.")
+                showError(.generalError, "Seleccione una fecha valida.")
                 return
             }
             
@@ -451,12 +451,12 @@ extension ProductManagerView.AuditView {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -914,7 +914,7 @@ extension ProductManagerView.AuditView {
             let view = SearchCustomerQuickView { account in
                 
                 guard account.isConcessionaire else {
-                    showError(.errorGeneral, "La cuenta no tiene perfil de concesionario.")
+                    showError(.generalError, "La cuenta no tiene perfil de concesionario.")
                     return
                 }
                 

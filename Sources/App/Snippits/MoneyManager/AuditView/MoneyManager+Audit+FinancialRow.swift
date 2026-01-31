@@ -78,17 +78,17 @@ extension MoneyManagerView.AuditView {
                                 loadingView(show: false)
                                 
                                 guard let resp else {
-                                    showError(.errorDeCommunicacion, .serverConextionError)
+                                    showError(.comunicationError, .serverConextionError)
                                     return
                                 }
                                 
                                 guard resp.status == .ok else {
-                                    showError(.errorGeneral, resp.msg)
+                                    showError(.generalError, resp.msg)
                                     return
                                 }
                                 
                                 guard let payload = resp.data else {
-                                    showError(.errorDeCommunicacion, .unexpenctedMissingPayload)
+                                    showError(.comunicationError, .unexpenctedMissingPayload)
                                     return
                                 }
                                 
@@ -134,12 +134,12 @@ extension MoneyManagerView.AuditView {
                                         loadingView(show: false)
                                         
                                         guard let resp else {
-                                            showError(.errorDeCommunicacion, .serverConextionError)
+                                            showError(.comunicationError, .serverConextionError)
                                             return
                                         }
                                         
                                         guard resp.status == .ok else {
-                                            showError(.errorGeneral, resp.msg)
+                                            showError(.generalError, resp.msg)
                                             return
                                         }
                                      
@@ -173,12 +173,12 @@ extension MoneyManagerView.AuditView {
                                 loadingView(show: false)
                                 
                                 guard let resp else {
-                                    showError(.errorDeCommunicacion, .serverConextionError)
+                                    showError(.comunicationError, .serverConextionError)
                                     return
                                 }
                                 
                                 guard resp.status == .ok else {
-                                    showError(.errorGeneral, resp.msg)
+                                    showError(.generalError, resp.msg)
                                     return
                                 }
                              

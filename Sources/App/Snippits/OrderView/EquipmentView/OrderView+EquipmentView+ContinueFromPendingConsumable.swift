@@ -306,12 +306,12 @@ extension OrderView.EquipmentView {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .unexpenctedMissingPayload)
+                    showError(.comunicationError, .unexpenctedMissingPayload)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 

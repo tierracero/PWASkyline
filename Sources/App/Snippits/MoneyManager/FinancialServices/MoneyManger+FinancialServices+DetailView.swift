@@ -577,17 +577,17 @@ extension MoneyManagerView.FinancialServicesView {
                 API.custAPIV1.getVendor(id: vendorid) { resp in
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
                     
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
                     guard let payload = resp.data else {
-                        showError(.errorDeCommunicacion, .unexpenctedMissingPayload)
+                        showError(.comunicationError, .unexpenctedMissingPayload)
                         return
                     }
                     
@@ -623,24 +623,24 @@ extension MoneyManagerView.FinancialServicesView {
             }
             
             guard let _returned = Double(self.returned)?.toCents else {
-                showError(.errorGeneral, "Ingrese una Cantidad valida.")
+                showError(.generalError, "Ingrese una Cantidad valida.")
                 returnedField.select()
                 return
             }
             
             guard _returned <= financial.amount else {
-                showError(.errorGeneral, "El pago no puede ser mayor al balance")
+                showError(.generalError, "El pago no puede ser mayor al balance")
                 returnedField.select()
                 return
             }
             
             guard let vendor else {
-                showError(.errorGeneral, "Seleccione proveedor.")
+                showError(.generalError, "Seleccione proveedor.")
                 return
             }
             
             guard let reciptType else {
-                showError(.errorGeneral, "Seleccione tipo de recibo.")
+                showError(.generalError, "Seleccione tipo de recibo.")
                 return
             }
             
@@ -649,7 +649,7 @@ extension MoneyManagerView.FinancialServicesView {
             if reciptType == .fiscalDocument {
                 
                 guard let _reciptUuid = UUID(uuidString: reciptId) else {
-                    showError(.errorGeneral, "Ingrese el UUID del documento fiscal.")
+                    showError(.generalError, "Ingrese el UUID del documento fiscal.")
                     return
                 }
                 
@@ -657,7 +657,7 @@ extension MoneyManagerView.FinancialServicesView {
             }
             
             if reciptFolio.isEmpty {
-                showError(.errorGeneral, "Ingrese el Serie/Folio del Recibo/Factura.")
+                showError(.generalError, "Ingrese el Serie/Folio del Recibo/Factura.")
                 return
             }
             
@@ -682,12 +682,12 @@ extension MoneyManagerView.FinancialServicesView {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
                     
                     guard resp.status == .ok else{
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
@@ -722,7 +722,7 @@ extension MoneyManagerView.FinancialServicesView {
                 return
             }
             
-            showError(.errorGeneral, "Lo sentimos esta función aun no esta habilitada")
+            showError(.generalError, "Lo sentimos esta función aun no esta habilitada")
             
         }
     }

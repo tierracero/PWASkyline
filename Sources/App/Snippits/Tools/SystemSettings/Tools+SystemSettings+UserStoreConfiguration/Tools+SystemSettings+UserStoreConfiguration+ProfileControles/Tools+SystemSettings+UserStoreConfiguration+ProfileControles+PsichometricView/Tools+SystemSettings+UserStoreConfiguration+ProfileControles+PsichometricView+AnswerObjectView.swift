@@ -189,14 +189,14 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.Psich
         func addAnswer() {
 
             guard let type else {
-                showError(.campoRequerido, "Seleccione Un timpo de respuesta valida")
+                showError(.requiredField, "Seleccione Un timpo de respuesta valida")
                 return
             }
 
             let answer = answer.purgeSpaces
 
             if answer.isEmpty {
-                showError(.campoRequerido, "Ingrese una respuesta valida")
+                showError(.requiredField, "Ingrese una respuesta valida")
                 return
             }
 
@@ -213,12 +213,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.Psich
                     loadingView(show: false)
 
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
 
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
 
@@ -248,12 +248,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.Psich
                     loadingView(show: false)
 
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
 
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
 

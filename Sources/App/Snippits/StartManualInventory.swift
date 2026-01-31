@@ -302,18 +302,18 @@ class StartManualInventory: Div {
         newDocumentName = newDocumentName.purgeSpaces.capitalizingFirstLetters()
         
         if newDocumentName.isEmpty {
-            showError(.campoRequerido, "Ingrese nombre para identificar documento")
+            showError(.requiredField, "Ingrese nombre para identificar documento")
             newDocumentNameField.select()
             return
         }
         
         guard let vendor else {
-            showError(.campoRequerido, "Seleccione provedor de la compra")
+            showError(.requiredField, "Seleccione provedor de la compra")
             return
         }
         
         guard let profile else {
-            showError(.campoRequerido, "Seleccione/Active Perfil Fiscal, contatcte a Soporte TC")
+            showError(.requiredField, "Seleccione/Active Perfil Fiscal, contatcte a Soporte TC")
             return
         }
 

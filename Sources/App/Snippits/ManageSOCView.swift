@@ -1480,12 +1480,12 @@ class ManageSOCView: Div {
                                                             loadingView(show: false)
                                                             
                                                             guard let resp else {
-                                                                showError(.errorDeCommunicacion, .serverConextionError)
+                                                                showError(.comunicationError, .serverConextionError)
                                                                 return
                                                             }
                                                             
                                                             guard resp.status == .ok else {
-                                                                showError(.errorGeneral, resp.msg)
+                                                                showError(.generalError, resp.msg)
                                                                 return
                                                             }
                                                             
@@ -2072,12 +2072,12 @@ class ManageSOCView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -2185,12 +2185,12 @@ class ManageSOCView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -2342,7 +2342,7 @@ class ManageSOCView: Div {
         }
         
         xhr.onError { jsValue in
-            showError(.errorDeCommunicacion, .serverConextionError)
+            showError(.comunicationError, .serverConextionError)
             self.imageRefrence.removeValue(forKey: view.viewid)
             //self.uploadPercent = ""
             view.remove()
@@ -2353,14 +2353,14 @@ class ManageSOCView: Div {
             view.loadPercent = ""
             
             guard let responseText = xhr.responseText else {
-                showError(.errorGeneral, .serverConextionError + " 001")
+                showError(.generalError, .serverConextionError + " 001")
                 self.imageRefrence.removeValue(forKey: view.viewid)
                 view.remove()
                 return
             }
             
             guard let data = responseText.data(using: .utf8) else {
-                showError(.errorGeneral, .serverConextionError + " 002")
+                showError(.generalError, .serverConextionError + " 002")
                 self.imageRefrence.removeValue(forKey: view.viewid)
                 view.remove()
                 return
@@ -2371,14 +2371,14 @@ class ManageSOCView: Div {
                 let resp = try JSONDecoder().decode(APIResponseGeneric<API.custAPIV1.UploadMediaResponse>.self, from: data)
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     self.imageRefrence.removeValue(forKey: view.viewid)
                     view.remove()
                     return
                 }
                 
                 guard let data = resp.data else {
-                    showError(.errorGeneral, "No se pudo cargar datos")
+                    showError(.generalError, "No se pudo cargar datos")
                     self.imageRefrence.removeValue(forKey: view.viewid)
                     view.remove()
                     return
@@ -2406,7 +2406,7 @@ class ManageSOCView: Div {
                 }
                 
             } catch {
-                showError(.errorGeneral, .serverConextionError + " 003")
+                showError(.generalError, .serverConextionError + " 003")
                 self.imageRefrence.removeValue(forKey: view.viewid)
                 view.remove()
                 return
@@ -2514,33 +2514,33 @@ class ManageSOCView: Div {
         
          //Modelo
          if name.isEmpty {
-             showError(.campoRequerido, "Ingrese modelo o nombre del produsto")
+             showError(.requiredField, "Ingrese modelo o nombre del produsto")
              return
          }
          //smallDescription
          if smallDescription.isEmpty {
-             showError(.campoRequerido, "Requiere descripcion corta")
+             showError(.requiredField, "Requiere descripcion corta")
              return
          }
          //fiscode
          if fiscCode.isEmpty {
-             showError(.campoRequerido, "Codigo fiscal")
+             showError(.requiredField, "Codigo fiscal")
              return
          }
          //fiscunit
          if fiscUnit.isEmpty {
-             showError(.campoRequerido, "Unidad Fiscal")
+             showError(.requiredField, "Unidad Fiscal")
              return
          }
          //cost i
         
         guard let _cost = Float(cost.replace(from: ",", to: "")) else {
-            showError(.campoRequerido, "Costo Interno Requerido")
+            showError(.requiredField, "Costo Interno Requerido")
             return
         }
         
         guard let _pricea = Float(pricea.replace(from: ",", to: "")) else {
-            showError(.campoRequerido, "Precio A Requerido")
+            showError(.requiredField, "Precio A Requerido")
             return
         }
         
@@ -2551,22 +2551,22 @@ class ManageSOCView: Div {
         if pricep.isEmpty { pricep = priceb }
         
         guard let _priceb = Float(priceb.replace(from: ",", to: "")) else {
-            showError(.formatoInvalido, "Precio Medio Mayore Requerido")
+            showError(.invalidFormat, "Precio Medio Mayore Requerido")
             return
         }
         
         guard let _pricec = Float(pricec.replace(from: ",", to: "")) else {
-            showError(.formatoInvalido, "Precio Mayore Requerido")
+            showError(.invalidFormat, "Precio Mayore Requerido")
             return
         }
         
         guard let _pricep = Float(pricep.replace(from: ",", to: "")) else {
-            showError(.formatoInvalido, "Precio Promocional Requerido")
+            showError(.invalidFormat, "Precio Promocional Requerido")
             return
         }
         
         guard let _productionCost = Float(productionCost)?.toCents else {
-            showError(.formatoInvalido, "Precio Promocional Requerido")
+            showError(.invalidFormat, "Precio Promocional Requerido")
             return
         }
         
@@ -2615,17 +2615,17 @@ class ManageSOCView: Div {
         let serviceLevel = UsernameRoles(rawValue: level) ?? .general
         
         guard let _comisionBy = ComisionBy(rawValue: comisionBy) else{
-            showError(.campoInvalido, "Seleccione comision valido")
+            showError(.invalidField, "Seleccione comision valido")
             return
         }
         
         guard let _comisionAmount = Int(comisionAmount) else{
-            showError(.campoInvalido, "Monto de comision invalida")
+            showError(.invalidField, "Monto de comision invalida")
             return
         }
         
         guard let socCodeType = SOCCodeType(rawValue: socCodeTypeListener) else {
-            showError(.campoInvalido, "Seleccione tipo de codigo a seleccionar")
+            showError(.invalidField, "Seleccione tipo de codigo a seleccionar")
             return
         }
         
@@ -2650,8 +2650,8 @@ class ManageSOCView: Div {
         }
         
         if let unCompatibleCode {
-            showError(.errorGeneral, "El EFECTO \(unCompatibleCode.description.uppercased()) es incompatible")
-            showError(.errorGeneral, unCompatibleReason)
+            showError(.generalError, "El EFECTO \(unCompatibleCode.description.uppercased()) es incompatible")
+            showError(.generalError, unCompatibleReason)
             return
         }
         
@@ -2696,12 +2696,12 @@ class ManageSOCView: Div {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -2755,12 +2755,12 @@ class ManageSOCView: Div {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -2803,12 +2803,12 @@ class ManageSOCView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -2901,14 +2901,14 @@ class ManageSOCView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             print("x003")
 
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
          

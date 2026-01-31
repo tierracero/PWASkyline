@@ -678,19 +678,19 @@ class ConfirmProductViewNew: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorGeneral, "No se pudo obtener respuesta del servidor intente de nuevo. Si el problema persiste contacte a Soporte TC")
+                showError(.generalError, "No se pudo obtener respuesta del servidor intente de nuevo. Si el problema persiste contacte a Soporte TC")
                 self.remove()
                 return
             }
             
             guard let payload = resp.data else {
-                showError(.errorGeneral, "No se pudo obtener POC del servidor intente de nuevo. Si el problema persiste contacte a Soporte TC")
+                showError(.generalError, "No se pudo obtener POC del servidor intente de nuevo. Si el problema persiste contacte a Soporte TC")
                 self.remove()
                 return
             }
             
             if resp.status != .ok {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 self.remove()
                 return
             }
@@ -761,9 +761,7 @@ class ConfirmProductViewNew: Div {
             
             inventory.forEach { storeInventory in
                 
-                guard let store = storeInventory.store else {
-                    return
-                }
+                let store = storeInventory.store
                 
                 self.storeSelect.appendChild(
                     Option(store.name)
@@ -792,7 +790,7 @@ class ConfirmProductViewNew: Div {
         // MARK: set `poc`
         guard let poc else {
             quantFieldIsDisabeld = false
-            showError(.errorGeneral, "No se pudo cargar POC, refresque e intente de nuevo.")
+            showError(.generalError, "No se pudo cargar POC, refresque e intente de nuevo.")
             return
         }
 
@@ -802,7 +800,7 @@ class ConfirmProductViewNew: Div {
         if storeIdSelectListener == "concession" {
                 guard let accountId else {
                     quantFieldIsDisabeld = false
-                    showError(.errorGeneral, "No se localizo la cuenta del concesionario")
+                    showError(.generalError, "No se localizo la cuenta del concesionario")
                     return 
                 }
 
@@ -813,7 +811,7 @@ class ConfirmProductViewNew: Div {
 
             guard let storeId = UUID(uuidString: storeIdSelectListener) else {
                 quantFieldIsDisabeld = false
-                showError(.errorGeneral, "No se localizo la tienda seleccionada")
+                showError(.generalError, "No se localizo la tienda seleccionada")
                 return 
             }
             
@@ -822,7 +820,7 @@ class ConfirmProductViewNew: Div {
 
         guard let from else {
             quantFieldIsDisabeld = false
-            showError(.errorGeneral, "No se estabecio procencia d e los productos, contacte a Soporte TC")
+            showError(.generalError, "No se estabecio procencia d e los productos, contacte a Soporte TC")
             return 
         }
 
@@ -844,19 +842,19 @@ class ConfirmProductViewNew: Div {
             guard let availableQuantity = Int(self.pocTotalInventory) else {
                 quantFieldIsDisabeld = false
                 quantInput.select()
-                showError(.campoInvalido, "Ingrese una cantidad valida")
+                showError(.invalidField, "Ingrese una cantidad valida")
                 return
             }
 
             guard let quantity = Int(self.cuant) else {
                 quantFieldIsDisabeld = false
                 quantInput.select()
-                showError(.campoInvalido, "Ingrese una cantidad valida")
+                showError(.invalidField, "Ingrese una cantidad valida")
                 return
             }
 
             guard availableQuantity >=  quantity else {
-                showError(.campoInvalido, "No cuenta con unidades suficientes para la venta.")
+                showError(.invalidField, "No cuenta con unidades suficientes para la venta.")
                 return
             }
 
@@ -947,7 +945,7 @@ class ConfirmProductViewNew: Div {
         else {
             
             guard let storeId = UUID(uuidString: storeIdSelectListener) else {
-                showError(.errorGeneral, "Seleccione tienda valida")
+                showError(.generalError, "Seleccione tienda valida")
                 quantFieldIsDisabeld = false
                 return
             }
@@ -955,7 +953,7 @@ class ConfirmProductViewNew: Div {
             var selectedInventory: CustStoreProductInventorySale? = nil
             
             inventory.forEach { storeInventory in
-                if storeInventory.store?.id == storeId {
+                if storeInventory.store.id == storeId {
                     selectedInventory = storeInventory
                 }
             }

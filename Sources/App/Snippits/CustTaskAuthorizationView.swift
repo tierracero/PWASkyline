@@ -71,12 +71,12 @@ class CustTaskAuthorizationView: Div {
                             API.custAPIV1.notifications() { resp in
                                 
                                 guard let resp else {
-                                    showError(.errorDeCommunicacion, .serverConextionError)
+                                    showError(.comunicationError, .serverConextionError)
                                     return
                                 }
                                 
                                 guard let data = resp.data else {
-                                    showError( .errorGeneral, .unexpenctedMissingPayload)
+                                    showError( .generalError, .unexpenctedMissingPayload)
                                     return
                                 }
                                 
@@ -214,12 +214,12 @@ class CustTaskAuthorizationView: Div {
                         .onClick {
                             
                             guard let frequency = CustTaskAuthorizationManagerAlertFrequency(rawValue: self.frequencySelectListener) else {
-                                showError(.errorGeneral, "")
+                                showError(.generalError, "")
                                 return
                             }
                             
                             guard let level = CustTaskAuthorizationManagerAlertLevel(rawValue: self.levelSelectListener) else {
-                                showError(.errorGeneral, "")
+                                showError(.generalError, "")
                                 return
                             }
                             
@@ -233,12 +233,12 @@ class CustTaskAuthorizationView: Div {
                                 loadingView(show: false)
                                 
                                 guard let resp else {
-                                    showError(.errorDeCommunicacion, .serverConextionError)
+                                    showError(.comunicationError, .serverConextionError)
                                     return
                                 }
                                 
                                 guard resp.status == .ok else {
-                                    showError(.errorGeneral, resp.msg)
+                                    showError(.generalError, resp.msg)
                                     return
                                 }
                                 
@@ -572,12 +572,12 @@ class CustTaskAuthorizationView: Div {
         API.custAPIV1.notificationsViewed { resp in
             
             guard let resp else {
-                showError(.errorDeCommunicacion, "No se pudo actulaizar, sistema de altertas (ultima vista), contacte a Soporte TC")
+                showError(.comunicationError, "No se pudo actulaizar, sistema de altertas (ultima vista), contacte a Soporte TC")
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, "No se pudo actulaizar, sistema de altertas (ultima vista), contacte a Soporte TC")
+                showError(.generalError, "No se pudo actulaizar, sistema de altertas (ultima vista), contacte a Soporte TC")
                 return
             }
         }

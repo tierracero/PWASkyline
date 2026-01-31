@@ -1313,12 +1313,12 @@ class ToolReciveSendInventory: Div {
                             loadingView(show: false)
                             
                             guard let resp else {
-                                showError(.errorDeCommunicacion, .serverConextionError)
+                                showError(.comunicationError, .serverConextionError)
                                 return
                             }
                             
                             guard resp.status == .ok else {
-                                showError(.errorGeneral, resp.msg)
+                                showError(.generalError, resp.msg)
                                 return
                             }
                             
@@ -1525,7 +1525,7 @@ class ToolReciveSendInventory: Div {
                      print("⚪️ prefix \(prefix)")
                      
                     if let type = CustFolioSequenceTableType(rawValue: prefix) {
-                        showError(.formatoInvalido, "Lo sentimos \"\(type.description)\" no esta soportodo en este modulo.")
+                        showError(.invalidFormat, "Lo sentimos \"\(type.description)\" no esta soportodo en este modulo.")
                     }
                     return
                 }
@@ -1541,7 +1541,7 @@ class ToolReciveSendInventory: Div {
                      print("⚪️ prefix \(prefix)")
                      
                     if let type = CustFolioSequenceTableType(rawValue: prefix) {
-                        showError(.formatoInvalido, "Lo sentimos \"\(type.description)\" no esta soportodo en este modulo.")
+                        showError(.invalidFormat, "Lo sentimos \"\(type.description)\" no esta soportodo en este modulo.")
                     }
                     return
                 }
@@ -1587,12 +1587,12 @@ class ToolReciveSendInventory: Div {
                                 loadingView(show: false)
 
                                 guard let resp else {
-                                    showError(.errorDeCommunicacion, .serverConextionError)
+                                    showError(.comunicationError, .serverConextionError)
                                     return
                                 }
 
                                 guard resp.status == .ok else {
-                                    showError(.errorGeneral, resp.msg)
+                                    showError(.generalError, resp.msg)
                                     return
                                 }
 
@@ -1602,7 +1602,7 @@ class ToolReciveSendInventory: Div {
                                 }
 
                                 if payload.doc.tipoDeComprobante == .pago {
-                                    showError(.errorGeneral, "Documentos de pagos aun no son soportados.")
+                                    showError(.generalError, "Documentos de pagos aun no son soportados.")
                                 }
                                 
                                 let view = ToolFiscalViewDocument(
@@ -1624,7 +1624,7 @@ class ToolReciveSendInventory: Div {
                             addToDom(ToolReciveSendInventory(loadid: id))
                         }
                         else {
-                            showError(.errorGeneral, "Este documento no pertenece a ningun perfil fiscal de la ceunta")
+                            showError(.generalError, "Este documento no pertenece a ningun perfil fiscal de la ceunta")
                         }
                         
                     }
@@ -1707,7 +1707,7 @@ class ToolReciveSendInventory: Div {
         }
         
         if let hasError {
-            showError(.errorGeneral, hasError)
+            showError(.generalError, hasError)
             return
         }
         
@@ -2757,12 +2757,12 @@ class ToolReciveSendInventory: Div {
                         loadingView(show: false)
                         
                         guard let resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         guard resp.status == .ok else{
-                            showError(.errorGeneral, resp.msg)
+                            showError(.generalError, resp.msg)
                             return
                         }
                         
@@ -2785,7 +2785,7 @@ class ToolReciveSendInventory: Div {
                     totalUnits += subView.units
                 }
                 if view.units != totalUnits {
-                    showError(.errorGeneral, "Hacen falta ingresos en \(view.name) \(view.brand) \(view.model)")
+                    showError(.generalError, "Hacen falta ingresos en \(view.name) \(view.brand) \(view.model)")
                     hasError = true
                 }
             }
@@ -2820,12 +2820,12 @@ class ToolReciveSendInventory: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else{
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -2845,7 +2845,7 @@ class ToolReciveSendInventory: Div {
         }
         
         xhr.onError { jsValue in
-            showError(.errorDeCommunicacion, .serverConextionError)
+            showError(.comunicationError, .serverConextionError)
             self.uploadPercent = ""
         }
         
@@ -2854,12 +2854,12 @@ class ToolReciveSendInventory: Div {
             self.uploadPercent = ""
             
             guard let responseText = xhr.responseText else {
-                showError(.errorGeneral, .serverConextionError + " 001")
+                showError(.generalError, .serverConextionError + " 001")
                 return
             }
             
             guard let data = responseText.data(using: .utf8) else {
-                showError(.errorGeneral, .serverConextionError + " 002")
+                showError(.generalError, .serverConextionError + " 002")
                 return
             }
             
@@ -2872,19 +2872,19 @@ class ToolReciveSendInventory: Div {
                 let resp = try JSONDecoder().decode(APIResponseGeneric<API.fiscalV1.FiscalXMLIngresoResponse>.self, from: data)
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let data = resp.data else {
-                    showError(.errorGeneral, "No se pudo cargar dato")
+                    showError(.generalError, "No se pudo cargar dato")
                     return
                 }
                 
                 self.loadData(data)
                 
             } catch {
-                showError(.errorGeneral, .serverConextionError + " 003")
+                showError(.generalError, .serverConextionError + " 003")
                 return
             }
             
@@ -2934,17 +2934,17 @@ class ToolReciveSendInventory: Div {
     func loadData(_ data: API.fiscalV1.FiscalXMLIngresoResponse) {
         
         guard let dateParts = data.document.fecha.explode("T").first?.explode("-") else {
-            showError(.errorGeneral, "No se pudo obtener fecha de creacion 001.")
+            showError(.generalError, "No se pudo obtener fecha de creacion 001.")
             return
         }
         
         guard dateParts.count == 3 else {
-            showError(.errorGeneral, "No se pudo obtener fecha de creacion 002.")
+            showError(.generalError, "No se pudo obtener fecha de creacion 002.")
             return
         }
         
         guard let uuid = data.document.complemento.timbreFiscalDigital?.uuid else {
-            showError(.errorGeneral, "No se pudo localizar uuid e doc.")
+            showError(.generalError, "No se pudo localizar uuid e doc.")
             return
         }
         
@@ -2961,7 +2961,7 @@ class ToolReciveSendInventory: Div {
         
         /// this is the ral life calander date  i cant go befor this date
         guard let uts = Calendar.current.date(from: thisMonthCalendarComponants)?.uts else {
-            showError(.errorGeneral, "No se pudo obtener fecha de creacion 003.")
+            showError(.generalError, "No se pudo obtener fecha de creacion 003.")
             return
         }
         
@@ -3108,12 +3108,12 @@ class ToolReciveSendInventory: Div {
             loadingView(show: false)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
 
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -3188,7 +3188,7 @@ class ToolReciveSendInventory: Div {
             }
             
             guard let doc = resp.data else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -3266,12 +3266,12 @@ class ToolReciveSendInventory: Div {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
                     
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
@@ -3297,7 +3297,7 @@ class ToolReciveSendInventory: Div {
     func saveDoc() {
         
         guard let docid = docid else {
-            showError(.errorGeneral, "No se obtuvo id del documento, reinice el proceso si continua el problema contacte a Soporte TC")
+            showError(.generalError, "No se obtuvo id del documento, reinice el proceso si continua el problema contacte a Soporte TC")
             return
         }
 
@@ -3368,7 +3368,7 @@ class ToolReciveSendInventory: Div {
         }
         
         if hasError {
-            showError(.errorGeneral, errorMgs)
+            showError(.generalError, errorMgs)
             return
         }
         
@@ -3405,12 +3405,12 @@ class ToolReciveSendInventory: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
 
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -3634,17 +3634,17 @@ class ToolReciveSendInventory: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
             guard let cost = resp.data else {
-                showError(.errorGeneral, "No se obtuvo data de la respusta")
+                showError(.generalError, "No se obtuvo data de la respusta")
                 return
             }
         
@@ -3783,7 +3783,7 @@ class ToolReciveSendInventory: Div {
     func saveManualInventory() {
         
         guard let manualPurchaseManager else {
-            showError(.errorGeneral, "No se localizo Documento")
+            showError(.generalError, "No se localizo Documento")
             return
         }
         
@@ -3839,17 +3839,17 @@ class ToolReciveSendInventory: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
             guard let data = resp.data else {
-                showError(.errorGeneral, "No se obtuvo data de la respusta")
+                showError(.generalError, "No se obtuvo data de la respusta")
                 return
             }
             
@@ -3906,12 +3906,12 @@ class ToolReciveSendInventory: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -3983,7 +3983,7 @@ class ToolReciveSendInventory: Div {
         }
         
         guard let profile else {
-            showError(.errorGeneral, "No se localizo perfil fiscal. No se pudo cargar documeto.")
+            showError(.generalError, "No se localizo perfil fiscal. No se pudo cargar documeto.")
             return
         }
         
@@ -4069,12 +4069,12 @@ extension ToolReciveSendInventory {
         ) { resp in
         
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             

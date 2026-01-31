@@ -398,7 +398,7 @@ class ToolFiscalViewDocument: Div {
                             .onClick {
                                 
                                 if self.doc.status == .canceled || self.doc.status == .cancelationRequest  {
-                                    showError(.errorGeneral, "Este docuemnto ya esta cancelado.")
+                                    showError(.generalError, "Este docuemnto ya esta cancelado.")
                                     return
                                 }
                                 
@@ -495,7 +495,7 @@ class ToolFiscalViewDocument: Div {
             if self.doc.version == "3.3" {
                 
                 guard let data = doc.raw.data(using: .utf8) else {
-                    showError(.errorGeneral, "No se pudo decodificar DATA de RAW [\(doc.version)] Contacte a Soporte TC")
+                    showError(.generalError, "No se pudo decodificar DATA de RAW [\(doc.version)] Contacte a Soporte TC")
                     return
                 }
                 
@@ -590,7 +590,7 @@ class ToolFiscalViewDocument: Div {
                     
                 }
                 catch {
-                    showError(.errorGeneral, "No se pudo decodificar RAW DATA [\(doc.version)] Contacte a Soporte TC")
+                    showError(.generalError, "No se pudo decodificar RAW DATA [\(doc.version)] Contacte a Soporte TC")
                     
                     print("🔴  error  🔴")
                     
@@ -601,7 +601,7 @@ class ToolFiscalViewDocument: Div {
             else if self.doc.version == "4.0" {
                 
                 guard let data = doc.raw.data(using: .utf8) else {
-                    showError(.errorGeneral, "No se pudo decodificar DATA de RAW [\(doc.version)] Contacte a Soporte TC")
+                    showError(.generalError, "No se pudo decodificar DATA de RAW [\(doc.version)] Contacte a Soporte TC")
                     return
                 }
                 
@@ -694,12 +694,12 @@ class ToolFiscalViewDocument: Div {
                     
                 }
                 catch {
-                    showError(.errorGeneral, "No se pudo decodificar RAW DATA [\(doc.version)] Contacte a Soporte TC")
+                    showError(.generalError, "No se pudo decodificar RAW DATA [\(doc.version)] Contacte a Soporte TC")
                 }
                 
             }
             else {
-                showError(.errorGeneral, "Documento mp soportado [\(doc.version)] Contacte a Soporte TC")
+                showError(.generalError, "Documento mp soportado [\(doc.version)] Contacte a Soporte TC")
             }
             
             if doc.status != .canceled && doc.status != .cancelationRequest {
@@ -826,13 +826,13 @@ class ToolFiscalViewDocument: Div {
             let (isValid, reason) = isValidPhone(communicationMethod)
             
             if !isValid {
-                showError(.errorGeneral, reason)
+                showError(.generalError, reason)
                 return
             }
         }
         else {
             guard isValidEmail(communicationMethod) else {
-                showError(.errorGeneral, "Correo electronico invalido")
+                showError(.generalError, "Correo electronico invalido")
                 return
             }
         }
@@ -844,12 +844,12 @@ class ToolFiscalViewDocument: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -871,12 +871,12 @@ class ToolFiscalViewDocument: Div {
     func deleteDocument() {
         
         guard let motive = FiscalCancelDocumentMotive(rawValue: self.deleteDocumentSelectListener) else {
-            showError(.errorGeneral, "Seleccion motivo de cancelacion.")
+            showError(.generalError, "Seleccion motivo de cancelacion.")
             return
         }
         
         if deleteDocumentSelectReason.isEmpty {
-            showError(.errorGeneral, "Ingrese explicación de la cencalación.")
+            showError(.generalError, "Ingrese explicación de la cencalación.")
             return
         }
         
@@ -891,12 +891,12 @@ class ToolFiscalViewDocument: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -962,17 +962,17 @@ class ToolFiscalViewDocument: Div {
             ) { resp in
                 
                 guard let resp else{
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let payload = resp.data else {
-                    showError(.errorGeneral, .unexpectedError("No se localizo data de la respueta"))
+                    showError(.generalError, .unexpectedError("No se localizo data de la respueta"))
                     return
                 }
                 

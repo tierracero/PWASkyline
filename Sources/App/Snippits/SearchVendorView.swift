@@ -195,17 +195,17 @@ class SearchVendorView: Div {
                 tf.removeClass(.isLoading)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let data = resp.data else {
-                    showError(.errorGeneral, "No se recivio payload")
+                    showError(.generalError, "No se recivio payload")
                     return
                 }
                 
@@ -252,17 +252,17 @@ class SearchVendorView: Div {
                 tf.removeClass(.isLoading)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let data = resp.data else {
-                    showError(.errorGeneral, "No se recivio payload")
+                    showError(.generalError, "No se recivio payload")
                     return
                 }
                 
@@ -323,17 +323,17 @@ class SearchVendorView: Div {
                 tf.removeClass(.isLoading)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let data = resp.data else {
-                    showError(.errorGeneral, "No se recivio payload")
+                    showError(.generalError, "No se recivio payload")
                     return
                 }
                 
@@ -664,13 +664,13 @@ class SearchVendorView: Div {
                 loadingView(show: false)
                 
                 guard let resp else{
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     self.remove()
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     self.remove()
                     return
                 }
@@ -750,25 +750,25 @@ class SearchVendorView: Div {
     func create(){
         
         if businessName.isEmpty {
-            showError(.campoRequerido, .requierdValid("Nombre de la empresa"))
+            showError(.requiredField, .requierdValid("Nombre de la empresa"))
             businessNameInput.select()
             return
         }
         
         if rfc.isEmpty {
-            showError(.campoRequerido, .requierdValid("RFC"))
+            showError(.requiredField, .requierdValid("RFC"))
             rfcInput.select()
             return
         }
         
         if razon.isEmpty {
-            showError(.campoRequerido, .requierdValid("Razon Social"))
+            showError(.requiredField, .requierdValid("Razon Social"))
             razonInput.select()
             return
         }
         
         guard let creditDays = Int64(self.creditDays) else{
-            showError(.campoRequerido, .requierdValid("Dias de Credito"))
+            showError(.requiredField, .requierdValid("Dias de Credito"))
             creditDaysField.select()
             return
         }
@@ -793,12 +793,12 @@ class SearchVendorView: Div {
                 loadingView(show: false)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -844,17 +844,17 @@ class SearchVendorView: Div {
                 loadingView(show: false)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let vendor = resp.data else{
-                    showError(.errorGeneral, "No se recivio payload")
+                    showError(.generalError, "No se recivio payload")
                     return
                 }
                 

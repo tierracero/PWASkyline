@@ -585,7 +585,7 @@ class CreateNewCustomerDataView: Div {
                             let (isValid,conflict) = isValidPhone(term)
                             
                             guard isValid else {
-                                showError(.formatoInvalido, conflict)
+                                showError(.invalidFormat, conflict)
                                 return
                             }
                             
@@ -608,7 +608,7 @@ class CreateNewCustomerDataView: Div {
                                 
                                 
                                 guard let data = resp.data else {
-                                    showError( .errorGeneral, .unexpenctedMissingPayload)
+                                    showError( .generalError, .unexpenctedMissingPayload)
                                     return
                                 }
                                 
@@ -720,7 +720,7 @@ class CreateNewCustomerDataView: Div {
                             .onClick {
                                 
                                 guard let country = Countries(rawValue: self.country), country == .mexico else {
-                                    showError(.campoInvalido, "Lo sentimos este servicio solo esta disponible para Mexico. Es posible que necesite corregir su ortografia o haga un ingreso manual.")
+                                    showError(.invalidField, "Lo sentimos este servicio solo esta disponible para Mexico. Es posible que necesite corregir su ortografia o haga un ingreso manual.")
                                     return
                                 }
                                 
@@ -1147,7 +1147,7 @@ class CreateNewCustomerDataView: Div {
                                     let (isValid,conflict) = isValidPhone(term)
                                     
                                     guard isValid else {
-                                        showError(.formatoInvalido, conflict)
+                                        showError(.invalidFormat, conflict)
                                         return
                                     }
                                     
@@ -1170,7 +1170,7 @@ class CreateNewCustomerDataView: Div {
                                         
                                         
                                         guard let data = resp.data else {
-                                            showError( .errorGeneral, .unexpenctedMissingPayload)
+                                            showError( .generalError, .unexpenctedMissingPayload)
                                             return
                                         }
                                         
@@ -1635,13 +1635,13 @@ class CreateNewCustomerDataView: Div {
     func requestMobileConfirmation(){
         
         if firstName.isEmpty {
-            showError(.campoRequerido, "Primer nombre requerido.")
+            showError(.requiredField, "Primer nombre requerido.")
             firstNameField.select()
             return
         }
         
         if lastName.isEmpty {
-            showError(.campoRequerido, "Primer apellido requerido.")
+            showError(.requiredField, "Primer apellido requerido.")
             lastNameField.select()
             return
         }
@@ -1649,7 +1649,7 @@ class CreateNewCustomerDataView: Div {
         if idType.isEmpty {
             switch self.idIsRequierd {
             case .required:
-                showError(.campoRequerido, "Seleccione tipo de identidad.")
+                showError(.requiredField, "Seleccione tipo de identidad.")
                 return
             case .recomended:
                 break
@@ -1666,13 +1666,13 @@ class CreateNewCustomerDataView: Div {
             case .identification:
                 
                 if idNumberCIC.isEmpty {
-                    showError(.campoRequerido, "Ingrese CIC de Identificación")
+                    showError(.requiredField, "Ingrese CIC de Identificación")
                     idNumberCICField.select()
                     return
                 }
                 
                 if idNumberOCR.isEmpty {
-                    showError(.campoRequerido, "Ingrese OCR de Identificación")
+                    showError(.requiredField, "Ingrese OCR de Identificación")
                     idNumberOCRField.select()
                     return
                 }
@@ -1680,7 +1680,7 @@ class CreateNewCustomerDataView: Div {
             case .driversLicens, .passport, .scholar, .votersCard, .other:
                 
                 if idNumberOCR.isEmpty {
-                    showError(.campoRequerido, "Ingrese OCR de Identificación")
+                    showError(.requiredField, "Ingrese OCR de Identificación")
                     idNumberOCRField.select()
                     return
                 }
@@ -1694,7 +1694,7 @@ class CreateNewCustomerDataView: Div {
         term = term.purgeSpaces
         
         if term.isEmpty {
-            showError(.campoRequerido, "Ingrese Numero de Celular")
+            showError(.requiredField, "Ingrese Numero de Celular")
             mobileField.select()
             return
         }
@@ -1702,7 +1702,7 @@ class CreateNewCustomerDataView: Div {
         let (isValid,conflict) = isValidPhone(term)
         
         guard isValid else {
-            showError(.formatoInvalido, conflict)
+            showError(.invalidFormat, conflict)
             return
         }
         
@@ -1730,7 +1730,7 @@ class CreateNewCustomerDataView: Div {
             }
             
             guard let data = resp.data else {
-                showError( .errorGeneral, .unexpenctedMissingPayload)
+                showError( .generalError, .unexpenctedMissingPayload)
                 return
             }
             
@@ -1758,7 +1758,7 @@ class CreateNewCustomerDataView: Div {
                     if resp.status != .ok {
                         // TODO By pass bc no conn
                         loadingView(show: false)
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
@@ -1777,7 +1777,7 @@ class CreateNewCustomerDataView: Div {
             else{
                 self.mobileField.class(.isNok)
                 loadingView(show: false)
-                showError(.errorGeneral, "El telefono ya esta regustrado en otra cuenta ")
+                showError(.generalError, "El telefono ya esta regustrado en otra cuenta ")
             }
         }
     }
@@ -1785,7 +1785,7 @@ class CreateNewCustomerDataView: Div {
     func confirmMobileConfirmation(){
         
         if pinCode.isEmpty {
-            showError(.campoRequerido, "Ingrese PIN para contunuar")
+            showError(.requiredField, "Ingrese PIN para contunuar")
             return
         }
         
@@ -1796,12 +1796,12 @@ class CreateNewCustomerDataView: Div {
             loadingView(show: false)
             
             guard let resp = resp else{
-                showError(.errorDeCommunicacion, "No se pudo contactar con el servidor.")
+                showError(.comunicationError, "No se pudo contactar con el servidor.")
                 return
             }
             
             if resp.status != .ok {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -1824,13 +1824,13 @@ class CreateNewCustomerDataView: Div {
         if acctType == .personal {
             
             if firstName.isEmpty {
-                showError(.campoRequerido, "Primer nombre requerido.")
+                showError(.requiredField, "Primer nombre requerido.")
                 firstNameField.select()
                 return
             }
             
             if lastName.isEmpty {
-                showError(.campoRequerido, "Primer apellido requerido.")
+                showError(.requiredField, "Primer apellido requerido.")
                 lastNameField.select()
                 return
             }
@@ -1842,7 +1842,7 @@ class CreateNewCustomerDataView: Div {
             
             switch self.idIsRequierd {
             case .required:
-                showError(.campoRequerido, "Seleccione tipo de identidad.")
+                showError(.requiredField, "Seleccione tipo de identidad.")
                 return
             case .recomended:
                 break
@@ -1860,13 +1860,13 @@ class CreateNewCustomerDataView: Div {
                 case .identification:
                     
                     if idNumberCIC.isEmpty {
-                        showError(.campoRequerido, "Ingrese CIC de Identificación")
+                        showError(.requiredField, "Ingrese CIC de Identificación")
                         idNumberCICField.select()
                         return
                     }
                     
                     if idNumberOCR.isEmpty {
-                        showError(.campoRequerido, "Ingrese OCR de Identificación")
+                        showError(.requiredField, "Ingrese OCR de Identificación")
                         idNumberOCRField.select()
                         return
                     }
@@ -1876,7 +1876,7 @@ class CreateNewCustomerDataView: Div {
                 case .driversLicens, .passport, .scholar, .votersCard, .other:
                     
                     if idNumberOCR.isEmpty {
-                        showError(.campoRequerido, "Ingrese OCR de Identificación")
+                        showError(.requiredField, "Ingrese OCR de Identificación")
                         idNumberOCRField.select()
                         return
                     }
@@ -1889,7 +1889,7 @@ class CreateNewCustomerDataView: Div {
         
         if acctType == .personal {
             if mobile.purgeSpaces.isEmpty {
-                showError(.campoRequerido, "Ingrese Numero de Celular")
+                showError(.requiredField, "Ingrese Numero de Celular")
                 mobileField.select()
                 return
             }
@@ -1897,7 +1897,7 @@ class CreateNewCustomerDataView: Div {
         }
         else {
             if self.rfc.isEmpty && mobile.isEmpty {
-                showError(.campoRequerido, "Ingrese Numero de Celular o RFC para crear cuenta")
+                showError(.requiredField, "Ingrese Numero de Celular o RFC para crear cuenta")
                 return
             }
         }
@@ -1907,7 +1907,7 @@ class CreateNewCustomerDataView: Div {
             let (isValid,conflict) = isValidPhone(mobile.purgeSpaces)
             
             guard isValid else {
-                showError(.formatoInvalido, conflict)
+                showError(.invalidFormat, conflict)
                 return
             }
         }
@@ -1967,7 +1967,7 @@ class CreateNewCustomerDataView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, "Error al conecatar al servidor")
+                showError(.comunicationError, "Error al conecatar al servidor")
                 return
             }
             
@@ -1975,17 +1975,17 @@ class CreateNewCustomerDataView: Div {
             print(resp)
             
             guard resp.status == .ok else{
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
             guard let data = resp.data else {
-                showError( .errorGeneral, .unexpenctedMissingPayload)
+                showError( .generalError, .unexpenctedMissingPayload)
                 return
             }
             
             guard let custAcct = data.custAcct else{
-                showError(.errorDeCommunicacion, "Error al obtener cuenta contacte a Soporte TC")
+                showError(.comunicationError, "Error al obtener cuenta contacte a Soporte TC")
                 return
             }
             
@@ -2036,12 +2036,12 @@ class CreateNewCustomerDataView: Div {
         let code = searchZipCodeString.purgeSpaces
         
         if code.count < 4 {
-            showError(.campoInvalido, "Ingrese un codigo postal minimo de cuatro digitos")
+            showError(.invalidField, "Ingrese un codigo postal minimo de cuatro digitos")
             return
         }
         
         guard let country = Countries(rawValue: country), country == .mexico else {
-            showError(.campoInvalido, "Lo sentimos este servicio solo esta disponible para Mexico. Es posible que necesite corregir su ortografia o haga un ingreso manual.")
+            showError(.invalidField, "Lo sentimos este servicio solo esta disponible para Mexico. Es posible que necesite corregir su ortografia o haga un ingreso manual.")
             return
         }
         
@@ -2055,22 +2055,22 @@ class CreateNewCustomerDataView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
             guard let data = resp.data else {
-                showError( .errorGeneral, .unexpenctedMissingPayload)
+                showError( .generalError, .unexpenctedMissingPayload)
                 return
             }
             
             if data.isEmpty {
-                showError(.errorGeneral, "No se localizo información, intente unn codigo nuevo o un ingreso manual.")
+                showError(.generalError, "No se localizo información, intente unn codigo nuevo o un ingreso manual.")
                 return
             }
             
@@ -2079,7 +2079,7 @@ class CreateNewCustomerDataView: Div {
             let codes = data
             
             guard let state = codes.first?.state else {
-                showError(.errorGeneral, "Se le localizo el estado en la peticion")
+                showError(.generalError, "Se le localizo el estado en la peticion")
                 return
             }
             

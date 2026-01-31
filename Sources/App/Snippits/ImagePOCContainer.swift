@@ -159,7 +159,7 @@ class ImagePOCContainer: Div {
                             }
                             
                             if self.selectedAvatar.wrappedValue == image {
-                                showError(.errorGeneral, "No puede eliminar un avatar establesido, cambie de avatar para poder eliminar la imagen actual.")
+                                showError(.generalError, "No puede eliminar un avatar establesido, cambie de avatar para poder eliminar la imagen actual.")
                                 return
                             }
                             
@@ -176,12 +176,12 @@ class ImagePOCContainer: Div {
                                 loadingView(show: false)
                                 
                                 guard let resp else {
-                                    showError(.errorDeCommunicacion, .serverConextionError)
+                                    showError(.comunicationError, .serverConextionError)
                                     return
                                 }
                                 
                                 guard resp.status == .ok else {
-                                    showError(.errorGeneral, resp.msg)
+                                    showError(.generalError, resp.msg)
                                     return
                                 }
                              
@@ -386,7 +386,7 @@ class ImagePOCContainer: Div {
                     }
                     
                     guard let payload = resp.data else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
@@ -462,12 +462,12 @@ class ImagePOCContainer: Div {
             ) { resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "Error de servidor al establecer avatar")
+                    showError(.comunicationError, "Error de servidor al establecer avatar")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, "Al Establecer Avatar" + resp.msg)
+                    showError(.generalError, "Al Establecer Avatar" + resp.msg)
                     return
                 }
                 
@@ -500,12 +500,12 @@ class ImagePOCContainer: Div {
             ) { resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "Erro de servidor al establecer avatar")
+                    showError(.comunicationError, "Erro de servidor al establecer avatar")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, "Al Establecer Avatar" + resp.msg)
+                    showError(.generalError, "Al Establecer Avatar" + resp.msg)
                     return
                 }
                 
@@ -531,12 +531,12 @@ class ImagePOCContainer: Div {
             ) { resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
              
@@ -547,18 +547,18 @@ class ImagePOCContainer: Div {
                 switch payload.status {
                 case .active, .processed:
                     if wait > 20 {
-                        showError(.errorGeneral, "Fallo cargo del archivo.")
+                        showError(.generalError, "Fallo cargo del archivo.")
                         return
                     }
                     self.chekUploadState(wait: wait + 1)
                 case .error:
-                    showError(.errorGeneral, "Fallo cargo del archivo.")
+                    showError(.generalError, "Fallo cargo del archivo.")
                     self.removeMe(self.viewid)
                     self.remove()
                 case .done:
                     
                     guard let image = payload.image else {
-                        showError(.errorGeneral, "No se encontro imagen, refsque para cargarla.")
+                        showError(.generalError, "No se encontro imagen, refsque para cargarla.")
                         return
                     }
                     
@@ -600,12 +600,12 @@ class ImagePOCContainer: Div {
             ) { resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
              
@@ -616,18 +616,18 @@ class ImagePOCContainer: Div {
                 switch payload.status {
                 case .active, .processed:
                     if wait > 20 {
-                        showError(.errorGeneral, "Fallo cargo del archivo.")
+                        showError(.generalError, "Fallo cargo del archivo.")
                         return
                     }
                     self.chekCropState(wait: wait + 1)
                 case .error:
-                    showError(.errorGeneral, "Fallo cargo del archivo.")
+                    showError(.generalError, "Fallo cargo del archivo.")
                     self.removeMe(self.viewid)
                     self.remove()
                 case .done:
                     
                     guard let image = payload.image else {
-                        showError(.errorGeneral, "No se encontro imagen, refsque para cargarla.")
+                        showError(.generalError, "No se encontro imagen, refsque para cargarla.")
                         return
                     }
                     

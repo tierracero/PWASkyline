@@ -201,12 +201,12 @@ extension BudgetView {
             }
             
             guard let credit = Double(creditListener)?.toCents else {
-                showError(.errorGeneral, "Ingrese una cantidad valida")
+                showError(.generalError, "Ingrese una cantidad valida")
                 return
             }
             
             guard credit > 0 else {
-                showError(.errorGeneral, "Ingrese una cantidad mayor a cero")
+                showError(.generalError, "Ingrese una cantidad mayor a cero")
                 return
             }
             
@@ -221,12 +221,12 @@ extension BudgetView {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -256,12 +256,12 @@ extension BudgetView {
                             loadingView(show: false)
                             
                             guard let resp else {
-                                showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                                showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                                 return
                             }
                             
                             guard resp.status == .ok else {
-                                showError(.errorGeneral, resp.msg)
+                                showError(.generalError, resp.msg)
                                 return
                             }
                             

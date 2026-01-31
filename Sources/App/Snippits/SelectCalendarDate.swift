@@ -480,7 +480,7 @@ class SelectCalendarDate: Div {
                         }
                         
                         guard self.hour.contains(":") else {
-                            showError(.campoRequerido, "Formato de hora erroneo HH:MM ")
+                            showError(.requiredField, "Formato de hora erroneo HH:MM ")
                             self.hourInput.select()
                             return
                         }
@@ -488,31 +488,31 @@ class SelectCalendarDate: Div {
                         let hourParts = self.hour.explode(":")
                         
                         guard hourParts.count == 2 else{
-                            showError(.campoRequerido, "Formato de hora erroneo HH:MM ")
+                            showError(.requiredField, "Formato de hora erroneo HH:MM ")
                             self.hourInput.select()
                             return
                         }
                         
                         guard let _hour = Int(hourParts[0]) else {
-                            showError(.campoRequerido, "Formato de hora erroneo HH:MM entre 0 - 23")
+                            showError(.requiredField, "Formato de hora erroneo HH:MM entre 0 - 23")
                             self.hourInput.select()
                             return
                         }
                         
                         guard _hour >= 0 && _hour <= 23 else {
-                            showError(.campoRequerido, "Formato de hora erroneo HH:MM entre 0 - 23")
+                            showError(.requiredField, "Formato de hora erroneo HH:MM entre 0 - 23")
                             self.hourInput.select()
                             return
                         }
                         
                         guard let _min = Int(hourParts[1]) else {
-                            showError(.campoRequerido, "Formato de minuto erroneo HH:MM entre 0 - 23")
+                            showError(.requiredField, "Formato de minuto erroneo HH:MM entre 0 - 23")
                             self.hourInput.select()
                             return
                         }
                         
                         guard _min >= 0 && _min <= 59 else {
-                            showError(.campoRequerido, "Formato de hora erroneo HH:MM entre 0 - 59")
+                            showError(.requiredField, "Formato de hora erroneo HH:MM entre 0 - 59")
                             self.hourInput.select()
                             return
                         }

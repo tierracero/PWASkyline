@@ -255,7 +255,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.Psich
             let question = self.question.purgeSpaces
 
             if question.isEmpty {
-                showError(.campoRequerido, "Ingrese pregunta a realizar.")
+                showError(.requiredField, "Ingrese pregunta a realizar.")
                 return 
             }
 
@@ -302,7 +302,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.Psich
             if let answerId {
 
                 if self.answers.count < 3  {
-                    showError(.campoRequerido, "Ingrese por lo menos tres respuestas.")
+                    showError(.requiredField, "Ingrese por lo menos tres respuestas.")
                     return
                 }
 
@@ -314,12 +314,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.Psich
                     loadingView(show: false)
 
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
 
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
@@ -363,12 +363,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.Psich
             let question = question.purgeSpaces
 
             if question.isEmpty {
-                showError(.campoRequerido, "Ingrese pregunta a realizar")
+                showError(.requiredField, "Ingrese pregunta a realizar")
                 return
             }
 
             if answers.count < 3 {
-                showError(.campoRequerido, "Ingrese por lo menos tres respuestas.")
+                showError(.requiredField, "Ingrese por lo menos tres respuestas.")
                 return
             }
 
@@ -384,12 +384,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.Psich
                     loadingView(show: false)
 
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
 
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
 
@@ -417,12 +417,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.Psich
                     loadingView(show: false)
 
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
 
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
 

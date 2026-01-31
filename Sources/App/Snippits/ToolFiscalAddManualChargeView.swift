@@ -649,27 +649,27 @@ class ToolFiscalAddManualChargeView: Div {
                 .onClick{
                     
                     guard !self.fiscCode.isEmpty else {
-                        showError(.campoRequerido, .requierdValid("Codigo Fiscal"))
+                        showError(.requiredField, .requierdValid("Codigo Fiscal"))
                         return
                     }
                     
                     guard !self.fiscUnit.isEmpty else {
-                        showError(.campoRequerido, .requierdValid("Unidad Fiscal"))
+                        showError(.requiredField, .requierdValid("Unidad Fiscal"))
                         return
                     }
                     
                     guard !self.name.isEmpty else {
-                        showError(.campoRequerido, .requierdValid("Nombre"))
+                        showError(.requiredField, .requierdValid("Nombre"))
                         return
                     }
                     
                     guard self.units > 0 else {
-                        showError(.campoRequerido, .requierdValid("Unidades"))
+                        showError(.requiredField, .requierdValid("Unidades"))
                         return
                     }
                     
                     guard self.cost > 0 else {
-                        showError(.campoRequerido, .requierdValid("Unidades"))
+                        showError(.requiredField, .requierdValid("Unidades"))
                         return
                     }
                     

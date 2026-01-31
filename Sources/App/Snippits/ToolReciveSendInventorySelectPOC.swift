@@ -242,7 +242,7 @@ class ToolReciveSendInventorySelectPOC: Div {
                         API.custPOCV1.getPOCCost(id: item.id) { resp in
                             
                             guard let cost = resp?.data else {
-                                showError(.errorDeCommunicacion, .serverConextionError)
+                                showError(.comunicationError, .serverConextionError)
                                 return
                             }
                             

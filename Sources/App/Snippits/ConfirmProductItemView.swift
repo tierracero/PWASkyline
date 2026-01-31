@@ -207,7 +207,7 @@ class ConfirmProductItemView: Div {
     func addItems(){
         
         guard let from else {
-            showError( .errorGeneral, "Ingrese unidades validas")
+            showError( .generalError, "Ingrese unidades validas")
             return
         }
 

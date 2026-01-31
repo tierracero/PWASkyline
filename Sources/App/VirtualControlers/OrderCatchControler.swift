@@ -517,12 +517,12 @@ public class OrderCatchControler {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -564,12 +564,12 @@ public class OrderCatchControler {
             
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -627,12 +627,12 @@ public class OrderCatchControler {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, "No se pudo comunicar con el servidor")
+                showError(.comunicationError, "No se pudo comunicar con el servidor")
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -669,20 +669,14 @@ public class OrderCatchControler {
             if custBudgetManagerStatus == nil {
                 orderCatch[orderId]?.budgetRequest = nil
             }
-            
             orderRowViewRefrence.forEach { id, view in
                 if orderId == id {
                     view.budget = custBudgetManagerStatus
                 }
             }
-
         case .orderStatus(let custFolioStatus):
-
-
             customerOrderStatusUpdate(orderId: orderId, status: custFolioStatus)
-
             updateOrderStatus(orderId, custFolioStatus)
-
         case .orderBalance(let balance):
             break
         case .orderDate(let date):
@@ -1828,12 +1822,12 @@ public class OrderCatchControler {
                 loadingView(show: false)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -2115,12 +2109,12 @@ public class OrderCatchControler {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                        showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                         return
                     }
                     
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
@@ -2178,12 +2172,12 @@ public class OrderCatchControler {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -2226,7 +2220,7 @@ public class OrderCatchControler {
             let data = try JSONEncoder().encode(payload)
             
             guard let str = String(data: data, encoding: .utf8) else {
-                showError(.errorGeneral, "No se pudo enviar mensaje.")
+                showError(.generalError, "No se pudo enviar mensaje.")
                 return
             }
             
@@ -2234,7 +2228,7 @@ public class OrderCatchControler {
             
         }
         catch {
-            showError(.errorGeneral, "🔴 No se pudo enviar mensaje 001")
+            showError(.generalError, "🔴 No se pudo enviar mensaje 001")
             print(error)
         }
         

@@ -271,17 +271,17 @@ class BudgetView: Div {
                             print("🟡  001")
                             
                             guard let resp else {
-                                showError(.errorDeCommunicacion, .serverConextionError)
+                                showError(.comunicationError, .serverConextionError)
                                 return
                             }
 
                             guard resp.status == .ok else {
-                                showError(.errorGeneral, resp.msg)
+                                showError(.generalError, resp.msg)
                                 return
                             }
                             
                             guard let payload = resp.data else {
-                                showError(.errorGeneral, resp.msg)
+                                showError(.generalError, resp.msg)
                                 return
                             }
                             
@@ -569,12 +569,12 @@ class BudgetView: Div {
                                         loadingView(show: false)
                                         
                                         guard let resp else {
-                                            showError(.errorDeCommunicacion, .serverConextionError)
+                                            showError(.comunicationError, .serverConextionError)
                                             return
                                         }
 
                                         guard resp.status == .ok else {
-                                            showError(.errorGeneral, resp.msg)
+                                            showError(.generalError, resp.msg)
                                             return
                                         }
                                         
@@ -654,12 +654,12 @@ class BudgetView: Div {
                                 loadingView(show: false)
                                 
                                 guard let resp else {
-                                    showError(.errorDeCommunicacion, .serverConextionError)
+                                    showError(.comunicationError, .serverConextionError)
                                     return
                                 }
 
                                 guard resp.status == .ok else {
-                                    showError(.errorGeneral, resp.msg)
+                                    showError(.generalError, resp.msg)
                                     return
                                 }
                                                                 
@@ -687,7 +687,7 @@ class BudgetView: Div {
                     .onClick {
                         
                         guard let budgetid = self.budgetid else {
-                            showError(.errorGeneral, "No se localizo id del presupuesto.")
+                            showError(.generalError, "No se localizo id del presupuesto.")
                             return
                         }
                         
@@ -761,12 +761,12 @@ class BudgetView: Div {
                                 loadingView(show: false)
                                 
                                 guard let resp = resp else {
-                                    showError(.errorDeCommunicacion, .serverConextionError)
+                                    showError(.comunicationError, .serverConextionError)
                                     return
                                 }
 
                                 guard resp.status == .ok else {
-                                    showError(.errorGeneral, resp.msg)
+                                    showError(.generalError, resp.msg)
                                     return
                                 }
                                 
@@ -810,7 +810,7 @@ class BudgetView: Div {
                                 
                                 
                                 guard let manager = budget.manager else {
-                                    showError(.errorGeneral, "No se localizo id del manager \(#function)")
+                                    showError(.generalError, "No se localizo id del manager \(#function)")
                                     return
                                 }
                                 
@@ -1027,12 +1027,12 @@ class BudgetView: Div {
                 loadingView(show: false)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -1155,12 +1155,12 @@ class BudgetView: Div {
                 print("🟡  003")
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -1277,7 +1277,7 @@ class BudgetView: Div {
     ){
         
         guard let budgetid = budgetid else {
-            showError(.errorGeneral, "Error al obtener id del presuesto")
+            showError(.generalError, "Error al obtener id del presuesto")
             return
         }
         
@@ -1350,12 +1350,12 @@ class BudgetView: Div {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
                     
                     guard resp.status == .ok else{
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
@@ -1388,12 +1388,12 @@ class BudgetView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             

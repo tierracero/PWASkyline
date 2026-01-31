@@ -150,19 +150,19 @@ class FiscalConceptDestinationManualItemsEditView: Div {
     func addMissingInventory(){
         
         guard let units = Int64(missingUnitsCount) else {
-            showError(.errorGeneral, "Ingrese unidades validas")
+            showError(.generalError, "Ingrese unidades validas")
             missingUnitsCountField.select()
             return
         }
         
         if units > totalUnitCount {
-            showError(.errorGeneral, "No puede mermar mas de \(totalUnitCount.toString) unidades.")
+            showError(.generalError, "No puede mermar mas de \(totalUnitCount.toString) unidades.")
             missingUnitsCountField.select()
             return
         }
         
         guard let type = InventoryPlaceType(rawValue: missingUnitsReasonListener) else {
-            showError(.errorGeneral, "Seleccione una razon de la merma")
+            showError(.generalError, "Seleccione una razon de la merma")
             return
         }
         

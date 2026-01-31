@@ -145,7 +145,7 @@ extension OrderView {
                 loadingView(show: false)
             
                 guard resp != nil else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 

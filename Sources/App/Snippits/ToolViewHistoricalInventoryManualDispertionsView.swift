@@ -474,7 +474,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                 print("🟢. 001")
 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     print("🔴 001")
                     self.remove()
                     return
@@ -504,7 +504,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
         func requestReport(){
              
             guard let type = PurchaseOrderAuditTypes(rawValue: auditTypeListener) else {
-                showError(.campoRequerido, "Ingrese tipo de reporte")
+                showError(.requiredField, "Ingrese tipo de reporte")
                 return
             }
             
@@ -523,7 +523,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
             else {
                 
                 if startAt.isEmpty {
-                    showError(.campoRequerido, "Ingrese fecha de Inicio")
+                    showError(.requiredField, "Ingrese fecha de Inicio")
                 }
                 
                 var dateParts = startAt.explode("/")
@@ -633,13 +633,13 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
             switch type {    
             case .byStore:
                 guard let id =  storeId else {
-                    showError(.errorGeneral, "Selecicone tienda para generar el reporte")
+                    showError(.generalError, "Selecicone tienda para generar el reporte")
                     return 
                 }
                 relId = id
             case .byVendor:
                 guard let id =  vendorId else {
-                    showError(.errorGeneral, "Selecicone proveedor para generar el reporte")
+                    showError(.generalError, "Selecicone proveedor para generar el reporte")
                     return 
                 }
                 relId = id
@@ -648,12 +648,12 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
             }
             
             guard let startAtUTS  else {
-                showError(.errorGeneral, "Ingrese un fecha de inicio valida")
+                showError(.generalError, "Ingrese un fecha de inicio valida")
                 return 
             }
 
             guard let endAtUTS  else {
-                showError(.errorGeneral, "Ingrese un fecha de finalizacion valida")
+                showError(.generalError, "Ingrese un fecha de finalizacion valida")
                 return 
             }
             
@@ -673,12 +673,12 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                 self.selectedDoc = nil
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -704,12 +704,12 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -2994,12 +2994,12 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                 loadingView(show: false)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
 
                 guard resp.status == .ok else{
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 

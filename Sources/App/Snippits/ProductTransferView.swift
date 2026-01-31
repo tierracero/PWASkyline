@@ -962,12 +962,12 @@ class ProductTransferView: Div {
                         loadingView(show: false)
                         
                         guard let resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         guard resp.status == .ok else {
-                            showError(.errorDeCommunicacion, resp.msg)
+                            showError(.comunicationError, resp.msg)
                             return
                         }
                         
@@ -1062,12 +1062,12 @@ class ProductTransferView: Div {
                         loadingView(show: false)
                         
                         guard let resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         guard resp.status == .ok else {
-                            showError(.errorDeCommunicacion, resp.msg)
+                            showError(.comunicationError, resp.msg)
                             return
                         }
                         
@@ -1155,12 +1155,12 @@ class ProductTransferView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorDeCommunicacion, resp.msg)
+                showError(.comunicationError, resp.msg)
                 return
             }
             

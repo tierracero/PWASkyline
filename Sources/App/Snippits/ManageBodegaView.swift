@@ -347,12 +347,12 @@ class ManageBodegaView: Div {
             self.newBodegaField.removeClass(.isLoading)
 
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
 
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
 
@@ -403,12 +403,12 @@ class ManageBodegaView: Div {
             self.newSeccionField.removeClass(.isLoading)
 
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
 
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
 
@@ -455,12 +455,12 @@ class ManageBodegaView: Div {
                 loadingView(show: false)
 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -474,7 +474,7 @@ class ManageBodegaView: Div {
             let sectionName = sectionName.purgeSpaces
 
             if sectionName.isEmpty {
-                showError(.campoRequerido, "Ingrese nombre de la seccion")
+                showError(.requiredField, "Ingrese nombre de la seccion")
                 newSeccionField.select()
                 return
             }
@@ -489,17 +489,17 @@ class ManageBodegaView: Div {
                 loadingView(show: false)
 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let payload = resp.data else {
-                    showError( .errorGeneral, .unexpenctedMissingPayload)
+                    showError( .generalError, .unexpenctedMissingPayload)
                     return
                 }
 

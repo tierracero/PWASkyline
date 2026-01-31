@@ -291,7 +291,7 @@ class AddCartaPorteFromHistoryView: Div {
     func addCartaPorte(){
         
         guard var selectedCartaPorte else {
-            showError(.errorGeneral, "No se seleccion carta porte")
+            showError(.generalError, "No se seleccion carta porte")
             return
         }
         
@@ -304,13 +304,13 @@ class AddCartaPorteFromHistoryView: Div {
             var location = loc
             
             guard let date = dateDayRefence[loc.placementId]?.wrappedValue else {
-                showError(.errorGeneral, "No se localizo nueva fecha")
+                showError(.generalError, "No se localizo nueva fecha")
                 hasError = true
                 return
             }
             
             guard let time = dateTimeRefence[loc.placementId]?.wrappedValue else {
-                showError(.errorGeneral, "No se localizo nueva fecha")
+                showError(.generalError, "No se localizo nueva fecha")
                 hasError = true
                 return
             }

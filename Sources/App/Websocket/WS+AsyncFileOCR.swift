@@ -1,5 +1,5 @@
 //
-//  WS+AsyncFileUpdate.swift
+//  WS+AsyncFileOCR.swift
 //  
 //
 //  Created by Victor Cantu on 2/4/25.
@@ -11,11 +11,11 @@ import TCFundamentals
 import TCFireSignal
 
 extension WS {
-    func asyncFileUpdate(_ payload: String) -> API.wsV1.AsyncFileUpdate? {
+    func asyncFileOCR(_ payload: String) -> API.wsV1.AsyncFileOCR? {
         
         if let data = payload.data(using: .utf8) {
             do {
-                return try JSONDecoder().decode(API.wsV1.AsyncFileUpdateNotification.self, from: data).payload
+                return try JSONDecoder().decode(API.wsV1.AsyncFileOCRNotification.self, from: data).payload
             } catch {
                 
                 print(error)

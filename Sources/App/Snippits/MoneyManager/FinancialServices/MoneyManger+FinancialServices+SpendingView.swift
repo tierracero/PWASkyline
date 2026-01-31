@@ -424,18 +424,18 @@ extension MoneyManagerView.FinancialServicesView {
         func createReport(){
             
             guard let user else {
-                showError(.errorGeneral, "Seleccione usuario.")
+                showError(.generalError, "Seleccione usuario.")
                 return
             }
             
             guard let amount = Double(self.amount)?.toCents else {
-                showError(.errorGeneral, "Ingrese una Cantidad valida.")
+                showError(.generalError, "Ingrese una Cantidad valida.")
                 amountField.select()
                 return
             }
             
             if financialTitle.isEmpty {
-                showError(.errorGeneral, "Ingrese descripción del evento.")
+                showError(.generalError, "Ingrese descripción del evento.")
                 financialField.select()
                 return
             }
@@ -444,12 +444,12 @@ extension MoneyManagerView.FinancialServicesView {
             if custCatchID == user.id {
                 
                 guard let vendor else {
-                    showError(.errorGeneral, "Seleccione proveedor.")
+                    showError(.generalError, "Seleccione proveedor.")
                     return
                 }
                 
                 guard let reciptType else {
-                    showError(.errorGeneral, "Seleccione tipo de recibo.")
+                    showError(.generalError, "Seleccione tipo de recibo.")
                     return
                 }
                 
@@ -458,7 +458,7 @@ extension MoneyManagerView.FinancialServicesView {
                 if reciptType == .fiscalDocument {
                     
                     guard let _reciptUuid = UUID(uuidString: reciptId) else {
-                        showError(.errorGeneral, "Ingrese el UUID del documento fiscal.")
+                        showError(.generalError, "Ingrese el UUID del documento fiscal.")
                         return
                     }
                     
@@ -466,7 +466,7 @@ extension MoneyManagerView.FinancialServicesView {
                 }
                 
                 if reciptFolio.isEmpty {
-                    showError(.errorGeneral, "Ingrese el Serie/Folio del Recibo/Factura.")
+                    showError(.generalError, "Ingrese el Serie/Folio del Recibo/Factura.")
                     return
                 }
                 
@@ -488,17 +488,17 @@ extension MoneyManagerView.FinancialServicesView {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
                     
                     guard resp.status == .ok else{
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
                     guard let payload = resp.data else {
-                        showError(.errorGeneral, .unexpenctedMissingPayload)
+                        showError(.generalError, .unexpenctedMissingPayload)
                         return
                     }
                     
@@ -537,17 +537,17 @@ extension MoneyManagerView.FinancialServicesView {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, .serverConextionError)
+                        showError(.comunicationError, .serverConextionError)
                         return
                     }
                     
                     guard resp.status == .ok else{
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
                     guard let payload = resp.data else {
-                        showError(.errorGeneral, .unexpenctedMissingPayload)
+                        showError(.generalError, .unexpenctedMissingPayload)
                         return
                     }
                     

@@ -191,7 +191,7 @@ class POCAddStorageView: Div {
         }
         
         guard let bodega = bods.first else {
-            showError(.errorGeneral, "No se localizo bodega de la tienda. Refresque o asegurese que su configuracion sea la correcta.")
+            showError(.generalError, "No se localizo bodega de la tienda. Refresque o asegurese que su configuracion sea la correcta.")
             return
         }
         
@@ -220,12 +220,12 @@ class POCAddStorageView: Div {
     func addStoragePlace(){
         
         guard let bodegaid else {
-            showError(.campoRequerido, "Selecione bodega")
+            showError(.requiredField, "Selecione bodega")
             return
         }
         
         guard let sectionid else {
-            showError(.campoRequerido, "Seleccione Seccion")
+            showError(.requiredField, "Seleccione Seccion")
             return
         }
         
@@ -244,12 +244,12 @@ class POCAddStorageView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             

@@ -377,7 +377,7 @@ class AddRentalProductConfirm: Div {
     func addItem(){
         
         guard let itemid = self.selecteItem else {
-            showError(.campoRequerido, "Seleccione producto para continuar")
+            showError(.requiredField, "Seleccione producto para continuar")
             return
         }
         
@@ -408,7 +408,7 @@ class AddRentalProductConfirm: Div {
                 
                 if object.isRequired && value.isEmpty {
                     allFiledsAreValid = false
-                    showError(.campoRequerido, "\(object.name) REQUERIDO")
+                    showError(.requiredField, "\(object.name) REQUERIDO")
                 }
                 
                 let opt: RentalProductObjects = .init(id: object.id, name: object.name, value: value)

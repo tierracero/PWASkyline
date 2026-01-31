@@ -290,17 +290,17 @@ extension OrderView {
         func createProject() {
             
             guard let supervisedBy = UUID(uuidString: supervisedBy) else {
-                showError(.errorGeneral, "Seleccione us supervisor valido.")
+                showError(.generalError, "Seleccione us supervisor valido.")
                 return
             }
             
             if name.isEmpty {
-                showError(.campoRequerido, "Ingrese un nombre")
+                showError(.requiredField, "Ingrese un nombre")
                 return
             }
             
             if descr.isEmpty {
-                showError(.campoRequerido, "Ingrese descrippcion")
+                showError(.requiredField, "Ingrese descrippcion")
                 return
             }
             
@@ -319,13 +319,13 @@ extension OrderView {
                 
                 guard let resp else {
                     loadingView(show: false)
-                    showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                     return
                 }
                 
                 guard resp.status == .ok else {
                     loadingView(show: false)
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -347,12 +347,12 @@ extension OrderView {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                        showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                         return
                     }
                     
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     

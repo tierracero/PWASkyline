@@ -153,7 +153,7 @@ public class ConfirmView: Div {
                 .onClick {
                     
                     if self.requiersComment && self.comment.isEmpty {
-                        showError(.campoRequerido, "Comentario Requerido")
+                        showError(.requiredField, "Comentario Requerido")
                         return
                     }
                     

@@ -90,14 +90,14 @@ extension MailComponents {
             }
             else{
                 callback(nil)
-                showError(.errorGeneral, "Error al codificar mensaje 001")
+                showError(.generalError, "Error al codificar mensaje 001")
                 return
             }
             
         }
         catch {
             callback(nil)
-            showError(.errorGeneral, "Error al codificar mensaje 002")
+            showError(.generalError, "Error al codificar mensaje 002")
             return
         }
         

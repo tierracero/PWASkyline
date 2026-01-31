@@ -333,23 +333,23 @@ extension ToolsView.SystemSettings {
             
             /// Currencies
             guard let defaultCurrencie = Currencies(rawValue: defaultCurrencie) else {
-                showError(.errorGeneral, "Seleccione tipo de moneda")
+                showError(.generalError, "Seleccione tipo de moneda")
                 return
             }
             
             guard let defaultWarentySelf = Int(defaultWarentySelf) else {
-                showError(.errorGeneral, "Seleccione garantia extenra valida")
+                showError(.generalError, "Seleccione garantia extenra valida")
                 return
             }
             
             guard let defaultWarentyProvider = Int(defaultWarentyProvider) else {
-                showError(.errorGeneral, "Seleccione garantia extenra valida")
+                showError(.generalError, "Seleccione garantia extenra valida")
                 return
             }
             
             /// InventorieZeroSale
             guard let inventorieZeroSale = InventorieZeroSale(rawValue: inventorieZeroSale) else {
-                showError(.errorGeneral, "Seleccione accion de zero inventario")
+                showError(.generalError, "Seleccione accion de zero inventario")
                 return
             }
             
@@ -368,12 +368,12 @@ extension ToolsView.SystemSettings {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 

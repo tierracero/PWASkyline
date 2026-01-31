@@ -559,7 +559,7 @@ class EmailViewControler: Div {
                                 }
                                     
                                 guard !senderEmail.isEmpty else{
-                                    showError(.errorGeneral, "No se localizo usuario enviador.")
+                                    showError(.generalError, "No se localizo usuario enviador.")
                                     return
                                 }
                                 
@@ -591,7 +591,7 @@ class EmailViewControler: Div {
                                 }
                                     
                                 guard !recipiantEmail.isEmpty else{
-                                    showError(.errorGeneral, "No se localizo usuario enviador.")
+                                    showError(.generalError, "No se localizo usuario enviador.")
                                     return
                                 }
                                 

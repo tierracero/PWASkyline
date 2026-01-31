@@ -1136,30 +1136,30 @@ extension AccountView {
             switch type {
             case .personal:
                 if firstName.isEmpty {
-                    showError(.campoRequerido, .requierdValid("Primer nombre"))
+                    showError(.requiredField, .requierdValid("Primer nombre"))
                     firstNameField.select()
                     return
                 }
                 if lastName.isEmpty {
-                    showError(.campoRequerido, .requierdValid("Primer apellido"))
+                    showError(.requiredField, .requierdValid("Primer apellido"))
                     lastNameField.select()
                     return
                 }
             case .empresaFisica, .empresaMoral, .organizacion:
                 if businessName.isEmpty {
-                    showError(.campoRequerido, .requierdValid("Nombre de la empresa"))
+                    showError(.requiredField, .requierdValid("Nombre de la empresa"))
                     businessNameField.select()
                     return
                 }
                 
                 if fiscalRazon.isEmpty {
-                    showError(.campoRequerido, .requierdValid("Razon Social"))
+                    showError(.requiredField, .requierdValid("Razon Social"))
                     fiscalRazonField.select()
                     return
                 }
                 
                 if fiscalRfc.isEmpty {
-                    showError(.campoRequerido, .requierdValid("RFC"))
+                    showError(.requiredField, .requierdValid("RFC"))
                     fiscalRfcField.select()
                     return
                 }
@@ -1219,12 +1219,12 @@ extension AccountView {
             ) { resp in
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError )
+                    showError(.comunicationError, .serverConextionError )
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 

@@ -231,12 +231,12 @@ class MessageGrid: Div {
                         loadingView(show: false)
                         
                         guard let resp else {
-                            showError(.errorDeCommunicacion, .serverConextionError)
+                            showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         guard resp.status == .ok else {
-                            showError(.errorGeneral, resp.msg)
+                            showError(.generalError, resp.msg)
                             return
                         }
                         
@@ -415,6 +415,8 @@ class MessageGrid: Div {
                         
                     }
                 }
+            case .asyncFileOCR:
+                break
             case .waMsgReactionUpdate:
                 if let payload = self.ws.waMsgReactionUpdate($0) {
                     
@@ -484,7 +486,7 @@ class MessageGrid: Div {
     func creatMessage(_ clicked: Bool){
         
         guard let type = NoteTypes(rawValue: newNoteFilter.value)  else {
-            showError(.formatoInvalido, "Tipo de nota Invalida")
+            showError(.invalidFormat, "Tipo de nota Invalida")
             return
         }
         
@@ -507,12 +509,12 @@ class MessageGrid: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -619,7 +621,7 @@ class MessageGrid: Div {
 
         if file.type.contains("video") || file.type.contains("image") {
             if  fileSize > 30 {
-                showError(.errorGeneral, "No se pueden subir archivoa de mas de 30 mb")
+                showError(.generalError, "No se pueden subir archivoa de mas de 30 mb")
 
                 return 
             }
@@ -643,7 +645,7 @@ class MessageGrid: Div {
         }
         
         guard let subType else {
-            showError(.errorGeneral, "Lo sentimos \(file.type.uppercased()) aun no son soportados.")
+            showError(.generalError, "Lo sentimos \(file.type.uppercased()) aun no son soportados.")
             return
         }
         
@@ -687,7 +689,7 @@ class MessageGrid: Div {
         
         xhr.onError { jsValue in
             
-            showError(.errorDeCommunicacion, .serverConextionError)
+            showError(.comunicationError, .serverConextionError)
             view.remove()
         }
         
@@ -696,13 +698,13 @@ class MessageGrid: Div {
             view.loadPercent = ""
             
             guard let responseText = xhr.responseText else {
-                showError(.errorGeneral, .serverConextionError + " 001")
+                showError(.generalError, .serverConextionError + " 001")
                 view.remove()
                 return
             }
             
             guard let data = responseText.data(using: .utf8) else {
-                showError(.errorGeneral, .serverConextionError + " 002")
+                showError(.generalError, .serverConextionError + " 002")
                 view.remove()
                 return
             }
@@ -715,13 +717,13 @@ class MessageGrid: Div {
                 print(resp)
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     view.remove()
                     return
                 }
                 
                 guard let data = resp.data else {
-                    showError(.errorGeneral, "No se pudo cargar datos")
+                    showError(.generalError, "No se pudo cargar datos")
                     view.remove()
                     return
                 }
@@ -805,7 +807,7 @@ class MessageGrid: Div {
                 
                 print(error)
                 
-                showError(.errorGeneral, .serverConextionError + " 003")
+                showError(.generalError, .serverConextionError + " 003")
 
                 return
 

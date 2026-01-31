@@ -282,7 +282,7 @@ class ServiceAccionItemElementView: Div {
         let _options = options.explode("\n")
         
         if title.isEmpty {
-            showError( .campoRequerido, .requierdValid("nombre"))
+            showError( .requiredField, .requierdValid("nombre"))
             titleField.select()
             return
         }
@@ -291,13 +291,13 @@ class ServiceAccionItemElementView: Div {
         case .textField, .textArea:
             
             if help.isEmpty {
-                showError( .campoRequerido, .requierdValid("texto ayuda"))
+                showError( .requiredField, .requierdValid("texto ayuda"))
                 helpField.select()
                 return
             }
             
             if placeholder.isEmpty {
-                showError( .campoRequerido, .requierdValid("placeholder"))
+                showError( .requiredField, .requierdValid("placeholder"))
                 placeholderField.select()
                 return
             }
@@ -305,7 +305,7 @@ class ServiceAccionItemElementView: Div {
         case .checkBox:
             
             if help.isEmpty {
-                showError( .campoRequerido, .requierdValid("texto ayuda"))
+                showError( .requiredField, .requierdValid("texto ayuda"))
                 helpField.select()
                 return
             }
@@ -313,19 +313,19 @@ class ServiceAccionItemElementView: Div {
         case .selection, .radio:
             
             if help.isEmpty {
-                showError( .campoRequerido, .requierdValid("texto ayuda"))
+                showError( .requiredField, .requierdValid("texto ayuda"))
                 helpField.select()
                 return
             }
             
             if options.purgeSpaces.isEmpty {
-                showError( .campoRequerido, .requierdValid("opciones"))
+                showError( .requiredField, .requierdValid("opciones"))
                 return
             }
         case .instruction:
             
             if help.isEmpty {
-                showError( .campoRequerido, .requierdValid("mensaje de instruccion"))
+                showError( .requiredField, .requierdValid("mensaje de instruccion"))
                 return
             }
         }

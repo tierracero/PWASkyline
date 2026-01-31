@@ -119,7 +119,7 @@ class FiscCodeField: Div {
         getUsedFiscCodes(type: self.type) { success in
             
             if !success {
-                showError(.errorDeCommunicacion, "No se pudo comunicar con el servidor para obtener codigos fiscales.")
+                showError(.comunicationError, "No se pudo comunicar con el servidor para obtener codigos fiscales.")
                 self.remove()
                 return
             }

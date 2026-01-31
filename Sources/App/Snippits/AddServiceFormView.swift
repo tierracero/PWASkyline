@@ -376,7 +376,7 @@ class AddServiceFormView: Div {
                             .onClick {
                                 
                                 guard let _price = Float(self.customeSalePriceInput.text)?.toCents else {
-                                    showError(.errorGeneral, "Ingrese un precio  valido")
+                                    showError(.generalError, "Ingrese un precio  valido")
                                     self.customeSalePriceInput.select()
                                     return
                                 }
@@ -619,12 +619,12 @@ class AddServiceFormView: Div {
             loadingView(show: false)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
 
@@ -721,7 +721,7 @@ class AddServiceFormView: Div {
             
             action.objects.forEach { object in
                 if object.isRequired && object.value.isEmpty {
-                    showError(.campoRequerido, .requierdValid("\(action.name): \(object.title)"))
+                    showError(.requiredField, .requierdValid("\(action.name): \(object.title)"))
                     actionRequieredIsEmpty = true
                 }
             }
@@ -732,12 +732,12 @@ class AddServiceFormView: Div {
         }
         
         guard let amountFloat = Float(self.amount) else {
-            showError(.errorGeneral, "Ingrese una cantidad valida")
+            showError(.generalError, "Ingrese una cantidad valida")
             return
         }
         
         guard let priceFloat = Float(self.price) else {
-            showError(.errorGeneral, "Ingrese una cantidad valida")
+            showError(.generalError, "Ingrese una cantidad valida")
             return
         }
         

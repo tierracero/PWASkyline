@@ -197,7 +197,7 @@ extension ToolsView.WebPage.MeetUsPage {
                                         .height(28.px)
                                         .onClick {
                                             
-                                            showError(.errorGeneral, "Habilitar esta funcion")
+                                            showError(.generalError, "Habilitar esta funcion")
                                             /*
                                             loadingView(show: true)
                                             
@@ -245,12 +245,12 @@ extension ToolsView.WebPage.MeetUsPage {
                                                 loadingView(show: false)
                                                 
                                                 guard let resp else {
-                                                    showError(.errorDeCommunicacion, .serverConextionError)
+                                                    showError(.comunicationError, .serverConextionError)
                                                     return
                                                 }
                                                 
                                                 guard resp.status == .ok else {
-                                                    showError(.errorGeneral, resp.msg)
+                                                    showError(.generalError, resp.msg)
                                                     return
                                                 }
                                                 
@@ -522,17 +522,17 @@ extension ToolsView.WebPage.MeetUsPage {
         func saveServiceData() {
             
             if name.isEmpty {
-                showError(.campoRequerido,.requierdValid("nombre"))
+                showError(.requiredField,.requierdValid("nombre"))
                 return
             }
             
             if smallDescription.isEmpty {
-                showError(.campoRequerido,.requierdValid("descripción corta"))
+                showError(.requiredField,.requierdValid("descripción corta"))
                 return
             }
             
             if descr.isEmpty {
-                showError(.campoRequerido,.requierdValid("descripción completa"))
+                showError(.requiredField,.requierdValid("descripción completa"))
                 return
             }
             
@@ -552,12 +552,12 @@ extension ToolsView.WebPage.MeetUsPage {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                        showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                         return
                     }
                     
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
@@ -597,12 +597,12 @@ extension ToolsView.WebPage.MeetUsPage {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 

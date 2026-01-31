@@ -388,12 +388,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
                                     loadingView(show: false)
 
                                     guard let resp else {
-                                        showError(.errorDeCommunicacion, .serverConextionError)
+                                        showError(.comunicationError, .serverConextionError)
                                         return
                                     }
 
                                     guard resp.status == .ok else {
-                                        showError(.errorGeneral, resp.msg)
+                                        showError(.generalError, resp.msg)
                                         return
                                     }
 
@@ -571,12 +571,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
         func saveTest(_ testId: UUID, _ ignoreEmptyContent: Bool = false) {
 
             guard let type else {
-                showError(.campoRequerido, "Seleccione tipo de prueba")
+                showError(.requiredField, "Seleccione tipo de prueba")
                 return
             }
 
             guard let level else {
-                showError(.campoRequerido, "Seleccione nivel de prueba")
+                showError(.requiredField, "Seleccione nivel de prueba")
                 return
             }
 
@@ -589,17 +589,17 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
             let content = content.purgeSpaces
 
             if name.isEmpty {
-                showError(.campoRequerido, "Ingrese un nombre valida.")
+                showError(.requiredField, "Ingrese un nombre valida.")
                 return
             }
 
             if descr.isEmpty {
-                showError(.campoRequerido, "Ingrese un descrición valida.")
+                showError(.requiredField, "Ingrese un descrición valida.")
                 return
             }
 
             if instruction.isEmpty {
-                showError(.campoRequerido, "Ingrese un descrición valida.")
+                showError(.requiredField, "Ingrese un descrición valida.")
                 return
             }
 
@@ -635,12 +635,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
                 loadingView(show: false)
 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
 
@@ -651,12 +651,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
         func createTest(_ ignoreEmptyContent: Bool = false){
             
             guard let type else {
-                showError(.campoRequerido, "Seleccione tipo de prueba")
+                showError(.requiredField, "Seleccione tipo de prueba")
                 return
             }
 
             guard let level else {
-                showError(.campoRequerido, "Seleccione nivel de prueba")
+                showError(.requiredField, "Seleccione nivel de prueba")
                 return
             }
 
@@ -669,17 +669,17 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
             let content = content.purgeSpaces
 
             if name.isEmpty {
-                showError(.campoRequerido, "Ingrese un nombre valida.")
+                showError(.requiredField, "Ingrese un nombre valida.")
                 return
             }
 
             if descr.isEmpty {
-                showError(.campoRequerido, "Ingrese un descrición valida.")
+                showError(.requiredField, "Ingrese un descrición valida.")
                 return
             }
 
             if instruction.isEmpty {
-                showError(.campoRequerido, "Ingrese un descrición valida.")
+                showError(.requiredField, "Ingrese un descrición valida.")
                 return
             }
 
@@ -700,7 +700,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
             }
             
             if self.questions.count < 10 {
-                showError(.campoRequerido, "Se rerquieren por lo menos 10 preguntas en la prueba")
+                showError(.requiredField, "Se rerquieren por lo menos 10 preguntas en la prueba")
                 return
             }
 
@@ -709,12 +709,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
             for  question in self.questions {
 
                 if question.answers.isEmpty {
-                    showError(.campoRequerido, "Una de las preguntas esta vacia. Favor de editar la.")
+                    showError(.requiredField, "Una de las preguntas esta vacia. Favor de editar la.")
                     break
                 }
 
                 if question.answers.count < 3{
-                    showError(.campoRequerido, "La pregunta \"\(question.answers)\" solo tiene \(question.answers.count) pregunrtas, agrege por lo menos 3")
+                    showError(.requiredField, "La pregunta \"\(question.answers)\" solo tiene \(question.answers.count) pregunrtas, agrege por lo menos 3")
                     break
                 }
 
@@ -746,12 +746,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
                 loadingView(show: false)
 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
 

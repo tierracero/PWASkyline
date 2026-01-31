@@ -336,20 +336,20 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.JobPo
         func addRequirement() {
 
             guard let requiermentHelper else {
-                showError(.campoRequerido, "Seleccione Requerimineto")
+                showError(.requiredField, "Seleccione Requerimineto")
                 return
             }
 
             switch requiermentHelper {
             case .age:
                 guard let jobPostAgeRequiermentsHelper else {
-                    showError(.campoRequerido, "Seleccione Edad Reqeurida Valida")
+                    showError(.requiredField, "Seleccione Edad Reqeurida Valida")
                     return
                 }
 
                 if jobPostAgeRequiermentsHelper.requiersValue {
                     if valueListener.isEmpty {
-                        showError(.campoRequerido, "Ingrese una Edad Valida")
+                        showError(.requiredField, "Ingrese una Edad Valida")
                         return
                     }
                 }
@@ -364,13 +364,13 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.JobPo
             case .educationalLevel:
 
                 guard let jobPostEducationRequiermentsHelper else {
-                    showError(.campoRequerido, "Seleccione Edad Reqeurida Valida")
+                    showError(.requiredField, "Seleccione Edad Reqeurida Valida")
                     return
                 }
 
                 if jobPostEducationRequiermentsHelper.requiersValue {
                     if valueListener.isEmpty {
-                        showError(.campoRequerido, "Ingrese una Edad Valida")
+                        showError(.requiredField, "Ingrese una Edad Valida")
                         return
                     }
                 }
@@ -400,13 +400,13 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.JobPo
             case .expirience:
             
                 guard let jobPostExpirienceRequiermentsHelper else {
-                    showError(.campoRequerido, "Seleccione Edad Reqeurida Valida")
+                    showError(.requiredField, "Seleccione Edad Reqeurida Valida")
                     return
                 }
 
                 if jobPostExpirienceRequiermentsHelper.requiersValue {
                     if valueListener.isEmpty {
-                        showError(.campoRequerido, "Ingrese una Edad Valida")
+                        showError(.requiredField, "Ingrese una Edad Valida")
                         return
                     }
                 }
@@ -421,7 +421,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.JobPo
             case .sex:
 
                 guard let jobPostGenderRequiermentsHelper else {
-                    showError(.campoRequerido, "Seleccione Sexo Valido")
+                    showError(.requiredField, "Seleccione Sexo Valido")
                     return
                 }
                 

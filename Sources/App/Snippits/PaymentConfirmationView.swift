@@ -373,12 +373,12 @@ class PaymentConfirmationView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else{
-                showError(.errorGeneral, "No se obtuvo datos de la cuenta.")
+                showError(.generalError, "No se obtuvo datos de la cuenta.")
                 return
             }
             
@@ -485,12 +485,12 @@ class PaymentConfirmationView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, "No se pudo comunicar con servidor para imprimir documento")
+                showError(.comunicationError, "No se pudo comunicar con servidor para imprimir documento")
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, "No se pudo comunicar con servidor para imprimir documento")
+                showError(.generalError, "No se pudo comunicar con servidor para imprimir documento")
                 return
             }
             

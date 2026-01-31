@@ -565,12 +565,12 @@ extension OrderView {
                                                     loadingView(show: false)
                                                     
                                                     guard let resp else {
-                                                        showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                                                        showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                                                         return
                                                     }
                                                     
                                                     guard resp.status == .ok else {
-                                                        showError(.errorGeneral, resp.msg)
+                                                        showError(.generalError, resp.msg)
                                                         return
                                                     }
                                                     
@@ -629,12 +629,12 @@ extension OrderView {
                                                     loadingView(show: false)
                                                     
                                                     guard let resp else {
-                                                        showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                                                        showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                                                         return
                                                     }
                                                     
                                                     guard resp.status == .ok else {
-                                                        showError(.errorGeneral, resp.msg)
+                                                        showError(.generalError, resp.msg)
                                                         return
                                                     }
                                                     
@@ -731,11 +731,11 @@ extension OrderView {
                                             loadingView(show: false)
                                             
                                             guard let resp else {
-                                                showError(.errorDeCommunicacion, .serverConextionError)
+                                                showError(.comunicationError, .serverConextionError)
                                                 return
                                             }
                                             guard resp.status == .ok else{
-                                                showError(.errorGeneral, resp.msg)
+                                                showError(.generalError, resp.msg)
                                                 return
                                             }
                                             
@@ -777,11 +777,11 @@ extension OrderView {
                                                     loadingView(show: false)
                                                     
                                                     guard let resp = resp else {
-                                                        showError(.errorDeCommunicacion, .serverConextionError)
+                                                        showError(.comunicationError, .serverConextionError)
                                                         return
                                                     }
                                                     guard resp.status == .ok else{
-                                                        showError(.errorGeneral    , resp.msg)
+                                                        showError(.generalError    , resp.msg)
                                                         return
                                                     }
                                                     
@@ -828,11 +828,11 @@ extension OrderView {
                                                     loadingView(show: false)
                                                     
                                                     guard let resp = resp else {
-                                                        showError(.errorDeCommunicacion, .serverConextionError)
+                                                        showError(.comunicationError, .serverConextionError)
                                                         return
                                                     }
                                                     guard resp.status == .ok else{
-                                                        showError(.errorGeneral    , resp.msg)
+                                                        showError(.generalError    , resp.msg)
                                                         return
                                                     }
                                                     
@@ -902,12 +902,12 @@ extension OrderView {
                                             loadingView(show: false)
                                             
                                             guard let resp = resp else {
-                                                showError(.errorDeCommunicacion, .serverConextionError)
+                                                showError(.comunicationError, .serverConextionError)
                                                 return
                                             }
                                             
                                             guard resp.status == .ok else{
-                                                showError( .errorGeneral, resp.msg)
+                                                showError( .generalError, resp.msg)
                                                 return
                                             }
                                             
@@ -963,12 +963,12 @@ extension OrderView {
                                                     loadingView(show: false)
                                                     
                                                     guard let resp = resp else {
-                                                        showError(.errorDeCommunicacion, .serverConextionError)
+                                                        showError(.comunicationError, .serverConextionError)
                                                         return
                                                     }
                                                     
                                                     guard resp.status == .ok else {
-                                                        showError(.errorGeneral, resp.msg)
+                                                        showError(.generalError, resp.msg)
                                                         return
                                                     }
                                                     
@@ -1029,11 +1029,11 @@ extension OrderView {
                                                     loadingView(show: false)
                                                     
                                                     guard let resp = resp else {
-                                                        showError(.errorDeCommunicacion, .serverConextionError)
+                                                        showError(.comunicationError, .serverConextionError)
                                                         return
                                                     }
                                                     guard resp.status == .ok else{
-                                                        showError(.errorGeneral, resp.msg)
+                                                        showError(.generalError, resp.msg)
                                                         return
                                                     }
                                                     
@@ -1192,12 +1192,12 @@ extension OrderView {
                                     loadingView(show: false)
                                     
                                     guard let resp else {
-                                        showError(.errorDeCommunicacion, .serverConextionError)
+                                        showError(.comunicationError, .serverConextionError)
                                         return
                                     }
                                     
                                     guard resp.status == .ok else {
-                                        showError(.errorGeneral, resp.msg)
+                                        showError(.generalError, resp.msg)
                                         return
                                     }
                                     
@@ -1468,12 +1468,12 @@ extension OrderView {
                                             loadingView(show: false)
                                             
                                             guard let resp else {
-                                                showError(.errorDeCommunicacion, .unexpenctedMissingPayload)
+                                                showError(.comunicationError, .unexpenctedMissingPayload)
                                                 return
                                             }
                                             
                                             guard resp.status == .ok else {
-                                                showError(.errorGeneral, resp.msg)
+                                                showError(.generalError, resp.msg)
                                                 return
                                             }
                                             

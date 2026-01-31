@@ -562,17 +562,17 @@ class ToolFiscalAddComplementoView: Div {
             ) { resp in
                 
                 guard let resp else{
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let payload = resp.data else {
-                    showError(.errorGeneral, .unexpectedError("No se localizo data de la respueta"))
+                    showError(.generalError, .unexpectedError("No se localizo data de la respueta"))
                     return
                 }
                 

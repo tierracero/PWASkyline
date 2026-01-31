@@ -431,27 +431,27 @@ class RequestTastView: Div {
     func requestTask(){
         
         guard let type else {
-            showError(.campoInvalido, "Seleccione tipo de tarea")
+            showError(.invalidField, "Seleccione tipo de tarea")
             return
         }
         
         guard let level = CustTaskAuthorizationManagerAlertLevel(rawValue: selectImportanceListener) else {
-            showError(.campoInvalido, "Seleccione nivel de importancia")
+            showError(.invalidField, "Seleccione nivel de importancia")
             return
         }
         guard let userId else {
-            showError(.campoInvalido, "Seleccione usuario")
+            showError(.invalidField, "Seleccione usuario")
             return
         }
         
         if reason.isEmpty {
-            showError(.campoInvalido, "Ingrese Tarea o instruccion a realizar")
+            showError(.invalidField, "Ingrese Tarea o instruccion a realizar")
             return
         }
         
         if type != .task {
             if relationId == nil  {
-                showError(.campoInvalido, selecTypeTitle)
+                showError(.invalidField, selecTypeTitle)
                 return
             }
         }
@@ -469,17 +469,17 @@ class RequestTastView: Div {
             loadingView(show: false)
             
             guard let resp = resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
 
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
             guard let payload = resp.data else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             

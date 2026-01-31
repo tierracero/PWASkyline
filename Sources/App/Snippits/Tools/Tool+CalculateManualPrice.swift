@@ -346,7 +346,7 @@ extension ToolsView {
             let _cost = cost.toDouble / 100
             
             guard var percent = Double(priceaPercent.replace(from: ",", to: "")) else {
-                showError(.errorGeneral, "Ingrese porcentaje valido.")
+                showError(.generalError, "Ingrese porcentaje valido.")
                 priceaField.select()
                 return
             }
@@ -356,7 +356,7 @@ extension ToolsView {
             let pricea = (_cost + (_cost * percent))
             
             guard var percent = Double(pricebPercent.replace(from: ",", to: "")) else {
-                showError(.errorGeneral, "Ingrese porcentaje valido.")
+                showError(.generalError, "Ingrese porcentaje valido.")
                 pricebField.select()
                 return
             }
@@ -366,7 +366,7 @@ extension ToolsView {
             let priceb = (_cost + (_cost * percent))
             
             guard var percent = Double(pricecPercent.replace(from: ",", to: "")) else {
-                showError(.errorGeneral, "Ingrese porcentaje valido.")
+                showError(.generalError, "Ingrese porcentaje valido.")
                 pricecField.select()
                 return
             }

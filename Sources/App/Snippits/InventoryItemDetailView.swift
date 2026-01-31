@@ -178,17 +178,17 @@ class InventoryItemDetailView: Div {
                                 loadingView(show: false)
                                 
                                 guard let resp = resp else {
-                                    showError(.errorDeCommunicacion, .serverConextionError)
+                                    showError(.comunicationError, .serverConextionError)
                                     return
                                 }
                                 
                                 guard resp.status == .ok else {
-                                    showError(.errorGeneral, resp.msg)
+                                    showError(.generalError, resp.msg)
                                     return
                                 }
                                 
                                 guard let doc = resp.data else {
-                                    showError(.errorGeneral, resp.msg)
+                                    showError(.generalError, resp.msg)
                                     return
                                 }
 
@@ -471,13 +471,13 @@ class InventoryItemDetailView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 self.remove()
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 self.remove()
                 return
             }
@@ -606,13 +606,13 @@ class InventoryItemDetailView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 self.remove()
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 self.remove()
                 return
             }
@@ -627,13 +627,13 @@ class InventoryItemDetailView: Div {
     func changePrice(){
          
         guard let price = Double(newPrice)?.toCents else {
-            showError(.errorGeneral, "Ingrese un nuevo precio valido")
+            showError(.generalError, "Ingrese un nuevo precio valido")
             newPriceField.select()
             return
         }
         
         if changeReason.isEmpty {
-            showError(.errorGeneral, "Ingrese motivo del cambio")
+            showError(.generalError, "Ingrese motivo del cambio")
             changeReasonField.select()
             return
         }
@@ -649,12 +649,12 @@ class InventoryItemDetailView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             

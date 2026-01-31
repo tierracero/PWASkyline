@@ -767,12 +767,12 @@ extension CustConcessionView {
             }
 
             if hasError {
-                showError(.errorGeneral, "Hay inconsistencias en la peticion, refresque la pantalla e intente de nuevo.")
+                showError(.generalError, "Hay inconsistencias en la peticion, refresque la pantalla e intente de nuevo.")
                 return
             }
             
             if selectedItems.isEmpty {
-                showError(.errorGeneral, "Seleccione elementos para Mover")
+                showError(.generalError, "Seleccione elementos para Mover")
                 return
             }
 

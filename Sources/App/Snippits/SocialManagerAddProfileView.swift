@@ -361,7 +361,7 @@ class SocialManagerAddProfileView: Div {
         }
         
         guard let sessionToken = sessionToken else{
-            showError(.errorGeneral, "No se puede generar autorizacion. 001")
+            showError(.generalError, "No se puede generar autorizacion. 001")
             return
         }
         
@@ -373,13 +373,13 @@ class SocialManagerAddProfileView: Div {
             
         }
         catch {
-            showError(.errorGeneral, "Error al generar token de acceso")
+            showError(.generalError, "Error al generar token de acceso")
             self.remove()
             return
         }
 
         guard var loginToken = loginToken else{
-            showError(.errorGeneral, "No se puede generar autorizacion. 001")
+            showError(.generalError, "No se puede generar autorizacion. 001")
             return
         }
         
@@ -492,13 +492,13 @@ class SocialManagerAddProfileView: Div {
         API.custAPIV1.getInstagramPages(fbpageid: fbpageid) { payload in
 
             guard let payload else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 loadingView(show: false)
                 return
             }
             
             guard payload.status == .ok else {
-                showError(.errorDeCommunicacion, payload.msg)
+                showError(.comunicationError, payload.msg)
                 return
             }
             
@@ -633,7 +633,7 @@ class SocialManagerAddProfileView: Div {
             igGetPageData(token: token, igid: igid) { payload in
                 
                 if let error = payload.error {
-                    showError(.errorGeneral, "Segenero un error, refresque e intente de nuevo")
+                    showError(.generalError, "Segenero un error, refresque e intente de nuevo")
                     return
                 }
                 
@@ -737,7 +737,7 @@ class SocialManagerAddProfileView: Div {
         API.custAPIV1.youtubeIsActive { resp in
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
@@ -772,7 +772,7 @@ class SocialManagerAddProfileView: Div {
             }
             
             guard let sessionToken = sessionToken else{
-                showError(.errorGeneral, "No se puede generar autorizacion. 001")
+                showError(.generalError, "No se puede generar autorizacion. 001")
                 return
             }
             
@@ -784,13 +784,13 @@ class SocialManagerAddProfileView: Div {
                 
             }
             catch {
-                showError(.errorGeneral, "Error al generar token de acceso")
+                showError(.generalError, "Error al generar token de acceso")
                 self.remove()
                 return
             }
 
             guard var loginToken = loginToken else{
-                showError(.errorGeneral, "No se puede generar autorizacion. 001")
+                showError(.generalError, "No se puede generar autorizacion. 001")
                 return
             }
             
@@ -867,12 +867,12 @@ class SocialManagerAddProfileView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -968,12 +968,12 @@ class SocialManagerAddProfileView: Div {
                 loadingView(show: false)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else{
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -1006,12 +1006,12 @@ class SocialManagerAddProfileView: Div {
                 loadingView(show: false)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else{
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -1042,12 +1042,12 @@ class SocialManagerAddProfileView: Div {
                 loadingView(show: false)
                 
                 guard let resp = resp else {
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else{
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -1119,7 +1119,7 @@ class SocialManagerAddProfileView: Div {
         }
         
         guard let sessionToken = sessionToken else{
-            showError(.errorGeneral, "No se puede generar autorizacion. 001")
+            showError(.generalError, "No se puede generar autorizacion. 001")
             return
         }
         
@@ -1131,13 +1131,13 @@ class SocialManagerAddProfileView: Div {
             
         }
         catch {
-            showError(.errorGeneral, "Error al generar token de acceso")
+            showError(.generalError, "Error al generar token de acceso")
             self.remove()
             return
         }
 
         guard var loginToken else{
-            showError(.errorGeneral, "No se puede generar autorizacion. 001")
+            showError(.generalError, "No se puede generar autorizacion. 001")
             return
         }
         

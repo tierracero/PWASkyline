@@ -167,28 +167,28 @@ class SMSRequestPIN: Div {
     func solicitarPIN() {
         
         guard let int = Int(countriesListener) else {
-            showError(.errorGeneral, "Seleccione Codigo de Pais")
+            showError(.generalError, "Seleccione Codigo de Pais")
             return
         }
         
         guard let cc = Countries(rawValue: int) else {
-            showError(.errorGeneral, "Seleccione Codigo de Pais Valido")
+            showError(.generalError, "Seleccione Codigo de Pais Valido")
             return
         }
         
         if mobile.isEmpty {
-            showError(.errorGeneral, "Ingrese Numero Movil")
+            showError(.generalError, "Ingrese Numero Movil")
             mobileField.select()
             return
         }
         
         guard mobile.count == 10 else {
-            showError(.errorGeneral, "Ingrese Numero Movil a 10 Digitos")
+            showError(.generalError, "Ingrese Numero Movil a 10 Digitos")
             return
         }
         
         guard let _ = Int64(mobile) else {
-            showError(.errorGeneral, "Ingrese Numero Movil Valido")
+            showError(.generalError, "Ingrese Numero Movil Valido")
             return
         }
         
@@ -210,17 +210,17 @@ class SMSRequestPIN: Div {
                 loadingView(show: false)
                 
                 guard let resp else{
-                    showError(.errorDeCommunicacion, .serverConextionError)
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let payload = resp.data else {
-                    showError(.errorGeneral, .unexpectedError("No se localizo data de la respueta"))
+                    showError(.generalError, .unexpectedError("No se localizo data de la respueta"))
                     return
                 }
                 

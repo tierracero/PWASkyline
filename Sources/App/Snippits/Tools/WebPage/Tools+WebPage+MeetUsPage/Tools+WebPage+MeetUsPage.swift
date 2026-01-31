@@ -811,63 +811,63 @@ extension ToolsView.WebPage {
         func saveChanges() {
             
             if metaTitle.isEmpty {
-                showError(.campoRequerido, .requierdValid("meta titulo"))
+                showError(.requiredField, .requierdValid("meta titulo"))
             }
             
             if metaDescription.isEmpty {
-                showError(.campoRequerido, .requierdValid("meta descripción"))
+                showError(.requiredField, .requierdValid("meta descripción"))
             }
             
             if title.isEmpty {
-                showError(.campoRequerido, .requierdValid("meta descripción"))
+                showError(.requiredField, .requierdValid("meta descripción"))
                 titleTextArea.focus()
                 return
             }
             
             if bisName.isEmpty {
-                showError(.campoRequerido, .requierdValid("meta descripción"))
+                showError(.requiredField, .requierdValid("meta descripción"))
                 titleTextArea.focus()
                 return
             }
             
             if slogan.isEmpty {
-                showError(.campoRequerido, .requierdValid("meta descripción"))
+                showError(.requiredField, .requierdValid("meta descripción"))
                 titleTextArea.focus()
                 return
             }
             
             if mantra.isEmpty {
-                showError(.campoRequerido, .requierdValid("meta descripción"))
+                showError(.requiredField, .requierdValid("meta descripción"))
                 titleTextArea.focus()
                 return
             }
             
             if descr.isEmpty {
-                showError(.campoRequerido, .requierdValid("meta descripción"))
+                showError(.requiredField, .requierdValid("meta descripción"))
                 descrTextArea.focus()
                 return
             }
             
             if mainText.isEmpty {
-                showError(.campoRequerido, .requierdValid("meta descripción"))
+                showError(.requiredField, .requierdValid("meta descripción"))
                 mainTextTextArea.focus()
                 return
             }
             
             if subText.isEmpty {
-                showError(.campoRequerido, .requierdValid("meta descripción"))
+                showError(.requiredField, .requierdValid("meta descripción"))
                 subTextTextArea.focus()
                 return
             }
             
             if history.isEmpty {
-                showError(.campoRequerido, .requierdValid("meta descripción"))
+                showError(.requiredField, .requierdValid("meta descripción"))
                 historyTextArea.focus()
                 return
             }
             
             if vision.isEmpty {
-                showError(.campoRequerido, .requierdValid("meta descripción"))
+                showError(.requiredField, .requierdValid("meta descripción"))
                 visionTextArea.focus()
                 return
             }
@@ -892,12 +892,12 @@ extension ToolsView.WebPage {
                 loadingView(show: false)
                 
                 guard let resp else {
-                    showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    showError(.errorGeneral, resp.msg)
+                    showError(.generalError, resp.msg)
                     return
                 }
                 
@@ -1092,12 +1092,12 @@ extension ToolsView.WebPage {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                        showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                         return
                     }
                     
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     
@@ -1152,12 +1152,12 @@ extension ToolsView.WebPage {
                     loadingView(show: false)
                     
                     guard let resp else {
-                        showError(.errorDeCommunicacion, "No se pudo comunicar con el servir para obtener usuario")
+                        showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                         return
                     }
                     
                     guard resp.status == .ok else {
-                        showError(.errorGeneral, resp.msg)
+                        showError(.generalError, resp.msg)
                         return
                     }
                     

@@ -448,12 +448,12 @@ class ToolReciveSendInventoryManualDispertionsView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -473,13 +473,13 @@ class ToolReciveSendInventoryManualDispertionsView: Div {
         newDocumentName = newDocumentName.purgeSpaces.capitalizingFirstLetters()
         
         if newDocumentName.isEmpty {
-            showError(.campoRequerido, "Ingrese nombre para identificar documento")
+            showError(.requiredField, "Ingrese nombre para identificar documento")
             newDocumentNameField.select()
             return
         }
         
         guard let vendor else {
-            showError(.campoRequerido, "Seleccione provedor de la compra")
+            showError(.requiredField, "Seleccione provedor de la compra")
             
             addToDom( SearchVendorView(loadBy: nil) { account in
                 self.vendor = account
@@ -490,7 +490,7 @@ class ToolReciveSendInventoryManualDispertionsView: Div {
         }
         
         guard let profile else {
-            showError(.campoRequerido, "Seleccione/Active Perfil Fiscal, contatcte a Soporte TC")
+            showError(.requiredField, "Seleccione/Active Perfil Fiscal, contatcte a Soporte TC")
             return
         }
         
@@ -506,12 +506,12 @@ class ToolReciveSendInventoryManualDispertionsView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             
@@ -538,12 +538,12 @@ class ToolReciveSendInventoryManualDispertionsView: Div {
             loadingView(show: false)
             
             guard let resp else {
-                showError(.errorDeCommunicacion, .serverConextionError)
+                showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                showError(.errorGeneral, resp.msg)
+                showError(.generalError, resp.msg)
                 return
             }
             

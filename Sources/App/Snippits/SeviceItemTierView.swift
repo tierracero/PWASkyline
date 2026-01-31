@@ -98,12 +98,12 @@ class SeviceItemTierView: Div {
                             loadingView(show: false)
                             
                             guard let resp else{
-                                showError(.errorDeCommunicacion, .serverConextionError)
+                                showError(.comunicationError, .serverConextionError)
                                 return
                             }
                             
                             guard resp.status == .ok else{
-                                showError(.errorGeneral, resp.msg)
+                                showError(.generalError, resp.msg)
                                 return
                             }
                             
@@ -132,7 +132,7 @@ class SeviceItemTierView: Div {
                             return
                         }
                         */
-                        showError(.errorGeneral, "La edicion de \(self.type.description) [seccion] aun no es soportado, contacte a soporte TC")
+                        showError(.generalError, "La edicion de \(self.type.description) [seccion] aun no es soportado, contacte a soporte TC")
                         
                     case .line:
                         /*
@@ -144,11 +144,11 @@ class SeviceItemTierView: Div {
                             return
                         }
                         */
-                        showError(.errorGeneral, "La edicion de \(self.type.description) [seccion] aun no es soportado, contacte a soporte TC")
+                        showError(.generalError, "La edicion de \(self.type.description) [seccion] aun no es soportado, contacte a soporte TC")
                         
                     case .main, .all:
                         
-                        showError(.errorGeneral, "La edicion de \(self.type.description) [seccion] aun no es soportado, contacte a soporte TC")
+                        showError(.generalError, "La edicion de \(self.type.description) [seccion] aun no es soportado, contacte a soporte TC")
                         
                     }
                     event.stopPropagation()
@@ -174,16 +174,16 @@ class SeviceItemTierView: Div {
                     return
                 }
                  */
-                showError(.errorGeneral, "La manipulacion de \(self.type.description) [seccion] aun no es soportado, contacte a soporte TC")
+                showError(.generalError, "La manipulacion de \(self.type.description) [seccion] aun no es soportado, contacte a soporte TC")
             case .line:
                 /*
                 guard let lineid = self.line else{
                     return
                 }
                  */
-                showError(.errorGeneral, "La manipulacion de \(self.type.description) [seccion] aun no es soportado, contacte a soporte TC")
+                showError(.generalError, "La manipulacion de \(self.type.description) [seccion] aun no es soportado, contacte a soporte TC")
             case .main,  .all:
-                showError(.errorGeneral, "La manipulacion de \(self.type.description) [seccion] aun no es soportado, contacte a soporte TC")
+                showError(.generalError, "La manipulacion de \(self.type.description) [seccion] aun no es soportado, contacte a soporte TC")
             }
             
         }
