@@ -3920,21 +3920,21 @@ class ManagePOC: Div {
         
         formData.append("file", file, filename: fileName)
         
-        xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadManager")
+        formData.append("eventid", view.viewid.uuidString)
         
-        xhr.setRequestHeader("eventid", view.viewid.uuidString)
-        
-        xhr.setRequestHeader("to", ImagePickerTo.product.rawValue)
+        formData.append("to", ImagePickerTo.product.rawValue)
         
         if let id = self.pocid?.uuidString {
-            xhr.setRequestHeader("id", id)
+            formData.append("id", id)
         }
         
-        xhr.setRequestHeader("fileName", fileName)
+        formData.append("fileName", fileName)
         
-        xhr.setRequestHeader("connid", custCatchChatConnID)
+        formData.append("connid", custCatchChatConnID)
         
-        xhr.setRequestHeader("remoteCamera", false.description)
+        formData.append("remoteCamera", false.description)
+        
+        xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
         
         xhr.setRequestHeader("Accept", "application/json")
         
