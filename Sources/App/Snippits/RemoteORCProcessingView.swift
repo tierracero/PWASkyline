@@ -41,9 +41,60 @@ class RemoteORCProcessingView: Div {
     /// Found Prodcts
     @State var items: [OCRCustomePayloadItem] = []
 
+    lazy var itemContainer = Div()
+
     override func didAddToDOM() {
         super.didAddToDOM()
 
+        loadingView(show: true)
+
+        API.custAPIV1.requestMobileCamara( 
+            type: .useCamaraForOCR,
+            connid: custCatchChatConnID,
+            eventid: self.viewId,
+            relatedid: self.script.id,
+            relatedfolio: "",
+            multipleTakes: false
+        ) { resp in
+            
+            loadingView(show: false)
+            
+            guard let resp else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+            
+            guard resp.status == .ok else {
+                showError(.generalError, resp.msg)
+                return
+            }
+            
+            showSuccess(.operacionExitosa, "Entre en la notificacion en su movil.")
+            
+        }
+                    
+
+    }
+
+    override func buildUI() {
+        super.buildUI()
+        
+        self.class(.transparantBlackBackGround)
+        position(.absolute)
+        height(100.percent)
+        width(100.percent)
+        left(0.px)
+        top(0.px)
+
+
+        $items.listen {
+            self.itemContainer.innerHTML = ""
+
+            $0.forEach { item in
+                self.itemContainer.appendChild(Div("\(item.units) \(item.code) \(item.description)"))
+            }
+
+        }
 
         WebApp.current.wsevent.listen {
             
@@ -139,46 +190,6 @@ class RemoteORCProcessingView: Div {
 
         }
 
-        loadingView(show: true)
-
-        API.custAPIV1.requestMobileCamara( 
-            type: .useCamaraForOCR,
-            connid: custCatchChatConnID,
-            eventid: self.viewId,
-            relatedid: self.script.id,
-            relatedfolio: "",
-            multipleTakes: false
-        ) { resp in
-            
-            loadingView(show: false)
-            
-            guard let resp else {
-                showError(.comunicationError, .serverConextionError)
-                return
-            }
-            
-            guard resp.status == .ok else {
-                showError(.generalError, resp.msg)
-                return
-            }
-            
-            showSuccess(.operacionExitosa, "Entre en la notificacion en su movil.")
-            
-        }
-                    
-
-    }
-
-    override func buildUI() {
-        super.buildUI()
-        
-        self.class(.transparantBlackBackGround)
-        position(.absolute)
-        height(100.percent)
-        width(100.percent)
-        left(0.px)
-        top(0.px)
-
     }
 
     @DOM override var body: DOM.Content {
@@ -247,10 +258,7 @@ class RemoteORCProcessingView: Div {
                         Div{
                             Div{
 
-                                ForEach(self.$items) { item in
-                                    Div("\(item.units) \(item.code) \(item.description)")
-
-                                }
+                                self.itemContainer
 
                             }
                             .margin(all: 7.px)
