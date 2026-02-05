@@ -225,6 +225,39 @@ class RemoteORCProcessingView: Div {
                     
                     Div{
                         
+                        H2("Datos de la compra")
+                            .color(.white)
+
+                        Div {
+                            H2(self.$idOne.map{ "SERIE: \($0)" })
+                            .color(.white)
+                        }
+                        .width(50.percent)
+                        .float(.left)
+
+                        Div {
+                            H2(self.$idTwo.map{ "FOLIO: \($0)" })
+                            .color(.white)
+                        }
+                        .width(50.percent)
+                        .float(.left)
+
+                        H2("Productos")
+                            .color(.white)
+                        Div{
+                            Div{
+
+                                ForEach(self.$items) { item in
+                                    Div("\(item.units) \(item.code) \(item.description)")
+
+                                }
+
+                            }
+                            .margin(all: 7.px)
+                        }
+                        .class(.roundDarkBlue)
+                        .custom("height", "calc(100% - 90px)")
+
                     }
                     .height(100.percent)
                     .hidden(self.$docIsLoaded.map{ !$0 })
