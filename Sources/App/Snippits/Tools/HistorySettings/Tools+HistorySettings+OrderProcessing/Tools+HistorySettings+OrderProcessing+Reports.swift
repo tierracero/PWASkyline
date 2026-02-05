@@ -1297,6 +1297,10 @@ extension ToolsView.HistorySettings.OrderProcessing {
                 
                 csvString += "\n\(getDate(item.createdAt).formatedLong),\(getDate(item.modifiedAt).formatedLong),\(item.folio),\(createdBy),\(workedBy),\(pendingPickup),\(item.description.replace(from: ",", to: " ")),N/A,\(item.status.description),\(cost.formatMoney.replace(from: ",", to: "")),\(total.formatMoney.replace(from: ",", to: "")),\(revenue.formatMoney.replace(from: ",", to: "")))"
                 
+                item.equpment.forEach { equipment in
+                        csvString += "\n,,,,,,\(equipment.description.replace(from: ",", to: " ")),,,,,"
+                }
+
             }
             
             csvString += "\n,,,,,,,N/A,,\(grandCost.formatMoney.replace(from: ",", to: "")),\(grandTotal.formatMoney.replace(from: ",", to: "")),\((grandTotal - grandCost).formatMoney.replace(from: ",", to: "")))"

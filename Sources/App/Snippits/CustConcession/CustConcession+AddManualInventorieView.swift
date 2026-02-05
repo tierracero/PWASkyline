@@ -299,33 +299,15 @@ extension CustConcessionView {
                         .height(32.px)
                         .float(.right)
                         .onClick {
-                            
-                            // useCamaraForOCR
 
-                            API.custAPIV1.requestMobileCamara( 
-                                type: .useCamaraForOCR,
-                                connid: custCatchChatConnID,
-                                eventid: self.viewId,
-                                relatedid: self.orcScript?.id,
-                                relatedfolio: self.orcScript?.name ?? "",
-                                multipleTakes: false
-                            ) { resp in
-                                
-                                loadingView(show: false)
-                                
-                                guard let resp else {
-                                    showError(.comunicationError, .serverConextionError)
-                                    return
-                                }
-                                
-                                guard resp.status == .ok else {
-                                    showError(.generalError, resp.msg)
-                                    return
-                                }
-                                
-                                showSuccess(.operacionExitosa, "Entre en la notificacion en su movil.")
-                                
+                            guard let orcScript = self.orcScript else {
+                                return
                             }
+
+                            let view = RemoteORCProcessingView(script: orcScript)
+
+                            addToDom(view)
+                            
                         }
 
                     H2("Agregar concesión")
@@ -359,6 +341,7 @@ extension CustConcessionView {
                     .marginLeft(7.px)
                     .float(.left)
                     .onClick{
+                        
                         let view = SelectStoreDepartment { type, levelid, titleText in
                         
                             let view = ManagePOC(
