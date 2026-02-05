@@ -327,7 +327,6 @@ class MessageGrid: Div {
             
             switch event {
             case .requestMobileCamaraComplete:
-                
                 if let payload = self.ws.requestMobileCamaraComplete($0) {
                     
                     guard let note = payload.note else {
@@ -368,7 +367,6 @@ class MessageGrid: Div {
                     }
                     
                 }
-                
             case .requestMobileCamaraFail:
                 if let payload = self.ws.requestMobileCamaraFail($0) {
                     
@@ -393,6 +391,21 @@ class MessageGrid: Div {
                 if let payload = self.ws.requestMobileCamaraProgress($0) {
                     if let view = self.noteViewCatche[payload.eventid] {
                         view.activity = "Cargando \(payload.percent.toString)%"
+                    }
+                }
+            
+            case .requestMobileCamaraCancel:
+                if let payload = self.ws.requestMobileCamaraCancel($0) {
+                    
+                    if  let view = self.noteViewCatche[payload.eventid] {
+                        view.remove()
+                    }
+                    
+                }
+            case .requestMobileCamaraSelected:
+                if let payload = self.ws.requestMobileCamaraSelected($0) {
+                    if let view = self.noteViewCatche[payload.eventid] {
+                        view.activity = "Iniciando Carga.."
                     }
                 }
             case .asyncFileUpload:

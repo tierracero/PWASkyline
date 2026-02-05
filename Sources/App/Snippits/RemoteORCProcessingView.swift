@@ -26,37 +26,146 @@ class RemoteORCProcessingView: Div {
 
     var viewId: UUID = .init()
 
+    let ws = WS()
+    
+    @State var loadState = "📷 Solicitando conección a camara del al app"
+
+    @State var docIsLoaded = false
+
+    /// Mayor document Identifier EG: SERIE
+    @State var idOne: String = ""
+    
+    /// Minor document identifier EG: FOLIO
+    @State var idTwo: String = ""
+    
+    /// Found Prodcts
+    @State var items: [OCRCustomePayloadItem] = []
+
     override func didAddToDOM() {
         super.didAddToDOM()
 
-        /*
 
-                        API.custAPIV1.requestMobileCamara( 
-                            type: .useCamaraForOCR,
-                            connid: custCatchChatConnID,
-                            eventid: self.viewId,
-                            relatedid: self.orcScript?.id,
-                            relatedfolio: "",
-                            multipleTakes: false
-                        ) { resp in
-                            
-                            loadingView(show: false)
-                            
-                            guard let resp else {
-                                showError(.comunicationError, .serverConextionError)
-                                return
-                            }
-                            
-                            guard resp.status == .ok else {
-                                showError(.generalError, resp.msg)
-                                return
-                            }
-                            
-                            showSuccess(.operacionExitosa, "Entre en la notificacion en su movil.")
-                            
-                        }
+        WebApp.current.wsevent.listen {
+            
+            if $0.isEmpty { return }
+            
+            let (event, _) = self.ws.recive($0)
+            
+            guard let event  else {
+                return
+            }
+
+            switch event {
+                case .requestMobileCamaraFail:
+                if let payload = self.ws.requestMobileCamaraFail($0) {
+                                        
+                    guard payload.eventid == self.viewId else {
+                        return
+                    }
+
+                    self.remove()
+                }
+            case .requestMobileCamaraInitiate:
+                if let payload = self.ws.requestMobileCamaraInitiate($0) {
                     
-        */
+                    guard payload.eventid == self.viewId else {
+                        return
+                    }
+
+                    self.loadState = "La camara rmota ha iniciado" 
+
+                }
+            case .requestMobileCamaraProgress:
+            
+                if let payload = self.ws.requestMobileCamaraProgress($0) {
+                    
+                    guard payload.eventid == self.viewId else {
+                        return
+                    }
+
+                    self.loadState = "Cargando \(payload.percent.toString)%"
+
+                }
+
+           case .requestMobileCamaraCancel:
+
+                if let payload = self.ws.requestMobileCamaraCancel($0) {
+
+                    guard payload.eventid == self.viewId else {
+                        return
+                    }
+
+                    self.remove()
+
+                }
+
+           case .requestMobileCamaraSelected:
+
+                if let payload = self.ws.requestMobileCamaraSelected($0) {
+           
+                    guard payload.eventid == self.viewId else {
+                        return
+                    }
+
+                    self.loadState = "Iniciando Carga..." 
+                }
+            case .asyncFileOCR:
+                if let payload = self.ws.asyncFileOCR($0) {
+                    
+                    guard payload.eventId == self.viewId else {
+                        return
+                    }
+
+                    self.docIsLoaded = true
+
+                    
+
+                }
+            case .asyncFileUpdate:
+                if let payload = self.ws.asyncFileUpdate($0) {
+                    
+                    guard payload.eventId == self.viewId else {
+                        return
+                    }
+
+                    self.loadState = payload.message
+
+                }
+           
+            default:
+            break
+            }
+            
+
+        }
+
+        loadingView(show: true)
+
+        API.custAPIV1.requestMobileCamara( 
+            type: .useCamaraForOCR,
+            connid: custCatchChatConnID,
+            eventid: self.viewId,
+            relatedid: self.script.id,
+            relatedfolio: "",
+            multipleTakes: false
+        ) { resp in
+            
+            loadingView(show: false)
+            
+            guard let resp else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+            
+            guard resp.status == .ok else {
+                showError(.generalError, resp.msg)
+                return
+            }
+            
+            showSuccess(.operacionExitosa, "Entre en la notificacion en su movil.")
+            
+        }
+                    
 
     }
 
@@ -71,9 +180,6 @@ class RemoteORCProcessingView: Div {
         top(0.px)
 
     }
-
-    
-
 
     @DOM override var body: DOM.Content {
 
@@ -100,6 +206,29 @@ class RemoteORCProcessingView: Div {
 
                 Div{
 
+                    Div{
+                        Table{
+                            Tr{
+                                Td{
+                                    Span(self.$loadState)
+                                    .color(.white)
+                                }
+                                .verticalAlign(.middle)
+                                .align(.center)
+                            }
+                        }
+                        .height(100.percent)
+                        .width(100.percent)
+                    }
+                    .height(100.percent)
+                    .hidden(self.$docIsLoaded)
+                    
+                    Div{
+                        
+                    }
+                    .height(100.percent)
+                    .hidden(self.$docIsLoaded.map{ !$0 })
+
                 }
                 .custom("height", "calc(100% - 50px)")
                 
@@ -112,8 +241,6 @@ class RemoteORCProcessingView: Div {
             .padding(all: 7.px)
             .height(80.percent)
             .width(80.percent)
-            .left(10.percent)
-            .top(25.px)
         }
         
 

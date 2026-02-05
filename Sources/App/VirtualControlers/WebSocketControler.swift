@@ -298,6 +298,10 @@ func connWebsocket(interval: Double){
                 break
             case .requestMobileScannerComplete:
                 break
+            case .requestMobileCamaraCancel:
+                break
+            case .requestMobileCamaraSelected:
+                break
             case .requestMobileOCRComplete:
                 break
             case .custTaskAuthRequest:

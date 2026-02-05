@@ -2957,6 +2957,27 @@ class ManagePOC: Div {
                 
                 view.loadPercent = "\(payload.percent.toString)%"
                 
+
+            case .requestMobileCamaraCancel:
+                if let payload = self.ws.requestMobileCamaraCancel($0) {
+                    
+                    if  let view = self.imageRefrence[payload.eventid] {
+                        self.imageRefrence.removeValue(forKey: view.viewid)
+                        view.remove()
+                    }
+                    
+                }
+            case .requestMobileCamaraSelected:
+                
+                if let payload = self.ws.requestMobileCamaraSelected($0) {
+
+                    guard let view = self.imageRefrence[payload.eventid] else {
+                        return
+                    }
+                    
+                    view.loadPercent = "Iniciando Carga..."
+                }
+
             case .asyncFileUpload:
                 
                 if let payload = self.ws.asyncFileUpload($0) {

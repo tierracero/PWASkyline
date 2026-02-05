@@ -377,6 +377,10 @@ class ImageWebView: Div {
                 break
             case .requestMobileCamaraProgress:
                 break
+            case .requestMobileCamaraCancel:
+                break
+            case .requestMobileCamaraSelected:
+                break
             case .asyncFileUpload:
                 
                 guard let payload = self.ws.asyncFileUpload($0) else {

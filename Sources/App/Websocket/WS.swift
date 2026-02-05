@@ -52,6 +52,8 @@ public struct WS {
         case requestMobileCamaraFail
         case requestMobileCamaraInitiate
         case requestMobileCamaraProgress
+        case requestMobileCamaraSelected
+        case requestMobileCamaraCancel
 
      
         /// Use camera to scan QR / Barcode

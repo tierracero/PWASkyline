@@ -1991,7 +1991,11 @@ class WorkViewControler: PageController {
                     }
                     
                 }
-                
+            
+            case .requestMobileCamaraCancel:
+                break
+            case .requestMobileCamaraSelected:
+                break
             case .requestMobileOCRComplete:
                 break
             case .custTaskAuthRequest:
