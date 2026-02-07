@@ -300,34 +300,7 @@ extension CustConcessionView {
                         .float(.right)
                         .onClick {
 
-                            guard let orcScript = self.orcScript else {
-                                return
-                            }
-
-                            let view = RemoteORCProcessingView(script: orcScript) { idTagOne, idTagTwo, items in
-
-                                self.docSerie = idTagOne
-
-                                self.docFolio = idTagTwo
-
-                                items.forEach { item in
-
-                                    self.addItem(
-                                        item: .init(
-                                            pocId: item.poc?.id ?? .init(),
-                                            description: item.description,
-                                            units: .units(item.units),
-                                            series: .doesNotContain,
-                                            price: item.price
-                                        ),
-                                        avatar: String
-                                    )
-
-                                }
-
-                            }
-
-                            addToDom(view)
+                            self.requestOCR()
                             
                         }
 
@@ -760,6 +733,38 @@ extension CustConcessionView {
             searchBox.select() 
         }
         
+        func requestOCR() {
+            
+            guard let orcScript =  else {
+                return
+            }
+
+            let view = RemoteORCProcessingView(script: orcScript) { idTagOne, idTagTwo, items in
+
+                self.docSerie = idTagOne
+
+                self.docFolio = idTagTwo
+
+                items.forEach { item in
+
+                    self.addItem(
+                        item: .init(
+                            pocId: item.poc?.id ?? .init(),
+                            description: item.description,
+                            units: .units(item.units),
+                            series: .doesNotContain,
+                            price: item.price
+                        ),
+                        avatar: String
+                    )
+
+                }
+
+            }
+
+            addToDom(view)
+        }
+
         func searchTermAct() {
             
             if searchTerm.isEmpty {
