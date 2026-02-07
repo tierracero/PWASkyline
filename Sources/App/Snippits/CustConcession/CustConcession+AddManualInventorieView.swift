@@ -735,7 +735,7 @@ extension CustConcessionView {
         
         func requestOCR() {
             
-            guard let orcScript =  else {
+            guard let orcScript  else  {
                 return
             }
 
@@ -753,9 +753,9 @@ extension CustConcessionView {
                             description: item.description,
                             units: .units(item.units),
                             series: .doesNotContain,
-                            price: item.price
+                            price: item.poc?.pricea ?? 0
                         ),
-                        avatar: String
+                        avatar: item.poc?.avatar ?? ""
                     )
 
                 }
