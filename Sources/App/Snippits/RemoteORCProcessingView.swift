@@ -13,11 +13,21 @@ class RemoteORCProcessingView: Div {
     override class var name: String { "div" }
 
     let script: OCRCustomeScript
-
+    private var callback: (
+        _ idTagOne: String,
+        _ idTagTwo: String,
+        _ items: [OCRCustomePayloadItem]
+    ) -> Void
     init(
-        script: OCRCustomeScript
+        script: OCRCustomeScript,
+        callback: @escaping(
+            _ idTagOne: String,
+            _ idTagTwo: String,
+            _ items: [OCRCustomePayloadItem]
+        ) -> Void
     ) {
-        self.script  = script 
+        self.script  = script
+        self.callback = callback
     }
 
     required init() {
@@ -38,41 +48,14 @@ class RemoteORCProcessingView: Div {
     /// Minor document identifier EG: FOLIO
     @State var idTwo: String = ""
     
-    /// Found Prodcts
-    @State var items: [OCRCustomePayloadItem] = []
+    @State var itemRefrence: [RemoteORCProcessingItem] = []
 
     lazy var itemContainer = Div()
 
     override func didAddToDOM() {
         super.didAddToDOM()
 
-        loadingView(show: true)
-
-        API.custAPIV1.requestMobileCamara( 
-            type: .useCamaraForOCR,
-            connid: custCatchChatConnID,
-            eventid: self.viewId,
-            relatedid: self.script.id,
-            relatedfolio: "",
-            multipleTakes: false
-        ) { resp in
-            
-            loadingView(show: false)
-            
-            guard let resp else {
-                showError(.comunicationError, .serverConextionError)
-                return
-            }
-            
-            guard resp.status == .ok else {
-                showError(.generalError, resp.msg)
-                return
-            }
-            
-            showSuccess(.operacionExitosa, "Entre en la notificacion en su movil.")
-            
-        }
-                    
+        sendSignal()
 
     }
 
@@ -85,16 +68,6 @@ class RemoteORCProcessingView: Div {
         width(100.percent)
         left(0.px)
         top(0.px)
-
-
-        $items.listen {
-            self.itemContainer.innerHTML = ""
-
-            $0.forEach { item in
-                self.itemContainer.appendChild(Div("\(item.units) \(item.code) \(item.description)"))
-            }
-
-        }
 
         WebApp.current.wsevent.listen {
             
@@ -168,8 +141,12 @@ class RemoteORCProcessingView: Div {
                     }
 
                     self.docIsLoaded = true
-
                     
+                    self.idOne = payload.payload.idOne
+                
+                    self.idTwo = payload.payload.idTwo
+
+                    self.itemRefrence = payload.payload.items.map{ .init(item: $0)}
 
                 }
             case .asyncFileUpdate:
@@ -205,6 +182,27 @@ class RemoteORCProcessingView: Div {
                             self.remove()
                         }
                     
+                    Div{
+
+                        Div{
+                            Img()
+                                .src("/skyline/media/mobileScannerWhite.png")
+                                .marginTop(3.px)
+                                .height(23.px)
+                        }
+                        .marginRight(7.px)
+                        .float(.left)
+
+                        Span("Enviar Señal")
+
+                    }
+                    .marginRight(12.px)
+                    .float(.right)
+                    .class(.uibtn)
+                    .onClick {
+                        self.sendSignal()
+                    }
+
                     H2("Escaneo de Documento | \(self.script.name)")
                         .color(.lightBlueText)
                         .marginLeft(7.px)
@@ -257,9 +255,9 @@ class RemoteORCProcessingView: Div {
                             .color(.white)
                         Div{
                             Div{
-
-                                self.itemContainer
-
+                                ForEach(self.$itemRefrence) { item in
+                                    item
+                                }
                             }
                             .margin(all: 7.px)
                         }
@@ -271,7 +269,17 @@ class RemoteORCProcessingView: Div {
                     .hidden(self.$docIsLoaded.map{ !$0 })
 
                 }
-                .custom("height", "calc(100% - 50px)")
+                .custom("height", "calc(100% - 85px)")
+
+                Div{
+                    Div("Ingresar Productos")
+                    .class( .uibtnLargeOrange )
+                    .onClick {
+                        //
+                        self.addProducts()
+                    }
+                }
+                .align(.right)
                 
             }
             .backgroundColor(.backGroundGraySlate)
@@ -283,8 +291,181 @@ class RemoteORCProcessingView: Div {
             .height(80.percent)
             .width(80.percent)
         }
+    
+    func sendSignal(){
+
+        loadingView(show: true)
+
+        API.custAPIV1.requestMobileCamara( 
+            type: .useCamaraForOCR,
+            connid: custCatchChatConnID,
+            eventid: self.viewId,
+            relatedid: self.script.id,
+            relatedfolio: "",
+            multipleTakes: false
+        ) { resp in
+            
+            loadingView(show: false)
+            
+            guard let resp else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+            
+            guard resp.status == .ok else {
+                showError(.generalError, resp.msg)
+                return
+            }
+            
+            showSuccess(.operacionExitosa, "Entre en la notificacion en su movil.")
+            
+        }
         
+    }
+
+    func addProducts() {
+
+    }
 
 }
     
-    
+extension RemoteORCProcessingView {
+
+    class RemoteORCProcessingItem: Div {
+        
+        override class var name: String { "div" }
+
+        let item: OCRCustomePayloadItem
+
+        @State var poc: CustPOCQuick? = nil
+
+        init(
+            item: OCRCustomePayloadItem
+        ) {
+            self.item  = item
+            self.poc = item.poc
+        }
+
+        required init() {
+            fatalError("init() has not been implemented")
+        }
+
+        override func buildUI() {
+            super.buildUI()
+            custom("width", "calc(100% - 14px)")
+        }
+
+        @DOM override var body: DOM.Content {
+            Div {
+
+                Div (self.item.code)
+                .class(.oneLineText)
+                .minHeight(10.px)
+                .width(150.px)
+                .float(.left)
+
+                Div (self.item.description)
+                .custom("width", "calc(100% - 530px)")
+                .class(.oneLineText)
+                .minHeight(10.px)
+                .float(.left)
+
+                Div (self.item.units.toString)
+                .class(.oneLineText)
+                .minHeight(10.px)
+                .width(90.px)
+                .float(.left)
+
+                Div (self.item.cost.formatMoney)
+                .class(.oneLineText)
+                .minHeight(10.px)
+                .width(90.px)
+                .float(.left)
+
+                Div {
+
+                    Div("Crear Producto")
+                    .class(.oneLineText)
+                    .align(.center)
+                    .class(.uibtn)
+                    .onClick{
+                        
+                        let view = SelectStoreDepartment { type, levelid, titleText in
+                        
+                            let view = ManagePOC(
+                                leveltype: type,
+                                levelid: levelid,
+                                levelName: titleText,
+                                pocid: nil,
+                                titleText: titleText,
+                                quickView: true
+                            ) { pocId, upc, brand, model, name, cost, price, avatar, reqSeries in
+                                self.poc = .init(
+                                    id: pocId,
+                                    name: name,
+                                    pseudoName: name.pseudo,
+                                    upc: upc,
+                                    brand: brand,
+                                    model: model,
+                                    pseudoModel: model.pseudo,
+                                    tagOne: "",
+                                    tagTwo: "",
+                                    tagThree: "",
+                                    fiscCode: "",
+                                    fiscUnit: "",
+                                    cost: cost,
+                                    pricea: price,
+                                    priceb: price,
+                                    pricec: price,
+                                    pricecr: price,
+                                    avatar: avatar,
+                                    inCredit: false,
+                                    reqSeries: reqSeries,
+                                    status: GeneralStatus.active
+                                )
+                            } deleted: { }
+                            
+                            view.upc = self.item.code
+
+                            view.name = self.item.description
+
+                            view.cost = self.item.cost.formatMoney
+
+                            addToDom( view )
+
+                        }
+
+                        addToDom( view )
+                    }
+
+                }
+                .width(100.px)
+                .align(.center)
+                .float(.left)
+                .hidden(self.$poc.map{ $0 == nil })
+                
+                Div{
+                    Img()
+                    .src("skyline/media/icon-checkmark.svg")
+                    .margin(all: 5.px)
+                    .height(42)
+                }
+                .width(100.px)
+                .align(.center)
+                .float(.left)
+                .hidden(self.$poc.map{ $0 != nil })
+                
+                Div().clear(.both)
+
+            }
+            .borderBottom(width: .thin, style: .solid, color: .backGroundLightGraySlate)
+            .fontSize(26.px)
+            .color(.white)
+            
+            Div().height(3.px)
+
+        }
+
+    }
+}
+

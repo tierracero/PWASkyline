@@ -35,7 +35,7 @@ class SelectStoreDepartment: Div {
     required init() {
         fatalError("init() has not been implemented")
     }
-    
+
     @State var activeMode: ActiveMode = .selectDep
     
     @State var titleText: String = "Seleccionar Departamento"
@@ -656,6 +656,7 @@ class SelectStoreDepartment: Div {
 }
 
 extension SelectStoreDepartment {
+
 
     enum ActiveMode: String, Codable {
         case selectDep

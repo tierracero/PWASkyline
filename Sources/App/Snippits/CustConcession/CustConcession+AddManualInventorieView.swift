@@ -304,7 +304,28 @@ extension CustConcessionView {
                                 return
                             }
 
-                            let view = RemoteORCProcessingView(script: orcScript)
+                            let view = RemoteORCProcessingView(script: orcScript) { idTagOne, idTagTwo, items in
+
+                                self.docSerie = idTagOne
+
+                                self.docFolio = idTagTwo
+
+                                items.forEach { item in
+
+                                    self.addItem(
+                                        item: .init(
+                                            pocId: item.poc?.id ?? .init(),
+                                            description: item.description,
+                                            units: .units(item.units),
+                                            series: .doesNotContain,
+                                            price: item.price
+                                        ),
+                                        avatar: String
+                                    )
+
+                                }
+
+                            }
 
                             addToDom(view)
                             
@@ -833,8 +854,6 @@ extension CustConcessionView {
             }
 
             let items: [CreateManualProductObject] = self.kart.map{  $0.value.item }
-
-            
 
             addToDom(ConfirmationView(
                 type: .yesNo,
