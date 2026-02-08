@@ -164,7 +164,6 @@ class RemoteORCProcessingView: Div {
             break
             }
             
-
         }
 
     }
@@ -324,6 +323,18 @@ class RemoteORCProcessingView: Div {
     }
 
     func addProducts() {
+
+        self.callback( idOne, idTwo, itemRefrence.map{
+            .init(
+                code: $0.item.code,
+                description: $0.item.description,
+                 cost: $0.item.cost,
+                 units: $0.item.units,
+                 poc: $0.poc
+            )
+        })
+
+        self.remove()
 
     }
 
