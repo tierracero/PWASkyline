@@ -817,7 +817,6 @@ class ToolReciveSendInventory: Div {
                         .fontSize(18.px)
                     
                 }
-                .hidden(self.$barcodes.map{ $0.isEmpty })
                 .marginRight(18.px)
                 .marginTop(3.px)
                 .class(.uibtn)
@@ -1086,7 +1085,6 @@ class ToolReciveSendInventory: Div {
                         .fontSize(18.px)
                     
                 }
-                .hidden(self.$barcodes.map{ $0.isEmpty })
                 .marginRight(18.px)
                 .marginTop(3.px)
                 .class(.uibtn)
@@ -1337,7 +1335,7 @@ class ToolReciveSendInventory: Div {
                 H2("Ingresar inventario")
                     .color(.lightBlueText)
                     .float(.left)
-                
+            
                 H2(self.$manualPurchaseManager.map{ ($0?.folio ?? "").isEmpty ? "" : "Manual \(($0?.folio ?? "")) \(($0?.name ?? ""))" })
                     .hidden(self.$manualPurchaseManager.map{ ($0?.folio ?? "").isEmpty })
                     .marginLeft(7.px)

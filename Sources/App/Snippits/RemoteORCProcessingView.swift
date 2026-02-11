@@ -146,7 +146,18 @@ class RemoteORCProcessingView: Div {
                 
                     self.idTwo = payload.payload.idTwo
 
-                    self.itemRefrence = payload.payload.items.map{ .init(item: $0)}
+                    self.itemRefrence = payload.payload.items.map{ item in
+                        
+                        return .init(item: item) { view in
+
+                            if let index = self.itemRefrence.firstIndex(of: view) {
+                                self.itemRefrence.remove(at: index)
+                            }
+
+                        }
+                    }
+
+                    self.loadState = ""
 
                 }
             case .asyncFileUpdate:
@@ -201,6 +212,14 @@ class RemoteORCProcessingView: Div {
                     .onClick {
                         self.sendSignal()
                     }
+
+                    Div(self.$loadState)
+                    .hidden(self.$docIsLoaded.map{ !$0 })
+                    .marginRight(12.px)
+                    .fontSize(23.px)
+                    .color(.white)
+                    .float(.right)
+
 
                     H2("Escaneo de Documento | \(self.script.name)")
                         .color(.lightBlueText)
@@ -348,18 +367,44 @@ extension RemoteORCProcessingView {
 
         let item: OCRCustomePayloadItem
 
+        @State var units: String
+
+        @State var cost: String
+
         @State var poc: CustPOCQuick? = nil
 
+        private var removeCallBack: (
+            _ view: RemoteORCProcessingItem
+        ) -> Void
+
         init(
-            item: OCRCustomePayloadItem
+            item: OCRCustomePayloadItem,
+            removeCallBack: @escaping (
+                _ view: RemoteORCProcessingItem
+            ) -> Void
         ) {
             self.item  = item
+            self.removeCallBack = removeCallBack
+            self.units = item.units.toString
+            self.cost = item.cost.formatMoney
             self.poc = item.poc
         }
 
         required init() {
             fatalError("init() has not been implemented")
         }
+
+         lazy var unitsField = InputText(self.$units)
+        .custom("width", "calc(100% - 14px)")
+        .class(.textFiledLightLarge)
+        .autocomplete(.off)
+        .placeholder("0")
+        
+         lazy var costField = InputText(self.$cost)
+        .custom("width", "calc(100% - 14px)")
+        .class(.textFiledLightLarge)
+        .autocomplete(.off)
+        .placeholder("0.00")
 
         override func buildUI() {
             super.buildUI()
@@ -369,6 +414,22 @@ extension RemoteORCProcessingView {
         @DOM override var body: DOM.Content {
             Div {
 
+
+                Div {
+                     Img()
+                        .src("skyline/media/cross.png")
+                        .margin(all: 5.px)
+                        .height(42)
+                        .onClick {
+                            self.removeCallBack(self)
+                        }
+                }
+                .class(.oneLineText)
+                .minHeight(10.px)
+                .align(.center)
+                .width(50.px)
+                .float(.left)
+
                 Div (self.item.code)
                 .class(.oneLineText)
                 .minHeight(10.px)
@@ -376,18 +437,26 @@ extension RemoteORCProcessingView {
                 .float(.left)
 
                 Div (self.item.description)
-                .custom("width", "calc(100% - 530px)")
+                .custom("width", "calc(100% - 480px)")
                 .class(.oneLineText)
                 .minHeight(10.px)
                 .float(.left)
 
-                Div (self.item.units.toString)
+                Div {
+                    Span("Unidades:")
+                    .color(.gray)
+                    self.unitsField
+                }
                 .class(.oneLineText)
                 .minHeight(10.px)
                 .width(90.px)
                 .float(.left)
 
-                Div (self.item.cost.formatMoney)
+                Div {
+                    Span("Costo:")
+                    .color(.gray)
+                    self.costField
+                }
                 .class(.oneLineText)
                 .minHeight(10.px)
                 .width(90.px)
@@ -395,7 +464,8 @@ extension RemoteORCProcessingView {
 
                 Div {
 
-                    Div("Crear Producto")
+                    Div("Crear\nProducto")
+                    .fontSize(16.px)
                     .class(.oneLineText)
                     .align(.center)
                     .class(.uibtn)
@@ -453,7 +523,7 @@ extension RemoteORCProcessingView {
                 .width(100.px)
                 .align(.center)
                 .float(.left)
-                .hidden(self.$poc.map{ $0 == nil })
+                .hidden(self.$poc.map{ $0 != nil })
                 
                 Div{
                     Img()
@@ -464,7 +534,7 @@ extension RemoteORCProcessingView {
                 .width(100.px)
                 .align(.center)
                 .float(.left)
-                .hidden(self.$poc.map{ $0 != nil })
+                .hidden(self.$poc.map{ $0 == nil })
                 
                 Div().clear(.both)
 
