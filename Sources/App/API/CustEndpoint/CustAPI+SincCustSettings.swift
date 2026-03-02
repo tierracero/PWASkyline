@@ -18,8 +18,8 @@ extension CustComponents {
 			version,
 			"sincCustSettings",
 			EmptyPayload()
-		) { payload in
-			guard let data = payload else{
+		) { data in
+			guard let data  else{
 				callback(nil)
 				return
 			}
@@ -28,6 +28,10 @@ extension CustComponents {
 				callback(resp)
 			}
 			catch{
+
+				print("🔴. errror")
+
+				print(error)
 				callback(nil)
 			}
 		}

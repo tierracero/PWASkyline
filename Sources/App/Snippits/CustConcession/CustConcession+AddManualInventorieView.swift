@@ -264,10 +264,6 @@ extension CustConcessionView {
            WebApp.shared.skyline.orcScripts.forEach { script in 
                 //useCamaraForOCR
 
-                print(script.relType)
-                print(script.relId)
-                print(vendor.id)
-
                 if script.relType == .vendor && script.relId == vendor.id {
                     orcScript = script
                 }

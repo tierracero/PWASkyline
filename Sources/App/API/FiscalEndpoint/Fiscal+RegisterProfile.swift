@@ -18,29 +18,24 @@ extension FiscalComponents {
         pack: String,
         rfc: String,
         razon: String,
-        sat_web_pass: String,
+        satPass: String,
         nomComercial: String,
-        /// 612 Personas Físicas con Actividades Empresariales y Profesionales...
         regimen: FiscalRegimens,
         zipCode: String,
-        ///ingreso I, egreso E , nomina N, pago P, traslado T
         tipoDeFact: FiscalType,
-        ///P01 porDefinir, G03 gastosEnGeneral, P01 porDefinir...
         usoDeFact: FiscalUse,
         tipoDePago: FiscalPaymentCodes,
-        ///Ejemplo: efectivo, chequeNominativo, transferenciaElectronicaDeFondos ...
         methDePago: FiscalPaymentMeths,
-        /// MXN, USD, EUR, CAD ...
         tipoDeMoneda: FIDocumentCurrency,
         fiscUnit: String,
         fiscCode: String,
-        fiel_sat_cer: String,
-        fiel_sat_key: String,
-        fiel_sat_pass: String,
-        /// azul, rojo, naranja, verde
-        theme: FIColors,
+        cerType: CerType,
+        cerFile: String,
+        keyFile: String,
+        passFile: String,
         serie: String,
         folio: String,
+        theme: FIColors,
         logo: String,
         callback: @escaping ( (_ resp: APIResponseGeneric<FiscalComponents.Profile>?) -> () )
     ) {
@@ -56,7 +51,7 @@ extension FiscalComponents {
                 pack: pack,
                 rfc: rfc,
                 razon: razon,
-                sat_web_pass: sat_web_pass,
+                satPass: satPass,
                 nomComercial: nomComercial,
                 regimen: regimen,
                 zipCode: zipCode,
@@ -67,17 +62,18 @@ extension FiscalComponents {
                 tipoDeMoneda: tipoDeMoneda,
                 fiscUnit: fiscUnit,
                 fiscCode: fiscCode,
-                fiel_sat_cer: fiel_sat_cer,
-                fiel_sat_key: fiel_sat_key,
-                fiel_sat_pass: fiel_sat_pass,
-                theme: theme,
+                cerType: cerType,
+                cerFile: cerFile,
+                keyFile: keyFile,
+                passFile: passFile,
                 serie: serie,
                 folio: folio,
+                theme: theme,
                 logo: logo
             )
-        ) { payload in
+        ) { data in
             
-            guard let data = payload else{
+            guard let data else {
                 callback(nil)
                 return
             }

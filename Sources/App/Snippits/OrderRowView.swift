@@ -35,11 +35,11 @@ class OrderRowView: Div {
     
     var data: CustOrderLoadFolios
     
-    private var callback: ((_ action: OrderAction?) -> ())
+    private var callback: () -> Void
 
     init(
         data: CustOrderLoadFolios,
-        callback: @escaping ((_ action: OrderAction?) -> ())
+        callback: @escaping () -> Void
     ) {
         self.data = data
         self.callback = callback
@@ -195,7 +195,7 @@ class OrderRowView: Div {
         */
 
         onClick {
-            self.callback(.open)
+            self.callback()
         }
         
         if data.folio.contains("-") {

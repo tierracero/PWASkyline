@@ -1162,118 +1162,84 @@ public class AccoutOverview: Div {
     }
     
     func orderRowView(_ data: CustOrderLoadFolios) -> Div {
-        OrderRowView(data: data, callback: { action in
-            if let action = action {
-                switch action {
-                case .open:
-                    
-                    /// Search If their is a acctid refrence
-                    if let accountid = minViewOrderAccountRefrence[data.id] {
-                        /// Search if AccoutOverview is available
-                        if let accoutOverview = minViewAcctRefrence[accountid] {
-                            if accoutOverview.order?.id == data.id {
-                                /// The current order is lodad only show
-                                /// remove small button
-                                minViewDivRefrence[accountid]?.remove()
-                                ///  remove small button refrence
-                                minViewDivRefrence.removeValue(forKey: accountid)
-                                /// Show AccoutOverview
-                                accoutOverview.display(.block)
-                                return
-                            }
-                            else{
-                                /// Load Order
-                                /// remove small button
-                                minViewDivRefrence[accountid]?.remove()
-                                ///  remove small button refrence
-                                minViewDivRefrence.removeValue(forKey: accountid)
-                                /// Show AccoutOverview
-                                accoutOverview.display(.block)
-                                
-                                accoutOverview.loadOrder(id: data.id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
-                                    accoutOverview.loadOrder(
-                                        account: account,
-                                        order: order,
-                                        notes: notes,
-                                        payments: payments,
-                                        charges: charges,
-                                        pocs: pocs,
-                                        files: files,
-                                        equipments: equipments,
-                                        rentals: rentals,
-                                        transferOrder: transferOrder,
-                                        orderHighPriorityNote: orderHighPriorityNote,
-                                        accountHighPriorityNote: accountHighPriorityNote,
-                                        tasks: tasks,
-                                        orderRoute: route,
-                                        loadFromCatch: loadFromCatch
-                                    )
-                                    
-                                    accoutOverview.load = .order
-                                    
-                                }
-                                return
-                            }
-                        }
+        OrderRowView(data: data) {
+    
+            /// Search If their is a acctid refrence
+            if let accountid = minViewOrderAccountRefrence[data.id] {
+                /// Search if AccoutOverview is available
+                if let accoutOverview = minViewAcctRefrence[accountid] {
+                    if accoutOverview.order?.id == data.id {
+                        /// The current order is lodad only show
+                        /// remove small button
+                        minViewDivRefrence[accountid]?.remove()
+                        ///  remove small button refrence
+                        minViewDivRefrence.removeValue(forKey: accountid)
+                        /// Show AccoutOverview
+                        accoutOverview.display(.block)
+                        return
                     }
-                    
-                    self.loadOrder(id: data.id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
-                        let accoutOverview = AccoutOverview (
-                            id: .id(order.custAcct)
-                        )
-                        accoutOverview.loadOrder(
-                            account: account,
-                            order: order,
-                            notes: notes,
-                            payments: payments,
-                            charges: charges,
-                            pocs: pocs,
-                            files: files,
-                            equipments: equipments,
-                            rentals: rentals,
-                            transferOrder: transferOrder,
-                            orderHighPriorityNote: orderHighPriorityNote,
-                            accountHighPriorityNote: accountHighPriorityNote,
-                            tasks: tasks,
-                            orderRoute: route,
-                            loadFromCatch: loadFromCatch
-                        )
-                        self.appendChild(accoutOverview)
-                    }
-                case .print:
-                    self.loadOrder(id: data.id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
-                        let printBody = OrderPrintEngine(
-                            order: order,
-                            notes: notes,
-                            payments: payments,
-                            charges: charges,
-                            pocs: pocs,
-                            files: files,
-                            equipments: equipments,
-                            rentals: rentals,
-                            transferOrder: transferOrder
-                        ).innerHTML
-                        _ = JSObject.global.renderPrint!(custCatchUrl, order.folio, order.deepLinkCode, String(order.mobile.suffix(4)), printBody)
-                    }
-                case .alert:
-                    break
-                case .addNote:
-                    self.appendChild(
-                        QuickMessageView(style: .light, order: data, notes: [], callback: { note in
+                    else{
+                        /// Load Order
+                        /// remove small button
+                        minViewDivRefrence[accountid]?.remove()
+                        ///  remove small button refrence
+                        minViewDivRefrence.removeValue(forKey: accountid)
+                        /// Show AccoutOverview
+                        accoutOverview.display(.block)
+                        
+                        accoutOverview.loadOrder(id: data.id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                            accoutOverview.loadOrder(
+                                account: account,
+                                order: order,
+                                notes: notes,
+                                payments: payments,
+                                charges: charges,
+                                pocs: pocs,
+                                files: files,
+                                equipments: equipments,
+                                rentals: rentals,
+                                transferOrder: transferOrder,
+                                orderHighPriorityNote: orderHighPriorityNote,
+                                accountHighPriorityNote: accountHighPriorityNote,
+                                tasks: tasks,
+                                orderRoute: route,
+                                loadFromCatch: loadFromCatch
+                            )
                             
-                        })
-                    )
-                case .date:
-                    break
-                case .adopt:
-                    break
-                case .finalize:
-                    break
-                case .cancel:
-                    break
+                            accoutOverview.load = .order
+                            
+                        }
+                        return
+                    }
                 }
             }
-        })
+            
+            self.loadOrder(id: data.id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                let accoutOverview = AccoutOverview (
+                    id: .id(order.custAcct)
+                )
+                accoutOverview.loadOrder(
+                    account: account,
+                    order: order,
+                    notes: notes,
+                    payments: payments,
+                    charges: charges,
+                    pocs: pocs,
+                    files: files,
+                    equipments: equipments,
+                    rentals: rentals,
+                    transferOrder: transferOrder,
+                    orderHighPriorityNote: orderHighPriorityNote,
+                    accountHighPriorityNote: accountHighPriorityNote,
+                    tasks: tasks,
+                    orderRoute: route,
+                    loadFromCatch: loadFromCatch
+                )
+                self.appendChild(accoutOverview)
+            }
+        
+
+        }
     }
 
     func hideView(){

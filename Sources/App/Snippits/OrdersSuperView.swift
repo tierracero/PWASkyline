@@ -250,12 +250,8 @@ class OrdersSuperView: Div {
     
     func orderRowView(_ data: CustOrderLoadFolios) -> Div {
         
-        OrderRowView(data: data, callback: { action in
-            
-            if let action {
-                switch action {
-                case .open:
-                    
+        OrderRowView(data: data) {
+
                     /// Search If their is a acctid refrence
                     if let accountid = minViewOrderAccountRefrence[data.id] {
                         
@@ -343,43 +339,8 @@ class OrdersSuperView: Div {
                         
                         self.appendChild(accoutOverview)
                     }
-                case .print:
-                    self.loadFolio(orderid: data.id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
-                        
-                        let printBody = OrderPrintEngine(
-                            order: order,
-                            notes: notes,
-                            payments: payments,
-                            charges: charges,
-                            pocs: pocs,
-                            files: files,
-                            equipments: equipments,
-                            rentals: rentals,
-                            transferOrder: transferOrder
-                        ).innerHTML
-                        
-                        _ = JSObject.global.renderPrint!(custCatchUrl, order.folio, order.deepLinkCode, String(order.mobile.suffix(4)), printBody)
-                    }
-                case .alert:
-                    break
-                case .addNote:
-                    self.appendChild(
-                        QuickMessageView(style: .light, order: data, notes: [], callback: { note in
-                            
-                        })
-                    )
-                case .date:
-                    break
-                case .adopt:
-                    break
-                case .finalize:
-                    break
-                case .cancel:
-                    break
-                }
-            }
-            
-        })
+   
+        }
     }
     
     func loadFolio(

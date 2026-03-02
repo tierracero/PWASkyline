@@ -84,6 +84,10 @@ class ManageFiscalProfile: Div {
     /// Default Fiscal Code
     @State var fiscCode: String = ""
     
+    @State var cerType: API.fiscalV1.CerType? = nil
+
+    @State var cerTypeListener = ""
+
     @State var fielCer: String? = nil
     
     @State var fielKey: String? = nil
@@ -108,6 +112,11 @@ class ManageFiscalProfile: Div {
     
 //    @State var eMail: String = ""
     lazy var eMailSelect = Select(self.$eMail)
+        .custom("width","calc(100% - 18px)")
+        .class(.textFiledBlackDark)
+        .height(31.px)
+
+    lazy var cerTypeSelect = Select(self.$cerTypeListener)
         .custom("width","calc(100% - 18px)")
         .class(.textFiledBlackDark)
         .height(31.px)
@@ -223,7 +232,6 @@ class ManageFiscalProfile: Div {
         .onClick {
             self.logoFile.click()
         }
-    
     
     lazy var serieField = InputText(self.$serie)
         .placeholder("Serie de Factura")
@@ -437,16 +445,22 @@ class ManageFiscalProfile: Div {
             
             Div().class(.clear).marginTop(3.px)
             
-            H2("Archivos FIEL")
-                .color(.white)
-            
+            Div{
+
+                self.cerTypeSelect
+                .float(.right)
+
+                H2("Archivos")
+                    .color(.white)
+            }
+
             Div().class(.clear)
             
             Div{
                 
                 Div{
                     Label{
-                        Span("FIEL KEY")
+                        Span("Archivo KEY")
                             .color(.lightGray)
                         Br()
                         Span(self.$keyUploadPercent)
@@ -476,7 +490,7 @@ class ManageFiscalProfile: Div {
                 Div{
                     
                     Label{
-                        Span("FIEL CER")
+                        Span("Archivo CER")
                             .color(.lightGray)
                         
                         Br()
@@ -549,13 +563,23 @@ class ManageFiscalProfile: Div {
     
     override func buildUI() {
         super.buildUI()
+
+        eMail = userCathByUUID.first?.value.username ?? ""
         
-        self.eMail = userCathByUUID.first?.value.username ?? ""
+        cerTypeSelect.appendChild(Option("Seleccione Tipo de Archivo").value(""))
+
+        API.fiscalV1.CerType.allCases.forEach { item in 
+            cerTypeSelect.appendChild(Option(item.description).value(item.rawValue))
+        }
         
         userCathByUUID.forEach { id, user in
             eMailSelect.appendChild(Option(user.username).value(user.username))
         }
         
+        $cerTypeListener.listen  {
+            self.cerType = API.fiscalV1.CerType(rawValue: $0)
+        }
+
         $regimenListener.listen {
             self.regimen = FiscalRegimens(rawValue: $0)
         }
@@ -794,7 +818,7 @@ class ManageFiscalProfile: Div {
             key: custCatchKey,
             token: custCatchToken,
             tcon: .web, 
-            applicationType: .customer
+            applicationType: custCatchAccountType.sessionType
         )){
             
             if let str = String(data: jsonData, encoding: .utf8) {
@@ -891,18 +915,21 @@ class ManageFiscalProfile: Div {
             fiscCodeField.fiscCodeField.select()
             return
         }
+
+        guard let cerType else {
+            showError(.requiredField, .requierdValid("Seleccione tipo de certificado"))
+            return
+        }
         
         guard let fielCer else {
             showError(.requiredField, .requierdValid("Ingrese archivo .cer"))
             return
         }
         
-        
         guard let fielKey else {
             showError(.requiredField, .requierdValid("Ingrese archivo .key"))
             return
         }
-        
         
         guard !fielPass.isEmpty else {
             showError(.requiredField, .requierdValid("Ingerse contraseña FIEL"))
@@ -922,7 +949,7 @@ class ManageFiscalProfile: Div {
             pack: pack,
             rfc: rfc,
             razon: razon,
-            sat_web_pass: sat_web_pass,
+            satPass: sat_web_pass,
             nomComercial: nomComercial,
             regimen: regimen,
             zipCode: zipCode,
@@ -933,12 +960,13 @@ class ManageFiscalProfile: Div {
             tipoDeMoneda: tipoDeMoneda,
             fiscUnit: fiscUnit,
             fiscCode: fiscCode,
-            fiel_sat_cer: fielCer,
-            fiel_sat_key: fielKey,
-            fiel_sat_pass: fielPass,
-            theme: theme,
+            cerType: cerType,
+            cerFile: fielCer,
+            keyFile: fielKey,
+            passFile: fielPass,
             serie: serie,
             folio: folio,
+            theme: theme,
             logo: logo ?? ""
         ) { resp in
             
@@ -973,3 +1001,5 @@ extension ManageFiscalProfile {
         case logo
     }
 }
+// 'eMail:username:password:pack:rfc:razon:satPass:nomComercial:regimen:zipCode:tipoDeFact:usoDeFact:tipoDePago:methDePago:tipoDeMoneda:fiscUnit:fiscCode:cerType:cerFile:keyFile:passFile:theme:serie:folio:logo:_:', expected
+// 'eMail:username:password:pack:rfc:razon:satPass:nomComercial:regimen:zipCode:tipoDeFact:usoDeFact:tipoDePago:methDePago:tipoDeMoneda:fiscUnit:fiscCode:cerType:cerFile:keyFile:passFile:serie:folio:theme:logo:callback:')

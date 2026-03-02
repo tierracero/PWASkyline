@@ -294,7 +294,7 @@ extension ToolsView.SystemSettings {
                 key: custCatchKey,
                 token: custCatchToken,
                 tcon: .web,
-                applicationType: .customer
+                applicationType: custCatchAccountType.sessionType
             ))
 
             let token = data.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0))
@@ -348,7 +348,7 @@ extension ToolsView.SystemSettings {
             key: custCatchKey,
             token: custCatchToken,
             tcon: .web,
-            applicationType: .customer
+            applicationType: custCatchAccountType.sessionType
         )){
             if let str = String(data: jsonData, encoding: .utf8) {
                 let utf8str = str.data(using: .utf8)

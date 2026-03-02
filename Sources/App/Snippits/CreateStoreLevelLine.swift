@@ -509,7 +509,7 @@ class CreateStoreLevelLine: Div {
             key: custCatchKey,
             token: custCatchToken,
             tcon: .web, 
-            applicationType: .customer
+            applicationType: custCatchAccountType.sessionType
         )){
             if let str = String(data: jsonData, encoding: .utf8) {
                 let utf8str = str.data(using: .utf8)

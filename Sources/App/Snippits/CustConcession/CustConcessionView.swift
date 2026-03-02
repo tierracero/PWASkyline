@@ -90,6 +90,8 @@ class CustConcessionView: Div {
 
     lazy var bodegaContainer = Div()
         
+    lazy var itemsInView = Div()
+
     @State var sideView: SideView = .incomingView
     
     @State var sideViewSelectIsHiden: Bool = true
@@ -395,14 +397,11 @@ class CustConcessionView: Div {
                         Div{
                             
                             Div{
+
                                 Table().noResult(label: "🗳️ No existen conseciones")
                                     .hidden(self.$inItems.map{ !$0.isEmpty })
                                 
-                                ForEach(self.$inItems) { item in
-
-                                    self.outItemDiv(item)
-                                   
-                                }
+                                self.itemsInView
                                 .hidden(self.$inItems.map{ $0.isEmpty })
                                 
                             }
@@ -706,6 +705,15 @@ class CustConcessionView: Div {
             }
         }
 
+        $inItems.listen {
+
+            self.itemsInView.innerHTML = ""
+
+            self.asyncAddInItemsDocs($0)
+
+        }
+
+
         SideView.allCases.forEach { item in
         
             let view = Div {
@@ -731,6 +739,8 @@ class CustConcessionView: Div {
         
         self.itemsRefrence = Dictionary(uniqueKeysWithValues: items.map{ value in ( value.id, value ) })
         
+        print("🚧  C \(getNow())")
+
         items.forEach { item in
 
             if let bodegaId = item.alocatedTo {
@@ -755,6 +765,9 @@ class CustConcessionView: Div {
         hasAnyActiveElement = ( !items.isEmpty || !bodegas.isEmpty)
         
         // MARK:  porceess CURRENT INVENTORIE items
+
+        print("🚧  D \(getNow())")
+
         self.processRefrenceItems()
 
         // MARK: process DOCUMENTS
@@ -901,8 +914,117 @@ class CustConcessionView: Div {
         
         self.productContainer.innerHTML = ""
         
-        itemsPOCRefrence.forEach { pocId, items in
+        asyncAddItem(rows: self.itemsPOCRefrence)
+
+        guard firstLoad else {
+            return
+        }
+
+        bodegas.forEach{ bodega in 
+
+            /*
+            consetionId: UUID,
+            consetionName: String,
+            bodega: CustStoreBodegasQuick,
+            bodegas: [CustStoreBodegasQuick],
+            pocs: [CustPOCQuick],
+            */
+
+            let view = BodegaView(
+                consetionId: self.account.id,
+                consetionName: "Conseccion \(self.account.businessName)",
+                bodega: bodega,
+                bodegas: self.bodegas,
+                pocs: self.pocs
+            ) { items, alocatedTo in
+
+                print("⚠️ BodegaView Move ")
+
+                if let alocatedTo {
+
+                    print("alocatedTo \(alocatedTo.uuid)")
+
+                    self.bodegaRefrence[alocatedTo]?.takeInItems(items: items)
+
+                }
+                else {
+
+                    print("MAIN SECCTION")
+
+                    self.addItemsToConcession(items: items)
+                    
+                }
+                                                
+            }
+
+            bodegaContainer.appendChild(view)
+
+            bodegaRefrence[bodega.id] = view
             
+        }
+    
+        // var bodegaRefrence: [ UUID : BodegaView ] = [:]
+        itemsInBodegas.forEach { bodegaId, items in
+
+            guard let view = bodegaRefrence[bodegaId] else {
+                showError(.generalError, "No se puco localizr una de las bodegas, refresque e eintente de nuevo. Si el problema persiste contacte a soporte.")
+                return
+            }
+
+            view.takeInItems(items: items)
+
+        }
+
+    }
+     
+    func asyncAddInItemsDocs(_ items: [ControlManager]) {
+
+        if items.isEmpty { //  || loadId != loadingSessionId 
+            return
+        }
+
+        var items = items
+
+        guard let item = items.first else {
+            asyncAddInItemsDocs(items)
+            return
+        }
+
+        items.removeFirst()
+
+        let view = outItemDiv(item)
+
+        view.filter(.opacity(0))
+
+        itemsInView.appendChild(view)
+
+        view.fadeIn()
+
+        Dispatch.asyncAfter(0.07) {
+            self.asyncAddInItemsDocs(items)
+        }
+        
+    }
+
+    func asyncAddItem(rows: [UUID: [CustPOCInventorySoldObject]] ) {
+        
+        if rows.isEmpty { //  || loadId != loadingSessionId 
+            return
+        }
+
+        var rows = rows
+
+        guard let row = rows.first else {
+            asyncAddItem(rows: rows)
+            return
+        }
+
+        rows.removeValue(forKey: row.key)
+
+        let pocId = row.key
+
+        let items = row.value
+
             let poc = self.pocRefrence[pocId]
             
             var avatar = "/skyline/media/skylineapp.svg"
@@ -936,7 +1058,7 @@ class CustConcessionView: Div {
                 self.calculateSelectedItems()
             }
             
-            let row: Tr = Tr {
+            let item: Tr = Tr {
                 Td{
 
                     InputText($itemsCount)
@@ -1068,71 +1190,24 @@ class CustConcessionView: Div {
                 return true
             })
 
-            self.productContainer.appendChild(row)
+            item.filter(.opacity(0))
+
+            self.productContainer.appendChild(item)
             
+
+            item.fadeIn()
+
+        Dispatch.asyncAfter(0.07) {
+            self.asyncAddItem(rows: rows)
         }
 
-        guard firstLoad else {
-            return
-        }
 
-        bodegas.forEach{ bodega in 
 
-            /*
-            consetionId: UUID,
-            consetionName: String,
-            bodega: CustStoreBodegasQuick,
-            bodegas: [CustStoreBodegasQuick],
-            pocs: [CustPOCQuick],
-            */
 
-            let view = BodegaView(
-                consetionId: self.account.id,
-                consetionName: "Conseccion \(self.account.businessName)",
-                bodega: bodega,
-                bodegas: self.bodegas,
-                pocs: self.pocs
-            ) { items, alocatedTo in
 
-                print("⚠️ BodegaView Move ")
-
-                if let alocatedTo {
-
-                    print("alocatedTo \(alocatedTo.uuid)")
-
-                    self.bodegaRefrence[alocatedTo]?.takeInItems(items: items)
-
-                }
-                else {
-
-                    print("MAIN SECCTION")
-
-                    self.addItemsToConcession(items: items)
-                    
-                }
-                                                
-            }
-
-            bodegaContainer.appendChild(view)
-
-            bodegaRefrence[bodega.id] = view
-            
-        }
-    
-        // var bodegaRefrence: [ UUID : BodegaView ] = [:]
-        itemsInBodegas.forEach { bodegaId, items in
-
-            guard let view = bodegaRefrence[bodegaId] else {
-                showError(.generalError, "No se puco localizr una de las bodegas, refresque e eintente de nuevo. Si el problema persiste contacte a soporte.")
-                return
-            }
-
-            view.takeInItems(items: items)
-
-        }
 
     }
-    
+
     func calculateSelectedItems(){
         
         var soldPrices: [Int64] = []

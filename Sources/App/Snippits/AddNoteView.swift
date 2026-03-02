@@ -151,10 +151,12 @@ class AddNoteView: Div {
     func addNote(){
         
         guard let noteType = NoteTypes(rawValue: noteTypeListener) else {
+            print("🚧 chose note type")
             return
         }
         
         if message.isEmpty {
+            print("🚧 message is emprty")
             return
         }
         

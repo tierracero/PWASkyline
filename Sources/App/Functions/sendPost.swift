@@ -20,7 +20,7 @@ public func sendPost<T: Codable> (
     callback: @escaping ( (_ payload: Foundation.Data?) -> () )
 ) {
     
-    var server = "https://intratc.co/api"
+    var server = "https://api.tierracero.co"
     
     if WebApp.shared.window.location.hostname == "localhost" || WebApp.shared.window.location.hostname == localTestIp {
         switch developmentMode {
@@ -33,9 +33,6 @@ public func sendPost<T: Codable> (
         }
     }
 
-    
-
-    
     var url = "\(server)/\(route.rawValue)"
     
     if let version {
@@ -96,7 +93,7 @@ public func sendPost<T: Codable> (
 	callback: @escaping ( (_ payload: Foundation.Data?) -> () )
 ) {
     
-    var server = "https://intratc.co/api"
+    var server = "https://api.tierracero.co"
     
     switch developmentMode {
         case .local:
@@ -157,7 +154,7 @@ public func sendPost<T: Codable> (
         key: custCatchKey,
         token: custCatchToken,
         tcon: .web, 
-        applicationType: .customer
+        applicationType: custCatchAccountType.sessionType
     )){
         if let str = String(data: jsonData, encoding: .utf8){
             let utf8str = str.data(using: .utf8)
@@ -236,7 +233,7 @@ public func sendPost<T: Codable> (
         key: custCatchKey,
         token: custCatchToken,
         tcon: .web, 
-        applicationType: .customer
+        applicationType: custCatchAccountType.sessionType
     )){
         if let str = String(data: jsonData, encoding: .utf8){
             let utf8str = str.data(using: .utf8)

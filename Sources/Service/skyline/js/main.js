@@ -2403,6 +2403,7 @@ var strokeColors = [
 Array.prototype.random = function () {
   return this[Math.floor((Math.random()*this.length))];
 }
+
 function loadAppleMapUsers(mapId, items, updateCoordinate){
     
     var items = JSON.parse(items);
@@ -2442,12 +2443,24 @@ function loadAppleMapUsers(mapId, items, updateCoordinate){
             var location = userLocations[j]
             
             console.log("🟢 🟢  strokeColor " + strokeColor)
-            
+            console.log(`location.createdAt ${location.createdAt}`)
+
+
             if (j == 0) {
-            
+
+                var name  = user.username
+
+                let parts = user.username.split("@")
+
+                let date = getDate(location.createdAt)
+
+                if ( parts.length > 1 ) {
+                    name = `@${parts[0]}\n${date.vDate} ${date.time}`
+                }
+
                 _userpoints.push({
                     color: strokeColor,
-                    name: `${user.username}`,
+                    name: name,
                     lat: location.latitude,
                     lon: location.longitude
                 })
@@ -3040,3 +3053,7 @@ function downloadWithHeader(url, headers) {
     });
 }
 
+function addToDomAsinc(view, items) {
+    console.log(view)
+    console.log(items)
+}

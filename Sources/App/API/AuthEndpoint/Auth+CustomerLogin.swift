@@ -53,6 +53,8 @@ extension AuthComponents {
 				}
 				catch{
 					
+                    print("🔴 DECODE_ERROR \(#function)")
+
 					print(error)
 					
 					callback(nil)

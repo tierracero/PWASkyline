@@ -1516,8 +1516,12 @@ class AccountView: PageController {
 
                     loadingView(show: true)
                     
+                    print("🚧  A \(getNow())")
+
                     API.custAccountV1.loadConcessions(id: self.account.id) { resp in
                     
+                        print("🚧  B \(getNow())")
+
                         loadingView(show: false)
                         
                         guard let resp else {
@@ -1534,6 +1538,8 @@ class AccountView: PageController {
                             showError( .unexpectedResult, .payloadDecodError)
                             return
                         }
+
+
 
                         let view = CustConcessionView(
                                     account: self.account,

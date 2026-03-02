@@ -798,13 +798,14 @@ class OrderView: Div {
                                  }
                                  .borderLeft(width: BorderWidthType.thin, style: .solid, color: .gray)
                                  .hidden(self.$status.map{
+                                    
                                      [
-                                        CustFolioStatus.pending,
                                         CustFolioStatus.canceled,
                                         CustFolioStatus.finalize,
                                         CustFolioStatus.pendingSpare,
                                         CustFolioStatus.collection
                                      ].contains($0)
+                                     
                                  })
                                  .paddingRight(3.px)
                                  .paddingLeft(7.px)
@@ -820,7 +821,6 @@ class OrderView: Div {
                             .onClick {
                                 
                                 if [
-                                    CustFolioStatus.pending,
                                     CustFolioStatus.canceled,
                                     CustFolioStatus.finalize,
                                     CustFolioStatus.pendingSpare,
@@ -904,34 +904,31 @@ class OrderView: Div {
                                     event.stopPropagation()
                                 }
                                 
-                                Div{
-                                    
-                                    Div(CustFolioStatus.finalize.description)
-                                    .color(CustFolioStatus.finalize.color)
-                                    .class(.oneLineText)
-                                    .width(90.percent)
-                                    .marginTop(7.px)
-                                    .class(.uibtn)
-                                    .onClick { _, event in
-                                        self.changeOrderStatus(.finalize)
-                                        self.statusMenuIsHidden = true
-                                        event.stopPropagation()
-                                    }
-                                    
-                                    Div(CustFolioStatus.canceled.description)
-                                    .color(CustFolioStatus.canceled.color)
-                                    .class(.oneLineText)
-                                    .width(90.percent)
-                                    .marginTop(7.px)
-                                    .class(.uibtn)
-                                    .onClick { _, event in
-                                        self.changeOrderStatus(.canceled)
-                                        self.statusMenuIsHidden = true
-                                        event.stopPropagation()
-                                    }
-                                    
+                                Div(CustFolioStatus.finalize.description)
+                                .hidden(self.$status.map{ ($0 == .finalize  || $0 == .canceled) })
+                                .color(CustFolioStatus.finalize.color)
+                                .class(.oneLineText)
+                                .width(90.percent)
+                                .marginTop(7.px)
+                                .class(.uibtn)
+                                .onClick { _, event in
+                                    self.changeOrderStatus(.finalize)
+                                    self.statusMenuIsHidden = true
+                                    event.stopPropagation()
                                 }
-                                .hidden(self.$status.map{ $0 != .archive })
+                                
+                                Div(CustFolioStatus.canceled.description)
+                                .hidden(self.$status.map{ ($0 == .finalize  || $0 == .canceled) })
+                                .color(CustFolioStatus.canceled.color)
+                                .class(.oneLineText)
+                                .width(90.percent)
+                                .marginTop(7.px)
+                                .class(.uibtn)
+                                .onClick { _, event in
+                                    self.changeOrderStatus(.canceled)
+                                    self.statusMenuIsHidden = true
+                                    event.stopPropagation()
+                                }
                                 
                                 
                                 Div().height(12.px)
@@ -4891,13 +4888,14 @@ class OrderView: Div {
         case .pendingSpare:
             showError(.generalError, "Funcion no sopotada")
             return
-            return
         case .canceled:
-            showError(.generalError, "Funcion no sopotada")
-            
+            guard custCatchHerk > 3 else {
+                showError(.generalError, "No tiene permiso para realizar este cambio")
+                return
+            }
         case .finalize:
-            if self.status != .archive {
-                showError(.generalError, "Funcion no sopotada")
+            guard custCatchHerk > 3 else {
+                showError(.generalError, "No tiene permiso para realizar este cambio")
                 return
             }
         case .archive:
@@ -5208,7 +5206,7 @@ class OrderView: Div {
             key: custCatchKey,
             token: custCatchToken,
             tcon: .web, 
-            applicationType: .customer
+            applicationType: custCatchAccountType.sessionType
         )){
             if let str = String(data: jsonData, encoding: .utf8) {
                 let utf8str = str.data(using: .utf8)

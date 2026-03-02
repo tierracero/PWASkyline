@@ -1078,9 +1078,11 @@ extension SalePointView {
                 
                 self.sales.forEach { item in
                     
+                    let date = getDate(item.createdAt) 
+
                     tableBody.appendChild(Tr{
                         Td(item.folio)
-                        Td("\(getDate(item.createdAt).day.toString)/\(getDate(item.createdAt).month.toString)/\(getDate(item.createdAt).year.toString.suffix(2)) \(getDate(item.createdAt).time)")
+                        Td("\(date.formatedLong) \(date.time)")
                         Td{
                             if let accountId = item.custAcct {
                                 Div("\(self.accountRefrence[accountId]?.folio ?? "") \(self.accountRefrence[accountId]?.businessName ?? "") \(self.accountRefrence[accountId]?.firstName ?? "") \(self.accountRefrence[accountId]?.firstName ?? "")".purgeSpaces)

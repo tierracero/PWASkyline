@@ -19,6 +19,8 @@ public struct BarcodePrinting: Codable {
     
     public let name: String
     
+    public let units: Int
+
     public let price: Int64
     
     public init(
@@ -27,6 +29,7 @@ public struct BarcodePrinting: Codable {
         brand: String,
         model: String,
         name: String,
+        units: Int,
         price: Int64
     ){
         self.id = id
@@ -34,6 +37,7 @@ public struct BarcodePrinting: Codable {
         self.brand = brand
         self.model = model
         self.name = name
+        self.units = units
         self.price = price
     }
     

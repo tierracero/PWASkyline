@@ -103,6 +103,9 @@ public class OrderCatchControler {
     private var delete: [UUID] = []
     
     private var deleteDelegates: [UUID] = []
+
+
+    private var loadingSessionId: UUID = .init()
     
     /// [ CustOrder.id :  OrderRowView]
     private var orderRowViewRefrence: [UUID:OrderRowView] = [:]
@@ -219,6 +222,14 @@ public class OrderCatchControler {
         .class(.roundGrayBlackDark, .oneHalf)
         .overflow(.auto)
     
+    lazy var pendingOrderView = Div()
+
+    lazy var activeOrderView = Div()
+
+    lazy var finilizeOrderView = Div()
+
+    lazy var pendingSpareOrderView = Div()
+
     lazy var selectStoreMenuButton = Div{
         
         Div{
@@ -507,6 +518,8 @@ public class OrderCatchControler {
     func sincByState(_ state: OrderState) {
         
         loadingView(show: true)
+
+
         
         API.custOrderV1.loadOrdersByState(
             state: state,
@@ -560,6 +573,7 @@ public class OrderCatchControler {
             store: self.selectedStore?.id,
             account: nil
         ) { resp in
+
             loadingView(show: false)
             
             
@@ -617,6 +631,8 @@ public class OrderCatchControler {
     ){
         loadingView(show: true)
         
+        Console.clear()
+
         API.custOrderV1.loadFolios(
             storeid: selectedStore?.id,
             accountid: accountid,
@@ -625,7 +641,7 @@ public class OrderCatchControler {
         ) { resp in
             
             loadingView(show: false)
-            
+
             guard let resp else {
                 showError(.comunicationError, "No se pudo comunicar con el servidor")
                 return
@@ -657,6 +673,7 @@ public class OrderCatchControler {
             self.routes = data.routes
             
             self.drawOrderView()
+
             
         }
     }
@@ -819,11 +836,44 @@ public class OrderCatchControler {
             
     }
 
+    func asyncAddOrder(loadId: UUID , view: Div, rows: [CustOrderLoadFolios]) {
+
+        if rows.isEmpty || loadId != loadingSessionId {
+            return
+        }
+
+        var rows = rows
+
+        guard let row = rows.first else {
+            asyncAddOrder(loadId: loadId, view: view, rows: rows)
+            return
+        }
+
+        rows.removeFirst()
+
+        let item = orderRowView(row)
+
+        item.filter(.opacity(0))
+
+        view.appendChild(item)
+
+        item.fadeIn()
+
+        Dispatch.asyncAfter(0.10) {
+            self.asyncAddOrder(loadId: loadId, view: view, rows: rows)
+        }
+
+    }
+
     func drawOrderView(){
         
         orderRowViewRefrence.forEach { id, view in
             view.remove()
         }
+
+        let thisLoadingSessionId : UUID = .init()
+
+        loadingSessionId = thisLoadingSessionId
         
         firstView.innerHTML = ""
         container.removeClass(.oneHalf)
@@ -833,6 +883,11 @@ public class OrderCatchControler {
         secondView.removeClass(.oneHalf)
         secondView.removeClass(.twoThirdOrderGrid)
         
+        pendingOrderView.innerHTML = ""
+        activeOrderView.innerHTML = ""
+        finilizeOrderView.innerHTML = ""
+        pendingSpareOrderView.innerHTML = ""
+
         let totalItems: Int = [
             pending.count,
             pendingSpare.count,
@@ -880,10 +935,13 @@ public class OrderCatchControler {
                         .margin(all: 7.px)
                 )
                     
-                pending.forEach { data in
-                    firstView.appendChild(orderRowView(data))
-                }
+                firstView.appendChild(pendingOrderView)
+
+                asyncAddOrder(loadId: thisLoadingSessionId, view: pendingOrderView, rows: pending) //  pending
+
+
             }
+
             if !pendingSpare.isEmpty {
                 
                 firstView.appendChild(
@@ -899,10 +957,11 @@ public class OrderCatchControler {
                         
                         .margin(all: 7.px)
                 )
+
+                firstView.appendChild(pendingSpareOrderView)
+
+                asyncAddOrder(loadId: thisLoadingSessionId, view: pendingSpareOrderView, rows: pendingSpare)
                 
-                pendingSpare.forEach { data in
-                    firstView.appendChild(orderRowView(data))
-                }
             }
             if !inOrder.isEmpty {
                 
@@ -933,10 +992,11 @@ public class OrderCatchControler {
                     .margin(all: 7.px)
                     
                 )
-                
-                active.forEach { data in
-                    secondView.appendChild(self.orderRowView(data))
-                }
+
+                self.secondView.appendChild(activeOrderView)
+
+                asyncAddOrder(loadId: thisLoadingSessionId, view: activeOrderView, rows: active)
+
             }
             if !pendingPickup.isEmpty {
                 
@@ -952,30 +1012,39 @@ public class OrderCatchControler {
                     }
                     .margin(all: 7.px)
                 )
+
+                secondView.appendChild(finilizeOrderView)
                 
-                pendingPickup.forEach { data in
-                    secondView.appendChild(self.orderRowView(data))
-                }
+                asyncAddOrder(loadId: thisLoadingSessionId, view: finilizeOrderView, rows: pendingPickup)
+
             }
             
             if orderCount > 0 {
                 
-                self.other.forEach { item in
-                    self.secondView.appendChild(self.orderRowView(item))
-                }
+                asyncAddOrder(loadId: thisLoadingSessionId, view: secondView, rows: other)
                 
             }
             else {
+                
+                var evenItems: [CustOrderLoadFolios] = []
+
+                var oddItems: [CustOrderLoadFolios] = []
+
                 var cc = 0
+
                 self.other.forEach { item in
                     if cc.isEven {
-                        self.firstView.appendChild(self.orderRowView(item))
+                        evenItems.append(item)
                     }
                     else {
-                        self.secondView.appendChild(self.orderRowView(item))
+                        oddItems.append(item)
                     }
                     cc += 1
                 }
+
+                asyncAddOrder(loadId: thisLoadingSessionId, view: firstView, rows: evenItems)
+
+                asyncAddOrder(loadId: thisLoadingSessionId, view: secondView, rows: oddItems)
             }
             
         case .calendarView:
@@ -1160,21 +1229,17 @@ public class OrderCatchControler {
                 }
             }
             
-            self.firstView.appendChild(H1("Sin Cita / Vencidos \(generalPayload.count.toString)").color(.white).marginBottom(7.px))
-            
+            generalPayload.append(contentsOf: other)
+
             /// View One
-            generalPayload.forEach { data in
-                self.firstView.appendChild(self.orderRowView(data))
-            }
-            
+            self.firstView.appendChild(H1("Sin Cita / Vencidos \(generalPayload.count.toString)").color(.white).marginBottom(7.px))
+            self.asyncAddOrder(loadId: thisLoadingSessionId, view: self.firstView, rows: generalPayload)
+
             /// View Two
             self.secondView.appendChild(OrderCalendarView(selectedDateStamp: "", __workMap: workMap, callback: { selectedDateStamp, uts, highPriority in
                 
             }))
             
-            self.other.forEach { item in
-                self.firstView.appendChild(self.orderRowView(item))
-            }
             
         case .userView:
         
@@ -1186,7 +1251,7 @@ public class OrderCatchControler {
                 
                 let userRefrence = Dictionary(uniqueKeysWithValues: users.map{ value in ( value.id, value) })
                 
-                var userByName = users.map{ $0.username }.sorted()
+                let userByName = users.map{ $0.username }.sorted()
                 
                 var userIdsByUsernameSorted: [UUID] = []
                 
@@ -1215,6 +1280,8 @@ public class OrderCatchControler {
                         }
                         .margin(all: 7.px)
                     )
+                    
+                    self.firstView.appendChild(self.pendingOrderView)
                         
                     self.pending.forEach { data in
                         if let _ = orderRefrence[data.activeUser] {
@@ -1235,7 +1302,7 @@ public class OrderCatchControler {
                             }
                         }
                         
-                        self.firstView.appendChild(
+                        self.pendingOrderView.appendChild(
                             Div{
                                 
                                 H2(items.count.toString)
@@ -1252,10 +1319,13 @@ public class OrderCatchControler {
                                 
                             }.margin(all: 7.px)
                         )
-                        
-                        items.forEach { item in
-                            self.firstView.appendChild(self.orderRowView(item))
-                        }
+
+                        let userInnerView = Div()
+
+                        self.pendingOrderView.appendChild(userInnerView)
+
+                        self.asyncAddOrder(loadId: thisLoadingSessionId, view: userInnerView, rows: items) 
+
                     }
                     
                 }
@@ -1275,7 +1345,9 @@ public class OrderCatchControler {
                         }
                         .margin(all: 7.px)
                     )
-                        
+
+                    self.firstView.appendChild(self.pendingSpareOrderView)
+                    
                     self.pendingSpare.forEach { data in
                         if let _ = orderRefrence[data.activeUser] {
                             orderRefrence[data.activeUser]?.append(data)
@@ -1294,8 +1366,8 @@ public class OrderCatchControler {
                                 userName =  "@" + (udata.username.explode("@").first ?? "\(udata.firstName) \(udata.lastName)")
                             }
                         }
-                        
-                        self.firstView.appendChild(
+
+                        self.pendingSpareOrderView.appendChild(
                             Div{
                                 
                                 H2(items.count.toString)
@@ -1311,10 +1383,13 @@ public class OrderCatchControler {
                                 Div().clear(.both)
                             }.margin(all: 7.px)
                         )
+
+                        let userInnerView = Div()
+
+                        self.pendingSpareOrderView.appendChild(userInnerView)
+
+                        self.asyncAddOrder(loadId: thisLoadingSessionId, view: userInnerView, rows: items)
                         
-                        items.forEach { item in
-                            self.firstView.appendChild(self.orderRowView(item))
-                        }
                     }
                     
                 }
@@ -1348,6 +1423,8 @@ public class OrderCatchControler {
                         }
                         .margin(all: 7.px)
                     )
+
+                    self.secondView.appendChild(self.activeOrderView)
                     
                     self.active.forEach { data in
                         if let _ = orderRefrence[data.activeUser] {
@@ -1368,7 +1445,7 @@ public class OrderCatchControler {
                             }
                         }
                         
-                        self.secondView.appendChild(
+                        self.activeOrderView.appendChild(
                             Div{
                                 
                                 H2(items.count.toString)
@@ -1384,10 +1461,13 @@ public class OrderCatchControler {
                                 Div().clear(.both)
                             }.margin(all: 7.px)
                         )
+
+                        let userInnerView = Div()
+
+                        self.activeOrderView.appendChild(userInnerView)
+
+                        self.asyncAddOrder(loadId: thisLoadingSessionId, view: userInnerView, rows: items)
                         
-                        items.forEach { item in
-                            self.secondView.appendChild(self.orderRowView(item))
-                        }
                     }
                     
                 }
@@ -1410,6 +1490,8 @@ public class OrderCatchControler {
                         }
                         .margin(all: 7.px)
                     )
+
+                    self.secondView.appendChild(self.finilizeOrderView)
                     
                     self.pendingPickup.forEach { data in
                         if let _ = orderRefrence[data.activeUser] {
@@ -1430,7 +1512,7 @@ public class OrderCatchControler {
                             }
                         }
                         
-                        self.secondView.appendChild(
+                        self.finilizeOrderView.appendChild(
                             Div{
                                 
                                 H2(items.count.toString)
@@ -1447,9 +1529,12 @@ public class OrderCatchControler {
                             }.margin(all: 7.px)
                         )
                         
-                        items.forEach { item in
-                            self.secondView.appendChild(self.orderRowView(item))
-                        }
+                        let userInnerView = Div()
+
+                        self.finilizeOrderView.appendChild(userInnerView)
+
+                        self.asyncAddOrder(loadId: thisLoadingSessionId, view: userInnerView, rows: items)
+                        
                     }
                     
                 }
@@ -1563,133 +1648,94 @@ public class OrderCatchControler {
     
     func orderRowView(_ data: CustOrderLoadFolios) -> OrderRowView {
         
-        let view = OrderRowView(data: data, callback: { action in
-            if let action {
-                switch action {
-                case .open:
+        let view = OrderRowView(data: data, callback: { 
+    
+                /// Search If their is a acctid refrence
+                if let accountid = minViewOrderAccountRefrence[data.id] {
                     
-                    /// Search If their is a acctid refrence
-                    if let accountid = minViewOrderAccountRefrence[data.id] {
+                    /// Search if AccoutOverview is available
+                    if let accoutOverview = minViewAcctRefrence[accountid] {
                         
-                        /// Search if AccoutOverview is available
-                        if let accoutOverview = minViewAcctRefrence[accountid] {
+                        if accoutOverview.order?.id == data.id {
                             
-                            if accoutOverview.order?.id == data.id {
-                                
-                                /// The current order is lodad only show
-                                /// remove small button
-                                minViewDivRefrence[accountid]?.remove()
-                                ///  remove small button refrence
-                                minViewDivRefrence.removeValue(forKey: accountid)
-                                /// Show AccoutOverview
-                                accoutOverview.display(.block)
+                            /// The current order is lodad only show
+                            /// remove small button
+                            minViewDivRefrence[accountid]?.remove()
+                            ///  remove small button refrence
+                            minViewDivRefrence.removeValue(forKey: accountid)
+                            /// Show AccoutOverview
+                            accoutOverview.display(.block)
+                            
+                            accoutOverview.load = .order
+                            
+                            return
+                        }
+                        else{
+                            
+                            /// Load Order
+                            /// remove small button
+                            minViewDivRefrence[accountid]?.remove()
+                            ///  remove small button refrence
+                            minViewDivRefrence.removeValue(forKey: accountid)
+                            /// Show AccoutOverview
+                            accoutOverview.display(.block)
+                            
+                            accoutOverview.loadOrder(id: data.id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                                accoutOverview.loadOrder(
+                                    account: account,
+                                    order: order,
+                                    notes: notes,
+                                    payments: payments,
+                                    charges: charges, 
+                                    pocs: pocs,
+                                    files: files,
+                                    equipments: equipments,
+                                    rentals: rentals,
+                                    transferOrder: transferOrder,
+                                    orderHighPriorityNote: orderHighPriorityNote,
+                                    accountHighPriorityNote: accountHighPriorityNote,
+                                    tasks: tasks,
+                                    orderRoute: route,
+                                    loadFromCatch: loadFromCatch
+                                )
                                 
                                 accoutOverview.load = .order
                                 
-                                return
                             }
-                            else{
-                                
-                                /// Load Order
-                                /// remove small button
-                                minViewDivRefrence[accountid]?.remove()
-                                ///  remove small button refrence
-                                minViewDivRefrence.removeValue(forKey: accountid)
-                                /// Show AccoutOverview
-                                accoutOverview.display(.block)
-                                
-                                accoutOverview.loadOrder(id: data.id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
-                                    accoutOverview.loadOrder(
-                                        account: account,
-                                        order: order,
-                                        notes: notes,
-                                        payments: payments,
-                                        charges: charges, 
-                                        pocs: pocs,
-                                        files: files,
-                                        equipments: equipments,
-                                        rentals: rentals,
-                                        transferOrder: transferOrder,
-                                        orderHighPriorityNote: orderHighPriorityNote,
-                                        accountHighPriorityNote: accountHighPriorityNote,
-                                        tasks: tasks,
-                                        orderRoute: route,
-                                        loadFromCatch: loadFromCatch
-                                    )
-                                    
-                                    accoutOverview.load = .order
-                                    
-                                }
-                                return
-                            }
+                            return
                         }
-                        
                     }
                     
-                    self.loadFolio(orderid: data.id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
-                        let accoutOverview = AccoutOverview (
-                            id: .id(order.custAcct)
-                        )
-                        
-                        accoutOverview.loadOrder(
-                            account: account,
-                            order: order,
-                            notes: notes,
-                            payments: payments,
-                            charges: charges,
-                            pocs: pocs,
-                            files: files,
-                            equipments: equipments, 
-                            rentals: rentals,
-                            transferOrder: transferOrder,
-                            orderHighPriorityNote: orderHighPriorityNote,
-                            accountHighPriorityNote: accountHighPriorityNote,
-                            tasks: tasks,
-                            orderRoute: route,
-                            loadFromCatch: loadFromCatch
-                        )
-                        
-                        minViewAcctRefrence[order.custAcct] = accoutOverview
-                        
-                        addToDom(accoutOverview)
-                    }
-                case .print:
-                    self.loadFolio(orderid: data.id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
-                        let printBody = OrderPrintEngine(
-                            order: order,
-                            notes: notes,
-                            payments: payments,
-                            charges: charges,
-                            pocs: pocs,
-                            files: files,
-                            equipments: equipments,
-                            rentals: rentals,
-                            transferOrder: transferOrder
-                        ).innerHTML
-                        _ = JSObject.global.renderPrint!(
-                            custCatchUrl,
-                            order.folio,
-                            order.deepLinkCode,
-                            String(order.mobile.suffix(4)),
-                            printBody
-                        )
-                    }
-                case .alert:
-                    break
-                case .addNote:
-                    addToDom(QuickMessageView(style: .light, order: data, notes: [], callback: { note in
-                        
-                    }))
-                case .date:
-                    break
-                case .adopt:
-                    break
-                case .finalize:
-                    break
-                case .cancel:
-                    break
                 }
-            }
+                
+                self.loadFolio(orderid: data.id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                    let accoutOverview = AccoutOverview (
+                        id: .id(order.custAcct)
+                    )
+                    
+                    accoutOverview.loadOrder(
+                        account: account,
+                        order: order,
+                        notes: notes,
+                        payments: payments,
+                        charges: charges,
+                        pocs: pocs,
+                        files: files,
+                        equipments: equipments, 
+                        rentals: rentals,
+                        transferOrder: transferOrder,
+                        orderHighPriorityNote: orderHighPriorityNote,
+                        accountHighPriorityNote: accountHighPriorityNote,
+                        tasks: tasks,
+                        orderRoute: route,
+                        loadFromCatch: loadFromCatch
+                    )
+                    
+                    minViewAcctRefrence[order.custAcct] = accoutOverview
+                    
+                    addToDom(accoutOverview)
+                }
+            
         })
         
         orderRowViewRefrence[data.id] = view
@@ -1887,7 +1933,11 @@ public class OrderCatchControler {
     func drawRouteView(){
         
         orderRowViewRefrence.removeAll()
-        
+
+        let thisLoadingSessionId : UUID = .init()
+
+        loadingSessionId = thisLoadingSessionId
+
         container.class(.oneHalf)
         secondView.class([.oneHalf, .roundGrayBlackDark])
         
@@ -1974,10 +2024,9 @@ public class OrderCatchControler {
         }
         
         /// View One
-        generalPayload.forEach { data in
-            firstView.appendChild(self.orderRowView(data))
-        }
+        self.asyncAddOrder(loadId: thisLoadingSessionId, view: self.firstView, rows: generalPayload) 
         
+        /// View Two
         if routes.isEmpty {
             secondView.appendChild(Table().noResult(label: "🚚 No hay rutas creadas hasta el momento."))
             return
@@ -2235,6 +2284,7 @@ public class OrderCatchControler {
     }
 
 
+    //func addItems
 
 }
 

@@ -727,8 +727,8 @@ public class LoginViewcontroler: PageController {
             custCatchMyChatToken = data.userToken
             custCatchStore = store
             custCatchGroop = groop
+            custCatchAccountType = data.accountType
             linkedProfile = data.linkedProfile
-            
             panelMode = data.mode
             
             if let _url = custCatchUser.explode("@").last {
@@ -744,10 +744,11 @@ public class LoginViewcontroler: PageController {
             WebApp.current.window.localStorage.set( JSString(data.userToken), forKey: "custCatchMyChatToken")
             WebApp.current.window.localStorage.set( JSString(store.uuidString), forKey: "custCatchStore")
             WebApp.current.window.localStorage.set( JSString(groop.uuidString), forKey: "custCatchGroop")
+            WebApp.current.window.localStorage.set( JSString(data.accountType.rawValue), forKey: "custCatchAccountType")
             WebApp.current.window.localStorage.set( JSString(data.mode.rawValue), forKey: "panelMode")
             WebApp.current.window.localStorage.set( JSString(self.username), forKey: "lastLooginUser")
             WebApp.current.window.localStorage.set(getNow(), forKey: "sessionControl")
-            
+
             let today = "\(JSDate().fullYear)\(JSDate().month)\(JSDate().day)"
             
             WebApp.current.window.localStorage.set( JSString(today), forKey: "activeSession")

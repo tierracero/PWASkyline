@@ -124,8 +124,6 @@ class ToolReciveSendInventory: Div {
     
     @State var manualItems: [FiscalConceptManualView] = []
     
-    @State var barcodes: [BarcodePrinting] = []
-    
     @State var controlStatus: FiscalDocumentControlStatus = .active
     
     /// Document of inventory processing
@@ -2915,7 +2913,7 @@ class ToolReciveSendInventory: Div {
             key: custCatchKey,
             token: custCatchToken,
             tcon: .web, 
-            applicationType: .customer
+            applicationType: custCatchAccountType.sessionType
         )){
             if let str = String(data: jsonData, encoding: .utf8) {
                 let utf8str = str.data(using: .utf8)
@@ -3421,15 +3419,6 @@ class ToolReciveSendInventory: Div {
             
             self.downloadDocs()
             
-            self.barcodes = self.items.map{ .init(
-                id: $0.pocid!,
-                upc: $0.upc,
-                brand: "",
-                model: "",
-                name: $0.item.descripcion,
-                price: $0.price
-            )}
-            
             self.docs.forEach { view in
                 if view.item.id == docid {
                     view.remove()
@@ -3857,22 +3846,61 @@ class ToolReciveSendInventory: Div {
          
             self.downloadManualDocs(false)
             
-            self.barcodes = self.manualItems.map{ .init(
-                id: $0.pocid,
-                upc: $0.upc,
-                brand: $0.brand,
-                model: $0.model,
-                name: $0.name,
-                price: $0.price
-            )}
-            
             showSuccess(.operacionExitosa, "Inventario ingresado con exito folio \(data.folio)", .long)
             
         }
     }
     
     func printTags() {
-        addToDom(PrintBarcodes(barodes: self.barcodes))
+
+        // BarcodePrinting
+
+        Console.clear()
+
+        print(items.count)
+ 
+        print(manualItems.count)
+
+        print("items")
+
+        items.forEach { item in
+        
+            print(item.units)
+
+        }
+
+        print("manualItems")
+
+        manualItems.forEach { item in
+        
+            print(item.units)
+
+        }
+
+        var barcodes: [BarcodePrinting] = items.map{ .init(
+                id: $0.pocid!,
+                upc: $0.upc,
+                brand: "",
+                model: "",
+                name: $0.item.descripcion,
+                units: ($0.units).toInt ,
+                price: $0.price
+            )}
+
+        barcodes.append(contentsOf: manualItems.map{ .init(
+            id: $0.pocid,
+            upc: $0.upc,
+            brand: "",
+            model: "",
+            name: $0.name,
+            units: ($0.units).toInt ,
+            price: $0.price
+        )})
+
+        addToDom(PrintBarcodes(
+            barodes: barcodes
+        ))
+
     }
     
     func downloadManualDocs(_ withDetail: Bool){

@@ -15,8 +15,8 @@ public struct SkylineWeb {
 	public private(set) var version: VersionControl = .init(
         mode: .beta,
         major: 0,
-        minor: 20,
-        patch: 2
+        minor: 21,
+        patch: 1
     )
 	
 	public init() {}
@@ -67,6 +67,8 @@ public var custCatchMid: String = ""
 public var custCatchKey: String = ""
 
 public var custCatchID: UUID = .init()
+
+public var custCatchAccountType: TCAccountType = .buisness
 
 public var linkedProfile: [PanelConfigurationObjects] = []
 
@@ -245,8 +247,8 @@ open class _SkyLine {
 	public private(set) var version: VersionControl = .init(
         mode: .beta,
         major: 0,
-        minor: 20,
-        patch: 2
+        minor: 21,
+        patch: 1
     )
 	
     /// .init(.rgba(0, 0, 0, 0.7))
@@ -305,6 +307,8 @@ open class _SkyLine {
     @State var wsevent = ""
 
     public var orcScripts: [OCRCustomeScript] = []
+
+    public var printScripts: [PrintCustomeScript] = []
 	
 }
 extension WebApp {

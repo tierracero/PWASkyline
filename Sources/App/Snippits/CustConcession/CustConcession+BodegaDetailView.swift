@@ -141,7 +141,7 @@ extension CustConcessionView {
                                 
                                 self.codeFilterField
                                 
-                                H2("Productos Actuales")
+                                H2("Productos Actuales | \(self.bodega.name)")
                                     .color(.white)
                                     .float(.left)
                                 

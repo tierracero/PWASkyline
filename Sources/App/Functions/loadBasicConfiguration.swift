@@ -89,6 +89,8 @@ public func loadBasicConfiguration( callback: @escaping ( (
             return
         }
         
+        custCatchAccountType = TCAccountType(rawValue: (WebApp.current.window.localStorage.string(forKey: "custCatchAccountType") ?? "") ) ?? .buisness
+
         // convert String to proper data types
         guard let _custCatchHerk = Int(__custCatchHerk) else {
             killSession()
@@ -194,6 +196,8 @@ public func loadBasicConfiguration( callback: @escaping ( (
             MercadoLibreControler.shared.profile = settings.mercadoLibreProfile
             
             WebApp.shared.skyline.orcScripts = settings.orcScripts
+
+            WebApp.shared.skyline.printScripts = settings.printScripts
             
             if settings.account.status != .active {
                 callback(settings.account.status)

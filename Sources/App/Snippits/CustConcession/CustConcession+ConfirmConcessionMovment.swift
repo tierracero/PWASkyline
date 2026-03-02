@@ -90,8 +90,10 @@ extension CustConcessionView {
                                 .color(.white)
                             
                         }
+                        .overflow(.auto)
                         .margin(all: 7.px)
                     }
+                    .height(100.percent)
                     .width(60.percent)
                     .overflow(.auto)
                     .float(.left)
@@ -180,10 +182,12 @@ extension CustConcessionView {
                         .align(.right)
                         
                     }
+                    .height(100.percent)
                     .width(40.percent)
                     .float(.left)
                     
                 }
+                .custom("height", "calc(100% - 35px)")
                 
             }
             .custom("left", "calc(50% - 424px)")
@@ -192,6 +196,7 @@ extension CustConcessionView {
             .borderRadius(all: 24.px)
             .position(.absolute)
             .padding(all: 12.px)
+            .height(500.px)
             .width(800.px)
             
         }

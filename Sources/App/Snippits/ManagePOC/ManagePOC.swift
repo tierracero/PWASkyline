@@ -1937,7 +1937,7 @@ class ManagePOC: Div {
             .custom("height", "calc(100% - 40px)")
             .overflow(.auto)
             .class(.oneHalf)
-            
+
             Div {
                 Div{
                     
@@ -1999,6 +1999,7 @@ class ManagePOC: Div {
                     
                     /// Brand, UPC /SKU / POC
                     Div{
+                        
                         /// Brand
                         Label("Marca").color(.lightGray)
                         Div{
@@ -2037,16 +2038,17 @@ class ManagePOC: Div {
                                         showError(.requiredField, "Ingrese \"SKU / UPC / POC\" para usar esta herramienta")
                                         self.upcField.select()
                                         return
-                                    }
+                                    } 
                                     
-                                    addToDom(PrintBarcodes(barodes: [.init(
+                                    addToDom(PrintBarcodes(barode: .init(
                                         id: pocid,
                                         upc: self.upc,
                                         brand: self.brand,
                                         model: self.model,
                                         name: self.name,
+                                        units: 0,
                                         price: pricea
-                                    )]))
+                                    )))
                                 }
                                 .hidden(self.$pocid.map { $0 == nil })
                             
@@ -2059,6 +2061,7 @@ class ManagePOC: Div {
                                     self.storeFreeUPC()
                                 }
                         }
+                        
                         
                     }
                     .width(50.percent)
@@ -2091,9 +2094,7 @@ class ManagePOC: Div {
                     .width(50.percent)
                     .float(.left)
                     
-
-                    Div().class(.clear).height(7.px)
-                    
+                    Div().class(.clear).height(7.px)         
 
                     /// Name
                     Label("Nombre").color(.lightGray)
@@ -2279,7 +2280,6 @@ class ManagePOC: Div {
                         Div().class(.clear).height(7.px)
                     
                     }
-                    
                     
                     if self.pocid == nil {
                         H2("Inventario")
@@ -2508,7 +2508,7 @@ class ManagePOC: Div {
         .width(1150.px)
         .color(.white)
         .top(45.px)
-        
+        /*
         /// Select Brand View
         Div{
             Div{
@@ -2559,7 +2559,7 @@ class ManagePOC: Div {
         .color(.white)
         .top(45.px)
         .hidden(self.$selectBrandViewIsHidden)
-        
+        */
     }
     
     override func buildUI() {
@@ -3968,7 +3968,7 @@ class ManagePOC: Div {
             key: custCatchKey,
             token: custCatchToken,
             tcon: .web, 
-            applicationType: .customer
+            applicationType: custCatchAccountType.sessionType
         )){
             if let str = String(data: jsonData, encoding: .utf8) {
                 let utf8str = str.data(using: .utf8)
