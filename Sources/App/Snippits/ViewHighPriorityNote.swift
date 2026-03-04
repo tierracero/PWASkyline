@@ -162,7 +162,7 @@ class ViewHighPriorityNote: Div {
                 }
                 
                 API.custAPIV1.lowerNotePriority(
-                    noteId: .order(self.note.id)
+                    noteId:  noteId
                 ) { resp in
                     loadingView(show: false)
                     
@@ -191,6 +191,7 @@ class ViewHighPriorityNote: Div {
 /// order, account, general
 extension ViewHighPriorityNote {
     
+    /// order, account, general
     enum NoteLevelType {
         case order
         case account
