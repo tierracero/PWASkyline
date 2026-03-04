@@ -426,6 +426,39 @@ class WorkViewControler: PageController {
                         }))
                     
                 }
+
+
+                Div{
+                    Span()
+                        .backgroundImage("/skyline/media/addBlueIcon.png")
+                        .opacity(0.5)
+                        .height(40.px)
+                        .width(40.px)
+                        .marginTop(5.px)
+                        .paddingRight(20.px)
+                        .backgroundSize(h: 100.percent, v: 100.percent)
+                    
+                    Span()
+                        .paddingRight(7.px)
+                    
+                    Span("Seguimineto")
+                        .marginTop(10.px)
+                        .fontSize(18.px)
+                        .height(35.px)
+                        .color(.gray)
+                    
+                }
+                .display(self.$pmode.map{ ($0 == .serviceOrder) ? .inlineBlock : .none })
+                .class(.topBarButton)
+                .onClick {
+                    
+                    self.newOrderSearchCustomer(.followup)
+                    
+                    
+                }
+
+                    
+                
                 
                 // Nuevo folio
                 // Punto de Venta
@@ -2794,10 +2827,13 @@ class WorkViewControler: PageController {
                                     break
                                 case .account:
                                     loadAccountView(id: .id(custAcct.id))
+                               case .followup:
+                                    break
                                 }
                             }
 
                             self.appendChild(custDataView)
+                            
                     }
                     )
                 )
@@ -2972,6 +3008,9 @@ class WorkViewControler: PageController {
                         break
                     case .account:
                         loadAccountView(id: .id(custAcct.id))
+
+                    case .followup:
+                        break
                     }
                 }
                 else{
@@ -3139,6 +3178,8 @@ class WorkViewControler: PageController {
                             break
                         case .account:
                             loadAccountView(id: .id(custAcct.id))
+                        case .followup:
+                        break
                         }
                     }
                     

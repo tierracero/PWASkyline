@@ -14,9 +14,13 @@ class ViewHighPriorityNote: Div {
     
     override class var name: String { "div" }
     
+    /// order, account, general
     let type: NoteLevelType
+
     let note: HighPriorityNote
+    
     let folio: String?
+
     let name: String?
     
     init(
@@ -148,8 +152,18 @@ class ViewHighPriorityNote: Div {
             message: "¿Esta seguro que desea bajar la prioridad de la nota?",
             callback: { isConfirmed, comment in
                 
+                var noteId: API.custAPIV1.LowerNotePriority {
+                    switch self.type {
+                        case .order:
+                        return .order(self.note.id)
+                        case .account, .general:
+                        return .general(self.note.id)
+                    }
+                }
+                
+
                 API.custAPIV1.lowerNotePriority(
-                    noteId: .order(self.note.id)
+                    noteId:  noteId
                 ) { resp in
                     loadingView(show: false)
                     
@@ -177,6 +191,7 @@ class ViewHighPriorityNote: Div {
 
 extension ViewHighPriorityNote {
     
+    /// order, account, general
     enum NoteLevelType {
         case order
         case account

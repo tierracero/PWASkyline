@@ -1593,6 +1593,9 @@ class CreateNewCustomerDataView: Div {
             case .account:
                 mobileIsRequierd = configStoreProcessing.accountMobileConfirmationMode
                 idIsRequierd = configStoreProcessing.accountIdConfirmationMode
+            case .followup:
+                mobileIsRequierd = configStoreProcessing.accountMobileConfirmationMode
+                idIsRequierd = configStoreProcessing.accountIdConfirmationMode
             }
         }
         
