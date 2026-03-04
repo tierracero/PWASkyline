@@ -8,48 +8,40 @@
 import Foundation
 
 func validateTimeFormat(
-    time: String,
-    error: @escaping (
-        _ title: String,
-        _ message: String
-    ) -> ()
-){
+    time: String
+) -> ValidatFormatError? {
     
     guard !time.isEmpty else {
-        error("Campo Requerido", "Ingrese hora de envio/recepcion")
-        return
+        return .init("Campo Requerido", "Ingrese hora de envio/recepcion")
+        
     }
     
     if !time.contains(":") {
-        error("Formato de hora invalida", "La hora debe de tener el siguente formato:\nHH:MM")
-        return
+        return .init("Formato de hora invalida", "La hora debe de tener el siguente formato:\nHH:MM")
     }
     
     let hourParts = time.explode(":")
     
     if hourParts.count != 2 {
-        error("Formato de fecha invalida", "La hora debe de tener el siguente formato:\nHH:MM")
-        return
+        return .init("Formato de fecha invalida", "La hora debe de tener el siguente formato:\nHH:MM")
     }
     
     guard let hour = Int(hourParts[0]) else {
-        error("Formato de fecha invalida", "Hora invalido, ingrese una hora valido entre 1 y el 24")
-        return
+        return .init("Formato de fecha invalida", "Hora invalido, ingrese una hora valido entre 1 y el 24")
     }
     
     guard (hour >= 0 && hour < 25) else {
-        error("Formato de fecha invalida", "Hora invalido, ingrese una hora valido entre 1 y el 24.")
-        return
+        return .init("Formato de fecha invalida", "Hora invalido, ingrese una hora valido entre 1 y el 24.")
     }
     
     guard let min = Int(hourParts[1]) else {
-        error("Formato de fecha invalida", "Minuto invalido, ingrese un minito valido entre 0 y el 59")
-        return
+        return .init("Formato de fecha invalida", "Minuto invalido, ingrese un minito valido entre 0 y el 59")
     }
     
     guard (min >= 0 && min < 60) else {
-        error( "Formato de fecha invalida", "Minuto invalido, ingrese un minito valido entre 0 y el 59.")
-        return
+        return .init( "Formato de fecha invalida", "Minuto invalido, ingrese un minito valido entre 0 y el 59.")
     }
+
+    return nil
     
 }

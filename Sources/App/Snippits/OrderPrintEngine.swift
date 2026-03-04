@@ -606,7 +606,7 @@ class OrderPrintEngine: Div {
         
         if let _logo = custWebFilesLogos?.logoIndexWhite.avatar {
             if !_logo.isEmpty {
-                logo = "https://\(custCatchUrl)/contenido/\(_logo)"
+                logo = "https://\(custCatchUrl)\(skylineUrlPatch)/contenido/\(_logo)"
             }
         }
         

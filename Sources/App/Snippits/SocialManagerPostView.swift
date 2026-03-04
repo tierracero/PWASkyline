@@ -346,7 +346,7 @@ class SocialManagerPostView: Div {
         case .image:
             mediaContainer.appendChild(
                 Img()
-                .src("https://\(custCatchUrl)/contenido/thump_\(post.media)")
+                .src("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(post.media)")
                 .custom("width", "calc(100% - 10px)")
                 .borderRadius(12.px)
                 .padding(all: 5.px)
@@ -354,7 +354,7 @@ class SocialManagerPostView: Div {
         case .video, .shorts:
             mediaContainer.appendChild(
                 Img()
-                .src("https://\(custCatchUrl)/contenido/thump_\(post.media.replace(from: ".mp4", to: ".jpg"))")
+                .src("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(post.media.replace(from: ".mp4", to: ".jpg"))")
                 .custom("width", "calc(100% - 10px)")
                 .borderRadius(12.px)
                 .padding(all: 5.px)

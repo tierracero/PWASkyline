@@ -259,7 +259,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             nick = user.nick
             
             if !user.avatar.isEmpty {
-                avatar.load("https://\(custCatchUrl)/contenido/\(user.avatar)")
+                avatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/\(user.avatar)")
             }
             
         }

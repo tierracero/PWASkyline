@@ -11,7 +11,6 @@ import TCFireSignal
 
 extension CustComponents {
 	
-
 	static func sincCustSettings( callback: @escaping ( (_ resp: APIResponseGeneric<SincCustSettingsResponse>?) -> () )) {
 		sendPost(
 			rout,

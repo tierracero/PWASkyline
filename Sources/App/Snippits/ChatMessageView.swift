@@ -163,7 +163,7 @@ class ChatMessageView: Div {
                         }
                         
                         if !user.avatar.isEmpty {
-                            self.userAvatar.load("/contenido/\(user.avatar)")
+                            self.userAvatar.load("\(skylineUrlPatch)/contenido/\(user.avatar)")
                         }
                         
                         if user.username.contains("@") {
@@ -578,7 +578,7 @@ class ChatMessageView: Div {
     func newMedia(mediaUrl: URLConformable) {
         messageText = ""
         mediaAsincLoader.appendChild(Img()
-            .src("https://\(custCatchUrl)/contenido/defaultLogoBlackSquare.svg")
+            .src("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/defaultLogoBlackSquare.svg")
             .load(mediaUrl)
             .width(300.px)
         )

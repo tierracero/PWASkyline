@@ -453,15 +453,15 @@ class ImageWebView: Div {
         $relationId.listen {
             
             if self.relation == .general {
-                self.path = "https://\(custCatchUrl)/contenido/"
+                self.path = "https://\(custCatchUrl)\(skylineUrlPatch)/contenido/"
             }
             else {
                 if $0 == nil {
-                    self.path = "https://\(custCatchUrl)/iCatch/"
+                    self.path = "https://\(custCatchUrl)\(skylineUrlPatch)/iCatch/"
                 }
                 else{
                     if let pDir = customerServiceProfile?.account.pDir {
-                        self.path = "https://\(custCatchUrl)/contenido/"
+                        self.path = "https://\(custCatchUrl)\(skylineUrlPatch)/contenido/"
                     }
                 }
             }
@@ -471,14 +471,14 @@ class ImageWebView: Div {
         if relation == .general {
             
             if relationId == nil {
-                self.path = "https://\(custCatchUrl)/iCatch/"
+                self.path = "https://\(custCatchUrl)\(skylineUrlPatch)/iCatch/"
             }
             else{
-                self.path = "https://\(custCatchUrl)/contenido/"
+                self.path = "https://\(custCatchUrl)\(skylineUrlPatch)/contenido/"
             }
         }
         else {
-            self.path = "https://\(custCatchUrl)/contenido/"
+            self.path = "https://\(custCatchUrl)\(skylineUrlPatch)/contenido/"
         }
         
         selectedAvatar.listen {

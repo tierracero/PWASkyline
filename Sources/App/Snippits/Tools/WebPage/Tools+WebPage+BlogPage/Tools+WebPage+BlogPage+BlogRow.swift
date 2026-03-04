@@ -94,7 +94,7 @@ extension ToolsView.WebPage.BlogPage {
             super.buildUI()
             
             if !item.avatar.isEmpty {
-                avatar.load("https://\(custCatchUrl)/contenido/thump_\(item.avatar)")
+                avatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(item.avatar)")
             }
             
         }

@@ -1587,7 +1587,7 @@ class CreateNewCustomerDataView: Div {
             case .rental:
                 mobileIsRequierd = configStoreProcessing.rentalMobileConfirmationMode
                 idIsRequierd = configStoreProcessing.rentalIdConfirmationMode
-            case .date:
+            case .date, .followup:
                 mobileIsRequierd = configStoreProcessing.dateMobileConfirmationMode
                 idIsRequierd = configStoreProcessing.dateIdConfirmationMode
             case .account:

@@ -181,7 +181,7 @@ class PDVPrintEngine: Div {
         
         if let _logo = custWebFilesLogos?.logoIndexWhite.avatar {
             if !_logo.isEmpty {
-                logo = "/contenido/\(_logo)"
+                logo = "\(skylineUrlPatch)/contenido/\(_logo)"
             }
         }
         

@@ -94,7 +94,7 @@ extension ToolsView.WebPage.ServicePage {
             super.buildUI()
             
             if !service.avatar.isEmpty {
-                avatar.load("https://\(custCatchUrl)/contenido/thump_\(service.avatar)")
+                avatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(service.avatar)")
             }
             
         }

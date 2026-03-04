@@ -1261,7 +1261,7 @@ class SocialManagerView: Div {
     
         waterMarkItems.forEach { file in
             
-            let view = ImageEditorItem( url: "https://\(custCatchUrl)/contenido/\(file.file)", width: file.width, height: file.height, callback: { url, width, height in
+            let view = ImageEditorItem( url: "https://\(custCatchUrl)\(skylineUrlPatch)/contenido/\(file.file)", width: file.width, height: file.height, callback: { url, width, height in
                 self.addIconToEditor(url, width, height)
             })
                 .float(.left)

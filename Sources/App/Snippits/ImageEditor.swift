@@ -750,7 +750,7 @@ class ImageEditor: Div {
         waterMarkItems.forEach { file in
             
             let view = ImageEditorItem( 
-                url: "https://\(custCatchUrl)/contenido/\(file.file)",
+                url: "https://\(custCatchUrl)\(skylineUrlPatch)/contenido/\(file.file)",
                 width: file.width,
                 height: file.height
             ) { url, width, height in
@@ -1158,7 +1158,7 @@ class ImageEditor: Div {
                     }
                     
                     self.imageLogo
-                        .load("https://\(custCatchUrl)/iCatch/thump_\(image)")
+                        .load("https://\(custCatchUrl)\(skylineUrlPatch)/iCatch/thump_\(image)")
 
                     self.imgIsBeingReplaced = true
                     

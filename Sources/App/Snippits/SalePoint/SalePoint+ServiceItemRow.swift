@@ -124,7 +124,7 @@ extension SalePointView {
             float(.left)
             
             if !soc.a.isEmpty {
-                avatar.load("https:///\(custCatchUrl)/contenido/thump_\(soc.a)")
+                avatar.load("https:///\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(soc.a)")
             }
             
         }

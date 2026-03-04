@@ -89,8 +89,6 @@ public func loadBasicConfiguration( callback: @escaping ( (
             return
         }
         
-        custCatchAccountType = TCAccountType(rawValue: (WebApp.current.window.localStorage.string(forKey: "custCatchAccountType") ?? "") ) ?? .buisness
-
         // convert String to proper data types
         guard let _custCatchHerk = Int(__custCatchHerk) else {
             killSession()
@@ -112,7 +110,11 @@ public func loadBasicConfiguration( callback: @escaping ( (
             callback(nil)
             return
         }
-        
+
+        pDir = WebApp.current.window.localStorage.string(forKey: "custCatchPDir") ?? "" 
+
+        custCatchAccountType = TCAccountType(rawValue: (WebApp.current.window.localStorage.string(forKey: "custCatchAccountType") ?? "") ) ?? .buisness
+
         custCatchUser = _custCatchUser
         custCatchHerk = _custCatchHerk
         custCatchToken = _custCatchToken
@@ -125,10 +127,19 @@ public func loadBasicConfiguration( callback: @escaping ( (
         panelMode = _panelMode
         
         print("⭐️  panelMode \(panelMode)")
-        
-        if let _url = custCatchUser.explode("@").last {
-            custCatchUrl = _url
+
+        if custCatchAccountType == .entrepreneur {
+            custCatchUrl = "skyline.tierracero.com"
+            skylineUrlPatch = "/\(pDir)"
+        } else {
+            if let _url = custCatchUser.explode("@").last {
+                custCatchUrl = _url
+            }
         }
+
+        print("⭐️  custCatchUrl \(custCatchUrl)")
+        print("⭐️  skylineUrlPatch \(skylineUrlPatch)")
+
         
         if let data = str.data(using: .utf8) {
             do {
@@ -164,6 +175,24 @@ public func loadBasicConfiguration( callback: @escaping ( (
             }
             
             tcaccount = settings.account
+            
+            pDir = settings.account.pDir
+
+            accountType = settings.account.accountType
+
+            Console.clear()
+
+            print("accountType")
+
+            print(accountType)
+
+            if accountType == .entrepreneur {
+                skylineUrlPatch =  "/\(settings.account.pDir)"
+            }
+
+            print("skylineUrlPatch")
+
+            print(skylineUrlPatch)
             
             custWebFilesLogos = settings.custWebFilesLogos
             

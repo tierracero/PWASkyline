@@ -730,10 +730,23 @@ public class LoginViewcontroler: PageController {
             custCatchAccountType = data.accountType
             linkedProfile = data.linkedProfile
             panelMode = data.mode
-            
-            if let _url = custCatchUser.explode("@").last {
-                custCatchUrl = _url
+            pDir = data.pDir
+
+            if data.accountType == .entrepreneur {
+                
+                custCatchUrl = "skyline.tierracero.com"
+
+                skylineUrlPatch = "/\(data.pDir)"
+
             }
+            else {
+
+                if let _url = custCatchUser.explode("@").last {
+                    custCatchUrl = _url
+                }
+
+            }
+
             
             WebApp.current.window.localStorage.set( JSString(self.username), forKey: "custCatchUser")
             WebApp.current.window.localStorage.set( JSString(String(data.herk)), forKey: "custCatchHerk")
@@ -747,6 +760,7 @@ public class LoginViewcontroler: PageController {
             WebApp.current.window.localStorage.set( JSString(data.accountType.rawValue), forKey: "custCatchAccountType")
             WebApp.current.window.localStorage.set( JSString(data.mode.rawValue), forKey: "panelMode")
             WebApp.current.window.localStorage.set( JSString(self.username), forKey: "lastLooginUser")
+            WebApp.current.window.localStorage.set( JSString(pDir), forKey: "custCatchPDir")
             WebApp.current.window.localStorage.set(getNow(), forKey: "sessionControl")
 
             let today = "\(JSDate().fullYear)\(JSDate().month)\(JSDate().day)"

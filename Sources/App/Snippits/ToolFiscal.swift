@@ -2582,7 +2582,7 @@ class ToolFiscal: Div {
             Div{
                 if !logo.isEmpty {
                     Img()
-                        .src("https://\(custCatchUrl)/contenido/\(logo)")
+                        .src("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/\(logo)")
                         .width(90.percent)
                 }
                 

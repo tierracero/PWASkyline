@@ -633,9 +633,9 @@ class AccountMembershipControlView: Div {
                 let avatar = Img()
                     .src("/skyline/media/tierraceroRoundLogoBlack.svg")
                     .width(24.px)
-                
+                // skylineUrlPatch
                 if !soc.avatar.isEmpty {
-                    avatar.load("https://\(custCatchUrl)/contenido/thump_\(avatar)")
+                    avatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(avatar)")
                 }
                 
                 self.socGrid.appendChild(

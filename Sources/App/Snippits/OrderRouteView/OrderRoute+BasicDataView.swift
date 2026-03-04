@@ -322,7 +322,6 @@ extension OrderRouteView{
                         
                         self.supervisorSelect
                         
-                        
                     }
                     .width(50.percent)
                     .float(.left)
@@ -443,30 +442,44 @@ extension OrderRouteView{
                 return
             }
             
-            validateDateFormat(date: "\(day)/\(month)/\(year)") { title, message in
+            if let error = validateDateFormat(date: "\(day)/\(month)/\(year)") { 
                 print("🔴  invalid date ")
+
+                let title = error.title
+
+                let message = error.message
+
                 addToDom(ConfirmationView(type: .ok, title: title, message: message, callback: { isConfirmed, comment in
                     self.dayField.select()
                 }))
                 return
             }
             
-            validateTimeFormat(time: initialTime) { title, message in
+            if let error = validateTimeFormat(time: initialTime) {
                 print("🔴  invalid time 1 ")
+
+                let title = error.title
+
+                let message = error.message
+
                 addToDom(ConfirmationView(type: .ok, title: title, message: message, callback: { isConfirmed, comment in
                     self.initialTimeField.select()
                 }))
                 return
             }
             
-            validateTimeFormat(time: endingTime) { title, message in
+            if let error = validateTimeFormat(time: endingTime) { 
                 print("🔴  invalid time 2 ")
+
+                let title = error.title
+
+                let message = error.message
+
                 addToDom(ConfirmationView(type: .ok, title: title, message: message, callback: { isConfirmed, comment in
                     self.endingTimeField.select()
                 }))
                 return
             }
-            
             
             guard let supervisor = UUID(uuidString: supervisor) else {
                 showError(.generalError, "Seleccione Supervisor")

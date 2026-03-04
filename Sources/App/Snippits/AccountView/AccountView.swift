@@ -1701,7 +1701,7 @@ class AccountView: PageController {
         self.overflow(.hidden)
         
         if let img = account.avatar {
-            self.avatar.load("https://\(custCatchUrl)/contenido/\(img)")
+            self.avatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/\(img)")
         }
         
         membershipExpire = account.expiredAt
@@ -1887,7 +1887,7 @@ class AccountView: PageController {
                 }
                 
                 self.avatar
-                    .load("https://\(custCatchUrl)/contenido/\(img)")
+                    .load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/\(img)")
                 
             }
             

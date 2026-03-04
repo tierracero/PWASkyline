@@ -538,7 +538,7 @@ class PrintBarcodes: Div {
             
             if let _logo = custWebFilesLogos?.logoIndexMain.avatar {
                 if !_logo.isEmpty {
-                    logo = "https://\(custCatchUrl)/contenido/\(_logo)"
+                    logo = "https://\(custCatchUrl)\(skylineUrlPatch)/contenido/\(_logo)"
                 }
             }
             

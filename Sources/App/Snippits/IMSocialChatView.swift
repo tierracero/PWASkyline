@@ -855,11 +855,11 @@ class IMSocialChatView: Div {
                     case .img:
                         
                         print("newFile")
-                        print("https://\(custCatchUrl)/fileNet/\(file.file)")
+                        print("https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(file.file)")
                         
                         self.messageRefrence[mid]?.messageText = file.file
                         
-                        self.messageRefrence[mid]?.newMedia(mediaUrl: "https://\(custCatchUrl)/fileNet/\(file.file)")
+                        self.messageRefrence[mid]?.newMedia(mediaUrl: "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(file.file)")
                         
                         self.messageRefrence[mid]?.updateMessageStatus(.sent)
                         

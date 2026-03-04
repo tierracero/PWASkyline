@@ -792,11 +792,11 @@ class MessageGrid: Div {
                     switch payload.type {
                     case .image:
                         view.activity = payload.fileName
-                        view.mediaImage.load("https://\(custCatchUrl)/fileNet/thump_\(payload.fileName)")
+                        view.mediaImage.load("https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/thump_\(payload.fileName)")
                     case .video:
                         view.activity = payload.fileName
                         view.poster = payload.avatar
-                        view.videoSrc = "https://\(custCatchUrl)/fileNet/thump_\(payload.fileName)"
+                        view.videoSrc = "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/thump_\(payload.fileName)"
                     case .audio:
                         break
                     case .pdf:

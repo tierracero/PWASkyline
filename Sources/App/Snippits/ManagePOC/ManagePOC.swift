@@ -2595,7 +2595,7 @@ class ManagePOC: Div {
             var _path = ""
             
             if self.pocid == nil {
-                _path = "https://\(custCatchUrl)/iCatch/"
+                _path = "https://\(custCatchUrl)\(skylineUrlPatch)/iCatch/"
             }
             else{
                 if let pDir = customerServiceProfile?.account.pDir {

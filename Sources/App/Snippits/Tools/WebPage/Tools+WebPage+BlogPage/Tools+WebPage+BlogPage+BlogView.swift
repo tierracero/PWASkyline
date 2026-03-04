@@ -437,7 +437,7 @@ extension ToolsView.WebPage.BlogPage {
             top(0.px)
          
             if !avatar.isEmpty {
-                imageAvatar.load("https://\(custCatchUrl)/contenido/thump_\(avatar)")
+                imageAvatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(avatar)")
             }
             
             files.forEach { file in
@@ -465,7 +465,7 @@ extension ToolsView.WebPage.BlogPage {
                     )
                 } imAvatar: { viewId, fileName in
                     self.avatar = fileName
-                    self.imageAvatar.load("https://\(custCatchUrl)/contenido/thump_\(fileName)")
+                    self.imageAvatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(fileName)")
                     self.updateAvatar(viewId, fileName)
                 } removeMe: { viewId in
                     self.imageRefrence[viewId]?.remove()
@@ -517,7 +517,7 @@ extension ToolsView.WebPage.BlogPage {
                     )
                 } imAvatar: { viewId, fileName in
                     self.avatar = fileName
-                    self.imageAvatar.load("https://\(custCatchUrl)/contenido/thump_\(fileName)")
+                    self.imageAvatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(fileName)")
                     self.updateAvatar(viewId, fileName)
                 } removeMe: { viewId in
                     self.imageRefrence[viewId]?.remove()

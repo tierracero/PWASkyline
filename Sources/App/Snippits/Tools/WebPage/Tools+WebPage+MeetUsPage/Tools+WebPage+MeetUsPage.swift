@@ -452,7 +452,7 @@ extension ToolsView.WebPage {
                                                     return
                                                 }
                                                 
-                                                view.avatar.load("https://\(custCatchUrl)/contenido/thump_\(avatar)")
+                                                view.avatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(avatar)")
                                                 
                                             } addItem: { item in
                                                 self.addDiplomaRow(item)
@@ -517,7 +517,7 @@ extension ToolsView.WebPage {
                                                     return
                                                 }
                                                 
-                                                view.avatar.load("https://\(custCatchUrl)/contenido/thump_\(avatar)")
+                                                view.avatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(avatar)")
                                                 
                                             } addItem: { item in
                                                 self.addProfileRow(item)
@@ -1118,7 +1118,7 @@ extension ToolsView.WebPage {
                         
                     } updateAvatar: { serviceId, avatar in
                         
-                        view.avatar.load("https://\(custCatchUrl)/contenido/thump_\(avatar)")
+                        view.avatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(avatar)")
                         
                     } addItem: { service in
                         // MARK: un used since service exist
@@ -1178,7 +1178,7 @@ extension ToolsView.WebPage {
                         
                     } updateAvatar: { itemId, avatar in
                         
-                        view.avatar.load("https://\(custCatchUrl)/contenido/thump_\(avatar)")
+                        view.avatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(avatar)")
                         
                     } addItem: { item in
                         // MARK: un used since service exist

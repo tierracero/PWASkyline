@@ -176,7 +176,7 @@ class AddRentalSelectDepartment: Div {
                         }
                 )
                 if !dep.coverLandscape.isEmpty {
-                    img.load("https://baronrojotrajes.com/contenido/thump_\(dep.coverLandscape)")
+                    img.load("https://baronrojotrajes.com\(skylineUrlPatch)/contenido/thump_\(dep.coverLandscape)")
                 }
             }
         }

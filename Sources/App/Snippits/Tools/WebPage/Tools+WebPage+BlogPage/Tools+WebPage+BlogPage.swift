@@ -327,7 +327,7 @@ extension ToolsView.WebPage {
                                                     return
                                                 }
                                                 
-                                                view.avatar.load("https://\(custCatchUrl)/contenido/thump_\(avatar)")
+                                                view.avatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(avatar)")
                                                 
                                             } addItem: { item in
                                                 self.addItemRow(item)
@@ -881,7 +881,7 @@ extension ToolsView.WebPage {
                         
                     } updateAvatar: { itemId, avatar in
                         
-                        view.avatar.load("https://\(custCatchUrl)/contenido/thump_\(avatar)")
+                        view.avatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(avatar)")
                         
                     } addItem: { blog in
                         // MARK: un used since blog entrie exist

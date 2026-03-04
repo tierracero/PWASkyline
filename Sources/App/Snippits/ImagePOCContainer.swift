@@ -312,7 +312,7 @@ class ImagePOCContainer: Div {
         $pocid.listen {
             
            if $0 == nil {
-               self.path = "https://\(custCatchUrl)/iCatch/"
+               self.path = "https://\(custCatchUrl)\(skylineUrlPatch)/iCatch/"
            }
            else{
                if let pDir = customerServiceProfile?.account.pDir {
@@ -323,7 +323,7 @@ class ImagePOCContainer: Div {
         }
         
         if pocid == nil {
-            self.path = "https://\(custCatchUrl)/iCatch/"
+            self.path = "https://\(custCatchUrl)\(skylineUrlPatch)/iCatch/"
         }
         else{
            if let pDir = customerServiceProfile?.account.pDir {

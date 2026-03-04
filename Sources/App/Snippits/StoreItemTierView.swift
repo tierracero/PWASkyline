@@ -263,7 +263,7 @@ class StoreItemTierView: Div {
         }
         
         if !coverLandscape.isEmpty {
-            self.avatar.load("https://\(custCatchUrl)/contenido/thump_\(coverLandscape)")
+            self.avatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(coverLandscape)")
             
         }
         

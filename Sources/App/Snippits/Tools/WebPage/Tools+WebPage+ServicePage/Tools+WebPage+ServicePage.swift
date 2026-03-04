@@ -405,7 +405,7 @@ extension ToolsView.WebPage {
                                                 return
                                             }
                                             
-                                            view.avatar.load("https://\(custCatchUrl)/contenido/thump_\(avatar)")
+                                            view.avatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(avatar)")
                                             
                                         } addService: { service in
                                             self.addServiceRow(service)
@@ -868,7 +868,7 @@ extension ToolsView.WebPage {
                         
                     } updateAvatar: { serviceId, avatar in
                         
-                        view.avatar.load("https://\(custCatchUrl)/contenido/thump_\(avatar)")
+                        view.avatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(avatar)")
                         
                     } addService: { service in
                         // MARK: un used since service exist

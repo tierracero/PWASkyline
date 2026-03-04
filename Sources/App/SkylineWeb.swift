@@ -16,7 +16,7 @@ public struct SkylineWeb {
         mode: .beta,
         major: 0,
         minor: 21,
-        patch: 1
+        patch: 2
     )
 	
 	public init() {}
@@ -73,7 +73,14 @@ public var custCatchAccountType: TCAccountType = .buisness
 public var linkedProfile: [PanelConfigurationObjects] = []
 
 public var tcaccount: TCAccountsItem? = nil
- 
+
+public var accountType: TCAccountType = .buisness
+
+public var pDir: String = ""
+
+// variabel used to define since given directory fora customer since entrepernur account have no website 
+public var skylineUrlPatch = ""
+
 /// This contols main menu (left) aditional items
 public var aditionalMenuItems: [AditionalSideMenuItems] = []
 
@@ -248,7 +255,7 @@ open class _SkyLine {
         mode: .beta,
         major: 0,
         minor: 21,
-        patch: 1
+        patch: 2
     )
 	
     /// .init(.rgba(0, 0, 0, 0.7))

@@ -256,7 +256,7 @@ class CreateStoreLevelLine: Div {
             descr = line.smallDescription
             
             if !line.coverLandscape.isEmpty {
-                self.imgAvatar.load("https://\(custCatchUrl)/contenido/thump_\(line.coverLandscape)")
+                self.imgAvatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(line.coverLandscape)")
             }
             
             

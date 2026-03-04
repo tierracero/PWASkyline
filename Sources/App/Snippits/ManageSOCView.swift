@@ -1703,7 +1703,7 @@ class ManageSOCView: Div {
             var _path = ""
             
             if self.socid == nil {
-                _path = "https://\(custCatchUrl)/iCatch/"
+                _path = "https://\(custCatchUrl)\(skylineUrlPatch)/iCatch/"
             }
             else{
                 if let pDir = customerServiceProfile?.account.pDir {
@@ -2263,7 +2263,7 @@ class ManageSOCView: Div {
             self.relatedCodes =  payload.relatedCodes
             
             if !payload.soc.avatar.isEmpty {
-                self.imageAvatar.load("https://\(custCatchUrl)/contenido/\(payload.soc.avatar)")
+                self.imageAvatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/\(payload.soc.avatar)")
             }
             
             self.autoCalcCost = currentAutoCalcCost

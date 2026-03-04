@@ -2205,9 +2205,9 @@ class OrderView: Div {
                         
                         view.loadPercent = ""
                         
-                        view.url = "https://\(custCatchUrl)/fileNet/\(payload.fileName)"
+                        view.url = "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(payload.fileName)"
                         
-                        view.custom("background-image", "url('\("https://\(custCatchUrl)/fileNet/\(payload.fileName)")')")
+                        view.custom("background-image", "url('\("https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(payload.fileName)")')")
                         
                     }
                 }
@@ -2655,13 +2655,13 @@ class OrderView: Div {
             let view = OrderImageView(
                 id: file.id,
                 name: file.file,
-                url: "https://\(custCatchUrl)/fileNet/thump_\(file.avatar)"
+                url: "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/thump_\(file.avatar)"
             ) { id, name in
                 
                 addToDom(MediaViewer(
                     relid: self.order.id,
                     type: .orderFile,
-                    url: "https://\(custCatchUrl)/fileNet/",
+                    url: "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/",
                     files: [
                         .init(
                             fileId: file.id,
@@ -5133,19 +5133,19 @@ class OrderView: Div {
                     
                     switch payload.type {
                     case .image:
-                        view.url = "https://\(custCatchUrl)/fileNet/\(payload.fileName)"
-                        view.custom("background-image", "url('\("https://\(custCatchUrl)/fileNet/\(payload.fileName)")')")
+                        view.url = "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(payload.fileName)"
+                        view.custom("background-image", "url('\("https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(payload.fileName)")')")
                     case .video:
-                        //view.poster = "https://\(custCatchUrl)/fileNet/\(payload.fileName)"
-                        //view.videoSrc = "https://\(custCatchUrl)/fileNet/thump_\(payload.fileName)"
-                        view.url = "https://\(custCatchUrl)/fileNet/\(payload.fileName)"
-                        view.custom("background-image", "url('\("https://\(custCatchUrl)/fileNet/\(payload.fileName)")')")
+                        //view.poster = "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(payload.fileName)"
+                        //view.videoSrc = "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/thump_\(payload.fileName)"
+                        view.url = "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(payload.fileName)"
+                        view.custom("background-image", "url('\("https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(payload.fileName)")')")
                     case .audio:
                         break
                     case .pdf:
                         break
                     case .doc, .pages, .numbers, .keynote, .xml:
-                        view.url = "https://\(custCatchUrl)/fileNet/\(payload.fileName)"
+                        view.url = "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(payload.fileName)"
                     case .ptt:
                         break
                     case .general:

@@ -88,7 +88,7 @@ class MessageObject: Div {
             addToDom(MediaViewer(
                 relid: self.relid,
                 type: self.type,
-                url: "https://\(custCatchUrl)/fileNet/",
+                url: "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/",
                 files: [.init(
                     fileId: nil,
                     file: self.activity,
@@ -146,7 +146,7 @@ class MessageObject: Div {
                 }
                 
                 if !user.avatar.isEmpty {
-                    self.userAvatar.load("https://\(custCatchUrl)/contenido/\(user.avatar)")
+                    self.userAvatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/\(user.avatar)")
                 }
                 
                 if user.username.contains("@") {
@@ -171,7 +171,7 @@ class MessageObject: Div {
         case .img:
             if !self.note.activity.isEmpty {
                 activity = note.activity
-                self.mediaImage.load("https://\(custCatchUrl)/fileNet/\(self.note.activity)")
+                self.mediaImage.load("https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(self.note.activity)")
             }
         case .doc:
             break
@@ -180,8 +180,8 @@ class MessageObject: Div {
         case .voice:
             break
         case .vdo:
-            videoSrc = "https://\(custCatchUrl)/fileNet/\(self.note.activity)"
-            poster = "https://\(custCatchUrl)/fileNet/\(self.note.activity)".replace(from: ".mp4", to: ".jpg")
+            videoSrc = "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(self.note.activity)"
+            poster = "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(self.note.activity)".replace(from: ".mp4", to: ".jpg")
             activity = note.activity
         }
         
@@ -296,7 +296,7 @@ class MessageObject: Div {
                 Div{
                     Audio()
                         .controls(true)
-                        .src("https://\(custCatchUrl)/fileNet/\(self.note.activity)")
+                        .src("https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(self.note.activity)")
                         .width(250.px)
                         .controls(true)
                 }
@@ -463,7 +463,7 @@ class MessageObject: Div {
                 Div{
                     Audio()
                         .controls(true)
-                        .src("https://\(custCatchUrl)/fileNet/\(self.note.activity)")
+                        .src("https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(self.note.activity)")
                         .width(250.px)
                         .controls(true)
                 }
@@ -482,7 +482,7 @@ class MessageObject: Div {
                 Div{
                     Video{
                         Source()
-                            .src("https://\(custCatchUrl)/fileNet/\(self.note.activity)")
+                            .src("https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(self.note.activity)")
                     }
                     .width(25.percent)
                     .controls(true)
@@ -675,7 +675,7 @@ class MessageObject: Div {
                 Div{
                     Audio()
                         .controls(true)
-                        .src("https://\(custCatchUrl)/fileNet/\(self.note.activity)")
+                        .src("https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(self.note.activity)")
                         .width(250.px)
                         .controls(true)
                 }
@@ -695,7 +695,7 @@ class MessageObject: Div {
                 Div{
                     Video{
                         Source()
-                            .src("https://\(custCatchUrl)/fileNet/\(self.note.activity)")
+                            .src("https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(self.note.activity)")
                     }
                     .width(25.percent)
                     .controls(true)
@@ -786,7 +786,7 @@ class MessageObject: Div {
     
     func loadImage(_ image: String ){
         
-        mediaImage.load("https://\(custCatchUrl)/fileNet/thump_\(image)")
+        mediaImage.load("https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/thump_\(image)")
         
         activity = image
         

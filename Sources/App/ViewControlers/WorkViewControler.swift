@@ -427,110 +427,113 @@ class WorkViewControler: PageController {
                     
                 }
                 
+                
+                // Punto de Venta
+                if linkedProfile.contains(.bizPDV) {
+                    Div{
+                        Span()
+                            .backgroundImage("/skyline/media/addBlueIcon.png")
+                            .opacity(0.5)
+                            .height(40.px)
+                            .width(40.px)
+                            .marginTop(5.px)
+                            .paddingRight(20.px)
+                            .backgroundSize(h: 100.percent, v: 100.percent)
+                        
+                        Span()
+                            .paddingRight(7.px)
+                        
+                        Span("Venta")
+                            .marginTop(10.px)
+                            .fontSize(18.px)
+                            .height(35.px)
+                            .color(.gray)
+                        
+                    }
+                    .class(.topBarButton)
+                    .onClick {
+                        
+                        if let view = self.posView {
+                            
+                            view.display(.block)
+                            
+                            self.posSubView?.remove()
+                            
+                            self.posSubView = nil
+                            
+                            return
+                        }
+                        
+                        let salePoint = SalePointView(loadBy: nil) {
+                            // MARK: Close View
+                            
+                            self.posView?.remove()
+                            
+                            self.posView = nil
+                            
+                        } minimizeView: {
+                            // MARK: Minimize View
+                            
+                            print("🟢  Will try to lower window 001")
+                            
+                            let subView = Div{
+                                Div{
+                                    Img()
+                                        .src("/skyline/media/star_yellow.png")
+                                        .marginTop(3.px)
+                                        .width(22.px)
+                                }
+                                .marginRight(7.px)
+                                .float(.left)
+                                
+                                Span("PDV")
+                                    .color(.white)
+                                
+                            }
+                                .border(width: .medium, style: .solid, color: .slateGray)
+                                .custom("width", "fit-content")
+                                .backgroundColor(.grayBlack)
+                                .borderRadius(all: 12.px)
+                                .class(.oneLineText)
+                                .padding(all: 7.px)
+                                .margin(all: 7.px)
+                                .cursor(.pointer)
+                                .fontSize(23.px)
+                                .color(.white)
+                                .float(.left)
+                                .onClick {
+                                    
+                                    self.posSubView?.remove()
+                                    
+                                    self.posSubView = nil
+                                    
+                                    if let view = self.posView {
+                                        view.display(.block)
+                                    }
+                                }
+                            
+                            self.posSubView = subView
+                            
+                            WebApp.current.minimizedGrid.appendChild(subView)
+                            
+                            self.posView?.display(.none)
+                            
+                        }
+
+                        
+                        self.posView = salePoint
+                        
+                        self.appendChild(salePoint)
+                        
+                    }
+                }
+                   
+                   
+                   
+
                 // Nuevo folio
                 // Punto de Venta
                 if linkedProfile.contains(.bizODS) {
-                    
-                    // Punto de Venta
-                    if linkedProfile.contains(.bizPDV) {
-                        Div{
-                            Span()
-                                .backgroundImage("/skyline/media/addBlueIcon.png")
-                                .opacity(0.5)
-                                .height(40.px)
-                                .width(40.px)
-                                .marginTop(5.px)
-                                .paddingRight(20.px)
-                                .backgroundSize(h: 100.percent, v: 100.percent)
-                            
-                            Span()
-                                .paddingRight(7.px)
-                            
-                            Span("Venta")
-                                .marginTop(10.px)
-                                .fontSize(18.px)
-                                .height(35.px)
-                                .color(.gray)
-                            
-                        }
-                        .class(.topBarButton)
-                        .onClick {
-                            
-                            if let view = self.posView {
-                                
-                                view.display(.block)
-                                
-                                self.posSubView?.remove()
-                                
-                                self.posSubView = nil
-                                
-                                return
-                            }
-                            
-                            let salePoint = SalePointView(loadBy: nil) {
-                                // MARK: Close View
-                                
-                                self.posView?.remove()
-                                
-                                self.posView = nil
-                                
-                            } minimizeView: {
-                                // MARK: Minimize View
-                                
-                                print("🟢  Will try to lower window 001")
-                                
-                                let subView = Div{
-                                    Div{
-                                        Img()
-                                            .src("/skyline/media/star_yellow.png")
-                                            .marginTop(3.px)
-                                            .width(22.px)
-                                    }
-                                    .marginRight(7.px)
-                                    .float(.left)
-                                    
-                                    Span("PDV")
-                                        .color(.white)
-                                    
-                                }
-                                    .border(width: .medium, style: .solid, color: .slateGray)
-                                    .custom("width", "fit-content")
-                                    .backgroundColor(.grayBlack)
-                                    .borderRadius(all: 12.px)
-                                    .class(.oneLineText)
-                                    .padding(all: 7.px)
-                                    .margin(all: 7.px)
-                                    .cursor(.pointer)
-                                    .fontSize(23.px)
-                                    .color(.white)
-                                    .float(.left)
-                                    .onClick {
-                                        
-                                        self.posSubView?.remove()
-                                        
-                                        self.posSubView = nil
-                                        
-                                        if let view = self.posView {
-                                            view.display(.block)
-                                        }
-                                    }
-                                
-                                self.posSubView = subView
-                                
-                                WebApp.current.minimizedGrid.appendChild(subView)
-                                
-                                self.posView?.display(.none)
-                             
-                            }
-
-                            
-                            self.posView = salePoint
-                            
-                            self.appendChild(salePoint)
-                            
-                        }
-                    }
-                    
                     Div{
                         Span()
                             .backgroundImage("/skyline/media/addBlueIcon.png")
@@ -2725,6 +2728,7 @@ class WorkViewControler: PageController {
                                     self.appendChild(order)
                                     
                                 case .rental:
+
                                     let order = StartRentalOrder(custAcct: custAcct) { id in
                                         
                                         OrderCatchControler.shared.loadFolio(orderid: id) {account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
@@ -2794,6 +2798,8 @@ class WorkViewControler: PageController {
                                     break
                                 case .account:
                                     loadAccountView(id: .id(custAcct.id))
+                                case .followup:
+                                    break
                                 }
                             }
 
@@ -2811,7 +2817,6 @@ class WorkViewControler: PageController {
                     switch orderType {
                     case .order:
                         
-
                         let order = StartServiceOrder(custAcct: custAcct) { id, shownHighPriorityNotes, cfiles in
                             
                             OrderCatchControler.shared.loadFolio(orderid: id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
@@ -2902,7 +2907,9 @@ class WorkViewControler: PageController {
                             
                         }
                         self.appendChild(order)
+
                     case .rental:
+
                         let order = StartRentalOrder(custAcct: custAcct) { id in
                             
                             OrderCatchControler.shared.loadFolio(orderid: id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
@@ -2968,10 +2975,13 @@ class WorkViewControler: PageController {
                             
                         }
                         self.appendChild(order)
+
                     case .date:
                         break
                     case .account:
                         loadAccountView(id: .id(custAcct.id))
+                    case .followup:
+                              break
                     }
                 }
                 else{
@@ -3139,6 +3149,8 @@ class WorkViewControler: PageController {
                             break
                         case .account:
                             loadAccountView(id: .id(custAcct.id))
+                        case .followup:
+                            break
                         }
                     }
                     

@@ -612,7 +612,7 @@ extension CustConcessionView {
             
             if let custWebFilesLogos {
                 if !custWebFilesLogos.logoIndexWhite.avatar.isEmpty {
-                    logo = "https://\(custCatchUrl)/contenido/\(custWebFilesLogos.logoIndexWhite.avatar)"
+                    logo = "https://\(custCatchUrl)\(skylineUrlPatch)/contenido/\(custWebFilesLogos.logoIndexWhite.avatar)"
                 }
             }
             

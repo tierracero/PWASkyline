@@ -256,7 +256,7 @@ class CreateStoreLevelCategoria: Div {
             descr = cat.smallDescription
             
             if !cat.coverLandscape.isEmpty {
-                self.imgAvatar.load("https://\(custCatchUrl)/contenido/thump_\(cat.coverLandscape)")
+                self.imgAvatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(cat.coverLandscape)")
             }
             
         }

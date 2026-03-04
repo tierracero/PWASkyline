@@ -263,7 +263,7 @@ class CreateStoreLevelDepartement: Div {
             descr = dep.smallDescription
             
             if !dep.coverLandscape.isEmpty {
-                self.imgAvatar.load("https://\(custCatchUrl)/contenido/thump_\(dep.coverLandscape)")
+                self.imgAvatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(dep.coverLandscape)")
             }
             
         }
