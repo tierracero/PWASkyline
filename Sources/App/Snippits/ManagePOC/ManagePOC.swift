@@ -2508,7 +2508,7 @@ class ManagePOC: Div {
         .width(1150.px)
         .color(.white)
         .top(45.px)
-        /*
+        
         /// Select Brand View
         Div{
             Div{
@@ -2559,7 +2559,7 @@ class ManagePOC: Div {
         .color(.white)
         .top(45.px)
         .hidden(self.$selectBrandViewIsHidden)
-        */
+        
     }
     
     override func buildUI() {
@@ -4017,6 +4017,8 @@ class ManagePOC: Div {
     
     func getBrands() {
         
+        print("getBrands")
+
         if !brands.isEmpty {
             loadBrands()
             
@@ -4056,6 +4058,8 @@ class ManagePOC: Div {
     
     func loadBrands() {
         
+        print("loadBrands")
+
         brandCount = brands.count
         
         selectBrandViewIsHidden = false

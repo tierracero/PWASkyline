@@ -12,13 +12,21 @@ import Web
 class OrderPrintChargesEngine: Div {
     
     var order: CustOrderLoadFolioDetails
+    
     var notes: [CustOrderLoadFolioNotes]
+    
     var payments: [CustOrderLoadFolioPayments]
+    
     var charges: [CustOrderLoadFolioCharges]
+    
     var pocs: [CustPOCInventoryOrderView]
+    
     var files: [CustOrderLoadFolioFiles]
+    
     var equipments: [CustOrderLoadFolioEquipments]
+    
     var rentals: [CustPOCRentalsMin]
+    
     var transferOrder: CustTranferManager?
     
     init(
@@ -52,6 +60,7 @@ class OrderPrintChargesEngine: Div {
     lazy var lineBreak = Div()
     
     lazy var dateViewOne = Div()
+
     lazy var dateViewTwo = Div()
     
     lazy var orderImg = Img()
@@ -295,7 +304,7 @@ class OrderPrintChargesEngine: Div {
         
         if let _logo = custWebFilesLogos?.logoIndexWhite.avatar {
             if !_logo.isEmpty {
-                logo = "\(skylineUrlPatch)/contenido/\(_logo)"
+                logo = "\(custCatchUrl)\(skylineUrlPatch)/contenido/\(_logo)"
             }
         }
         

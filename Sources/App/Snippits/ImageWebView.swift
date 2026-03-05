@@ -487,6 +487,10 @@ class ImageWebView: Div {
         
         isAvatar = (self.selectedAvatar.wrappedValue == self.image)
         
+        print("⚠️  image")
+
+        print(image)
+
         if let image {
             loadImage(image)
         }

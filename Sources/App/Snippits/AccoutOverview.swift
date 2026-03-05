@@ -348,7 +348,9 @@ public class AccoutOverview: Div {
                 .marginTop(7.px)
                 .class(.uibtn)
                 .onClick { _, event in
+
                     if let orderView = self._orderView {
+                        
                         let printBody = OrderPrintChargesEngine(
                             order: orderView.order,
                             notes: orderView.notes,
@@ -360,6 +362,9 @@ public class AccoutOverview: Div {
                             rentals:orderView.rentals,
                             transferOrder: orderView.transferOrder
                         ).innerHTML
+
+                        print(printBody)
+
                         _ = JSObject.global.renderPrint!(
                             custCatchUrl,
                             orderView.order.folio,
@@ -367,6 +372,8 @@ public class AccoutOverview: Div {
                             String(orderView.order.mobile.suffix(4)),
                             printBody
                         )
+
+
                     }
                     
                     self.printMenuViewIsHidden = true

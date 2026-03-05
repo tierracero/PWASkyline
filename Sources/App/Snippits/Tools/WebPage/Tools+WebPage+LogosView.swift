@@ -338,12 +338,12 @@ extension ToolsView.WebPage {
                     relation: .logoIndexBlack,
                     relationId: nil,
                     type: .img,
-                    mediaId: nil,
-                    file: nil,
-                    image: nil,
-                    descr: "",
-                    width: 0,
-                    height: 0,
+                    mediaId: image.id,
+                    file: image.file,
+                    image: image.avatar,
+                    descr: image.description,
+                    width: image.width,
+                    height: image.height,
                     selectedAvatar: self.$darkLogo
                 ) { viewId, mediaId, path, originalImage, originalWidth, originalHeight, isAvatar in
                    
@@ -368,12 +368,12 @@ extension ToolsView.WebPage {
                     relation: .logoIndexBlackTrans,
                     relationId: nil,
                     type: .img,
-                    mediaId: nil,
-                    file: nil,
-                    image: nil,
-                    descr: "",
-                    width: 0,
-                    height: 0,
+                    mediaId: image.id,
+                    file: image.file,
+                    image: image.avatar,
+                    descr: image.description,
+                    width: image.width,
+                    height: image.height,
                     selectedAvatar: self.$darkTransLogo
                 ) { viewId, mediaId, path, originalImage, originalWidth, originalHeight, isAvatar in
                    
@@ -398,12 +398,12 @@ extension ToolsView.WebPage {
                     relation: .logoIndexWhite,
                     relationId: nil,
                     type: .img,
-                    mediaId: nil,
-                    file: nil,
-                    image: nil,
-                    descr: "",
-                    width: 0,
-                    height: 0,
+                    mediaId: image.id,
+                    file: image.file,
+                    image: image.avatar,
+                    descr: image.description,
+                    width: image.width,
+                    height: image.height,
                     selectedAvatar: self.$lightLogo
                 ) { viewId, mediaId, path, originalImage, originalWidth, originalHeight, isAvatar in
                    
@@ -428,12 +428,12 @@ extension ToolsView.WebPage {
                     relation: .logoIndexWhiteTrans,
                     relationId: nil,
                     type: .img,
-                    mediaId: nil,
-                    file: nil,
-                    image: nil,
-                    descr: "",
-                    width: 0,
-                    height: 0,
+                    mediaId: image.id,
+                    file: image.file,
+                    image: image.avatar,
+                    descr: image.description,
+                    width: image.width,
+                    height: image.height,
                     selectedAvatar: self.$lightTransLogo
                 ) { viewId, mediaId, path, originalImage, originalWidth, originalHeight, isAvatar in
                    
@@ -458,12 +458,12 @@ extension ToolsView.WebPage {
                     relation: .logoIndexIcon,
                     relationId: nil,
                     type: .img,
-                    mediaId: nil,
-                    file: nil,
-                    image: nil,
-                    descr: "",
-                    width: 0,
-                    height: 0,
+                    mediaId: image.id,
+                    file: image.file,
+                    image: image.avatar,
+                    descr: image.description,
+                    width: image.width,
+                    height: image.height,
                     selectedAvatar: self.$iconLogo
                 ) { viewId, mediaId, path, originalImage, originalWidth, originalHeight, isAvatar in
                    
@@ -488,7 +488,7 @@ extension ToolsView.WebPage {
         func renderInputFileDark() {
             
             fileInputDark = InputFile()
-                .accept(["image/png", "image/gif", "image/jpeg", "image/jpg", "image/webp"]) // ,".heic"
+                .accept(["image/png", "image/gif", "image/jpeg", "image/jpg", "image/webp"]) 
                 .multiple(false)
                 .display(.none)
             
