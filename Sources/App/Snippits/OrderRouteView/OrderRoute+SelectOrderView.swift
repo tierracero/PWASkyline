@@ -60,13 +60,9 @@ extension OrderRouteView{
         
         @State var selectedOrderIsHidden = true
         
-        @State var multipleAddressResultIsHidden = true
-        
         var order: CustOrder? = nil
         
         @State var orders: [CustOrder] = []
-        
-        @State var linkedLocations: [AppleMap] = []
         
         @State var currentLocation: AppleMap.Coordinate? = nil
         
@@ -384,57 +380,6 @@ extension OrderRouteView{
                 
             }
             .hidden(self.$selectedOrderIsHidden)
-            .class(.transparantBlackBackGround)
-            .position(.absolute)
-            .height(100.percent)
-            .width(100.percent)
-            .left(0.px)
-            .top(0.px)
-            
-            Div{
-                Div{
-                    Div{
-                        
-                        Img()
-                            .closeButton(.view)
-                            .onClick{
-                                self.linkedLocations.removeAll()
-                                self.multipleAddressResultIsHidden = true
-                            }
-                        
-                        H2("Seleccionar Direccion")
-                            .color(.lightBlueText)
-                    }
-                    
-                    Div().class(.clear).marginTop(7.px)
-                
-                    ForEach(self.$linkedLocations){ loc in
-                        
-                        Div{
-                            Span(loc.formattedAddress ?? "\(loc.name) \(loc.locality) \(loc.postCode)")
-                        }
-                            .custom("width","calc(100% - 24px)")
-                            .class(.uibtnLarge, .twoLineText)
-                            .onClick {
-                                self.addLocation(latitude: loc.coordinate.latitude, longitude: loc.coordinate.longitude)
-                            }
-                        
-                    }
-                    .width(100.percent)
-                    .maxHeight(300.px)
-                    .overflow(.auto)
-                    
-                }
-                .backgroundColor(.backGroundGraySlate)
-                .borderRadius(all: 24.px)
-                .padding(all: 12.px)
-                .position(.absolute)
-                .width(50.percent)
-                .left(25.percent)
-                .top(24.percent)
-                
-            }
-            .hidden(self.$multipleAddressResultIsHidden)
             .class(.transparantBlackBackGround)
             .position(.absolute)
             .height(100.percent)
@@ -838,7 +783,6 @@ extension OrderRouteView{
                         self.processMapResponse(payload)
                     }
                     
-                    
                     return .undefined
                 }.jsValue, JSClosure { args in
                     
@@ -875,11 +819,13 @@ extension OrderRouteView{
                 }
                 
                 if payload.count > 1 {
-                
-                    self.linkedLocations = payload
-                    
-                    self.multipleAddressResultIsHidden = false
-                    
+
+                    let view = MapMultipleAddressSelector(linkedLocations: payload) { item in
+                        self.addLocation(latitude: item.coordinate.latitude, longitude: item.coordinate.longitude)
+                    }
+
+                    addToDom(view)
+
                     return
                 }
                 
