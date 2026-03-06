@@ -249,7 +249,7 @@ class OrderView: Div {
         }
         .id(Id(stringLiteral: mapId))
         .position(.relative)
-        .height(250.px)
+        
 
     @DOM override var body: DOM.Content {
         

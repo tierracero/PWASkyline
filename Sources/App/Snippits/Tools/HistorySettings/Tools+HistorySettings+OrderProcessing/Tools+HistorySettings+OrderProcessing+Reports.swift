@@ -1248,6 +1248,31 @@ extension ToolsView.HistorySettings.OrderProcessing {
         
         func printReportGeneralData( userref: [UUID:CustUsername], fileName: String, data: [API.custOrderV1.ReportsObjects]){
             
+
+            do {
+
+                let  jdata = try JSONEncoder().encode(data)
+
+                if let json = String(data: jdata, encoding: .utf8) {
+
+                    print("- - - - - - - - - - - -")
+                    print("- - - - - - - - - - - -")
+
+                    print(json)
+
+
+                    print("- - - - - - - - - - - -")
+                    print("- - - - - - - - - - - -")
+
+                }
+
+            }
+            catch{
+
+            }
+
+            
+
             var csvString = "Creado,Finalizado,Folio,Creado Por,Procesado Por,Pend Entrega,Descripción,QA,Status,Costos,Cargos,Ganacia"
             
             var grandCost: Int64 = 0

@@ -2138,6 +2138,10 @@ function loadMap(mapId, serchString, callback, updateCoordinate) {
     console.log(map)
     
     console.log(" - - - - - - - - - - ")
+
+    console.log("serchString")
+    
+    console.log(serchString)
     
     let search = new mapkit.Search({ getsUserLocation: true }); search.search(serchString, (error, data) => {
         

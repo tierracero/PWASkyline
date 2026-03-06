@@ -45,6 +45,8 @@ class StartServiceOrder: Div {
         fatalError("init() has not been implemented")
     }
     
+    var mapToken = ""
+
     var smsTokens: [String] = []
     
     @State var currentLocation: AppleMap.Coordinate? = nil
@@ -116,9 +118,9 @@ class StartServiceOrder: Div {
         Option("Codigo 3 x 3")
         .value("pinpatern_canvas_3x3.png")
 
-
         Option("Codigo 4 x 4")
         .value("pinpatern_canvas_4x4.png")
+
     }
     .width(95.percent)
     .fontSize(23.px)
@@ -127,7 +129,6 @@ class StartServiceOrder: Div {
         _ = JSObject.global.resetCanvas!()
         _ = JSObject.global.loadImageCanvas!("/skyline/media/\(select.text)")
     }
-
 
     lazy var firstName = InputText(self.$_firstName)
         .autocomplete(.off)
@@ -331,7 +332,7 @@ class StartServiceOrder: Div {
         .height(38.px)
 
     let mapId = "map_" + callKey(32)
-    
+
     lazy var mapContainer = Div{
             Img()
                 .src("/skyline/media/orderMapRequest.jpeg")
@@ -339,12 +340,37 @@ class StartServiceOrder: Div {
                 .opacity(0.5)
                 .borderRadius(all: 12.px)
                 .custom("width","calc(100% - 14px)")
-                .cursor(.pointer)
-                .onClick {
-                    
+                
+            Div{
+                Table{
+                    Tr{
+                        Td{
+                            Div("🗺️  Cargar Mapa")
+                            .class(.uibtnLargeOrange)
+                            .onClick {
+                                self.loadMap()
+                            }
+                        }
+                        .verticalAlign(.middle)
+                        .align(.center)
+                    }
                 }
+                .height(100.percent)
+                .width(100.percent)
+            }
+            .height(100.percent)
+            .width(100.percent)
+            .position(.absolute)
+            .left(0.px)
+            .top(0.px)
+            .display(.flex)
+            .custom("justify-content", "center")
+            .custom("align-items", "center")
+    
         }
         .id(Id(stringLiteral: mapId))
+        .position(.relative)
+        .height(250.px)
 
     @State var ttotal = "$0.00"
     
@@ -1098,7 +1124,11 @@ class StartServiceOrder: Div {
                 
                 // Direccion Body
                 Div{
-                    
+
+                    Div().class(.clear).marginTop(3.px)
+
+                    self.mapContainer
+
                     Div().class(.clear).marginTop(3.px)
                     
                     Div {
@@ -2828,8 +2858,8 @@ class StartServiceOrder: Div {
                 description: self._descr,
                 ///  insted of server  do small descr here ??
                 smallDescription: "",
-                lat: nil,
-                lon: nil,
+                lat: self.currentLocation?.latitude.toString,
+                lon: self.currentLocation?.longitude.toString,
                 contact: .init(
                     firstName: self._firstName,
                     secondName: self._secondName,
@@ -3892,10 +3922,12 @@ class StartServiceOrder: Div {
                 return
             }
         
+            self.mapToken = token
+
             self.mapContainer.innerHTML = ""
             
             // "Arroyo Carrizal, Luis Echeverria, 87060 Victoria, Tamps., México
-            let _ = JSObject.global.initiateSingleMap!(self.mapId, token, "\(self.street), \(self.colony), \(self.zip) \(self.city), \(self.state), \(self.country)", JSOneshotClosure { args in
+            let _ = JSObject.global.initiateSingleMap!(self.mapId, token, "\(self._street), \(self._colony), \(self._zip) \(self._city), \(self._state), \(self._country)", JSOneshotClosure { args in
                 
                 loadingView(show: false)
                 
@@ -3982,37 +4014,68 @@ class StartServiceOrder: Div {
     }
 
 
-        func addLocation(latitude: Double? = nil, longitude: Double? = nil){
+    func addLocation(latitude: Double? = nil, longitude: Double? = nil){
+    
+        var latitude = latitude
         
-            var latitude = latitude
+        var longitude = longitude
+        
+        if latitude == nil || longitude == nil {
             
-            var longitude = longitude
-            
-            if latitude == nil || longitude == nil {
-                
-                if let currentLocation {
-                    latitude = currentLocation.latitude
-                    longitude = currentLocation.longitude
-                }
-                
+            if let currentLocation {
+                latitude = currentLocation.latitude
+                longitude = currentLocation.longitude
             }
-            
-            guard let latitude else {
-                print("🔴 FAIL TO GET  LAT")
-                return
-            }
-            
-            guard let longitude else {
-                print("🔴 FAIL TO GET  LON")
-                return
-            }
-            
-            
-            
-            print("🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  ")
             
         }
         
+        guard let latitude else {
+            print("🔴 FAIL TO GET  LAT")
+            return
+        }
+        
+        guard let longitude else {
+            print("🔴 FAIL TO GET  LON")
+            return
+        }
+        
+        currentLocation = .init(latitude: latitude, longitude: longitude)
+        
+        loadLocation(latitude.toString, longitude.toString)
+
+        print("🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  ")
+        
+    }
+        
+    func loadLocation(_ lat: String,_ lon: String){
+
+            self.mapContainer.innerHTML = ""
+            
+
+            // "Arroyo Carrizal, Luis Echeverria, 87060 Victoria, Tamps., México
+            let _ = JSObject.global.initiateSingleMapCord!(self.mapId, self.mapToken, lat, lon,  JSClosure { args in
+                
+                print("🗺️  processMapUpdate")
+
+                print(args)
+
+                print("🟢  0001 ")
+                
+                print(args)
+                
+                if let payload = args.first?.string {
+                    print("🟢  0002 ")
+                    self.processMapUpdate(payload)
+                }
+                
+                print("🟢  0003 ")
+                
+                return .undefined
+            }.jsValue)
+
+        }
+
+
 
 }
 
