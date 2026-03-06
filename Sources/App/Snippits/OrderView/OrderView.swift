@@ -219,12 +219,37 @@ class OrderView: Div {
                 .opacity(0.5)
                 .borderRadius(all: 12.px)
                 .custom("width","calc(100% - 14px)")
-                .cursor(.pointer)
-                .onClick {
-                    
+                
+            Div{
+                Table{
+                    Tr{
+                        Td{
+                            Div("🗺️  Cargar Mapa")
+                            .class(.uibtnLargeOrange)
+                            .onClick {
+                                self.loadMap()
+                            }
+                        }
+                        .verticalAlign(.middle)
+                        .align(.center)
+                    }
                 }
+                .height(100.percent)
+                .width(100.percent)
+            }
+            .height(100.percent)
+            .width(100.percent)
+            .position(.absolute)
+            .left(0.px)
+            .top(0.px)
+            .display(.flex)
+            .custom("justify-content", "center")
+            .custom("align-items", "center")
+    
         }
         .id(Id(stringLiteral: mapId))
+        .position(.relative)
+        .height(250.px)
 
     @DOM override var body: DOM.Content {
         
@@ -5225,9 +5250,101 @@ class OrderView: Div {
         
     }
     
+
     func loadLocation(_ lat: String,_ lon: String){
-        _ = JSObject.global.initmap!( "control.\(custCatchUrl)" , lat, lon, "Cliente")
-    }
+
+            self.mapContainer.innerHTML = ""
+            
+            loadingView(show: true)
+            
+            API.v1.jwt { token in
+                
+                guard let token else {
+                    loadingView(show: false)
+                    showError(.comunicationError, "No se pudo cargar token")
+                    return
+                }
+
+                loadingView(show: false)
+
+                // "Arroyo Carrizal, Luis Echeverria, 87060 Victoria, Tamps., México
+                let _ = JSObject.global.initiateSingleMapCord!(self.mapId, token, lat, lon,  JSClosure { args in
+                    
+                    print("🗺️  processMapUpdate")
+
+                    print(args)
+
+                    print("🟢  0001 ")
+                    
+                    print(args)
+                    
+                    if let payload = args.first?.string {
+                        print("🟢  0002 ")
+                        self.processMapUpdate(payload)
+                    }
+                    
+                    print("🟢  0003 ")
+                    
+                    return .undefined
+                }.jsValue)
+
+            }
+        }
+
+
+    func loadLocation(token: String, _ lat: String,_ lon: String){
+
+            self.mapContainer.innerHTML = ""
+            
+            // "Arroyo Carrizal, Luis Echeverria, 87060 Victoria, Tamps., México
+            let _ = JSObject.global.initiateSingleMapCord!(self.mapId, token, lat, lon,  JSClosure { args in
+
+
+                print(args)
+
+                /*
+                guard let data = json.data(using: .utf8) else {
+                    showError(.unexpectedResult, "No se pudo crear data de hilo")
+                    return
+                }
+                
+                do {
+                    
+                    let payload = try JSONDecoder().decode([AppleMap].self, from: data)
+                    
+                    if payload.isEmpty {
+                        showError(.generalError, "no hay resultado")
+                        return
+                    }
+                    
+                    if payload.count > 1 {
+
+                            let view = MapMultipleAddressSelector(linkedLocations: payload) { item in
+                                self.addLocation(latitude: item.coordinate.latitude, longitude: item.coordinate.longitude)
+                            }
+
+                            addToDom(view)
+
+                            return
+                    }
+
+                    guard let location = payload.first else {
+                        return
+                    }
+
+                    self.addLocation(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+                    
+                } catch {
+                    showError(.unexpectedResult, "No se pudo decodificar data inicial de mapa")
+                    return
+                }
+                */
+                return .undefined
+
+            }.jsValue)
+        }
+
+    
     
     func proccessPayment(_ code: FiscalPaymentCodes, _ description: String, _ amount: Float, _ provider: String, _ lastFour: String, _ auth: String, _ uts: Int64?){
         
@@ -5437,7 +5554,9 @@ class OrderView: Div {
                 showError(.comunicationError, "No se pudo cargar token")
                 return
             }
-        
+
+            loadingView(show: false)
+
             self.mapContainer.innerHTML = ""
             
             // "Arroyo Carrizal, Luis Echeverria, 87060 Victoria, Tamps., México
@@ -5447,14 +5566,12 @@ class OrderView: Div {
                 
                 print(args)
 
-                loadingView(show: false)
-
                 if let payload = args.first?.string {
                     self.processMapResponse(payload)
                 }
                 
-                
                 return .undefined
+
             }.jsValue, JSClosure { args in
                 
                 print("🗺️  processMapUpdate")
@@ -5524,35 +5641,35 @@ class OrderView: Div {
                 showError(.unexpectedResult, "No se pudo crear data de hilo")
                 return
             }
-            
-        do {
-
-            currentLocation = try JSONDecoder().decode(AppleMap.Coordinate.self, from: data)
-
-            guard let latitude = currentLocation?.latitude else {
-                return
-            }
-
-            guard let longitude = currentLocation?.longitude else {
-                return
-            }
-
-            API.custOrderV1.addLocation(
-                latitude: latitude,
-                longitude: longitude,
-                orderId: self.order.id
-            ) { resp in
-
-                print(resp )
-
-            }
                 
+            do {
 
-        }
-        catch {
-            showError(.unexpectedResult, "No se pudo decodificar data de cordenadas de mapa.")
-            return
-        }
+                currentLocation = try JSONDecoder().decode(AppleMap.Coordinate.self, from: data)
+
+                guard let latitude = currentLocation?.latitude else {
+                    return
+                }
+
+                guard let longitude = currentLocation?.longitude else {
+                    return
+                }
+
+                API.custOrderV1.addLocation(
+                    latitude: latitude,
+                    longitude: longitude,
+                    orderId: self.order.id
+                ) { resp in
+
+                    print(resp )
+
+                }
+                    
+
+            }
+            catch {
+                showError(.unexpectedResult, "No se pudo decodificar data de cordenadas de mapa.")
+                return
+            }
     }
     
         func addLocation(latitude: Double? = nil, longitude: Double? = nil){

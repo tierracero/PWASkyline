@@ -19,7 +19,11 @@ extension APIComponents {
         
         // let url = "https://intratc.co/api/jwt/control.\(custCatchUrl)"
         
-        let url = "https://intratc.co/api/jwt/\(WebApp.shared.window.location.hostname)"
+        var url = "https://api.tierracero.co/jwt/\(WebApp.shared.window.location.hostname)"
+
+        if WebApp.shared.window.location.hostname == "localhost" {
+            url = "https://api.tierracero.co/jwt/\(WebApp.shared.window.location.hostname):\(WebApp.shared.window.location.port)"
+        }
         
         print(url)
         

@@ -1964,6 +1964,136 @@ function initmap( url, lat, lon, storeName){
 }
 
 
+function initmap( url, lat, lon, storeName){
+    
+    marker = null
+    
+    $(`#mapkitjs`).height(250)
+    
+    $(`#mapkitjs`).html('')
+    
+    map = new mapkit.Map("mapkitjs");
+    
+    mapkit.init({
+        authorizationCallback: function(done) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", `https://intratc.co/api/jwt/${url}`);
+            xhr.addEventListener("load", function() {
+                
+                console.log("🗾  🗾  🗾  🗾  🗾  🗾  🗾  🗾  🗾  ")
+                console.log(`https://intratc.co/api/jwt/${url}`)
+                console.log(this.responseText)
+                
+                done(this.responseText);
+            });
+            xhr.send();
+        },
+        language: "es"
+    });
+
+    var MarkerAnnotation = mapkit.MarkerAnnotation
+    
+    var annotations = new mapkit.CoordinateRegion(
+        new mapkit.Coordinate(parseFloat(lat), parseFloat(lon)),
+        new mapkit.CoordinateSpan(0.020528323102041, 0.043467582244898)
+    );
+
+    map.region = annotations;
+
+    marker = new mapkit.MarkerAnnotation(map.center, {
+        draggable: false,
+        selected: false,
+        title: storeName
+    });
+
+    map.addAnnotation(marker);
+}
+
+
+//// load map with location
+
+
+function initiateSingleMapCord(mapId, token, lat, lon, updateCoordinate) {
+    
+    // MARK: Initiate MAP
+    
+    console.log("🟡  initiateSingleMap")
+    
+    mapkit.init({
+        authorizationCallback: function(done) {
+            done(token);
+        },
+        language: "es"
+     });
+    
+    loadMapCord(mapId, lat, lon, updateCoordinate)
+}
+
+function loadMapCord(mapId, lat, lon, updateCoordinate) {
+    
+    console.log("🟡  loadMap")
+    
+    marker = null
+    
+    map = new mapkit.Map(mapId);
+    
+    console.log("🟢  loadMap")
+    
+    console.log(map)
+    
+    console.log(" - - - - - - - - - - ")
+    
+    console.log("💎  💎  💎  💎  💎  💎  💎  💎  💎  💎 001")
+    
+    console.log(lat)
+
+    let latitude = parseFloat(lat)
+
+    let longitude = parseFloat(lon)
+
+    // console.log(lat)
+
+    // console.log(`lat ${lat}`)
+
+    // console.log(`lon ${lon}`)
+
+    let annotation = new mapkit.CoordinateRegion(
+        new mapkit.Coordinate(latitude, longitude),
+        new mapkit.CoordinateSpan(0.020528323102041, 0.043467582244898)
+    );
+
+    map.region = annotation;
+
+    marker = new mapkit.MarkerAnnotation(map.center, {
+        draggable: true,
+        selected: true,
+        title: "Selecciona tu ubicación"
+    });
+
+    marker.addEventListener("drag-start", function(event) {
+        // No need to show "Drag me" message once user has dragged
+        event.target.title = "";
+    });
+    
+    marker.addEventListener("drag-end", function() {
+        
+        updateCoordinate(JSON.stringify({
+            latitude: marker.coordinate.latitude,
+            longitude: marker.coordinate.longitude
+        }))
+        
+    });
+    
+    map.addAnnotation(marker);
+
+    updateCoordinate(JSON.stringify({
+        latitude: latitude,
+        longitude: longitude
+    }))
+    
+
+}
+
 
 mapRefrenceObject = {}
 
@@ -1994,6 +2124,7 @@ function initiateSingleMap(mapId, token, serchString, callback, updateCoordinate
     
     loadMap(mapId, serchString, callback, updateCoordinate)
 }
+
 function loadMap(mapId, serchString, callback, updateCoordinate) {
     
     console.log("🟡  loadMap")
@@ -2025,7 +2156,7 @@ function loadMap(mapId, serchString, callback, updateCoordinate) {
             
             data.places.map( place => {
 
-                console.log("💎  💎  💎  💎  💎  💎  💎  💎  💎  💎")
+                console.log("💎  💎  💎  💎  💎  💎  💎  💎  💎  💎 002")
                 
                 updateCoordinate(JSON.stringify({
                     latitude: place.coordinate.latitude,
@@ -2063,7 +2194,6 @@ function loadMap(mapId, serchString, callback, updateCoordinate) {
             });
             
         }
-        
         
         callback(JSON.stringify(data.places))
         
@@ -2174,7 +2304,6 @@ function computeDirections(directions, origin, destination) {
     };
     directions.route(directionsOptions, directionHandler);
 }
-
 
 // This asks MapKit for directions and when it gets a response sends it to directionHandler
 function computeDirectionsHelpper(map, strokeColor, directions, origin, destination) {
