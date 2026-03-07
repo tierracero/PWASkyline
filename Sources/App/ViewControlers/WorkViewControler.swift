@@ -8,10 +8,10 @@
 import Foundation
 import TCFundamentals
 import TCFireSignal
-import Web
 import WebSocketAPI
 import MailAPICore
 import FetchAPI
+import Web
 
 class WorkViewControler: PageController {
     
@@ -2832,7 +2832,7 @@ class WorkViewControler: PageController {
                                 case .account:
                                     loadAccountView(id: .id(custAcct.id))
                                 case .followup:
-                                    break
+                                    self.startFollowup(custAcct)
                                 }
                             }
 
@@ -3015,7 +3015,7 @@ class WorkViewControler: PageController {
                     case .account:
                         loadAccountView(id: .id(custAcct.id))
                     case .followup:
-                              break
+                        self.startFollowup(custAcct)
                     }
                 }
                 else{
@@ -3987,6 +3987,16 @@ class WorkViewControler: PageController {
         }
     }
     
+    func startFollowup(_ account: CustAcctSearch) {
+
+        let view =  CreateNewFollowup(
+            custAcct: account
+        )
+
+        addToDom(view)
+        
+    }
+
 }
 
 extension WorkViewControler {

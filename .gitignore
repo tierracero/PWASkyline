@@ -13,3 +13,5 @@ DistPublic
 .swiftpm/xcode/xcuserdata/victorcantu.xcuserdatad/xcschemes/xcschememanagement.plist
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .devcontainer/devcontainer.json
+.swiftpm
+WebSources
