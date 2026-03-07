@@ -35,7 +35,7 @@ class CreateNewFollowup: Div {
     @State var type: CustFollowUpType?  = nil
     
     /// low, medium, high, verryHigh, closing
-    @State var interest: CustProspectFollowUpIntrest?  = nil
+    @State var interest: CustFollowUpIntrest?  = nil
     
     @State var comment: String = ""
     
@@ -79,17 +79,24 @@ class CreateNewFollowup: Div {
             
             Div().class(.clear).height(7.px)
             
-            H3("Tipo de seguimiento")
-                .color(.gray)
-            Div().class(.clear).height(3.px)
-            self.typeSelect
-            
-            Div().class(.clear).height(7.px)
-            
-            H3("Nivel de interes")
-                .color(.gray)
-            Div().class(.clear).height(3.px)
-            self.interestSelect
+            Div {
+                Div{
+                    H3("Tipo de seguimiento")
+                        .color(.gray)
+                    Div().class(.clear).height(3.px)
+                    self.typeSelect
+                }
+                .width(50.percent)
+                .float(.left)
+                Div{
+                    H3("Nivel de interes")
+                        .color(.gray)
+                    Div().class(.clear).height(3.px)
+                    self.interestSelect
+                }
+                .width(50.percent)
+                .float(.left)
+            }
             
             Div().class(.clear).height(7.px)
             
@@ -98,12 +105,39 @@ class CreateNewFollowup: Div {
             Div().class(.clear).height(3.px)
             
             Div {
-                H2(self.$currentUserLabel)
-                    .color(.white)
-                
-                Div().class(.clear).height(3.px)
-                
+
+                Div {
+
+                    Div {
+                        H2(self.$currentUserLabel)
+                        .color(.white)
+                    }
+                    .custom("width", "calc(100% - 50px)")
+                    .float(.left)
+
+                    Div {
+                        Div{
+                            Img()
+                                .src("/skyline/media/zoom.png")
+                                .width(18.px)
+                                
+                        }
+                        .marginTop(0.px)
+                        .class(.uibtnLarge)
+                        .align(.center)
+                        .onClick {
+                            self.selectUser()
+                        }
+                        
+                    }
+                    .width(50.px)
+                    .float(.left)
+
+                }
+                .hidden(self.$currentUser.map{ $0 == nil })
+
                 Div("Seleccionar Usuario")
+                    .hidden(self.$currentUser.map{ $0 != nil })
                     .class(.uibtnLargeOrange)
                     .textAlign(.center)
                     .width(95.percent)
@@ -124,25 +158,36 @@ class CreateNewFollowup: Div {
             Div().class(.clear).height(3.px)
             
             Div {
-                Div("Seleccionar Fecha")
-                    .class(.uibtnLargeOrange)
-                    .textAlign(.center)
-                    .width(49.percent)
-                    .float(.left)
-                    .onClick {
-                        self.selectDate()
+                Div {
+
+                    Div("Seleccionar Fecha")
+                        .class(.uibtnLargeOrange)
+                        .textAlign(.center)
+                        .width(95.percent)
+                        .float(.left)
+                        .onClick {
+                            self.selectDate()
                     }
-                
-                Div("Limpiar Fecha")
-                    .class(.uibtnLargeOrange)
-                    .textAlign(.center)
-                    .width(46.percent)
-                    .float(.left)
-                    .onClick {
-                        self.nextDateAt = nil
-                        self.nextDateLabel = "Sin fecha seleccionada"
-                    }
-                
+                }
+                .width(50.percent)
+                .float(.left)
+
+                Div {
+
+                    Div("Remover Fecha")
+                        .class(.uibtnLarge)
+                        .textAlign(.center)
+                        .width(95.percent)
+                        .float(.left)
+                        .onClick {
+                            self.nextDateAt = nil
+                            self.nextDateLabel = "Sin fecha seleccionada"
+                        }
+
+                }
+                .width(50.percent)
+                .float(.left)
+
                 Div().class(.clear)
             }
             
@@ -195,41 +240,26 @@ class CreateNewFollowup: Div {
         
         CustFollowUpType.allCases.forEach { item in
             typeSelect.appendChild(
-                Option(item.rawValue)
+                Option(item.documentableName)
                 .value(item.rawValue)
             )
         }
         
-        CustProspectFollowUpIntrest.allCases.forEach { item in
+        CustFollowUpIntrest.allCases.forEach { item in
             interestSelect.appendChild(
-                Option(item.rawValue)
+                Option(item.documentableName)
                     .value(item.rawValue)
             )
         }
-        
-        if let type {
-            typeListener = type.rawValue
-        }
-        
-        if let interest {
-            interestListener = interest.rawValue
-        }
-        
-        if let nextDateAt {
-            let date = getDate(nextDateAt)
-            nextDateLabel = "\(date.formatedLong) \(date.time)"
-        }
-        
-        if let currentUser {
-            updateCurrentUserLabel(currentUser)
-        }
-        
+
+        typeListener = CustFollowUpType.purchase.rawValue
+
         $typeListener.listen {
             self.type = CustFollowUpType(rawValue: $0)
         }
         
         $interestListener.listen {
-            self.interest = CustProspectFollowUpIntrest(rawValue: $0)
+            self.interest = CustFollowUpIntrest(rawValue: $0)
         }
     }
     
@@ -292,7 +322,7 @@ class CreateNewFollowup: Div {
             return
         }
         
-        guard let interest = CustProspectFollowUpIntrest(rawValue: interestListener) else {
+        guard let interest = CustFollowUpIntrest(rawValue: interestListener) else {
             showError(.invalidField, "Seleccione nivel de interes")
             return
         }

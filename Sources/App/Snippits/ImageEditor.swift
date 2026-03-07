@@ -864,7 +864,6 @@ class ImageEditor: Div {
         if originalWidth == 0 ||
         originalHeight == 0 ||
         relativeWidth == 0 ||
-        relativeHieght == 0 ||
         thumpWidth == 0 ||
         thumpHeight == 0 ||
         wapWidth == 0 ||

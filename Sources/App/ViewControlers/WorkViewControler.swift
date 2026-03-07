@@ -427,7 +427,6 @@ class WorkViewControler: PageController {
                     
                 }
 
-
                 Div{
                     Span()
                         .backgroundImage("/skyline/media/addBlueIcon.png")
@@ -451,16 +450,9 @@ class WorkViewControler: PageController {
                 .display(self.$pmode.map{ ($0 == .serviceOrder) ? .inlineBlock : .none })
                 .class(.topBarButton)
                 .onClick {
-                    
                     self.newOrderSearchCustomer(.followup)
-                    
-                    
                 }
 
-                    
-                
-                
-                
                 // Punto de Venta
                 if linkedProfile.contains(.bizPDV) {
                     Div{
