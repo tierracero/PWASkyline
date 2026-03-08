@@ -1,1 +1,0 @@
-FROM swiftstream/web-dev:latest
