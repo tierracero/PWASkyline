@@ -34,7 +34,7 @@ extension ToolsView.HistorySettings {
                             self.remove()
                         }
                     
-                    H2("Ajustes y Auditoria del Sistea de Ordenes")
+                    H2("Ajustes y Auditoria del Siste.a de Ordenes")
                         .color(.lightBlueText)
                         .marginRight(12.px)
                         .float(.left)

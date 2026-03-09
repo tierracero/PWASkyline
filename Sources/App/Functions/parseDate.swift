@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// day / month / year | hour : min
 public func parseDate(date: String, time: String) -> Int64? {
     
     guard !date.isEmpty else {
@@ -18,7 +19,7 @@ public func parseDate(date: String, time: String) -> Int64? {
         
         print("001 date \(date)")
         
-        addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida", message: "La fecha debe de tener el siguente formato:\nDD/MM/AAAA", callback: { isConfirmed, comment in
+        addToDom(ConfirmationView(type: .ok, title: "Formato de fecha invalida", message: "La fecha debe de tener el siguente formato:\nDD/MM/AAAA", callback: { isConfirmed, comment in
             
         }))
         return nil
@@ -28,35 +29,35 @@ public func parseDate(date: String, time: String) -> Int64? {
     
     if dateParts.count != 3 {
         print("002 date \(date)")
-        addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida", message: "La fecha debe de tener el siguente formato:\nDD/MM/AAAA", callback: { isConfirmed, comment in
+        addToDom(ConfirmationView(type: .ok, title: "Formato de fecha invalida", message: "La fecha debe de tener el siguente formato:\nDD/MM/AAAA", callback: { isConfirmed, comment in
             
         }))
         return nil
     }
     
     guard let day = Int(dateParts[0]) else {
-        addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida", message: "Dia invalido, ingrese un dia valido entre 1 y el 31", callback: { isConfirmed, comment in
+        addToDom(ConfirmationView(type: .ok, title: "Formato de fecha invalida", message: "Dia invalido, ingrese un dia valido entre 1 y el 31", callback: { isConfirmed, comment in
             
         }))
         return nil
     }
     
     guard (day > 0 && day < 32) else {
-        addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida", message: "Dia invalido, ingrese un dia valido entre 1 y el 31.", callback: { isConfirmed, comment in
+        addToDom(ConfirmationView(type: .ok, title: "Formato de fecha invalida", message: "Dia invalido, ingrese un dia valido entre 1 y el 31.", callback: { isConfirmed, comment in
             
         }))
         return nil
     }
     
     guard let month = Int(dateParts[1]) else {
-        addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida", message: "Mes invalido, ingrese un mes valido entre 1 y el 12.", callback: { isConfirmed, comment in
+        addToDom(ConfirmationView(type: .ok, title: "Formato de fecha invalida", message: "Mes invalido, ingrese un mes valido entre 1 y el 12.", callback: { isConfirmed, comment in
             
         }))
         return nil
     }
     
     guard (month > 0 && month < 13) else {
-        addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida", message: "Mes invalido, ingrese un mes valido entre 1 y el 12.", callback: { isConfirmed, comment in
+        addToDom(ConfirmationView(type: .ok, title: "Formato de fecha invalida", message: "Mes invalido, ingrese un mes valido entre 1 y el 12.", callback: { isConfirmed, comment in
             
         }))
         return nil
@@ -67,7 +68,7 @@ public func parseDate(date: String, time: String) -> Int64? {
     }
     
     guard year >= Date().year else {
-        addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida", message: "Año invalido, ingrese un año igual o mayor que al presente.", callback: { isConfirmed, comment in
+        addToDom(ConfirmationView(type: .ok, title: "Formato de fecha invalida", message: "Año invalido, ingrese un año igual o mayor que al presente.", callback: { isConfirmed, comment in
             
         }))
         return nil
@@ -80,7 +81,7 @@ public func parseDate(date: String, time: String) -> Int64? {
     
     
     if !time.contains(":") {
-        addToDom(ConfirmView(type: .ok, title: "Formato de hora invalida", message: "La hora debe de tener el siguente formato:\nHH:MM", callback: { isConfirmed, comment in
+        addToDom(ConfirmationView(type: .ok, title: "Formato de hora invalida", message: "La hora debe de tener el siguente formato:\nHH:MM", callback: { isConfirmed, comment in
             
         }))
         return nil
@@ -89,35 +90,35 @@ public func parseDate(date: String, time: String) -> Int64? {
     let hourParts = time.explode(":")
     
     if hourParts.count != 2 {
-        addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida", message: "La hora debe de tener el siguente formato:\nHH:MM", callback: { isConfirmed, comment in
+        addToDom(ConfirmationView(type: .ok, title: "Formato de fecha invalida", message: "La hora debe de tener el siguente formato:\nHH:MM", callback: { isConfirmed, comment in
             
         }))
         return nil
     }
     
     guard let hour = Int(hourParts[0]) else {
-        addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida", message: "Hora invalido, ingrese una hora valido entre 1 y el 24", callback: { isConfirmed, comment in
+        addToDom(ConfirmationView(type: .ok, title: "Formato de fecha invalida", message: "Hora invalido, ingrese una hora valido entre 1 y el 24", callback: { isConfirmed, comment in
             
         }))
         return nil
     }
     
     guard (hour >= 0 && hour < 25) else {
-        addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida", message: "Hora invalido, ingrese una hora valido entre 1 y el 24.", callback: { isConfirmed, comment in
+        addToDom(ConfirmationView(type: .ok, title: "Formato de fecha invalida", message: "Hora invalido, ingrese una hora valido entre 1 y el 24.", callback: { isConfirmed, comment in
             
         }))
         return nil
     }
     
     guard let min = Int(hourParts[1]) else {
-        addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida", message: "Minuto invalido, ingrese un minito valido entre 0 y el 59", callback: { isConfirmed, comment in
+        addToDom(ConfirmationView(type: .ok, title: "Formato de fecha invalida", message: "Minuto invalido, ingrese un minito valido entre 0 y el 59", callback: { isConfirmed, comment in
             
         }))
         return nil
     }
     
     guard (min >= 0 && min < 60) else {
-        addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida", message: "Minuto invalido, ingrese un minito valido entre 0 y el 59.", callback: { isConfirmed, comment in
+        addToDom(ConfirmationView(type: .ok, title: "Formato de fecha invalida", message: "Minuto invalido, ingrese un minito valido entre 0 y el 59.", callback: { isConfirmed, comment in
             
         }))
         return nil

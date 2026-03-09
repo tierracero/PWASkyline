@@ -993,7 +993,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
         
         func downloadReport(type: ReportType) {
             
-            guard let data else {
+            guard let data: API.custOrderV1.ReportResponseType else {
                 return
             }
             

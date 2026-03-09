@@ -31,7 +31,7 @@ class CreateNewFollowup: Div {
     
     @State var currentUser: UUID? = nil
     
-    /// date, purchase
+    /// date, purchase, campain
     @State var type: CustFollowUpType?  = nil
     
     /// low, medium, high, verryHigh, closing
@@ -47,12 +47,23 @@ class CreateNewFollowup: Div {
     
     @State var currentUserLabel = "No seleccionado"
     
+    @State var campaigns: [CustFollowUpCampaign] = []
+
+    @State var campaignListener: String = ""
+
+    @State var campaign: CustFollowUpCampaign? = nil
+
     lazy var typeSelect = Select(self.$typeListener)
         .custom("width", "calc(100% - 24px)")
         .class(.textFiledBlackDark)
         .height(31.px)
     
     lazy var interestSelect = Select(self.$interestListener)
+        .custom("width", "calc(100% - 24px)")
+        .class(.textFiledBlackDark)
+        .height(31.px)
+
+    lazy var campaignSelect = Select(self.$campaignListener)
         .custom("width", "calc(100% - 24px)")
         .class(.textFiledBlackDark)
         .height(31.px)
@@ -160,20 +171,6 @@ class CreateNewFollowup: Div {
             Div {
                 Div {
 
-                    Div("Seleccionar Fecha")
-                        .class(.uibtnLargeOrange)
-                        .textAlign(.center)
-                        .width(95.percent)
-                        .float(.left)
-                        .onClick {
-                            self.selectDate()
-                    }
-                }
-                .width(50.percent)
-                .float(.left)
-
-                Div {
-
                     Div("Remover Fecha")
                         .class(.uibtnLarge)
                         .textAlign(.center)
@@ -188,11 +185,35 @@ class CreateNewFollowup: Div {
                 .width(50.percent)
                 .float(.left)
 
+                Div {
+
+                    Div("Seleccionar Fecha")
+                        .class(.uibtnLargeOrange)
+                        .textAlign(.center)
+                        .width(95.percent)
+                        .float(.left)
+                        .onClick {
+                            self.selectDate()
+                    }
+                }
+                .width(50.percent)
+                .float(.left)
+
                 Div().class(.clear)
             }
             
             Div().class(.clear).height(7.px)
-            
+            /*
+            Div {
+                H3("Campaña | ¿Que le interedsa al cliente?")
+                    .color(.gray)
+                Div().class(.clear).height(3.px)
+                self.campaignSelect
+                
+                Div().class(.clear).height(7.px)
+            }
+            .hidden(self.$campaigns.map{ $0.isEmpty })
+            */
             H3("Comentario")
                 .color(.gray)
             Div().class(.clear).height(3.px)
@@ -252,7 +273,7 @@ class CreateNewFollowup: Div {
             )
         }
 
-        typeListener = CustFollowUpType.purchase.rawValue
+        typeListener = CustFollowUpType.followup.rawValue
 
         $typeListener.listen {
             self.type = CustFollowUpType(rawValue: $0)
@@ -260,6 +281,51 @@ class CreateNewFollowup: Div {
         
         $interestListener.listen {
             self.interest = CustFollowUpIntrest(rawValue: $0)
+        }
+
+        $campaignListener.listen {
+            self.campaign = nil
+            guard let id = UUID(uuidString: $0) else {
+                return
+            }
+            self.campaigns.forEach { item in
+                if id == item.id {
+                    self.campaign = item
+                }
+            }
+        }
+
+        loadingView(show: true)
+
+        API.custFollowup.getCampaigns { resp in
+
+            loadingView(show: false)
+
+            guard let resp else {
+                showError(.comunicationError, .unexpenctedMissingPayload)
+                return
+            }
+            
+            guard resp.status == .ok else {
+                showError(.generalError, resp.msg)
+                return
+            }
+            
+            guard let campaigns = resp.data?.campaigns else {
+                showError(.unexpectedResult, .unexpenctedMissingPayload)
+                return
+            }
+
+            self.campaigns = campaigns
+
+            campaigns.forEach{ item in
+                self.campaignSelect.appendChild(
+                    Option(item.name)
+                    .value(item.id.uuidString)
+                )
+            }
+            
+
         }
     }
     
@@ -331,6 +397,21 @@ class CreateNewFollowup: Div {
             showError(.invalidField, "Ingrese comentario")
             return
         }
+
+        API.custFollowup.create(
+            nextDateAt: nextDateAt,
+            currentUser: currentUser,
+            accountId: self.custAcct.id,
+            type: type,
+            interest: interest,
+            comment: comment,
+            items: []
+        ) { resp in
+
+        }
+
+        // day / month / year | hour : min
+        // parseDate
         
         
     }

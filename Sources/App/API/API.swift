@@ -17,9 +17,16 @@ public struct API {
     public typealias cloudUserV1 = CloudUserComponents
     public typealias custAccountV1 = CustAccountComponents
     public typealias custPDVV1 = CustPDVComponents
+
+    public typealias custExcel = CustExcelComponents
+    public typealias custFollowup = CustFollowupComponents
+
     public typealias custPOCV1 = CustPOCComponents
     public typealias custSOCV1 = CustSOCComponents
     public typealias custOrderV1 = CustOrderComponents
+
+    public typealias custPrint = CustPrintComponents
+
     public typealias custRouteV1 = CustRouteComponents
     public typealias custAPIV1 = CustComponents
     //public typealias customerV1 = CustomerComponents
