@@ -174,7 +174,6 @@ class SalePointView: Div {
                 .marginTop(-3.px)
                 .marginLeft(7.px)
                 .cursor(.pointer)
-                
                 .fontSize(22.px)
                 .float(.left)
                 .onClick {
@@ -302,6 +301,13 @@ class SalePointView: Div {
                     })
                 }
                 
+
+                if linkedProfile.contains(.bizFollowUp) {
+                    OrderCatchControler.shared.loadFollowUpsButton
+                        .float(.left)
+                }
+
+
                 Div{
                     
                     Div{

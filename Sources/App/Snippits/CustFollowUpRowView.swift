@@ -34,7 +34,7 @@ class CustFollowUpRowView: Div {
     lazy var dateView = Div()
     
     init(
-        data: CustFollowUp,
+        _ data: CustFollowUp,
         callback: @escaping () -> Void
     ) {
         self.data = data

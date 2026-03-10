@@ -16,13 +16,34 @@ public class OrderCatchControler {
     static var shared: OrderCatchControler { orderCatchControler }
     
     @State var viewType: OrderViewType
-    
+
+    @State var macroViewType: MacroViewType
+
     let ws = WS()
     
     init(){
 
         self.viewType = OrderViewType(rawValue: (WebApp.current.window.localStorage.string(forKey: "viewType") ?? "")) ?? .listView
-        
+
+        self.macroViewType = MacroViewType(rawValue: (WebApp.current.window.localStorage.string(forKey: "macroViewType") ?? "")) ?? .orderView
+
+        switch self.macroViewType {    
+        case .followUpView:
+            if !linkedProfile.contains(.bizFollowUp) {
+                if linkedProfile.contains(.bizODS) {
+                    self.macroViewType = .orderView
+                }
+
+            }
+        case .orderView:
+            if !linkedProfile.contains(.bizODS) {
+                if linkedProfile.contains(.bizFollowUp) {
+                    self.macroViewType = .followUpView
+                }
+
+            }
+        }
+
         $viewType.listen {
             self.drawOrderView()
         }
@@ -60,7 +81,7 @@ public class OrderCatchControler {
     
     /// Controls last time the orders where reloaded (manualy or cron trask). To avoid un neserary cron reloads
     private var lastSync: Int64 = 0
-    
+
     @State var selectStoreMenuIsHidden = true
     
     @State var loadOrderStatusTypeIsHidden = true
@@ -108,7 +129,9 @@ public class OrderCatchControler {
     private var loadingSessionId: UUID = .init()
     
     /// [ CustOrder.id :  OrderRowView]
-    private var orderRowViewRefrence: [UUID:OrderRowView] = [:]
+    private var orderRowViewRefrence: [ UUID : OrderRowView] = [:]
+
+    private var followupRowViewRefrence: [ UUID : Div] = [:]
     
     lazy var listViewButton = Img()
         .src("/skyline/media/icon_list.png")
@@ -498,7 +521,180 @@ public class OrderCatchControler {
             event.stopPropagation()
         }
     }
+
+    lazy var loadFollowUpsButton = Div{
+        
+        Div{
+            
+            Div{
+                Img()
+                    .src("/skyline/media/reload.png")
+                    .marginTop(5.px)
+                    .height(18.px)
+            }
+            .marginLeft(7.px)
+            .float(.left)
+            
+            Div("Seguiminetos")
+                //.custom("width", "calc(100% - 70px)")
+                .class(.oneLineText)
+                .marginLeft(7.px)
+                .fontSize(22.px)
+                .float(.left)
+             
+         }
+        //.width(207.px)
+        .class(.uibtn)
+        .onClick { _, event in
+            self.loadFollowups()
+            event.stopPropagation()
+        }
+
+        /*
+        Div{
+            
+            Div(LoadOrderStatusType.general.description)
+                .hidden(self.$loadOrderStatusType.map{ $0 == .general })
+                .class(.oneLineText)
+                .width(90.percent)
+                .fontSize(22.px)
+                .marginTop(7.px)
+                .class(.uibtn)
+                .onClick { _, event in
+                    self.loadOrderStatusType = .general
+                    self.loadOrderStatusTypeIsHidden = true
+                    event.stopPropagation()
+                }
+            
+            Div(OrderState.inBudget.description)
+                .hidden(self.$loadOrderStatusType.map{ $0 == .byState(.inBudget) })
+                .class(.oneLineText)
+                .width(90.percent)
+                .fontSize(22.px)
+                .marginTop(7.px)
+                .class(.uibtn)
+                .onClick { _, event in
+                    self.loadOrderStatusType = .byState(.inBudget)
+                    self.loadOrderStatusTypeIsHidden = true
+                    event.stopPropagation()
+                }
+            
+            Div(OrderState.alerted.description)
+                .hidden(self.$loadOrderStatusType.map{ $0 == .byState(.alerted) })
+                .class(.oneLineText)
+                .width(90.percent)
+                .fontSize(22.px)
+                .marginTop(7.px)
+                .class(.uibtn)
+                .onClick { _, event in
+                    self.loadOrderStatusType = .byState(.alerted)
+                    self.loadOrderStatusTypeIsHidden = true
+                    event.stopPropagation()
+                }
+            
+            Div(OrderState.highPriority.description)
+                .hidden(self.$loadOrderStatusType.map{ $0 == .byState(.highPriority) })
+                .class(.oneLineText)
+                .width(90.percent)
+                .fontSize(22.px)
+                .marginTop(7.px)
+                .class(.uibtn)
+                .onClick { _, event in
+                    self.loadOrderStatusType = .byState(.highPriority)
+                    self.loadOrderStatusTypeIsHidden = true
+                    event.stopPropagation()
+                }
+            
+            Div(CustFolioStatus.saleWait.description)
+                .hidden(self.$loadOrderStatusType.map{ $0 == .byStatus(.saleWait) })
+                .color(CustFolioStatus.saleWait.color)
+                .class(.oneLineText)
+                .width(90.percent)
+                .fontSize(22.px)
+                .marginTop(7.px)
+                .class(.uibtn)
+                .onClick { _, event in
+                    self.loadOrderStatusType = .byStatus(.saleWait)
+                    self.loadOrderStatusTypeIsHidden = true
+                    event.stopPropagation()
+                }
+            
+            Div(CustFolioStatus.archive.description)
+                .hidden(self.$loadOrderStatusType.map{ $0 == .byStatus(.archive) })
+                .color(CustFolioStatus.archive.color)
+                .class(.oneLineText)
+                .width(90.percent)
+                .fontSize(22.px)
+                .marginTop(7.px)
+                .class(.uibtn)
+                .onClick { _, event in
+                    self.loadOrderStatusType = .byStatus(.archive)
+                    self.loadOrderStatusTypeIsHidden = true
+                    event.stopPropagation()
+                }
+            
+            Div(CustFolioStatus.finalize.description)
+                .hidden(self.$loadOrderStatusType.map{ $0 == .byStatus(.finalize) })
+                .color(CustFolioStatus.finalize.color)
+                .class(.oneLineText)
+                .width(90.percent)
+                .fontSize(22.px)
+                .marginTop(7.px)
+                .class(.uibtn)
+                .onClick { _, event in
+                    self.loadOrderStatusType = .byStatus(.finalize)
+                    self.loadOrderStatusTypeIsHidden = true
+                    event.stopPropagation()
+                }
+            
+            Div(CustFolioStatus.canceled.description)
+                .hidden(self.$loadOrderStatusType.map{ $0 == .byStatus(.canceled) })
+                .color(CustFolioStatus.canceled.color)
+                .class(.oneLineText)
+                .width(90.percent)
+                .fontSize(22.px)
+                .marginTop(7.px)
+                .class(.uibtn)
+                .onClick { _, event in
+                    self.loadOrderStatusType = .byStatus(.canceled)
+                    self.loadOrderStatusTypeIsHidden = true
+                    event.stopPropagation()
+                }
+            
+            Div(CustFolioStatus.collection.description)
+                .hidden(self.$loadOrderStatusType.map{ $0 == .byStatus(.collection) })
+                .color(CustFolioStatus.collection.color)
+                .class(.oneLineText)
+                .width(90.percent)
+                .fontSize(22.px)
+                .marginTop(7.px)
+                .class(.uibtn)
+                .onClick { _, event in
+                    self.loadOrderStatusType = .byStatus(.collection)
+                    self.loadOrderStatusTypeIsHidden = true
+                    event.stopPropagation()
+                }
+            
+            Div().height(12.px)
+            
+        }
+        .hidden(self.$loadOrderStatusTypeIsHidden)
+        .backgroundColor(.transparentBlack)
+        .position(.absolute)
+        .borderRadius(12.px)
+        .padding(all: 3.px)
+        .margin(all: 3.px)
+        .marginTop(7.px)
+        .width(207.px)
+        .zIndex(1)
+        .onClick { _, event in
+            event.stopPropagation()
+        }
+        */
+
+    }
     
+
     /// Executes a search on acording set loadOrderStatusType values
     func executeSearch(){
         switch loadOrderStatusType {
@@ -629,6 +825,7 @@ public class OrderCatchControler {
         current: [APIStoreSincObject],
         curTrans: [APIStoreSincObject]
     ){
+
         loadingView(show: true)
         
         Console.clear()
@@ -673,7 +870,6 @@ public class OrderCatchControler {
             self.routes = data.routes
             
             self.drawOrderView()
-
             
         }
     }
@@ -740,7 +936,6 @@ public class OrderCatchControler {
         }
         
     }
-    
 
     func updateOrderStatus(_ orderId: UUID, _ custFolioStatus: CustFolioStatus){
         
@@ -865,11 +1060,81 @@ public class OrderCatchControler {
 
     }
 
-    func drawOrderView(){
-        
+    func drawFollowupView( items: [CustFollowUp]) {
+
+        macroViewType = .followUpView
+                
+        followupRowViewRefrence.forEach { id, view in
+            view.remove()
+        }
+
+        followupRowViewRefrence.removeAll()
+
         orderRowViewRefrence.forEach { id, view in
             view.remove()
         }
+
+        orderRowViewRefrence.removeAll()
+
+        let thisLoadingSessionId : UUID = .init()
+
+        loadingSessionId = thisLoadingSessionId
+        
+        firstView.innerHTML = ""
+        container.removeClass(.oneHalf)
+        container.removeClass(.oneThirdOrderGrid)
+        
+        secondView.innerHTML = ""
+        secondView.removeClass(.oneHalf)
+        secondView.removeClass(.twoThirdOrderGrid)
+        
+        pendingOrderView.innerHTML = ""
+        activeOrderView.innerHTML = ""
+        finilizeOrderView.innerHTML = ""
+        pendingSpareOrderView.innerHTML = ""
+
+
+        // MARK: ADD  Corresponding clases
+        container.class(.oneHalf)
+
+        secondView.class([.oneHalf, .roundGrayBlackDark])
+
+        // LOAD DATA
+
+        var isEven = true
+
+        items.forEach { item in
+
+            let view = followupRowView(data: item)
+
+            if isEven {
+                firstView.appendChild(view)
+            }
+            else {
+                secondView.appendChild(view)
+            }
+
+            isEven = !isEven
+
+        }
+
+    }
+
+    func drawOrderView(){
+        
+        macroViewType = .orderView
+
+        followupRowViewRefrence.forEach { id, view in
+            view.remove()
+        }
+
+        followupRowViewRefrence.removeAll()
+
+        orderRowViewRefrence.forEach { id, view in
+            view.remove()
+        }
+
+        orderRowViewRefrence.removeAll()
 
         let thisLoadingSessionId : UUID = .init()
 
@@ -1743,6 +2008,17 @@ public class OrderCatchControler {
         return view
         
     }
+
+    func followupRowView(data: CustFollowUp) -> CustFollowUpRowView {
+
+        let view = CustFollowUpRowView(data) {
+            
+        }
+        
+        followupRowViewRefrence[data.id] = view
+        
+        return view
+    }
     
     func loadFolio(
         orderid: UUID,
@@ -1932,6 +2208,8 @@ public class OrderCatchControler {
     
     func drawRouteView(){
         
+        macroViewType = .orderView
+
         orderRowViewRefrence.removeAll()
 
         let thisLoadingSessionId : UUID = .init()
@@ -2283,13 +2561,51 @@ public class OrderCatchControler {
         
     }
 
+    func loadFollowups() {
+        
+        loadingView(show: true)
 
-    //func addItems
+        API.custFollowup.getItems(
+            userId: custCatchUser,
+            status: nil
+        ) { resp in
+            
+            loadingView(show: false)
+            
+            guard let resp else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+            
+            guard resp.status == .ok else {
+                showError(.generalError, resp.msg)
+                return
+            }
+            
+            guard let followups = resp.data?.followups else {
+                showError(.unexpectedResult, .unexpenctedMissingPayload)
+                return
+            }
 
+            self.drawFollowupView(followups)
+            
+        }
+    }
+    
 }
 
 extension OrderCatchControler {
     
+    enum MacroViewType: String {
+
+        case orderView
+        
+        case followUpView
+
+        //case rentalView
+
+    }
+
     enum OrderViewType: String {
         case listView
         case calendarView
@@ -2309,7 +2625,7 @@ extension OrderCatchControler {
         var description: String {
             switch self {
             case .general:
-                return "Mis Ordenes"
+                return "Ordenes"
             case .byState:
                 return "Presupuestados"
             case .byStatus(let status):

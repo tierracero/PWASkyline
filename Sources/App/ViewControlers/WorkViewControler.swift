@@ -755,7 +755,7 @@ class WorkViewControler: PageController {
         // Work Grid
         Div{
             
-            if linkedProfile.contains(.bizODS) {
+            if linkedProfile.contains(.bizODS) || linkedProfile.contains(.bizFollowUp) {
                 
                 /// Buttons
                 Div{
@@ -779,7 +779,11 @@ class WorkViewControler: PageController {
                     
                     OrderCatchControler.shared.loadOrderStatusButton
                         .float(.right)
-                    
+
+                    if linkedProfile.contains(.bizFollowUp) {
+                        OrderCatchControler.shared.loadFollowUpsButton
+                            .float(.right)
+                    }
                     Div{
                         OrderCatchControler.shared.selectStoreMenuButton
                         .hidden(self.$userHerk.map{ $0 < 3 })
@@ -787,6 +791,8 @@ class WorkViewControler: PageController {
                     .hidden(OrderCatchControler.shared.$stores.map{ $0.count < 2 })
                     .float(.right)
                     
+            /*
+
                     Div("|")
                         .marginRight(7.px)
                         .fontSize(24.px)
@@ -840,7 +846,7 @@ class WorkViewControler: PageController {
                     .marginRight(7.px)
                     .class(.uibtn)
                     .float(.right)
-                    
+                    */
                 }
                 .marginBottom(0.px)
                 .marginRight(12.px)
