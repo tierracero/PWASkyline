@@ -203,7 +203,7 @@ class CreateNewFollowup: Div {
             }
             
             Div().class(.clear).height(7.px)
-            /*
+            
             Div {
                 H3("Campaña | ¿Que le interedsa al cliente?")
                     .color(.gray)
@@ -213,7 +213,7 @@ class CreateNewFollowup: Div {
                 Div().class(.clear).height(7.px)
             }
             .hidden(self.$campaigns.map{ $0.isEmpty })
-            */
+            
             H3("Comentario")
                 .color(.gray)
             Div().class(.clear).height(3.px)
