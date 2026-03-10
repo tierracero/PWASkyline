@@ -398,6 +398,8 @@ class CreateNewFollowup: Div {
             return
         }
 
+        loadingView(show: true)
+
         API.custFollowup.create(
             nextDateAt: nextDateAt,
             currentUser: currentUser,
@@ -407,6 +409,25 @@ class CreateNewFollowup: Div {
             comment: comment,
             items: []
         ) { resp in
+
+                loadingView(show: false)
+                
+                guard let resp else {
+                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
+                    return
+                }
+                
+                guard resp.status == .ok else {
+                    showError(.generalError, resp.msg)
+                    return
+                }
+                
+                guard let payload = resp.data else {
+                    showError(.unexpectedResult, .unexpenctedMissingPayload)
+                    return
+                }
+                
+                
 
         }
 
