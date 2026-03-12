@@ -3548,6 +3548,8 @@ class WorkViewControler: PageController {
                     showAlert(.alerta, "\(type.description) aun no es soportado")
                 case .financialServices:
                     showAlert(.alerta, "\(type.description) aun no es soportado")
+                case .followup: 
+                    break
                 }
                 
                 return

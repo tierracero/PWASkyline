@@ -315,7 +315,7 @@ open class _SkyLine {
 
     public var orcScripts: [OCRCustomeScript] = []
 
-    public var printScripts: [PrintCustomeScript] = []
+    public var printScripts: [CustomerCustomeScript] = []
 	
 }
 extension WebApp {

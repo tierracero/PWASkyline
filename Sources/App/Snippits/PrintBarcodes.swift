@@ -47,7 +47,7 @@ class PrintBarcodes: Div {
     
     @State var fontSize: String = "12"
     
-    @State var printScript: PrintCustomeScript? = nil
+    @State var printScript: CustomerCustomeScript? = nil
 
     lazy var barcodeGrid = Div()
         .custom("height", "calc(100% - 180px)")
@@ -460,7 +460,7 @@ class PrintBarcodes: Div {
 
             loadingView(show: true)
 
-            var items: [PrintCustomeProductTagPayload] = []
+            var items: [CustomeProductTagPayload] = []
 
             if singleProduct {
 

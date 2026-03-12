@@ -15,7 +15,7 @@ public class OrderCatchControler {
     
     static var shared: OrderCatchControler { orderCatchControler }
     
-    @State var viewType: OrderViewType
+    @State var viewType: OrderViewMode
 
     @State var macroViewType: MacroViewType
 
@@ -23,7 +23,7 @@ public class OrderCatchControler {
     
     init(){
 
-        self.viewType = OrderViewType(rawValue: (WebApp.current.window.localStorage.string(forKey: "viewType") ?? "")) ?? .listView
+        self.viewType = OrderViewMode(rawValue: (WebApp.current.window.localStorage.string(forKey: "viewType") ?? "")) ?? .listView
 
         self.macroViewType = MacroViewType(rawValue: (WebApp.current.window.localStorage.string(forKey: "macroViewType") ?? "")) ?? .orderView
 
@@ -2566,7 +2566,7 @@ public class OrderCatchControler {
         loadingView(show: true)
 
         API.custFollowup.getItems(
-            userId: custCatchUser,
+            userId: custCatchID,
             status: nil
         ) { resp in
             
@@ -2587,7 +2587,7 @@ public class OrderCatchControler {
                 return
             }
 
-            self.drawFollowupView(followups)
+            self.drawFollowupView(items: followups)
             
         }
     }
@@ -2604,13 +2604,6 @@ extension OrderCatchControler {
 
         //case rentalView
 
-    }
-
-    enum OrderViewType: String {
-        case listView
-        case calendarView
-        case userView
-        case routeView
     }
     
     enum LoadOrderStatusType: Equatable {
