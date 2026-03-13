@@ -110,7 +110,7 @@ class StartServiceOrder: Div {
     lazy var pinOfDeviceField = InputText(self.$pinOfDevice)
         .autocomplete(.off)
         .placeholder("PIN de telefono")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .custom("width", "calc(100% - 20px)")
 
     lazy var pinPatternSelect = Select{
@@ -133,61 +133,61 @@ class StartServiceOrder: Div {
     lazy var firstName = InputText(self.$_firstName)
         .autocomplete(.off)
         .placeholder("Primer Nombre")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .custom("width", "calc(100% - 20px)")
     
     lazy var secondName = InputText(self.$_secondLastName)
         .autocomplete(.off)
         .placeholder("Segundo Nombre")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .custom("width", "calc(100% - 20px)")
         
     lazy var lastName = InputText(self.$_lastName)
         .autocomplete(.off)
         .placeholder("Primer Apellido")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .custom("width", "calc(100% - 20px)")
     
     lazy var secondLastName = InputText(self.$_secondLastName)
         .autocomplete(.off)
         .placeholder("Segundo Apellido")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .custom("width", "calc(100% - 20px)")
     
     lazy var mobile = InputText(self.$_mobile)
         .disabled(self.$acctType.map{ $0 == .personal })
         .custom("width", "calc(100% - 10px)")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .placeholder("Celular")
         .autocomplete(.off)
     
     lazy var email = InputText(self.$_email)
         .autocomplete(.off)
         .placeholder("Correo Electronico")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .custom("width", "calc(100% - 10px)")
     
     lazy var street = InputText(self.$_street)
         .autocomplete(.off)
         .placeholder(.streetNumber)
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .custom("width", "calc(100% - 18px)")
     
     lazy var streetResultField = InputText(self.$_street)
         .custom("width", "calc(100% - 18px)")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .placeholder(.streetNumber)
         .autocomplete(.off)
     
     lazy var colony = InputText(self.$_colony)
         .autocomplete(.off)
         .placeholder(.colony)
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .custom("width", "calc(100% - 18px)")
     
     lazy var colonyResultSelect = Select(self.$_colony)
         .custom("width", "calc(100% - 18px)")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .height(37.px)
         .body {
             Option("Seleccione Colonia")
@@ -196,13 +196,13 @@ class StartServiceOrder: Div {
     
     lazy var city = InputText(self.$_city)
         .custom("width", "calc(100% - 18px)")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .autocomplete(.off)
         .placeholder(.city)
     
     lazy var cityResultField = InputText(self.$_city)
         .custom("width", "calc(100% - 18px)")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .autocomplete(.off)
         .placeholder(.city)
         .cursor(.pointer)
@@ -211,13 +211,13 @@ class StartServiceOrder: Div {
     
     lazy var state = InputText(self.$_state)
         .custom("width", "calc(100% - 18px)")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .placeholder(.state)
         .autocomplete(.off)
     
     lazy var stateResultField = InputText(self.$_state)
         .custom("width", "calc(100% - 18px)")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .placeholder(.state)
         .autocomplete(.off)
         .cursor(.pointer)
@@ -226,13 +226,13 @@ class StartServiceOrder: Div {
     
     lazy var country = InputText(self.$_country)
         .custom("width", "calc(100% - 18px)")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .placeholder(.country)
         .autocomplete(.off)
     
     lazy var countryResultField = InputText(self.$_country)
         .custom("width", "calc(100% - 18px)")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .placeholder(.country)
         .autocomplete(.off)
         .cursor(.pointer)
@@ -242,7 +242,7 @@ class StartServiceOrder: Div {
     lazy var zip = InputText(self.$_zip)
         .custom("width", "calc(100% - 18px)")
         .placeholder("Codigo Postal")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .autocomplete(.off)
         .onKeyDown({ tf, event in
             guard let _ = Float(event.key) else {
@@ -261,7 +261,7 @@ class StartServiceOrder: Div {
     
     lazy var zipSearchField = InputText(self.$searchZipCodeString)
         .placeholder("Codigo Postal")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .autocomplete(.off)
         .width(120.px)
         .onKeyDown({ tf, event in
@@ -282,7 +282,7 @@ class StartServiceOrder: Div {
     lazy var zipResultField = InputText(self.$_zip)
         .custom("width", "calc(100% - 18px)")
         .placeholder("Codigo Postal")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .autocomplete(.off)
         .cursor(.pointer)
         .cursor(.default)
@@ -291,18 +291,18 @@ class StartServiceOrder: Div {
     lazy var contacto1 = InputText(self.$_contacto1)
         .autocomplete(.off)
         .placeholder("Nombre Contacto")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .custom("width", "calc(100% - 10px)")
     
     lazy var contacto2 = InputText(self.$_contacto2)
         .autocomplete(.off)
                 .placeholder("Apellido Contacto")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .custom("width", "calc(100% - 10px)")
     
     lazy var cardIdField = Div(self.$cardId.map{ $0.isEmpty ? "sw-23AB1234" : $0 })
         .custom("width", "calc(100% - 64px)")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .cursor(.pointer)
         .color(.gray)
         .onClick {
@@ -310,7 +310,7 @@ class StartServiceOrder: Div {
         }
     
     lazy var dateDay = Strong(self.$sugestedPromiseDay)
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .width(100.percent)
         .color(self.$sugestedPromiseDay.map{$0 == "DD/MM/AAAA" ? .lightGray : .orangeRed})
         .onClick {
@@ -318,7 +318,7 @@ class StartServiceOrder: Div {
         }
     
     lazy var dateHour = Strong(self.$sugestedPromiseHour)
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .width(100.percent)
         .color(self.$sugestedPromiseHour.map{$0 == "HH:MM" ? .lightGray : .orangeRed})
         .onClick {
@@ -326,7 +326,7 @@ class StartServiceOrder: Div {
         }
     
     lazy var selectUser = Select(self.$selectedUserID)
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .width(99.percent)
         .fontSize(23.px)
         .height(38.px)
@@ -382,7 +382,7 @@ class StartServiceOrder: Div {
             Td("CUni").width(70.px)
             Td("STotal").width(70.px)
         }
-        .color(.black)
+        .color(.white)
     }.width(100.percent)
     
     /**  `` General Input Items `` */
@@ -408,7 +408,7 @@ class StartServiceOrder: Div {
     lazy var idTag1 = InputText(self.$_idTag1)
         .autocomplete(.off)
         .placeholder(configServiceTags.idTagPlaceholder)
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .custom("width", "calc(100% - 10px)")
         .onFocus {
             self.selectEquipmentField = "idTag1"
@@ -420,7 +420,7 @@ class StartServiceOrder: Div {
     lazy var idTag2 = InputText(self.$_idTag2)
         .autocomplete(.off)
         .placeholder(configServiceTags.secondIDTagPlaceholder)
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .custom("width", "calc(100% - 10px)")
         .onFocus {
             self.selectEquipmentField = "idTag2"
@@ -462,7 +462,7 @@ class StartServiceOrder: Div {
     
     lazy var tag1 = InputText(self.$_tag1)
         .placeholder(configServiceTags.tag1Placeholder)
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .width(100.percent)
         .autocomplete(.off)
         .onFocus {
@@ -541,7 +541,7 @@ class StartServiceOrder: Div {
 
     lazy var tag2 = InputText(self.$_tag2)
         .placeholder(configServiceTags.tag2Placeholder)
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .width(100.percent)
         .autocomplete(.off)
         .onFocus {
@@ -622,7 +622,7 @@ class StartServiceOrder: Div {
     
     lazy var tag3 = InputText(self.$_tag3)
         .placeholder(configServiceTags.tag3Placeholder)
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .autocomplete(.off)
         .width(100.percent)
         .onFocus {
@@ -697,7 +697,7 @@ class StartServiceOrder: Div {
     
     lazy var tag4 = InputText(self.$_tag4)
         .placeholder(configServiceTags.tag4Placeholder)
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .autocomplete(.off)
         .width(100.percent)
         .onFocus {
@@ -709,7 +709,7 @@ class StartServiceOrder: Div {
     
     lazy var tag5 = InputText(self.$_tag5)
         .placeholder(configServiceTags.tag5Placeholder)
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .autocomplete(.off)
         .width(100.percent)
         .onFocus {
@@ -721,7 +721,7 @@ class StartServiceOrder: Div {
     
     lazy var tag6 = InputText(self.$_tag6)
         .placeholder(configServiceTags.tag6Placeholder)
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .autocomplete(.off)
         .width(100.percent)
         .onFocus {
@@ -734,9 +734,20 @@ class StartServiceOrder: Div {
     lazy var descr = TextArea(self.$_descr)
         .placeholder(configServiceTags.tagDescrPlaceholder)
         .custom("width", "calc(100% - 10px)")
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .width(100.percent)
         .height(90.px)
+
+    @State var customeScriptListiner = ""
+        
+    lazy var customeScriptSelect = Select(self.$customeScriptListiner)
+        .custom("width", "calc(100% - 18px)")
+        .class(.textFiledBlackDark)
+        .height(37.px)
+        .body {
+            Option("Ingreso por archivo")
+                .value("")
+        }
     
     lazy var checkTag1 = InputCheckbox().toggle(self.$_checkTag1)
     
@@ -763,8 +774,60 @@ class StartServiceOrder: Div {
     var payChargeRef: [ UUID : OldChargeTrRow ] = [:]
     
     @DOM override var body: DOM.Content {
+        
         Div{
             
+            /// Header
+            Div {
+                
+                Img()
+                    .closeButton(.uiView2)
+                    .onClick {
+                        self.appendChild(ConfirmationView(
+                            type: .yesNo,
+                            title: "Confirme Salida",
+                            message: "¿Quiere salir? Se perderan todos los datos.",
+                            callback: { resp, _ in
+                                if resp {
+                                    //$keyUp.removeAllListeners() CKME
+                                    _ = JSObject.global.deinitiateCanvas!()
+                                    self.remove()
+                                }
+                            })
+                        )
+                    }
+                
+                Div{
+
+                    Div{
+                        Div("Ingerso por Archivo")
+                    }
+                    .class(.uibtn)
+                    .hidden(self.$customeScripts.map{ $0.count > 1 })
+                    .onClick {
+                        self.loadByScript()
+                    }
+
+                    Div{
+                        
+                        self.customeScriptSelect
+
+                        Div("Subir")
+                        .class(.uibtn)
+                    }
+                    .hidden(self.$customeScripts.map{ $0.count < 2 })
+
+                }
+                .marginRight(7.px)
+                .float(.right)
+                .hidden(self.$customeScripts.map{ $0.isEmpty })
+                
+                H2("Crear Nueva Orden")
+                    .color(.lightBlueText)
+
+            }
+            .paddingBottom(7.px)
+
             Div {
                 
                 H3("Orden de Servicio")
@@ -785,6 +848,7 @@ class StartServiceOrder: Div {
                         Div().class(.clear)
                         
                         Strong(self.custAcct.folio)
+                        .color(.white)
                         
                         Div().class(.clear)
                         
@@ -802,7 +866,8 @@ class StartServiceOrder: Div {
                         Div().class(.clear)
                         
                         Strong("\(self.custAcct.type.description) \\ \(self.custAcct.costType.description)")
-                        
+                        .color(.white)
+
                         Div().class(.clear)
                     }
                     .width(66.percent)
@@ -826,7 +891,8 @@ class StartServiceOrder: Div {
                             Div().class(.clear)
                             
                             Strong("\(self.custAcct.firstName) \(self.custAcct.lastName)")
-                            
+                            .color(.white)
+
                             Div().class(.clear)
                             
                             
@@ -846,7 +912,8 @@ class StartServiceOrder: Div {
                             Div().class(.clear)
                             
                             Strong(self.custAcct.businessName)
-                            
+                            .color(.white)
+
                             Div().class(.clear)
                             
                             
@@ -865,6 +932,7 @@ class StartServiceOrder: Div {
                         Div().class(.clear)
                         
                         Strong("\(self.custAcct.mobile) \(self.custAcct.email)")
+                        .color(.white)
                         
                         Div().class(.clear)
                     }
@@ -1174,7 +1242,7 @@ class StartServiceOrder: Div {
                                             Div().clear(.both)
                                             
                                         }
-                                        .class(.uibutton)
+                                        .class(.uibtn)
                                         .marginTop(7.px)
                                     }
                                     .width(25.percent)
@@ -1237,7 +1305,7 @@ class StartServiceOrder: Div {
                                     .color(.red)
                                 
                                 Div("Buscar de nuevo")
-                                    .class(.uibutton)
+                                    .class(.uibtn)
                                     .float(.right)
                                     .onClick {
                                         
@@ -1451,8 +1519,8 @@ class StartServiceOrder: Div {
                 .hidden(self.$requierServiceAddress.map{!$0})
                 
             }
+            .custom("height", "calc(100% - 35px)")
             .custom("width", "calc(33% - 7px)")
-            .height(100.percent)
             .marginRight(7.px)
             .overflow(.auto)
             .float(.left)
@@ -1480,6 +1548,7 @@ class StartServiceOrder: Div {
                                 Img()
                                     .src(self.$cardId.map{ $0.isEmpty ? "/skyline/media/rewards_unactive.png" : "/skyline/media/rewards_active.png" })
                                     .custom("width", "calc(100% - 24px)")
+                                    .class(.iconWhite)
                                 
                                 Div()
                                     .marginTop(3.px)
@@ -1511,7 +1580,7 @@ class StartServiceOrder: Div {
                                 Div(self.$cardId.map{ $0.isEmpty ? "sw-23AB1234" : $0 })
                                     .hidden(self.$cardId.map{ $0.isEmpty })
                                     .custom("width", "calc(100% - 64px)")
-                                    .class(.textFiledLightLarge)
+                                    .class(.textFiledBlackDark)
                                     .cursor(.pointer)
                                 
                                 Div()
@@ -1552,7 +1621,7 @@ class StartServiceOrder: Div {
                                 .fontSize(16.px)
                                 
                             }
-                            .class(.uibutton)
+                            .class(.uibtn)
                             .float(.left)
                             .onClick { _ in
                                 self.addCharge()
@@ -1569,7 +1638,7 @@ class StartServiceOrder: Div {
                                 Span("Pago")
                                     .fontSize(16.px)
                             }
-                            .class(.uibutton)
+                            .class(.uibtn)
                             .float(.left)
                             .onClick {
                                 self.addPayment()
@@ -1579,14 +1648,13 @@ class StartServiceOrder: Div {
                                 .fontWeight(.bolder)
                                 .fontSize(32.px)
                                 .float(.right)
-                                .color(.black)
+                                .color(.white)
                             
                         }
                         
                         Div().marginTop(7.px)
                         
                         /// Special Item
-
 
                     }
                     .overflow(.auto)
@@ -1601,27 +1669,9 @@ class StartServiceOrder: Div {
                 
                 Div{
                     Div{
-                    
+                        
                         Div{
                         
-                            Img()
-                                .closeButton(.view)
-                                .marginRight(0.px)
-                                .onClick{
-                                    self.appendChild(ConfirmView(
-                                        type: .yesNo,
-                                        title: "Confirme Salida",
-                                        message: "¿Quiere salir? Se perderan todos los datos.",
-                                        callback: { resp, _ in
-                                            if resp {
-                                                //$keyUp.removeAllListeners() CKME
-                                                _ = JSObject.global.deinitiateCanvas!()
-                                                self.remove()
-                                            }
-                                        })
-                                    )
-                                }
-                            
                             H3("Datos del orden")
                                 .color(.lightBlueText)
                             
@@ -2093,6 +2143,7 @@ class StartServiceOrder: Div {
                             
                         }
                         
+                        
                         ///`tag4`
                         Div{
                             Label(configServiceTags.tag4Name)
@@ -2128,7 +2179,7 @@ class StartServiceOrder: Div {
                             self.tag6
                         }.hidden(!configServiceTags.tag6)
                         Div().class(.clear)
-
+                        
                         H3("Descripcion de la orden")
                             .color(.lightBlueText)
                         
@@ -2147,8 +2198,9 @@ class StartServiceOrder: Div {
                                 .float(.left)
                                 
                                 Div(configServiceTags.checkTag1Name)
-                                .class( .oneLineText)
                                 .custom("width", "calc(100% - 70px)")
+                                .class( .oneLineText)
+                                .color(.white)
                                 .float(.left)
                             }
                             .hidden(!configServiceTags.checkTag1)
@@ -2163,8 +2215,9 @@ class StartServiceOrder: Div {
                                 .float(.left)
                                 
                                 Div(configServiceTags.checkTag2Name)
-                                .class(.oneLineText)
                                 .custom("width", "calc(100% - 70px)")
+                                .class( .oneLineText)
+                                .color(.white)
                                 .float(.left)
                                 Div().class(.clear)
                             }
@@ -2179,8 +2232,9 @@ class StartServiceOrder: Div {
                                 .width(70.px)
                                 .float(.left)
                                 Div(configServiceTags.checkTag3Name)
-                                .class(.oneLineText)
                                 .custom("width", "calc(100% - 70px)")
+                                .class( .oneLineText)
+                                .color(.white)
                                 .float(.left)
                                 Div().class(.clear)
                             }
@@ -2196,8 +2250,9 @@ class StartServiceOrder: Div {
                                 .float(.left)
                                 
                                 Div(configServiceTags.checkTag4Name)
-                                .class(.oneLineText)
                                 .custom("width", "calc(100% - 70px)")
+                                .class( .oneLineText)
+                                .color(.white)
                                 .float(.left)
                                 Div().class(.clear)
                             }
@@ -2212,8 +2267,9 @@ class StartServiceOrder: Div {
                                 .width(70.px)
                                 .float(.left)
                                 Div(configServiceTags.checkTag5Name)
-                                .class( .oneLineText)
                                 .custom("width", "calc(100% - 70px)")
+                                .class( .oneLineText)
+                                .color(.white)
                                 .float(.left)
                                 Div().class(.clear)
                             }
@@ -2227,9 +2283,11 @@ class StartServiceOrder: Div {
                                 }
                                 .width(70.px)
                                 .float(.left)
+
                                 Div(configServiceTags.checkTag6Name)
-                                .class(.oneLineText)
                                 .custom("width", "calc(100% - 70px)")
+                                .class( .oneLineText)
+                                .color(.white)
                                 .float(.left)
                                 Div().class(.clear)
                             }
@@ -2281,6 +2339,7 @@ class StartServiceOrder: Div {
 
                             Div{
                                 H2("PATRON / PIN de  Accesso")
+                                .color(.white)
                             }
 
                             Div().clear(.both).height(7.px)
@@ -2299,6 +2358,7 @@ class StartServiceOrder: Div {
                                 Div{
                                     Div{
                                         Label("Tipo de patron")
+                                        .color(.white)
 
                                         Div().height(3.px).clear(.both)
 
@@ -2308,7 +2368,7 @@ class StartServiceOrder: Div {
 
                                         Div("Resetear")
                                         .custom("width", "calc(100% - 20px)")
-                                        .class(.uibutton)
+                                        .class(.uibtn)
                                         .onClick{
                                             
                                             _ = JSObject.global.resetCanvas!()
@@ -2322,6 +2382,7 @@ class StartServiceOrder: Div {
                                         Div().height(7.px).clear(.both)
 
                                         Label("PIN / Contraseña")
+                                        .color(.white)
 
                                         Div().height(3.px).clear(.both)
 
@@ -2342,7 +2403,23 @@ class StartServiceOrder: Div {
                             Div().height(12.px).clear(.both)
 
                         }
+                        else if configStore.print.image == .location {
 
+                            Div{
+                                H2("Solicitar Ubicación")
+                                .color(.white)
+                            }
+
+                            Div().clear(.both).height(7.px)
+
+                            Div{
+                                Img()
+                                    .src("/skyline/media/locationToBeRequested.png")
+                                    .custom("width", "calc(100% - 24px)")
+                            }
+                            .align(.center)
+                        }
+                        
                         Div{
                             
                             Img()
@@ -2354,7 +2431,7 @@ class StartServiceOrder: Div {
                         }
                         .fontSize(20.px)
                         .align(.center)
-                        .class(.smallButtonBox)
+                        .class(.uibtn)
                         .onClick{
                             addToDom(StartServiceOrderEquipmentView(
                                 equipment: nil,
@@ -2389,16 +2466,17 @@ class StartServiceOrder: Div {
                 .position(.fixed)
                 .bottom(25.px)
                 .right(25.px)
+                
             }
-            .height(100.percent)
+            .custom("height", "calc(100% - 35px)")
             .width(66.percent)
             .float(.left)
             
         }
         .custom("height", "calc(100% - 85px)")
         .custom("left", "calc(5% - 12px)")
+        .backgroundColor(.grayBlack)
         .borderRadius(all: 24.px)
-        .backgroundColor(.white)
         .padding(all: 12.px)
         .position(.absolute)
         .width(90.percent)
@@ -2579,7 +2657,15 @@ class StartServiceOrder: Div {
                 }
             }
         }
-         
+
+        @State var customeScripts: [CustomerCustomeScript] = []
+
+        WebApp.shared.skyline.customeScripts.forEach { script in
+            if script.type == .orderCreated, script.relType == .customer(custAcct.id) {
+                customeScripts.append(script)
+            }
+        }
+
         custAcct.highPriorityNotes?.forEach({ note in
             
             if shownHighPriorityNotes.contains(note.id) {
@@ -2614,6 +2700,25 @@ class StartServiceOrder: Div {
         print("⚠️  didRemoveFromDOM")
         super.didRemoveFromDOM()
         _ = JSObject.global.deinitiateCanvas!()
+    }
+
+    func loadByScript() {
+
+        var customeScript: CustomerCustomeScript? = nil
+
+        if customeScripts.count == 1 {
+
+        }
+        else {
+            
+        }
+
+        guard let customeScript else {
+            showError(.generalError, "Selecione script para porcessar")
+            return
+        }
+
+
     }
 
     func activateRewards(){
@@ -3695,7 +3800,7 @@ class StartServiceOrder: Div {
                 
                 if currentUnits > 0 {
                     
-                    let tr = OldChargeTrRow(
+                    let tr: OldChargeTrRow = OldChargeTrRow(
                         preCharge: true,
                         isCharge: true,
                         id: id,

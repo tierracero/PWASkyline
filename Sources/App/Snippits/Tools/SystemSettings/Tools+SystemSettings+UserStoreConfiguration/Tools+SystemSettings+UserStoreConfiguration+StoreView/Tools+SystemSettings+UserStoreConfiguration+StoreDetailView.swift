@@ -1769,13 +1769,6 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 return
             }
 
-
-            if mobile.isEmpty {
-                showError(.requiredField, "Telefono Celular")
-                mobileField.select()
-                return
-            }
-
             if email.isEmpty {
                 showError(.requiredField, "Correo Electronico")
                 emailField.select()

@@ -273,13 +273,21 @@ class PrintBarcodes: Div {
         left(0.px)
         top(0.px)
         
-        if !WebApp.shared.skyline.printScripts.isEmpty {
+        var customeScripts: [CustomerCustomeScript] = []
+
+        WebApp.shared.skyline.customeScripts.forEach { script in
+            if script.type == .productTag {
+                customeScripts.append(script)
+            }
+        }
+
+        if !customeScripts.isEmpty {
 
                 let customeGroup = OptGroup("Formatos Personalizadas")
 
                 let generalGroup = OptGroup("Formatos Generales")
 
-                WebApp.shared.skyline.printScripts.forEach { script in
+                customeScripts.forEach { script in
                     customeGroup.appendChild(
                         Option(script.name)
                             .value(script.id.uuidString)
@@ -411,7 +419,7 @@ class PrintBarcodes: Div {
 
             if let id: UUID = UUID(uuidString: $0) {
 
-                WebApp.shared.skyline.printScripts.forEach { item in
+                WebApp.shared.skyline.customeScripts.forEach { item in
                 
                     if item.id == id  {
 

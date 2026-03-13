@@ -825,10 +825,8 @@ public class OrderCatchControler {
         current: [APIStoreSincObject],
         curTrans: [APIStoreSincObject]
     ){
-
-        loadingView(show: true)
         
-        Console.clear()
+        loadingView(show: true)
 
         API.custOrderV1.loadFolios(
             storeid: selectedStore?.id,

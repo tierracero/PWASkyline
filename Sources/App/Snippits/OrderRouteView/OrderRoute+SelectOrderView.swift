@@ -431,7 +431,7 @@ extension OrderRouteView{
                 onlyActive: true
             ) { resp in
                 
-                Console.clear()
+
                 
                 loadingView(show: false)
                 

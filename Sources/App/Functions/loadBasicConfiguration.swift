@@ -174,113 +174,93 @@ public func loadBasicConfiguration( callback: @escaping ( (
                 return
             }
             
-            tcaccount = settings.account
-            
-            pDir = settings.account.pDir
+            API.custAPIV1.sincCustConfig { resp in
 
-            accountType = settings.account.accountType
-
-            Console.clear()
-
-            print("accountType")
-
-            print(accountType)
-
-            if accountType == .entrepreneur {
-                skylineUrlPatch =  "/\(settings.account.pDir)"
-            }
-
-            print("skylineUrlPatch")
-
-            print(skylineUrlPatch)
-            
-            custWebFilesLogos = settings.custWebFilesLogos
-            
-            configStoreProduct = settings.configStoreProduct
-            
-            configContactTags = settings.configContactTags
-            
-            configServiceTags = settings.configServiceTags
-
-            configStoreProcessing = settings.configStoreProcessing
-            
-            if WebApp.current.window.localStorage.string(forKey: "viewType") == nil {
-                /// ``list, calendar``
-                WebApp.current.window.localStorage.set(
-                    JSString(configStoreProcessing.gridView.rawValue),
-                    forKey: "viewType"
-                )
-            }
-            
-            configGeneral = settings.configGeneral
-            
-            customerServiceProfile = settings.customerServiceProfile
-            
-            custOperationWorkProfile = settings.custOperationWorkProfile
-            
-            configStore = settings.configStore
-            
-            alertManagerConfiguration = settings.alertManagerConfiguration
-            
-            MercadoLibreControler.shared.profile = settings.mercadoLibreProfile
-            
-            WebApp.shared.skyline.orcScripts = settings.orcScripts
-
-            WebApp.shared.skyline.printScripts = settings.printScripts
-            
-            if settings.account.status != .active {
-                callback(settings.account.status)
-                return
-            }
-            
-            API.fiscalV1.getProfile(type: .general, relation: nil) { resp in
-                
-                loadingView(show: false)
-                
                 guard let resp else {
+                    print("🔴   API.custAPIV1.sincCustConfig 001")
+                    callback(nil)
                     return
                 }
                 
-                guard resp.status == .ok else{
+                if resp.status != .ok {
+                    print("🔴   API.custAPIV1.sincCustConfig 002")
+                    callback(nil)
                     return
                 }
                 
-                guard let data = resp.data else {
+                guard let config = resp.data else {
+                    print("🔴   API.custAPIV1.sincCustConfig 003")
+                    callback(nil)
                     return
                 }
 
 
-                fiscalProfile = data
-
-                fiscalProfiles = data.profiles
+                configStoreProduct = config.configStoreProduct
                 
-                API.custAPIV1.getUserRefrence(id: nil) { resp in
+                configContactTags = config.configContactTags
+                
+                configServiceTags = config.configServiceTags
+
+                configStoreProcessing = config.configStoreProcessing
+                
+                configGeneral = config.configGeneral
+                
+                configStore = config.configStore
+                
+                tcaccount = settings.account
+                
+                pDir = settings.account.pDir
+
+                accountType = settings.account.accountType
+
+                print("accountType")
+
+                print(accountType)
+
+                if accountType == .entrepreneur {
+                    skylineUrlPatch =  "/\(settings.account.pDir)"
+                }
+
+                print("skylineUrlPatch")
+
+                print(skylineUrlPatch)
+                
+                custWebFilesLogos = settings.custWebFilesLogos
+                
+                customerServiceProfile = settings.customerServiceProfile
+                
+                custOperationWorkProfile = settings.custOperationWorkProfile
+                
+                alertManagerConfiguration = settings.alertManagerConfiguration
+                
+                MercadoLibreControler.shared.profile = settings.mercadoLibreProfile
+                
+                WebApp.shared.skyline.orcScripts = settings.orcScripts
+
+                WebApp.shared.skyline.customeScripts = settings.printScripts
+                
+                if WebApp.current.window.localStorage.string(forKey: "viewType") == nil {
+                    /// ``list, calendar``
+                    WebApp.current.window.localStorage.set(
+                        JSString(configStoreProcessing.gridView.rawValue),
+                        forKey: "viewType"
+                    )
+                }
+                
+                if settings.account.status != .active {
+                    callback(settings.account.status)
+                    return
+                }
+                
+                API.fiscalV1.getProfile(type: .general, relation: nil) { resp in
+                    
+                    loadingView(show: false)
                     
                     guard let resp else {
                         return
                     }
                     
-                    if resp.status != .ok {
-                        return
-                    }
-                    
-                    guard let data = resp.data else {
-                        showError(.unexpectedResult, .unexpenctedMissingPayload)
-                        return
-                    }
-                    
-                    data.users.forEach { user in
-                        userCathByUUID[user.id] = user
-                    }
-                }
-                
-                API.custAPIV1.sincStore { resp in
-                    
-                    guard let resp else {
-                        return
-                    }
-                    
-                    if resp.status != .ok {
+                    guard resp.status == .ok else{
                         return
                     }
                     
@@ -288,109 +268,148 @@ public func loadBasicConfiguration( callback: @escaping ( (
                         return
                     }
 
-                    OrderCatchControler.shared.stores = data.stores.map{.init(
-                        id: $0.id,
-                        name: $0.name,
-                        mainStore: $0.mainStore,
-                        telephone: $0.telephone,
-                        mobile: $0.mobile,
-                        email: $0.email,
-                        street: $0.street,
-                        colony: $0.colony,
-                        city: $0.city,
-                        state: $0.state,
-                        schedulea: $0.schedulea,
-                        scheduleb: $0.scheduleb,
-                        schedulec: $0.schedulec,
-                        lat: $0.lat,
-                        lon: $0.lon
-                    )}
+                    fiscalProfile = data
+
+                    fiscalProfiles = data.profiles
                     
-                    data.stores.forEach { store in
-                        stores[store.id] = store
+                    API.custAPIV1.getUserRefrence(id: nil) { resp in
                         
-                        if store.id == custCatchStore {
-                            
-                            OrderCatchControler.shared.selectedStore = .init(
-                                id: store.id,
-                                name: store.name,
-                                mainStore: store.mainStore,
-                                telephone: store.telephone,
-                                mobile: store.mobile,
-                                email: store.email,
-                                street: store.street,
-                                colony: store.colony,
-                                city: store.city,
-                                state: store.state,
-                                schedulea: store.schedulea,
-                                scheduleb: store.scheduleb,
-                                schedulec: store.schedulec,
-                                lat: store.lat,
-                                lon: store.lon
-                            )
+                        guard let resp else {
+                            return
+                        }
+                        
+                        if resp.status != .ok {
+                            return
+                        }
+                        
+                        guard let data = resp.data else {
+                            showError(.unexpectedResult, .unexpenctedMissingPayload)
+                            return
+                        }
+                        
+                        data.users.forEach { user in
+                            userCathByUUID[user.id] = user
                         }
                     }
                     
-                    data.bodegas.forEach { _bodegas in
-                        bodegas[_bodegas.id] = _bodegas
+                    API.custAPIV1.sincStore { resp in
+                        
+                        guard let resp else {
+                            return
+                        }
+                        
+                        if resp.status != .ok {
+                            return
+                        }
+                        
+                        guard let data = resp.data else {
+                            return
+                        }
+
+                        OrderCatchControler.shared.stores = data.stores.map{.init(
+                            id: $0.id,
+                            name: $0.name,
+                            mainStore: $0.mainStore,
+                            telephone: $0.telephone,
+                            mobile: $0.mobile,
+                            email: $0.email,
+                            street: $0.street,
+                            colony: $0.colony,
+                            city: $0.city,
+                            state: $0.state,
+                            schedulea: $0.schedulea,
+                            scheduleb: $0.scheduleb,
+                            schedulec: $0.schedulec,
+                            lat: $0.lat,
+                            lon: $0.lon
+                        )}
+                        
+                        data.stores.forEach { store in
+                            stores[store.id] = store
+                            
+                            if store.id == custCatchStore {
+                                
+                                OrderCatchControler.shared.selectedStore = .init(
+                                    id: store.id,
+                                    name: store.name,
+                                    mainStore: store.mainStore,
+                                    telephone: store.telephone,
+                                    mobile: store.mobile,
+                                    email: store.email,
+                                    street: store.street,
+                                    colony: store.colony,
+                                    city: store.city,
+                                    state: store.state,
+                                    schedulea: store.schedulea,
+                                    scheduleb: store.scheduleb,
+                                    schedulec: store.schedulec,
+                                    lat: store.lat,
+                                    lon: store.lon
+                                )
+                            }
+                        }
+                        
+                        data.bodegas.forEach { _bodegas in
+                            bodegas[_bodegas.id] = _bodegas
+                        }
+                        
+                        data.seccion.forEach { _seccion in
+                            seccions[_seccion.id] = _seccion
+                        }
+                        
                     }
                     
-                    data.seccion.forEach { _seccion in
-                        seccions[_seccion.id] = _seccion
+                    API.custAPIV1.getBankAccounts { resp in
+                        
+                        guard let resp = resp else {
+                            return
+                        }
+                        
+                        if resp.status != .ok {
+                            return
+                        }
+
+                        guard let data = resp.data else {
+                            return
+                        }
+        
+                        mybanks = data.banks
                     }
+                    
+                    API.custOrderV1.getOrderManagerItems{ resp in
+                        
+                        guard let resp  else {
+                            return
+                        }
+                        
+                        guard resp.status == .ok else {
+                            return
+                        }
+                        
+
+                        guard let data = resp.data else {
+                            return
+                        }
+        
+
+                        orderManagerType = data.orderManagerType
+                        
+                        orderManagerBrand = data.orderManagerBrand
+                        
+                        orderManagerModel = data.orderManagerModel
+                        
+                    }
+                    
+                    getWorkLoadPayload()
                     
                 }
                 
-                API.custAPIV1.getBankAccounts { resp in
-                    
-                    guard let resp = resp else {
-                        return
-                    }
-                    
-                    if resp.status != .ok {
-                        return
-                    }
+                callback(settings.account.status)
+            
 
-                    guard let data = resp.data else {
-                        return
-                    }
-    
-                    mybanks = data.banks
-                }
-                
-                API.custOrderV1.getOrderManagerItems{ resp in
-                    
-                    guard let resp  else {
-                        return
-                    }
-                    
-                    guard resp.status == .ok else {
-                        return
-                    }
-                    
-
-                    guard let data = resp.data else {
-                        return
-                    }
-    
-
-                    orderManagerType = data.orderManagerType
-                    
-                    orderManagerBrand = data.orderManagerBrand
-                    
-                    orderManagerModel = data.orderManagerModel
-                    
-                }
-                
-                getWorkLoadPayload()
                 
             }
-            
-            callback(settings.account.status)
-            
-        }
-        
-        
+        }        
     }
 }
 

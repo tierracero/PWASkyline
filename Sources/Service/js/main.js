@@ -1026,8 +1026,6 @@ function printPdv(payload,custdata) {
     let data = JSON.parse(payload)
     let cust = JSON.parse(custdata)
     
-    console.clear()
-    
     console.log(data)
     console.log(cust)
     body =
@@ -1141,8 +1139,6 @@ function printPdv(payload,custdata) {
 }
 
 function closeUIView(){
-    
-    console.clear()
     
     if ( document.getElementById(`no`) !== null){
         console.log("found no")

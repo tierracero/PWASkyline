@@ -964,8 +964,6 @@ function printPdv(payload,custdata) {
     let data = JSON.parse(payload)
     let cust = JSON.parse(custdata)
     
-    console.clear()
-    
     console.log(data)
     console.log(cust)
     body =
@@ -2407,8 +2405,6 @@ function loadAppleMapRought(mapId, locations, users, updateCoordinate){
         
     }
     
-    console.clear()
-    
     console.log(users)
     
     var users = JSON.parse(users);
@@ -2552,8 +2548,6 @@ function loadAppleMapUsers(mapId, items, updateCoordinate){
     var _userpoints = []
     
     var _usermarkers = []
-    
-    console.clear()
     
     for ( var i = 0; i < items.length; i++ ) {
         
@@ -2846,8 +2840,6 @@ class PinPaternCanvas {
     }
 
     initiateCanvas() {
-
-        console.clear()
 
         console.log("🟢  CANVAS")
 
