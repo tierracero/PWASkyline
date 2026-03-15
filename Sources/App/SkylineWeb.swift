@@ -15,8 +15,8 @@ public struct SkylineWeb {
 	public private(set) var version: VersionControl = .init(
         mode: .beta,
         major: 0,
-        minor: 21,
-        patch: 3
+        minor: 22,
+        patch: 0
     )
 	
 	public init() {}
@@ -254,8 +254,8 @@ open class _SkyLine {
 	public private(set) var version: VersionControl = .init(
         mode: .beta,
         major: 0,
-        minor: 21,
-        patch: 3
+        minor: 22,
+        patch: 0
     )
 	
     /// .init(.rgba(0, 0, 0, 0.7))

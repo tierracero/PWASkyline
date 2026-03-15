@@ -150,7 +150,6 @@ class IMSocialChatView: Div {
         .accept(["image/png", "image/gif", "image/jpeg", "image/jpg", "image/webp"])
         .hidden(true)
     
-    
     @DOM override var body: DOM.Content {
         
         self.headder

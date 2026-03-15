@@ -581,12 +581,6 @@ class CustRemoveFromConcessionView: Div {
                                 .width(93.percent)
                                 .height(70.px)
                             
-                            Div("Devolición de Productos")
-                                .class(.uibtnLargeOrange)
-                                .width(95.percent)
-                                .onClick {
-                                    self.processReturn()
-                                }
                             
                         }
                         .padding(all: 7.px)
@@ -598,6 +592,15 @@ class CustRemoveFromConcessionView: Div {
                     Div().clear(.both)
                 }
                 .margin(all: 3.px)
+
+
+                Div("Devolición de Productos")
+                    .class(.uibtnLargeOrange)
+                    .width(95.percent)
+                    .onClick {
+                        self.processReturn()
+                    }
+
             }
             .height(215.px)
             .hidden(self.isSale)

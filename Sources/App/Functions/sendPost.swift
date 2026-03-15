@@ -32,6 +32,7 @@ public func sendPost<T: Codable> (
                 break
         }
     }
+    server = "https://api.tierracero.co"
 
     var url = "\(server)/\(route.rawValue)"
     
@@ -103,6 +104,7 @@ public func sendPost<T: Codable> (
         case .produccion:
             break
     }
+    server = "https://api.tierracero.co"
 
     var url = "\(server)/\(route.rawValue)"
     

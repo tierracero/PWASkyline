@@ -228,8 +228,6 @@ class CreateStoreLevelDepartement: Div {
             .align(.right)
             
             Div().class(.clear).height(7.px)
-                
-        
                  
         }
         .backgroundColor(.grayBlack)

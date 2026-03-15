@@ -128,547 +128,597 @@ class CustConcessionView: Div {
                 
                 Div().class(.clear)
             }
+            .backgroundColor(.grayBlackDark)
             
             Div().class(.clear).marginTop(3.px)
             
             Div{
                 
-                Div{
+                Div {
+
                     Div{
-                        Table().noResult(label: "🛒 No hay articulos en concesion.")
-                            .hidden(self.$hasAnyActiveElement)
-                            .height(100.percent)
-                        
                         Div{
+                            Table().noResult(label: "🛒 No hay articulos en concesion.")
+                                .hidden(self.$hasAnyActiveElement)
+                                .height(100.percent)
                             
                             Div{
                                 
-                                H2(self.$itemsRefrence.map{ $0.count.toString })
-                                    .marginRight(12.px)
-                                    .color(.yellowTC)
-                                    .float(.right)
-                                
-                                Img()
-                                    .src("/skyline/media/icon_print.png")
-                                    .marginRight(12.px)
-                                    .class(.iconWhite)
-                                    .float(.right)
-                                    .height(24.px)
-                                    .onClick {
-
-                                        if self.itemsRefrence.isEmpty {
-                                            return
-                                        }
-                                        
-                                        self.printCurrentConcession()
-                                        
-                                    }
-                                    .hidden(self.$itemsRefrence.map { $0.isEmpty })
-                                
-                                self.codeFilterField
-                                
-                                H2("Productos Actuales")
-                                    .color(.white)
-                                    .float(.left)
-                                
-                                Div().clear(.both)
-                            }
-                            
-                            Div().clear(.both).height(7.px)
-                            
-                            Div{
-
-                                Table {
-
-                                    THead {
-                                        Tr{
-                                            Td("")
-                                            Td("")
-                                            Td("POC/SKU/UPC")
-                                            Td("Marca")
-                                            Td("Modelo")
-                                            Td("Nombre")
-                                            Td("Unis.")
-                                            Td("Costo")
-                                            Td("")
-                                        }
-                                    }
-
-                                    self.productContainer
-
-                                }
-                                .width(100.percent)
-
-                                self.bodegaContainer
-
-                            }
-                            .custom("height", "calc(100% - 150px)")
-                            .class(.roundDarkBlue)
-                            .padding(all: 3.px)
-                            .overflow(.auto)                            
-
-                            Div().clear(.both).height(12.px)
-
-                            Div{
-
                                 Div{
-
-                                    Div("Unidades Select.")
-                                    .class(.oneLineText)
-                                    .marginBottom(12.px)
-                                    .padding(all: 3.px)
-                                    .fontSize(18.px)
-
-                                    Div(self.$totalItemCount.map{ $0.toString })
-                                    .class(.oneLineText)
-                                    .padding(all: 3.px)
-                                    .fontSize(48.px)
-                                    .align(.right)
-
-                                    Div().clear(.both)
-
-                                }
-                                .width(30.percent)
-                                .float(.left)
-
-                                Div{
-
-                                    Div("Precio Total")
-                                    .class(.oneLineText)
-                                    .marginBottom(12.px)
-                                    .padding(all: 3.px)
-                                    .fontSize(18.px)
-
-                                    Div(self.$totalItemAmount.map{ $0.formatMoney })
-                                    .class(.oneLineText)
-                                    .padding(all: 3.px)
-                                    .fontSize(48.px)
-                                    .align(.right)
-
-                                    Div().clear(.both)
-
-                                }
-                                .width(30.percent)
-                                .fontSize(18.px)
-                                .float(.left)
-                                
-                                Div{
-
-                                    Div{
-                                        Span("Vender")
-                                    }
-                                    .margin(all: 7.px)
-                                    .class(.uibtn)
-                                    .float(.left)
-                                    .onClick {
-                                        self.removeFromConcession(isSale: true)
-                                    }
                                     
-                                    Div{
-                                        Span("Devolución")
-                                    }
-                                    .margin(all: 7.px)
-                                    .class(.uibtn)
-                                    .float(.left)
-                                    .onClick {
-                                        self.removeFromConcession(isSale: false)
-                                    }
-
-                                    Div{
-                                        Span("Mover a Bod.")
-                                    }
-                                    .hidden(self.$bodegas.map{ $0.isEmpty })
-                                    .margin(all: 7.px)
-                                    .class(.uibtn)
-                                    .float(.left)
-                                    .onClick {
-                                        self.moveItemsTo()
-                                    }
+                                    H2(self.$itemsRefrence.map{ $0.count.toString })
+                                        .marginRight(12.px)
+                                        .color(.yellowTC)
+                                        .float(.right)
                                     
+                                    Img()
+                                        .src("/skyline/media/icon_print.png")
+                                        .marginRight(12.px)
+                                        .class(.iconWhite)
+                                        .float(.right)
+                                        .height(24.px)
+                                        .onClick {
+
+                                            if self.itemsRefrence.isEmpty {
+                                                return
+                                            }
+                                            
+                                            self.printCurrentConcession()
+                                            
+                                        }
+                                        .hidden(self.$itemsRefrence.map { $0.isEmpty })
+                                    
+                                    self.codeFilterField
+                                    
+                                    H2("Productos Actuales")
+                                        .color(.white)
+                                        .float(.left)
+                                    
+                                    Div().clear(.both)
                                 }
-                                .width(40.percent)
-                                .align(.right)
-                                .float(.left)
+                                
+                                Div().clear(.both).height(7.px)
+                                
+                                Div{
 
-                                Div().clear(.both)
+                                    Table {
+
+                                        THead {
+                                            Tr{
+                                                Td("")
+                                                Td("")
+                                                Td("POC/SKU/UPC")
+                                                Td("Marca")
+                                                Td("Modelo")
+                                                Td("Nombre")
+                                                Td("Unis.")
+                                                Td("Costo")
+                                                Td("")
+                                            }
+                                        }
+
+                                        self.productContainer
+
+                                    }
+                                    .width(100.percent)
+
+                                    self.bodegaContainer
+
+                                }
+                                .custom("height", "calc(100% - 55px)")
+                                .class(.roundDarkBlue)
+                                .padding(all: 3.px)
+                                .overflow(.auto)                            
+
                             }
-
+                            .hidden(self.$hasAnyActiveElement.map{ !$0 })
+                            .height(100.percent)
+                            
                         }
-                        
-                        .hidden(self.$hasAnyActiveElement.map{ !$0 })
                         .height(100.percent)
-                        
+                        .margin(all: 3.px)
                     }
                     .height(100.percent)
-                    .margin(all: 3.px)
-                }
-                .height(100.percent)
-                .width(60.percent)
-                .float(.left)
-                
-                Div{
-
+                    .width(60.percent)
+                    .float(.left)
+                    
                     Div{
 
                         Div{
 
                             Div{
-                                
-                                Span(self.$sideView.map{ $0.documentableName })
-                                
-                                Div{
-                                    Img()
-                                        .src(self.$sideViewSelectIsHiden.map{ $0 ? "/skyline/media/dropDown.png" : "/skyline/media/dropDownClose.png"  })
-                                        .class(.iconWhite)
-                                        .paddingTop(7.px)
-                                        .width(18.px)
-                                }
-                                .borderLeft(width: BorderWidthType.thin, style: .solid, color: .gray)
-                                .paddingRight(3.px)
-                                .paddingLeft(7.px)
-                                .marginLeft(7.px)
-                                .float(.right)
-                                
-                                Div().clear(.both)
-                                
-                            }
-                            .width(250.px)
-                            .class(.uibtn)
-                            .float(.left)
-                            .onClick { _, event in
-                                self.sideViewSelectIsHiden = !self.sideViewSelectIsHiden
-                                event.stopPropagation()
-                            }
 
-                            Img()
-                                .src("skyline/media/zoom.png")
-                                .marginRight(18.px)
-                                .cursor(.pointer)
-                                .height(24.px)
-                                .float(.right)
-                                .onClick {
+                                Div{
+                                    
+                                    Span(self.$sideView.map{ $0.documentableName })
+                                    
+                                    Div{
+                                        Img()
+                                            .src(self.$sideViewSelectIsHiden.map{ $0 ? "/skyline/media/dropDown.png" : "/skyline/media/dropDownClose.png"  })
+                                            .class(.iconWhite)
+                                            .paddingTop(7.px)
+                                            .width(18.px)
+                                    }
+                                    .borderLeft(width: BorderWidthType.thin, style: .solid, color: .gray)
+                                    .paddingRight(3.px)
+                                    .paddingLeft(7.px)
+                                    .marginLeft(7.px)
+                                    .float(.right)
+                                    
+                                    Div().clear(.both)
                                     
                                 }
-
-                            Img()
-                                .src("skyline/media/history_color.png")
-                                .marginRight(18.px)
-                                .cursor(.pointer)
-                                .height(24.px)
-                                .float(.right)
-                                .onClick {
-                                    addToDom(ProductTransferReportView(reportType: .byConcessionaire(self.account)))
+                                .width(250.px)
+                                .class(.uibtn)
+                                .float(.left)
+                                .onClick { _, event in
+                                    self.sideViewSelectIsHiden = !self.sideViewSelectIsHiden
+                                    event.stopPropagation()
                                 }
-                            
-                            Div().class(.clear)
 
-                            Div()
-                            .position(.absolute)
-                            .height(100.percent)
-                            .width(100.percent)
-                            .left(0.px)
-                            .top(0.px)
-                            .hidden(self.$sideViewSelectIsHiden)
-                            .onClick {
-                                self.sideViewSelectIsHiden = true
-                                $1.stopPropagation()
-                            }
-
-                            Div{
-                                self.sideMenuItems
-                            }
-                            .hidden(self.$sideViewSelectIsHiden)
-                            .backgroundColor(.transparentBlack)
-                            .position(.absolute)
-                            .borderRadius(12.px)
-                            .padding(all: 3.px)
-                            .margin(all: 3.px)
-                            .marginTop(7.px)
-                            .width(300.px)
-                            .zIndex(1)
-                            .onClick { _, event in
-                                event.stopPropagation()
-                            }
-
-                        }
-                        
-                        Div().class(.clear).marginTop(3.px)
-
-                        Div{
-                            
-                            Div{
-
-                                Table().noResult(label: "🗳️ No existen conseciones")
-                                    .hidden(self.$inItems.map{ !$0.isEmpty })
-                                
-                                self.itemsInView
-                                .hidden(self.$inItems.map{ $0.isEmpty })
-                                
-                            }
-                            .hidden(self.$sideView.map{ $0 != .incomingView })
-                            .height(100.percent)
-                            .margin(all: 3.px)
-                            
-                            Div{
-
-                                Table().noResult(label: "🗳️ No existen salidas")
-                                    .hidden(self.$outItems.map{ !$0.isEmpty })
-
-                                ForEach(self.$outItems) { control in
-
-                                    self.controlItemDiv(control)
-                                   
-                                }
-                                .hidden(self.$outItems.map{ $0.isEmpty })
-
-                            }
-                            .hidden(self.$sideView.map{ $0 != .outgoingView })
-                            .height(100.percent)
-                            .margin(all: 3.px)
-                            
-                            Div{
-                                
-                                Table().noResult(label: "🗳️  No existen ventas")
-                                    .hidden(self.$sales.map{ !$0.isEmpty })
-                                
-                                ForEach(self.$sales) { sale in
-                                    Div{
-                                        
-                                        Div(sale.total.formatMoney)
-                                            .marginRight(3.px)
-                                            .float(.right)
-                                        
-                                        Div(sale.folio)
-                                            .marginRight(7.px)
-                                            .float(.left)
-                                        
-                                        Div(getDate(sale.createdAt).formatedShort)
-                                            .marginRight(7.px)
-                                            .float(.left)
-                                        
-                                    }
-                                    .class(.uibtnLarge)
-                                    .width(97.percent)
+                                Img()
+                                    .src("skyline/media/zoom.png")
+                                    .marginRight(18.px)
+                                    .cursor(.pointer)
+                                    .height(24.px)
+                                    .float(.right)
                                     .onClick {
-                                        addToDom(SalePointView.DetailView(saleId: .id(sale.id)))
+                                        
+                                    }
+
+                                Img()
+                                    .src("skyline/media/history_color.png")
+                                    .marginRight(18.px)
+                                    .cursor(.pointer)
+                                    .height(24.px)
+                                    .float(.right)
+                                    .onClick {
+                                        addToDom(ProductTransferReportView(reportType: .byConcessionaire(self.account)))
+                                    }
+                                
+                                Div().class(.clear)
+
+                                Div()
+                                .position(.absolute)
+                                .height(100.percent)
+                                .width(100.percent)
+                                .left(0.px)
+                                .top(0.px)
+                                .hidden(self.$sideViewSelectIsHiden)
+                                .onClick {
+                                    self.sideViewSelectIsHiden = true
+                                    $1.stopPropagation()
+                                }
+
+                                Div{
+                                    self.sideMenuItems
+                                }
+                                .hidden(self.$sideViewSelectIsHiden)
+                                .backgroundColor(.transparentBlack)
+                                .position(.absolute)
+                                .borderRadius(12.px)
+                                .padding(all: 3.px)
+                                .margin(all: 3.px)
+                                .marginTop(7.px)
+                                .width(300.px)
+                                .zIndex(1)
+                                .onClick { _, event in
+                                    event.stopPropagation()
+                                }
+
+                            }
+                            
+                            Div().class(.clear).marginTop(3.px)
+
+                            Div{
+                                
+                                Div{
+
+                                    Table().noResult(label: "🗳️ No existen conseciones")
+                                        .hidden(self.$inItems.map{ !$0.isEmpty })
+                                    
+                                    self.itemsInView
+                                    .hidden(self.$inItems.map{ $0.isEmpty })
+                                    
+                                }
+                                .hidden(self.$sideView.map{ $0 != .incomingView })
+                                .height(100.percent)
+                                .margin(all: 3.px)
+                                
+                                Div{
+
+                                    Table().noResult(label: "🗳️ No existen salidas")
+                                        .hidden(self.$outItems.map{ !$0.isEmpty })
+
+                                    ForEach(self.$outItems) { control in
+
+                                        self.controlItemDiv(control)
+                                    
+                                    }
+                                    .hidden(self.$outItems.map{ $0.isEmpty })
+
+                                }
+                                .hidden(self.$sideView.map{ $0 != .outgoingView })
+                                .height(100.percent)
+                                .margin(all: 3.px)
+                                
+                                Div{
+                                    
+                                    Table().noResult(label: "🗳️  No existen ventas")
+                                        .hidden(self.$sales.map{ !$0.isEmpty })
+                                    
+                                    ForEach(self.$sales) { sale in
+                                        Div{
+                                            
+                                            Div(sale.total.formatMoney)
+                                                .marginRight(3.px)
+                                                .float(.right)
+                                            
+                                            Div(sale.folio)
+                                                .marginRight(7.px)
+                                                .float(.left)
+                                            
+                                            Div(getDate(sale.createdAt).formatedShort)
+                                                .marginRight(7.px)
+                                                .float(.left)
+                                            
+                                        }
+                                        .class(.uibtnLarge)
+                                        .width(97.percent)
+                                        .onClick {
+                                            addToDom(SalePointView.DetailView(saleId: .id(sale.id)))
+                                        }
+                                    }
+                                    .hidden(self.$sales.map{ $0.isEmpty })
+                                    
+                                }
+                                .hidden(self.$sideView.map{ $0 != .salesView })
+                                .height(100.percent)
+                                .margin(all: 3.px)
+                                
+                                Div{
+
+                                    Table().noResult(label: "🗳️ No existen mermados")
+                                        .hidden(self.$mermItems.map{ !$0.isEmpty })
+
+                                    ForEach(self.$mermItems) { control in
+
+                                        self.controlItemDiv(control)
+                                    
+                                    }
+                                    .hidden(self.$mermItems.map{ $0.isEmpty })
+                                    
+                                }
+                                .hidden(self.$sideView.map{ $0 != .otherView })
+                                .height(100.percent)
+                                .margin(all: 3.px)
+
+                            }
+                            .custom("height", "calc(50% - 35px)")
+                            .class(.roundGrayBlackDark)
+                            .overflow(.auto)
+                            
+                            Div().class(.clear).marginTop(3.px)
+                        
+                            Div{
+                                
+                                H2("Herramientas")
+                                    .float(.left)
+
+                                Div().class(.clear).height(7.px)
+
+                                Div{
+        
+                                    Div{
+                                        Img()
+                                            .src("skyline/media/zoom.png")
+                                            .marginRight(12.px)
+                                            .cursor(.pointer)
+                                            .height(18.px)
+
+                                        Span("Auditar / Kardex")
+                                    }
+                                    .custom("width", "calc(100% - 14px)")
+                                    .align(.center)
+                                    .class(.uibtn)
+
+                                    .onClick {
+                                        addToDom(ProductManagerView.AuditView(auditType: .concessionaire(self.account)))
                                     }
                                 }
-                                .hidden(self.$sales.map{ $0.isEmpty })
-                                
-                            }
-                            .hidden(self.$sideView.map{ $0 != .salesView })
-                            .height(100.percent)
-                            .margin(all: 3.px)
-                            
-                            Div{
-
-                                Table().noResult(label: "🗳️ No existen mermados")
-                                    .hidden(self.$mermItems.map{ !$0.isEmpty })
-
-                                ForEach(self.$mermItems) { control in
-
-                                    self.controlItemDiv(control)
-                                   
-                                }
-                                .hidden(self.$mermItems.map{ $0.isEmpty })
-                                
-                            }
-                            .hidden(self.$sideView.map{ $0 != .otherView })
-                            .height(100.percent)
-                            .margin(all: 3.px)
-
-                        }
-                        .custom("height", "calc(50% - 35px)")
-                        .class(.roundGrayBlackDark)
-                        .overflow(.auto)
-                        
-                        Div().class(.clear).marginTop(3.px)
-                    
-                        Div{
-                            
-                            H2("Herramientas")
+                                .width(50.percent)
                                 .float(.left)
 
-                            Div().class(.clear).height(7.px)
-
-                            Div{
-    
                                 Div{
-                                     Img()
-                                        .src("skyline/media/zoom.png")
-                                        .marginRight(12.px)
-                                        .cursor(.pointer)
-                                        .height(18.px)
+                                    Div{
+                                        Img()
+                                            .src("skyline/media/add.png")
+                                            .marginRight(12.px)
+                                            .cursor(.pointer)
+                                            .height(18.px)
 
-                                    Span("Auditar / Kardex")
+                                        Span("Agregar Manual")
+                                    }
+                                    .custom("width", "calc(100% - 14px)")
+                                    .align(.center)
+                                    .class(.uibtn)
+                                    .onClick {
+
+                                        print("🚧  000")
+
+                                        let view = StartManualInventory { name, vendor, profile in
+
+                                            print("🚧  001")
+
+
+                                            let view: CustConcessionView.AddManualInventorieView = AddManualInventorieView(
+                                                account: self.account,
+                                                newDocumentName: name,
+                                                vendor: vendor,
+                                                profile: profile,
+                                                bodegas: self.bodegas
+                                            )
+
+                                            addToDom(view)
+
+                                        }
+
+                                        let date = Date()
+
+                                        view.newDocumentName = " Ingreso a concession manual \(date.dateStamp)"
+
+                                        addToDom(view)
+                                        
+                                    }
                                 }
-                                .custom("width", "calc(100% - 14px)")
-                                .align(.center)
-                                .class(.uibtn)
+                                .width(50.percent)
+                                .float(.left)
+                                
+                                Div().class(.clear).height(12.px)
 
-                                .onClick {
-                                    addToDom(ProductManagerView.AuditView(auditType: .concessionaire(self.account)))
-                                }
-                            }
-                            .width(50.percent)
-                            .float(.left)
-
-                            Div{
                                 Div{
-                                     Img()
-                                        .src("skyline/media/add.png")
-                                        .marginRight(12.px)
-                                        .cursor(.pointer)
-                                        .height(18.px)
+                                    Div{
+                                        Img()
+                                            .src("skyline/media/add.png")
+                                            .marginRight(12.px)
+                                            .cursor(.pointer)
+                                            .height(18.px)
 
-                                    Span("Agregar Manual")
-                                }
-                                .custom("width", "calc(100% - 14px)")
-                                .align(.center)
-                                .class(.uibtn)
-                                .onClick {
+                                        Span("Agregar Bodega")
+                                    }
+                                    .custom("width", "calc(100% - 14px)")
+                                    .align(.center)
+                                    .class(.uibtn)
+                                    .onClick {
+                                        
+                                        let view: ManageBodegaView = .init(
+                                            relationType: .consessioner(self.account.id),
+                                            relationName: "Crear bodega para concesionario",
+                                            loadBy: .createForConcession,
+                                            onCreate: { bodega, _ in
+                                            
+                                                self.bodegas.append(.init(
+                                                    id: bodega.id,
+                                                    name: bodega.name
+                                                ))
+                                                
+                                                self.bodegaRefrence.forEach { _, view in
+                                                    view.bodegas = self.bodegas
+                                                }
+                                                
+                                            },
+                                            onUpdate: { id, name, _ in
 
-                                    print("🚧  000")
+                                                var bodegas: [CustStoreBodegasQuick] = []
 
-                                    let view = StartManualInventory { name, vendor, profile in
+                                                self.bodegas.forEach { bodega in
+                                                    
+                                                    if bodega.id  == id  {
+                                                        
+                                                        bodegas.append(.init(
+                                                            id: id,
+                                                            name: name
+                                                        ) )
 
-                                        print("🚧  001")
+                                                        return
+                                                    }
 
+                                                    bodegas.append(bodega)
 
-                                        let view: CustConcessionView.AddManualInventorieView = AddManualInventorieView(
-                                            account: self.account,
-                                            newDocumentName: name,
-                                            vendor: vendor,
-                                            profile: profile,
-                                            bodegas: self.bodegas
+                                                }
+
+                                                self.bodegas = bodegas
+
+                                                let view = BodegaView(
+                                                    consetionId: self.account.id,
+                                                    consetionName: "Conseccion \(self.account.businessName)",
+                                                    bodega: .init(id: id, name: name) ,
+                                                    bodegas: self.bodegas,
+                                                    pocs: self.pocs
+                                                ) { items, alocatedTo in
+
+                                                    if let alocatedTo {
+
+                                                        self.bodegaRefrence[alocatedTo]?.takeInItems(items: items)
+
+                                                    }
+                                                    else {
+
+                                                        self.addItemsToConcession(items: items)
+
+                                                    }
+                                                    
+                                                }
+
+                                                self.bodegaContainer.appendChild(view)
+
+                                                self.bodegaRefrence[id] = view
+                                                
+                                            }
                                         )
 
                                         addToDom(view)
 
                                     }
-
-                                    let date = Date()
-
-                                    view.newDocumentName = " Ingreso a concession manual \(date.dateStamp)"
-
-                                    addToDom(view)
-                                    
                                 }
-                            }
-                            .width(50.percent)
-                            .float(.left)
-                            
-                            Div().class(.clear).height(12.px)
-
-                            Div{
-                                Div{
-                                     Img()
-                                        .src("skyline/media/add.png")
-                                        .marginRight(12.px)
-                                        .cursor(.pointer)
-                                        .height(18.px)
-
-                                    Span("Agregar Bodega")
-                                }
-                                .custom("width", "calc(100% - 14px)")
-                                .align(.center)
-                                .class(.uibtn)
-                                .onClick {
-                                    
-                                    let view: ManageBodegaView = .init(
-                                        relationType: .consessioner(self.account.id),
-                                        relationName: "Crear bodega para concesionario",
-                                        loadBy: .createForConcession,
-                                        onCreate: { bodega, _ in
-                                        
-                                            self.bodegas.append(.init(
-                                                id: bodega.id,
-                                                name: bodega.name
-                                            ))
-                                            
-                                            self.bodegaRefrence.forEach { _, view in
-                                                view.bodegas = self.bodegas
-                                            }
-                                            
-                                        },
-                                        onUpdate: { id, name, _ in
-
-                                            var bodegas: [CustStoreBodegasQuick] = []
-
-                                            self.bodegas.forEach { bodega in
-                                                
-                                                if bodega.id  == id  {
-                                                    
-                                                    bodegas.append(.init(
-                                                        id: id,
-                                                        name: name
-                                                    ) )
-
-                                                    return
-                                                }
-
-                                                bodegas.append(bodega)
-
-                                            }
-
-                                            self.bodegas = bodegas
-
-                                            let view = BodegaView(
-                                                consetionId: self.account.id,
-                                                consetionName: "Conseccion \(self.account.businessName)",
-                                                bodega: .init(id: id, name: name) ,
-                                                bodegas: self.bodegas,
-                                                pocs: self.pocs
-                                            ) { items, alocatedTo in
-
-                                                if let alocatedTo {
-
-                                                    self.bodegaRefrence[alocatedTo]?.takeInItems(items: items)
-
-                                                }
-                                                else {
-
-                                                    self.addItemsToConcession(items: items)
-
-                                                }
-                                                
-                                            }
-
-                                            self.bodegaContainer.appendChild(view)
-
-                                            self.bodegaRefrence[id] = view
-                                            
-                                        }
-                                    )
-
-                                    addToDom(view)
-
-                                }
-                            }
-                            .width(50.percent)
-                            .float(.left)
-                            
-                            Div{
+                                .width(50.percent)
+                                .float(.left)
                                 
+                                Div{
+                                    
+                                }
+                                .width(50.percent)
+                                .float(.left)
+
+                                Div().class(.clear).height(7.px)
+
                             }
-                            .width(50.percent)
-                            .float(.left)
-
+                            
                             Div().class(.clear).height(7.px)
-
+                            
                         }
-                        
-                        Div().class(.clear).height(7.px)
+                        .height(100.percent)
+                        .margin(all: 3.px)
                         
                     }
                     .height(100.percent)
-                    .margin(all: 3.px)
+                    .width(40.percent)
+                    .float(.left)
+                    
+                    Div().class(.clear)
+
+                }
+                .custom("height", "calc(100% - 100px)")
+
+                Div{
+
+                    Div{
+
+                        Div{
+
+                            Span("Unidades Select.")
+
+                            Div{
+                                Img()
+                                .src("/skyline/media/shopping_cart_icon.png")
+                                .class(.iconWhite)
+                                .marginRight(3.px)
+                                .height(16.px)
+                                .width(16.px)
+                                
+                                Span("Ver")
+                                .fontSize(16.px)
+                                .color(.white)
+
+                            }
+                            .padding(all: 3.px)
+                            .marginTop(-6.px)
+                            .class(.uibtn)
+                            .float(.right)
+                            .onClick {
+                                self.previewCart()
+                            }
+                            .hidden(self.$totalItemCount.map{ $0 == 0 })
+                        }
+                        .class(.oneLineText)
+                        .marginBottom(12.px)
+                        .padding(all: 3.px)
+                        .fontSize(18.px)
+
+                        Div(self.$totalItemCount.map{ $0.toString })
+                        .class(.oneLineText)
+                        .padding(all: 3.px)
+                        .fontSize(48.px)
+                        .align(.right)
+
+                        Div().clear(.both)
+
+                    }
+                    .width(25.percent)
+                    .float(.left)
+
+                    Div{
+
+                        Div("Precio Total")
+                        .class(.oneLineText)
+                        .marginBottom(12.px)
+                        .padding(all: 3.px)
+                        .fontSize(18.px)
+
+                        Div(self.$totalItemAmount.map{ $0.formatMoney })
+                        .class(.oneLineText)
+                        .padding(all: 3.px)
+                        .fontSize(48.px)
+                        .align(.right)
+
+                        Div().clear(.both)
+
+                    }
+                    .width(25.percent)
+                    .fontSize(18.px)
+                    .float(.left)
+                    
+                    Div{
+
+                        Div("Vender")
+                        .padding(all: 7.px)
+                        .margin(all: 3.px)
+                        .class(.uibtn)
+                        .float(.left)
+                        .onClick {
+                            self.removeFromConcession(isSale: true)
+                        }
+                        
+                        Div("Devolución")
+                        .padding(all: 7.px)
+                        .margin(all: 3.px)
+                        .class(.uibtn)
+                        .float(.left)
+                        .onClick {
+                            self.removeFromConcession(isSale: false)
+                        }
+
+                        Div("Mover a Bod.")
+                        .hidden(self.$bodegas.map{ $0.isEmpty })
+                        .padding(all: 7.px)
+                        .margin(all: 3.px)
+                        .class(.uibtn)
+                        .float(.left)
+                        .onClick {
+                            self.moveItemsTo()
+                        }
+                        
+                        if custCatchHerk > 3 {
+
+                            Div("Mermar")
+                            .padding(all: 7.px)
+                            .margin(all: 3.px)
+                            .class(.uibtn)
+                            .float(.left)
+                            .onClick {
+                                self.moveItemsToMerm()
+                            }
+
+                        }
+                        
+                        Div("Ingrso de Orden")
+                        .padding(all: 7.px)
+                        .margin(all: 3.px)
+                        .class(.uibtn)
+                        .float(.left)
+                        .onClick {
+                            self.moveItemsToOrder()
+                        }
+                        
+
+                    }
+                    .width(50.percent)
+                    .align(.right)
+                    .float(.left)
+
+                    Div().clear(.both)
                     
                 }
-                .height(100.percent)
-                .width(40.percent)
-                .float(.left)
-                Div().class(.clear)
                  
             }
             .custom("height", "calc(100% - 37px)")
@@ -1641,6 +1691,117 @@ class CustConcessionView: Div {
 
         
     }
+    
+    func moveItemsToMerm(){
+
+    }
+
+    func moveItemsToOrder() {
+
+        var selectedItems:[CustPOCInventorySoldObject] = []
+        
+        var pocs: [CustPOCQuick] = []
+    
+        var hasError = false
+        
+        self.selectedItems.forEach { itemId, state in
+            if state {
+                
+                guard let item = itemsRefrence[itemId] else {
+                    hasError = true
+                    return
+                }
+
+                selectedItems.append(item)
+            }
+        }
+        
+        if hasError {
+            showError(.generalError, "Hay inconsistencias en la peticion, refresque la pantalla e intente de nuevo.")
+            return
+        }
+        
+        if selectedItems.isEmpty {
+            showError(.generalError, "Seleccione elementos para Mover")
+            return
+        }
+
+        selectedItems.forEach{ item in
+        
+            if let poc = pocRefrence[item.POC] {
+                pocs.append(poc)
+            }
+
+        }
+
+        let view = QuickOrderSearch { order in
+
+            let view = ConfirmOrderMovment(
+                accountId: self.account.id,
+                bodegaId: nil,
+                order: order,
+                selectedItems: selectedItems,
+                pocs: pocs
+            ) { movedItems in
+
+                self.removeItemsFromConcession(ids: movedItems.map(\.id))
+
+            }
+
+            addToDom(view)
+
+        }
+
+        addToDom(view)
+
+    }
+
+    func previewCart() {
+        
+        var selectedItems:[CustPOCInventorySoldObject] = []
+        
+        var pocs: [CustPOCQuick] = []
+    
+        var hasError = false
+        
+        self.selectedItems.forEach { itemId, state in
+            if state {
+                
+                guard let item = itemsRefrence[itemId] else {
+                    hasError = true
+                    return
+                }
+
+                selectedItems.append(item)
+            }
+        }
+        
+        if hasError {
+            showError(.generalError, "Hay inconsistencias en la peticion, refresque la pantalla e intente de nuevo.")
+            return
+        }
+        
+        if selectedItems.isEmpty {
+            showError(.generalError, "Seleccione elementos para Mover")
+            return
+        }
+
+        selectedItems.forEach{ item in
+        
+            if let poc = pocRefrence[item.POC] {
+                pocs.append(poc)
+            }
+
+        }
+        
+        let view = PreviewItems(
+            selectedItems: selectedItems,
+            pocs: pocs
+        )
+        
+        addToDom(view)
+
+    }
 
 }
 
@@ -1739,7 +1900,7 @@ extension CustConcessionView {
 
     }
 
-    func  outItemDiv(_ item: ControlManager) -> Div {
+    func outItemDiv(_ item: ControlManager) -> Div {
 
         let control = item.control 
 
@@ -1915,7 +2076,7 @@ extension CustConcessionView {
         }
     }
     
-    func  controlItemDiv(_ control: CustFiscalInventoryControl) -> Div {
+    func controlItemDiv(_ control: CustFiscalInventoryControl) -> Div {
 
         return  Div{
             
@@ -2036,6 +2197,5 @@ extension CustConcessionView {
             self.openConcession(controlId: control.id)
         }
     }
-
 
 }

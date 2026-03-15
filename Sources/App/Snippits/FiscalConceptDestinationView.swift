@@ -879,10 +879,6 @@ class FiscalConceptDestinationView: Div {
             return
         }
         
-        if !term.contains("-") {
-            term = "-\(term)"
-        }
-        
         loadingView(show: true)
         
         API.custOrderV1.searchFolio(

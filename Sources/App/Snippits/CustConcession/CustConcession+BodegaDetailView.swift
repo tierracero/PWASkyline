@@ -152,19 +152,49 @@ extension CustConcessionView {
                             
                             self.productDiv
                             
-                            Div().clear(.both).height(12.px)
+                            Div().clear(.both).height(3.px)
 
                             Div{
 
                                 Div{
 
-                                    Div("Unidades Select.")
+                                    Div{
+                                        
+
+
+                                        Span("Unidades Select.")
+
+                                        Div{
+                                            Img()
+                                            .src("/skyline/media/shopping_cart_icon.png")
+                                            .class(.iconWhite)
+                                            .marginRight(3.px)
+                                            .height(16.px)
+                                            .width(16.px)
+                                            
+                                            Span("Ver")
+                                            .fontSize(18.px)
+                                            .color(.white)
+
+                                        }
+                                        .padding(all: 7.px)
+                                        .marginTop(0.px)
+                                        .class(.uibtn)
+                                        .float(.right)
+                                        .onClick {
+                                            self.previewCart()
+                                        }
+                                        .hidden(self.$totalItemCount.map{ $0 == 0 })
+
+
+
+                                    }
                                     .class(.oneLineText)
                                     .marginBottom(12.px)
                                     .padding(all: 3.px)
                                     .fontSize(18.px)
-
-                                    Div(self.$totalItemCount.map{ $0.toString })
+                                    
+                                    Div(self.$totalItemCount.map{ $0.toString } )
                                     .class(.oneLineText)
                                     .padding(all: 3.px)
                                     .fontSize(48.px)
@@ -173,7 +203,7 @@ extension CustConcessionView {
                                     Div().clear(.both)
 
                                 }
-                                .width(30.percent)
+                                .width(25.percent)
                                 .float(.left)
 
                                 Div{
@@ -193,28 +223,56 @@ extension CustConcessionView {
                                     Div().clear(.both)
 
                                 }
-                                .width(30.percent)
+                                .width(25.percent)
                                 .fontSize(18.px)
                                 .float(.left)
                                 
                                 Div{
 
-                                    Div{
-                                        Span("Mover a Bod.")
-                                    }
-                                    .margin(all: 7.px)
+                                    Div("Mover a Bod.")
+                                    .padding(all: 7.px)
+                                    .margin(all: 3.px)
                                     .class(.uibtn)
                                     .float(.left)
                                     .onClick {
                                         self.moveItemsTo()
                                     }
+                                        
+                                    Div {
+
+                                        Div("Mermar")
+                                        .padding(all: 7.px)
+                                        .margin(all: 3.px)
+                                        .class(.uibtn)
+                                        .onClick {
+                                            self.moveItemsToMerm()
+                                        }
+                                    }
+                                    .fontSize(18.px)
+                                    .float(.left)
+
+                                    Div {
+
+                                        Div("Ingrso de Orden")
+                                        .padding(all: 7.px)
+                                        .margin(all: 3.px)
+                                        .class(.uibtn)
+                                        .onClick {
+                                            self.moveItemsToOrder()
+                                        }
+                                    }
+                                    .fontSize(18.px)
+                                    .float(.left)
+
                                     
                                 }
-                                .width(40.percent)
+                                .width(50.percent)
                                 .align(.right)
                                 .float(.left)
 
                                 Div().clear(.both)
+
+
                             }
 
                         }
@@ -794,6 +852,116 @@ extension CustConcessionView {
 
             
         }
+
+        func moveItemsToMerm() {
+
+        }
+
+        func moveItemsToOrder() {
+
+            var selectedItems:[CustPOCInventorySoldObject] = []
+
+            var pocs: [CustPOCQuick] = []
+            
+            var hasError = false
+            
+            selectedItemsState.forEach { itemId, state in
+                if state.wrappedValue {
+                    
+                    guard let item = itemsRefrence[itemId] else {
+                        hasError = true
+                        return
+                    }
+                    selectedItems.append(item)
+                }
+            }
+            
+            selectedItems.forEach{ item in
+            
+                if let poc = pocRefrence[item.POC] {
+                    pocs.append(poc)
+                }
+
+            }
+
+            if hasError {
+                showError(.generalError, "Hay inconsistencias en la peticion, refresque la pantalla e intente de nuevo.")
+                return
+            }
+            
+            if selectedItems.isEmpty {
+                showError(.generalError, "Seleccione elementos para Mover")
+                return
+            }
+
+            let view = QuickOrderSearch { order in
+
+                let view = ConfirmOrderMovment(
+                    accountId: self.consetionId,
+                    bodegaId: self.bodega.id,
+                    order: order,
+                    selectedItems: selectedItems,
+                    pocs: pocs
+                ) { movedItems in
+                    
+                    self.removeItemsFromConcession(ids: movedItems.map(\.id))
+
+                }
+
+                addToDom(view)
+            }
+
+            addToDom(view)
+
+        }
+
+        func previewCart() {
+            
+            var selectedItems:[CustPOCInventorySoldObject] = []
+
+            var pocs: [CustPOCQuick] = []
+            
+            var hasError = false
+            
+            selectedItemsState.forEach { itemId, state in
+                if state.wrappedValue {
+                    
+                    guard let item = itemsRefrence[itemId] else {
+                        hasError = true
+                        return
+                    }
+                    selectedItems.append(item)
+                }
+            }
+            
+            selectedItems.forEach{ item in
+            
+                if let poc = pocRefrence[item.POC] {
+                    pocs.append(poc)
+                }
+
+            }
+
+            if hasError {
+                showError(.generalError, "Hay inconsistencias en la peticion, refresque la pantalla e intente de nuevo.")
+                return
+            }
+            
+            if selectedItems.isEmpty {
+                showError(.generalError, "Seleccione elementos para Mover")
+                return
+            }
+
+            
+            let view = PreviewItems(
+                selectedItems: selectedItems,
+                pocs: pocs
+            )
+            
+            addToDom(view)
+
+        }
+
 
     }
 }

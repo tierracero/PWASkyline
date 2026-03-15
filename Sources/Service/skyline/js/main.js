@@ -1867,6 +1867,7 @@ function download(name, content) {
         "tif":"image/tiff",
         "tiff":"image/tiff",
         "ttf":"font/ttf",
+        "txt":"text/plain",
         "vsd":"application/vnd.visio",
         "wav":"audio/x-wav",
         "weba":"audio/webm",

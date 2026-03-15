@@ -44,7 +44,7 @@ class StartServiceOrder: Div {
     required init() {
         fatalError("init() has not been implemented")
     }
-    
+
     var mapToken = ""
 
     var smsTokens: [String] = []
@@ -333,7 +333,7 @@ class StartServiceOrder: Div {
 
     let mapId = "map_" + callKey(32)
 
-    lazy var mapContainer = Div{
+    lazy var mapContainer = Div {
             Img()
                 .src("/skyline/media/orderMapRequest.jpeg")
                 .margin(all:7.px)
@@ -737,17 +737,6 @@ class StartServiceOrder: Div {
         .class(.textFiledBlackDark)
         .width(100.percent)
         .height(90.px)
-
-    @State var customeScriptListiner = ""
-        
-    lazy var customeScriptSelect = Select(self.$customeScriptListiner)
-        .custom("width", "calc(100% - 18px)")
-        .class(.textFiledBlackDark)
-        .height(37.px)
-        .body {
-            Option("Ingreso por archivo")
-                .value("")
-        }
     
     lazy var checkTag1 = InputCheckbox().toggle(self.$_checkTag1)
     
@@ -763,7 +752,7 @@ class StartServiceOrder: Div {
     
     /**  `` /General Input Items `` */
     
-    @State var total:Int64 = 0
+    @State var total: Int64 = 0
     
     @State var charges: [ChargeObject] = []
     
@@ -773,6 +762,25 @@ class StartServiceOrder: Div {
     
     var payChargeRef: [ UUID : OldChargeTrRow ] = [:]
     
+    @State var customeScript: CustomerCustomeScript? = nil
+
+    @State var customeScripts: [CustomerCustomeScript] = []
+
+    @State var customeScriptListiner = ""
+        
+    lazy var customeScriptSelect = Select(self.$customeScriptListiner)
+        .custom("width", "calc(100% - 18px)")
+        .class(.textFiledBlackDark)
+        .height(37.px)
+        .body {
+            Option("Ingreso por archivo")
+                .value("")
+        }
+
+    lazy var fileLoader: InputFile = InputFile()
+        .accept(["application/vnd.ms-excel", "text/csv", "text/plain",]) // , ".heic"
+        .hidden(true)
+
     @DOM override var body: DOM.Content {
         
         Div{
@@ -2535,7 +2543,7 @@ class StartServiceOrder: Div {
         
         self.requierServiceAddress = configContactTags.requierServiceAddress
         
-        self.$dueAt.listen {
+        $dueAt.listen {
             if let _uts = $0 {
                 let newDate = Date(timeIntervalSince1970: TimeInterval(_uts))
                 
@@ -2551,6 +2559,13 @@ class StartServiceOrder: Div {
             }
         }
         
+
+        fileLoader.$files.listen {
+            $0.forEach { file in
+                self.loadMedia(file)
+            }
+        }
+
         self.selectUser.appendChild(
             Option("Seleccione Usuario")
                 .value("")
@@ -2574,25 +2589,14 @@ class StartServiceOrder: Div {
                 guard resp.status == .ok else{
                     return
                 }
-                
-                if let uts = resp.data?.sugestedPromis {
-                    
-                    let date = Date(timeIntervalSince1970: TimeInterval(uts))
-                    
-                    var components = DateComponents()
-                    components.day = date.day
-                    components.month = date.month
-                    components.year = date.year
-                    components.hour = 16
-                    components.minute = 0
-                    
-                    guard let now = Calendar.current.date(from: components)?.timeIntervalSince1970 else {
-                        return
-                    }
-                    
-                    self.dueAt = Int64(now)
-                    
+               
+                guard let payload = resp.data else {
+                    showError(.unexpectedResult, .unexpenctedMissingPayload)
+                    return
                 }
+
+                print(payload)
+
             }
         }
         
@@ -2658,8 +2662,6 @@ class StartServiceOrder: Div {
             }
         }
 
-        @State var customeScripts: [CustomerCustomeScript] = []
-
         WebApp.shared.skyline.customeScripts.forEach { script in
             if script.type == .orderCreated, script.relType == .customer(custAcct.id) {
                 customeScripts.append(script)
@@ -2700,25 +2702,6 @@ class StartServiceOrder: Div {
         print("⚠️  didRemoveFromDOM")
         super.didRemoveFromDOM()
         _ = JSObject.global.deinitiateCanvas!()
-    }
-
-    func loadByScript() {
-
-        var customeScript: CustomerCustomeScript? = nil
-
-        if customeScripts.count == 1 {
-
-        }
-        else {
-            
-        }
-
-        guard let customeScript else {
-            showError(.generalError, "Selecione script para porcessar")
-            return
-        }
-
-
     }
 
     func activateRewards(){
@@ -3910,77 +3893,77 @@ class StartServiceOrder: Div {
 
     func addPayment(){
 
-                                let pv = AddPaymentFormView (
-                                    accountId: self.custAcct.id,
-                                    cardId: self.cardId,
-                                    currentBalance: self.total
-                                ) { code, description, amount, provider, lastFour, auth, uts in
-                                    
-                                    let refid: UUID = .init()
-                                    
-                                    self.payments.append(
-                                        .init(
-                                            refid: refid,
-                                            fiscCode: code,
-                                            description: description,
-                                            amount: amount,
-                                            reference: "",
-                                            provider: provider,
-                                            lastFour: lastFour,
-                                            auth: auth
-                                        )
-                                    )
-                                    
-                                    let id = refid
-                                
-                                    let tr = OldChargeTrRow(
-                                        preCharge: true,
-                                        isCharge: false,
-                                        id: id,
-                                        name: description,
-                                        cuant: 100.toInt64,
-                                        price: amount,
-                                        puerchaseOrder: false
-                                    ) { viewId in
-                                        
-                                        if let tf = self.payChargeRef[viewId] {
-                                            tf.remove()
-                                        }
-                                        
-                                        var _payments: [PaymentObject] = []
-                                        
-                                        self.payments.forEach { pay in
-                                            if pay.refid == id {
-                                                return
-                                            }
-                                            _payments.append(pay)
-                                        }
-                                        
-                                        self.payments = _payments
-                                        
-                                        print(_payments)
-                                        
-                                        self.calcBalance()
-                                        
-                                    }
-                                    
-                                    self.payChargeRef[tr.viewId] = tr
-                                    
-                                    self.chargesTable.appendChild(tr)
-                                    
-                                    self.calcBalance()
-                                    
-                                }
-                                
-                                self.appendChild(pv)
-                                
-                                if self.total <= 0 {
-                                    pv.paymentDescription.select()
-                                }
-                                else{
-                                    pv.paymentInput.select()
-                                }
-                                
+        let pv = AddPaymentFormView (
+            accountId: self.custAcct.id,
+            cardId: self.cardId,
+            currentBalance: self.total
+        ) { code, description, amount, provider, lastFour, auth, uts in
+            
+            let refid: UUID = .init()
+            
+            self.payments.append(
+                .init(
+                    refid: refid,
+                    fiscCode: code,
+                    description: description,
+                    amount: amount,
+                    reference: "",
+                    provider: provider,
+                    lastFour: lastFour,
+                    auth: auth
+                )
+            )
+            
+            let id = refid
+        
+            let tr = OldChargeTrRow(
+                preCharge: true,
+                isCharge: false,
+                id: id,
+                name: description,
+                cuant: 100.toInt64,
+                price: amount,
+                puerchaseOrder: false
+            ) { viewId in
+                
+                if let tf = self.payChargeRef[viewId] {
+                    tf.remove()
+                }
+                
+                var _payments: [PaymentObject] = []
+                
+                self.payments.forEach { pay in
+                    if pay.refid == id {
+                        return
+                    }
+                    _payments.append(pay)
+                }
+                
+                self.payments = _payments
+                
+                print(_payments)
+                
+                self.calcBalance()
+                
+            }
+            
+            self.payChargeRef[tr.viewId] = tr
+            
+            self.chargesTable.appendChild(tr)
+            
+            self.calcBalance()
+            
+        }
+        
+        self.appendChild(pv)
+        
+        if self.total <= 0 {
+            pv.paymentDescription.select()
+        }
+        else{
+            pv.paymentInput.select()
+        }
+        
     }
 
     func loadMap(){
@@ -4118,7 +4101,6 @@ class StartServiceOrder: Div {
         }
     }
 
-
     func addLocation(latitude: Double? = nil, longitude: Double? = nil){
     
         var latitude = latitude
@@ -4180,6 +4162,63 @@ class StartServiceOrder: Div {
 
         }
 
+    func loadMedia(_ file: File) {
+        
+        guard let customeScript else {
+            showError(.generalError, "Selecione script para porcessar")
+            return
+        }
+
+        let view = StartServiceOrderBulk(
+            account: custAcct,
+            customeScript: customeScript,
+            file: file
+        )
+        
+        addToDom(view)
+
+        self.remove()
+
+    }
+
+    func loadByScript() {
+
+        if customeScripts.count == 1 {
+
+             guard let script = customeScripts.first else {
+                showError(.generalError, "Error al cargar SCRIPT")
+                return
+             }
+
+             self.customeScript = script
+
+        }
+        else {
+
+            guard let scriptId = UUID(uuidString: customeScriptListiner) else {
+                showError(.generalError, "Seleccione script a ejecutar")
+                return
+            }
+            
+            customeScripts.forEach { script in
+
+                if script.id == scriptId {
+                    self.customeScript = script
+                }
+
+            }
+
+        }
+
+        guard let _ = customeScript else {
+            showError(.generalError, "Selecione script para porcessar")
+            return
+        }
+
+        self.fileLoader.click()
+
+
+    }
 
 
 }

@@ -3559,11 +3559,6 @@ class WorkViewControler: PageController {
         
         if let _ = Int64(term) {
             
-            // TODO: remove patch once i edu cate phyunlock
-            if term.count == 3 {
-                term  = "-\(term)"
-            }
-            
             if term.count < 4 {
                 showError(.invalidFormat, "Al buscar por numero debe incluir cuatro digitos por lo menos")
                 return
