@@ -11,6 +11,7 @@ import TCFireSignal
 import Web
 
 extension ToolFiscal.AddCreditNoteView {
+    
     enum CreditReason: String, CaseIterable {
         case `return`
         case discount
@@ -61,7 +62,7 @@ extension ToolFiscal {
         }
         
         
-        @State var creditDescription = ""
+        @State var comment = ""
 
         @State var creditReasonSelectListener = ""
         
@@ -84,8 +85,20 @@ extension ToolFiscal {
             .placeholder("0.00")
             .class(.textFiledBlackDarkLarge)
             .width(90.percent)
+            .marginLeft(3.px)
             .fontSize(23.px)
-            .height(28.px)
+            .height(36.px)
+            .onKeyDown({ tf, event in
+                guard let _ = Double(event.key) else {
+                    if !ignoredKeys.contains(event.key) {
+                        event.preventDefault()
+                    }
+                    return
+                }
+            })
+            .onFocus { tf in
+                tf.select()
+            }
         
         @DOM override var body: DOM.Content {
 
@@ -103,29 +116,43 @@ extension ToolFiscal {
                         
                         H2("+ Agergar Nota de Credito")
                             .color(.white)
-                        
-                        /// ``Selccioe motivo``
-                        Label("Motivo")
-                            .marginBottom(12.px)
-                            .fontSize(18.px)
-                            .color(.gray)
-                        
-                        self.creditReasonSelect
-                        
-                        
-                        Label("Contidad de Credito")
-                            .marginBottom(12.px)
-                            .fontSize(18.px)
-                            .color(.gray)
 
-                        self.amountField
+                        Div{
+                            Div{
+                                /// ``Selccioe motivo``
+                                Label("Motivo")
+                                    .marginBottom(12.px)
+                                    .fontSize(18.px)
+                                    .color(.gray)
+                                
+                                self.creditReasonSelect
+                            }
+                            .width(50.percent)
+                            .float(.left)
+
+                            Div{
+                                
+                                Label("Cantidad de Credito")
+                                    .marginBottom(12.px)
+                                    .fontSize(18.px)
+                                    .color(.gray)
+
+                                self.amountField
+
+                            }
+                            .width(50.percent)
+                            .float(.left)
+
+                            Div().clear(.both)
+
+                        }
                         
                         Label("Comentarios")
                             .marginBottom(12.px)
                             .fontSize(18.px)
                             .color(.gray)
                         
-                        TextArea(self.$creditDescription)
+                        TextArea(self.$comment)
                             .class(.textFiledBlackDarkLarge)
                             .placeholder("Ingrese la razon por la que se solicita la cancelacion...")
                             .padding(all: 12.px)
@@ -189,6 +216,51 @@ extension ToolFiscal {
         }
     
         func addCredit() {
+
+
+            guard let creditReason else {
+                showError(.generalError, "Seleccione motivo de ajuste")
+                return
+            }
+
+            guard let amount = Double(amount), amount > 0 else {
+                showError(.generalError, "Seleccione motivo de ajuste")
+                self.amountField.select()
+                return
+            }
+
+            loadingView(show: true)
+
+            API.fiscalV1.creditNote(
+                id: doc.id,
+                credit: Int64(amount * 100) ,
+                description: creditReason.description,
+                comment: self.comment,
+                storeId: custCatchStore
+            ){ resp in
+
+                loadingView(show: false)
+                
+                guard let resp else {
+                    showError(.comunicationError, .serverConextionError)
+                    return
+                }
+
+                guard resp.status == .ok else {
+                    showError(.generalError, resp.msg)
+                    return
+                }
+                
+                guard let payload = resp.data else {
+                    showError(.unexpectedResult, .unexpenctedMissingPayload)
+                    return
+                }
+
+                self.callback(payload)
+
+                self.remove()
+
+            }
 
         }
     }

@@ -46,6 +46,8 @@ class ToolFiscalViewDocument: Div {
         fatalError("init() has not been implemented")
     }
     
+    @State var egres: Int64 = 0
+
     @State var balance: Int64 = 0
     
     @State var status: FIFacturaStatus = .active
@@ -85,7 +87,7 @@ class ToolFiscalViewDocument: Div {
     
     lazy var relatedDocumentsView = Div()
     
-    lazy var toolsView = Div{
+    lazy var toolsView = Div {
         H2("Documentos")
             .color(.gray)
         
@@ -269,7 +271,7 @@ class ToolFiscalViewDocument: Div {
                     }
                     .width(50.percent)
                     .float(.left)
-                    
+
                     Div{
                         Label("Balance")
                             .marginBottom(3.px)
@@ -298,6 +300,25 @@ class ToolFiscalViewDocument: Div {
                         .textAlign(.right)
                         .disabled(true)
                 }
+
+
+                Div{
+                    Label("Egreso")
+                        .marginBottom(3.px)
+                        .color(.gray)
+                    
+                    InputText(self.$egres.map{ $0.formatMoney })
+                        .custom("width", "calc(100% - 18px)")
+                        .class( .textFiledBlackDarkMedium)
+                        .marginBottom(7.px)
+                        .textAlign(.right)
+                        .disabled(true)
+
+                }
+                .hidden(self.$egres.map{ $0 == 0 })
+
+                    /// egres
+                    
                 
                 Div{
                     Div("Enviar")
@@ -550,9 +571,6 @@ class ToolFiscalViewDocument: Div {
                             Td(item.importe.formatMoney)
                         })
                         
-//                        let item: FiscalDocumentObject.TaxItem
-                        
-                        //detailsView.appendChild()
                     }
                     
                     if trasladados > 0 {
@@ -690,6 +708,9 @@ class ToolFiscalViewDocument: Div {
                             .align(.right)
                     })
                     
+
+
+
                     detailsView.appendChild(table)
                     
                 }
@@ -774,6 +795,11 @@ class ToolFiscalViewDocument: Div {
             
             reldocs.forEach { item in
                 relatedDocumentsView.appendChild(loadFiscRow(folio: rfcFolioRefrence[item.emisorRfc] ?? "", doc: item))
+
+                if item.tipoDeComprobante == .egreso {
+                    self.egres += item.total
+                }
+
             }
         }
         
@@ -1019,7 +1045,20 @@ class ToolFiscalViewDocument: Div {
             account: self.account
         ){ payload in
 
+                self.reldocs.append(payload)
+                
+                /// [ RFC : FIAcct.Folio ]
+                var rfcFolioRefrence: [String:String] = [:]
+                
+                fiscalProfiles.forEach { profile in
+                    rfcFolioRefrence[profile.rfc] = profile.folio
+                }
+                
+                self.relatedDocumentsView.appendChild(self.loadFiscRow(folio: rfcFolioRefrence[payload.emisorRfc] ?? "", doc: payload))
+                
         }
+
+        addToDom(view)
     }
 
 }
