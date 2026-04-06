@@ -12,7 +12,7 @@ import Web
 
 class ConfirmartionSMSView: Div {
     
-    override class var name: String { "header" }
+    override class var name: String { "div" }
     
     let tokens: [String]
     
