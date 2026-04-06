@@ -500,31 +500,32 @@ class ConfirmProductView: Div {
                 
                 Div{
                     
-                    if custCatchHerk > 1 {
-                        Span{
+                    // Change price Toggle
+                    
+                    Span{
+                        
+                        Div{
+                            Img()
+                                .src("/skyline/media/random.png")
+                                .height(12.px)
+                                .marginRight(7.px)
                             
-                            Div{
-                                Img()
-                                    .src("/skyline/media/random.png")
-                                    .height(12.px)
-                                    .marginRight(7.px)
-                                
-                                Span("C.P.")
-                                    .fontSize(14.px)
-                            }
-                            .custom("width", "fit-content")
-                            .padding(all: 7.px)
-                            .marginLeft(0.px)
-                            .class(.uibutton)
-                            .float(.right)
-                            .hidden(self.$changePriceViewIsHidden.map{ !$0 })
-                            .onClick { _ in
-                                self.changePriceViewIsHidden = false
-                            }
+                            Span("C.P.")
+                                .fontSize(14.px)
                         }
+                        .custom("width", "fit-content")
+                        .padding(all: 7.px)
+                        .marginLeft(0.px)
+                        .class(.uibutton)
+                        .float(.right)
                         .hidden(self.$changePriceViewIsHidden.map{ !$0 })
-                        .float(.left)
+                        .onClick { _ in
+                            self.changePriceViewIsHidden = false
+                        }
                     }
+                    .hidden(self.$changePriceViewIsHidden.map{ !$0 })
+                    .float(.left)
+                    
                     
                     Div{
                         

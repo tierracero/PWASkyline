@@ -14,4 +14,4 @@ DistPublic
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .devcontainer/devcontainer.json
 .swiftpm
-.devcontainer
+.devcontainer 
