@@ -266,16 +266,23 @@ class StartServiceOrderBulk: Div {
                 return
             }
 
-            self.items = payload.orders.map { order in
+            var items: [SeviceOrderBulkItem] = []
 
-                let row = SeviceOrderBulkItem(item: order) { item in
-                    if let index = self.items.firstIndex(of: item) {
-                        self.items.remove(at: index)
-                    }
+            payload.orders.forEach { order in
+
+                if order.posibleConflict == true  {
+                    return
                 }
-                
-                return row
+
+                let row = SeviceOrderBulkItem(item: order) { _ in
+
+                }
+
+                items.append(row)
+
             }
+
+             self.items = items
             
             self.status = "Carga Correcta "
         }
@@ -429,7 +436,14 @@ class StartServiceOrderBulk: Div {
                     showError(.requiredField, "El \(rowName) debe incluir movil.")
                     return
                 }
-                
+
+                let (isValid, message) = isValidPhone(payload.mobile)
+
+                if isValid {
+                    showError(.requiredField, rowName  + " " + message)
+                    return
+                }
+
                 guard !payload.firstName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
                     showError(.requiredField, "El \(rowName) debe incluir primer nombre.")
                     return
@@ -444,6 +458,9 @@ class StartServiceOrderBulk: Div {
                     showError(.requiredField, "El \(rowName) debe incluir descripcion.")
                     return
                 }
+
+                
+
                 
                 extarct.append(payload)
             }
@@ -530,7 +547,7 @@ class SeviceOrderBulkResults: Div {
                 
                 Div().class(.clear).height(4.px)
                 
-                Div(order.folio)
+                Div("\(order.folio) \(order.name) \(order.smallDescription)")
                     .class(.textFiledBlackDark, .oneLineText)
                     .padding(all: 10.px)
                     .color(.white)
@@ -665,95 +682,43 @@ class SeviceOrderBulkItem: Div {
     
     var item: OrderExtractPayload
     
-    private var onRemove: ((
-        _ view: SeviceOrderBulkItem
-    ) -> ())
-    
-    @State var brand = ""
-    @State var city = ""
-    @State var colony = ""
-    @State var country = ""
-    @State var itemDescription = ""
-    @State var email = ""
+    @State var brand: String
+    @State var city: String
+    @State var colony: String
+    @State var country: String
+    @State var itemDescription: String
+    @State var email: String
     @State var firstName = ""
-    @State var idOne = ""
-    @State var idTwo = ""
-    @State var lastName = ""
-    @State var latitude = ""
-    @State var longitud = ""
-    @State var mobile = ""
-    @State var model = ""
-    @State var posibleConflict = false
-    @State var secondLastName = ""
-    @State var secondName = ""
-    @State var serie = ""
-    @State var state = ""
-    @State var street = ""
-    @State var telephone = ""
-    @State var type = ""
-    @State var zip = ""
-    @State var workedBy = ""
-    
-    lazy var idTag1Field = InputText(self.$idOne)
-        .autocomplete(.off)
-        .placeholder(configServiceTags.idTagPlaceholder)
-        .class(.textFiledBlackDark)
-        .custom("width", "calc(100% - 10px)")
-       
-    
-    lazy var idTag2Field = InputText(self.$idTwo)
-        .autocomplete(.off)
-        .placeholder(configServiceTags.secondIDTagPlaceholder)
-        .class(.textFiledBlackDark)
-        .custom("width", "calc(100% - 10px)")
-    
+    @State var idOne: String
+    @State var idTwo: String
+    @State var lastName: String
+    @State var latitude: String
+    @State var longitud: String
+    @State var mobile: String
+    @State var model: String
+    @State var posibleConflict: Bool
+    @State var secondLastName: String
+    @State var secondName: String
+    @State var serie: String
+    @State var state: String
+    @State var street: String
+    @State var telephone: String
+    @State var type: String
+    @State var zip: String
+    @State var workedBy: String
 
-    lazy var descriptionArea = TextArea(self.$itemDescription)
-        .placeholder(configServiceTags.tagDescrPlaceholder)
-        .custom("width", "calc(100% - 10px)")
-        .class(.textFiledBlackDark)
-        .width(100.percent)
-        .height(90.px)
+    private var onRemove: ((
+        _ itemId: UUID
+    ) -> ())
 
-    lazy var brandField = self.makeTextField(self.$brand, placeholder: "Marca")
-    lazy var cityField = self.makeTextField(self.$city, placeholder: "Ciudad")
-    lazy var colonyField = self.makeTextField(self.$colony, placeholder: "Colonia")
-    lazy var countryField = self.makeTextField(self.$country, placeholder: "Pais")
-
-    lazy var emailField = self.makeTextField(self.$email, placeholder: "Correo")
-    lazy var firstNameField = self.makeTextField(self.$firstName, placeholder: "Primer Nombre")
-    lazy var lastNameField = self.makeTextField(self.$lastName, placeholder: "Primer Apellido")
-    lazy var latitudeField = self.makeTextField(self.$latitude, placeholder: "Latitud")
-    lazy var longitudField = self.makeTextField(self.$longitud, placeholder: "Longitud")
-    lazy var mobileField = self.makeTextField(self.$mobile, placeholder: "Celular")
-    lazy var modelField = self.makeTextField(self.$model, placeholder: "Modelo")
-    lazy var secondLastNameField = self.makeTextField(self.$secondLastName, placeholder: "Segundo Apellido")
-    lazy var secondNameField = self.makeTextField(self.$secondName, placeholder: "Segundo Nombre")
-    lazy var serieField = self.makeTextField(self.$serie, placeholder: "Serie")
-    lazy var stateField = self.makeTextField(self.$state, placeholder: "Estado")
-    lazy var streetField = self.makeTextField(self.$street, placeholder: "Calle")
-    lazy var telephoneField = self.makeTextField(self.$telephone, placeholder: "Telefono")
-    lazy var typeField = self.makeTextField(self.$type, placeholder: "Tipo")
-    lazy var zipField = self.makeTextField(self.$zip, placeholder: "Codigo Postal")
-    
-    lazy var workedBySelect = Select(self.$workedBy)
-        .class(.textFiledBlackDark)
-        .custom("width", "calc(100% - 18px)")
-        .height(37.px)
-        .body {
-            Option("Seleccione Usuario")
-                .value("")
-        }
-    
     init(
         item: OrderExtractPayload,
         onRemove: @escaping ((
-            _ view: SeviceOrderBulkItem
+            _ itemId: UUID
         ) -> ())
     ) {
         self.item = item
         self.onRemove = onRemove
-
         self.brand = item.brand
         self.city = item.city
         self.colony = item.colony
@@ -785,6 +750,56 @@ class SeviceOrderBulkItem: Div {
     required init() {
         fatalError("init() has not been implemented")
     }
+    
+    
+    lazy var idTag1Field = InputText(self.$idOne)
+        .autocomplete(.off)
+        .placeholder(configServiceTags.idTagPlaceholder)
+        .class(.textFiledBlackDark)
+        .custom("width", "calc(100% - 10px)")
+       
+    lazy var idTag2Field = InputText(self.$idTwo)
+        .autocomplete(.off)
+        .placeholder(configServiceTags.secondIDTagPlaceholder)
+        .class(.textFiledBlackDark)
+        .custom("width", "calc(100% - 10px)")
+    
+
+    lazy var descriptionArea = TextArea(self.$itemDescription)
+        .placeholder(configServiceTags.tagDescrPlaceholder)
+        .custom("width", "calc(100% - 10px)")
+        .class(.textFiledBlackDark)
+        .width(100.percent)
+        .height(90.px)
+
+    lazy var brandField = self.makeTextField(self.$brand, placeholder: "Marca")
+    lazy var cityField = self.makeTextField(self.$city, placeholder: "Ciudad")
+    lazy var colonyField = self.makeTextField(self.$colony, placeholder: "Colonia")
+    lazy var countryField = self.makeTextField(self.$country, placeholder: "Pais")
+    lazy var emailField = self.makeTextField(self.$email, placeholder: "Correo")
+    lazy var firstNameField = self.makeTextField(self.$firstName, placeholder: "Primer Nombre")
+    lazy var lastNameField = self.makeTextField(self.$lastName, placeholder: "Primer Apellido")
+    lazy var latitudeField = self.makeTextField(self.$latitude, placeholder: "Latitud")
+    lazy var longitudField = self.makeTextField(self.$longitud, placeholder: "Longitud")
+    lazy var mobileField = self.makeTextField(self.$mobile, placeholder: "Celular")
+    lazy var modelField = self.makeTextField(self.$model, placeholder: "Modelo")
+    lazy var secondLastNameField = self.makeTextField(self.$secondLastName, placeholder: "Segundo Apellido")
+    lazy var secondNameField = self.makeTextField(self.$secondName, placeholder: "Segundo Nombre")
+    lazy var serieField = self.makeTextField(self.$serie, placeholder: "Serie")
+    lazy var stateField = self.makeTextField(self.$state, placeholder: "Estado")
+    lazy var streetField = self.makeTextField(self.$street, placeholder: "Calle")
+    lazy var telephoneField = self.makeTextField(self.$telephone, placeholder: "Telefono")
+    lazy var typeField = self.makeTextField(self.$type, placeholder: "Tipo")
+    lazy var zipField = self.makeTextField(self.$zip, placeholder: "Codigo Postal")
+    
+    lazy var workedBySelect = Select(self.$workedBy)
+        .class(.textFiledBlackDark)
+        .custom("width", "calc(100% - 18px)")
+        .height(37.px)
+        .body {
+            Option("Seleccione Usuario")
+                .value("")
+        }
     
     @DOM override var body: DOM.Content {
         
@@ -1058,7 +1073,7 @@ class SeviceOrderBulkItem: Div {
                     Div("Remover")
                     .class( .uibtnLarge )
                     .onClick {
-                        self.onRemove(self)
+                        self.onRemove(self.item.id)
                     }
                 }
                 .align(.right)
@@ -1109,6 +1124,7 @@ class SeviceOrderBulkItem: Div {
     
     func extractPayload() -> OrderExtractPayload {
         .init(
+            id: self.item.id,
             idOne: self.idOne.trimmingCharacters(in: .whitespacesAndNewlines),
             idTwo: self.idTwo.trimmingCharacters(in: .whitespacesAndNewlines),
             firstName: self.firstName.trimmingCharacters(in: .whitespacesAndNewlines),

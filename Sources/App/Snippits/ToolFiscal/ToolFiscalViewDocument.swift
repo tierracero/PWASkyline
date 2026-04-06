@@ -816,6 +816,20 @@ class ToolFiscalViewDocument: Div {
                 toolsView.appendChild(addPaymentBtn)
                 
             }
+            if doc.tipoDeComprobante == .ingreso {
+                let creditButton = Div{
+                        
+                        Span("+ Nota de Credito")
+                    }
+                    .width(100.percent)
+                    .class(.uibtnLarge)
+                    .align(.center)
+                    .onClick {
+                        self.addCreditNote()
+                    }
+
+                toolsView.appendChild(creditButton)
+            }
             
         }
         
@@ -938,6 +952,7 @@ class ToolFiscalViewDocument: Div {
     }
     
     func addPayment(){
+
         if balance <= 0 {
             return
         }
@@ -961,7 +976,7 @@ class ToolFiscalViewDocument: Div {
                 lastFour: lastFour
             ) { resp in
                 
-                guard let resp else{
+                guard let resp: APIResponseGeneric<FIAccountsServices> else{
                     showError(.comunicationError, .serverConextionError)
                     return
                 }
@@ -998,4 +1013,13 @@ class ToolFiscalViewDocument: Div {
         
     }
     
+    func addCreditNote() {
+        let view = ToolFiscal.AddCreditNoteView(
+            doc: self.doc,
+            account: self.account
+        ){ payload in
+
+        }
+    }
+
 }
