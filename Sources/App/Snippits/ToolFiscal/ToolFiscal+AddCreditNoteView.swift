@@ -183,7 +183,7 @@ extension ToolFiscal {
             }
 
             CreditReason.allCases.forEach {
-                deleteDocumentSelect.appendChild(Option($0.description).value($0.rawValue))
+                creditReasonSelect.appendChild(Option($0.description).value($0.rawValue))
             }
 
         }
