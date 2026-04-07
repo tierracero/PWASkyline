@@ -255,7 +255,7 @@ class ToolFiscalViewDocument: Div {
                     .disabled(true)
                 
                 /// Total / Balance
-                if self.doc.methodoDePago == .pagoEnParcialidadesODiferido {
+                if self.doc.methodoDePago == .pagoEnParcialidadesODiferido || (self.doc.total != self.doc.paidBalance) {
                     
                     Div{
                         Label("Total")
@@ -269,7 +269,8 @@ class ToolFiscalViewDocument: Div {
                             .textAlign(.right)
                             .disabled(true)
                     }
-                    .width(50.percent)
+                    .custom("width", "calc(50% - 2px)")
+                    .marginRight(4.px)
                     .float(.left)
 
                     Div{
@@ -284,7 +285,7 @@ class ToolFiscalViewDocument: Div {
                             .textAlign(.right)
                             .disabled(true)
                     }
-                    .width(50.percent)
+                    .custom("width", "calc(50% - 2px)")
                     .float(.left)
                     
                 }
@@ -300,7 +301,6 @@ class ToolFiscalViewDocument: Div {
                         .textAlign(.right)
                         .disabled(true)
                 }
-
 
                 Div{
                     Label("Egreso")
@@ -1045,16 +1045,18 @@ class ToolFiscalViewDocument: Div {
             account: self.account
         ){ payload in
 
-                self.reldocs.append(payload)
-                
-                /// [ RFC : FIAcct.Folio ]
-                var rfcFolioRefrence: [String:String] = [:]
-                
-                fiscalProfiles.forEach { profile in
-                    rfcFolioRefrence[profile.rfc] = profile.folio
-                }
-                
-                self.relatedDocumentsView.appendChild(self.loadFiscRow(folio: rfcFolioRefrence[payload.emisorRfc] ?? "", doc: payload))
+            self.egres += payload.total
+
+            self.reldocs.append(payload)
+            
+            /// [ RFC : FIAcct.Folio ]
+            var rfcFolioRefrence: [String:String] = [:]
+            
+            fiscalProfiles.forEach { profile in
+                rfcFolioRefrence[profile.rfc] = profile.folio
+            }
+            
+            self.relatedDocumentsView.appendChild(self.loadFiscRow(folio: rfcFolioRefrence[payload.emisorRfc] ?? "", doc: payload))
                 
         }
 

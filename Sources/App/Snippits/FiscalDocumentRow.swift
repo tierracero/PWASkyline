@@ -351,14 +351,14 @@ class FiscalDocumentRow: Div {
                 break
             }
             
-        case .egreso:
-            break
+        // case .egreso:
+        //     break
         case .nomina:
             break
-        case .pago:
+        case .pago, .egreso:
             dataView.appendChild(Div{
                 
-                Div("Pago")
+                Div(self.doc.tipoDeComprobante == .pago ?  "Pago" : "Egreso")
                     .width(15.percent)
                     .fontSize(14.px)
                     .align(.center)
@@ -458,8 +458,7 @@ class FiscalDocumentRow: Div {
         case .ingreso:
             break
         case .egreso:
-            showError(.generalError, "Documento no soportado")
-            return
+            break
         case .nomina:
             showError(.generalError, "Documento no soportado")
             return
