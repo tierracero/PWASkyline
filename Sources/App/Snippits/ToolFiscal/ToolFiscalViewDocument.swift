@@ -19,6 +19,8 @@ class ToolFiscalViewDocument: Div {
     var doc: FIAccountsServices
     
     @State var reldocs: [FIAccountsServices]
+
+    @State var reldocsActive: [FIAccountsServices]
     
     let account: CustAcctFiscal
     
@@ -38,7 +40,17 @@ class ToolFiscalViewDocument: Div {
         self.reldocs = reldocs
         self.account = account
         self.isCanceled = isCanceled
-        
+
+        var reldocsActive: [FIAccountsServices] = []
+
+        reldocs.forEach{ doc in
+            if doc.status != .canceled {
+                reldocsActive.append(doc)
+            }
+        }
+
+        self.reldocsActive = reldocsActive
+
         super.init()
     }
     
@@ -708,9 +720,6 @@ class ToolFiscalViewDocument: Div {
                             .align(.right)
                     })
                     
-
-
-
                     detailsView.appendChild(table)
                     
                 }
@@ -728,7 +737,7 @@ class ToolFiscalViewDocument: Div {
                 deleteDocumentsView.appendChild(Div{
                     
                     Div("⚠️ Para poder eliminar esto documento elimine los Documentos / Pagos ")
-                        .hidden(self.$reldocs.map{ $0.isEmpty })
+                        .hidden(self.$reldocsActive.map{ $0.isEmpty })
                     
                     Div{
                         Div{
@@ -747,14 +756,39 @@ class ToolFiscalViewDocument: Div {
                             self.deleteDocumentViewIsHidden = false
                         }
                     }
-                    .hidden(self.$reldocs.map{ !$0.isEmpty })
+                    .hidden(self.$reldocsActive.map{ !$0.isEmpty })
                     .align(.right)
                 })
                 
             }
             
         case .egreso:
-            break
+            
+            if doc.status != .canceled && doc.status != .cancelationRequest {
+                
+                deleteDocumentsView.appendChild(
+
+                    Div{
+                        Div{
+                            Img()
+                                .src("/skyline/media/cross.png")
+                                .marginRight(12.px)
+                                .cursor(.pointer)
+                                .width(24.px)
+                            
+                            Span("Eliminar Factura")
+                        }
+                        .width(100.percent)
+                        .class(.uibtnLarge)
+                        .align(.center)
+                        .onClick {
+                            self.deleteDocumentViewIsHidden = false
+                        }
+                    }
+                    .align(.right)
+                )
+                
+            }
         case .nomina:
             break
         case .pago:
@@ -797,6 +831,11 @@ class ToolFiscalViewDocument: Div {
                 relatedDocumentsView.appendChild(loadFiscRow(folio: rfcFolioRefrence[item.emisorRfc] ?? "", doc: item))
 
                 if item.tipoDeComprobante == .egreso {
+
+                    if item.status == .canceled {
+                        return
+                    }
+
                     self.egres += item.total
                 }
 

@@ -16,7 +16,7 @@ public struct SkylineWeb {
         mode: .beta,
         major: 0,
         minor: 22,
-        patch: 6
+        patch: 7
     )
 	
 	public init() {}
@@ -255,7 +255,7 @@ open class _SkyLine {
         mode: .beta,
         major: 0,
         minor: 22,
-        patch: 6
+        patch: 7
     )
 	
     /// .init(.rgba(0, 0, 0, 0.7))
