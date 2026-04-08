@@ -338,77 +338,79 @@ class AddChargeFormView: Div {
                 
                 /// `Change Price`
                 Div{
-                    Div{
-                        Label("Precio Public")
+                    if custCatchHerk > 1 {
                         Div{
+                            Label("Precio Public")
                             Div{
-                                Span("$")
-                                    .marginRight(7.px)
-                                Span(self.$pricea)
+                                Div{
+                                    Span("$")
+                                        .marginRight(7.px)
+                                    Span(self.$pricea)
+                                }
+                                .custom("width", "fit-content")
+                                .paddingRight(7.px)
+                                .paddingLeft(7.px)
+                                .margin(all: 0.px)
+                                .fontSize(23.px)
+                                .onClick {
+                                    self.changePriceViewIsHidden = true
+                                    self.price = self.pricea
+                                }
                             }
-                            .custom("width", "fit-content")
-                            .paddingRight(7.px)
-                            .paddingLeft(7.px)
-                            .margin(all: 0.px)
-                            .fontSize(23.px)
-                            .onClick {
-                                self.changePriceViewIsHidden = true
-                                self.price = self.pricea
-                            }
+                            .class(.uibutton)
                         }
-                        .class(.uibutton)
-                    }
-                    .class(.section)
-                    
-                    Div{
-                        Label("Medio Mayoreo")
+                        .class(.section)
                         
                         Div{
+                            Label("Medio Mayoreo")
+                            
                             Div{
-                                Span("$")
-                                    .marginRight(7.px)
-                                Span(self.$priceb)
+                                Div{
+                                    Span("$")
+                                        .marginRight(7.px)
+                                    Span(self.$priceb)
+                                }
+                                .custom("width", "fit-content")
+                                .paddingRight(7.px)
+                                .paddingLeft(7.px)
+                                .margin(all: 0.px)
+                                .fontSize(23.px)
+                                .onClick {
+                                    self.changePriceViewIsHidden = true
+                                    self.price = self.priceb
+                                }
+                                
                             }
-                            .custom("width", "fit-content")
-                            .paddingRight(7.px)
-                            .paddingLeft(7.px)
-                            .margin(all: 0.px)
-                            .fontSize(23.px)
-                            .onClick {
-                                self.changePriceViewIsHidden = true
-                                self.price = self.priceb
-                            }
+                            .class(.uibutton)
                             
                         }
-                        .class(.uibutton)
-                        
-                    }
-                    .class(.section)
-                    
-                    Div{
-                        Label("Precio Mayoreo")
+                        .class(.section)
                         
                         Div{
+                            Label("Precio Mayoreo")
+                            
                             Div{
-                                Span("$")
-                                    .marginRight(7.px)
-                                Span(self.$pricec)
+                                Div{
+                                    Span("$")
+                                        .marginRight(7.px)
+                                    Span(self.$pricec)
+                                }
+                                .custom("width", "fit-content")
+                                .paddingRight(7.px)
+                                .paddingLeft(7.px)
+                                .margin(all: 0.px)
+                                .fontSize(23.px)
+                                .onClick {
+                                    self.changePriceViewIsHidden = true
+                                    self.price = self.pricec
+                                }
                             }
-                            .custom("width", "fit-content")
-                            .paddingRight(7.px)
-                            .paddingLeft(7.px)
-                            .margin(all: 0.px)
-                            .fontSize(23.px)
-                            .onClick {
-                                self.changePriceViewIsHidden = true
-                                self.price = self.pricec
-                            }
+                            .class(.uibutton)
+                            
                         }
-                        .class(.uibutton)
-                        
+                        .class(.section)
                     }
-                    .class(.section)
-                    
+
                     /// Custome price
                     Div{
                         Label("Precio Personal")

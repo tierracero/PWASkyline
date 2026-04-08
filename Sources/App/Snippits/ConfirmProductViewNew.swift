@@ -331,9 +331,8 @@ class ConfirmProductViewNew: Div {
                 .class(.section)
                 
                 /// `Change Price`
-                if custCatchHerk > 1 {
-                    
-                    Div{
+                Div{
+                    if custCatchHerk > 1 {
                         /// Precio Public
                         Div{
                             Label("Precio Public")
@@ -420,111 +419,110 @@ class ConfirmProductViewNew: Div {
                             
                         }
                         .class(.section)
+                    }
+                    Div {
                         
-                        Div {
+                        Label("Personalizado")
+                        
+                        Div{
                             
-                            Label("Personalizado")
-                            
-                            Div{
-                                
-                                InputText(self.$customePrice)
-                                    .class(.textFiledLight)
-                                    .marginRight(3.px)
-                                    .width(100.px)
-                                    .onKeyDown({ tf, event in
-                                        guard let _ = Float(event.key) else {
-                                            if !ignoredKeys.contains(event.key) {
-                                                event.preventDefault()
-                                            }
-                                            return
+                            InputText(self.$customePrice)
+                                .class(.textFiledLight)
+                                .marginRight(3.px)
+                                .width(100.px)
+                                .onKeyDown({ tf, event in
+                                    guard let _ = Float(event.key) else {
+                                        if !ignoredKeys.contains(event.key) {
+                                            event.preventDefault()
                                         }
-                                    })
-                                    .onFocus { tf in
-                                        tf.select()
+                                        return
                                     }
-                            }
-                            
-                            Div{
-                                
-                                Span(" Agregar ")
-                                .custom("width", "fit-content")
-                                .paddingRight(7.px)
-                                .paddingLeft(7.px)
-                                .margin(all: 0.px)
-                                .class(.uibutton)
-                                .fontSize(18.px)
-                                .onClick {
-                                    
-                                    if let _cost = Float(self.customePrice)?.toCents  {
-                                        
-                                        if custCatchHerk > 4 {
-                                            
-                                            self.changePriceViewIsHidden = true
-                                            
-                                            self.cost = _cost
-                                            
-                                        }
-                                        else {
-                                            
-                                            addToDom(CustTaskAuthRequestWaitView(
-                                                type: .product,
-                                                id: self.pocid,
-                                                requestedPrice: _cost,
-                                                reason: "",
-                                                callback: { auth in
-                                                    
-                                                    self.changePriceViewIsHidden = true
-                                                    
-                                                    if auth {
-                                                        self.cost = _cost
-                                                    }
-                                                    
-                                                })
-                                            )
-                                        }
-                                    }
-                                    
+                                })
+                                .onFocus { tf in
+                                    tf.select()
                                 }
-                            }
-                            
                         }
-                        .class(.section)
                         
+                        Div{
+                            
+                            Span(" Agregar ")
+                            .custom("width", "fit-content")
+                            .paddingRight(7.px)
+                            .paddingLeft(7.px)
+                            .margin(all: 0.px)
+                            .class(.uibutton)
+                            .fontSize(18.px)
+                            .onClick {
+                                
+                                if let _cost = Float(self.customePrice)?.toCents  {
+                                    
+                                    if custCatchHerk > 4 {
+                                        
+                                        self.changePriceViewIsHidden = true
+                                        
+                                        self.cost = _cost
+                                        
+                                    }
+                                    else {
+                                        
+                                        addToDom(CustTaskAuthRequestWaitView(
+                                            type: .product,
+                                            id: self.pocid,
+                                            requestedPrice: _cost,
+                                            reason: "",
+                                            callback: { auth in
+                                                
+                                                self.changePriceViewIsHidden = true
+                                                
+                                                if auth {
+                                                    self.cost = _cost
+                                                }
+                                                
+                                            })
+                                        )
+                                    }
+                                }
+                                
+                            }
+                        }
                         
                     }
-                    .hidden(self.$changePriceViewIsHidden.map{ $0 })
+                    .class(.section)
+                    
                     
                 }
+                .hidden(self.$changePriceViewIsHidden.map{ $0 })
+                
+                
                 
                 Div().class(.clear)
                 
                 Div{
                     
-                    if custCatchHerk > 1 {
-                        Span{
+                    Span{
+                        
+                        Div{
+                            Img()
+                                .src("/skyline/media/random.png")
+                                .height(12.px)
+                                .marginRight(7.px)
                             
-                            Div{
-                                Img()
-                                    .src("/skyline/media/random.png")
-                                    .height(12.px)
-                                    .marginRight(7.px)
-                                
-                                Span("C.P.")
-                                    .fontSize(14.px)
-                            }
-                            .custom("width", "fit-content")
-                            .padding(all: 7.px)
-                            .marginLeft(0.px)
-                            .class(.uibutton)
-                            .float(.right)
-                            .hidden(self.$changePriceViewIsHidden.map{ !$0 })
-                            .onClick { _ in
-                                self.changePriceViewIsHidden = false
-                            }
+                            Span("C.P.")
+                                .fontSize(14.px)
                         }
+                        .custom("width", "fit-content")
+                        .padding(all: 7.px)
+                        .marginLeft(0.px)
+                        .class(.uibutton)
+                        .float(.right)
                         .hidden(self.$changePriceViewIsHidden.map{ !$0 })
-                        .float(.left)
+                        .onClick { _ in
+                            self.changePriceViewIsHidden = false
+                        }
                     }
+                    .hidden(self.$changePriceViewIsHidden.map{ !$0 })
+                    .float(.left)
+                
                     
                     Div{
 

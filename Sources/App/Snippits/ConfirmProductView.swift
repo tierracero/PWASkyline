@@ -330,10 +330,11 @@ class ConfirmProductView: Div {
                 }
                 .class(.section)
                 
-                /// `Change Price`
-                if custCatchHerk > 1 {
-                    
-                    Div{
+                Div{
+
+                    /// `Change Price`
+                    if custCatchHerk > 1 {
+                            
                         /// Precio Public
                         Div{
                             Label("Precio Public")
@@ -420,88 +421,87 @@ class ConfirmProductView: Div {
                             
                         }
                         .class(.section)
+                    }
+
+                    // Precio Personalizado
+                    Div {
                         
-                        Div {
+                        Label("Personalizado")
+                        
+                        Div{
                             
-                            Label("Personalizado")
-                            
-                            Div{
-                                
-                                InputText(self.$customePrice)
-                                    .class(.textFiledLight)
-                                    .marginRight(3.px)
-                                    .width(100.px)
-                                    .onKeyDown({ tf, event in
-                                        guard let _ = Float(event.key) else {
-                                            if !ignoredKeys.contains(event.key) {
-                                                event.preventDefault()
-                                            }
-                                            return
+                            InputText(self.$customePrice)
+                                .class(.textFiledLight)
+                                .marginRight(3.px)
+                                .width(100.px)
+                                .onKeyDown({ tf, event in
+                                    guard let _ = Float(event.key) else {
+                                        if !ignoredKeys.contains(event.key) {
+                                            event.preventDefault()
                                         }
-                                    })
-                                    .onFocus { tf in
-                                        tf.select()
+                                        return
                                     }
-                            }
-                            
-                            Div{
-                                
-                                Span(" Agregar ")
-                                .custom("width", "fit-content")
-                                .paddingRight(7.px)
-                                .paddingLeft(7.px)
-                                .margin(all: 0.px)
-                                .class(.uibutton)
-                                .fontSize(18.px)
-                                .onClick {
-                                    
-                                    if let _cost = Float(self.customePrice)?.toCents  {
-                                        
-                                        if custCatchHerk > 4 {
-                                            
-                                            self.changePriceViewIsHidden = true
-                                            
-                                            self.cost = _cost
-                                            
-                                        }
-                                        else {
-                                            
-                                            addToDom(CustTaskAuthRequestWaitView(
-                                                type: .product,
-                                                id: self.pocid,
-                                                requestedPrice: _cost,
-                                                reason: "",
-                                                callback: { auth in
-                                                    
-                                                    self.changePriceViewIsHidden = true
-                                                    
-                                                    if auth {
-                                                        self.cost = _cost
-                                                    }
-                                                    
-                                                })
-                                            )
-                                        }
-                                    }
-                                    
+                                })
+                                .onFocus { tf in
+                                    tf.select()
                                 }
-                            }
-                            
                         }
-                        .class(.section)
                         
+                        Div{
+                            
+                            Span(" Agregar ")
+                            .custom("width", "fit-content")
+                            .paddingRight(7.px)
+                            .paddingLeft(7.px)
+                            .margin(all: 0.px)
+                            .class(.uibutton)
+                            .fontSize(18.px)
+                            .onClick {
+                                
+                                if let _cost = Float(self.customePrice)?.toCents  {
+                                    
+                                    if custCatchHerk > 4 {
+                                        
+                                        self.changePriceViewIsHidden = true
+                                        
+                                        self.cost = _cost
+                                        
+                                    }
+                                    else {
+                                        
+                                        addToDom(CustTaskAuthRequestWaitView(
+                                            type: .product,
+                                            id: self.pocid,
+                                            requestedPrice: _cost,
+                                            reason: "",
+                                            callback: { auth in
+                                                
+                                                self.changePriceViewIsHidden = true
+                                                
+                                                if auth {
+                                                    self.cost = _cost
+                                                }
+                                                
+                                            })
+                                        )
+                                    }
+                                }
+                                
+                            }
+                        }
                         
                     }
-                    .hidden(self.$changePriceViewIsHidden.map{ $0 })
+                    .class(.section)
+                    
                     
                 }
+                .hidden(self.$changePriceViewIsHidden.map{ $0 })
                 
                 Div().class(.clear)
                 
                 Div{
                     
                     // Change price Toggle
-                    
                     Span{
                         
                         Div{
@@ -526,9 +526,7 @@ class ConfirmProductView: Div {
                     .hidden(self.$changePriceViewIsHidden.map{ !$0 })
                     .float(.left)
                     
-                    
                     Div{
-                        
                         /// Delete Button
                         Div {
                             Span()

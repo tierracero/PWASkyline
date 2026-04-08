@@ -214,34 +214,31 @@ class BudgetSOCView: Div {
                             }
                         }
                         .hidden(self.$chargeId.map { $0 != nil })
-                        
-                        if custCatchHerk > 1 {
-                            
-                            Span{
-                                ///
-                                Div{
-                                    Img()
-                                        .src("/skyline/media/random.png")
-                                        .height(12.px)
-                                        .marginRight(7.px)
-                                    
-                                    Span("C.P.")
-                                        .fontSize(14.px)
-                                }
-                                .custom("width", "fit-content")
-                                .padding(all: 7.px)
-                                .marginLeft(0.px)
-                                .class(.uibutton)
-                                .float(.right)
-                                .hidden(self.$changePriceViewIsHidden.map{ !$0 })
-                                .onClick { _ in
-                                    self.changePriceViewIsHidden = false
-                                }
+                    
+                        Span{
+                            ///
+                            Div{
+                                Img()
+                                    .src("/skyline/media/random.png")
+                                    .height(12.px)
+                                    .marginRight(7.px)
+                                
+                                Span("C.P.")
+                                    .fontSize(14.px)
                             }
-                            .hidden(self.$chargeId.map { $0 == nil })
+                            .custom("width", "fit-content")
+                            .padding(all: 7.px)
+                            .marginLeft(0.px)
+                            .class(.uibutton)
                             .float(.right)
-                            
+                            .hidden(self.$changePriceViewIsHidden.map{ !$0 })
+                            .onClick { _ in
+                                self.changePriceViewIsHidden = false
+                            }
                         }
+                        .hidden(self.$chargeId.map { $0 == nil })
+                        .float(.right)
+                        
                         
                         self.salePriceInput
                     }
@@ -276,77 +273,80 @@ class BudgetSOCView: Div {
                 
                 /// `Change Price`
                 Div{
-                    Div{
-                        Label("Precio Public")
+                    if custCatchHerk > 1 {
                         Div{
+                            Label("Precio Public")
                             Div{
-                                Span("$")
-                                    .marginRight(7.px)
-                                Span(self.$pricea)
+                                Div{
+                                    Span("$")
+                                        .marginRight(7.px)
+                                    Span(self.$pricea)
+                                }
+                                .custom("width", "fit-content")
+                                .paddingRight(7.px)
+                                .paddingLeft(7.px)
+                                .margin(all: 0.px)
+                                .fontSize(23.px)
+                                .onClick {
+                                    self.changePriceViewIsHidden = true
+                                    self.price = self.pricea
+                                }
                             }
-                            .custom("width", "fit-content")
-                            .paddingRight(7.px)
-                            .paddingLeft(7.px)
-                            .margin(all: 0.px)
-                            .fontSize(23.px)
-                            .onClick {
-                                self.changePriceViewIsHidden = true
-                                self.price = self.pricea
-                            }
+                            .class(.uibutton)
                         }
-                        .class(.uibutton)
-                    }
-                    .class(.section)
-                    
-                    Div{
-                        Label("Medio Mayoreo")
+                        .class(.section)
                         
                         Div{
+                            Label("Medio Mayoreo")
+                            
                             Div{
-                                Span("$")
-                                    .marginRight(7.px)
-                                Span(self.$priceb)
+                                Div{
+                                    Span("$")
+                                        .marginRight(7.px)
+                                    Span(self.$priceb)
+                                }
+                                .custom("width", "fit-content")
+                                .paddingRight(7.px)
+                                .paddingLeft(7.px)
+                                .margin(all: 0.px)
+                                .fontSize(23.px)
+                                .onClick {
+                                    self.changePriceViewIsHidden = true
+                                    self.price = self.priceb
+                                }
+                                
                             }
-                            .custom("width", "fit-content")
-                            .paddingRight(7.px)
-                            .paddingLeft(7.px)
-                            .margin(all: 0.px)
-                            .fontSize(23.px)
-                            .onClick {
-                                self.changePriceViewIsHidden = true
-                                self.price = self.priceb
-                            }
+                            .class(.uibutton)
                             
                         }
-                        .class(.uibutton)
-                        
-                    }
-                    .class(.section)
-                    
-                    Div{
-                        Label("Precio Mayoreo")
+                        .class(.section)
                         
                         Div{
+                            Label("Precio Mayoreo")
+                            
                             Div{
-                                Span("$")
-                                    .marginRight(7.px)
-                                Span(self.$pricec)
+                                Div{
+                                    Span("$")
+                                        .marginRight(7.px)
+                                    Span(self.$pricec)
+                                }
+                                .custom("width", "fit-content")
+                                .paddingRight(7.px)
+                                .paddingLeft(7.px)
+                                .margin(all: 0.px)
+                                .fontSize(23.px)
+                                .onClick {
+                                    self.changePriceViewIsHidden = true
+                                    self.price = self.pricec
+                                }
                             }
-                            .custom("width", "fit-content")
-                            .paddingRight(7.px)
-                            .paddingLeft(7.px)
-                            .margin(all: 0.px)
-                            .fontSize(23.px)
-                            .onClick {
-                                self.changePriceViewIsHidden = true
-                                self.price = self.pricec
-                            }
+                            .class(.uibutton)
+                            
                         }
-                        .class(.uibutton)
-                        
+                        .class(.section)
                     }
-                    .class(.section)
-                    
+
+                    /// Personalizado
                     Div {
                         
                         Label("Personalizado")
@@ -428,8 +428,6 @@ class BudgetSOCView: Div {
                 .hidden(self.$changePriceViewIsHidden.map{ $0 })
                 
                 Div().class(.clear)
-                
-                
                 
                 Div{
                     Div {
