@@ -11,10 +11,13 @@ import Web
 public func killSession(){
     
     var cc = 0
+
+    
     
     while cc <  WebApp.current.window.localStorage.length {
         if let key = WebApp.current.window.localStorage.key(at: cc) {
             if key.starts(with: "conserve") {
+                cc += 1
                 return
             }
             WebApp.current.window.localStorage.removeItem(forKey: key)

@@ -147,7 +147,7 @@ func connWebsocket(interval: Double){
         return
     }
     
-    var url = "wss://intratc.co/ws?\(query)"
+    var url = "wss://api.tierracero.co/ws?\(query)"
     
     if WebApp.shared.window.location.hostname == "localhost" || WebApp.shared.window.location.hostname == localTestIp {
         //url = "wss://localhost:8800/ws?\(query)"
