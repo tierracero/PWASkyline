@@ -12,11 +12,11 @@ public func killSession(){
     
     var cc = 0
 
-    
+    let conserveItemList: [String] = ["lastLoginUser"]
     
     while cc <  WebApp.current.window.localStorage.length {
         if let key = WebApp.current.window.localStorage.key(at: cc) {
-            if key.starts(with: "conserve") {
+            if key.starts(with: "conserve") || conserveItemList.contains(key) {
                 cc += 1
                 return
             }
