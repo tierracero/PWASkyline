@@ -3210,7 +3210,12 @@ class WorkViewControler: PageController {
         }
         else if caller == "logout"{
             loadingView(show: true)
+
+            // customerLogout
+
             killSession()
+
+
             Dispatch.asyncAfter(1) {
                 _ = JSObject.global.goToLogin!()
             }
