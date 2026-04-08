@@ -3211,6 +3211,9 @@ class WorkViewControler: PageController {
         else if caller == "logout"{
             loadingView(show: true)
             killSession()
+
+            //API.authV1.
+
             Dispatch.asyncAfter(1) {
                 _ = JSObject.global.goToLogin!()
             }

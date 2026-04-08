@@ -531,7 +531,7 @@ public class LoginViewcontroler: PageController {
             self.hello = "Buenas Noches 🍺"
         }
         
-        if let lastUser = WebApp.current.window.localStorage.string(forKey: "lastLooginUser") {
+        if let lastUser = WebApp.current.window.localStorage.string(forKey: "lastLoginUser") {
             self.username = lastUser
         }
         
@@ -759,7 +759,7 @@ public class LoginViewcontroler: PageController {
             WebApp.current.window.localStorage.set( JSString(groop.uuidString), forKey: "custCatchGroop")
             WebApp.current.window.localStorage.set( JSString(data.accountType.rawValue), forKey: "custCatchAccountType")
             WebApp.current.window.localStorage.set( JSString(data.mode.rawValue), forKey: "panelMode")
-            WebApp.current.window.localStorage.set( JSString(self.username), forKey: "lastLooginUser")
+            WebApp.current.window.localStorage.set( JSString(self.username), forKey: "lastLoginUser")
             WebApp.current.window.localStorage.set( JSString(pDir), forKey: "custCatchPDir")
             WebApp.current.window.localStorage.set(getNow(), forKey: "sessionControl")
 
