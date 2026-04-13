@@ -14,7 +14,7 @@ class BudgetConfirmationView: Div {
     
     override class var name: String { "div" }
     
-    let custAcct:  CustAcctSearch
+    @State var custAcct: CustAcctSearch?
     let comment: String
     let store: UUID
     let saleType: FolioTypes
@@ -24,11 +24,13 @@ class BudgetConfirmationView: Div {
         _ type: BudgetType,
         _ budgetid: UUID,
         _ budgetfolio: String,
-        _ fiscalProfile: UUID?
+        _ fiscalProfile: UUID?,
+        _ showTaxes: Bool,
+        _ custAcct: CustAcctSearch
     ) -> ())
     
     init(
-        custAcct: CustAcctSearch,
+        custAcct: CustAcctSearch?,
         comment: String,
         store: UUID,
         saleType: FolioTypes,
@@ -37,7 +39,9 @@ class BudgetConfirmationView: Div {
             _ type: BudgetType,
             _ budgetid: UUID,
             _ budgetfolio: String,
-            _ fiscalProfile: UUID?
+            _ fiscalProfile: UUID?,
+            _ showTaxes: Bool,
+            _ custAcct: CustAcctSearch
         ) -> ())
     ) {
         self.custAcct = custAcct
@@ -63,6 +67,22 @@ class BudgetConfirmationView: Div {
     required init() {
         fatalError("init() has not been implemented")
     }
+
+    lazy var firstNameField = InputText( self.$custAcct.map{ $0?.firstName ?? "" } )
+        .custom("width", "calc(100% - 30px)")
+        .placeholder("Primer Nombre")
+        .class(.textFiledBlackDark)
+        .disabled(true)
+    
+    lazy var lastNameField = InputText( self.$custAcct.map{ $0?.lastName ?? "" } )
+        .custom("width", "calc(100% - 30px)")
+        .placeholder("Primer Apellido")
+        .class(.textFiledBlackDark)
+        .disabled(true)
+
+
+    @State var showTaxes: Bool = false
+    
     
     @DOM override var body: DOM.Content {
         
@@ -77,54 +97,157 @@ class BudgetConfirmationView: Div {
                         self.remove()
                     }
                 
-                H2("Seleccione tipo de presupuesto")
+                H2("Ingrese información de presupuesto")
                     .color(.lightBlueText)
                 
                 Div().class(.clear).marginTop(7.px)
                 
-                if fiscalProfiles.count > 0 {
-                
-                    self.selectedFiscalProfileSelect
+                Div{
+
+                    Div("Seleccionar cliente")
+                    .custom("width", "calc(100% - 32px)")
+                    .class(.uibtnLargeOrange)
+                    .margin(all: 12.px)
+                    .align(.center)
+                    .onClick {
+
+                        self.selectCustomer()
                     
+                    }
+
+                }
+                .hidden(self.$custAcct.map{ $0 != nil })
+                
+                Div{
+
+                    if fiscalProfiles.count > 0 {
+                    
+                        H2("Perfil de facturacion ")
+                            .color(.lightBlueText)
+                        
+                        Div()
+                            .marginTop(3.px)
+                            .class(.clear)
+                        
+                        self.selectedFiscalProfileSelect
+                        
+                        Div().class(.clear).marginTop(7.px)
+                    }
+                    
+                    Div{
+
+                        H2("Datos del Cliente")
+                            .color(.lightBlueText)
+                        
+                        Div().marginTop(3.px).class(.clear)
+                        
+                        Div{
+                            
+                            Span("Primer Nombre")
+                                .color(.white)
+                                Div().marginTop(3.px).class(.clear)
+                            
+                            self.firstNameField
+                            
+                            Div().class(.clear)
+                            
+                        }
+                        .class(.oneTwo)
+                        
+                        Div{
+                            
+                            Span("Primer Apellido")
+                                .color(.white)
+
+                            Div().marginTop(3.px).class(.clear)
+                            
+                            self.lastNameField
+                            
+                            Div().class(.clear)
+                        }
+                        .class(.oneTwo)
+                        
+                        Div().class(.clear).marginTop(7.px)
+                        
+                    }
+
+                    
+                    Div().marginTop(3.px).class(.clear)
+                    
+                    Div {
+
+                    }
+                    .width(50.percent)
+                    .height(35.px)
+                    .float(.left)
+
+                    Div {
+                        InputCheckbox(self.$showTaxes)
+                        .id(.init("showTaxes"))
+                        Label("IVA Desglosado")
+                        .for("showTaxes")
+                        .color(.white)
+                    }
+                    .width(50.percent)
+                    .float(.left)
+
+                    Div().marginTop(3.px).class(.clear)
+
+                    H2("Selccione Opción")
+                        .color(.lightBlueText)
+                    
+                    Div().marginTop(3.px).class(.clear)
+                    
+                    Div {
+                        Div{
+                            
+                            Img()
+                                .src("/skyline/media/icon_print.png")
+                                .class(.iconWhite)
+                                .marginRight(7.px)
+                                .marginLeft(7.px)
+                                .height(18.px)
+                            
+                            Span("Descargar e Imprimir")
+                        }
+                        .class(.uibtnLarge)
+                        .width(90.percent)
+                        .onClick {
+                            self.requestBudget(.print)
+                        }
+                    }
+                    .width(50.percent)
+                    .float(.left)
+
+                    Div {
+                        
+                        Div{
+                            
+                            Img()
+                                .src("/skyline/media/sendToMobile.png")
+                                .class(.iconWhite)
+                                .marginRight(7.px)
+                                .marginLeft(7.px)
+                                .height(18.px)
+                            
+                            Span(self.$custAcct.map{ "Enviar a movil \($0?.mobile ?? "")" })
+                        }
+                        .hidden(self.$custAcct.map{ ($0?.mobile ?? "" ).isEmpty })
+                        .class(.uibtnLarge)
+                        .width(90.percent)
+                        .onClick {
+                            self.requestBudget(.send)
+                        }
+                    }
+                    .width(50.percent)
+                    .float(.left)
+
                     Div().class(.clear).marginTop(7.px)
-                }
+
                 
-                Div{
-                    
-                    Img()
-                        .src("/skyline/media/icon_print.png")
-                        .class(.iconWhite)
-                        .marginRight(7.px)
-                        .marginLeft(7.px)
-                        .height(18.px)
-                    
-                    Span("Descargar e Imprimir")
                 }
-                .class(.uibtnLarge)
-                .width(95.percent)
-                .onClick {
-                    self.requestBudget(.print)
-                }
-                
-                Div().class(.clear).marginTop(7.px)
-                
-                Div{
-                    
-                    Img()
-                        .src("/skyline/media/sendToMobile.png")
-                        .class(.iconWhite)
-                        .marginRight(7.px)
-                        .marginLeft(7.px)
-                        .height(18.px)
-                    
-                    Span("Enviar a movil \(self.custAcct.mobile)")
-                }
-                .class(.uibtnLarge)
-                .width(95.percent)
-                .onClick {
-                    self.requestBudget(.send)
-                }
-                
+                .hidden(self.$custAcct.map{ $0 == nil })
+
                 Div().class(.clear).marginTop(7.px)
                 
             }
@@ -132,13 +255,12 @@ class BudgetConfirmationView: Div {
             
         }
         .backgroundColor(.backGroundGraySlate)
+        .custom("top", "calc(50% - 124px)")
         .borderRadius(all: 24.px)
         .position(.absolute)
         .padding(all: 12.px)
-        .height(50.percent)
         .width(40.percent)
         .left(30.percent)
-        .top(25.percent)
         
     }
     
@@ -166,10 +288,19 @@ class BudgetConfirmationView: Div {
     
     override func didAddToDOM() {
         super.didAddToDOM()
+
+        if custAcct == nil {
+            selectCustomer()
+        }
     }
     
     func requestBudget(_ type: BudgetType) {
-     
+        
+        guard let custAcct else {
+            showError(.generalError, "No se localizo cuenta del cliente")
+            return
+        }
+
         loadingView(show: true)
         
         API.custPDVV1.createBudgetReport(
@@ -205,9 +336,11 @@ class BudgetConfirmationView: Div {
             }
             
             showSuccess(.operacionExitosa, "Presupuesto creado \(folio)", .long)
+
+            Console.clear()
             
-            print("⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ")
-            print("⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ")
+            print("⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎")
+            print("⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎")
             
             
             print(self.selectedFiscalProfileListener)
@@ -215,10 +348,12 @@ class BudgetConfirmationView: Div {
             print(self.selectedFiscalProfileListener)
             print(self.selectedFiscalProfileListener)
             
-            print("⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ")
-            print("⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ")
+            print("⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎")
+            print("⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎")
             
-            self.callback(type, id, folio,  UUID(uuidString: self.selectedFiscalProfileListener))
+
+
+            self.callback(type, id, folio,  UUID(uuidString: self.selectedFiscalProfileListener), self.showTaxes, custAcct)
             
             self.remove()
             
@@ -226,6 +361,35 @@ class BudgetConfirmationView: Div {
         
     }
     
+     func selectCustomer(){
+        
+            let view = SearchCustomerQuickView { account in
+                self.custAcct = account
+            } create: { term in
+                /// No customer, create cuatomer.
+                addToDom(CreateNewCusomerView(
+                    searchTerm: term,
+                    custType: .general,
+                    callback: { acctType, custType, searchTerm in
+                        
+                        let custDataView = CreateNewCustomerDataView(
+                            acctType: acctType,
+                            custType: custType,
+                            orderType: nil,
+                            searchTerm: searchTerm
+                        ) { account in
+                            self.custAcct = account
+                        }
+
+                        self.appendChild(custDataView)
+                        
+                    }))
+            }
+
+            addToDom(view)
+            
+    }
+
 }
 extension BudgetConfirmationView {
     
