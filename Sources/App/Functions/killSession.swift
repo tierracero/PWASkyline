@@ -10,33 +10,27 @@ import Web
 
 public func killSession(){
     
+    WebApp.current.window.localStorage.clear()
+
+    /*
     var cc = 0
 
-    let conserveItemList: [String] = ["lastLoginUser"]
-    
-    while cc <  WebApp.current.window.localStorage.length {
+    let length = WebApp.current.window.localStorage.length
+
+    let conserveItemList: [String] = ["lastLoginUser", "EmailControlerViewMode"]
+
+    while cc <  length {
+
+            
+
         if let key = WebApp.current.window.localStorage.key(at: cc) {
-            if key.starts(with: "conserve") || conserveItemList.contains(key) {
-                cc += 1
-                return
+            if !conserveItemList.contains(key) {
+                WebApp.current.window.localStorage.removeItem(forKey: key)   
             }
-            WebApp.current.window.localStorage.removeItem(forKey: key)
         }
+        
         cc += 1
     }
+    */
     
-    /*
-    WebApp.current.window.localStorage.removeItem(forKey: "custCatchUser")
-    WebApp.current.window.localStorage.removeItem(forKey: "custCatchToken")
-    WebApp.current.window.localStorage.removeItem(forKey: "custCatchMid")
-    WebApp.current.window.localStorage.removeItem(forKey: "custCatchKey")
-    WebApp.current.window.localStorage.removeItem(forKey: "custCatchID")
-    WebApp.current.window.localStorage.removeItem(forKey: "custCatchStore")
-    WebApp.current.window.localStorage.removeItem(forKey: "custCatchGroop")
-    WebApp.current.window.localStorage.removeItem(forKey: "linkedProfile")
-    WebApp.current.window.localStorage.removeItem(forKey: "custCatchHerk")
-    WebApp.current.window.localStorage.removeItem(forKey: "activeSession")
-    WebApp.current.window.localStorage.removeItem(forKey: "custCatchChatConnID")
-    WebApp.current.window.localStorage.removeItem(forKey: "custCatchChatToken")
-     */
 }

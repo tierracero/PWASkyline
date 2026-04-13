@@ -3209,16 +3209,14 @@ class WorkViewControler: PageController {
             addToDom(ToolsView())
         }
         else if caller == "logout"{
+
             loadingView(show: true)
 
-            // customerLogout
-
-            killSession()
-
-            //API.authV1.
-
-            Dispatch.asyncAfter(1) {
-                _ = JSObject.global.goToLogin!()
+            API.authV1.customerLogout { _ in
+                killSession()
+                Dispatch.asyncAfter(1) {
+                    _ = JSObject.global.goToLogin!()
+                }
             }
         }
         else if caller == "storeAndProducts"{

@@ -1,4 +1,4 @@
-//
+// bukA-5784
 //  SalePointView.swift
 //
 //
@@ -59,6 +59,10 @@ class SalePointView: Div {
     @State var budgetid: UUID? = nil
     
     @State var budgetFolio: String = ""
+
+    @State var fiscalProfile: UUID? = nil
+
+    @State var showTaxes: Bool = false
     
     @State var selectedAccountName: String = "S/F Publico General"
     
@@ -86,10 +90,8 @@ class SalePointView: Div {
     
     @State var rewadsPoints: Float? =  nil
     
-    @State var allowBudgetDetails: Bool = false
-    
-    lazy var allowBudgetDetailsCheckbox = InputCheckbox($allowBudgetDetails)
-        .id(.init(stringLiteral: "allowBudgetDetailsBox"))
+    lazy var showTaxesCheckbox = InputCheckbox($showTaxes)
+        .id(.init(stringLiteral: "showTaxes"))
         .marginRight(3.px)
     
     lazy var itemGrid = Table{
@@ -143,6 +145,19 @@ class SalePointView: Div {
         .overflow(.auto)
         .width(1000.px)
     
+
+    @State var selectedFiscalProfileListener = ""
+    
+    lazy var selectedFiscalProfileSelect = Select(self.$selectedFiscalProfileListener)
+        .body(content: {
+            Option("Seleccione Perfil Fiscal (Opcional)")
+                .value("")
+        })
+        .custom("width","calc(100% - 24px)")
+        .class(.textFiledBlackDark)
+        .height(31.px)
+    
+
     @DOM override var body: DOM.Content {
         
         Div {
@@ -485,60 +500,87 @@ class SalePointView: Div {
                 
                 /// Budget Control Buttons
                 Div{
-                    
-                    H2(self.$budgetFolio)
-                        .marginRight(12.px)
-                        .float(.left)
-                    
+
                     Div{
-                        // Download
+
+                        if fiscalProfiles.count > 0 {
+
+                            Div {
+                                self.selectedFiscalProfileSelect
+                            }
+
+                            Div().clear(.both).height(3.px)
+                                                        
+                        }
+
                         Div{
+
+                            H2(self.$budgetFolio)
+                                .marginRight(12.px)
+                                .color(.white)
+                                .float(.left)
                             
-                            Span()
-                                .backgroundImage("skyline/media/download2.png")
-                                .class(.ico)
-                            
-                            Span("Descargar")
-                            
+                            Div {
+
+                                // Download
+                                Div{
+                                    
+                                    Span()
+                                        .backgroundImage("skyline/media/download2.png")
+                                        .class(.ico)
+                                    
+                                    Span("Descargar")
+                                    
+                                }
+                                .onClick{
+                                    self.sendBudgetDocument(type: .print, fiscalProfile: self.fiscalProfile)
+                                }
+                                .marginRight(12.px)
+                                .class(.uibutton)
+                                .float(.left)
+                                
+                                // Send
+                                Div{
+                                    
+                                    Span()
+                                        .backgroundImage("skyline/media/sendToMobile.png")
+                                        .class(.ico)
+                                    
+                                    Span("Enviar")
+                                    
+                                }
+                                .onClick{
+                                    self.sendBudgetDocument(type: .send, fiscalProfile: self.fiscalProfile)
+                                }
+                                .marginRight(12.px)
+                                .class(.uibutton)
+                                .float(.left)
+                                
+                                Div().clear(.both)
+                                
+                                Div{
+                                    self.showTaxesCheckbox
+                                    Label("IVA Desglosado")
+                                        .for("showTaxesBox")
+                                        .color(.white)
+                                }
+                                
+                            }
+                            .float(.left)
+
+                            Div().clear(.both)
                         }
-                        .onClick{
-                            self.sendBudgetDocument(type: .print, fiscalProfile: nil)
-                        }
-                        .marginRight(12.px)
-                        .class(.uibutton)
-                        .float(.left)
-                        
-                        // Send
-                        Div{
-                            
-                            Span()
-                                .backgroundImage("skyline/media/sendToMobile.png")
-                                .class(.ico)
-                            
-                            Span("Enviar")
-                            
-                        }
-                        .onClick{
-                            self.sendBudgetDocument(type: .send, fiscalProfile: nil)
-                        }
-                        .marginRight(12.px)
-                        .class(.uibutton)
-                        .float(.left)
-                        
-                        Div().clear(.both)
-                        
-                        Div{
-                            self.allowBudgetDetailsCheckbox
-                            Label("IVA Desglosado")
-                                .for("allowBudgetDetailsBox")
-                        }
-                        
+
                     }
-                    .float(.left)
-                    
-                    
+                    .margin(all: 7.px)
                     
                 }
+                .backgroundColor(.transparentBlack)
+                .borderRadius(24.px)
+                .position(.fixed)
+                .bottom(50.px)
+                .left(50.px)
+                .width(400.px)
                 .hidden(self.$budgetid.map{ $0 == nil })
                 .float(.left)
                 
@@ -621,6 +663,15 @@ class SalePointView: Div {
     
     override func buildUI() {
         
+
+
+        fiscalProfiles.forEach { profile in
+            selectedFiscalProfileSelect.appendChild(
+                Option("\(profile.rfc) \(profile.razon)")
+                    .value(profile.id.uuidString)
+            )
+        }
+        
         if !isSubView {
             
             self.class(.transparantBlackBackGround)
@@ -632,6 +683,10 @@ class SalePointView: Div {
             
         }
         
+        $selectedFiscalProfileListener.listen {
+            self.fiscalProfile = UUID(uuidString: $0)
+        }
+
         $rewadsPoints.listen {
             self.calcBalance()
         }
@@ -692,6 +747,8 @@ class SalePointView: Div {
                     self.budgetFolio = payload.budgetFolio
             
                     self.custAcct = payload.custAcct
+
+                    
                     
                     payload.saleObjects.forEach { item in
                         
@@ -1693,54 +1750,23 @@ class SalePointView: Div {
     
     func createBudget(){
         
-        guard let custAcct else {
-            
-            let view = SearchCustomerQuickView { account in
-                
-                self.custAcct = account
-                
-                self.createBudget()
-                
-            } create: { term in
-                /// No customer, create cuatomer.
-                addToDom(CreateNewCusomerView(
-                    searchTerm: term,
-                    custType: .general,
-                    callback: { acctType, custType, searchTerm in
-                        
-                        let custDataView = CreateNewCustomerDataView(
-                            acctType: acctType,
-                            custType: custType,
-                            orderType: nil,
-                            searchTerm: searchTerm
-                        ) { account in
-                            
-                            self.custAcct = account
-                            self.createBudget()
-                            
-                        }
-
-                        self.appendChild(custDataView)
-                        
-                    }))
-            }
-
-            addToDom(view)
-            
-            return
-        }
-        
         let view = BudgetConfirmationView (
             custAcct: custAcct,
             comment: "",
             store: custCatchStore,
             saleType: .sale,
             kart: kart
-        ) { type, budgetid, budgetFolio, fiscalProfile in
+        ) { type, budgetid, budgetFolio, fiscalProfile, showTaxes, custAcct in
             
             self.budgetid = budgetid
             
             self.budgetFolio = budgetFolio
+
+            self.fiscalProfile = fiscalProfile
+
+            self.showTaxes = showTaxes
+
+            self.custAcct = custAcct
             
             self.sendBudgetDocument(type: type, fiscalProfile: fiscalProfile)
             
@@ -1837,12 +1863,20 @@ class SalePointView: Div {
         "&type=\(type)" +
         "&id=\(id)" +
         "&pDir=\(pDir)".replace(from: " ", to: "+") +
-        "&deductedTaxes=\(self.allowBudgetDetails.description)"
+        "&deductedTaxes=\(self.showTaxes.description)"
         
         if let fiscalProfile {
             url += "&fiscalProfile=\(fiscalProfile.uuidString)"
         }
         
+
+        // https://tierracero.com/dev/skyline/api.php?token=1775830032En0Waufe7sZc9OzbxwC55nCQa3hEfygDmpa3QzrouwX1wZA7&user=erik@tradesa.mx&key=1927u1KofoXCbfe2BQcWYaZSmj7ne%2f9TKZkPvUpXqgI%3d&mid=%2boPlYEoYnKf8tbQ13pA8zQ%3d%3d&ie=createBudgetReport&firstName=Nom&lastName=Ape&mobile=8311234567&type=print&id=954C65CB-A75F-4280-9B4D-F52BF6357BF3&pDir=WkAQw&deductedTaxes=false&fiscalProfile=E8300691-20A7-40F0-9539-A289A4A69296
+        print("🌎 url")
+        
+        print("🌎 url")
+
+        print(url)
+
         switch type {
         case .print:
             _ = JSObject.global.goToURL!(url)
