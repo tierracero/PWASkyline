@@ -49,7 +49,7 @@ extension Class {
 	public static var m0: Class { "m-0" }
 	public static var mt0: Class { "mt-0" }
 	
-	public static var headerLogoImage: Class { "header-logo-image" }
+	public static var headerLogoImage: Class { "header-logfo-image" }
 	public static var hero: Class { "hero" }
 	public static var heroInner: Class { "hero-inner" }
 	public static var heroCopy: Class { "hero-copy" }

@@ -116,11 +116,31 @@ class MessageGrid: Div {
         .accept(["image/png", "image/gif", "image/jpeg", "application/pdf", "video/mp4", "video/x-m4v", "video/*", "video", "pages", "numbers", "key"]) //  ".heic",
         .hidden(true)
     
+    lazy var downloadMesages  = Img()
+        .src("/skyline/media/download2.png")
+        .marginLeft(12.px)
+        .cursor(.pointer)
+        .marginTop(2.px)
+        .height(18.px)
+        .float(.left)
+        .onClick {
+            let view = Download(
+                orderId: self.orderid,
+                accountId: self.accountid,
+                folio: self.folio,
+                name: self.name,
+                mobile: self.mobile,
+                notes: self.notes
+            )
+
+            addToDom(view)
+        }
+
     lazy var maximizeMsgView = Img()
         .src("/skyline/media/maximizeWindow.png")
         .hidden(self.$isPopup.map{ !$0 })
         .class(.iconWhite)
-        .marginLeft(7.px)
+        .marginLeft(12.px)
         .cursor(.pointer)
         .marginTop(2.px)
         .height(18.px)
@@ -143,6 +163,8 @@ class MessageGrid: Div {
             H3("Notas Actuales")
                 .color(.gray)
                 .float(.left)
+
+            self.downloadMesages
             
             self.maximizeMsgView
             

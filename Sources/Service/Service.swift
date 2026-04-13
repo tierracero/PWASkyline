@@ -6,8 +6,8 @@ public class Service: ServiceWorker {
             .name("Tierra Cero")
             .startURL("/")
             .display(.standalone)
-            .backgroundColor("#2A3443")
-            .themeColor("white")
+            .backgroundColor("#1D2026") 
+            .themeColor("dark")
             .icons(
                 .init(src: "images/192.png", sizes: .x192, type: .png),
                 .init(src: "images/512.png", sizes: .x512, type: .png)
