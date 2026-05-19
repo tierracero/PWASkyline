@@ -1569,19 +1569,24 @@ class AccountView: PageController {
                     .onClick {
                         self.currentAccountTab = .finance
                     }
+
+                if custCatchAccountType != .entrepreneur {
+                    
                 
-                H3("Credito")
-                    .backgroundColor( self.$currentAccountTab.map{$0 == .credit ? .black : .transparent})
-                    .color( self.$currentAccountTab.map{$0 == .credit ? .lightBlueText : .gray})
-                    .padding(top: 3.px, right: 7.px, bottom: 3.px, left: 7.px)
-                    .borderTopRightRadius(12.px)
-                    .borderTopLeftRadius(12.px)
-                    .marginLeft(7.px)
-                    .cursor(.pointer)
-                    .float(.left)
-                    .onClick {
-                        self.currentAccountTab = .credit
-                    }
+                    H3("Credito")
+                        .backgroundColor( self.$currentAccountTab.map{$0 == .credit ? .black : .transparent})
+                        .color( self.$currentAccountTab.map{$0 == .credit ? .lightBlueText : .gray})
+                        .padding(top: 3.px, right: 7.px, bottom: 3.px, left: 7.px)
+                        .borderTopRightRadius(12.px)
+                        .borderTopLeftRadius(12.px)
+                        .marginLeft(7.px)
+                        .cursor(.pointer)
+                        .float(.left)
+                        .onClick {
+                            self.currentAccountTab = .credit
+                        }
+
+                }
 
             }
             .height(30.px)
@@ -1792,31 +1797,32 @@ class AccountView: PageController {
                     .value(type.rawValue))
             }
         }
-        
-        if let creditId = account.cracct {
-            loadCreditView(creditId)
-        }
-        else{
-            self.creditDetailView = Div{
-                Table {
-                    Tr{
-                        Td{
-                            Div("Activar Credito")
-                                .class(.uibtnLargeOrange)
-                                .onClick {
-                                    self.activateCredit()
-                                }
+        if custCatchAccountType != .entrepreneur {  
+            
+            if let creditId = account.cracct {
+                loadCreditView(creditId)
+            }
+            else{
+                self.creditDetailView = Div{
+                    Table {
+                        Tr{
+                            Td{
+                                Div("Activar Credito")
+                                    .class(.uibtnLargeOrange)
+                                    .onClick {
+                                        self.activateCredit()
+                                    }
+                            }
+                            .align(.center)
+                            .verticalAlign(.middle)
                         }
-                        .align(.center)
-                        .verticalAlign(.middle)
                     }
+                    .height(100.percent)
+                    .width(100.percent)
                 }
                 .height(100.percent)
-                .width(100.percent)
             }
-            .height(100.percent)
         }
-        
         API.custAccountV1.loadDetails(id: self.account.id) { resp in
             
             guard let resp else{

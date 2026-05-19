@@ -164,8 +164,10 @@ class MessageGrid: Div {
                 .color(.gray)
                 .float(.left)
 
-            self.downloadMesages
-            
+            if custCatchAccountType != .entrepreneur {
+                self.downloadMesages
+            }
+
             self.maximizeMsgView
             
             Div().class(.clear)

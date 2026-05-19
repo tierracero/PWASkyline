@@ -16,7 +16,7 @@ public struct SkylineWeb {
         mode: .beta,
         major: 0,
         minor: 22,
-        patch: 9
+        patch: 14
     )
 	
 	public init() {}
@@ -255,14 +255,14 @@ open class _SkyLine {
         mode: .beta,
         major: 0,
         minor: 22,
-        patch: 9
+        patch: 14
     )
 	
     /// .init(.rgba(0, 0, 0, 0.7))
-	public lazy var loadingView = Div{
-			Table {
-				Tr {
-					Td {
+	public lazy var loadingView = Div {
+        Table {
+            Tr {
+                Td {
                     
                     Img()
                         .src("/skyline/media/cross.png")
@@ -275,18 +275,18 @@ open class _SkyLine {
                             faseOutLoadingView()
                         })
 
-						Img()
-							.src("/skyline/media/tierraceroRoundLogoWhite.svg")
-							.marginBottom(12.px)
-							.width(100.px)
-					}
-					.align(.center)
-					.verticalAlign(.middle)
-				}
-			}
-			.width(100.percent)
-			.height(100.percent)
-		}
+                        Img()
+                            .src("/skyline/media/tierraceroRoundLogoWhite.svg")
+                            .marginBottom(12.px)
+                            .width(100.px)
+                }
+                .align(.center)
+                .verticalAlign(.middle)
+            }
+        }
+        .width(100.percent)
+        .height(100.percent)
+    }
     .backgroundColor(.transparentBlack)
     .filter(.opacity(0))
     .position(.absolute)

@@ -382,8 +382,10 @@ extension MoneyManagerView.AuditView {
 
                         Div().clear(.both)
                     }.hidden(self.$validations.map{ $0.isEmpty })
-                    ForEach(self.$validations) {
-                        $0
+                    Div{
+                        ForEach(self.$validations) {
+                            $0
+                        }
                     }
                     Div{
                         /// Date
@@ -452,8 +454,10 @@ extension MoneyManagerView.AuditView {
 
                         Div().clear(.both)
                     }.hidden(self.$payment.map{ $0.isEmpty })
-                    ForEach(self.$payment) {
-                        $0
+                    Div{
+                        ForEach(self.$payment) {
+                            $0
+                        }
                     }
                     Div{
                         /// Date
@@ -525,8 +529,10 @@ extension MoneyManagerView.AuditView {
 
                         Div().clear(.both)
                     }.hidden(self.$moneyManager.map{ $0.isEmpty })
-                    ForEach(self.$moneyManager) {
-                        $0
+                    Div{
+                       ForEach(self.$moneyManager) {
+                            $0
+                        }
                     }
                     
                     /// financials
@@ -561,8 +567,10 @@ extension MoneyManagerView.AuditView {
                         
                         Div().clear(.both)
                     }.hidden(self.$financials.map{ $0.isEmpty })
-                    ForEach(self.$financials) {
-                        $0
+                    Div{
+                        ForEach(self.$financials) {
+                            $0
+                        }
                     }
                     Div{
                         /// Date
@@ -679,9 +687,7 @@ extension MoneyManagerView.AuditView {
                         .float(.right)
                         
                     }
-                    
                 }
-                
             }
             .custom("height", "calc(90% - 24px)")
             .custom("width", "calc(90% - 24px)")
@@ -777,6 +783,11 @@ extension MoneyManagerView.AuditView {
                 createdBy: createdBy,
                 targetUser: targetUser
             ).innerHTML
+
+
+            Console.clear()
+
+            print(printBody)
             
             _ = JSObject.global.renderGeneralPrint!(custCatchUrl, self.item.folio, printBody)
             

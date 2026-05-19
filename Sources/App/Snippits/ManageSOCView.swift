@@ -975,30 +975,31 @@ class ManageSOCView: Div {
                             .onClick {
                                 self.viewMode =  .general
                             }
+                        if custCatchAccountType != .entrepreneur {
+                            H3("Acciones")
+                                .backgroundColor(self.$viewMode.map{ ($0 == .actions) ? .black : .transparent})
+                                .borderTopRightRadius(7.px)
+                                .borderTopLeftRadius(7.px)
+                                .marginRight(12.px)
+                                .padding(all:7.px)
+                                .cursor(.pointer)
+                                .float(.left)
+                                .onClick {
+                                    self.viewMode =  .actions
+                                }
                         
-                        H3("Acciones")
-                            .backgroundColor(self.$viewMode.map{ ($0 == .actions) ? .black : .transparent})
-                            .borderTopRightRadius(7.px)
-                            .borderTopLeftRadius(7.px)
-                            .marginRight(12.px)
-                            .padding(all:7.px)
-                            .cursor(.pointer)
-                            .float(.left)
-                            .onClick {
-                                self.viewMode =  .actions
-                            }
-                        
-                        H3("Docs")
-                            .backgroundColor(self.$viewMode.map{ ($0 == .documents) ? .black : .transparent})
-                            .borderTopRightRadius(7.px)
-                            .borderTopLeftRadius(7.px)
-                            .marginRight(12.px)
-                            .padding(all:7.px)
-                            .cursor(.pointer)
-                            .float(.left)
-                            .onClick {
-                                self.viewMode =  .documents
-                            }
+                            H3("Docs")
+                                .backgroundColor(self.$viewMode.map{ ($0 == .documents) ? .black : .transparent})
+                                .borderTopRightRadius(7.px)
+                                .borderTopLeftRadius(7.px)
+                                .marginRight(12.px)
+                                .padding(all:7.px)
+                                .cursor(.pointer)
+                                .float(.left)
+                                .onClick {
+                                    self.viewMode =  .documents
+                                }
+                        }
                         
                         H3("Notas")
                             .backgroundColor(self.$viewMode.map{ ($0 == .notes) ? .black : .transparent})

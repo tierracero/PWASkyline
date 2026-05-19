@@ -19,14 +19,17 @@ extension MoneyManagerView.AuditView {
         let item: CustMoneyManager
         
         /// NON Cash Payments Recived
-        let validations: [PaymentRow]
+        @State var validations: [PaymentRow]
+        
         /// Cash Payments Recived
-        let payment: [PaymentRow]
+        @State var payment: [PaymentRow]
+        
         /// Money manager Orders
-        let moneyManager: [MoneyManagerRow]
+        @State var moneyManager: [MoneyManagerRow]
+
         /// Finacial
         /// tae, money, lending
-        let financials: [FinancialRow]
+        @State var financials: [FinancialRow]
         
         let createdBy: String
         
@@ -58,6 +61,14 @@ extension MoneyManagerView.AuditView {
         var paymentBalance: Int64 = 0
         var financialsBalance: Int64 = 0
         
+
+        lazy var validationsView = Div()
+
+        lazy var paymentView = Div()
+
+        lazy var financialsView = Div()
+        .id(.init("financialView"))
+
         @DOM override var body: DOM.Content {
             /// Header
             Div {
@@ -362,9 +373,7 @@ extension MoneyManagerView.AuditView {
                 Div().clear(.both)
             }
             .hidden(self.validations.isEmpty)
-            ForEach(self.validations) {
-                $0.fontSize(14.px)
-            }
+            self.validationsView
             Div{
                 /// Date
                 Div("")
@@ -428,8 +437,10 @@ extension MoneyManagerView.AuditView {
                 Div().clear(.both)
             }
             .hidden(self.payment.isEmpty)
-            ForEach(self.payment) {
-                $0.fontSize(14.px)
+            Div {
+               ForEach(self.payment) {
+                    $0.fontSize(14.px)
+                }
             }
             Div{
                 /// Date
@@ -499,9 +510,7 @@ extension MoneyManagerView.AuditView {
                 Div().clear(.both)
             }
             .hidden(self.moneyManager.isEmpty)
-            ForEach(self.moneyManager) {
-                $0.fontSize(14.px)
-            }
+            self.paymentView
             
             /// financials
             H3("Cortes Recibidos / Servicios Financieros")
@@ -534,9 +543,8 @@ extension MoneyManagerView.AuditView {
                 Div().clear(.both)
             }
             .hidden(self.financials.isEmpty)
-            ForEach(self.financials) {
-                $0.fontSize(14.px)
-            }
+            self.financialsView
+
             Div{
                 /// Date
                 Div("")
@@ -572,7 +580,19 @@ extension MoneyManagerView.AuditView {
             
         override func buildUI() {
             super.buildUI()
-            
+
+            self.validations.forEach{ item in
+                validationsView.appendChild(item)
+            }
+
+            self.payment.forEach{ item in
+                paymentView.appendChild(item)
+            }
+
+            self.financials.forEach{ item in
+                financialsView.appendChild(item)
+            }
+   
             validationsBalance = validations.map{ $0.item.cost }.reduce(0, +)
             
             paymentBalance = payment.map{ $0.item.cost }.reduce(0, +)

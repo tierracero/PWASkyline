@@ -62,6 +62,8 @@ class SalePointView: Div {
 
     @State var fiscalProfile: UUID? = nil
 
+    @State var showDetail: Bool = false
+
     @State var showTaxes: Bool = false
     
     @State var selectedAccountName: String = "S/F Publico General"
@@ -90,8 +92,12 @@ class SalePointView: Div {
     
     @State var rewadsPoints: Float? =  nil
     
+    lazy var showDetailCheckbox = InputCheckbox($showDetail)
+        .id(.init(stringLiteral: "showDetailBox"))
+        .marginRight(3.px)
+
     lazy var showTaxesCheckbox = InputCheckbox($showTaxes)
-        .id(.init(stringLiteral: "showTaxes"))
+        .id(.init(stringLiteral: "showTaxesBox"))
         .marginRight(3.px)
     
     lazy var itemGrid = Table{
@@ -502,7 +508,7 @@ class SalePointView: Div {
                 Div{
 
                     Div{
-
+                        
                         if fiscalProfiles.count > 0 {
 
                             Div {
@@ -559,10 +565,24 @@ class SalePointView: Div {
                                 Div().clear(.both)
                                 
                                 Div{
-                                    self.showTaxesCheckbox
-                                    Label("IVA Desglosado")
-                                        .for("showTaxesBox")
-                                        .color(.white)
+
+                                    Div{
+                                        self.showDetailCheckbox
+                                        Label("Ver Detalles")
+                                            .for("showDetailBox")
+                                            .color(.white)
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div{
+                                        self.showTaxesCheckbox
+                                        Label("IVA Desglosado")
+                                            .for("showTaxesBox")
+                                            .color(.white)
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
                                 }
                                 
                             }
@@ -570,6 +590,7 @@ class SalePointView: Div {
 
                             Div().clear(.both)
                         }
+                        
 
                     }
                     .margin(all: 7.px)
@@ -715,7 +736,7 @@ class SalePointView: Div {
         
         if let loadBy {
             
-            switch loadBy{
+            switch loadBy {
             case .budget(let id):
                 
                 loadingView(show: true)
@@ -1756,13 +1777,15 @@ class SalePointView: Div {
             store: custCatchStore,
             saleType: .sale,
             kart: kart
-        ) { type, budgetid, budgetFolio, fiscalProfile, showTaxes, custAcct in
+        ) { type, budgetid, budgetFolio, fiscalProfile, showDetail, showTaxes, custAcct in
             
             self.budgetid = budgetid
             
             self.budgetFolio = budgetFolio
 
             self.fiscalProfile = fiscalProfile
+
+            self.showDetail = showDetail
 
             self.showTaxes = showTaxes
 
@@ -1863,14 +1886,15 @@ class SalePointView: Div {
         "&type=\(type)" +
         "&id=\(id)" +
         "&pDir=\(pDir)".replace(from: " ", to: "+") +
+        "&fullDetail=\(self.showDetail.description)" +
         "&deductedTaxes=\(self.showTaxes.description)"
         
         if let fiscalProfile {
             url += "&fiscalProfile=\(fiscalProfile.uuidString)"
         }
-        
 
         // https://tierracero.com/dev/skyline/api.php?token=1775830032En0Waufe7sZc9OzbxwC55nCQa3hEfygDmpa3QzrouwX1wZA7&user=erik@tradesa.mx&key=1927u1KofoXCbfe2BQcWYaZSmj7ne%2f9TKZkPvUpXqgI%3d&mid=%2boPlYEoYnKf8tbQ13pA8zQ%3d%3d&ie=createBudgetReport&firstName=Nom&lastName=Ape&mobile=8311234567&type=print&id=954C65CB-A75F-4280-9B4D-F52BF6357BF3&pDir=WkAQw&deductedTaxes=false&fiscalProfile=E8300691-20A7-40F0-9539-A289A4A69296
+        
         print("🌎 url")
         
         print("🌎 url")

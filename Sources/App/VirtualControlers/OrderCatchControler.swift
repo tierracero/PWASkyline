@@ -21,11 +21,15 @@ public class OrderCatchControler {
 
     let ws = WS()
     
+    @State var custCatchAccountType: TCAccountType
+
     init(){
 
         self.viewType = OrderViewMode(rawValue: (WebApp.current.window.localStorage.string(forKey: "viewType") ?? "")) ?? .listView
 
         self.macroViewType = MacroViewType(rawValue: (WebApp.current.window.localStorage.string(forKey: "macroViewType") ?? "")) ?? .orderView
+
+        self.custCatchAccountType = TCAccountType(rawValue: (WebApp.current.window.localStorage.string(forKey: "custCatchAccountType") ?? "") ) ?? .buisness
 
         switch self.macroViewType {    
         case .followUpView:
@@ -172,6 +176,7 @@ public class OrderCatchControler {
     lazy var routeViewButton = Img()
         .src("/skyline/media/icon_route.png")
         .class(self.$viewType.map{$0 == .routeView ? .iconBlue : .iconWhite})
+        .hidden(self.$custCatchAccountType.map{ $0 == .entrepreneur })
         .marginLeft(18.px)
         .height(28.px)
         .onClick { img, event in
@@ -228,13 +233,15 @@ public class OrderCatchControler {
         .marginTop(5.px)
     
     lazy var firstView = Div()
-        .custom("height", "calc(100% - 227px)")
+        .custom("height", "calc(100% - \( (custCatchAccountType != .entrepreneur) ? "175" : "227" )px)")
         .overflow(.auto)
         .class(.roundGrayBlackDark)
     
     lazy var container = Div{
         self.firstView
-        self.emailViewControler
+        if self.custCatchAccountType != .entrepreneur {
+            self.emailViewControler
+        }
     }
     .custom("height", "calc(100% - 0px)")
     .overflow(.hidden)

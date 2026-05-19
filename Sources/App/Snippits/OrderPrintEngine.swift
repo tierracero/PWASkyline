@@ -414,15 +414,26 @@ class OrderPrintEngine: Div {
             var tag2 = ""
             var tag3 = ""
             var tag4 = ""
+            var tag5 = ""
+            var tag6 = ""
             
-            if !eq.tag1.isEmpty { tag1 = "\(configServiceTags.tag1Name) \(eq.tag1)" }
-            if !eq.tag2.isEmpty { tag2 = " \(configServiceTags.tag2Name) \(eq.tag2)" }
-            if !eq.tag3.isEmpty { tag3 = " \(configServiceTags.tag3Name) \(eq.tag3)" }
-            if !eq.tag3.isEmpty { tag4 = " \(configServiceTags.tag4Name) \(eq.tag4)" }
+            let tag1Value = eq.tag1.purgeSpaces
+            let tag2Value = eq.tag2.purgeSpaces
+            let tag3Value = eq.tag3.purgeSpaces
+            let tag4Value = eq.tag4.purgeSpaces
+            let tag5Value = eq.tag5.purgeSpaces
+            let tag6Value = eq.tag6.purgeSpaces
+
+            if !tag1Value.isEmpty { tag1 = "\(configServiceTags.tag1Name) \(tag1Value)" }
+            if !tag2Value.isEmpty { tag2 = "\(configServiceTags.tag2Name) \(tag2Value)" }
+            if !tag3Value.isEmpty { tag3 = "\(configServiceTags.tag3Name) \(tag3Value)" }
+            if !tag4Value.isEmpty { tag4 = "\(configServiceTags.tag4Name) \(tag4Value)" }
+            if !tag5Value.isEmpty { tag5 = "\(configServiceTags.tag4Name) \(tag5Value)" }
+            if !tag6Value.isEmpty { tag6 = "\(configServiceTags.tag6Name) \(tag6Value)" }
             
             var eqObjOne = Div {
                 Strong("Equipo \(cc): \(eq.IDTag1) ")
-                Span("\(tag1) \(tag2) \(tag3) \(tag4) ").marginLeft(3.px)
+                Span("\(tag1) \(tag2) \(tag3) \(tag4) \(tag5) \(tag6)").marginLeft(3.px)
                 Br()
                 Span(configServiceTags.tagDescrName)
                 Span(eq.tagDescr).marginLeft(3.px)
@@ -431,7 +442,7 @@ class OrderPrintEngine: Div {
             
             var eqObjTwo = Div {
                 Strong("Equipo \(cc): \(eq.IDTag1) ")
-                Span("\(tag1) \(tag2) \(tag3) \(tag4) ").marginLeft(3.px)
+                Span("\(tag1) \(tag2) \(tag3) \(tag4) \(tag5) \(tag6)").marginLeft(3.px)
                 Br()
                 Span(configServiceTags.tagDescrName)
                 Span(eq.tagDescr).marginLeft(3.px)
@@ -441,7 +452,7 @@ class OrderPrintEngine: Div {
             if(configGeneral.docuWelcome.count > 1000 && configGeneral.docuWelcome.count < 1801){
                 eqObjOne = Div {
                     Strong("Equipo \(cc): \(eq.IDTag1.suffix(6)) ")
-                    Span("\(eq.tag1) \(eq.tag2) \(eq.tag3) \(eq.tag4) ").marginLeft(3.px)
+                    Span("\(eq.tag1) \(eq.tag2) \(eq.tag3) \(eq.tag4) \(eq.tag5) \(eq.tag6)").marginLeft(3.px)
                     Br()
                     Span(configServiceTags.tagDescrName)
                     Span(eq.tagDescr).marginLeft(3.px)
@@ -450,7 +461,7 @@ class OrderPrintEngine: Div {
                 
                 eqObjTwo = Div {
                         Strong("Equipo \(cc): \(eq.IDTag1.suffix(6)) ")
-                        Span("\(eq.tag1) \(eq.tag2) \(eq.tag3) \(eq.tag4) ").marginLeft(3.px)
+                        Span("\(eq.tag1) \(eq.tag2) \(eq.tag3) \(eq.tag4) \(eq.tag5) \(eq.tag6)").marginLeft(3.px)
                         Br()
                         Span(configServiceTags.tagDescrName)
                         Span(eq.tagDescr).marginLeft(3.px)
@@ -460,7 +471,7 @@ class OrderPrintEngine: Div {
             else if(configGeneral.docuWelcome.count > 1800){
                 eqObjOne = Div {
                     Strong("\(cc):  \(eq.IDTag1.suffix(4)) ")
-                    Span("\(eq.tag1) \(eq.tag2) \(eq.tag3) \(eq.tag4) ").marginLeft(3.px)
+                    Span("\(eq.tag1) \(eq.tag2) \(eq.tag3) \(eq.tag4) \(eq.tag5) \(eq.tag6)").marginLeft(3.px)
                     Span(eq.tagDescr).marginLeft(3.px)
                     Br()
                 }
@@ -487,6 +498,7 @@ class OrderPrintEngine: Div {
             cc += 1
             
             equipmetsDataOne.appendChild(eqObjOne)
+            
             equipmetsDataTwo.appendChild(eqObjTwo)
             
         }

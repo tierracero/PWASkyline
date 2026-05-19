@@ -822,7 +822,7 @@ func baseAPIUrl(_ endpoint: String) -> String {
         .replace(from: "+", to: "%2b")
         .replace(from: "=", to: "%3d")
     
-    var url = "\(endpoint)?" +
+    let url = "\(endpoint)?" +
     "token=\(_token)" +
     "&user=\(_user)" +
     "&key=\(_key)" +

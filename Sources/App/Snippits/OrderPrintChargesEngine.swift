@@ -302,12 +302,14 @@ class OrderPrintChargesEngine: Div {
             )
         }
         
-        if let _logo = custWebFilesLogos?.logoIndexWhite.avatar {
-            if !_logo.isEmpty {
-                logo = "\(custCatchUrl)\(skylineUrlPatch)/contenido/\(_logo)"
-            }
+        if let _logo = custWebFilesLogos?.logoIndexWhite.avatar, !_logo.isEmpty {
+            print("🟢 FOUND")
+            logo = "https://\(custCatchUrl)\(skylineUrlPatch)/contenido/\(_logo)"
         }
         
+        print("logo")
+        print(logo)
+
         let createdAt = getDate(order.createdAt)
         
         dateViewOne.appendChild(

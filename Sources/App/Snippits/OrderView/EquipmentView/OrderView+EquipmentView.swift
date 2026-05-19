@@ -1247,15 +1247,19 @@ extension OrderView {
                                     .marginLeft(12.px)
                                     .marginTop(7.px)
                                     .height(24.px)
-                                
-                                Div{
-                                    Div("Pendiente")
-                                    Div("Insumo")
+                                  
+                                if custCatchAccountType != .entrepreneur {
+
+                                    Div{
+                                        Div("Pendiente")
+                                        Div("Insumo")
+                                    }
+                                    .textAlign(.center)
+                                    .marginRight(7.px)
+                                    .fontSize(16.px)
+                                    .float(.right)
+                                    
                                 }
-                                .textAlign(.center)
-                                .marginRight(7.px)
-                                .fontSize(16.px)
-                                .float(.right)
                             }
                             .marginRight(12.px)
                             .hidden(self.$equipmentStatus.map{ $0 != .onwork })

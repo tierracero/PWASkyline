@@ -300,37 +300,27 @@ class WorkViewControler: PageController {
         Link()
             .href("/skyline/css/main.css")
             .rel(.stylesheet)
-            .onLoad {
-                
-            }
+            .onLoad { }
         
         Link()
             .href("/skyline/css/jcrop.css")
             .rel(.stylesheet)
-            .onLoad {
-                
-            }
+            .onLoad { }
         
         Script()
             .src("/skyline/js/main.js")
             .type("text/javascript")
-            .onLoad {
-                
-            }
+            .onLoad { }
         
         Script()
             .src("/js/socialjs.js")
             .type("text/javascript")
-            .onLoad {
-                
-            }
+            .onLoad { }
         
         Script()
             .src("/skyline/js/jcrop.js")
             .type("text/javascript")
-            .onLoad {
-                
-            }
+            .onLoad { }
         
         Script()
             .src("/skyline/js/JsBarcode.all.min.js")
@@ -769,13 +759,15 @@ class WorkViewControler: PageController {
                             addToDom(ToolsView.HistorySettings.OrderProcessing())
                         }
                     
-                    OrderCatchControler.shared.listViewButton
+    
+                        OrderCatchControler.shared.listViewButton
+                        
+                        OrderCatchControler.shared.userViewButton
+                        
+                        OrderCatchControler.shared.calendarViewButton
+                        
+                        OrderCatchControler.shared.routeViewButton
                     
-                    OrderCatchControler.shared.userViewButton
-                    
-                    OrderCatchControler.shared.calendarViewButton
-                    
-                    OrderCatchControler.shared.routeViewButton
                     
                     OrderCatchControler.shared.loadOrderStatusButton
                         .float(.right)
@@ -2387,35 +2379,40 @@ class WorkViewControler: PageController {
             )
         }
         
-        /// ``+ Like``
-        activeModules += 1
-        sideBar.appendChild(
-            Div{
-                Img()
-                    .src("/skyline/media/icon-like.png")
-                    .padding(all: 3.px)
-                    .cursor(.pointer)
-                
-                Div("Sociales")
-                    .class(.oneLineText)
-                    .fontSize(12.px)
-                    .color(.gray)
-            }
-            .margin(all: 3.px)
-            .align(.center)
-            .height(57.px)
-            .onClick {
-                
-                if custCatchUser.contains("@tierracero.com") || custCatchUser.contains("@centrodeservicios.cc") {
-                    addToDom(SocialManagerView())
+
+        if custCatchAccountType != .entrepreneur {
+
+            /// ``+ Like``
+            activeModules += 1
+            sideBar.appendChild(
+                Div{
+                    Img()
+                        .src("/skyline/media/icon-like.png")
+                        .padding(all: 3.px)
+                        .cursor(.pointer)
+                    
+                    Div("Sociales")
+                        .class(.oneLineText)
+                        .fontSize(12.px)
+                        .color(.gray)
                 }
-                else{
-                    print("🔴 \(custCatchUrl) does not have perm for social ")
+                .margin(all: 3.px)
+                .align(.center)
+                .height(57.px)
+                .onClick {
+                    
+                    if custCatchUser.contains("@tierracero.com") || custCatchUser.contains("@centrodeservicios.cc") {
+                        addToDom(SocialManagerView())
+                    }
+                    else{
+                        print("🔴 \(custCatchUrl) does not have perm for social ")
+                    }
+                    
                 }
-                
-            }
-        )
-        
+            )
+            
+        }
+
         let buttonHeight = (activeModules * 63) + 20
         
         sideBar.appendChild(Div().height(7.px))

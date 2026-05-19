@@ -25,6 +25,7 @@ class BudgetConfirmationView: Div {
         _ budgetid: UUID,
         _ budgetfolio: String,
         _ fiscalProfile: UUID?,
+        _ showDetail: Bool,
         _ showTaxes: Bool,
         _ custAcct: CustAcctSearch
     ) -> ())
@@ -40,6 +41,7 @@ class BudgetConfirmationView: Div {
             _ budgetid: UUID,
             _ budgetfolio: String,
             _ fiscalProfile: UUID?,
+            _ showDetail: Bool,
             _ showTaxes: Bool,
             _ custAcct: CustAcctSearch
         ) -> ())
@@ -81,8 +83,9 @@ class BudgetConfirmationView: Div {
         .disabled(true)
 
 
+    @State var showDetail: Bool = true
+
     @State var showTaxes: Bool = false
-    
     
     @DOM override var body: DOM.Content {
         
@@ -175,7 +178,12 @@ class BudgetConfirmationView: Div {
                     Div().marginTop(3.px).class(.clear)
                     
                     Div {
-
+                        InputCheckbox(self.$showDetail)
+                        .id(.init("showTaxes"))
+                        
+                        Label("Mostrar Detalles")
+                        .for("showTaxes")
+                        .color(.white)
                     }
                     .width(50.percent)
                     .height(35.px)
@@ -184,6 +192,7 @@ class BudgetConfirmationView: Div {
                     Div {
                         InputCheckbox(self.$showTaxes)
                         .id(.init("showTaxes"))
+
                         Label("IVA Desglosado")
                         .for("showTaxes")
                         .color(.white)
@@ -353,7 +362,7 @@ class BudgetConfirmationView: Div {
             
 
 
-            self.callback(type, id, folio,  UUID(uuidString: self.selectedFiscalProfileListener), self.showTaxes, custAcct)
+            self.callback(type, id, folio,  UUID(uuidString: self.selectedFiscalProfileListener), self.showDetail, self.showTaxes, custAcct)
             
             self.remove()
             

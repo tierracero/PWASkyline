@@ -148,8 +148,8 @@ class OrderView: Div {
     @State var country = ""
     @State var zip = ""
     
-    @State var lat = ""
-    @State var lon = ""
+    @State var lat: Double? = nil
+    @State var lon: Double? = nil
     
     @State var contratc: String? = nil
     
@@ -249,7 +249,6 @@ class OrderView: Div {
         }
         .id(Id(stringLiteral: mapId))
         .position(.relative)
-        
 
     @DOM override var body: DOM.Content {
         
@@ -720,84 +719,87 @@ class OrderView: Div {
                             }
                             self.editMode = true
                         }
-                                    
-                   Div{
-                       Div{
-                           Img()
-                               .src("/skyline/media/add.png")
-                               .marginLeft(3.px)
-                               .marginTop(7.px)
-                               .height(20.px)
-                       }
-                       .float(.left)
-                       
-                       Span("Proyecto")
-                   }
-                   .hidden(self.$orderProject.map{ $0 != nil })
-                   .class(.uibtn)
-                   .float(.right)
-                   .onClick {
-                       self.addOrderProject()
-                   }
-                    Div{
+
+                    if custCatchAccountType != .entrepreneur {
+                                            
                         Div{
-                            Img()
-                                .src("/skyline/media/star_yellow.png")
-                                .marginLeft(3.px)
-                                .marginTop(7.px)
-                                .height(20.px)
+                            Div{
+                                Img()
+                                    .src("/skyline/media/add.png")
+                                    .marginLeft(3.px)
+                                    .marginTop(7.px)
+                                    .height(20.px)
+                            }
+                            .float(.left)
+                            
+                            Span("Proyecto")
                         }
-                        .float(.left)
-                        
-                        Span("Ver Proyecto")
-                        
-                    }
-                    .hidden(self.$orderProject.map{ $0 == nil })
-                    .class(.uibtn)
-                    .float(.right)
-                    .onClick {
-                        
-                        guard let orderProject = self.orderProject else {
-                            showError(.unexpectedResult, "No selocalizo id del proyecto")
-                            return
+                        .hidden(self.$orderProject.map{ $0 != nil })
+                        .class(.uibtn)
+                        .float(.right)
+                        .onClick {
+                            self.addOrderProject()
                         }
                         
-                        API.custOrderV1.loadOrderProject(
-                            projetcId: orderProject,
-                            orderId: self.order.id
-                        ) { resp in
+                        Div{
+                            Div{
+                                Img()
+                                    .src("/skyline/media/star_yellow.png")
+                                    .marginLeft(3.px)
+                                    .marginTop(7.px)
+                                    .height(20.px)
+                            }
+                            .float(.left)
                             
-                            loadingView(show: false)
+                            Span("Ver Proyecto")
                             
-                            guard let resp else {
-                                showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
+                        }
+                        .hidden(self.$orderProject.map{ $0 == nil })
+                        .class(.uibtn)
+                        .float(.right)
+                        .onClick {
+                            
+                            guard let orderProject = self.orderProject else {
+                                showError(.unexpectedResult, "No selocalizo id del proyecto")
                                 return
                             }
                             
-                            guard resp.status == .ok else {
-                                showError(.generalError, resp.msg)
-                                return
+                            API.custOrderV1.loadOrderProject(
+                                projetcId: orderProject,
+                                orderId: self.order.id
+                            ) { resp in
+                                
+                                loadingView(show: false)
+                                
+                                guard let resp else {
+                                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
+                                    return
+                                }
+                                
+                                guard resp.status == .ok else {
+                                    showError(.generalError, resp.msg)
+                                    return
+                                }
+                                
+                                guard let payload = resp.data else {
+                                    showError(.unexpectedResult, .unexpenctedMissingPayload)
+                                    return
+                                }
+                                
+                                let view = OrderProject(
+                                    project: payload.project,
+                                    items: payload.items,
+                                    charges: payload.charges
+                                )
+                                
+                                addToDom(view)
+                                
+                                
                             }
-                            
-                            guard let payload = resp.data else {
-                                showError(.unexpectedResult, .unexpenctedMissingPayload)
-                                return
-                            }
-                            
-                            let view = OrderProject(
-                                project: payload.project,
-                                items: payload.items,
-                                charges: payload.charges
-                            )
-                            
-                            addToDom(view)
-                            
                             
                         }
-                        
-                    }
                     
-                    
+                    }
                    
                 }
                 
@@ -1371,153 +1373,155 @@ class OrderView: Div {
                 
                 Div().clear(.both)
                 
-                Div{
+                if custCatchAccountType != .entrepreneur {    
                     Div{
-                        Span("Encuestas Administración")
-                            .fontSize(16.px)
-                        Div().class(.clear).marginTop(7.px)
                         Div{
-                            /// First Point
+                            Span("Encuestas Administración")
+                                .fontSize(16.px)
+                            Div().class(.clear).marginTop(7.px)
                             Div{
-                                Div()
-                                    .backgroundColor(.yellowContrast)
-                                    .borderRadius(all: 9.px)
-                                    .width(18.px)
-                                    .height(18.px)
+                                /// First Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.yellowContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                /// Second Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.grayContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                /// Third Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.grayContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                /// Fourth Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.grayContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                /// Fivth Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.grayContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                Div().clear(.both)
+                                
                             }
-                            .width(20.percent)
-                            .align(.center)
-                            .float(.left)
-                            
-                            /// Second Point
-                            Div{
-                                Div()
-                                    .backgroundColor(.grayContrast)
-                                    .borderRadius(all: 9.px)
-                                    .width(18.px)
-                                    .height(18.px)
-                            }
-                            .width(20.percent)
-                            .align(.center)
-                            .float(.left)
-                            
-                            /// Third Point
-                            Div{
-                                Div()
-                                    .backgroundColor(.grayContrast)
-                                    .borderRadius(all: 9.px)
-                                    .width(18.px)
-                                    .height(18.px)
-                            }
-                            .width(20.percent)
-                            .align(.center)
-                            .float(.left)
-                            
-                            /// Fourth Point
-                            Div{
-                                Div()
-                                    .backgroundColor(.grayContrast)
-                                    .borderRadius(all: 9.px)
-                                    .width(18.px)
-                                    .height(18.px)
-                            }
-                            .width(20.percent)
-                            .align(.center)
-                            .float(.left)
-                            
-                            /// Fivth Point
-                            Div{
-                                Div()
-                                    .backgroundColor(.grayContrast)
-                                    .borderRadius(all: 9.px)
-                                    .width(18.px)
-                                    .height(18.px)
-                            }
-                            .width(20.percent)
-                            .align(.center)
-                            .float(.left)
-                            
-                            Div().clear(.both)
-                            
                         }
-                    }
-                    .class(.oneHalf)
-                    .borderRight(width: .thin, style: .solid, color: .gray)
-                    
-                    Div{
+                        .class(.oneHalf)
+                        .borderRight(width: .thin, style: .solid, color: .gray)
                         
-                        Span("Encuestas Tecnico")
-                            .fontSize(16.px)
-                        Div().class(.clear).marginTop(7.px)
                         Div{
-                            /// First Point
-                            Div{
-                                Div()
-                                    .backgroundColor(.yellowContrast)
-                                    .borderRadius(all: 9.px)
-                                    .width(18.px)
-                                    .height(18.px)
-                            }
-                            .width(20.percent)
-                            .align(.center)
-                            .float(.left)
                             
-                            /// Second Point
+                            Span("Encuestas Tecnico")
+                                .fontSize(16.px)
+                            Div().class(.clear).marginTop(7.px)
                             Div{
-                                Div()
-                                    .backgroundColor(.grayContrast)
-                                    .borderRadius(all: 9.px)
-                                    .width(18.px)
-                                    .height(18.px)
+                                /// First Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.yellowContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                /// Second Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.grayContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                /// Third Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.grayContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                /// Fourth Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.grayContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                /// Fifth Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.grayContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                Div().clear(.both)
                             }
-                            .width(20.percent)
-                            .align(.center)
-                            .float(.left)
-                            
-                            /// Third Point
-                            Div{
-                                Div()
-                                    .backgroundColor(.grayContrast)
-                                    .borderRadius(all: 9.px)
-                                    .width(18.px)
-                                    .height(18.px)
-                            }
-                            .width(20.percent)
-                            .align(.center)
-                            .float(.left)
-                            
-                            /// Fourth Point
-                            Div{
-                                Div()
-                                    .backgroundColor(.grayContrast)
-                                    .borderRadius(all: 9.px)
-                                    .width(18.px)
-                                    .height(18.px)
-                            }
-                            .width(20.percent)
-                            .align(.center)
-                            .float(.left)
-                            
-                            /// Fifth Point
-                            Div{
-                                Div()
-                                    .backgroundColor(.grayContrast)
-                                    .borderRadius(all: 9.px)
-                                    .width(18.px)
-                                    .height(18.px)
-                            }
-                            .width(20.percent)
-                            .align(.center)
-                            .float(.left)
-                            
-                            Div().clear(.both)
                         }
+                        .class(.oneHalf)
+                        
+                        Div().clear(.both)
                     }
-                    .class(.oneHalf)
-                    
-                    Div().clear(.both)
                 }
-                
+
                 Div().class(.clear).marginTop(12.px)
                 
                 Div {
@@ -1547,7 +1551,7 @@ class OrderView: Div {
                         "&documentId=" + file
                         
                         _ = JSObject.global.goToURL!(url)
-                }
+                    }
                     
                     Div{
                         Span("-- No hay Carta de Servicio")
@@ -1561,6 +1565,7 @@ class OrderView: Div {
                 Div().class(.clear).marginTop(12.px)
                 
                 Div {
+
                     Img()
                         .float(.right)
                         .src("/skyline/media/zoom.png")
@@ -1569,21 +1574,23 @@ class OrderView: Div {
                         .padding(all: 3.px)
                     
                     H2("Direccion de servicio")
+                        .marginBottom(3.px)
                         .fontSize(24.px)
                         .marginTop(7.px)
-                        .marginBottom(3.px)
+
                 }
                 .cursor(.pointer)
-                .onClick { self.requierServiceAddress =  !self.requierServiceAddress }
+                .onClick { self.requierServiceAddress = !self.requierServiceAddress }
                 
                 Div().class(.clear)
                 
                 Div{
 
-                    self.mapContainer
-                    
-                    Div().class(.clear).marginBottom(7.px)
-                    
+                    if custCatchAccountType != .entrepreneur {
+                        self.mapContainer
+                        
+                        Div().class(.clear).marginBottom(7.px)
+                    }
                     /// street
                     Div {
                         
@@ -2207,10 +2214,6 @@ class OrderView: Div {
             }
         }
         
-        $pendingPickups.listen {
-            print($0)
-        }
-        
         WebApp.current.wsevent.listen {
             
             if $0.isEmpty { return }
@@ -2225,7 +2228,13 @@ class OrderView: Div {
             case .wsLocationUpdate:
                 if let payload = self.ws.locationUpdate($0) {
                     if payload.order == self.order.id {
-                        self.loadLocation(payload.lat, payload.lon)
+
+                        guard let lat = Double(payload.lat), let lon = Double(payload.lon) else {
+                            return
+                        }
+
+                        self.loadLocation(lat, lon)
+
                     }
                 }
             case .asyncFileUpload:
@@ -2260,7 +2269,7 @@ class OrderView: Div {
     override func didAddToDOM() {
         super.didAddToDOM()
         
-        if !lat.isEmpty && !lon.isEmpty {
+        if let lat, let lon {
             loadLocation(lat, lon)
         }
 
@@ -2591,12 +2600,6 @@ class OrderView: Div {
             }
             
         }
-
-        print("🟢  pocsRefrence")
-        print("🟢  pocsRefrence")
-
-        print(pocsRefrence)
-
         
         pocsRefrence.forEach { pocId, priceRefrence in
         
@@ -3006,9 +3009,9 @@ class OrderView: Div {
         country = order.country
         zip = order.zip
         
-        lat = order.lat
+        lat = Double(order.lat)
         
-        lon = order.lon
+        lon = Double(order.lon)
         
         contratc = order.contract
         
@@ -5249,9 +5252,8 @@ class OrderView: Div {
         xhr.send(formData)
         
     }
-    
 
-    func loadLocation(_ lat: String,_ lon: String){
+    func loadLocation(_ lat: Double,_ lon: Double){
 
             self.mapContainer.innerHTML = ""
             
@@ -5654,16 +5656,23 @@ class OrderView: Div {
                     return
                 }
 
-                API.custOrderV1.addLocation(
-                    latitude: latitude,
-                    longitude: longitude,
-                    orderId: self.order.id
-                ) { resp in
+                if self.lat != latitude || self.lon != longitude {
 
-                    print(resp )
+                    self.lat = latitude
+                    
+                    self.lon = longitude
+
+                    API.custOrderV1.addLocation(
+                        latitude: latitude,
+                        longitude: longitude,
+                        orderId: self.order.id
+                    ) { resp in
+
+                        print(resp )
+
+                    }
 
                 }
-                    
 
             }
             catch {
@@ -5686,11 +5695,11 @@ class OrderView: Div {
             
             print("🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  ")
             
-            self.lat = latitude.toString
+            self.lat = latitude
             
-            self.lon = longitude.toString
+            self.lon = longitude
 
-            self.loadLocation(latitude.toString, longitude.toString)
+            self.loadLocation(latitude, longitude)
             
         }
 
