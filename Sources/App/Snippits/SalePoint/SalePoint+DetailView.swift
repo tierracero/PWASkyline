@@ -1275,5 +1275,25 @@ extension SalePointView {
 
         }
 
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $newNote.removeAllListeners()
+            $custAcct.removeAllListeners()
+            $custSale.removeAllListeners()
+            $soldStore.removeAllListeners()
+            $soldAt.removeAllListeners()
+            $soldBy.removeAllListeners()
+            $totalCost.removeAllListeners()
+            $totalBalance.removeAllListeners()
+            $totalRevenue.removeAllListeners()
+            $totalCommision.removeAllListeners()
+            $totalPremier.removeAllListeners()
+            $fiscalDocument.removeAllListeners()
+            $fiscalDocumentDue.removeAllListeners()
+            $fiscalDocumentStatus.removeAllListeners()
+            $fiscalDocumentID.removeAllListeners()
+            $status.removeAllListeners()
+        }
     }
 }

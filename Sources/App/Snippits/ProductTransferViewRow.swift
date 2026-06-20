@@ -194,4 +194,12 @@ class ProductTransferViewRow: Div {
         super.didAddToDOM()
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $storeTargeting.removeAllListeners()
+        $storeTargetingName.removeAllListeners()
+        $statusName.removeAllListeners()
+        $statusState.removeAllListeners()
+    }
 }

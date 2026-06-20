@@ -436,4 +436,20 @@ class CreateNewFollowup: Div {
         
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $nextDateAt.removeAllListeners()
+        $currentUser.removeAllListeners()
+        $type.removeAllListeners()
+        $interest.removeAllListeners()
+        $comment.removeAllListeners()
+        $typeListener.removeAllListeners()
+        $interestListener.removeAllListeners()
+        $nextDateLabel.removeAllListeners()
+        $currentUserLabel.removeAllListeners()
+        $campaigns.removeAllListeners()
+        $campaignListener.removeAllListeners()
+        $campaign.removeAllListeners()
+    }
 }

@@ -149,5 +149,10 @@ class SearchCustomerView: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $term.removeAllListeners()
+    }
 }
 

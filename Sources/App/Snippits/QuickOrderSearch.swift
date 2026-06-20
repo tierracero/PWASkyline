@@ -164,4 +164,9 @@ class QuickOrderSearch: Div {
             
         }
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $searchFolioString.removeAllListeners()
+    }
 }

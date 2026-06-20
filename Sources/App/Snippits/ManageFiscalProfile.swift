@@ -637,6 +637,33 @@ class ManageFiscalProfile: Div {
     
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        $fiscid.removeAllListeners()
+        $packid.removeAllListeners()
+        $eMail.removeAllListeners()
+        $rfc.removeAllListeners()
+        $razon.removeAllListeners()
+        $sat_web_pass.removeAllListeners()
+        $nomComercial.removeAllListeners()
+        $regimenListener.removeAllListeners()
+        $zipCode.removeAllListeners()
+        $usoDeFactListener.removeAllListeners()
+        $tipoDePagoListener.removeAllListeners()
+        $methDePagoListener.removeAllListeners()
+        $tipoDeMonedaListener.removeAllListeners()
+        $fiscUnit.removeAllListeners()
+        $fiscCode.removeAllListeners()
+        $cerType.removeAllListeners()
+        $cerTypeListener.removeAllListeners()
+        $fielCer.removeAllListeners()
+        $fielKey.removeAllListeners()
+        $fielPass.removeAllListeners()
+        $themeListener.removeAllListeners()
+        $logo.removeAllListeners()
+        $serie.removeAllListeners()
+        $folio.removeAllListeners()
+        $logoUploadPercent.removeAllListeners()
+        $keyUploadPercent.removeAllListeners()
+        $cerUploadPercent.removeAllListeners()
     }
     
     func loadSelectionItems(){

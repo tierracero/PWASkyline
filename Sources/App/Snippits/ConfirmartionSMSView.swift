@@ -214,5 +214,10 @@ class ConfirmartionSMSView: Div {
             
         }
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $pin.removeAllListeners()
+    }
 }
 

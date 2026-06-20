@@ -219,5 +219,10 @@ extension ToolFiscal {
             
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $items.removeAllListeners()
+        }
     }
 }

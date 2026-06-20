@@ -106,6 +106,7 @@ class QuickMessageObject: Div {
     
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        $username.removeAllListeners()
         
     }
     

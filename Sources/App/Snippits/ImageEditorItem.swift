@@ -126,4 +126,10 @@ class ImageEditorItem: Div {
             }
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $url.removeAllListeners()
+        $loadPercent.removeAllListeners()
+    }
 }

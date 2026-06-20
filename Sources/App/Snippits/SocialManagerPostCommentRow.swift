@@ -557,5 +557,23 @@ class SocialManagerPostCommentRow: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $date.removeAllListeners()
+        $message.removeAllListeners()
+        $like.removeAllListeners()
+        $dislike.removeAllListeners()
+        $love.removeAllListeners()
+        $care.removeAllListeners()
+        $wow.removeAllListeners()
+        $haha.removeAllListeners()
+        $sorry.removeAllListeners()
+        $angry.removeAllListeners()
+        $other.removeAllListeners()
+        $comments.removeAllListeners()
+        $hasAttachment.removeAllListeners()
+        $newComment.removeAllListeners()
+    }
 }
 

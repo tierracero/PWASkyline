@@ -585,6 +585,16 @@ class StartRentalOrder: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $currentRentals.removeAllListeners()
+        $selectedDateStamp.removeAllListeners()
+        $selctedDate.removeAllListeners()
+        $balanceString.removeAllListeners()
+        $uts.removeAllListeners()
+        $highPriority.removeAllListeners()
+    }
 }
 
 extension StartRentalOrder {

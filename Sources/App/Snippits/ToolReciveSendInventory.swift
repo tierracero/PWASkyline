@@ -4047,6 +4047,47 @@ class ToolReciveSendInventory: Div {
         
     }
 
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $uploadPercent.removeAllListeners()
+        $vendorFolio.removeAllListeners()
+        $businessName.removeAllListeners()
+        $vendorRfc.removeAllListeners()
+        $vendorRazon.removeAllListeners()
+        $finaceContact.removeAllListeners()
+        $oporationContact.removeAllListeners()
+        $receptorRfc.removeAllListeners()
+        $receptorRazon.removeAllListeners()
+        $fiscalUse.removeAllListeners()
+        $paymentForm.removeAllListeners()
+        $docid.removeAllListeners()
+        $docuuid.removeAllListeners()
+        $docFolio.removeAllListeners()
+        $docSerie.removeAllListeners()
+        $total.removeAllListeners()
+        $internalCost.removeAllListeners()
+        $balance.removeAllListeners()
+        $officialDate.removeAllListeners()
+        $dueDate.removeAllListeners()
+        $hasProduct.removeAllListeners()
+        $itemsEmpty.removeAllListeners()
+        $items.removeAllListeners()
+        $docs.removeAllListeners()
+        $manualItems.removeAllListeners()
+        $controlStatus.removeAllListeners()
+        $captureDocuments.removeAllListeners()
+        $canAddTargets.removeAllListeners()
+        $recentXMLviewIsHidden.removeAllListeners()
+        $ingresoManual.removeAllListeners()
+        $custInventoryPurchaseManagerStatus.removeAllListeners()
+        $manualPurchaseManager.removeAllListeners()
+        $recentXMLviewFilterText.removeAllListeners()
+        $recentXMLviewFilterSearch.removeAllListeners()
+        $selectManualDocumentMenuViewIsHidden.removeAllListeners()
+        $totalUnits.removeAllListeners()
+        $downloadDocumentViewIsHidden.removeAllListeners()
+    }
 }
 
 extension ToolReciveSendInventory {

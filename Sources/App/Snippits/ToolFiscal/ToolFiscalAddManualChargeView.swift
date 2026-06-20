@@ -903,6 +903,31 @@ class ToolFiscalAddManualChargeView: Div {
     
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        $item.removeAllListeners()
+        $fiscCode.removeAllListeners()
+        $fiscUnit.removeAllListeners()
+        $code.removeAllListeners()
+        $name.removeAllListeners()
+        $unitsListener.removeAllListeners()
+        $units.removeAllListeners()
+        $unitsTextListener.removeAllListeners()
+        $costTextListener.removeAllListeners()
+        $costListener.removeAllListeners()
+        $cost.removeAllListeners()
+        $discountListener.removeAllListeners()
+        $discount.removeAllListeners()
+        $subTotal.removeAllListeners()
+        $taxTrasladados.removeAllListeners()
+        $taxRetenidos.removeAllListeners()
+        $total.removeAllListeners()
+        $retenidos.removeAllListeners()
+        $trasladados.removeAllListeners()
+        $nameTextListener.removeAllListeners()
+        $addNewTaxViewIsHidden.removeAllListeners()
+        $newRetentionTypeLister.removeAllListeners()
+        $newTaxTypeListener.removeAllListeners()
+        $newTaxFactorListener.removeAllListeners()
+        $newTaxTaza.removeAllListeners()
     }
     
     func addNewTax() {

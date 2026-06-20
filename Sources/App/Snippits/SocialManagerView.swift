@@ -14,6 +14,8 @@ import XMLHttpRequest
 class SocialManagerView: Div {
     
     override class var name: String { "div" }
+
+    let viewId: UUID = .init()
     
      /*
      socialLive,
@@ -869,6 +871,22 @@ class SocialManagerView: Div {
     
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        $currentView.removeAllListeners()
+        $currentLoadedMedia.removeAllListeners()
+        $uploadPercent.removeAllListeners()
+        $profile.removeAllListeners()
+        $pagesView.removeAllListeners()
+        $posts.removeAllListeners()
+        $hasLoadedMedia.removeAllListeners()
+        $imageIsLoaded.removeAllListeners()
+        $relativeHeight.removeAllListeners()
+        $relativeWidth.removeAllListeners()
+        $top.removeAllListeners()
+        $left.removeAllListeners()
+        $logoRelativeHeight.removeAllListeners()
+        $logoRelativeWidth.removeAllListeners()
+        $logoTop.removeAllListeners()
+        $logoLeft.removeAllListeners()
         
         print("didRemoveFromDOM good bye !!")
         
@@ -1150,9 +1168,11 @@ class SocialManagerView: Div {
         
         let formData = FormData()
         
+        formData.append("eventid", self.viewId.uuidString)
+
         formData.append("file", file, filename: file.name)
         
-        xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadMedia")
+        xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadManager")
         
         xhr.setRequestHeader("Accept", "application/json")
         

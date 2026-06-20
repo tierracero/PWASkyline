@@ -675,6 +675,18 @@ class EmailViewControler: Div {
         loadBox(box: box)
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $mode.removeAllListeners()
+        $profiles.removeAllListeners()
+        $currentUser.removeAllListeners()
+        $newEmails.removeAllListeners()
+        $totalEmails.removeAllListeners()
+        $currentBox.removeAllListeners()
+        $emailBoxRefecne.removeAllListeners()
+        $emailListRefrence.removeAllListeners()
+    }
 }
 
 extension EmailViewControler {

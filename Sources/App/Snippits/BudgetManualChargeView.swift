@@ -341,4 +341,13 @@ class BudgetManualChargeView: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $units.removeAllListeners()
+        $descr.removeAllListeners()
+        $price.removeAllListeners()
+        $cost.removeAllListeners()
+        $removeButtonIsHidden.removeAllListeners()
+    }
 }

@@ -445,6 +445,16 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             }
 
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $selectedSetting.removeAllListeners()
+            $jobPostIsLoaded.removeAllListeners()
+            $psicometicsIsLoaded.removeAllListeners()
+            $nominaIsLoaded.removeAllListeners()
+            $schedulesIsLoaded.removeAllListeners()
+            $rulesIsLoaded.removeAllListeners()
+        }
     }
 
 }

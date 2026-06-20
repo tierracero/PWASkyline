@@ -659,4 +659,18 @@ class SearchHistoricalPurchaseDetailedView: Div {
         
         addToDom(view)
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $poc.removeAllListeners()
+        $businessName.removeAllListeners()
+        $firstName.removeAllListeners()
+        $lastName.removeAllListeners()
+        $rfc.removeAllListeners()
+        $razon.removeAllListeners()
+        $email.removeAllListeners()
+        $fiscalPOCMobile.removeAllListeners()
+        $mobile.removeAllListeners()
+        $creditDays.removeAllListeners()
+    }
 }

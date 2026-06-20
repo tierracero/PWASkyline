@@ -664,5 +664,17 @@ extension OrderRouteView{
                 
             }
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $items.removeAllListeners()
+            $name.removeAllListeners()
+            $day.removeAllListeners()
+            $month.removeAllListeners()
+            $year.removeAllListeners()
+            $initialTime.removeAllListeners()
+            $endingTime.removeAllListeners()
+            $mapInitiated.removeAllListeners()
+        }
     }
 }

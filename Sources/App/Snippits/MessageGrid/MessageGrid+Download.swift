@@ -283,6 +283,12 @@ extension MessageGrid {
 
         }
 
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $currentView.removeAllListeners()
+            $selectableMesages.removeAllListeners()
+        }
     }
 }
 

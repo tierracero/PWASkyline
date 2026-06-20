@@ -1574,4 +1574,23 @@ class CustRemoveFromConcessionView: Div {
         }
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $items.removeAllListeners()
+        $comments.removeAllListeners()
+        $paymentForm.removeAllListeners()
+        $paymentFormListener.removeAllListeners()
+        $generalBankResultsIsHidden.removeAllListeners()
+        $providerFilter.removeAllListeners()
+        $provider.removeAllListeners()
+        $lastFour.removeAllListeners()
+        $auth.removeAllListeners()
+        $newBalance.removeAllListeners()
+        $currentBalance.removeAllListeners()
+        $profiles.removeAllListeners()
+        $profile.removeAllListeners()
+        $selectFiscalProfileIsHidden.removeAllListeners()
+        $grandTotal.removeAllListeners()
+    }
 }

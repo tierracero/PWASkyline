@@ -410,6 +410,24 @@ extension ProductManagerView{
                 
             }
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $targetLevel.removeAllListeners()
+            $depId.removeAllListeners()
+            $depName.removeAllListeners()
+            $cats.removeAllListeners()
+            $catId.removeAllListeners()
+            $catName.removeAllListeners()
+            $lines.removeAllListeners()
+            $lineId.removeAllListeners()
+            $lineName.removeAllListeners()
+            $depListener.removeAllListeners()
+            $selectCatIsHidden.removeAllListeners()
+            $catListener.removeAllListeners()
+            $selectLineIsHidden.removeAllListeners()
+            $lineListener.removeAllListeners()
+        }
     }
 }
 

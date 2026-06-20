@@ -878,6 +878,31 @@ class AddCartaPorteView: Div {
     
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        $cartaPorte.removeAllListeners()
+        $operadorType.removeAllListeners()
+        $operadorRfc.removeAllListeners()
+        $operadorLicens.removeAllListeners()
+        $vehicalWeight.removeAllListeners()
+        $vehicalLicensePlate.removeAllListeners()
+        $vehicalYearModel.removeAllListeners()
+        $permitType.removeAllListeners()
+        $permitNumber.removeAllListeners()
+        $hasDangerousMatirial.removeAllListeners()
+        $insuranceCivilProvider.removeAllListeners()
+        $insuranceCivilNumber.removeAllListeners()
+        $insuranceAmbinetProvider.removeAllListeners()
+        $insuranceAmbinetNumber.removeAllListeners()
+        $insurancePayloadProvider.removeAllListeners()
+        $insurancePayloadNumber.removeAllListeners()
+        $insuranceAmount.removeAllListeners()
+        $remolqueRequierd.removeAllListeners()
+        $tipoRemolqueA.removeAllListeners()
+        $plcacasRemolqueA.removeAllListeners()
+        $tipoRemolqueB.removeAllListeners()
+        $plcacasRemolqueB.removeAllListeners()
+        $remolqueView.removeAllListeners()
+        $locations.removeAllListeners()
+        $merchandise.removeAllListeners()
     }
     
     func loadCartaPorte(){

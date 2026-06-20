@@ -210,6 +210,12 @@ extension ProductManagerView {
             }
             
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $currentView.removeAllListeners()
+            $departmentSelectListener.removeAllListeners()
+        }
     }
 }
 

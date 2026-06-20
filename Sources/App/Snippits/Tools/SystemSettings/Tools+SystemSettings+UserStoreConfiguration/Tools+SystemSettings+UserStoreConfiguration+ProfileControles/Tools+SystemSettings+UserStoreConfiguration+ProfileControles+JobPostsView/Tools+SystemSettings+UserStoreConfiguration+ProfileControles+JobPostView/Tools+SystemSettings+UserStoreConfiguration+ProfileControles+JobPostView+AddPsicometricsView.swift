@@ -216,5 +216,11 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.JobPo
         }
 
     //
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $items.removeAllListeners()
+            $term.removeAllListeners()
+        }
     }
 }

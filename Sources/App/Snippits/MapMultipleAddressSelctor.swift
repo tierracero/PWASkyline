@@ -94,4 +94,9 @@ public class MapMultipleAddressSelector: Div {
         
         
     }
+
+    public override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $linkedLocations.removeAllListeners()
+    }
 }

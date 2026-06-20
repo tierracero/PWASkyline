@@ -334,5 +334,12 @@ extension BudgetView {
                 
             }
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $folio.removeAllListeners()
+            $budgetCost.removeAllListeners()
+            $balance.removeAllListeners()
+        }
     }
 }

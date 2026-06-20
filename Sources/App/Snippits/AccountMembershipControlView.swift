@@ -860,6 +860,22 @@ class AccountMembershipControlView: Div {
             self.remove()
         }
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $viewMode.removeAllListeners()
+        $selectedSoc.removeAllListeners()
+        $changePriceViewIsHidden.removeAllListeners()
+        $price.removeAllListeners()
+        $payCode.removeAllListeners()
+        $payDescription.removeAllListeners()
+        $payAmount.removeAllListeners()
+        $payProvider.removeAllListeners()
+        $payLastFour.removeAllListeners()
+        $payAuth.removeAllListeners()
+        $initialDate.removeAllListeners()
+        $finishedDate.removeAllListeners()
+    }
 }
 
 extension AccountMembershipControlView {

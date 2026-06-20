@@ -233,5 +233,12 @@ extension OrderView.EquipmentView {
             }
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $days.removeAllListeners()
+            $descr.removeAllListeners()
+            $reason.removeAllListeners()
+        }
     }
 }

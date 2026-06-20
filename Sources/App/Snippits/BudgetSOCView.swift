@@ -664,4 +664,23 @@ class BudgetSOCView: Div {
         self.remove()
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $searchTerm.removeAllListeners()
+        $name.removeAllListeners()
+        $amount.removeAllListeners()
+        $price.removeAllListeners()
+        $pricea.removeAllListeners()
+        $priceb.removeAllListeners()
+        $pricec.removeAllListeners()
+        $customePrice.removeAllListeners()
+        $addInternalCostIsHidden.removeAllListeners()
+        $costAmount.removeAllListeners()
+        $changePriceViewIsHidden.removeAllListeners()
+        $actionItems.removeAllListeners()
+        $actionItemsRefrence.removeAllListeners()
+        $chargeId.removeAllListeners()
+        $saleActions.removeAllListeners()
+    }
 }

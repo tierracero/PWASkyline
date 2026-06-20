@@ -1803,6 +1803,25 @@ class CustConcessionView: Div {
 
     }
 
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $sales.removeAllListeners()
+        $bodegas.removeAllListeners()
+        $hasAnyActiveElement.removeAllListeners()
+        $selectedItems.removeAllListeners()
+        $itemsRefrence.removeAllListeners()
+        $itemsPOCRefrence.removeAllListeners()
+        $totalItemCount.removeAllListeners()
+        $totalItemAmount.removeAllListeners()
+        $codeFilter.removeAllListeners()
+        $codeFilterListener.removeAllListeners()
+        $sideView.removeAllListeners()
+        $sideViewSelectIsHiden.removeAllListeners()
+        $inItems.removeAllListeners()
+        $outItems.removeAllListeners()
+        $mermItems.removeAllListeners()
+    }
 }
 
 extension CustConcessionView {

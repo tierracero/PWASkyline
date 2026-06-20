@@ -256,6 +256,11 @@ public class ConfirmationView: Div {
         self.remove()
     }
     
+
+    public override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $reason.removeAllListeners()
+    }
 }
 
 extension ConfirmationView {

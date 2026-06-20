@@ -738,6 +738,20 @@ extension ToolsView.WebPage {
         
 
 
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $darkLogo.removeAllListeners()
+            $darkTransLogo.removeAllListeners()
+            $lightLogo.removeAllListeners()
+            $lightTransLogo.removeAllListeners()
+            $iconLogo.removeAllListeners()
+            $darkLogos.removeAllListeners()
+            $darkTransLogos.removeAllListeners()
+            $lightLogos.removeAllListeners()
+            $lightTransLogos.removeAllListeners()
+            $iconLogos.removeAllListeners()
+        }
     }
 
 

@@ -970,6 +970,23 @@ class ProductManagerView: Div {
     
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        $department.removeAllListeners()
+        $departmentName.removeAllListeners()
+        $category.removeAllListeners()
+        $categoryName.removeAllListeners()
+        $line.removeAllListeners()
+        $lineName.removeAllListeners()
+        $levelView.removeAllListeners()
+        $categories.removeAllListeners()
+        $lines.removeAllListeners()
+        $depPOCs.removeAllListeners()
+        $catPOCs.removeAllListeners()
+        $linePOCs.removeAllListeners()
+        $title.removeAllListeners()
+        $backLink.removeAllListeners()
+        $productTranferMode.removeAllListeners()
+        $selectedProductIds.removeAllListeners()
+        $searchTerm.removeAllListeners()
     }
     
     func loadDeps(){

@@ -1626,4 +1626,36 @@ class StartServiceOrderEquipmentView: Div {
         self.remove()
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $equipment.removeAllListeners()
+        $selectEquipmentField.removeAllListeners()
+        $_idTag1.removeAllListeners()
+        $_idTag2.removeAllListeners()
+        $_tag1.removeAllListeners()
+        $_tag2.removeAllListeners()
+        $_tag3.removeAllListeners()
+        $_tag4.removeAllListeners()
+        $_tag5.removeAllListeners()
+        $_tag6.removeAllListeners()
+        $_descr.removeAllListeners()
+        $_checkTag1.removeAllListeners()
+        $_checkTag2.removeAllListeners()
+        $_checkTag3.removeAllListeners()
+        $_checkTag4.removeAllListeners()
+        $_checkTag5.removeAllListeners()
+        $_checkTag6.removeAllListeners()
+        $curOrderManagerBrand.removeAllListeners()
+        $curOrderManagerType.removeAllListeners()
+        $curOrderManagerModel.removeAllListeners()
+        $tag1PreSelctedItemID.removeAllListeners()
+        $tag1SelctedItemID.removeAllListeners()
+        $tag3isDisabeld.removeAllListeners()
+        $tag3PreSelctedItemID.removeAllListeners()
+        $tag3SelctedItemID.removeAllListeners()
+        $tag2isDisabeld.removeAllListeners()
+        $tag2PreSelctedItemID.removeAllListeners()
+        $tag2SelctedItemID.removeAllListeners()
+    }
 }

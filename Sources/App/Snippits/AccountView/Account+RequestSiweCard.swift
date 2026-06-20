@@ -803,6 +803,20 @@ extension AccountView {
             
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $accountId.removeAllListeners()
+            $mobile.removeAllListeners()
+            $orderCloseInscriptionMode.removeAllListeners()
+            $cardId.removeAllListeners()
+            $countriesListener.removeAllListeners()
+            $firstName.removeAllListeners()
+            $lastName.removeAllListeners()
+            $searchMobileViewIsHidden.removeAllListeners()
+            $results.removeAllListeners()
+            $searchMobileTerm.removeAllListeners()
+        }
     }
 }
 

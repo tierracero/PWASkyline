@@ -462,8 +462,6 @@ class PrintBarcodes: Div {
     
     func printTags() {
         
-        Console.clear()
-        
         if let printScript {
 
             loadingView(show: true)
@@ -564,4 +562,14 @@ class PrintBarcodes: Div {
 
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $printPrice.removeAllListeners()
+        $mode.removeAllListeners()
+        $modeListener.removeAllListeners()
+        $fontSize.removeAllListeners()
+        $printScript.removeAllListeners()
+        $singleProductUnits.removeAllListeners()
+    }
 }

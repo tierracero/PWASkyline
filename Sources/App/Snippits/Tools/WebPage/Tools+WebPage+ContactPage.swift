@@ -843,6 +843,22 @@ extension ToolsView.WebPage {
             addToDom(editor)
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $metaTitle.removeAllListeners()
+            $metaDescription.removeAllListeners()
+            $title.removeAllListeners()
+            $descr.removeAllListeners()
+            $mainText.removeAllListeners()
+            $subText.removeAllListeners()
+            $imgOne.removeAllListeners()
+            $imgTwo.removeAllListeners()
+            $imgThree.removeAllListeners()
+            $imageOne.removeAllListeners()
+            $imageTwo.removeAllListeners()
+            $imageThree.removeAllListeners()
+        }
     }
 }
 

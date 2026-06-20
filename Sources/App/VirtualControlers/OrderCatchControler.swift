@@ -548,6 +548,8 @@ public class OrderCatchControler {
                 .marginLeft(7.px)
                 .fontSize(22.px)
                 .float(.left)
+
+            Div().clear(.both)
              
          }
         //.width(207.px)
@@ -558,6 +560,17 @@ public class OrderCatchControler {
         }
 
         /*
+
+        https://tierracero.com/dev/skyline/api.php?token=1779772615UYe1mtw0fGfNMOKEUCmmBl1GytDbvX1C7IF6MC9gyIIsN0d3&user=vcantu01@tierracero.com&key=XBuHxkAYZHBUwnzysyXhu4pj8jY8cCVX3bwXqXv0dgg%3d&mid=%2boPlYEoYnKf8tbQ13pA8zQ%3d%3d&ie=createBudgetReport
+        &firstName=Victor
+        &lastName=Cantu
+        &mobile=3318000077
+        &type=print
+        &id=E11CCF3B-CACC-4147-B62F-8C17144C60C0
+        &pDir=kviU
+        &fullDetail=true
+        &deductedTaxes=false
+
         Div{
             
             Div(LoadOrderStatusType.general.description)
@@ -1950,7 +1963,7 @@ public class OrderCatchControler {
                             /// Show AccoutOverview
                             accoutOverview.display(.block)
                             
-                            accoutOverview.loadOrder(id: data.id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                            accoutOverview.loadOrder(id: data.id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                                 accoutOverview.loadOrder(
                                     account: account,
                                     order: order,
@@ -1959,6 +1972,7 @@ public class OrderCatchControler {
                                     charges: charges, 
                                     pocs: pocs,
                                     files: files,
+                                    contracts: contracts,
                                     equipments: equipments,
                                     rentals: rentals,
                                     transferOrder: transferOrder,
@@ -1978,7 +1992,7 @@ public class OrderCatchControler {
                     
                 }
                 
-                self.loadFolio(orderid: data.id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                self.loadFolio(orderid: data.id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                     let accoutOverview = AccoutOverview (
                         id: .id(order.custAcct)
                     )
@@ -1991,6 +2005,7 @@ public class OrderCatchControler {
                         charges: charges,
                         pocs: pocs,
                         files: files,
+                        contracts: contracts,
                         equipments: equipments, 
                         rentals: rentals,
                         transferOrder: transferOrder,
@@ -2035,6 +2050,7 @@ public class OrderCatchControler {
             _ charges: [CustOrderLoadFolioCharges],
             _ pocs: [CustPOCInventoryOrderView],
             _ files: [CustOrderLoadFolioFiles],
+            _ contracts: [CustPageContent],
             _ equipments: [CustOrderLoadFolioEquipments],
             _ rentals: [CustPOCRentalsMin],
             _ transferOrder: CustTranferManager?,
@@ -2073,7 +2089,7 @@ public class OrderCatchControler {
                     /// Show AccoutOverview
                     accoutOverview.display(.block)
                     
-                    accoutOverview.loadOrder(id: orderid) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, orderRoute, loadFromCatch in
+                    accoutOverview.loadOrder(id: orderid) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, orderRoute, loadFromCatch in
                         
                         accoutOverview.loadOrder(
                             account: account,
@@ -2083,6 +2099,7 @@ public class OrderCatchControler {
                             charges: charges,
                             pocs: pocs,
                             files: files,
+                            contracts: contracts,
                             equipments: equipments,
                             rentals: rentals,
                             transferOrder: transferOrder,
@@ -2113,6 +2130,7 @@ public class OrderCatchControler {
             let charges: [CustOrderLoadFolioCharges] = chargesCatch[orderid] ?? []
             let pocs: [CustPOCInventoryOrderView] = pocsCatch[orderid] ?? []
             let files: [CustOrderLoadFolioFiles] = filesCatch[orderid] ?? []
+            let contracts: [CustPageContent] = contractsCatch[orderid] ?? []
             let equipments: [CustOrderLoadFolioEquipments] = equipmentsCatch[orderid] ?? []
             let rentals: [CustPOCRentalsMin] = rentalsCatch[orderid] ?? []
             let orderHighPriorityNote: [HighPriorityNote] = orderHighPriorityNoteCatch[orderid] ?? []
@@ -2129,6 +2147,7 @@ public class OrderCatchControler {
                 charges,
                 pocs,
                 files,
+                contracts,
                 equipments,
                 rentals,
                 transferOrder,
@@ -2176,6 +2195,7 @@ public class OrderCatchControler {
                     chargesCatch[orderid] = loadOrderResponse.charges
                     pocsCatch[orderid] = loadOrderResponse.pocs
                     filesCatch[orderid] = loadOrderResponse.files
+                    contractsCatch[orderid] = loadOrderResponse.contracts
                     equipmentsCatch[orderid] = loadOrderResponse.equipments
                     rentalsCatch[orderid] = loadOrderResponse.rentals
                     orderHighPriorityNoteCatch[orderid] = loadOrderResponse.orderHighPriorityNote
@@ -2196,6 +2216,7 @@ public class OrderCatchControler {
                         loadOrderResponse.charges,
                         loadOrderResponse.pocs,
                         loadOrderResponse.files,
+                        loadOrderResponse.contracts,
                         loadOrderResponse.equipments,
                         loadOrderResponse.rentals,
                         loadOrderResponse.transferOrder,
@@ -2647,4 +2668,3 @@ extension OrderCatchControler {
     }
     
 }
-

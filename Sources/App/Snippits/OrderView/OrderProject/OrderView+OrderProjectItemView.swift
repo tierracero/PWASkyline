@@ -211,5 +211,14 @@ extension OrderView {
             
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $initiatedAt.removeAllListeners()
+            $finalizedAt.removeAllListeners()
+            $status.removeAllListeners()
+            $objects.removeAllListeners()
+            $workedBy.removeAllListeners()
+        }
     }
 }

@@ -13,6 +13,8 @@ import Web
 
 class CreateStoreLevelLine: Div {
     
+    let viewId: UUID = .init()
+
     override class var name: String { "div" }
     
     let line: CustStoreLinesAPI?
@@ -484,7 +486,7 @@ class CreateStoreLevelLine: Div {
         
         let fileName = safeFileName(name: file.name, to: .lineAvatar, folio: nil)
         
-        formData.append("event", UUID().uuidString)
+        formData.append("eventid", self.viewId.uuidString)
         
         formData.append("to", ImagePickerTo.lineAvatar.rawValue)
         
@@ -496,7 +498,7 @@ class CreateStoreLevelLine: Div {
 
         formData.append("file", file, filename: fileName)
         
-        xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadMedia")
+        xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
         
         xhr.setRequestHeader("Accept", "application/json")
         
@@ -524,6 +526,13 @@ class CreateStoreLevelLine: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $uploadPercent.removeAllListeners()
+        $name.removeAllListeners()
+        $descr.removeAllListeners()
+    }
 }
 
 

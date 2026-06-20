@@ -581,5 +581,18 @@ extension MoneyManagerView.FinancialServicesView {
                 
             }
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $user.removeAllListeners()
+            $financialTitle.removeAllListeners()
+            $amount.removeAllListeners()
+            $vendor.removeAllListeners()
+            $reciptType.removeAllListeners()
+            $reciptTypeListener.removeAllListeners()
+            $reciptFolio.removeAllListeners()
+            $reciptId.removeAllListeners()
+            $reciptImage.removeAllListeners()
+        }
     }
 }

@@ -1372,6 +1372,20 @@ extension ToolsView.HistorySettings.OrderProcessing {
         }
         
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $data.removeAllListeners()
+            $reportType.removeAllListeners()
+            $reportTypeListener.removeAllListeners()
+            $storeSelectListener.removeAllListeners()
+            $userSelectListener.removeAllListeners()
+            $dateSelectListener.removeAllListeners()
+            $startAt.removeAllListeners()
+            $endAt.removeAllListeners()
+            $startAtLabel.removeAllListeners()
+            $endAtLabel.removeAllListeners()
+        }
     }
 }
 extension ToolsView.HistorySettings.OrderProcessing.Reports {

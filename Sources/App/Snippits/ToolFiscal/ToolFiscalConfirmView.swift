@@ -479,6 +479,8 @@ class ToolFiscalConfirmView: Div {
     
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        $viewName.removeAllListeners()
+        $buttonName.removeAllListeners()
     }
     
 }

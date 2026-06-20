@@ -83,5 +83,13 @@ class OrderImageView: Div {
             self.callback(self.id, self.name)
         }
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $id.removeAllListeners()
+        $name.removeAllListeners()
+        $url.removeAllListeners()
+        $loadPercent.removeAllListeners()
+    }
 }
 

@@ -869,6 +869,23 @@ class SearchVendorView: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $id.removeAllListeners()
+        $term.removeAllListeners()
+        $results.removeAllListeners()
+        $createAccountViewIsHidden.removeAllListeners()
+        $businessName.removeAllListeners()
+        $firstName.removeAllListeners()
+        $lastName.removeAllListeners()
+        $rfc.removeAllListeners()
+        $razon.removeAllListeners()
+        $email.removeAllListeners()
+        $fiscalPOCMobile.removeAllListeners()
+        $mobile.removeAllListeners()
+        $creditDays.removeAllListeners()
+    }
 }
 
 extension SearchVendorView {

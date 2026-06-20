@@ -345,4 +345,17 @@ class ServiceAccionItemElementView: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $element.removeAllListeners()
+        $type.removeAllListeners()
+        $typeListener.removeAllListeners()
+        $title.removeAllListeners()
+        $help.removeAllListeners()
+        $placeholder.removeAllListeners()
+        $options.removeAllListeners()
+        $isRequired.removeAllListeners()
+        $customerMessage.removeAllListeners()
+    }
 }

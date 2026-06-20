@@ -266,4 +266,9 @@ class POCAddStorageView: Div {
         }
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $newInventory.removeAllListeners()
+    }
 }

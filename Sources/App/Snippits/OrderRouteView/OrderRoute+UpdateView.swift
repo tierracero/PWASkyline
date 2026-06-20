@@ -769,6 +769,21 @@ extension OrderRouteView {
                 
             }
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $route.removeAllListeners()
+            $routeItems.removeAllListeners()
+            $orders.removeAllListeners()
+            $items.removeAllListeners()
+            $name.removeAllListeners()
+            $day.removeAllListeners()
+            $month.removeAllListeners()
+            $year.removeAllListeners()
+            $initialTime.removeAllListeners()
+            $endingTime.removeAllListeners()
+            $mapInitiated.removeAllListeners()
+        }
     }
 }
 extension OrderRouteView.UpdateView {

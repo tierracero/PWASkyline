@@ -101,4 +101,9 @@ class ServiceAccionRow: Div {
         super.didAddToDOM()
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $name.removeAllListeners()
+    }
 }

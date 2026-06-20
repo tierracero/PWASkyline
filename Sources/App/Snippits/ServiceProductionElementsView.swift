@@ -233,4 +233,11 @@ class ServiceProductionElementsView: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $currentItem.removeAllListeners()
+        $actions.removeAllListeners()
+        $term.removeAllListeners()
+    }
 }

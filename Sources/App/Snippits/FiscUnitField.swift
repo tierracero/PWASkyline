@@ -373,4 +373,11 @@ class FiscUnitField: Div {
             }).margin(all: 0.px)
         )
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $textFieldStyle.removeAllListeners()
+        $fiscUnitDescription.removeAllListeners()
+        $fiscUnitIsSelected.removeAllListeners()
+    }
 }

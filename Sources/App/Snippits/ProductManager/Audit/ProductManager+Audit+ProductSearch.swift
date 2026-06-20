@@ -229,5 +229,11 @@ extension ProductManagerView.AuditView {
             
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $searchTerm.removeAllListeners()
+            $currentIds.removeAllListeners()
+        }
     }
 }

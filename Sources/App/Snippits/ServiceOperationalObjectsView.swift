@@ -274,4 +274,11 @@ class ServiceOperationalObjectsView: Div {
         }
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $currentIds.removeAllListeners()
+        $actions.removeAllListeners()
+        $term.removeAllListeners()
+    }
 }

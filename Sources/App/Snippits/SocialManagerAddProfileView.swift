@@ -259,6 +259,7 @@ class SocialManagerAddProfileView: Div {
     override func didRemoveFromDOM() {
         
         super.didRemoveFromDOM()
+        $type.removeAllListeners()
         
         print("🟠 didRemoveFromDOM  🟠")
         

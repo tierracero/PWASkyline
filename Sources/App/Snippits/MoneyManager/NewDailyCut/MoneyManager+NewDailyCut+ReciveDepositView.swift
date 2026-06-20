@@ -393,5 +393,14 @@ extension MoneyManagerView.NewDailyCutView {
                 })
             }
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $storename.removeAllListeners()
+            $balance.removeAllListeners()
+            $actionTitle.removeAllListeners()
+            $remainsInBox.removeAllListeners()
+            $missingInBox.removeAllListeners()
+        }
     }
 }

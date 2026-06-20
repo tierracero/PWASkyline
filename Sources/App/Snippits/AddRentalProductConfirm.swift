@@ -432,4 +432,10 @@ class AddRentalProductConfirm: Div {
         self.remove()
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $descr.removeAllListeners()
+        $selecteItem.removeAllListeners()
+    }
 }

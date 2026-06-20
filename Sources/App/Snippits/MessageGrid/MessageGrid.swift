@@ -887,8 +887,7 @@ class MessageGrid: Div {
         
         formData.append("remoteCamera", false.description)
         
-        // xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadMedia")
-        xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadManager")
+        xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
         
         xhr.setRequestHeader("Accept", "application/json")
         
@@ -913,5 +912,14 @@ class MessageGrid: Div {
         
         xhr.send(formData)
         
+    }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $viewMessage.removeAllListeners()
+        $message.removeAllListeners()
+        $buttonTitle.removeAllListeners()
+        $inputClass.removeAllListeners()
+        $isPopup.removeAllListeners()
     }
 }

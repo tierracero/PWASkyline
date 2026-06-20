@@ -237,4 +237,9 @@ class CustTaskAuthRequestWaitView: Div {
         super.didAddToDOM()
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $responseText.removeAllListeners()
+    }
 }

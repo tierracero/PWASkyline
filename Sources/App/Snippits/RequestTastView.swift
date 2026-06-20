@@ -490,4 +490,19 @@ class RequestTastView: Div {
         }
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $type.removeAllListeners()
+        $relationId.removeAllListeners()
+        $relationFolio.removeAllListeners()
+        $relationName.removeAllListeners()
+        $userId.removeAllListeners()
+        $userName.removeAllListeners()
+        $typeListener.removeAllListeners()
+        $selecTypeTitle.removeAllListeners()
+        $reason.removeAllListeners()
+        $selecTypeButton.removeAllListeners()
+        $selectImportanceListener.removeAllListeners()
+    }
 }

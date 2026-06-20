@@ -66,6 +66,11 @@ extension ToolsView {
             top(0.px)
             
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $departmentSelectListener.removeAllListeners()
+        }
     }
     
 }

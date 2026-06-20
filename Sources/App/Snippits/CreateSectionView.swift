@@ -289,4 +289,10 @@ class CreateSectionView: Div {
         }
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $sectionName.removeAllListeners()
+        $sectionDescription.removeAllListeners()
+    }
 }

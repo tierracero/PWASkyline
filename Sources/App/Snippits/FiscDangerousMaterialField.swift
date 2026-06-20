@@ -380,4 +380,11 @@ class FiscDangerousMaterialField: Div {
         )
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $textFieldStyle.removeAllListeners()
+        $fiscCodeDescription.removeAllListeners()
+        $fiscCodeIsSelected.removeAllListeners()
+    }
 }

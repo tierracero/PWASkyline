@@ -641,6 +641,14 @@ extension MoneyManagerView.AuditView {
         
         
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $validations.removeAllListeners()
+            $payment.removeAllListeners()
+            $moneyManager.removeAllListeners()
+            $financials.removeAllListeners()
+        }
     }
     
     

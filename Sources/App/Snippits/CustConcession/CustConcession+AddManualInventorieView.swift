@@ -925,6 +925,38 @@ extension CustConcessionView {
                 })
             )
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $bodegas.removeAllListeners()
+            $vendorFolio.removeAllListeners()
+            $businessName.removeAllListeners()
+            $vendorRfc.removeAllListeners()
+            $vendorRazon.removeAllListeners()
+            $finaceContact.removeAllListeners()
+            $oporationContact.removeAllListeners()
+            $receptorRfc.removeAllListeners()
+            $receptorRazon.removeAllListeners()
+            $fiscalUse.removeAllListeners()
+            $paymentForm.removeAllListeners()
+            $docid.removeAllListeners()
+            $docuuid.removeAllListeners()
+            $docFolio.removeAllListeners()
+            $docSerie.removeAllListeners()
+            $total.removeAllListeners()
+            $internalCost.removeAllListeners()
+            $balance.removeAllListeners()
+            $officialDate.removeAllListeners()
+            $dueDate.removeAllListeners()
+            $totalUnits.removeAllListeners()
+            $balanceString.removeAllListeners()
+            $kart.removeAllListeners()
+            $searchTerm.removeAllListeners()
+            $bodegaListener.removeAllListeners()
+            $sectionListener.removeAllListeners()
+            $kartItems.removeAllListeners()
+            $orcScript.removeAllListeners()
+        }
     }
 }
 extension CustConcessionView {

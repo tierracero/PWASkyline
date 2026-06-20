@@ -196,4 +196,9 @@ public class ConfirmView: Div {
         }
         
     }
+
+    public override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $comment.removeAllListeners()
+    }
 }

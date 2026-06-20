@@ -277,6 +277,14 @@ class ToolFiscalQuickAccountEdit: Div {
     
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        $accountid.removeAllListeners()
+        $razon.removeAllListeners()
+        $rfc.removeAllListeners()
+        $zipCpde.removeAllListeners()
+        $regimen.removeAllListeners()
+        $email.removeAllListeners()
+        $mobile.removeAllListeners()
+        $reciverRegimen.removeAllListeners()
     }
     
     func saveChanges(){

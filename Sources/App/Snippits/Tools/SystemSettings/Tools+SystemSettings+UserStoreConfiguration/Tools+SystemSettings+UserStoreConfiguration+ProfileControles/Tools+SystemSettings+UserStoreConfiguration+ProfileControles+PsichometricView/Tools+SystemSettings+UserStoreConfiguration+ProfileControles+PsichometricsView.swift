@@ -183,5 +183,11 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
             }
         }
 
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $items.removeAllListeners()
+            $selectedId.removeAllListeners()
+        }
     }
 }

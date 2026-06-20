@@ -1721,5 +1721,33 @@ extension OrderView {
             
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $editMode.removeAllListeners()
+            $isDisabled.removeAllListeners()
+            $isReadyDisabled.removeAllListeners()
+            $pendingPickupDisabled.removeAllListeners()
+            $descriptionIsHidden.removeAllListeners()
+            $selectEquipmentField.removeAllListeners()
+            $_idTag1.removeAllListeners()
+            $_idTag2.removeAllListeners()
+            $_tag1.removeAllListeners()
+            $_tag2.removeAllListeners()
+            $_tag3.removeAllListeners()
+            $_tag4.removeAllListeners()
+            $_tag5.removeAllListeners()
+            $_tag6.removeAllListeners()
+            $_descr.removeAllListeners()
+            $_checkTag1.removeAllListeners()
+            $_checkTag2.removeAllListeners()
+            $_checkTag3.removeAllListeners()
+            $_checkTag4.removeAllListeners()
+            $_checkTag5.removeAllListeners()
+            $_checkTag6.removeAllListeners()
+            $diagnostic.removeAllListeners()
+            $resolution.removeAllListeners()
+            $equipmentStatus.removeAllListeners()
+        }
     }
 }

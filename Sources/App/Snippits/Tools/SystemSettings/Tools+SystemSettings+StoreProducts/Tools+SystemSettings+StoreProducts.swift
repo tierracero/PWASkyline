@@ -381,5 +381,16 @@ extension ToolsView.SystemSettings {
                 
             }
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $defaultCurrencie.removeAllListeners()
+            $tagOne.removeAllListeners()
+            $tagTwo.removeAllListeners()
+            $tagThree.removeAllListeners()
+            $defaultWarentySelf.removeAllListeners()
+            $defaultWarentyProvider.removeAllListeners()
+            $inventorieZeroSale.removeAllListeners()
+        }
     }
 }

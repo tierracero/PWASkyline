@@ -381,5 +381,15 @@ extension ToolsView {
             
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $priceaSugestion.removeAllListeners()
+            $pricebSugestion.removeAllListeners()
+            $pricecSugestion.removeAllListeners()
+            $priceaPercent.removeAllListeners()
+            $pricebPercent.removeAllListeners()
+            $pricecPercent.removeAllListeners()
+        }
     }
 }

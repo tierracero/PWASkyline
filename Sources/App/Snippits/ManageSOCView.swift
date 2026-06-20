@@ -2433,7 +2433,7 @@ class ManageSOCView: Div {
             formData.append("socid", id)
         }
         
-        xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadMedia")
+        xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
         
         xhr.setRequestHeader("Accept", "application/json")
         
@@ -2922,6 +2922,59 @@ class ManageSOCView: Div {
         }
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $socid.removeAllListeners()
+        $thisCodeLevelListener.removeAllListeners()
+        $thisCodeLevel.removeAllListeners()
+        $relationCodeLevel.removeAllListeners()
+        $viewMode.removeAllListeners()
+        $notes.removeAllListeners()
+        $files.removeAllListeners()
+        $relatedCodes.removeAllListeners()
+        $autoExpireAt.removeAllListeners()
+        $socCodeTypeListener.removeAllListeners()
+        $efect.removeAllListeners()
+        $saleAction.removeAllListeners()
+        $operationalObject.removeAllListeners()
+        $serviceAction.removeAllListeners()
+        $documents.removeAllListeners()
+        $name.removeAllListeners()
+        $code.removeAllListeners()
+        $smallDescription.removeAllListeners()
+        $descr.removeAllListeners()
+        $productionTime.removeAllListeners()
+        $productionCost.removeAllListeners()
+        $cost.removeAllListeners()
+        $pricea.removeAllListeners()
+        $priceb.removeAllListeners()
+        $pricec.removeAllListeners()
+        $pricep.removeAllListeners()
+        $inPromo.removeAllListeners()
+        $comisionBy.removeAllListeners()
+        $comisionAmount.removeAllListeners()
+        $createOds.removeAllListeners()
+        $createOdsValues.removeAllListeners()
+        $accessCodes.removeAllListeners()
+        $icon.removeAllListeners()
+        $avatar.removeAllListeners()
+        $level.removeAllListeners()
+        $insumos.removeAllListeners()
+        $status.removeAllListeners()
+        $editImage.removeAllListeners()
+        $avatarUrl.removeAllListeners()
+        $selectedAvatar.removeAllListeners()
+        $autoCalcCost.removeAllListeners()
+        $totalTaxes.removeAllListeners()
+        $costTaxText.removeAllListeners()
+        $priceaTaxText.removeAllListeners()
+        $pricebTaxText.removeAllListeners()
+        $pricecTaxText.removeAllListeners()
+        $pricepTaxText.removeAllListeners()
+        $noteText.removeAllListeners()
+        $taxes.removeAllListeners()
+    }
 }
 
 extension ManageSOCView {

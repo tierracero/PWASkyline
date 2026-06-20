@@ -180,4 +180,10 @@ class POCInventoryControlView: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $controlViewIsHidden.removeAllListeners()
+        $bodegaid.removeAllListeners()
+    }
 }

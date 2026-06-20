@@ -82,6 +82,12 @@ class NewMailAttachment: Div {
     }
     
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $loadPercent.removeAllListeners()
+        $isuploaded.removeAllListeners()
+    }
 }
 
 

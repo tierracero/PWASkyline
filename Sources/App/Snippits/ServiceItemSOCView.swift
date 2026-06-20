@@ -117,6 +117,8 @@ class ServiceItemSOCView: Div {
     
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        $name.removeAllListeners()
+        $price.removeAllListeners()
     }
     
 }

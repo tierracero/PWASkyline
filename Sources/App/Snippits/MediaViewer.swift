@@ -420,6 +420,11 @@ class MediaViewer: Div {
         }
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $currentType.removeAllListeners()
+    }
 }
 
 extension MediaViewer {

@@ -491,6 +491,18 @@ class AddCartaPorteMerchendise: Div {
     
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        $descr.removeAllListeners()
+        $units.removeAllListeners()
+        $kilograms.removeAllListeners()
+        $isDangerousMaterial.removeAllListeners()
+        $isDangerousDisabled.removeAllListeners()
+        $isDangerousToggleHidden.removeAllListeners()
+        $isDangerousIsHidden.removeAllListeners()
+        $dangerousMaterialCode.removeAllListeners()
+        $packagingType.removeAllListeners()
+        $from.removeAllListeners()
+        $to.removeAllListeners()
+        $toId.removeAllListeners()
         
     }
     

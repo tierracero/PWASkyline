@@ -615,4 +615,21 @@ class SelectCalendarDate: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $selectedDateStamp.removeAllListeners()
+        $currentMonthName.removeAllListeners()
+        $realMonth.removeAllListeners()
+        $realYear.removeAllListeners()
+        $realDay.removeAllListeners()
+        $selectedDay.removeAllListeners()
+        $selectedMonth.removeAllListeners()
+        $selectedYear.removeAllListeners()
+        $day.removeAllListeners()
+        $year.removeAllListeners()
+        $yearName.removeAllListeners()
+        $hour.removeAllListeners()
+        $highPriority.removeAllListeners()
+    }
 }

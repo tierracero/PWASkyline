@@ -777,6 +777,25 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
             }
         }
 
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $id.removeAllListeners()
+            $createdAt.removeAllListeners()
+            $modifiedAt.removeAllListeners()
+            $type.removeAllListeners()
+            $level.removeAllListeners()
+            $name.removeAllListeners()
+            $descr.removeAllListeners()
+            $instruction.removeAllListeners()
+            $content.removeAllListeners()
+            $jobRole.removeAllListeners()
+            $jobRoles.removeAllListeners()
+            $questions.removeAllListeners()
+            $typeListener.removeAllListeners()
+            $levelListener.removeAllListeners()
+            $jobRoleIdListener.removeAllListeners()
+        }
     }
 
     enum PsichometricViewCallbackType {

@@ -125,4 +125,9 @@ class FiscalDocumentRowView: Div {
         
     }
 
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $searching.removeAllListeners()
+    }
 }

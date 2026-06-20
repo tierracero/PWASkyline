@@ -130,5 +130,10 @@ extension ToolsView.SystemSettings.SeviceOrder {
             
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $newItems.removeAllListeners()
+        }
     }
 }

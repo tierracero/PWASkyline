@@ -143,4 +143,9 @@ class EmailBoxView: Div {
         super.didAddToDOM()
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $count.removeAllListeners()
+    }
 }

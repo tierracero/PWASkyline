@@ -134,4 +134,9 @@ class AddTagView: Div {
         termField.select()
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $term.removeAllListeners()
+    }
 }

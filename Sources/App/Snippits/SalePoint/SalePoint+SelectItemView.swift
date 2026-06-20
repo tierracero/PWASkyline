@@ -134,5 +134,10 @@ extension SalePointView {
             top(0.px)
                         
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $items.removeAllListeners()
+        }
     }
 }

@@ -331,4 +331,12 @@ class SocialManagerConfirmView: Div {
             
         }
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $caption.removeAllListeners()
+        $link.removeAllListeners()
+        $uts.removeAllListeners()
+        $resultViewIsHidden.removeAllListeners()
+    }
 }

@@ -186,6 +186,12 @@ class ViewHighPriorityNote: Div {
         ))
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $username.removeAllListeners()
+        $isHighPriority.removeAllListeners()
+    }
 }
 
 /// order, account, general

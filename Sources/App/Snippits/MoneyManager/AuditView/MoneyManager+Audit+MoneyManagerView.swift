@@ -792,5 +792,18 @@ extension MoneyManagerView.AuditView {
             _ = JSObject.global.renderGeneralPrint!(custCatchUrl, self.item.folio, printBody)
             
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $validations.removeAllListeners()
+            $validationsBalance.removeAllListeners()
+            $payment.removeAllListeners()
+            $paymentBalance.removeAllListeners()
+            $moneyManager.removeAllListeners()
+            $financials.removeAllListeners()
+            $financialsBalance.removeAllListeners()
+            $createdBy.removeAllListeners()
+            $targetUser.removeAllListeners()
+        }
     }
 }

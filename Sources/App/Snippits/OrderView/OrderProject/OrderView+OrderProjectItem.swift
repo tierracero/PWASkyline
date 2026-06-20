@@ -280,5 +280,14 @@ extension OrderView {
             self.remove()
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $estimatedTime.removeAllListeners()
+            $workedBy.removeAllListeners()
+            $name.removeAllListeners()
+            $descr.removeAllListeners()
+            $objects.removeAllListeners()
+        }
     }
 }

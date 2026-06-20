@@ -302,4 +302,18 @@ class SocialManagerPostRow: Div {
         comments = post.comments.toString
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $like.removeAllListeners()
+        $dislike.removeAllListeners()
+        $love.removeAllListeners()
+        $care.removeAllListeners()
+        $wow.removeAllListeners()
+        $haha.removeAllListeners()
+        $sorry.removeAllListeners()
+        $angry.removeAllListeners()
+        $other.removeAllListeners()
+        $comments.removeAllListeners()
+    }
 }

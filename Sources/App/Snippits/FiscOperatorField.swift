@@ -185,6 +185,12 @@ class FiscOperatorField: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $term.removeAllListeners()
+        $fiscUnitIsSelected.removeAllListeners()
+    }
 }
 
 

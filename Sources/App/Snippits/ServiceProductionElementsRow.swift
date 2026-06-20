@@ -90,4 +90,9 @@ class ServiceProductionElementsRow: Div {
     override func didAddToDOM() {
         super.didAddToDOM()
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $name.removeAllListeners()
+    }
 }

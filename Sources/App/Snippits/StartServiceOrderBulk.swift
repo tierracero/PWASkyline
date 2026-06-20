@@ -514,6 +514,15 @@ class StartServiceOrderBulk: Div {
         addToDom(view)
     
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $loadPercent.removeAllListeners()
+        $status.removeAllListeners()
+        $mediaid.removeAllListeners()
+        $isCompleted.removeAllListeners()
+        $items.removeAllListeners()
+    }
 }
 
 class SeviceOrderBulkResults: Div {
@@ -674,6 +683,12 @@ class SeviceOrderBulkResults: Div {
         top(0.px)
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $orders.removeAllListeners()
+        $errors.removeAllListeners()
+    }
 }
 
 class SeviceOrderBulkItem: Div {
@@ -1208,4 +1223,32 @@ class SeviceOrderBulkItem: Div {
         return value.description
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $brand.removeAllListeners()
+        $city.removeAllListeners()
+        $colony.removeAllListeners()
+        $country.removeAllListeners()
+        $itemDescription.removeAllListeners()
+        $email.removeAllListeners()
+        $firstName.removeAllListeners()
+        $idOne.removeAllListeners()
+        $idTwo.removeAllListeners()
+        $lastName.removeAllListeners()
+        $latitude.removeAllListeners()
+        $longitud.removeAllListeners()
+        $mobile.removeAllListeners()
+        $model.removeAllListeners()
+        $posibleConflict.removeAllListeners()
+        $secondLastName.removeAllListeners()
+        $secondName.removeAllListeners()
+        $serie.removeAllListeners()
+        $state.removeAllListeners()
+        $street.removeAllListeners()
+        $telephone.removeAllListeners()
+        $type.removeAllListeners()
+        $zip.removeAllListeners()
+        $workedBy.removeAllListeners()
+    }
 }

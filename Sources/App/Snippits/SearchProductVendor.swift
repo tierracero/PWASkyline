@@ -201,4 +201,9 @@ public class SearchProductVendor: Div {
         }
     }
     
+
+    public override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $name.removeAllListeners()
+    }
 }

@@ -322,5 +322,12 @@ extension AddPaymentFormView {
                 
             })
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $currentBalance.removeAllListeners()
+            $payment.removeAllListeners()
+            $newBalance.removeAllListeners()
+        }
     }
 }

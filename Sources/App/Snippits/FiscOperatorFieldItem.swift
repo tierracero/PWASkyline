@@ -167,4 +167,12 @@ class FiscOperatorFieldItem: Div {
     }
     
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $name.removeAllListeners()
+        $licence.removeAllListeners()
+        $rfc.removeAllListeners()
+        $expireAt.removeAllListeners()
+    }
 }

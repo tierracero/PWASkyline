@@ -1793,5 +1793,43 @@ class AdvancesSearchViewControler: Div {
             
         }
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $searchTerm.removeAllListeners()
+        $orders.removeAllListeners()
+        $accounts.removeAllListeners()
+        $bizData.removeAllListeners()
+        $firstName.removeAllListeners()
+        $lastName.removeAllListeners()
+        $commMeth.removeAllListeners()
+        $street.removeAllListeners()
+        $colonie.removeAllListeners()
+        $city.removeAllListeners()
+        $tag1.removeAllListeners()
+        $tag2.removeAllListeners()
+        $tag3.removeAllListeners()
+        $tag4.removeAllListeners()
+        $tag5.removeAllListeners()
+        $tag6.removeAllListeners()
+        $descr.removeAllListeners()
+        $selectEquipmentField.removeAllListeners()
+        $curOrderManagerBrand.removeAllListeners()
+        $curOrderManagerType.removeAllListeners()
+        $curOrderManagerModel.removeAllListeners()
+        $tag1PreSelctedItemID.removeAllListeners()
+        $tag1SelctedItemID.removeAllListeners()
+        $tag3isDisabeld.removeAllListeners()
+        $tag3PreSelctedItemID.removeAllListeners()
+        $tag3SelctedItemID.removeAllListeners()
+        $tag2isDisabeld.removeAllListeners()
+        $tag2PreSelctedItemID.removeAllListeners()
+        $tag2SelctedItemID.removeAllListeners()
+        $dateSelectListener.removeAllListeners()
+        $startAt.removeAllListeners()
+        $endAt.removeAllListeners()
+        $startAtLabel.removeAllListeners()
+        $endAtLabel.removeAllListeners()
+    }
 }
 

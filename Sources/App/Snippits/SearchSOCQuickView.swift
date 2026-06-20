@@ -251,5 +251,11 @@ class SearchSOCQuickView: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $term.removeAllListeners()
+        $results.removeAllListeners()
+    }
 }
 

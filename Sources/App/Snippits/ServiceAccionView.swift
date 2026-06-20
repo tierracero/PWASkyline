@@ -673,4 +673,22 @@ class ServiceAccionView: Div {
         
     }
 
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $id.removeAllListeners()
+        $objects.removeAllListeners()
+        $operationalObject.removeAllListeners()
+        $custDocumentSupport.removeAllListeners()
+        $productionTime.removeAllListeners()
+        $productionLevel.removeAllListeners()
+        $productionLevelCalculation.removeAllListeners()
+        $productionLevelListener.removeAllListeners()
+        $workforceLevel.removeAllListeners()
+        $workforceLevelCalculation.removeAllListeners()
+        $workforceLevelListener.removeAllListeners()
+        $requestCompletition.removeAllListeners()
+        $isFavorite.removeAllListeners()
+        $name.removeAllListeners()
+    }
 }

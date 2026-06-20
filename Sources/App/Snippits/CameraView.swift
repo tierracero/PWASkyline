@@ -206,6 +206,7 @@ class CameraView: Div {
     
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        $currentPicture.removeAllListeners()
     }
     
 }

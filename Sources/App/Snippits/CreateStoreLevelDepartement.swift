@@ -14,6 +14,8 @@ import Web
 class CreateStoreLevelDepartement: Div {
     
     override class var name: String { "div" }
+
+    let viewId: UUID = .init()
     
     @State var dep: CustStoreDepsAPI?
     
@@ -54,6 +56,8 @@ class CreateStoreLevelDepartement: Div {
     required init() {
         fatalError("init() has not been implemented")
     }
+
+    let ws = WS()
     
     var titleText = "Crear Departamento"
     
@@ -271,12 +275,151 @@ class CreateStoreLevelDepartement: Div {
                 self.loadMedia(file)
             }
         }
+
+
+        WebApp.current.wsevent.listen {
+            
+            if $0.isEmpty { return }
+            
+            let (event, _) = self.ws.recive($0)
+            
+            guard let event else {
+                return
+            }
+            
+            switch event {
+            case .requestMobileCamaraComplete:
+                
+                if let payload = self.ws.requestMobileCamaraComplete($0) {
+
+                        guard self.viewId == payload.eventid else {
+                            return
+                        }
+                    
+                        self.uploadPercent = nil
+
+                        let avatar = "https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(payload.avatar)"
+
+                        self.imgAvatar.load(avatar)
+                           
+                        if let id = self.dep?.id {
+                            self.changeAvatar(id, avatar)
+                        }
+                }
+
+            case .requestMobileCamaraFail:
+
+                if let payload = self.ws.requestMobileCamaraFail($0) {
+                    
+                    guard self.viewId == payload.eventid else {
+                        return
+                    }
+                    showError(.generalError, "No se pudo iniciar camara")
+
+                    self.uploadPercent = nil
+                    
+                }
+
+            case .requestMobileCamaraInitiate:
+
+                if let payload = self.ws.requestMobileCamaraInitiate($0) {
+                    
+                    guard self.viewId == payload.eventid else {
+                        return
+                    }
+
+                    self.uploadPercent = "Se inicio camara"
+                    
+                }
+            
+            case .requestMobileCamaraProgress:
+                
+                guard let payload = self.ws.requestMobileCamaraProgress($0) else {
+                    return
+                }
+
+                guard self.viewId == payload.eventid else {
+                    return
+                }
+                    
+                
+                self.uploadPercent = "\(payload.percent.toString)%"
+                
+
+            case .requestMobileCamaraCancel:
+
+                if let payload = self.ws.requestMobileCamaraCancel($0) {
+
+                    guard self.viewId == payload.eventid else {
+                        return
+                    }
+                    
+                    self.uploadPercent = nil
+                    
+                }
+            case .requestMobileCamaraSelected:
+                
+                if let payload = self.ws.requestMobileCamaraSelected($0) {
+
+                    guard self.viewId == payload.eventid else {
+                        return
+                    }
+
+                    self.uploadPercent = "Iniciando Carga..."
+                }
+
+            case .asyncFileUpload:
+                
+                self.uploadPercent = nil
+
+                if let payload = self.ws.asyncFileUpload($0) {
+
+                    guard self.viewId == payload.eventid else {
+                        return
+                    }
+
+                    let avatar = "https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(payload.avatar)"
+
+                    self.imgAvatar.load(avatar)
+                        
+                    if let id = self.dep?.id {
+                        self.changeAvatar(id, avatar)
+                    }
+                }
+                
+            case .asyncFileUpdate:
+                
+                guard let payload = self.ws.asyncFileUpdate($0) else {
+                    return
+                }
+
+                guard self.viewId == payload.eventId else {
+                    return
+                }
+                
+                self.uploadPercent = payload.message
+                
+            default:
+                break
+            }
+        }
+        
+
     }
     
     override func didAddToDOM() {
         self.nameField.select()
         
         nameField.select()
+    }
+    
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $uploadPercent.removeAllListeners()
+        $name.removeAllListeners()
+        $descr.removeAllListeners()
+        $isPublic.removeAllListeners()
+        $dep.removeAllListeners()
     }
     
     func createLevel() {
@@ -461,6 +604,9 @@ class CreateStoreLevelDepartement: Div {
                 return
             }
             
+            print("⚠️ responseText")
+            print(responseText)
+
             guard let data = responseText.data(using: .utf8) else {
                 _ = JSObject.global.alert!("Error de conexion 002")
                 self.uploadPercent = nil
@@ -470,30 +616,38 @@ class CreateStoreLevelDepartement: Div {
             do {
                 self.uploadPercent = nil
                 
-                let resp = try JSONDecoder().decode(APIResponseGeneric<CustComponents.UploadMediaResponse>.self, from: data)
+                let resp = try JSONDecoder().decode(APIResponseGeneric<API.custAPIV1.UploadManagerResponse>.self, from: data)
                 
                 guard resp.status == .ok else {
-                    print("🔴 UPLAD ERROR")
-                    print(resp)
-                    _ = JSObject.global.alert!( resp.msg)
+                    showError(.generalError, resp.msg)
+                    
                     return
                 }
                 
-                guard let file = resp.data else {
-                    _ = JSObject.global.alert!( "No se pudo cargar datos")
+                guard let process = resp.data else {
+                    showError(.generalError, "No se pudo cargar datos")
                     return
                 }
                 
-                self.imgAvatar.load("\(file.url)thump_\(file.avatar)")
-                
-                if let id = self.dep?.id {
-                    self.changeAvatar(id, "\(file.url)thump_\(file.avatar)")
+                switch process {
+                case .processing(let process):
+                    
+                    self.uploadPercent = "processando..."
+                    
+                    print("⚠️  processando...")
+                    print(process)
+
+                case .processed(let payload):
+                    
+                    self.imgAvatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(payload.avatar)")
+                    
                 }
                 
             }
             catch {
                 
                 print("🔴  decode ERROR")
+
                 
                 print(error)
                 
@@ -521,7 +675,7 @@ class CreateStoreLevelDepartement: Div {
         
         let fileName = safeFileName(name: file.name, to: .departmentAvatar, folio: nil)
         
-        formData.append("event", UUID().uuidString)
+        formData.append("eventid", self.viewId.uuidString)
         
         formData.append("to", ImagePickerTo.departmentAvatar.rawValue)
         
@@ -532,8 +686,12 @@ class CreateStoreLevelDepartement: Div {
         formData.append("fileName", fileName)
 
         formData.append("file", file, filename: fileName)
+
+        formData.append("connid", custCatchChatConnID)
         
-        xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadMedia")
+        formData.append("remoteCamera", false.description)
+        
+        xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
         
         xhr.setRequestHeader("Accept", "application/json")
         

@@ -535,6 +535,14 @@ class ManageBodegaView: Div {
         }
     
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $bodegaId.removeAllListeners()
+        $bodegaName.removeAllListeners()
+        $bodegaDescription.removeAllListeners()
+        $sectionName.removeAllListeners()
+    }
 }
 
 extension ManageBodegaView {

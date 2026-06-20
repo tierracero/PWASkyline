@@ -566,6 +566,26 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
 
         }
 
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $notes.removeAllListeners()
+            $id.removeAllListeners()
+            $createdAt.removeAllListeners()
+            $modifiedAt.removeAllListeners()
+            $storeId.removeAllListeners()
+            $workedBy.removeAllListeners()
+            $type.removeAllListeners()
+            $psychometricsLevel.removeAllListeners()
+            $psychometricsTest.removeAllListeners()
+            $primaryTasks.removeAllListeners()
+            $secondaryTasks.removeAllListeners()
+            $rules.removeAllListeners()
+            $name.removeAllListeners()
+            $descr.removeAllListeners()
+            $requirements.removeAllListeners()
+            $available.removeAllListeners()
+        }
     }
 
     enum CallbackAcction {

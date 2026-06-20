@@ -199,6 +199,11 @@ class SelectCustUsernameView: Div {
     }
     
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $userSelectListener.removeAllListeners()
+    }
 }
 
 extension SelectCustUsernameView {

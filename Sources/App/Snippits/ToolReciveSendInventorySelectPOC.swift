@@ -303,5 +303,10 @@ class ToolReciveSendInventorySelectPOC: Div {
         } 
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $searchTerm.removeAllListeners()
+    }
 }
 

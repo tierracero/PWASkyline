@@ -2866,7 +2866,7 @@ extension ProductManagerView.AuditView {
                                         
                                     case .order:
 
-                                        OrderCatchControler.shared.loadFolio(orderid: item.channelId) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                                        OrderCatchControler.shared.loadFolio(orderid: item.channelId) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                                             
                                             let accoutOverview = AccoutOverview (
                                                 id: .id(order.custAcct)
@@ -2880,6 +2880,7 @@ extension ProductManagerView.AuditView {
                                                 charges: charges,
                                                 pocs: pocs,
                                                 files: files,
+                                                contracts: contracts,
                                                 equipments: equipments,
                                                 rentals: rentals,
                                                 transferOrder: transferOrder,
@@ -4495,6 +4496,21 @@ extension ProductManagerView.AuditView {
             
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $reportType.removeAllListeners()
+            $auditTypeListener.removeAllListeners()
+            $storeSelectListener.removeAllListeners()
+            $userSelectListener.removeAllListeners()
+            $departmentSelectListener.removeAllListeners()
+            $dateSelectListener.removeAllListeners()
+            $startAt.removeAllListeners()
+            $endAt.removeAllListeners()
+            $startAtLabel.removeAllListeners()
+            $endAtLabel.removeAllListeners()
+            $parsablePOCs.removeAllListeners()
+        }
     }
 
 }

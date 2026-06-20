@@ -955,4 +955,13 @@ class IMSocialChatView: Div {
         }
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $lastMessageRecivedAt.removeAllListeners()
+        $sendeFormIsDisabled.removeAllListeners()
+        $loaded.removeAllListeners()
+        $cursor.removeAllListeners()
+        $message.removeAllListeners()
+    }
 }

@@ -214,6 +214,7 @@ class AddCartaPorteFromHistoryView: Div {
     
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        $confirmDateIsHidden.removeAllListeners()
         
     }
     

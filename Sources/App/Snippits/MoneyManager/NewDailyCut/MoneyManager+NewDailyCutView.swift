@@ -673,6 +673,25 @@ extension MoneyManagerView {
             })
             
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $type.removeAllListeners()
+            $storeid.removeAllListeners()
+            $validations.removeAllListeners()
+            $validationsBalance.removeAllListeners()
+            $payment.removeAllListeners()
+            $paymentBalance.removeAllListeners()
+            $moneyManager.removeAllListeners()
+            $financials.removeAllListeners()
+            $financialsBalance.removeAllListeners()
+            $storeBalance.removeAllListeners()
+            $validationCheckBox.removeAllListeners()
+            $paymentCheckBox.removeAllListeners()
+            $moneyManagerCheckBox.removeAllListeners()
+            $financialsCheckBox.removeAllListeners()
+            $total.removeAllListeners()
+        }
     }
 }
 

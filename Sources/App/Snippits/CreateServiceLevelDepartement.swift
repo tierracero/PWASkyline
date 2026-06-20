@@ -259,5 +259,11 @@ class CreateServiceLevelDepartement: Div {
         }
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $name.removeAllListeners()
+        $descr.removeAllListeners()
+    }
 }
 

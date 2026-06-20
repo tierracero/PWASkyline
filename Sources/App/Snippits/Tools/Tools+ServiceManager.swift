@@ -474,6 +474,13 @@ extension ToolsView {
                     
         }
 
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $selectedDepatment.removeAllListeners()
+            $deps.removeAllListeners()
+            $services.removeAllListeners()
+        }
     }
 }
 

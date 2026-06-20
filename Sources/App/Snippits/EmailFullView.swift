@@ -232,4 +232,9 @@ class EmailFullView: Div {
     }
     
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $viewTitle.removeAllListeners()
+    }
 }

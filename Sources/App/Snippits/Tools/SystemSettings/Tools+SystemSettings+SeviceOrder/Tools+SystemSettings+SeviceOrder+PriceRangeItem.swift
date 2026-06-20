@@ -380,6 +380,21 @@ extension ToolsView.SystemSettings.SeviceOrder {
             ).formatMoney
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $id.removeAllListeners()
+            $lowerRange.removeAllListeners()
+            $upperRange.removeAllListeners()
+            $pricea.removeAllListeners()
+            $priceb.removeAllListeners()
+            $pricec.removeAllListeners()
+            $middleRange.removeAllListeners()
+            $rangeText.removeAllListeners()
+            $priceaCalc.removeAllListeners()
+            $pricebCalc.removeAllListeners()
+            $pricecCalc.removeAllListeners()
+        }
     }
 }
 

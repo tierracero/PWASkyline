@@ -198,4 +198,11 @@ class ConcessionConfirmationView: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $accountid.removeAllListeners()
+        $accountFolio.removeAllListeners()
+        $accountName.removeAllListeners()
+    }
 }

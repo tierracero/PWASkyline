@@ -1555,5 +1555,19 @@ class BudgetView: Div {
     }
     
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $budgetid.removeAllListeners()
+        $budgetCredit.removeAllListeners()
+        $budgetCreditExpire.removeAllListeners()
+        $folio.removeAllListeners()
+        $searchTerm.removeAllListeners()
+        $budgetCost.removeAllListeners()
+        $balance.removeAllListeners()
+        $printMenuViewIsHidden.removeAllListeners()
+        $sendMenuViewIsHidden.removeAllListeners()
+        $itemRefrence.removeAllListeners()
+    }
 }
 

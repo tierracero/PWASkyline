@@ -1081,4 +1081,18 @@ class ProductTransferReportView: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $customerName.removeAllListeners()
+        $auditTypeListener.removeAllListeners()
+        $storeSelectListener.removeAllListeners()
+        $dateSelectListener.removeAllListeners()
+        $startAt.removeAllListeners()
+        $endAt.removeAllListeners()
+        $startAtLabel.removeAllListeners()
+        $endAtLabel.removeAllListeners()
+        $filter.removeAllListeners()
+        $filterListener.removeAllListeners()
+    }
 }

@@ -62,7 +62,7 @@ class SalePointView: Div {
 
     @State var fiscalProfile: UUID? = nil
 
-    @State var showDetail: Bool = false
+    @State var showDetail: Bool = true
 
     @State var showTaxes: Bool = false
     
@@ -328,7 +328,6 @@ class SalePointView: Div {
                         .float(.left)
                 }
 
-
                 Div{
                     
                     Div{
@@ -440,7 +439,6 @@ class SalePointView: Div {
                         }
                     }
                     
-                    
                 }
                 .marginRight(7.px)
                 .marginTop(-12.px)
@@ -486,7 +484,22 @@ class SalePointView: Div {
             
             Div {
                 /// Crear Presupuesto
-                Div{
+                Div {
+
+                    Div{
+                        
+                        Span()
+                            .backgroundImage("skyline/media/zoom.png")
+                            .class(.ico)
+                        
+                        Span("Presupuesto Historicos")
+                        
+                    }
+                    .onClick(self.getBudgets)
+                    .marginRight(12.px)
+                    .class(.uibutton)
+
+
                     Div{
                         
                         Span()
@@ -508,16 +521,7 @@ class SalePointView: Div {
                 Div{
 
                     Div{
-                        
-                        if fiscalProfiles.count > 0 {
 
-                            Div {
-                                self.selectedFiscalProfileSelect
-                            }
-
-                            Div().clear(.both).height(3.px)
-                                                        
-                        }
 
                         Div{
 
@@ -525,72 +529,80 @@ class SalePointView: Div {
                                 .marginRight(12.px)
                                 .color(.white)
                                 .float(.left)
-                            
-                            Div {
+                                                        
+                            if fiscalProfiles.count > 0 {
 
-                                // Download
-                                Div{
-                                    
-                                    Span()
-                                        .backgroundImage("skyline/media/download2.png")
-                                        .class(.ico)
-                                    
-                                    Span("Descargar")
-                                    
-                                }
-                                .onClick{
-                                    self.sendBudgetDocument(type: .print, fiscalProfile: self.fiscalProfile)
-                                }
-                                .marginRight(12.px)
-                                .class(.uibutton)
-                                .float(.left)
-                                
-                                // Send
-                                Div{
-                                    
-                                    Span()
-                                        .backgroundImage("skyline/media/sendToMobile.png")
-                                        .class(.ico)
-                                    
-                                    Span("Enviar")
-                                    
-                                }
-                                .onClick{
-                                    self.sendBudgetDocument(type: .send, fiscalProfile: self.fiscalProfile)
-                                }
-                                .marginRight(12.px)
-                                .class(.uibutton)
-                                .float(.left)
-                                
-                                Div().clear(.both)
-                                
-                                Div{
+                                self.selectedFiscalProfileSelect
+                                .custom("width", "calc(100% - 155px)")
+                                .float(.right)
+                                                            
+                            }
+                        }
 
-                                    Div{
-                                        self.showDetailCheckbox
-                                        Label("Ver Detalles")
-                                            .for("showDetailBox")
-                                            .color(.white)
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
+                        Div().clear(.both).height(3.px)
 
-                                    Div{
-                                        self.showTaxesCheckbox
-                                        Label("IVA Desglosado")
-                                            .for("showTaxesBox")
-                                            .color(.white)
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
-                                }
+                        Div {
+
+                            // Download
+                            Div{
+                                
+                                Span()
+                                    .backgroundImage("skyline/media/download2.png")
+                                    .class(.ico)
+                                
+                                Span("Descargar")
                                 
                             }
+                            .onClick{
+                                self.sendBudgetDocument(type: .print, fiscalProfile: self.fiscalProfile)
+                            }
+                            .marginRight(12.px)
+                            .class(.uibutton)
                             .float(.left)
-
+                            
+                            // Send
+                            Div{
+                                
+                                Span()
+                                    .backgroundImage("skyline/media/sendToMobile.png")
+                                    .class(.ico)
+                                
+                                Span("Enviar")
+                                
+                            }
+                            .onClick{
+                                self.sendBudgetDocument(type: .send, fiscalProfile: self.fiscalProfile)
+                            }
+                            .marginRight(12.px)
+                            .class(.uibutton)
+                            .float(.left)
+                            
                             Div().clear(.both)
+                            
+                            Div{
+
+                                Div{
+                                    self.showDetailCheckbox
+                                    Label("Ver Detalles")
+                                        .for("showDetailBox")
+                                        .color(.white)
+                                }
+                                .width(50.percent)
+                                .float(.left)
+
+                                Div{
+                                    self.showTaxesCheckbox
+                                    Label("IVA Desglosado")
+                                        .for("showTaxesBox")
+                                        .color(.white)
+                                }
+                                .width(50.percent)
+                                .float(.left)
+                            }
+                            
                         }
                         
+                        Div().clear(.both).height(3.px)
 
                     }
                     .margin(all: 7.px)
@@ -599,11 +611,11 @@ class SalePointView: Div {
                 .backgroundColor(.transparentBlack)
                 .borderRadius(24.px)
                 .position(.fixed)
-                .bottom(50.px)
-                .left(50.px)
-                .width(400.px)
-                .hidden(self.$budgetid.map{ $0 == nil })
+                .bottom(25.px)
+                .width(425.px)
                 .float(.left)
+                .left(50.px)
+                .hidden(self.$budgetid.map{ $0 == nil })
                 
                 /// Credit Button
                 Div{
@@ -664,7 +676,6 @@ class SalePointView: Div {
                     .float(.right)
                     .color(.gray)
                 
-                
             }
             .marginTop(3.px)
             
@@ -683,12 +694,10 @@ class SalePointView: Div {
     }
     
     override func buildUI() {
-        
-
 
         fiscalProfiles.forEach { profile in
             selectedFiscalProfileSelect.appendChild(
-                Option("\(profile.rfc) \(profile.razon)")
+                Option("\(profile.rfc) \(profile.nomComercial) \(profile.razon)")
                     .value(profile.id.uuidString)
             )
         }
@@ -738,365 +747,7 @@ class SalePointView: Div {
             
             switch loadBy {
             case .budget(let id):
-                
-                loadingView(show: true)
-                
-                API.custAPIV1.loadBudgetObject(
-                    id: id,
-                    store: custCatchStore
-                ) { resp in
-                    
-                    loadingView(show: false)
-                    
-                    guard let resp else {
-                        showError(.comunicationError, .serverConextionError)
-                        return
-                    }
-                    
-                    guard resp.status == .ok else{
-                        showError(.generalError, resp.msg)
-                        return
-                    }
-                    
-                    guard let payload = resp.data else {
-                        showError(.comunicationError, .serverConextionError)
-                        return
-                    }
-                    
-                    self.budgetid = payload.budgetId
-                    
-                    self.budgetFolio = payload.budgetFolio
-            
-                    self.custAcct = payload.custAcct
-
-                    
-                    
-                    payload.saleObjects.forEach { item in
-                        
-                        let poc = item.custPOC
-                        
-                        let price = item.unitPrice
-                        
-                        let id = UUID()
-                        
-                        var series: [String] = item.ids.map{ $0.series }
-                        
-                        let row = KartItemView(
-                            id: id,
-                            cost: poc.cost,
-                            quant: item.units / 100,
-                            price: price,
-                            data: .init(
-                                t: .product,
-                                i: poc.id,
-                                u: poc.upc,
-                                n: poc.name,
-                                b: poc.brand,
-                                m: poc.model,
-                                p: price,
-                                a: poc.avatar,
-                                reqSeries: poc.reqSeries
-                            )
-                        ) { id in
-                            
-                            var _kart: [SalePointObject] = []
-                           
-                            self.kart.forEach { item in
-                               if item.id != id {
-                                   _kart.append(item)
-                               }
-                            }
-                            
-                            self.kart = _kart
-                            
-                            var _selectedInventoryIDs: [UUID] = []
-                            
-                            /// Ids  to be removed
-                            let ids = item.ids.map{ $0.id }
-                            
-                            self.selectedInventoryIDs.forEach { id in
-                                
-                                if !ids.contains(id) {
-                                    _selectedInventoryIDs.append(id)
-                                }
-                                
-                            }
-                            
-                            self.selectedInventoryIDs = _selectedInventoryIDs
-                            
-                            self.calcBalance()
-                        } editManualCharge: { id, units, description, price, cost in
-                            print("⭐️  editManualCharge  ⭐️  editManualCharge 002")
-                        }
-                        
-                        let ids = item.ids.map{ $0.id }
-                        
-                        self.kart.append(
-                            .init(
-                                id: id,
-                                kartItemView: row,
-                                data: .init(
-                                    type: .product,
-                                    id: poc.id,
-                                    store: item.ids.first?.custStore ?? custCatchStore,
-                                    ids: item.ids.map{ $0.id },
-                                    series: series,
-                                    cost: poc.pricea,
-                                    units: item.units,
-                                    unitPrice: price,
-                                    subTotal: price * (item.units / 100),
-                                    costType: item.costType,
-                                    name: poc.name,
-                                    brand: poc.brand,
-                                    model: poc.model,
-                                    pseudoModel: poc.pseudoModel,
-                                    avatar: poc.model,
-                                    fiscCode: poc.fiscCode,
-                                    fiscUnit: poc.fiscUnit,
-                                    preRegister: false
-                                )
-                            )
-                        )
-                        
-                        self.selectedInventoryIDs.append(contentsOf: ids)
-                        
-                        self.itemGrid.appendChild(row)
-                        
-                    }
-                    
-                    payload.saleObjectsSOC.forEach { item in
-                        
-                        let manualid = UUID()
-                        
-                        let row = KartItemView(
-                            id: item.custSOC.id,
-                            cost: item.custSOC.cost,
-                            quant: item.units / 100,
-                            price: item.unitPrice,
-                            data: .init(
-                                t: .service,
-                                i: item.custSOC.id,
-                                u: "",
-                                n: item.custSOC.name,
-                                b: "",
-                                m: "",
-                                p: item.unitPrice,
-                                a: "",
-                                reqSeries: false
-                            )
-                        ) { id in
-                            
-                            var _kart: [SalePointObject] = []
-                            
-                            self.kart.forEach { item in
-                                if item.id != id {
-                                    _kart.append(item)
-                                }
-                            }
-                            
-                            self.kart = _kart
-                            
-                            self.calcBalance()
-                            
-                        } editManualCharge: { id, units, description, price, cost in
-                            Console.clear()
-                            
-                             print("⭐️  editManualCharge  ⭐️  editManualCharge 003")
-                            
-                             var _kart: [SalePointObject] = []
-                             
-                             self.kart.forEach { item in
-                                 
-                                 if item.id == id {
-                                     
-                                     _kart.append(.init(
-                                         id: id,
-                                         kartItemView: item.kartItemView,
-                                         data: .init(
-                                             type: .service,
-                                             id: manualid,
-                                             store: custCatchStore,
-                                             ids: [],
-                                             series: [],
-                                             cost: cost,
-                                             units: units,
-                                             unitPrice: price,
-                                             subTotal: price * (units / 100),
-                                             costType: self.custAcct?.costType ?? .cost_a,
-                                             name: description,
-                                             brand: "",
-                                             model: "",
-                                             pseudoModel: "",
-                                             avatar: "",
-                                             fiscCode: "",
-                                             fiscUnit: "",
-                                             preRegister: false
-                                         )
-                                     ))
-                                     
-                                     return
-                                 }
-                                 
-                                 _kart.append(item)
-                                 
-                             }
-                             
-                             self.kart = _kart
-                             
-                             self.calcBalance()
-                             
-                        }
-                        
-                        self.kart.append(
-                            .init(
-                                id: item.custSOC.id,
-                                kartItemView: row,
-                                data: .init(
-                                    type: .service,
-                                    id: manualid,
-                                    store: custCatchStore,
-                                    ids: [],
-                                    series: [],
-                                    cost: item.custSOC.cost,
-                                    units: item.units,
-                                    unitPrice: item.unitPrice,
-                                    subTotal: item.unitPrice * (item.units / 100),
-                                    costType: item.costType,
-                                    name: item.custSOC.name,
-                                    brand: "",
-                                    model: "",
-                                    pseudoModel: "",
-                                    avatar: "",
-                                    fiscCode: "",
-                                    fiscUnit: "",
-                                    preRegister: false
-                                )
-                            )
-                        )
-                        
-                        self.itemGrid.appendChild(row)
-                        
-                    }
-                    
-                    payload.saleObjectsManual.forEach { item in
-                        
-                        let manualid = UUID()
-                        
-                        let row = KartItemView(
-                            id: item.id,
-                            cost: item.cost ?? 0,
-                            quant: item.units / 100,
-                            price: item.unitPrice,
-                            data: .init(
-                                t: .manual,
-                                i: manualid,
-                                u: "",
-                                n: item.name,
-                                b: "",
-                                m: "",
-                                p: item.unitPrice,
-                                a: "",
-                                reqSeries: false
-                            )
-                        ) { id in
-                            
-                            var _kart: [SalePointObject] = []
-                            
-                            self.kart.forEach { item in
-                                if item.id != id {
-                                    _kart.append(item)
-                                }
-                            }
-                            
-                            self.kart = _kart
-                            
-                            self.calcBalance()
-                            
-                        } editManualCharge: { id, units, description, price, cost in
-                            Console.clear()
-                            
-                             print("⭐️  editManualCharge  ⭐️  editManualCharge 003")
-                            
-                             var _kart: [SalePointObject] = []
-                             
-                             self.kart.forEach { item in
-                                 
-                                 if item.id == id {
-                                     
-                                     _kart.append(.init(
-                                         id: id,
-                                         kartItemView: item.kartItemView,
-                                         data: .init(
-                                             type: .manual,
-                                             id: manualid,
-                                             store: custCatchStore,
-                                             ids: [],
-                                             series: [],
-                                             cost: cost,
-                                             units: units,
-                                             unitPrice: price,
-                                             subTotal: price * (units / 100),
-                                             costType: self.custAcct?.costType ?? .cost_a,
-                                             name: description,
-                                             brand: "",
-                                             model: "",
-                                             pseudoModel: "",
-                                             avatar: "",
-                                             fiscCode: "",
-                                             fiscUnit: "",
-                                             preRegister: false
-                                         )
-                                     ))
-                                     
-                                     return
-                                 }
-                                 
-                                 _kart.append(item)
-                                 
-                             }
-                             
-                             self.kart = _kart
-                             
-                             self.calcBalance()
-                             
-                        }
-                        
-                        self.kart.append(
-                            
-                            .init(
-                                id: item.id,
-                                kartItemView: row,
-                                data: .init(
-                                    type: .manual,
-                                    id: manualid,
-                                    store: custCatchStore,
-                                    ids: [],
-                                    series: [],
-                                    cost: item.cost,
-                                    units: item.units,
-                                    unitPrice: item.unitPrice,
-                                    subTotal: item.unitPrice * (item.units / 100),
-                                    costType: item.costType,
-                                    name: item.name,
-                                    brand: "",
-                                    model: "",
-                                    pseudoModel: "",
-                                    avatar: "",
-                                    fiscCode: "",
-                                    fiscUnit: "",
-                                    preRegister: false
-                                )
-                            )
-                        )
-                        
-                        self.itemGrid.appendChild(row)
-                        
-                    }
-                    
-                    self.calcBalance(firstLoad: true)
-                    
-                }
-                
+                self.getBudget(id)
             case .transferInventory(_):
                 break
             case .transferOrder(_):
@@ -2453,6 +2104,430 @@ class SalePointView: Div {
         
     }
     
+    func getBudgets() {
+
+        loadingView(show: true)
+
+        API.custPDVV1.getBudgets { resp in
+
+            loadingView(show: false)
+                    
+            guard let resp else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+            
+            guard resp.status == .ok else{
+                showError(.generalError, resp.msg)
+                return
+            }
+            
+            guard var payload = resp.data else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+
+            payload.sort { $0.createdAt >   $1.createdAt }
+
+            let view = BudgetHistoricalView(budgets: payload) { id in
+                self.getBudget(.id(id))
+            }
+
+            addToDom(view)
+            
+        }
+    }
+
+    func getBudget(_ id: HybridIdentifier) {
+        
+        loadingView(show: true)
+        
+        API.custAPIV1.loadBudgetObject(
+            id: id,
+            store: custCatchStore
+        ) { resp in
+            
+            loadingView(show: false)
+            
+            guard let resp else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+            
+            guard resp.status == .ok else{
+                showError(.generalError, resp.msg)
+                return
+            }
+            
+            guard let payload = resp.data else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+            
+            self.budgetid = payload.budgetId
+            
+            self.budgetFolio = payload.budgetFolio
+    
+            self.custAcct = payload.custAcct
+
+            
+            
+            payload.saleObjects.forEach { item in
+                
+                let poc = item.custPOC
+                
+                let price = item.unitPrice
+                
+                let id = UUID()
+                
+                var series: [String] = item.ids.map{ $0.series }
+                
+                let row = KartItemView(
+                    id: id,
+                    cost: poc.cost,
+                    quant: item.units / 100,
+                    price: price,
+                    data: .init(
+                        t: .product,
+                        i: poc.id,
+                        u: poc.upc,
+                        n: poc.name,
+                        b: poc.brand,
+                        m: poc.model,
+                        p: price,
+                        a: poc.avatar,
+                        reqSeries: poc.reqSeries
+                    )
+                ) { id in
+                    
+                    var _kart: [SalePointObject] = []
+                    
+                    self.kart.forEach { item in
+                        if item.id != id {
+                            _kart.append(item)
+                        }
+                    }
+                    
+                    self.kart = _kart
+                    
+                    var _selectedInventoryIDs: [UUID] = []
+                    
+                    /// Ids  to be removed
+                    let ids = item.ids.map{ $0.id }
+                    
+                    self.selectedInventoryIDs.forEach { id in
+                        
+                        if !ids.contains(id) {
+                            _selectedInventoryIDs.append(id)
+                        }
+                        
+                    }
+                    
+                    self.selectedInventoryIDs = _selectedInventoryIDs
+                    
+                    self.calcBalance()
+                } editManualCharge: { id, units, description, price, cost in
+                    print("⭐️  editManualCharge  ⭐️  editManualCharge 002")
+                }
+                
+                let ids = item.ids.map{ $0.id }
+                
+                self.kart.append(
+                    .init(
+                        id: id,
+                        kartItemView: row,
+                        data: .init(
+                            type: .product,
+                            id: poc.id,
+                            store: item.ids.first?.custStore ?? custCatchStore,
+                            ids: item.ids.map{ $0.id },
+                            series: series,
+                            cost: poc.pricea,
+                            units: item.units,
+                            unitPrice: price,
+                            subTotal: price * (item.units / 100),
+                            costType: item.costType,
+                            name: poc.name,
+                            brand: poc.brand,
+                            model: poc.model,
+                            pseudoModel: poc.pseudoModel,
+                            avatar: poc.model,
+                            fiscCode: poc.fiscCode,
+                            fiscUnit: poc.fiscUnit,
+                            preRegister: false
+                        )
+                    )
+                )
+                
+                self.selectedInventoryIDs.append(contentsOf: ids)
+                
+                self.itemGrid.appendChild(row)
+                
+            }
+            
+            payload.saleObjectsSOC.forEach { item in
+                
+                let manualid = UUID()
+                
+                let row = KartItemView(
+                    id: item.custSOC.id,
+                    cost: item.custSOC.cost,
+                    quant: item.units / 100,
+                    price: item.unitPrice,
+                    data: .init(
+                        t: .service,
+                        i: item.custSOC.id,
+                        u: "",
+                        n: item.custSOC.name,
+                        b: "",
+                        m: "",
+                        p: item.unitPrice,
+                        a: "",
+                        reqSeries: false
+                    )
+                ) { id in
+                    
+                    var _kart: [SalePointObject] = []
+                    
+                    self.kart.forEach { item in
+                        if item.id != id {
+                            _kart.append(item)
+                        }
+                    }
+                    
+                    self.kart = _kart
+                    
+                    self.calcBalance()
+                    
+                } editManualCharge: { id, units, description, price, cost in
+                    Console.clear()
+                    
+                        print("⭐️  editManualCharge  ⭐️  editManualCharge 003")
+                    
+                        var _kart: [SalePointObject] = []
+                        
+                        self.kart.forEach { item in
+                            
+                            if item.id == id {
+                                
+                                _kart.append(.init(
+                                    id: id,
+                                    kartItemView: item.kartItemView,
+                                    data: .init(
+                                        type: .service,
+                                        id: manualid,
+                                        store: custCatchStore,
+                                        ids: [],
+                                        series: [],
+                                        cost: cost,
+                                        units: units,
+                                        unitPrice: price,
+                                        subTotal: price * (units / 100),
+                                        costType: self.custAcct?.costType ?? .cost_a,
+                                        name: description,
+                                        brand: "",
+                                        model: "",
+                                        pseudoModel: "",
+                                        avatar: "",
+                                        fiscCode: "",
+                                        fiscUnit: "",
+                                        preRegister: false
+                                    )
+                                ))
+                                
+                                return
+                            }
+                            
+                            _kart.append(item)
+                            
+                        }
+                        
+                        self.kart = _kart
+                        
+                        self.calcBalance()
+                        
+                }
+                
+                self.kart.append(
+                    .init(
+                        id: item.custSOC.id,
+                        kartItemView: row,
+                        data: .init(
+                            type: .service,
+                            id: manualid,
+                            store: custCatchStore,
+                            ids: [],
+                            series: [],
+                            cost: item.custSOC.cost,
+                            units: item.units,
+                            unitPrice: item.unitPrice,
+                            subTotal: item.unitPrice * (item.units / 100),
+                            costType: item.costType,
+                            name: item.custSOC.name,
+                            brand: "",
+                            model: "",
+                            pseudoModel: "",
+                            avatar: "",
+                            fiscCode: "",
+                            fiscUnit: "",
+                            preRegister: false
+                        )
+                    )
+                )
+                
+                self.itemGrid.appendChild(row)
+                
+            }
+            
+            payload.saleObjectsManual.forEach { item in
+                
+                let manualid = UUID()
+                
+                let row = KartItemView(
+                    id: item.id,
+                    cost: item.cost ?? 0,
+                    quant: item.units / 100,
+                    price: item.unitPrice,
+                    data: .init(
+                        t: .manual,
+                        i: manualid,
+                        u: "",
+                        n: item.name,
+                        b: "",
+                        m: "",
+                        p: item.unitPrice,
+                        a: "",
+                        reqSeries: false
+                    )
+                ) { id in
+                    
+                    var _kart: [SalePointObject] = []
+                    
+                    self.kart.forEach { item in
+                        if item.id != id {
+                            _kart.append(item)
+                        }
+                    }
+                    
+                    self.kart = _kart
+                    
+                    self.calcBalance()
+                    
+                } editManualCharge: { id, units, description, price, cost in
+                    Console.clear()
+                    
+                        print("⭐️  editManualCharge  ⭐️  editManualCharge 003")
+                    
+                        var _kart: [SalePointObject] = []
+                        
+                        self.kart.forEach { item in
+                            
+                            if item.id == id {
+                                
+                                _kart.append(.init(
+                                    id: id,
+                                    kartItemView: item.kartItemView,
+                                    data: .init(
+                                        type: .manual,
+                                        id: manualid,
+                                        store: custCatchStore,
+                                        ids: [],
+                                        series: [],
+                                        cost: cost,
+                                        units: units,
+                                        unitPrice: price,
+                                        subTotal: price * (units / 100),
+                                        costType: self.custAcct?.costType ?? .cost_a,
+                                        name: description,
+                                        brand: "",
+                                        model: "",
+                                        pseudoModel: "",
+                                        avatar: "",
+                                        fiscCode: "",
+                                        fiscUnit: "",
+                                        preRegister: false
+                                    )
+                                ))
+                                
+                                return
+                            }
+                            
+                            _kart.append(item)
+                            
+                        }
+                        
+                        self.kart = _kart
+                        
+                        self.calcBalance()
+                        
+                }
+                
+                self.kart.append(
+                    
+                    .init(
+                        id: item.id,
+                        kartItemView: row,
+                        data: .init(
+                            type: .manual,
+                            id: manualid,
+                            store: custCatchStore,
+                            ids: [],
+                            series: [],
+                            cost: item.cost,
+                            units: item.units,
+                            unitPrice: item.unitPrice,
+                            subTotal: item.unitPrice * (item.units / 100),
+                            costType: item.costType,
+                            name: item.name,
+                            brand: "",
+                            model: "",
+                            pseudoModel: "",
+                            avatar: "",
+                            fiscCode: "",
+                            fiscUnit: "",
+                            preRegister: false
+                        )
+                    )
+                )
+                
+                self.itemGrid.appendChild(row)
+                
+            }
+            
+            self.calcBalance(firstLoad: true)
+            
+        }
+                
+
+    }
+
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $custAcctFolio.removeAllListeners()
+        $custAcct.removeAllListeners()
+        $custSubAcct.removeAllListeners()
+        $custSale.removeAllListeners()
+        $budgetid.removeAllListeners()
+        $budgetFolio.removeAllListeners()
+        $fiscalProfile.removeAllListeners()
+        $showDetail.removeAllListeners()
+        $showTaxes.removeAllListeners()
+        $selectedAccountName.removeAllListeners()
+        $firstName.removeAllListeners()
+        $lastName.removeAllListeners()
+        $mobile.removeAllListeners()
+        $comment.removeAllListeners()
+        $payment.removeAllListeners()
+        $balanceString.removeAllListeners()
+        $changeString.removeAllListeners()
+        $searchTerm.removeAllListeners()
+        $kart.removeAllListeners()
+        $rewadsPoints.removeAllListeners()
+        $selectedFiscalProfileListener.removeAllListeners()
+    }
+    
+    
 }
 
 extension SalePointView {
@@ -2466,5 +2541,10 @@ extension SalePointView {
         case transferInventory(HybridIdentifier)
         case transferOrder(HybridIdentifier)
     }
-    
+
 }
+/*
+extension  {
+    
+    class BudgetView.HistoricItemsView : Div {
+    */

@@ -226,4 +226,9 @@ class ConfirmProductItemView: Div {
         self.remove()
         
     }   
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $unitsToAdd.removeAllListeners()
+    }
 }

@@ -686,4 +686,14 @@ class PaymentConfirmationView: Div {
 
 
 
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $saleId.removeAllListeners()
+        $saleFolio.removeAllListeners()
+        $accountid.removeAllListeners()
+        $accountFolio.removeAllListeners()
+        $accountName.removeAllListeners()
+        $accountMobile.removeAllListeners()
+    }
 }

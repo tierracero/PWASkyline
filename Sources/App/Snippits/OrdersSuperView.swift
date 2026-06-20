@@ -284,7 +284,7 @@ class OrdersSuperView: Div {
                                 /// Show AccoutOverview
                                 accoutOverview.display(.block)
                                 
-                                accoutOverview.loadOrder(id: data.id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                                accoutOverview.loadOrder(id: data.id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                                     
                                     accoutOverview.loadOrder(
                                         account: account,
@@ -294,6 +294,7 @@ class OrdersSuperView: Div {
                                         charges: charges,
                                         pocs: pocs,
                                         files: files,
+                                        contracts: contracts,
                                         equipments: equipments,
                                         rentals: rentals,
                                         transferOrder: transferOrder,
@@ -312,7 +313,7 @@ class OrdersSuperView: Div {
                         }
                     }
                     
-                    self.loadFolio(orderid: data.id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                    self.loadFolio(orderid: data.id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                         let accoutOverview = AccoutOverview (
                             id: .id(order.custAcct)
                         )
@@ -325,6 +326,7 @@ class OrdersSuperView: Div {
                             charges: charges,
                             pocs: pocs,
                             files: files,
+                            contracts: contracts,
                             equipments: equipments,
                             rentals: rentals,
                             transferOrder: transferOrder,
@@ -353,6 +355,7 @@ class OrdersSuperView: Div {
             _ charges: [CustOrderLoadFolioCharges],
             _ pocs: [CustPOCInventoryOrderView],
             _ files: [CustOrderLoadFolioFiles],
+            _ contracts: [CustPageContent],
             _ equipments: [CustOrderLoadFolioEquipments],
             _ rentals: [CustPOCRentalsMin],
             _ transferOrder: CustTranferManager?,
@@ -395,7 +398,7 @@ class OrdersSuperView: Div {
                     /// Show AccoutOverview
                     accoutOverview.display(.block)
                     
-                    accoutOverview.loadOrder(id: orderid) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                    accoutOverview.loadOrder(id: orderid) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                         
                         accoutOverview.loadOrder(
                             account: account,
@@ -405,6 +408,7 @@ class OrdersSuperView: Div {
                             charges: charges,
                             pocs: pocs,
                             files: files,
+                            contracts: contracts,
                             equipments: equipments,
                             rentals: rentals,
                             transferOrder: transferOrder,
@@ -435,6 +439,7 @@ class OrdersSuperView: Div {
             let charges: [CustOrderLoadFolioCharges] = chargesCatch[orderid] ?? []
             let pocs: [CustPOCInventoryOrderView] = pocsCatch[orderid] ?? []
             let files: [CustOrderLoadFolioFiles] = filesCatch[orderid] ?? []
+            let contracts: [CustPageContent] = contractsCatch[orderid] ?? []
             let equipments: [CustOrderLoadFolioEquipments] = equipmentsCatch[orderid] ?? []
             let rentals: [CustPOCRentalsMin] = rentalsCatch[orderid] ?? []
             let orderHighPriorityNote: [HighPriorityNote] = orderHighPriorityNoteCatch[orderid] ?? []
@@ -451,6 +456,7 @@ class OrdersSuperView: Div {
                 charges,
                 pocs,
                 files,
+                contracts,
                 equipments,
                 rentals,
                 transferOrder,
@@ -497,6 +503,7 @@ class OrdersSuperView: Div {
                     chargesCatch[orderid] = loadOrderResponse.charges
                     pocsCatch[orderid] = loadOrderResponse.pocs
                     filesCatch[orderid] = loadOrderResponse.files
+                    contractsCatch[orderid] = loadOrderResponse.contracts
                     equipmentsCatch[orderid] = loadOrderResponse.equipments
                     rentalsCatch[orderid] = loadOrderResponse.rentals
                     orderHighPriorityNoteCatch[orderid] = loadOrderResponse.orderHighPriorityNote
@@ -517,6 +524,7 @@ class OrdersSuperView: Div {
                         loadOrderResponse.charges,
                         loadOrderResponse.pocs,
                         loadOrderResponse.files,
+                        loadOrderResponse.contracts,
                         loadOrderResponse.equipments,
                         loadOrderResponse.rentals,
                         loadOrderResponse.transferOrder,
@@ -532,4 +540,9 @@ class OrdersSuperView: Div {
         }
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $selectedStore.removeAllListeners()
+    }
 }

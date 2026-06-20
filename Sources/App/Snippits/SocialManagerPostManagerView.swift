@@ -435,4 +435,19 @@ class SocialManagerPostManagerView: Div {
         }
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $comments.removeAllListeners()
+        $pageName.removeAllListeners()
+        $like.removeAllListeners()
+        $dislike.removeAllListeners()
+        $love.removeAllListeners()
+        $care.removeAllListeners()
+        $wow.removeAllListeners()
+        $haha.removeAllListeners()
+        $sorry.removeAllListeners()
+        $angry.removeAllListeners()
+        $other.removeAllListeners()
+    }
 }

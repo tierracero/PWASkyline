@@ -274,6 +274,12 @@ extension BudgetView {
                 })
             )
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $creditListener.removeAllListeners()
+            $creditExpireAtListener.removeAllListeners()
+        }
     }
 }
 

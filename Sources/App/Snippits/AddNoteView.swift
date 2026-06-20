@@ -193,4 +193,11 @@ class AddNoteView: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $message.removeAllListeners()
+        $date.removeAllListeners()
+        $noteTypeListener.removeAllListeners()
+    }
 }

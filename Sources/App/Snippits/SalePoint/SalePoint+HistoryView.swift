@@ -306,156 +306,150 @@ extension SalePointView {
                 
                 Div{
                     
-                    if custCatchHerk > 1 {
-                        
+                    
+                    Div{
+                        /// Tipo de reporte
                         Div{
-                            /// Tipo de reporte
-                            Div{
-                                Label("Tipo de reporte")
-                                    .fontSize(12.px)
-                                    .color(.gray)
-                                
-                                Div().clear(.both)
-                                
-                                self.reportTypeSelect
-                            }
-                            .marginLeft(12.px)
-                            .marginTop(3.px)
-                            .float(.left)
-                            
-                            /// Seleccione Tienda
-                            Div{
-                                Label("Seleccione Tienda")
-                                    .fontSize(12.px)
-                                    .color(.gray)
-                                Div().clear(.both)
-                                
-                                self.storeSelect
-                            }
-                            .hidden(self.$reportType.map{ !($0?.storeable ==  true) })
-                            .marginLeft(12.px)
-                            .marginTop(3.px)
-                            .float(.left)
-                            
-                            /// Seleccione Ususario
-                            Div{
-                                Label("Seleccione Usuario")
-                                    .fontSize(12.px)
-                                    .color(.gray)
-                                Div().clear(.both)
-                                
-                                self.userSelect
-                            }
-                            .hidden(self.$reportType.map{ !($0?.userable ==  true) })
-                            .marginLeft(12.px)
-                            .marginTop(3.px)
-                            .float(.left)
-                            
-                            /// Product Search
-                            Div{
-                                Label("Seleccione Productos")
-                                    .fontSize(12.px)
-                                    .color(.gray)
-                                Div().clear(.both)
-                                self.parceblePOCDiv
-                            }
-                            .hidden(self.$reportType.map{ !($0 == .byProduct) })
-                            .marginLeft(12.px)
-                            .marginTop(3.px)
-                            .float(.left)
-                            
-                            /// Product Search
-                            Div{
-                                Label("Seleccione Servicio")
-                                    .fontSize(12.px)
-                                    .color(.gray)
-                                Div().clear(.both)
-                                self.parcebleSOCDiv
-                            }
-                            .hidden(self.$reportType.map{ !($0 == .byService) })
-                            .marginLeft(12.px)
-                            .marginTop(3.px)
-                            .float(.left)
-                            
-                            /// Date Select Type
-                            Div{
-                                Label("Seleccione Fecha")
-                                    .fontSize(12.px)
-                                    .color(.gray)
-                                Div().clear(.both)
-                                self.dateSelect
-                            }
-                            .hidden(self.$reportType.map{ $0 == nil})
-                            .marginLeft(12.px)
-                            .marginTop(3.px)
-                            .float(.left)
-                            
-                            /// Star At
-                            Div{
-                                Label("Fecha Inicio")
-                                    .fontSize(12.px)
-                                    .color(.gray)
-                                Div().clear(.both)
-                                self.startAtField
-                                    .hidden(self.$endAtLabel.map{ !$0.isEmpty })
-                                Span(self.$startAtLabel)
-                                    .hidden(self.$endAtLabel.map{ $0.isEmpty })
-                                    .color(.white)
-                            }
-                            .hidden(self.$reportType.map{ $0 == nil})
-                            .marginLeft(12.px)
-                            .marginTop(3.px)
-                            .float(.left)
-                            
-                            /// End At
-                            Div{
-                                Label("Fecha Final")
-                                    .fontSize(12.px)
-                                    .color(.gray)
-                                Div().clear(.both)
-                                self.endAtField
-                                    .hidden(self.$endAtLabel.map{ !$0.isEmpty })
-                                Span(self.$endAtLabel)
-                                    .hidden(self.$endAtLabel.map{ $0.isEmpty })
-                                    .color(.white)
-                            }
-                            .hidden(self.$reportType.map{ $0 == nil})
-                            .marginLeft(12.px)
-                            .marginTop(3.px)
-                            .float(.left)
-                            
-                            Div(" Crear Reporte ")
-                                .class(.uibtnLargeOrange)
-                                .marginRight(12.px)
-                                .marginTop(18.px)
-                                .float(.right)
-                                .onClick {
-                                    self.requestReport()
-                                }
+                            Label("Tipo de reporte")
+                                .fontSize(12.px)
+                                .color(.gray)
                             
                             Div().clear(.both)
                             
-                            Div(self.$reportType.map{ $0?.helpText ??  "" })
-                                .paddingBottom(7.px)
-                                .marginLeft(12.px)
-                                .fontSize(12.px)
-                                .marginTop(3.px)
-                                .height(15.px)
-                                .color(.white)
-                                
+                            self.reportTypeSelect
                         }
-                        .borderRadius(7.px)
-                        .backgroundColor(.grayBlack)
-                        .height(85.px)
-                    
-                        self.resultDiv
-                            .custom("height", "calc(100% - 85px)")
+                        .marginLeft(12.px)
+                        .marginTop(3.px)
+                        .float(.left)
                         
+                        /// Seleccione Tienda
+                        Div{
+                            Label("Seleccione Tienda")
+                                .fontSize(12.px)
+                                .color(.gray)
+                            Div().clear(.both)
+                            
+                            self.storeSelect
+                        }
+                        .hidden(self.$reportType.map{ !($0?.storeable ==  true) })
+                        .marginLeft(12.px)
+                        .marginTop(3.px)
+                        .float(.left)
+                        
+                        /// Seleccione Ususario
+                        Div{
+                            Label("Seleccione Usuario")
+                                .fontSize(12.px)
+                                .color(.gray)
+                            Div().clear(.both)
+                            
+                            self.userSelect
+                        }
+                        .hidden(self.$reportType.map{ !($0?.userable ==  true) })
+                        .marginLeft(12.px)
+                        .marginTop(3.px)
+                        .float(.left)
+                        
+                        /// Product Search
+                        Div{
+                            Label("Seleccione Productos")
+                                .fontSize(12.px)
+                                .color(.gray)
+                            Div().clear(.both)
+                            self.parceblePOCDiv
+                        }
+                        .hidden(self.$reportType.map{ !($0 == .byProduct) })
+                        .marginLeft(12.px)
+                        .marginTop(3.px)
+                        .float(.left)
+                        
+                        /// Product Search
+                        Div{
+                            Label("Seleccione Servicio")
+                                .fontSize(12.px)
+                                .color(.gray)
+                            Div().clear(.both)
+                            self.parcebleSOCDiv
+                        }
+                        .hidden(self.$reportType.map{ !($0 == .byService) })
+                        .marginLeft(12.px)
+                        .marginTop(3.px)
+                        .float(.left)
+                        
+                        /// Date Select Type
+                        Div{
+                            Label("Seleccione Fecha")
+                                .fontSize(12.px)
+                                .color(.gray)
+                            Div().clear(.both)
+                            self.dateSelect
+                        }
+                        .hidden(self.$reportType.map{ $0 == nil})
+                        .marginLeft(12.px)
+                        .marginTop(3.px)
+                        .float(.left)
+                        
+                        /// Star At
+                        Div{
+                            Label("Fecha Inicio")
+                                .fontSize(12.px)
+                                .color(.gray)
+                            Div().clear(.both)
+                            self.startAtField
+                                .hidden(self.$endAtLabel.map{ !$0.isEmpty })
+                            Span(self.$startAtLabel)
+                                .hidden(self.$endAtLabel.map{ $0.isEmpty })
+                                .color(.white)
+                        }
+                        .hidden(self.$reportType.map{ $0 == nil})
+                        .marginLeft(12.px)
+                        .marginTop(3.px)
+                        .float(.left)
+                        
+                        /// End At
+                        Div{
+                            Label("Fecha Final")
+                                .fontSize(12.px)
+                                .color(.gray)
+                            Div().clear(.both)
+                            self.endAtField
+                                .hidden(self.$endAtLabel.map{ !$0.isEmpty })
+                            Span(self.$endAtLabel)
+                                .hidden(self.$endAtLabel.map{ $0.isEmpty })
+                                .color(.white)
+                        }
+                        .hidden(self.$reportType.map{ $0 == nil})
+                        .marginLeft(12.px)
+                        .marginTop(3.px)
+                        .float(.left)
+                        
+                        Div(" Crear Reporte ")
+                            .class(.uibtnLargeOrange)
+                            .marginRight(12.px)
+                            .marginTop(18.px)
+                            .float(.right)
+                            .onClick {
+                                self.requestReport()
+                            }
+                        
+                        Div().clear(.both)
+                        
+                        Div(self.$reportType.map{ $0?.helpText ??  "" })
+                            .paddingBottom(7.px)
+                            .marginLeft(12.px)
+                            .fontSize(12.px)
+                            .marginTop(3.px)
+                            .height(15.px)
+                            .color(.white)
+                            
                     }
-                    else {
-                        self.resultDiv
-                            .height(100.percent)
-                    }
+                    .borderRadius(7.px)
+                    .backgroundColor(.grayBlack)
+                    .height(85.px)
+                
+                    self.resultDiv
+                        .custom("height", "calc(100% - 85px)")
+                    
                     
                 }.custom("height", "calc(100% - 70px)")
                 
@@ -481,28 +475,25 @@ extension SalePointView {
                         self.printDocument()
                     }
                     
-                    if custCatchHerk > 1 {
+                    Div{
                         
-                        Div{
-                            
-                            Img()
-                                .src("/skyline/media/money_bag.png")
-                                .marginLeft(7.px)
-                                .cursor(.pointer)
-                                .height(18.px)
-                            
-                            Span("Facturar")
-                                .marginLeft(7.px)
-                            
-                        }
-                        .hidden(self.$salesWithOutFiscalDocumets.map{ $0.isEmpty })
-                        .class(.uibtnLarge)
-                        .marginLeft(7.px)
-                        .marginTop(0.px)
-                        .float(.left)
-                        .onClick {
-                            self.facturar()
-                        }
+                        Img()
+                            .src("/skyline/media/money_bag.png")
+                            .marginLeft(7.px)
+                            .cursor(.pointer)
+                            .height(18.px)
+                        
+                        Span("Facturar")
+                            .marginLeft(7.px)
+                        
+                    }
+                    .hidden(self.$salesWithOutFiscalDocumets.map{ $0.isEmpty })
+                    .class(.uibtnLarge)
+                    .marginLeft(7.px)
+                    .marginTop(0.px)
+                    .float(.left)
+                    .onClick {
+                        self.facturar()
                     }
                     
                     
@@ -533,24 +524,12 @@ extension SalePointView {
             left(0.px)
             top(0.px)
             
-            if custCatchHerk == 1 {
-                
-                reportTypeListener = SalesReportTypes.byUser.rawValue
-                
-                userSelectListener = custCatchID.uuidString
-                
-                dateSelectListener = DateRangeSelection.lastSevenDays.rawValue
-                
-                requestReport()
-                
-                return
-            }
-            
             reportTypeSelect.appendChild(
                 Option("Seleccione")
                     .value("")
             )
             
+            /// byStore, byUser, byProduct, byService
             SalesReportTypes.allCases.forEach { type in
                 reportTypeSelect.appendChild(
                     Option(type.description)
@@ -590,7 +569,19 @@ extension SalePointView {
             )
             
             getUsers(storeid: storeid, onlyActive: true) { users in
+
                 users.forEach { user in
+
+                    if custCatchHerk < 2  {
+                        if user.id != custCatchID {
+                            return
+                        }
+                    } else if custCatchHerk >= 2 && custCatchHerk < 3  {
+                        if user.store != custCatchStore {
+                            return
+                        }
+                    }
+
                     self.userSelect.appendChild(
                         Option("@" + (user.username.explode("@").first ?? user.firstName ))
                             .value(user.id.uuidString)
@@ -921,7 +912,6 @@ extension SalePointView {
                     
                 }
             }
-            
             
         }
         
@@ -1784,6 +1774,24 @@ extension SalePointView {
                 )
                 
             }
+        }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $sales.removeAllListeners()
+            $salesWithOutFiscalDocumets.removeAllListeners()
+            $reportType.removeAllListeners()
+            $totalBalance.removeAllListeners()
+            $reportTypeListener.removeAllListeners()
+            $storeSelectListener.removeAllListeners()
+            $userSelectListener.removeAllListeners()
+            $dateSelectListener.removeAllListeners()
+            $startAt.removeAllListeners()
+            $endAt.removeAllListeners()
+            $startAtLabel.removeAllListeners()
+            $endAtLabel.removeAllListeners()
+            $parsablePOCs.removeAllListeners()
+            $parsableSOCs.removeAllListeners()
         }
     }
 }

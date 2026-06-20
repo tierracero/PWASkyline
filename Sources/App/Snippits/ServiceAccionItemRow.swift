@@ -161,4 +161,15 @@ class ServiceAccionItemRow: Div {
         workforceLevel = action.workforceLevel
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $name.removeAllListeners()
+        $requestCompletition.removeAllListeners()
+        $isFavorite.removeAllListeners()
+        $productionCost.removeAllListeners()
+        $productionTime.removeAllListeners()
+        $productionLevel.removeAllListeners()
+        $workforceLevel.removeAllListeners()
+    }
 }

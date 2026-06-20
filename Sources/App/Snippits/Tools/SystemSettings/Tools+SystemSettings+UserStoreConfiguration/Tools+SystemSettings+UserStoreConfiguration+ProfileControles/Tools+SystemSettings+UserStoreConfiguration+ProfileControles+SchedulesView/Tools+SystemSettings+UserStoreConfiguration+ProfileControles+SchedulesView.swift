@@ -45,5 +45,11 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
             
         }
     
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $schedules.removeAllListeners()
+            $selectedScheduleId.removeAllListeners()
+        }
     }
 }

@@ -796,4 +796,21 @@ class MessageObject: Div {
         self.reactions = reactions
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $style.removeAllListeners()
+        $titleColor.removeAllListeners()
+        $bodyColor.removeAllListeners()
+        $footerColor.removeAllListeners()
+        $defaultImage.removeAllListeners()
+        $activity.removeAllListeners()
+        $userName.removeAllListeners()
+        $loadPercent.removeAllListeners()
+        $videoSrc.removeAllListeners()
+        $poster.removeAllListeners()
+        $waStatus.removeAllListeners()
+        $messageStatus.removeAllListeners()
+        $reactions.removeAllListeners()
+    }
 }

@@ -576,4 +576,20 @@ class ServiceOperationalObjectView: Div {
         }
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $id.removeAllListeners()
+        $directCost.removeAllListeners()
+        $indirectCost.removeAllListeners()
+        $custProductionElement.removeAllListeners()
+        $productionUnits.removeAllListeners()
+        $productionCost.removeAllListeners()
+        $productionTime.removeAllListeners()
+        $workforceLevelListener.removeAllListeners()
+        $isFavorite.removeAllListeners()
+        $code.removeAllListeners()
+        $name.removeAllListeners()
+        $descr.removeAllListeners()
+    }
 }

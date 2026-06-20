@@ -336,10 +336,12 @@ class StartServiceOrder: Div {
     lazy var mapContainer = Div {
             Img()
                 .src("/skyline/media/orderMapRequest.jpeg")
+                .custom("height","calc(100% - 14px)")
+                .custom("width","calc(100% - 14px)")
+                .borderRadius(all: 12.px)
+                .objectFit(.cover)
                 .margin(all:7.px)
                 .opacity(0.5)
-                .borderRadius(all: 12.px)
-                .custom("width","calc(100% - 14px)")
                 
             Div{
                 Table{
@@ -350,6 +352,15 @@ class StartServiceOrder: Div {
                             .onClick {
                                 self.loadMap()
                             }
+
+                            Div().clear(.both).height(12.px)
+
+                            Div("Busqueda Manual").color(.gray)
+                            .class(.uibtnLargeOrange)
+                            .onClick {
+                                self.searchAddressManualy()
+                            }
+
                         }
                         .verticalAlign(.middle)
                         .align(.center)
@@ -889,7 +900,7 @@ class StartServiceOrder: Div {
                     
                     if self.custAcct.type == .personal {
                         
-                        /// Account Contact
+                        // Account Contact
                         Div {
                             
                             Label("Nombre del Clientes")
@@ -1211,8 +1222,8 @@ class StartServiceOrder: Div {
                         
                         Div{
                             
-                            
                             Div{
+
                                 Div{
                                 
                                     Div{
@@ -1272,32 +1283,7 @@ class StartServiceOrder: Div {
                             .padding(all: 7.px)
                             .align(.center)
                             .onClick {
-                                
-                                guard let country = Countries(rawValue: self._country), country == .mexico else {
-                                    showError(.invalidField, "Lo sentimos este servicio solo esta disponible para Mexico. Es posible que necesite corregir su ortografia o haga un ingreso manual.")
-                                    return
-                                }
-                                
-                                let view = ManualAddressSearch(.byCountry(.mexico)) { settelment, city, state, zip, country in
-                                    
-                                    self._colony = settelment
-                                    
-                                    self._city = city
-                                    
-                                    self._state = state
-                                    
-                                    self._zip = zip
-                                    
-                                    self._country = country.description
-                                    
-                                    self.manualAddressInput = true
-                                    
-                                    self.street.select()
-                                    
-                                }
-                                
-                                addToDom(view)
-                                
+                                self.searchAddressManualy()
                             }
                             
                         }
@@ -1416,11 +1402,14 @@ class StartServiceOrder: Div {
                     
                     Div {
                         
+                        Div().height(7.px).clear(.both)
+
                         Div{
                             
                             /// Street
                             Span("Calle y numero")
-                            
+                            .color(.white)
+
                             self.street
                                 .onBlur({ input, event in
                                     self._street = input.text.purgeSpaces.capitalizingFirstLetters
@@ -1434,6 +1423,7 @@ class StartServiceOrder: Div {
                             /// Colony
                             Div{
                                 Span("Colonia")
+                                .color(.white)
                                 
                                 self.colony
                                     .onBlur({ input, event in
@@ -1449,6 +1439,8 @@ class StartServiceOrder: Div {
                             /// City
                             Div{
                                 Span("Cuidad")
+                                .color(.white)
+
                                 self.city
                                     .onBlur({ input, event in
                                         self._city = input.text.purgeSpaces.capitalizingFirstLetters
@@ -1464,6 +1456,8 @@ class StartServiceOrder: Div {
                             /// State
                             Div{
                                 Span("Estado")
+                                .color(.white)
+
                                 self.state
                                     .onBlur({ input, event in
                                         self._state = input.text.purgeSpaces.capitalizingFirstLetters
@@ -1478,6 +1472,8 @@ class StartServiceOrder: Div {
                             /// Codigo Postal
                             Div{
                                 Span("C.P.")
+                                .color(.white)
+
                                 self.zip
                                     .onBlur({ input, event in
                                         self._zip = input.text.purgeSpaces.capitalizingFirstLetters
@@ -1492,6 +1488,7 @@ class StartServiceOrder: Div {
                             /// Country
                             Div{
                                 Span("Pais")
+                                .color(.white)
                                 
                                 self.country
                                     .onBlur({ input, event in
@@ -2698,9 +2695,137 @@ class StartServiceOrder: Div {
 
     }
 
+    func searchAddressManualy() {
+
+        guard let country = Countries(rawValue: self._country), country == .mexico else {
+            showError(.invalidField, "Lo sentimos este servicio solo esta disponible para Mexico. Es posible que necesite corregir su ortografia o haga un ingreso manual.")
+            return
+        }
+        
+        let view = ManualAddressSearch(.byCountry(.mexico)) { response in
+            
+            switch response {
+            case .address(let address):
+
+                self._colony =  address.settlement
+                
+                self._city = address.city
+                
+                self._state = address.state
+                
+                self._zip = address.zip
+                
+                self._country = address.country.description
+
+            case .coordinates(let coordinate):
+
+
+                print("GOT CORDS")
+                
+                print(coordinate)
+
+                self.addLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+
+                if self._street.isEmpty {
+                    self._street = coordinate.street
+                }
+
+                self._colony =  coordinate.settlement
+                
+                self._city = coordinate.city
+                
+                self._state = coordinate.state
+                
+                self._zip = coordinate.zip
+                
+                self._country = coordinate.country.description
+
+            }
+
+            
+            self.manualAddressInput = true
+            
+            self.street.select()
+            
+        }
+        
+        addToDom(view)
+                                
+    }
+
     override func didRemoveFromDOM(){
         print("⚠️  didRemoveFromDOM")
         super.didRemoveFromDOM()
+        $acctType.removeAllListeners()
+        $currentLocation.removeAllListeners()
+        $dueAt.removeAllListeners()
+        $bookedPromises.removeAllListeners()
+        $sugestedPromiseDay.removeAllListeners()
+        $sugestedPromiseHour.removeAllListeners()
+        $selectedDateStamp.removeAllListeners()
+        $_firstName.removeAllListeners()
+        $_secondName.removeAllListeners()
+        $_lastName.removeAllListeners()
+        $_secondLastName.removeAllListeners()
+        $_email.removeAllListeners()
+        $_mobile.removeAllListeners()
+        $_idType.removeAllListeners()
+        $_idNumberCIC.removeAllListeners()
+        $_idNumberOCR.removeAllListeners()
+        $_street.removeAllListeners()
+        $_colony.removeAllListeners()
+        $_city.removeAllListeners()
+        $_state.removeAllListeners()
+        $_country.removeAllListeners()
+        $_zip.removeAllListeners()
+        $searchZipCodeString.removeAllListeners()
+        $_bizName.removeAllListeners()
+        $_razon.removeAllListeners()
+        $_rfc.removeAllListeners()
+        $_contacto1.removeAllListeners()
+        $_contacto2.removeAllListeners()
+        $cardId.removeAllListeners()
+        $selectedUserID.removeAllListeners()
+        $requierServiceAddress.removeAllListeners()
+        $manualAddressInput.removeAllListeners()
+        $foundAddressByZipCode.removeAllListeners()
+        $postalCodeResults.removeAllListeners()
+        $pinOfDevice.removeAllListeners()
+        $ttotal.removeAllListeners()
+        $selectEquipmentField.removeAllListeners()
+        $_idTag1.removeAllListeners()
+        $_idTag2.removeAllListeners()
+        $_tag1.removeAllListeners()
+        $_tag2.removeAllListeners()
+        $_tag3.removeAllListeners()
+        $_tag4.removeAllListeners()
+        $_tag5.removeAllListeners()
+        $_tag6.removeAllListeners()
+        $_descr.removeAllListeners()
+        $_checkTag1.removeAllListeners()
+        $_checkTag2.removeAllListeners()
+        $_checkTag3.removeAllListeners()
+        $_checkTag4.removeAllListeners()
+        $_checkTag5.removeAllListeners()
+        $_checkTag6.removeAllListeners()
+        $curOrderManagerBrand.removeAllListeners()
+        $curOrderManagerType.removeAllListeners()
+        $curOrderManagerModel.removeAllListeners()
+        $tag1PreSelctedItemID.removeAllListeners()
+        $tag1SelctedItemID.removeAllListeners()
+        $tag3isDisabeld.removeAllListeners()
+        $tag3PreSelctedItemID.removeAllListeners()
+        $tag3SelctedItemID.removeAllListeners()
+        $tag2isDisabeld.removeAllListeners()
+        $tag2PreSelctedItemID.removeAllListeners()
+        $tag2SelctedItemID.removeAllListeners()
+        $total.removeAllListeners()
+        $charges.removeAllListeners()
+        $payments.removeAllListeners()
+        $equipments.removeAllListeners()
+        $customeScript.removeAllListeners()
+        $customeScripts.removeAllListeners()
+        $customeScriptListiner.removeAllListeners()
         _ = JSObject.global.deinitiateCanvas!()
     }
 

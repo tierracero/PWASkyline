@@ -175,4 +175,10 @@ class QuickMessageView: Div {
             
         }
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $loaderIsHidden.removeAllListeners()
+        $_lcm.removeAllListeners()
+    }
 }

@@ -125,6 +125,11 @@ extension MoneyManagerView.NewDailyCutView {
                    
             }
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $users.removeAllListeners()
+        }
     }
 }
 

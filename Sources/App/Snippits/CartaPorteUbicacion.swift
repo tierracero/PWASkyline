@@ -276,4 +276,14 @@ class CartaPorteUbicacion: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $isHomeItem.removeAllListeners()
+        $date.removeAllListeners()
+        $time.removeAllListeners()
+        $street.removeAllListeners()
+        $number.removeAllListeners()
+        $refrence.removeAllListeners()
+    }
 }

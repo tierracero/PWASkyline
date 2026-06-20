@@ -78,14 +78,10 @@ extension OrderRouteView{
 
         @State var zip: String = ""
 
-        var latitude: String = ""
-
-        var longitude: String = ""
-        
         @State var loadByZipCode: Bool = false
         
         @State var mapIsLoaded: Bool = false
-        
+
         lazy var streetField = InputText(self.$street)
             .custom("width", "calc(100% - 18px)")
             .placeholder("Calle y número")
@@ -153,6 +149,30 @@ extension OrderRouteView{
             .id(.init(stringLiteral: "lonInput\(self.mapId)"))
             .hidden(true)
         
+        @State var latitude = ""
+
+        @State var longitude = ""
+
+        @State var addManualCoordanetsIsHidden = true
+
+        @State var addManualMultipleCoordanetsIsHidden = true
+        
+        lazy var latitudeField = InputText(self.$latitude)
+            .custom("width", "calc(100% - 18px)")
+            .class(.textFiledLightLarge)
+            .placeholder("23.00001234")
+            .autocomplete(.off)
+            .color(.gray)
+
+        lazy var longitudeField = InputText(self.$longitude)
+            .custom("width", "calc(100% - 18px)")
+            .class(.textFiledLightLarge)
+            .placeholder("-99.000001234")
+            .autocomplete(.off)
+            .color(.gray)
+
+        lazy var multipleResultsContainer = Div()
+
         @DOM override var body: DOM.Content {
             
             self.latInput
@@ -169,7 +189,7 @@ extension OrderRouteView{
                         .onClick{
                             self.remove()
                         }
-                    
+
                     H2("Buscar Orden")
                         .color(.lightBlueText)
                 }
@@ -215,7 +235,7 @@ extension OrderRouteView{
                         Img()
                             .closeButton(.view)
                             .onClick{
-                                self.remove()
+                                self.multipleOrderIsHidden = true
                             }
                         
                         H2("Seleccionar Orden")
@@ -250,7 +270,7 @@ extension OrderRouteView{
                 .top(24.percent)
                 
             }
-            .hidden(self.$multipleOrderIsHidden)
+            .hidden(self.$multipleOrderIsHidden )
             .class(.transparantBlackBackGround)
             .position(.absolute)
             .height(100.percent)
@@ -267,11 +287,22 @@ extension OrderRouteView{
                         Img()
                             .closeButton(.view)
                             .onClick{
-                                self.remove()
+                                self.selectedOrderIsHidden = true
                             }
+
+                        Div{
+                            Span("+ Coordenadas")
+                            .margin(all: 3.px)
+                        }
+                        .class(.uibtn)
+                        .float(.right)
+                        .onClick {
+                            self.addCoordanets()
+                        }
                         
                         H2("Confirmar direccion")
                             .color(.lightBlueText)
+
                     }
                     
                     Div().class(.clear).height(7.px)
@@ -386,6 +417,110 @@ extension OrderRouteView{
             .width(100.percent)
             .left(0.px)
             .top(0.px)
+
+            Div {
+
+                Div {
+                    
+                    // MARK: header
+                    Div{
+                        
+                        Img()
+                            .closeButton(.view)
+                            .onClick{
+                                self.addManualCoordanetsIsHidden = true
+                            }
+
+                        H1("Ingresar Coordenadas").color(.lightBlueText)
+                        
+                        Div().class(.clear).marginTop(12.px)
+
+                    }
+
+                    H2("Latitud")
+                    Div().clear(.both).height(3.px)
+                    self.latitudeField
+                    Div().clear(.both).height(7.px)
+
+                    H2("Longitud")
+                    Div().clear(.both).height(3.px)
+                    self.longitudeField
+                    Div().clear(.both).height(7.px)
+
+                    Div {
+                        Div("Ingresar Coordenadas")
+                            .custom("width", "calc(100% - 14px)")
+                            .class(.uibtnLargeOrange)
+                            .align(.center)
+                            .onClick {
+
+                                guard let latitude = Double(self.latitude) else {
+                                    showError(.generalError, "Latitud invalida")
+                                    return
+                                }
+
+                                guard let longitude = Double(self.longitude) else {
+                                    showError(.generalError, "Longitud invalida")
+                                    return
+                                }
+
+                                self.loadCoordanets(latitude: latitude, longitude: longitude)
+                                
+                            }
+                    }
+                        
+                }
+                .custom("left", "calc(50% - 212px)")
+                .custom("top", "calc(50% - 252px)")
+                .borderRadius(all: 24.px)
+                .backgroundColor(.white)
+                .padding(all: 12.px)
+                .position(.absolute)
+                .width(400.px)
+
+            }
+            .class(.transparantBlackBackGround)
+            .position(.absolute)
+            .height(100.percent)
+            .width(100.percent)
+            .left(0.px)
+            .top(0.px)
+            .hidden(self.$addManualCoordanetsIsHidden)
+
+            Div {
+                Div {
+
+                    // MARK: header
+                    Div {
+                        
+                        Img()
+                            .closeButton(.view)
+                            .onClick {
+                                self.addManualMultipleCoordanetsIsHidden = true
+                            }
+
+                        H1("Ingresar Coordenadas").color(.lightBlueText)
+                        
+                        Div().class(.clear).marginTop(12.px)
+
+                    }
+
+                    Div {
+                        self.multipleResultsContainer
+                    }
+                    .class(.roundDarkBlue)
+                    .padding(all: 7.px)
+                    .height(250.px)
+
+                }
+            }
+            .class(.transparantBlackBackGround)
+            .position(.absolute)
+            .height(100.percent)
+            .width(100.percent)
+            .left(0.px)
+            .top(0.px)
+            .hidden(self.$addManualMultipleCoordanetsIsHidden)
             
         }
         
@@ -418,7 +553,7 @@ extension OrderRouteView{
         func searchOrder(){
             
             if searchOrderString.isEmpty {
-                searchOrderField
+                searchOrderField.select()
                 return
             }
             
@@ -486,7 +621,6 @@ extension OrderRouteView{
                         self.searchOrderError = "⚠️ No hay resultados compatibles."
                     }
                     
-                    
                 }
                 
                 print("🟢 payload.orders \(orders.count)")
@@ -501,6 +635,7 @@ extension OrderRouteView{
                     self.order = order
                     
                     self.loadOrderDetail(order: order)
+
                     return
                 }
                 
@@ -511,6 +646,8 @@ extension OrderRouteView{
         
         func loadOrderDetail(order: CustOrder) {
             
+            print("⭐️  loadOrderDetail  ")
+
             if !order.lat.isEmpty && !order.lon.isEmpty {
                 
                 print("found lat and lon")
@@ -553,23 +690,114 @@ extension OrderRouteView{
                 city: order.city,
                 state: order.state,
                 country: order.country.isEmpty ? "mexico" : order.country
-            ))) { settlement, city, state, zip, country in
+            ))) { result in
                 
-                self.street = order.street
+                switch result {
+                case .address(let address):
+                    
+                    self.street = order.street
+                    
+                    self.colony = address.settlement
+
+                    self.city = address.city
+
+                    self.state = address.state
+
+                    self.country = address.country.description
+
+                    self.zip = address.zip
+                    
+                case .coordinates(let coordinate):
+
+                    print("")
+
+                    self.street = coordinate.street
+                    
+                    self.colony = coordinate.settlement
+
+                    self.city = coordinate.city
+
+                    self.state = coordinate.state
+
+                    self.country = coordinate.country.description
+
+                    self.zip = coordinate.zip
+
+                    API.custOrderV1.addLocation(
+                        latitude: coordinate.latitude,
+                        longitude: coordinate.longitude,
+                        orderId: order.id
+                    ) { resp in
+
+                        print(resp )
+
+                        API.custOrderV1.saveOrderDetail(
+                            orderid: order.id,
+                            name: order.name,
+                            mobile: order.mobile,
+                            telephone: order.telephone,
+                            email: order.email,
+                            street: (self.order?.street ?? "").isEmpty ? self.street : (self.order?.street ?? ""),
+                            colony: self.colony,
+                            city: self.city,
+                            state: self.state,
+                            country: self.country,
+                            zip: self.zip
+                        ) { resp in
+
+
+                            self.callback(.init(
+                                orderId: order.id,
+                                folio: order.folio,
+                                name: order.name,
+                                street: (self.order?.street ?? "").isEmpty ? self.street : (self.order?.street ?? ""),
+                                colony: self.colony,
+                                city: self.city,
+                                state: self.state,
+                                country: self.country,
+                                zip: self.zip,
+                                latitude: coordinate.latitude,
+                                longitude: coordinate.longitude
+                            ))
+
+                            self.remove()
+
+
+                        }
+                        
+                    }
+
+
+
+                /*
                 
-                self.colony = settlement
+                    self.latitude = coordinates.latitude
 
-                self.city = city
+                    self.longitude = coordinates.longitude
 
-                self.state = state
-
-                self.country = country.description
-
-                self.zip = zip
+                callback(.init(
+                    orderId: order.id,
+                    folio: order.folio,
+                    name: order.name,
+                    street: order.street,
+                    colony: order.colony,
+                    city: order.city,
+                    state: order.state,
+                    country: order.country,
+                    zip: order.zip,
+                    latitude: latitude,
+                    longitude: longitude
+                ))
                 
-                self.searchOrderString = ""
+                self.remove()
                 
+                */ 
+                }
+
+                
+
                 self.selectedOrderIsHidden = false
+
                 
             }
             
@@ -578,6 +806,8 @@ extension OrderRouteView{
         }
         
         func searchPostalCode(order: CustOrder){
+
+            print("⭐️  searchPostalCode  ")
             
             let code = order.zip.purgeSpaces
             
@@ -722,7 +952,7 @@ extension OrderRouteView{
             }
         }
         
-        func loadMap(){
+        func loadMap(){ 
             
             print("🟡 init map")
             
@@ -801,7 +1031,7 @@ extension OrderRouteView{
                 }.jsValue)
             }
         }
-        
+
         func processMapResponse(_ json: String ){
            
             guard let data = json.data(using: .utf8) else {
@@ -838,7 +1068,7 @@ extension OrderRouteView{
             
             
         }
-        
+
         func processMapUpdate(_ json: String){
             
              guard let data = json.data(using: .utf8) else {
@@ -911,5 +1141,253 @@ extension OrderRouteView{
             
         }
         
+        func addCoordanets() {
+            addManualCoordanetsIsHidden = false
+        }
+
+        func loadCoordanets(latitude: Double, longitude: Double) {
+            
+            print("🟡 reverse geocode coordinates")
+            
+            loadingView(show: true)
+            
+            API.v1.jwt { token in
+                
+                loadingView(show: false)
+
+                guard let token else {
+                    showError(.comunicationError, "No se pudo cargar token")
+                    return
+                }
+                
+                let _ = JSObject.global.initiateMapReverseGeocode!(token, latitude, longitude, JSOneshotClosure { args in
+                    
+                    if let payload = args.first?.string {
+                        self.processReverseGeocodeMapResponse(payload, latitude, longitude)
+                    }
+                    
+                    return .undefined
+                }.jsValue)
+            }
+        }
+        
+        func processReverseGeocodeMapResponse(_ json: String, _ latitude: Double, _ longitude: Double) {
+            
+            Console.clear()
+
+            print(json)
+
+            guard let data = json.data(using: .utf8) else {
+                showError(.unexpectedResult, "No se pudo crear data de dirección del mapa")
+                return
+            }
+            
+            do {
+                
+                let payload = try JSONDecoder().decode(ReverseGeocodeMapResponse.self, from: data)
+                
+                guard payload.status == "ok" else {
+                    showError(.generalError, payload.msg ?? "No se pudo localizar dirección con esas coordenadas.")
+                    return
+                }
+                
+                guard let addresses = payload.addresses, let address = addresses.first else {
+                    showError(.generalError, "No se localizaron direcciones con esas coordenadas.")
+                    return
+                }
+                
+                if addresses.count > 1 {
+
+                    self.multipleResultsContainer.innerHTML = ""
+
+                    addresses.forEach { address in
+
+                        let streetValue = (address.street?.isEmpty == false ? address.street : [address.streetName, address.streetNumber].compactMap { value in
+                            guard let value, !value.isEmpty else { return nil }
+                            return value
+                        }.joined(separator: " ")) ?? ""
+                        
+                        let colonyValue = address.colony ?? ""
+                        
+                        let cityValue = address.city ?? ""
+                        
+                        let stateValue = address.state ?? ""
+                        
+                        let countryValue = address.country ?? ""
+                        
+                        let zipValue = address.zip ?? ""
+
+                        let view = Div("")
+                        .marginBottom(7.px)
+                        .width(95.percent)
+                        .class(.uibtn)
+                        .onClick {
+
+                            guard let order = self.order else {
+                                return
+                            }
+
+                            loadingView(show: true)
+
+                            API.custOrderV1.saveOrderDetail(
+                                orderid: order.id,
+                                name: order.name,
+                                mobile: order.mobile,
+                                telephone: order.telephone,
+                                email: order.email,
+                                street: (self.order?.street ?? "").isEmpty ? self.street : (self.order?.street ?? ""),
+                                colony: self.colony,
+                                city: self.city,
+                                state: self.state,
+                                country: self.country,
+                                zip: self.zip
+                            ) { resp in
+
+                                loadingView(show: false)
+
+                                self.callback(.init(
+                                    orderId: order.id,
+                                    folio: order.folio,
+                                    name: order.name,
+                                    street: streetValue,
+                                    colony: colonyValue,
+                                    city: cityValue,
+                                    state: stateValue,
+                                    country: countryValue,
+                                    zip: zipValue,
+                                    latitude: latitude,
+                                    longitude: longitude
+                                ))
+
+                            }
+                            
+
+
+
+                            /*
+
+
+                API.custOrderV1.addLocation(
+                    latitude: coordinate.latitude,
+                    longitude: coordinate.longitude,
+                    orderId: self.order.id
+                ) { resp in
+
+                    print(resp )
+
+                }
+
+                API.custOrderV1.saveOrderDetail(
+                    orderid: self.order.id,
+                    name: self.orderName,
+                    mobile: self.mobile,
+                    telephone: self.telephone,
+                    email: self.email,
+                    street: self.street,
+                    colony: self.colony,
+                    city: self.city,
+                    state: self.state,
+                    country: self.country,
+                    zip: self.zip
+                ) { resp in
+
+
+                }
+                            */
+
+                        }
+
+                        self.multipleResultsContainer.appendChild(view)
+                    }
+
+                    return
+                }
+
+                for (index, address) in addresses.enumerated() {
+                    print("🗺 Posible dirección \(index + 1): \(address.printableAddress)")
+                }
+                
+                let streetValue = (address.street?.isEmpty == false ? address.street : [address.streetName, address.streetNumber].compactMap { value in
+                    guard let value, !value.isEmpty else { return nil }
+                    return value
+                }.joined(separator: " ")) ?? ""
+                
+                let colonyValue = address.colony ?? ""
+                
+                let cityValue = address.city ?? ""
+                
+                let stateValue = address.state ?? ""
+                
+                let countryValue = address.country ?? ""
+                
+                let zipValue = address.zip ?? ""
+
+                guard let order = self.order else {
+                    return
+                }
+
+                loadingView(show: true)
+
+                API.custOrderV1.saveOrderDetail(
+                    orderid: order.id,
+                    name: order.name,
+                    mobile: order.mobile,
+                    telephone: order.telephone,
+                    email: order.email,
+                    street: (self.order?.street ?? "").isEmpty ? self.street : (self.order?.street ?? ""),
+                    colony: self.colony,
+                    city: self.city,
+                    state: self.state,
+                    country: self.country,
+                    zip: self.zip
+                ) { resp in
+
+                    loadingView(show: false)
+
+                    self.callback(.init(
+                        orderId: order.id,
+                        folio: order.folio,
+                        name: order.name,
+                        street: streetValue,
+                        colony: colonyValue,
+                        city: cityValue,
+                        state: stateValue,
+                        country: countryValue,
+                        zip: zipValue,
+                        latitude: latitude,
+                        longitude: longitude
+                    ))
+
+                    self.remove()
+                
+                }
+
+     
+                
+            } catch {
+                showError(.unexpectedResult, "No se pudo decodificar dirección de coordenadas.")
+                return
+            }
+        }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $selectedOrderFolio.removeAllListeners()
+            $searchOrderString.removeAllListeners()
+            $searchOrderHasNoResults.removeAllListeners()
+            $searchOrderError.removeAllListeners()
+            $multipleOrderIsHidden.removeAllListeners()
+            $selectedOrderIsHidden.removeAllListeners()
+            $orders.removeAllListeners()
+            $currentLocation.removeAllListeners()
+            $street.removeAllListeners()
+            $colony.removeAllListeners()
+            $city.removeAllListeners()
+            $state.removeAllListeners()
+            $country.removeAllListeners()
+            $zip.removeAllListeners()
+            $loadByZipCode.removeAllListeners()
+            $mapIsLoaded.removeAllListeners()
+        }
     }
 }

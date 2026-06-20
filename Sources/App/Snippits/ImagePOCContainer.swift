@@ -641,4 +641,14 @@ class ImagePOCContainer: Div {
             }
         }
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $pocid.removeAllListeners()
+        $image.removeAllListeners()
+        $imageLoader.removeAllListeners()
+        $descr.removeAllListeners()
+        $loadPercent.removeAllListeners()
+        $isAvatar.removeAllListeners()
+    }
 }

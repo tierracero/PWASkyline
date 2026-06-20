@@ -177,5 +177,11 @@ extension CustConcessionView {
             self.items.append(contentsOf: items)
         }
 
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $bodegaName.removeAllListeners()
+            $items.removeAllListeners()
+        }
     }
 }

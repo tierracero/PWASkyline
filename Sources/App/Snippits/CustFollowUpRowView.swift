@@ -202,4 +202,10 @@ class CustFollowUpRowView: Div {
             self.currentUserLabel = user.username.explode("@").first ?? user.firstName
         }
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $createdByLabel.removeAllListeners()
+        $currentUserLabel.removeAllListeners()
+    }
 }

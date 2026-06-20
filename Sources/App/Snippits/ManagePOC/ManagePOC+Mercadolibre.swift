@@ -253,5 +253,16 @@ extension ManagePOC {
                 
             }
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $categoryId.removeAllListeners()
+            $inventoryId.removeAllListeners()
+            $siteId.removeAllListeners()
+            $autoPause.removeAllListeners()
+            $isActive.removeAllListeners()
+            $allowInPromoPrice.removeAllListeners()
+            $priceTypeListener.removeAllListeners()
+        }
     }
 }

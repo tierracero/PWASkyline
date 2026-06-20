@@ -172,5 +172,15 @@ extension OrderView {
             super.didAddToDOM()
             
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $type.removeAllListeners()
+            $typeListener.removeAllListeners()
+            $actionName.removeAllListeners()
+            $help.removeAllListeners()
+            $placeholder.removeAllListeners()
+            $isRequired.removeAllListeners()
+        }
     }
 }

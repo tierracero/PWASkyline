@@ -1024,4 +1024,27 @@ class ConfirmProductView: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $storeid.removeAllListeners()
+        $generateRepositionOrder.removeAllListeners()
+        $storeIdSelectListener.removeAllListeners()
+        $changePriceViewIsHidden.removeAllListeners()
+        $price.removeAllListeners()
+        $pricea.removeAllListeners()
+        $priceb.removeAllListeners()
+        $pricec.removeAllListeners()
+        $customePrice.removeAllListeners()
+        $name.removeAllListeners()
+        $upc.removeAllListeners()
+        $brand.removeAllListeners()
+        $model.removeAllListeners()
+        $cost.removeAllListeners()
+        $cuant.removeAllListeners()
+        $pocDescr.removeAllListeners()
+        $pocTotalInventory.removeAllListeners()
+        $quantFieldIsDisabeld.removeAllListeners()
+        $poc.removeAllListeners()
+    }
 }

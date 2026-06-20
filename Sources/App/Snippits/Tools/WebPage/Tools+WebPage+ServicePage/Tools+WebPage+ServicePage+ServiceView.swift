@@ -691,5 +691,18 @@ extension ToolsView.WebPage.ServicePage {
             addToDom(editor)
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $id.removeAllListeners()
+            $name.removeAllListeners()
+            $smallDescription.removeAllListeners()
+            $descr.removeAllListeners()
+            $cost.removeAllListeners()
+            $inPromo.removeAllListeners()
+            $avatar.removeAllListeners()
+            $editImage.removeAllListeners()
+            $selectedAvatar.removeAllListeners()
+        }
     }
 }

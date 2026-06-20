@@ -203,5 +203,18 @@ class IMChatBubbleView: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $icon.removeAllListeners()
+        $chatNick.removeAllListeners()
+        $lastMessageAt.removeAllListeners()
+        $lastMessageAtText.removeAllListeners()
+        $message.removeAllListeners()
+        $unSeenMessage.removeAllListeners()
+        $isActive.removeAllListeners()
+        $viewDetails.removeAllListeners()
+        $closeNewMessageBubbleTimmer.removeAllListeners()
+    }
 }
 

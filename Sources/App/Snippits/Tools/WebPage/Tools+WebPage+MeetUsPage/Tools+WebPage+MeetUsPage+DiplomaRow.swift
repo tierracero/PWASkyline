@@ -99,6 +99,12 @@ extension ToolsView.WebPage.MeetUsPage {
             
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $name.removeAllListeners()
+            $descr.removeAllListeners()
+        }
     }
 }
 

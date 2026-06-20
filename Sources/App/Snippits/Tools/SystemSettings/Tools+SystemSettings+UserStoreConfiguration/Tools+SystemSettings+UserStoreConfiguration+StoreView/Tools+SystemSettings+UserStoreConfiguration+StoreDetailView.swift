@@ -2216,6 +2216,51 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 }
             }
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $id.removeAllListeners()
+            $createdAt.removeAllListeners()
+            $modifiedAt.removeAllListeners()
+            $storeName.removeAllListeners()
+            $supervisor.removeAllListeners()
+            $supervisorListener.removeAllListeners()
+            $telephone.removeAllListeners()
+            $mobile.removeAllListeners()
+            $email.removeAllListeners()
+            $street.removeAllListeners()
+            $colony.removeAllListeners()
+            $city.removeAllListeners()
+            $state.removeAllListeners()
+            $country.removeAllListeners()
+            $zip.removeAllListeners()
+            $isFiscalable.removeAllListeners()
+            $isPublic.removeAllListeners()
+            $fiscalProfileListener.removeAllListeners()
+            $location.removeAllListeners()
+            $balance.removeAllListeners()
+            $storePrefix.removeAllListeners()
+            $statusListener.removeAllListeners()
+            $orderButtonListener.removeAllListeners()
+            $orderDocumentListener.removeAllListeners()
+            $orderImageListener.removeAllListeners()
+            $orderLineBreak.removeAllListeners()
+            $posButtonListener.removeAllListeners()
+            $posDocumentListener.removeAllListeners()
+            $posImageListener.removeAllListeners()
+            $posLineBreak.removeAllListeners()
+            $priceModifierPdv.removeAllListeners()
+            $priceModifierOrder.removeAllListeners()
+            $operationTypeListener.removeAllListeners()
+            $oporationStoreListener.removeAllListeners()
+            $lockedInventory.removeAllListeners()
+            $groopName.removeAllListeners()
+            $bodegaName.removeAllListeners()
+            $bodegaDescr.removeAllListeners()
+            $seccion.removeAllListeners()
+            $inventory.removeAllListeners()
+            $bodegasRefrence.removeAllListeners()
+        }
     }
 }
 

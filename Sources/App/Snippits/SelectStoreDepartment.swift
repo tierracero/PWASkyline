@@ -653,6 +653,21 @@ class SelectStoreDepartment: Div {
         }
     }
 
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $activeMode.removeAllListeners()
+        $titleText.removeAllListeners()
+        $selectedDepartmentId.removeAllListeners()
+        $selectedDepartment.removeAllListeners()
+        $selectedCategoryId.removeAllListeners()
+        $selectedCategory.removeAllListeners()
+        $selectedLineId.removeAllListeners()
+        $selectedLine.removeAllListeners()
+        $hasDeps.removeAllListeners()
+        $hasCats.removeAllListeners()
+        $hasLines.removeAllListeners()
+    }
 }
 
 extension SelectStoreDepartment {

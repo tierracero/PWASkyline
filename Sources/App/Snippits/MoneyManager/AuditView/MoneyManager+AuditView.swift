@@ -253,6 +253,13 @@ extension MoneyManagerView {
             }
             
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $payment.removeAllListeners()
+            $moneyManager.removeAllListeners()
+            $financials.removeAllListeners()
+        }
     }
     
 }

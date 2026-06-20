@@ -170,5 +170,11 @@ extension OrderView {
             
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $reason.removeAllListeners()
+            $date.removeAllListeners()
+        }
     }
 }

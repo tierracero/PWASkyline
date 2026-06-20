@@ -64,6 +64,7 @@ class CreateStoreLevelCategoria: Div {
         fatalError("init() has not been implemented")
     }
     
+    let viewId: UUID =  .init()
     
     var titleText = "Crear Categoria"
     
@@ -483,8 +484,8 @@ class CreateStoreLevelCategoria: Div {
         
         let fileName = safeFileName(name: file.name, to: .categoryAvatar, folio: nil)
         
-        formData.append("event", UUID().uuidString)
-        
+        formData.append("eventid", self.viewId.uuidString)
+
         formData.append("to", ImagePickerTo.categoryAvatar.rawValue)
         
         if let id = cat?.id {
@@ -495,7 +496,7 @@ class CreateStoreLevelCategoria: Div {
 
         formData.append("file", file, filename: fileName)
         
-        xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadMedia")
+        xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
         
         xhr.setRequestHeader("Accept", "application/json")
         
@@ -523,5 +524,12 @@ class CreateStoreLevelCategoria: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $uploadPercent.removeAllListeners()
+        $name.removeAllListeners()
+        $descr.removeAllListeners()
+    }
 }
 

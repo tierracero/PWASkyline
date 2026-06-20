@@ -295,4 +295,10 @@ class SearchCustomerFiscalView: Div {
         }
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $term.removeAllListeners()
+        $results.removeAllListeners()
+    }
 }

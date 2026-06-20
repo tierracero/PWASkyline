@@ -522,5 +522,21 @@ class OrderCalendarView: Div {
         return date.weekdayName
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $currentMonthName.removeAllListeners()
+        $realMonth.removeAllListeners()
+        $realYear.removeAllListeners()
+        $realDay.removeAllListeners()
+        $selectedDay.removeAllListeners()
+        $selectedMonth.removeAllListeners()
+        $selectedYear.removeAllListeners()
+        $day.removeAllListeners()
+        $year.removeAllListeners()
+        $yearName.removeAllListeners()
+        $highPriority.removeAllListeners()
+        $selectedDateStamp.removeAllListeners()
+    }
 }
 

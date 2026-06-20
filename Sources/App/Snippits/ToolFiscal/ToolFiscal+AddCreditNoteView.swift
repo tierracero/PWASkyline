@@ -263,6 +263,13 @@ extension ToolFiscal {
             }
 
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $comment.removeAllListeners()
+            $creditReasonSelectListener.removeAllListeners()
+            $amount.removeAllListeners()
+        }
     }
 
 }

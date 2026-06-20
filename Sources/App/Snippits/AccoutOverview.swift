@@ -832,6 +832,7 @@ public class AccoutOverview: Div {
         charges: [CustOrderLoadFolioCharges],
         pocs: [CustPOCInventoryOrderView],
         files: [CustOrderLoadFolioFiles],
+        contracts: [CustPageContent],
         equipments: [CustOrderLoadFolioEquipments],
         rentals: [CustPOCRentalsMin],
         transferOrder: CustTranferManager?,
@@ -858,6 +859,7 @@ public class AccoutOverview: Div {
             charges: charges,
             pocs: pocs,
             files: files,
+            contracts: contracts,
             equipments: equipments,
             rentals: rentals,
             transferOrder: transferOrder,
@@ -886,6 +888,7 @@ public class AccoutOverview: Div {
             _ charges: [CustOrderLoadFolioCharges],
             _ pocs: [CustPOCInventoryOrderView],
             _ files: [CustOrderLoadFolioFiles],
+            _ contracts: [CustPageContent],
             _ equipments: [CustOrderLoadFolioEquipments],
             _ rentals: [CustPOCRentalsMin],
             _ transferOrder: CustTranferManager?,
@@ -908,6 +911,7 @@ public class AccoutOverview: Div {
             let charges: [CustOrderLoadFolioCharges] = chargesCatch[id] ?? []
             let pocs: [CustPOCInventoryOrderView] = pocsCatch[id] ?? []
             let files: [CustOrderLoadFolioFiles] = filesCatch[id] ?? []
+            let contracts: [CustPageContent] = contractsCatch[id] ?? []
             let equipments: [CustOrderLoadFolioEquipments] = equipmentsCatch[id] ?? []
             let rentals: [CustPOCRentalsMin] = rentalsCatch[id] ?? []
             let orderHighPriorityNote: [HighPriorityNote] = orderHighPriorityNoteCatch[id] ?? []
@@ -926,6 +930,7 @@ public class AccoutOverview: Div {
                 charges,
                 pocs,
                 files,
+                contracts,
                 equipments,
                 rentals,
                 transferOrder,
@@ -975,6 +980,7 @@ public class AccoutOverview: Div {
                     chargesCatch[id] = loadOrderResponse.charges
                     pocsCatch[id] = loadOrderResponse.pocs
                     filesCatch[id] = loadOrderResponse.files
+                    contractsCatch[id] = loadOrderResponse.contracts
                     equipmentsCatch[id] = loadOrderResponse.equipments
                     rentalsCatch[id] = loadOrderResponse.rentals
                     orderHighPriorityNoteCatch[id] = loadOrderResponse.orderHighPriorityNote
@@ -995,6 +1001,7 @@ public class AccoutOverview: Div {
                         loadOrderResponse.charges,
                         loadOrderResponse.pocs,
                         loadOrderResponse.files,
+                        loadOrderResponse.contracts,
                         loadOrderResponse.equipments,
                         loadOrderResponse.rentals,
                         loadOrderResponse.transferOrder,
@@ -1194,7 +1201,7 @@ public class AccoutOverview: Div {
                         /// Show AccoutOverview
                         accoutOverview.display(.block)
                         
-                        accoutOverview.loadOrder(id: data.id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                        accoutOverview.loadOrder(id: data.id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                             accoutOverview.loadOrder(
                                 account: account,
                                 order: order,
@@ -1203,6 +1210,7 @@ public class AccoutOverview: Div {
                                 charges: charges,
                                 pocs: pocs,
                                 files: files,
+                                contracts: contracts,
                                 equipments: equipments,
                                 rentals: rentals,
                                 transferOrder: transferOrder,
@@ -1221,7 +1229,7 @@ public class AccoutOverview: Div {
                 }
             }
             
-            self.loadOrder(id: data.id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+            self.loadOrder(id: data.id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                 let accoutOverview = AccoutOverview (
                     id: .id(order.custAcct)
                 )
@@ -1233,6 +1241,7 @@ public class AccoutOverview: Div {
                     charges: charges,
                     pocs: pocs,
                     files: files,
+                    contracts: contracts,
                     equipments: equipments,
                     rentals: rentals,
                     transferOrder: transferOrder,
@@ -1359,7 +1368,7 @@ public class AccoutOverview: Div {
             )
         ) { orderid, _, cfiles in
             
-            OrderCatchControler.shared.loadFolio(orderid: orderid) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+            OrderCatchControler.shared.loadFolio(orderid: orderid) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                 
                 self.loadOrder(
                     account: account,
@@ -1369,6 +1378,7 @@ public class AccoutOverview: Div {
                     charges: charges,
                     pocs: pocs,
                     files: files,
+                    contracts: contracts,
                     equipments: equipments,
                     rentals: rentals,
                     transferOrder: transferOrder,
@@ -1390,5 +1400,14 @@ public class AccoutOverview: Div {
         
         addToDom(view)
     }
-}
 
+    public override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $cardId.removeAllListeners()
+        $acctType.removeAllListeners()
+        $order.removeAllListeners()
+        $orderStatus.removeAllListeners()
+        $load.removeAllListeners()
+        $printMenuViewIsHidden.removeAllListeners()
+    }
+}

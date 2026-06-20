@@ -712,4 +712,13 @@ class ImageWebView: Div {
             }
         }
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $relationId.removeAllListeners()
+        $image.removeAllListeners()
+        $descr.removeAllListeners()
+        $loadPercent.removeAllListeners()
+        $isAvatar.removeAllListeners()
+    }
 }

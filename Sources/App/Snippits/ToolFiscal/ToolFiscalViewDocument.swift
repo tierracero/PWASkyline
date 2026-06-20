@@ -1102,4 +1102,19 @@ class ToolFiscalViewDocument: Div {
         addToDom(view)
     }
 
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $reldocs.removeAllListeners()
+        $reldocsActive.removeAllListeners()
+        $egres.removeAllListeners()
+        $balance.removeAllListeners()
+        $status.removeAllListeners()
+        $comment.removeAllListeners()
+        $deleteDocumentViewIsHidden.removeAllListeners()
+        $deleteDocumentSelectListener.removeAllListeners()
+        $deleteDocumentSelectHelp.removeAllListeners()
+        $deleteDocumentSelectReason.removeAllListeners()
+        $communicationMethod.removeAllListeners()
+    }
 }

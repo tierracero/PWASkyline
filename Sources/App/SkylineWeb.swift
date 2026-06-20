@@ -16,7 +16,7 @@ public struct SkylineWeb {
         mode: .beta,
         major: 0,
         minor: 22,
-        patch: 14
+        patch: 23
     )
 	
 	public init() {}
@@ -161,6 +161,8 @@ public var pocsCatch: [UUID:[CustPOCInventoryOrderView]] = [:]
 
 public var filesCatch: [UUID:[CustOrderLoadFolioFiles]] = [:]
 
+public var contractsCatch: [UUID:[CustPageContent]] = [:]
+
 public var equipmentsCatch: [UUID:[CustOrderLoadFolioEquipments]] = [:]
 
 public var rentalsCatch: [UUID:[CustPOCRentalsMin]] = [:]
@@ -255,10 +257,9 @@ open class _SkyLine {
         mode: .beta,
         major: 0,
         minor: 22,
-        patch: 14
+        patch: 23
     )
 	
-    /// .init(.rgba(0, 0, 0, 0.7))
 	public lazy var loadingView = Div {
         Table {
             Tr {
@@ -318,6 +319,7 @@ open class _SkyLine {
     public var customeScripts: [CustomerCustomeScript] = []
 	
 }
+
 extension WebApp {
 
     public var skyline:  _SkyLine { _SkyLine.shared }

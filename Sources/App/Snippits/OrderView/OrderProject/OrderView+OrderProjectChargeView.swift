@@ -253,5 +253,13 @@ extension OrderView {
                 }
             }
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $estimetadCalculation.removeAllListeners()
+            $realCost.removeAllListeners()
+            $realUnits.removeAllListeners()
+            $realCalculation.removeAllListeners()
+        }
     }
 }

@@ -504,4 +504,15 @@ class POCStorageControlAddInventoryView: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $documentName.removeAllListeners()
+        $vendor.removeAllListeners()
+        $bodegaName.removeAllListeners()
+        $sectionName.removeAllListeners()
+        $unitsString.removeAllListeners()
+        $documentSerie.removeAllListeners()
+        $documentFolio.removeAllListeners()
+    }
 }

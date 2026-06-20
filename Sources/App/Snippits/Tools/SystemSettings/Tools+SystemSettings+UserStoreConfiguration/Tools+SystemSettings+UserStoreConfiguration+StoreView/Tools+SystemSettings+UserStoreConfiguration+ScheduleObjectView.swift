@@ -233,6 +233,17 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
         }
 
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $workDay.removeAllListeners()
+            $type.removeAllListeners()
+            $operationTypeListener.removeAllListeners()
+            $start.removeAllListeners()
+            $lucheStart.removeAllListeners()
+            $lucheEnd.removeAllListeners()
+            $end.removeAllListeners()
+        }
     }
 
 }

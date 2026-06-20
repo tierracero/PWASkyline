@@ -512,4 +512,9 @@ class FiscalDocumentRow: Div {
 //    }
     
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $moseIsOver.removeAllListeners()
+    }
 }

@@ -649,4 +649,17 @@ class EditChargePOCView: Div {
         }
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $units.removeAllListeners()
+        $cost.removeAllListeners()
+        $price.removeAllListeners()
+        $name.removeAllListeners()
+        $fiscCode.removeAllListeners()
+        $fiscCodeDescription.removeAllListeners()
+        $fiscUnit.removeAllListeners()
+        $fiscUnitDescription.removeAllListeners()
+        $isLoaded.removeAllListeners()
+    }
 }

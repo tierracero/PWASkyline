@@ -192,6 +192,14 @@ class SeviceItemTierView: Div {
     
     
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $tierName.removeAllListeners()
+        $icon.removeAllListeners()
+        $coverLandscape.removeAllListeners()
+        $coverPortrait.removeAllListeners()
+    }
 }
 
 

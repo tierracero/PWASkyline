@@ -239,6 +239,11 @@ extension CustConcessionView {
             
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $unitsToAdd.removeAllListeners()
+        }
     }
     
 }

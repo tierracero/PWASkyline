@@ -99,6 +99,12 @@ extension ToolsView.WebPage.ServicePage {
             
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $name.removeAllListeners()
+            $descr.removeAllListeners()
+        }
     }
 }
 

@@ -214,5 +214,10 @@ extension AccountView {
             
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $pin.removeAllListeners()
+        }
     }
 }

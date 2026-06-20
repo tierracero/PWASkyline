@@ -144,6 +144,12 @@ extension OrderView {
                 }
             }
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $value.removeAllListeners()
+            $checkBookState.removeAllListeners()
+        }
     }
 }
 

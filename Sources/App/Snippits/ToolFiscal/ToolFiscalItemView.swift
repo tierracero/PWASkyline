@@ -167,6 +167,13 @@ class ToolFiscalItemView: Div {
     
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        $base.removeAllListeners()
+        $discount.removeAllListeners()
+        $subTotal.removeAllListeners()
+        $taxTrasladados.removeAllListeners()
+        $taxRetenidos.removeAllListeners()
+        $total.removeAllListeners()
+        $fiscCodesAreMissing.removeAllListeners()
     }
     
     func calcTotals(){

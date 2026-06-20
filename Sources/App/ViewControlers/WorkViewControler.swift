@@ -974,50 +974,48 @@ class WorkViewControler: PageController {
         }
         .align(.center)
     }
-        .hidden( OrderCatchControler.shared.$viewType.map{ !($0 == .routeView) })
-        .class(.uibtn, .roundGrayBlackDark)
-        .borderRadius(50.percent)
-        .position(.absolute)
-        .cursor(.pointer)
-        .bottom(97.px)
-        .right(75.px)
-        .height(62.px)
-        .width(62.px)
-        .onClick {
+    .hidden( OrderCatchControler.shared.$viewType.map{ !($0 == .routeView) })
+    .class(.uibtn, .roundGrayBlackDark)
+    .borderRadius(50.percent)
+    .position(.absolute)
+    .cursor(.pointer)
+    .bottom(97.px)
+    .right(75.px)
+    .height(62.px)
+    .width(62.px)
+    .onClick {
+        
+        loadingView(show: true)
+        
+        API.custRouteV1.userLocations { resp in
+        
+            loadingView(show: false)
             
-            loadingView(show: true)
-            
-            API.custRouteV1.userLocations { resp in
-            
-                loadingView(show: false)
-                
-                guard let resp else {
-                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
-                    return
-                }
-                
-                guard resp.status == .ok else {
-                    showError(.generalError, resp.msg)
-                    return
-                }
-                
-                guard let payload = resp.data else {
-                    showError(.unexpectedResult, .unexpenctedMissingPayload)
-                    return
-                }
-              
-                let view = OrderRouteView.UserLocations(
-                    userLocations: payload.userLocations
-                )
-                
-                addToDom(view)
-                
+            guard let resp else {
+                showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
+                return
             }
             
-            //
+            guard resp.status == .ok else {
+                showError(.generalError, resp.msg)
+                return
+            }
+            
+            guard let payload = resp.data else {
+                showError(.unexpectedResult, .unexpenctedMissingPayload)
+                return
+            }
+            
+            let view = OrderRouteView.UserLocations(
+                userLocations: payload.userLocations
+            )
+            
+            addToDom(view)
             
         }
-    
+        
+    }
+
     override func buildUI() {
         super.buildUI()
         
@@ -2066,7 +2064,7 @@ class WorkViewControler: PageController {
                         
                         OrderCatchControler.shared.loadFolio(
                             orderid: payload.objid
-                        ) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                        ) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                             
                             let accoutOverview = AccoutOverview (
                                 id: .id(order.custAcct)
@@ -2080,6 +2078,7 @@ class WorkViewControler: PageController {
                                 charges: charges,
                                 pocs: pocs,
                                 files: files,
+                                contracts: contracts,
                                 equipments: equipments,
                                 rentals: rentals,
                                 transferOrder: transferOrder,
@@ -2654,7 +2653,7 @@ class WorkViewControler: PageController {
                                     
                                     let order = StartServiceOrder(custAcct: custAcct) { id, shownHighPriorityNotes, cfiles in
                                         
-                                        OrderCatchControler.shared.loadFolio(orderid: id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                                        OrderCatchControler.shared.loadFolio(orderid: id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
 
                                             var files = files
                                         
@@ -2720,6 +2719,7 @@ class WorkViewControler: PageController {
                                                 charges: charges,
                                                 pocs: pocs,
                                                 files: files,
+                                                contracts: contracts,
                                                 equipments: equipments,
                                                 rentals: rentals,
                                                 transferOrder: transferOrder,
@@ -2744,6 +2744,7 @@ class WorkViewControler: PageController {
                                                 charges: charges,
                                                 pocs: pocs,
                                                 files: files,
+                                                contracts: contracts,
                                                 equipments: equipments,
                                                 rentals: rentals,
                                                 transferOrder: transferOrder
@@ -2759,7 +2760,7 @@ class WorkViewControler: PageController {
 
                                     let order = StartRentalOrder(custAcct: custAcct) { id in
                                         
-                                        OrderCatchControler.shared.loadFolio(orderid: id) {account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                                        OrderCatchControler.shared.loadFolio(orderid: id) {account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                                             
                                             OrderCatchControler.shared.updateParameter(id, .newOrder(.init(
                                                 id: id,
@@ -2801,6 +2802,7 @@ class WorkViewControler: PageController {
                                                 charges: charges,
                                                 pocs: pocs,
                                                 files: files,
+                                                contracts: contracts,
                                                 equipments: equipments,
                                                 rentals: rentals,
                                                 transferOrder: transferOrder,
@@ -2848,7 +2850,7 @@ class WorkViewControler: PageController {
                         
                         let order = StartServiceOrder(custAcct: custAcct) { id, shownHighPriorityNotes, cfiles in
                             
-                            OrderCatchControler.shared.loadFolio(orderid: id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                            OrderCatchControler.shared.loadFolio(orderid: id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                     
                                 var files = files
                             
@@ -2913,6 +2915,7 @@ class WorkViewControler: PageController {
                                     charges: charges,
                                     pocs: pocs,
                                     files: files,
+                                    contracts: contracts,
                                     equipments: equipments,
                                     rentals: rentals,
                                     transferOrder: transferOrder,
@@ -2941,7 +2944,7 @@ class WorkViewControler: PageController {
 
                         let order = StartRentalOrder(custAcct: custAcct) { id in
                             
-                            OrderCatchControler.shared.loadFolio(orderid: id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                            OrderCatchControler.shared.loadFolio(orderid: id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                             
                                 OrderCatchControler.shared.updateParameter(id, .newOrder(.init(
                                     id: id,
@@ -2983,6 +2986,7 @@ class WorkViewControler: PageController {
                                     charges: charges,
                                     pocs: pocs,
                                     files: files,
+                                    contracts: contracts,
                                     equipments: equipments,
                                     rentals: rentals,
                                     transferOrder: transferOrder,
@@ -3020,7 +3024,7 @@ class WorkViewControler: PageController {
                         case .order:
                             let order = StartServiceOrder(custAcct: custAcct) { id, shownHighPriorityNotes, cfiles in
                                 
-                                OrderCatchControler.shared.loadFolio(orderid: id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                                OrderCatchControler.shared.loadFolio(orderid: id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
 
                                     var files = files
                                 
@@ -3085,6 +3089,7 @@ class WorkViewControler: PageController {
                                         charges: charges,
                                         pocs: pocs,
                                         files: files,
+                                        contracts: contracts,
                                         equipments: equipments,
                                         rentals: rentals,
                                         transferOrder: transferOrder,
@@ -3111,7 +3116,7 @@ class WorkViewControler: PageController {
                         case .rental:
                             let order = StartRentalOrder(custAcct: custAcct) { id in
                                 
-                                OrderCatchControler.shared.loadFolio(orderid: id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                                OrderCatchControler.shared.loadFolio(orderid: id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                                 
                                     OrderCatchControler.shared.updateParameter(id, .newOrder(.init(
                                         id: id,
@@ -3153,6 +3158,7 @@ class WorkViewControler: PageController {
                                         charges: charges,
                                         pocs: pocs,
                                         files: files,
+                                        contracts: contracts,
                                         equipments: equipments,
                                         rentals: rentals,
                                         transferOrder: transferOrder,
@@ -3408,6 +3414,7 @@ class WorkViewControler: PageController {
                             chargesCatch[id] = loadOrderResponse.charges
                             pocsCatch[id] = loadOrderResponse.pocs
                             filesCatch[id] = loadOrderResponse.files
+                            contractsCatch[id] = loadOrderResponse.contracts
                             equipmentsCatch[id] = loadOrderResponse.equipments
                             rentalsCatch[id] = loadOrderResponse.rentals
                             orderHighPriorityNoteCatch[id] = loadOrderResponse.orderHighPriorityNote
@@ -3434,6 +3441,7 @@ class WorkViewControler: PageController {
                                 charges: loadOrderResponse.charges,
                                 pocs: loadOrderResponse.pocs,
                                 files: loadOrderResponse.files,
+                                contracts: loadOrderResponse.contracts,
                                 equipments: loadOrderResponse.equipments,
                                 rentals: loadOrderResponse.rentals,
                                 transferOrder: loadOrderResponse.transferOrder,
@@ -3618,7 +3626,7 @@ class WorkViewControler: PageController {
                     return
                 }
                 
-                OrderCatchControler.shared.loadFolio(orderid: order.id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                OrderCatchControler.shared.loadFolio(orderid: order.id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                     
                     let accoutOverview = AccoutOverview (
                         id: .id(order.custAcct)
@@ -3632,6 +3640,7 @@ class WorkViewControler: PageController {
                          charges: charges,
                          pocs: pocs,
                          files: files,
+                         contracts: contracts,
                          equipments: equipments,
                          rentals: rentals,
                          transferOrder: transferOrder,
@@ -3713,7 +3722,7 @@ class WorkViewControler: PageController {
                 
                 OrderCatchControler.shared.loadFolio(
                     orderid: orderid
-                ) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                ) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                     
                     let accoutOverview = AccoutOverview (
                         id: .id(order.custAcct)
@@ -3727,6 +3736,7 @@ class WorkViewControler: PageController {
                         charges: charges,
                         pocs: pocs,
                         files: files,
+                        contracts: contracts,
                         equipments: equipments,
                         rentals: rentals,
                         transferOrder: transferOrder,

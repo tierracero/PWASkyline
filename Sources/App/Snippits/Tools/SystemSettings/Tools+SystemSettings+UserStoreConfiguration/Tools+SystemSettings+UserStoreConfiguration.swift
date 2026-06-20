@@ -460,5 +460,12 @@ extension ToolsView.SystemSettings {
                 }
             }
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $storeList.removeAllListeners()
+            $selectedStore.removeAllListeners()
+            $selectMenuViewIsHidden.removeAllListeners()
+        }
     }
 }

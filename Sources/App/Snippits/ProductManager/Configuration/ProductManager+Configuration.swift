@@ -433,5 +433,11 @@ extension ProductManagerView {
         }
         
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $requestProductDiscontinueViewIsHidden.removeAllListeners()
+            $daysLimit.removeAllListeners()
+        }
     }
 }

@@ -725,5 +725,23 @@ extension MoneyManagerView.FinancialServicesView {
             showError(.generalError, "Lo sentimos esta función aun no esta habilitada")
             
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $notes.removeAllListeners()
+            $vendor.removeAllListeners()
+            $isCompleted.removeAllListeners()
+            $amount.removeAllListeners()
+            $returned.removeAllListeners()
+            $balance.removeAllListeners()
+            $createdBy.removeAllListeners()
+            $targetUser.removeAllListeners()
+            $noteText.removeAllListeners()
+            $reciptType.removeAllListeners()
+            $reciptTypeListener.removeAllListeners()
+            $reciptFolio.removeAllListeners()
+            $reciptId.removeAllListeners()
+            $reciptImage.removeAllListeners()
+        }
     }
 }

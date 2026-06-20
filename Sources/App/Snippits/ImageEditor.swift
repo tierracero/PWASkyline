@@ -670,6 +670,17 @@ class ImageEditor: Div {
     
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        $imageIsLoaded.removeAllListeners()
+        $relativeHeight.removeAllListeners()
+        $relativeWidth.removeAllListeners()
+        $top.removeAllListeners()
+        $left.removeAllListeners()
+        $logoRelativeHeight.removeAllListeners()
+        $logoRelativeWidth.removeAllListeners()
+        $logoTop.removeAllListeners()
+        $logoLeft.removeAllListeners()
+        $editStep.removeAllListeners()
+        $imageEditorProcessingViewText.removeAllListeners()
     }
 
     func calcLogoIconWorkSpace(){

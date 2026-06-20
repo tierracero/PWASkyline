@@ -724,17 +724,26 @@ class CreateNewCustomerDataView: Div {
                                     return
                                 }
                                 
-                                let view = ManualAddressSearch(.byCountry(.mexico)) { settelment, city, state, zip, country in
+                                let view = ManualAddressSearch(.byCountry(.mexico)) { result in
                                     
-                                    self.colony = settelment
-                                    
-                                    self.city = city
-                                    
-                                    self.state = state
-                                    
-                                    self.zip = zip
-                                    
-                                    self.country = country.description
+                                    switch result {
+                                    case .address(let address):
+
+                                        self.colony = address.settlement
+                                        
+                                        self.city = address.city
+                                        
+                                        self.state = address.state
+                                        
+                                        self.zip = address.zip
+                                        
+                                        self.country = address.country.description
+
+                                        print("")
+
+                                    case .coordinates(let coordinate):
+                                        print("")
+                                    }
                                     
                                     self.manualAddressInput = true
                                     
@@ -2043,7 +2052,7 @@ class CreateNewCustomerDataView: Div {
             return
         }
         
-        guard let country = Countries(rawValue: country), country == .mexico else {
+        guard let country = Countries(rawValue: self.country), country == .mexico else {
             showError(.invalidField, "Lo sentimos este servicio solo esta disponible para Mexico. Es posible que necesite corregir su ortografia o haga un ingreso manual.")
             return
         }
@@ -2139,4 +2148,47 @@ class CreateNewCustomerDataView: Div {
 
 
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $acctType.removeAllListeners()
+        $confirmationButtonText.removeAllListeners()
+        $mobileIsRequierd.removeAllListeners()
+        $idIsRequierd.removeAllListeners()
+        $pinCode.removeAllListeners()
+        $confirmViewPINisHidden.removeAllListeners()
+        $firstName.removeAllListeners()
+        $secondName.removeAllListeners()
+        $lastName.removeAllListeners()
+        $seconLastName.removeAllListeners()
+        $email.removeAllListeners()
+        $mobile.removeAllListeners()
+        $idType.removeAllListeners()
+        $idNumberCIC.removeAllListeners()
+        $idNumberOCR.removeAllListeners()
+        $street.removeAllListeners()
+        $colony.removeAllListeners()
+        $city.removeAllListeners()
+        $state.removeAllListeners()
+        $country.removeAllListeners()
+        $zip.removeAllListeners()
+        $searchZipCodeString.removeAllListeners()
+        $bizName.removeAllListeners()
+        $razon.removeAllListeners()
+        $rfc.removeAllListeners()
+        $contacto1.removeAllListeners()
+        $contacto2.removeAllListeners()
+        $contactTel.removeAllListeners()
+        $contactMail.removeAllListeners()
+        $fiscalPOCFirstName.removeAllListeners()
+        $fiscalPOCLastName.removeAllListeners()
+        $fiscalPOCMobile.removeAllListeners()
+        $fiscalPOCMail.removeAllListeners()
+        $selectBillDate.removeAllListeners()
+        $requierServiceAddress.removeAllListeners()
+        $manualAddressInput.removeAllListeners()
+        $foundAddressByZipCode.removeAllListeners()
+        $postalCodeResults.removeAllListeners()
+        $bizOwner.removeAllListeners()
+    }
 }

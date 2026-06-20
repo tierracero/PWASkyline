@@ -216,6 +216,13 @@ extension SalePointView {
                 }
             )
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $typeListener.removeAllListeners()
+            $reason.removeAllListeners()
+            $targetUserListener.removeAllListeners()
+        }
     }
 }
 

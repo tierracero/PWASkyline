@@ -147,7 +147,7 @@ extension OrderRouteView {
             
             do {
                 
-                var data = try JSONEncoder().encode(userLocations)
+                let data = try JSONEncoder().encode(userLocations)
                 
                 guard let json = String(data: data, encoding: .utf8) else {
                     showError(.unexpectedResult, "No se pudo iniciar mapa, error al convertir data a hilo.")
@@ -169,6 +169,10 @@ extension OrderRouteView {
             
         }
         
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $mapInitiated.removeAllListeners()
+        }
     }
     
 }

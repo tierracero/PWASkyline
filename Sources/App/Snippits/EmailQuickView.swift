@@ -160,6 +160,15 @@ class EmailQuickView: Div {
         super.didAddToDOM()
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $seen.removeAllListeners()
+        $flagged.removeAllListeners()
+        $answered.removeAllListeners()
+        $from.removeAllListeners()
+        $timeString.removeAllListeners()
+    }
 }
 
 

@@ -286,7 +286,7 @@ class BudgetConfirmationView: Div {
         
         fiscalProfiles.forEach { profile in
             selectedFiscalProfileSelect.appendChild(
-                Option("\(profile.rfc) \(profile.razon)")
+                Option("\(profile.rfc) \(profile.nomComercial) \(profile.razon)")
                     .value(profile.id.uuidString)
             )
         }
@@ -399,6 +399,14 @@ class BudgetConfirmationView: Div {
             
     }
 
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $custAcct.removeAllListeners()
+        $selectedFiscalProfileListener.removeAllListeners()
+        $showDetail.removeAllListeners()
+        $showTaxes.removeAllListeners()
+    }
 }
 extension BudgetConfirmationView {
     

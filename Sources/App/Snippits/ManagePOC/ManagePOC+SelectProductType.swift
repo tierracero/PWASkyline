@@ -310,5 +310,11 @@ extension ManagePOC {
                 }
             )
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $selectedBrand.removeAllListeners()
+            $items.removeAllListeners()
+        }
     }
 }

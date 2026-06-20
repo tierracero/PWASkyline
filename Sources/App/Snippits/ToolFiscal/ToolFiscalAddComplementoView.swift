@@ -589,4 +589,14 @@ class ToolFiscalAddComplementoView: Div {
         })
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $paymentDocument.removeAllListeners()
+        $receptorRazon.removeAllListeners()
+        $receptorRfc.removeAllListeners()
+        $selectedDocumentsIds.removeAllListeners()
+        $subtotal.removeAllListeners()
+        $documentFilter.removeAllListeners()
+    }
 }

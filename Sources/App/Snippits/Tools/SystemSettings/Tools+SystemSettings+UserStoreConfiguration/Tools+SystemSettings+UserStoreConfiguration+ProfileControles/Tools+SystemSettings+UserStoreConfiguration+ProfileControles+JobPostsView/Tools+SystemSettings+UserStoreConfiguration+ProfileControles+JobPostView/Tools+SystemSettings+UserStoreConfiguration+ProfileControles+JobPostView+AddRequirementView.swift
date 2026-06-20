@@ -436,5 +436,20 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.JobPo
             self.remove()
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $valueListener.removeAllListeners()
+            $requiermentHelper.removeAllListeners()
+            $requiermentListener.removeAllListeners()
+            $jobPostAgeRequiermentsHelper.removeAllListeners()
+            $jobPostAgeRequiermentsListener.removeAllListeners()
+            $jobPostGenderRequiermentsHelper.removeAllListeners()
+            $jobPostGenderRequiermentsListener.removeAllListeners()
+            $jobPostEducationRequiermentsHelper.removeAllListeners()
+            $jobPostEducationRequiermentsListener.removeAllListeners()
+            $jobPostExpirienceRequiermentsHelper.removeAllListeners()
+            $jobPostExpirienceRequiermentsListener.removeAllListeners()
+        }
     }
 }

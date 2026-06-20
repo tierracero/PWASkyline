@@ -100,5 +100,18 @@ class ServiceAccionItemView: Div {
         left(0.px)
         top(0.px)
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $item.removeAllListeners()
+        $objects.removeAllListeners()
+        $custDocumentSupport.removeAllListeners()
+        $productionTime.removeAllListeners()
+        $productionLevel.removeAllListeners()
+        $workforceLevel.removeAllListeners()
+        $requestCompletition.removeAllListeners()
+        $isFavorite.removeAllListeners()
+        $name.removeAllListeners()
+    }
 }
 

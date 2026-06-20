@@ -595,4 +595,11 @@ class CustTaskAuthorizationView: Div {
         })
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $changeSettingViewIsHidden.removeAllListeners()
+        $frequencySelectListener.removeAllListeners()
+        $levelSelectListener.removeAllListeners()
+    }
 }

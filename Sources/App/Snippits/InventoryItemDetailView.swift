@@ -673,4 +673,28 @@ class InventoryItemDetailView: Div {
             
         }
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $itemid.removeAllListeners()
+        $createdBy.removeAllListeners()
+        $createdAt.removeAllListeners()
+        $soldBy.removeAllListeners()
+        $soldAt.removeAllListeners()
+        $soldPrice.removeAllListeners()
+        $custAcctRefrence.removeAllListeners()
+        $folioSoldRefrence.removeAllListeners()
+        $prod.removeAllListeners()
+        $newNote.removeAllListeners()
+        $warenExtenrnal.removeAllListeners()
+        $warenInternal.removeAllListeners()
+        $relatedAccount.removeAllListeners()
+        $relatedFolio.removeAllListeners()
+        $locaition.removeAllListeners()
+        $revenue.removeAllListeners()
+        $editPriceIsHidden.removeAllListeners()
+        $status.removeAllListeners()
+        $newPrice.removeAllListeners()
+        $changeReason.removeAllListeners()
+    }
 }

@@ -11,7 +11,6 @@ import TCFireSignal
 
 extension APIComponents {
 	
-
 	static func confirmMobileAuth(
         token: String,
         pin: String,

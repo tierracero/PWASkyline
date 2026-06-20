@@ -286,6 +286,14 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.Psich
             self.remove()
 
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $answerId.removeAllListeners()
+            $type.removeAllListeners()
+            $answer.removeAllListeners()
+            $typeListener.removeAllListeners()
+        }
     }
 }
 

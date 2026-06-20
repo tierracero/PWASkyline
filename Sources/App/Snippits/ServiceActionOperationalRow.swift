@@ -178,4 +178,11 @@ class ServiceActionOperationalRow: Div {
         self.time = (object.productionTime / 100).toString
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $name.removeAllListeners()
+        $cost.removeAllListeners()
+        $time.removeAllListeners()
+    }
 }

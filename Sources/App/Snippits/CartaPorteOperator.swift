@@ -263,4 +263,12 @@ class CartaPorteOperator: Div {
         }
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $id.removeAllListeners()
+        $name.removeAllListeners()
+        $licence.removeAllListeners()
+        $rfc.removeAllListeners()
+    }
 }

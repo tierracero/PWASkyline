@@ -582,5 +582,20 @@ class OrderRentalView: Div {
         self.oriDescr = self.rental.description
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $orderEditButton.removeAllListeners()
+        $editMode.removeAllListeners()
+        $name.removeAllListeners()
+        $ecoNumber.removeAllListeners()
+        $soldPrice.removeAllListeners()
+        $descr.removeAllListeners()
+        $isReady.removeAllListeners()
+        $isPicked.removeAllListeners()
+        $isReadyDisabled.removeAllListeners()
+        $pendingPickupDisabled.removeAllListeners()
+        $descriptionIsHidden.removeAllListeners()
+    }
 }
 

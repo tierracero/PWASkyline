@@ -376,4 +376,13 @@ class StartManualInventory: Div {
         })
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $newDocumentName.removeAllListeners()
+        $vendor.removeAllListeners()
+        $profile.removeAllListeners()
+        $selectFiscalProfileIsHidden.removeAllListeners()
+        $profiles.removeAllListeners()
+    }
 }

@@ -940,4 +940,24 @@ class AddChargeFormView: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $searchTerm.removeAllListeners()
+        $name.removeAllListeners()
+        $amount.removeAllListeners()
+        $price.removeAllListeners()
+        $pricea.removeAllListeners()
+        $priceb.removeAllListeners()
+        $pricec.removeAllListeners()
+        $addInternalCostIsHidden.removeAllListeners()
+        $costAmount.removeAllListeners()
+        $changePriceViewIsHidden.removeAllListeners()
+        $processAsWarenty.removeAllListeners()
+        $processAsInternalWarenty.removeAllListeners()
+        $actionItems.removeAllListeners()
+        $actionItemsRefrence.removeAllListeners()
+        $chargeId.removeAllListeners()
+        $saleActions.removeAllListeners()
+    }
 }

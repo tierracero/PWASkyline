@@ -599,4 +599,15 @@ class ToolReciveSendInventoryManualDispertionsView: Div {
         }
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $docs.removeAllListeners()
+        $createNewDocumentIsHidden.removeAllListeners()
+        $newDocumentName.removeAllListeners()
+        $vendor.removeAllListeners()
+        $profile.removeAllListeners()
+        $selectFiscalProfileIsHidden.removeAllListeners()
+        $profiles.removeAllListeners()
+    }
 }

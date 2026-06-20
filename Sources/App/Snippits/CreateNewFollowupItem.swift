@@ -183,4 +183,13 @@ class CreateNewFollowupItem: Div {
         
         remove()
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $linkType.removeAllListeners()
+        $linkId.removeAllListeners()
+        $comment.removeAllListeners()
+        $linkTypeListener.removeAllListeners()
+        $linkIdListener.removeAllListeners()
+    }
 }

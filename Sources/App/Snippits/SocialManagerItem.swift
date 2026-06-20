@@ -92,4 +92,9 @@ class SocialManagerItem: Div {
         super.buildUI()
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $isCheked.removeAllListeners()
+    }
 }

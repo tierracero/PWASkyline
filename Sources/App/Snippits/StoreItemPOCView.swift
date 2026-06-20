@@ -363,4 +363,9 @@ class StoreItemPOCView: Div {
      
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $price.removeAllListeners()
+    }
 }

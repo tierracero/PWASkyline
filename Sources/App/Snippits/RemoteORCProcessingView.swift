@@ -357,6 +357,15 @@ class RemoteORCProcessingView: Div {
 
     }
 
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $loadState.removeAllListeners()
+        $docIsLoaded.removeAllListeners()
+        $idOne.removeAllListeners()
+        $idTwo.removeAllListeners()
+        $itemRefrence.removeAllListeners()
+    }
 }
     
 extension RemoteORCProcessingView {
@@ -547,6 +556,13 @@ extension RemoteORCProcessingView {
 
         }
 
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $units.removeAllListeners()
+            $cost.removeAllListeners()
+            $poc.removeAllListeners()
+        }
     }
 }
 

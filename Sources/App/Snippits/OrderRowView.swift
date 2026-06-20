@@ -289,5 +289,15 @@ class OrderRowView: Div {
         budget = data.budget
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $uname.removeAllListeners()
+        $balance.removeAllListeners()
+        $alerted.removeAllListeners()
+        $highPriority.removeAllListeners()
+        $budget.removeAllListeners()
+        $budgetIcon.removeAllListeners()
+    }
 }
 

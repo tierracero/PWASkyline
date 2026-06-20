@@ -224,5 +224,14 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 }
             }
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $store.removeAllListeners()
+            $isLoaded.removeAllListeners()
+            $bodegas.removeAllListeners()
+            $sections.removeAllListeners()
+            $inventorie.removeAllListeners()
+        }
     }
 }

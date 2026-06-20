@@ -403,4 +403,17 @@ class FiscalConceptManualView: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $upc.removeAllListeners()
+        $brand.removeAllListeners()
+        $model.removeAllListeners()
+        $name.removeAllListeners()
+        $cost.removeAllListeners()
+        $price.removeAllListeners()
+        $inventoryDestinations.removeAllListeners()
+        $units.removeAllListeners()
+        $addMoreButtonIsHidden.removeAllListeners()
+    }
 }

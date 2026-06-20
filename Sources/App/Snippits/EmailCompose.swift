@@ -531,6 +531,17 @@ class EmailCompose: Div {
 //
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $subject.removeAllListeners()
+        $emailBody.removeAllListeners()
+        $sendersString.removeAllListeners()
+        $recipientsString.removeAllListeners()
+        $addContactViewIsHidden.removeAllListeners()
+        $addContactName.removeAllListeners()
+        $addContactEmail.removeAllListeners()
+    }
 }
 
 extension EmailCompose {

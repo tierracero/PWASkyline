@@ -213,6 +213,11 @@ extension MoneyManagerView {
             
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $items.removeAllListeners()
+        }
     }
     
 }

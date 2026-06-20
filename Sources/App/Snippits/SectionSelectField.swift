@@ -235,4 +235,11 @@ class SectionSelectField: Div {
             }))
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $sectionSelectResultIsHidden.removeAllListeners()
+        $sectionSelectText.removeAllListeners()
+        $displayedSection.removeAllListeners()
+    }
 }

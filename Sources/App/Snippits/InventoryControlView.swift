@@ -597,6 +597,10 @@ class InventoryControlView: Div {
     
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        $isReceived.removeAllListeners()
+        $receivedByName.removeAllListeners()
+        $closedByName.removeAllListeners()
+        $downloadDocumentViewIsHidden.removeAllListeners()
         $pin.removeAllListeners()
     }
     

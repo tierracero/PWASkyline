@@ -583,4 +583,13 @@ class ChatMessageView: Div {
             .width(300.px)
         )
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $defaultImage.removeAllListeners()
+        $userName.removeAllListeners()
+        $status.removeAllListeners()
+        $msgStatus.removeAllListeners()
+        $messageText.removeAllListeners()
+    }
 }

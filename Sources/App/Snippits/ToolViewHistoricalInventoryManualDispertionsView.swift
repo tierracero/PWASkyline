@@ -3028,4 +3028,20 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
             
         }
         */
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $reportType.removeAllListeners()
+        $auditTypeListener.removeAllListeners()
+        $docs.removeAllListeners()
+        $selectedDoc.removeAllListeners()
+        $storeSelectListener.removeAllListeners()
+        $vendorSelectListener.removeAllListeners()
+        $dateSelectListener.removeAllListeners()
+        $startAt.removeAllListeners()
+        $endAt.removeAllListeners()
+        $startAtLabel.removeAllListeners()
+        $endAtLabel.removeAllListeners()
+        $hasSearched.removeAllListeners()
+    }
     }

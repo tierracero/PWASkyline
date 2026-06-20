@@ -247,6 +247,11 @@ extension ToolsView {
 
             }
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $selectedSetting.removeAllListeners()
+        }
     }
 }
 

@@ -532,6 +532,15 @@ extension OrderView {
             }
             
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $charges.removeAllListeners()
+            $currentView.removeAllListeners()
+            $realUnits.removeAllListeners()
+            $realCost.removeAllListeners()
+            $realTotal.removeAllListeners()
+        }
     }
 }
 

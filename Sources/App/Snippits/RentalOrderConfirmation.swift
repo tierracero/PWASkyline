@@ -543,4 +543,22 @@ class RentalOrderConfirmation: Div {
         )
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $dueDateHour.removeAllListeners()
+        $dueDateDay.removeAllListeners()
+        $startAtDay.removeAllListeners()
+        $endAtDay.removeAllListeners()
+        $firstName.removeAllListeners()
+        $lastName.removeAllListeners()
+        $mobile.removeAllListeners()
+        $telephone.removeAllListeners()
+        $street.removeAllListeners()
+        $colony.removeAllListeners()
+        $city.removeAllListeners()
+        $state.removeAllListeners()
+        $country.removeAllListeners()
+        $zip.removeAllListeners()
+    }
 }

@@ -1282,4 +1282,23 @@ class AddPaymentFormView: Div {
         }
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $currentBalance.removeAllListeners()
+        $paymentMethod.removeAllListeners()
+        $paymentMethodListener.removeAllListeners()
+        $payDescr.removeAllListeners()
+        $payment.removeAllListeners()
+        $providerFilter.removeAllListeners()
+        $provider.removeAllListeners()
+        $lastFour.removeAllListeners()
+        $auth.removeAllListeners()
+        $newBalance.removeAllListeners()
+        $isDownPayment.removeAllListeners()
+        $isDownPaymentDisabled.removeAllListeners()
+        $datePickerIsHidden.removeAllListeners()
+        $date.removeAllListeners()
+        $generalBankResultsIsHidden.removeAllListeners()
+    }
 }

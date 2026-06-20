@@ -378,5 +378,19 @@ extension ToolsView.SystemSettings {
                 
                 }
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $institutionalColorListener.removeAllListeners()
+            $slogan.removeAllListeners()
+            $mantra.removeAllListeners()
+            $commercialName.removeAllListeners()
+            $facebookLink.removeAllListeners()
+            $instagramLink.removeAllListeners()
+            $twitterLink.removeAllListeners()
+            $youtubeLink.removeAllListeners()
+            $pinterestLink.removeAllListeners()
+            $tictokLink.removeAllListeners()
+        }
     }
 }

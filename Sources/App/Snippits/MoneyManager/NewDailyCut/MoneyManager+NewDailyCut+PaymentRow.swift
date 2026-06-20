@@ -85,6 +85,11 @@ extension MoneyManagerView.NewDailyCutView {
             marginTop(3.px)
             
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $isChecked.removeAllListeners()
+        }
     }
 }
 

@@ -1209,6 +1209,18 @@ class ProductTransferView: Div {
         }
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $hasTransfers.removeAllListeners()
+        $currentView.removeAllListeners()
+        $selectedStore.removeAllListeners()
+        $searchTerm.removeAllListeners()
+        $searchMermTerm.removeAllListeners()
+        $kart.removeAllListeners()
+        $pullRequst.removeAllListeners()
+        $selectPullTypeIsHidden.removeAllListeners()
+    }
 }
 
 extension ProductTransferView {

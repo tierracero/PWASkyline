@@ -934,4 +934,18 @@ class FiscalConceptDestinationView: Div {
             
         }
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $units.removeAllListeners()
+        $unitsToDisperse.removeAllListeners()
+        $unitsToDisperseSubTitle.removeAllListeners()
+        $selectedPlace.removeAllListeners()
+        $selectedStoreId.removeAllListeners()
+        $selectedStoreName.removeAllListeners()
+        $selectedBodIdListener.removeAllListeners()
+        $selectedSecIdListener.removeAllListeners()
+        $searchFolioString.removeAllListeners()
+        $selectedBodegaName.removeAllListeners()
+    }
 }

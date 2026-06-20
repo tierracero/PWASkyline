@@ -187,4 +187,15 @@ class ServiceAccionItemElementRow: Div {
         super.didAddToDOM()
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $type.removeAllListeners()
+        $typeListener.removeAllListeners()
+        $title.removeAllListeners()
+        $help.removeAllListeners()
+        $placeholder.removeAllListeners()
+        $isRequired.removeAllListeners()
+        $customerMessage.removeAllListeners()
+    }
 }

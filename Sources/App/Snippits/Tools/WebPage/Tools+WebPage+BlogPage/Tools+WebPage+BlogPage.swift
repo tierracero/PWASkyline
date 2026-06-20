@@ -984,5 +984,22 @@ extension ToolsView.WebPage {
             case three
         }
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $metaTitle.removeAllListeners()
+            $metaDescription.removeAllListeners()
+            $title.removeAllListeners()
+            $descr.removeAllListeners()
+            $mainText.removeAllListeners()
+            $subText.removeAllListeners()
+            $imgOne.removeAllListeners()
+            $imgTwo.removeAllListeners()
+            $imgThree.removeAllListeners()
+            $blogs.removeAllListeners()
+            $imageOne.removeAllListeners()
+            $imageTwo.removeAllListeners()
+            $imageThree.removeAllListeners()
+        }
     }
 }

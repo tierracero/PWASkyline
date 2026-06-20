@@ -229,5 +229,13 @@ extension ManageSOCView {
             self.remove()
             
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $allefect.removeAllListeners()
+            $efect.removeAllListeners()
+            $isCompatible.removeAllListeners()
+            $unCompatibleReason.removeAllListeners()
+        }
     }
 }

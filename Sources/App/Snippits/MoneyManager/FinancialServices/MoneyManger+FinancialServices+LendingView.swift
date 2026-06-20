@@ -277,5 +277,12 @@ extension MoneyManagerView.FinancialServicesView {
                
            }
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $user.removeAllListeners()
+            $financialTitle.removeAllListeners()
+            $amount.removeAllListeners()
+        }
     }
 }

@@ -274,4 +274,15 @@ class FiscalConceptProductView: Div {
             
         }
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $upc.removeAllListeners()
+        $brand.removeAllListeners()
+        $model.removeAllListeners()
+        $name.removeAllListeners()
+        $descr.removeAllListeners()
+        $price.removeAllListeners()
+        $cost.removeAllListeners()
+    }
 }

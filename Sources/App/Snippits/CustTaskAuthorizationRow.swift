@@ -153,7 +153,7 @@ class CustTaskAuthorizationRow: Div {
                         return
                     }
                     
-                    OrderCatchControler.shared.loadFolio(orderid: id) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                    OrderCatchControler.shared.loadFolio(orderid: id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                         
                          let accoutOverview = AccoutOverview (
                              id: .id(order.custAcct)
@@ -167,6 +167,7 @@ class CustTaskAuthorizationRow: Div {
                              charges: charges,
                              pocs: pocs,
                              files: files,
+                             contracts: contracts,
                              equipments: equipments,
                              rentals: rentals,
                              transferOrder: transferOrder,
@@ -232,7 +233,7 @@ class CustTaskAuthorizationRow: Div {
                             return
                         }
 
-                        OrderCatchControler.shared.loadFolio(orderid: payload.orderId) { account, order, notes, payments, charges, pocs, files, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                        OrderCatchControler.shared.loadFolio(orderid: payload.orderId) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                             
                             loadingView(show: false)
                             
@@ -252,6 +253,7 @@ class CustTaskAuthorizationRow: Div {
                                 charges: charges,
                                 pocs: pocs,
                                 files: files,
+                                contracts: contracts,
                                 equipments: equipments,
                                 rentals: rentals,
                                 transferOrder: transferOrder,
@@ -452,6 +454,12 @@ class CustTaskAuthorizationRow: Div {
             self.username = "@" + (user?.username.explode("@").first ?? "N/A")
         }
         
+    }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $username.removeAllListeners()
+        $isLoading.removeAllListeners()
     }
 }
 

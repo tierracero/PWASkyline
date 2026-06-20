@@ -116,6 +116,9 @@ class BudgetHistoricalView: Div {
                             Div(item.total.formatMoney)
                                 .float(.right)
                         }
+
+
+                        Div().class(.clear)
                         
                     }
                     .marginBottom(7.px)
@@ -123,6 +126,7 @@ class BudgetHistoricalView: Div {
                     .width(97.percent)
                     .class(.uibtn)
                     .onClick {
+
                         self.loadDocument(doc: .init(
                             id: item.id,
                             createdAt: item.createdAt,

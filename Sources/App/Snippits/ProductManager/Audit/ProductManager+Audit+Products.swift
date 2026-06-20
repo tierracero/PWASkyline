@@ -931,6 +931,19 @@ extension ProductManagerView.AuditView {
             addToDom(view)
             
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $typeSelectListener.removeAllListeners()
+            $selectCustomerListener.removeAllListeners()
+            $selectCustomerId.removeAllListeners()
+            $storeSelectListener.removeAllListeners()
+            $dateSelectListener.removeAllListeners()
+            $startAt.removeAllListeners()
+            $endAtLabel.removeAllListeners()
+            $endAt.removeAllListeners()
+            $startAtLabel.removeAllListeners()
+        }
     }
 }
 

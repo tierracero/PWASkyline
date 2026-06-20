@@ -447,6 +447,22 @@ class AddCartaPorteUbicacion: Div {
     
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        $isHomeItem.removeAllListeners()
+        $hasDestination.removeAllListeners()
+        $placementId.removeAllListeners()
+        $rfc.removeAllListeners()
+        $razon.removeAllListeners()
+        $date.removeAllListeners()
+        $time.removeAllListeners()
+        $storeName.removeAllListeners()
+        $street.removeAllListeners()
+        $number.removeAllListeners()
+        $colonie.removeAllListeners()
+        $refrence.removeAllListeners()
+        $state.removeAllListeners()
+        $country.removeAllListeners()
+        $zipCode.removeAllListeners()
+        $distance.removeAllListeners()
     }
     
     func addPlace(){

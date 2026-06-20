@@ -231,4 +231,10 @@ class SMSRequestPIN: Div {
         })
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $cardId.removeAllListeners()
+        $countriesListener.removeAllListeners()
+    }
 }

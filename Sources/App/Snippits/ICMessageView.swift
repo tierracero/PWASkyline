@@ -273,4 +273,16 @@ class ICMessageView: Div {
         
     }
     
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $icon.removeAllListeners()
+        $chatNick.removeAllListeners()
+        $socialIcon.removeAllListeners()
+        $lastMessageAt.removeAllListeners()
+        $lastMessageAtText.removeAllListeners()
+        $activity.removeAllListeners()
+        $status.removeAllListeners()
+        $isFoccused.removeAllListeners()
+    }
 }

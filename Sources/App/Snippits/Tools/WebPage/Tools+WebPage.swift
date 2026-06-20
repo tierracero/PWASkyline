@@ -1408,6 +1408,22 @@ extension ToolsView {
 
         }
 
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $webTool.removeAllListeners()
+            $indexListener.removeAllListeners()
+            $meetUsListener.removeAllListeners()
+            $serviceListener.removeAllListeners()
+            $productListener.removeAllListeners()
+            $promotionListener.removeAllListeners()
+            $calendarListener.removeAllListeners()
+            $albumListener.removeAllListeners()
+            $blogListener.removeAllListeners()
+            $downloadListener.removeAllListeners()
+            $orderListener.removeAllListeners()
+            $contactListener.removeAllListeners()
+        }
     }
 }
 

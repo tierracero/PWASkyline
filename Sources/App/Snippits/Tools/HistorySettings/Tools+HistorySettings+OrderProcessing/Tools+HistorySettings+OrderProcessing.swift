@@ -105,6 +105,12 @@ extension ToolsView.HistorySettings {
             top(0.px)
             
         }
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $currentView.removeAllListeners()
+            $departmentSelectListener.removeAllListeners()
+        }
     }
 }
 

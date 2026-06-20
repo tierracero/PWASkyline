@@ -37,6 +37,7 @@ class OrderView: Div {
     var charges: [CustOrderLoadFolioCharges]
     var pocs: [CustPOCInventoryOrderView]
     var files: [CustOrderLoadFolioFiles]
+    var contracts: [CustPageContent]
     var equipments: [CustOrderLoadFolioEquipments]
     var rentals: [CustPOCRentalsMin]
     var transferOrder: CustTranferManager?
@@ -54,6 +55,7 @@ class OrderView: Div {
         charges: [CustOrderLoadFolioCharges],
         pocs: [CustPOCInventoryOrderView],
         files: [CustOrderLoadFolioFiles],
+        contracts: [CustPageContent],
         equipments: [CustOrderLoadFolioEquipments],
         rentals: [CustPOCRentalsMin],
         transferOrder: CustTranferManager?,
@@ -70,6 +72,7 @@ class OrderView: Div {
         self.charges = charges
         self.pocs = pocs
         self.files = files
+        self.contracts = contracts
         self.equipments = equipments
         self.rentals = rentals
         self.transferOrder = transferOrder
@@ -163,6 +166,8 @@ class OrderView: Div {
 
     @State var currentLocation: AppleMap.Coordinate? = nil
     
+    @State var orderContract: [CustomerCustomeScript] = []
+
     var chargesRefrence: [ UUID: OldChargeTrRow ] = [:]
     
     var rentalViewRefrence: [UUID:OrderRentalView] = [:]
@@ -215,10 +220,12 @@ class OrderView: Div {
     lazy var mapContainer = Div{
             Img()
                 .src("/skyline/media/orderMapRequest.jpeg")
+                .custom("height","calc(100% - 14px)")
+                .custom("width","calc(100% - 14px)")
+                .borderRadius(all: 12.px)
+                .objectFit(.cover)
                 .margin(all:7.px)
                 .opacity(0.5)
-                .borderRadius(all: 12.px)
-                .custom("width","calc(100% - 14px)")
                 
             Div{
                 Table{
@@ -228,6 +235,14 @@ class OrderView: Div {
                             .class(.uibtnLargeOrange)
                             .onClick {
                                 self.loadMap()
+                            }
+
+                            Div().clear(.both).height(12.px)
+
+                            Div("Busqueda Manual").color(.gray)
+                            .class(.uibtnLargeOrange)
+                            .onClick {
+                                self.searchAddressManualy()
                             }
                         }
                         .verticalAlign(.middle)
@@ -248,6 +263,7 @@ class OrderView: Div {
     
         }
         .id(Id(stringLiteral: mapId))
+        .height(250.px)
         .position(.relative)
 
     @DOM override var body: DOM.Content {
@@ -1526,32 +1542,22 @@ class OrderView: Div {
                 
                 Div {
                     
-                    Div{
-                        
-                        Span("Carta de Servicio")
-                        
-                        Img()
-                            .src("/skyline/media/download2.png")
-                            .marginRight(12.px)
+                    Div {
+                          Div {
+                                Img()
+                                    .src("/skyline/media/add.png")
+                                    .marginTop(7.px)
+                                    .cursor(.pointer)
+                                    .height(24.px)
+                            }
+                            .marginRight(7.px)
                             .float(.right)
-                            .height(24.px)
+
+                        Span("Carta de Servicio")
+                        .color(.yellowTC)
                     }
-                    .hidden(self.$contratc.map{ $0 == nil })
-                    .class(.uibtnLarge)
-                    .width(95.percent)
-                    .onClick {
-                        
-                        let file = ((self.order.contract ?? "").addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")
-                            .replace(from: "/", to: "%2f")
-                            .replace(from: "+", to: "%2b")
-                            .replace(from: "=", to: "%3d")
-                        
-                        let url = baseSkylineAPIUrl(ie: "downloadContract") +
-                        "&orderId=" + self.order.id.uuidString +
-                        "&documentId=" + file
-                        
-                        _ = JSObject.global.goToURL!(url)
-                    }
+
+                    Div().clear(.both).height(3.px)
                     
                     Div{
                         Span("-- No hay Carta de Servicio")
@@ -1560,6 +1566,46 @@ class OrderView: Div {
                     .hidden(self.$contratc.map{ $0 != nil })
                     .align(.center)
                      
+                    //orderContract
+
+                    // {"valueNinePlaceholder":"","valueSevenIO":"textField","valueThree":{"custome":{"_0":"Fecha del primer pago"}},"valueFourPlaceholder":"DD\/MM\/AAAA","valueTwelveIO":"instruction","valueTwelvePlaceholder":"","valueFifteen":{"inactive":{}},"valueFiveIO":"textArea","valueFourteenPlaceholder":"","valueFourteen":{"inactive":{}},"valueFour":{"custome":{"_0":"Fecha del ultimo pago"}},"customerAddress":"order","contractId":"871A7F2E-63A5-4A08-9EA8-B04FFF3F7933","valueSixIO":"textField","valueFourIO":"textArea","valueFourteenIO":"instruction","valueThirteenIO":"instruction","valueTwo":{"custome":{"_0":"Inicion de contrato"}},"valueEight":{"custome":{"_0":"Mensualidad"}},"customerInformation":"account","valueOnePlaceholder":"¿Cuanto meses va a durar el contrato?","valueOne":{"custome":{"_0":"Plazos del contrato"}},"valueOneIO":"textField","valueThirteen":{"inactive":{}},"valueSevenPlaceholder":"0.00","valueFivePlaceholder":"Ponga un concepto por linea","valueEightIO":"textField","valueSixPlaceholder":"0.00","valueSeven":{"custome":{"_0":"Anticipo"}},"valueEightPlaceholder":"0.00","valueNine":{"inactive":{}},"valueTwoPlaceholder":"DD\/MM\/AAAA","valueSix":{"custome":{"_0":"Valor total del Proyecto"}},"valueThreePlaceholder":"DD\/MM\/AAAA","valueTwoIO":"textField","valueThreeIO":"textField","valueNineIO":"instruction","valueFive":{"custome":{"_0":"Descrición del producto"}},"valueTenIO":"instruction","valueTenPlaceholder":"","valueTen":{"inactive":{}},"valueElevenIO":"instruction","valueElevenPlaceholder":"","valueEleven":{"inactive":{}},"valueTwelve":{"inactive":{}},"valueThirteenPlaceholder":"","valueFifteenPlaceholder":"","valueFifteenIO":"instruction"}
+
+                    Div().clear(.both).height(7.px)
+
+                    Div {
+                        Div {
+                            Div {
+                                Img()
+                                    .src("/skyline/media/add.png")
+                                    .marginTop(7.px)
+                                    .cursor(.pointer)
+                                    .height(24.px)
+                                    .onClick {
+                                        addToDom(SelectCustContractView(
+                                            orderContract: self.orderContract,
+                                            callback: { contract in
+                                                self.loadContractMetaData(contract)
+                                            }
+                                        ))
+                                    }
+                            }
+                            .marginRight(7.px)
+                            .float(.right)
+
+                            Span("Contratos")
+                            .color(.yellowTC)
+                        }
+
+                        Div().clear(.both).height(3.px)
+
+                        Div {
+                            
+                        }
+                        .class(.roundDarkBlue)
+                        .height(150.px)
+                    }
+                    .hidden(self.$orderContract.map{ $0.isEmpty })
+                    
                 }
                 
                 Div().class(.clear).marginTop(12.px)
@@ -1769,8 +1815,8 @@ class OrderView: Div {
             .overflow(.auto)
             
             /// Status View
-            Div{
-                     
+            Div {
+
                 /// pending
                 Div {
                     
@@ -1949,6 +1995,24 @@ class OrderView: Div {
         width(100.percent)
         height(100.percent)
         
+        WebApp.shared.skyline.customeScripts.forEach { script in
+            if script.type == .orderContract {
+
+                switch script.relType {
+                case .general:
+                    orderContract.append(script)
+                case .customer(let id):
+                    if id == order.custAcct {
+                        orderContract.append(script)
+                    }
+                case .vendor:
+                    break
+                }
+
+            }
+        }
+
+
         dueAtDiv = Div{
             
             Span(self.$dueDate.map{ ($0 == nil) ? "" : "\(getDate($0!).formatedShort) \(getDate($0!).time)"} )
@@ -2185,6 +2249,7 @@ class OrderView: Div {
                     chargesCatch[self.order.id] = loadOrderResponse.charges
                     pocsCatch[self.order.id] = loadOrderResponse.pocs
                     filesCatch[self.order.id] = loadOrderResponse.files
+                    contractsCatch[self.order.id] = loadOrderResponse.contracts
                     equipmentsCatch[self.order.id] = loadOrderResponse.equipments
                     rentalsCatch[self.order.id] = loadOrderResponse.rentals
                     if let transferOrder = loadOrderResponse.transferOrder {
@@ -2203,6 +2268,7 @@ class OrderView: Div {
                     self.charges = loadOrderResponse.charges
                     self.pocs = loadOrderResponse.pocs
                     self.files = loadOrderResponse.files
+                    self.contracts = loadOrderResponse.contracts
                     self.equipments = loadOrderResponse.equipments
                     self.rentals = loadOrderResponse.rentals
                     self.transferOrder = loadOrderResponse.transferOrder
@@ -5346,8 +5412,6 @@ class OrderView: Div {
             }.jsValue)
         }
 
-    
-    
     func proccessPayment(_ code: FiscalPaymentCodes, _ description: String, _ amount: Float, _ provider: String, _ lastFour: String, _ auth: String, _ uts: Int64?){
         
         API.custOrderV1.addPayment(
@@ -5680,28 +5744,178 @@ class OrderView: Div {
                 return
             }
     }
-    
-        func addLocation(latitude: Double? = nil, longitude: Double? = nil){
-            
-            guard let latitude else {
-                print("🔴 FAIL TO GET  LAT")
-                return
-            }
-            
-            guard let longitude else {
-                print("🔴 FAIL TO GET  LON")
-                return
-            }
-            
-            print("🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  ")
-            
-            self.lat = latitude
-            
-            self.lon = longitude
 
-            self.loadLocation(latitude, longitude)
+    func addLocation(latitude: Double? = nil, longitude: Double? = nil){
+        
+        guard let latitude else {
+            print("🔴 FAIL TO GET  LAT")
+            return
+        }
+        
+        guard let longitude else {
+            print("🔴 FAIL TO GET  LON")
+            return
+        }
+        
+        print("🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  ")
+        
+        self.lat = latitude
+        
+        self.lon = longitude
+
+        self.loadLocation(latitude, longitude)
+        
+    }
+
+
+    func searchAddressManualy() {
+
+        guard let country = Countries(rawValue: self.country), country == .mexico else {
+            showError(.invalidField, "Lo sentimos este servicio solo esta disponible para Mexico. Es posible que necesite corregir su ortografia o haga un ingreso manual.")
+            return
+        }
+        
+        let view = ManualAddressSearch(.byCountry(.mexico)) { response in
+            
+            switch response {
+            case .address(let address):
+
+                self.colony =  address.settlement
+                
+                self.city = address.city
+                
+                self.state = address.state
+                
+                self.zip = address.zip
+                
+                self.country = address.country.description
+
+                print("")
+
+            case .coordinates(let coordinate):
+                
+                if self.street.isEmpty {
+                    self.street = coordinate.street
+                }
+
+                self.colony =  coordinate.settlement
+                
+                self.city = coordinate.city
+                
+                self.state = coordinate.state
+                
+                self.zip = coordinate.zip
+                
+                self.country = coordinate.country.description
+                
+                API.custOrderV1.addLocation(
+                    latitude: coordinate.latitude,
+                    longitude: coordinate.longitude,
+                    orderId: self.order.id
+                ) { resp in
+
+                    print(resp )
+
+                }
+
+                API.custOrderV1.saveOrderDetail(
+                    orderid: self.order.id,
+                    name: self.orderName,
+                    mobile: self.mobile,
+                    telephone: self.telephone,
+                    email: self.email,
+                    street: self.street,
+                    colony: self.colony,
+                    city: self.city,
+                    state: self.state,
+                    country: self.country,
+                    zip: self.zip
+                ) { resp in
+
+
+                }
+            }
             
         }
+        
+        addToDom(view)
+                                
+    }
+
+    func loadContractMetaData (_ contract: CustomerCustomeScript) {
+        
+        guard let metaData = contract.meta.data(using: .utf8) else {
+            showError(.generalError, "No se pudo leer la configuracion del contrato")
+            return
+        }
+
+        guard let equipment = self.equipments.first else {
+            showError(.generalError, "No se pudo localizar el equipo del contrato")
+            return
+        }
+        
+        do {
+
+            let configuration = try JSONDecoder().decode(CustContractRelationConfiguration.self, from: metaData)
+            
+            addToDom(CreateCustContractView(
+                orderId: self.order.id,
+                configuration: configuration,
+                equipment: equipment
+             ) { fileName in
+                self.contratc = fileName
+                self.order.contract = fileName
+            })
+        }
+        catch {
+            showError(.generalError, "No se pudo cargar la configuracion del contrato")
+            print(error)
+        }
+    }
 
 
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $tasks.removeAllListeners()
+        $pendingPickups.removeAllListeners()
+        $lastCommunicationMethod.removeAllListeners()
+        $dueDate.removeAllListeners()
+        $budgetIcon.removeAllListeners()
+        $budgetStatus.removeAllListeners()
+        $inAlert.removeAllListeners()
+        $isHighPriority.removeAllListeners()
+        $orderProject.removeAllListeners()
+        $statusMenuIsHidden.removeAllListeners()
+        $status.removeAllListeners()
+        $currentEquipment.removeAllListeners()
+        $tpays.removeAllListeners()
+        $tchars.removeAllListeners()
+        $ttotal.removeAllListeners()
+        $orderName.removeAllListeners()
+        $mobile.removeAllListeners()
+        $telephone.removeAllListeners()
+        $email.removeAllListeners()
+        $streetHolderIsHidden.removeAllListeners()
+        $colonyHolderIsHidden.removeAllListeners()
+        $cityHolderIsHidden.removeAllListeners()
+        $stateHolderIsHidden.removeAllListeners()
+        $countryHolderIsHidden.removeAllListeners()
+        $ziptHolderIsHidden.removeAllListeners()
+        $street.removeAllListeners()
+        $colony.removeAllListeners()
+        $city.removeAllListeners()
+        $state.removeAllListeners()
+        $country.removeAllListeners()
+        $zip.removeAllListeners()
+        $lat.removeAllListeners()
+        $lon.removeAllListeners()
+        $contratc.removeAllListeners()
+        $editMode.removeAllListeners()
+        $requierServiceAddress.removeAllListeners()
+        $onWorkUser.removeAllListeners()
+        $onWorkUsername.removeAllListeners()
+        $currentLocation.removeAllListeners()
+        $orderContract.removeAllListeners()
+    }
 }

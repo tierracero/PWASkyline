@@ -481,6 +481,28 @@ class ToolViewFiscalXMLDocument: Div {
     }
     
     override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $vendorFolio.removeAllListeners()
+        $businessName.removeAllListeners()
+        $vendorRfc.removeAllListeners()
+        $vendorRazon.removeAllListeners()
+        $finaceContact.removeAllListeners()
+        $oporationContact.removeAllListeners()
+        $receptorRfc.removeAllListeners()
+        $receptorRazon.removeAllListeners()
+        $fiscalUse.removeAllListeners()
+        $paymentForm.removeAllListeners()
+        $docid.removeAllListeners()
+        $docuuid.removeAllListeners()
+        $docFolio.removeAllListeners()
+        $docSerie.removeAllListeners()
+        $total.removeAllListeners()
+        $balance.removeAllListeners()
+        $officialDate.removeAllListeners()
+        $dueDate.removeAllListeners()
+        $canAddTarget.removeAllListeners()
+        $custInventoryPurchaseManagerStatus.removeAllListeners()
+        $manualPurchaseManager.removeAllListeners()
         print("did remove from dom 🤖")
     }
     

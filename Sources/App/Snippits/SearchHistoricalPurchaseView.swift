@@ -319,4 +319,9 @@ class SearchHistoricalPurchaseView: Div {
             
         }
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $term.removeAllListeners()
+    }
 }

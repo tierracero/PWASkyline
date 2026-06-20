@@ -308,4 +308,19 @@ class SocialManagerPostPageRow: Div {
         }
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $pageName.removeAllListeners()
+        $like.removeAllListeners()
+        $dislike.removeAllListeners()
+        $love.removeAllListeners()
+        $care.removeAllListeners()
+        $wow.removeAllListeners()
+        $haha.removeAllListeners()
+        $sorry.removeAllListeners()
+        $angry.removeAllListeners()
+        $other.removeAllListeners()
+        $comments.removeAllListeners()
+    }
 }

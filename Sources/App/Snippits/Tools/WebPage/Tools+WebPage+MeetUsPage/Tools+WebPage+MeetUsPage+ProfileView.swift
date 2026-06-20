@@ -652,5 +652,17 @@ extension ToolsView.WebPage.MeetUsPage {
         }
         
         
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $id.removeAllListeners()
+            $name.removeAllListeners()
+            $smallDescription.removeAllListeners()
+            $descr.removeAllListeners()
+            $inPromo.removeAllListeners()
+            $avatar.removeAllListeners()
+            $editImage.removeAllListeners()
+            $selectedAvatar.removeAllListeners()
+        }
     }
 }

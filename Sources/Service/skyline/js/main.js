@@ -2093,6 +2093,96 @@ function loadMapCord(mapId, lat, lon, updateCoordinate) {
 
 }
 
+function initiateMapReverseGeocode(token, lat, lon, callback) {
+    
+    console.log("🟡  initiateMapReverseGeocode")
+    
+    mapkit.init({
+        authorizationCallback: function(done) {
+            done(token);
+        },
+        language: "es"
+     });
+    
+    reverseGeocodeCoordinate(lat, lon, callback)
+}
+
+function normalizeMapkitReversePlace(place, latitude, longitude) {
+    
+    let coordinate = place.coordinate || {};
+    let dependentLocalities = Array.isArray(place.dependentLocalities) ? place.dependentLocalities.filter(Boolean) : [];
+    let street = place.fullThoroughfare || [place.thoroughfare, place.subThoroughfare].filter(Boolean).join(" ");
+    
+    return {
+        coordinate: {
+            latitude: coordinate.latitude !== undefined ? coordinate.latitude : latitude,
+            longitude: coordinate.longitude !== undefined ? coordinate.longitude : longitude
+        },
+        formattedAddress: place.formattedAddress || (Array.isArray(place.formattedAddressLines) ? place.formattedAddressLines.join(", ") : ""),
+        name: place.name || "",
+        street: street || "",
+        streetName: place.thoroughfare || "",
+        streetNumber: place.subThoroughfare || "",
+        colony: place.subLocality || dependentLocalities[0] || "",
+        city: place.locality || place.subAdministrativeArea || "",
+        state: place.administrativeArea || "",
+        country: place.country || "",
+        zip: place.postCode || ""
+    };
+}
+
+function reverseGeocodeCoordinate(lat, lon, callback) {
+    
+    let latitude = parseFloat(lat);
+    let longitude = parseFloat(lon);
+    let geocoder = new mapkit.Geocoder();
+    
+    geocoder.reverseLookup(new mapkit.Coordinate(latitude, longitude), function(error, data) {
+        
+        if (error) {
+            console.log("🔴  ERROR REVERSE GEOCODING COORDINATE")
+            console.log(error)
+            
+            callback(JSON.stringify({
+                status: "error",
+                msg: "No se pudo localizar dirección con esas coordenadas."
+            }));
+            
+            return;
+        }
+        
+        let places = [];
+        
+        if (Array.isArray(data)) {
+            places = data;
+        } else if (data && Array.isArray(data.places)) {
+            places = data.places;
+        } else if (data && Array.isArray(data.results)) {
+            places = data.results;
+        }
+        
+        let addresses = places.map(function(place) {
+            return normalizeMapkitReversePlace(place, latitude, longitude);
+        });
+        
+        addresses.forEach(function(address, index) {
+            console.log("🗺 Posible dirección " + (index + 1) + ": " + [
+                address.street,
+                address.colony,
+                address.city,
+                address.state,
+                address.country,
+                address.zip
+            ].filter(Boolean).join(", "));
+        });
+        
+        callback(JSON.stringify({
+            status: "ok",
+            addresses: addresses
+        }));
+    });
+}
+
 
 mapRefrenceObject = {}
 

@@ -171,5 +171,11 @@ class FiscalConceptDestinationManualItemsEditView: Div {
         self.remove()
         
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $missingUnitsCount.removeAllListeners()
+        $missingUnitsReasonListener.removeAllListeners()
+    }
 }
 

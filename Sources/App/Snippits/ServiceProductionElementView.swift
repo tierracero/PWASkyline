@@ -343,4 +343,14 @@ class ServiceProductionElementView: Div {
             
         }
     }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $id.removeAllListeners()
+        $code.removeAllListeners()
+        $name.removeAllListeners()
+        $descr.removeAllListeners()
+        $cost.removeAllListeners()
+        $isFavorite.removeAllListeners()
+    }
 }

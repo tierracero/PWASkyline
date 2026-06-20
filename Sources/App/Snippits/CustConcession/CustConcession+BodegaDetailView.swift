@@ -963,5 +963,16 @@ extension CustConcessionView {
         }
 
 
+
+        override func didRemoveFromDOM() {
+            super.didRemoveFromDOM()
+            $hasAnyActiveElement.removeAllListeners()
+            $selectedItemsState.removeAllListeners()
+            $itemsRefrence.removeAllListeners()
+            $itemsPOCRefrence.removeAllListeners()
+            $totalItemCount.removeAllListeners()
+            $totalItemAmount.removeAllListeners()
+            $codeFilter.removeAllListeners()
+        }
     }
 }

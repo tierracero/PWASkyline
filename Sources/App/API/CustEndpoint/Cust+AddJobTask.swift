@@ -20,6 +20,7 @@ extension CustComponents {
         name: String,
         reason: String,
         description: String,
+        impact: CustJobTaskImpact,
         callback: @escaping ( (_ resp: APIResponseGeneric<CustJobTask>?) -> () )
     ) {
         sendPost(
@@ -35,7 +36,8 @@ extension CustComponents {
                 subExecuteAt: subExecuteAt,
                 name: name,
                 reason: reason,
-                description: reason
+                description: description,
+                impact: impact
             )
         ) { data in
             guard let data else {
