@@ -16,6 +16,8 @@ class CreateCustContractView: Div {
     
     let orderId: UUID
 
+    let contractName: String
+
     let configuration: CustContractRelationConfiguration
 
     let equipment: CustOrderLoadFolioEquipments
@@ -28,6 +30,7 @@ class CreateCustContractView: Div {
     
     init(
         orderId: UUID,
+        contractName: String,
         configuration: CustContractRelationConfiguration,
         equipment: CustOrderLoadFolioEquipments,
         serviceTags: ConfigServiceTags = configServiceTags,
@@ -36,6 +39,7 @@ class CreateCustContractView: Div {
         ) -> ())
     ) {
         self.orderId = orderId
+        self.contractName = contractName
         self.configuration = configuration
         self.equipment = equipment
         self.serviceTags = serviceTags
@@ -165,7 +169,7 @@ class CreateCustContractView: Div {
                         self.remove()
                     }
                 
-                H2("Crear Contrato")
+                H2("Crear Contrato | \(self.contractName)")
                     .color(.lightBlueText)
                     .height(35.px)
                 

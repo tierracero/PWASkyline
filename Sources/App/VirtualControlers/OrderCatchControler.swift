@@ -135,7 +135,7 @@ public class OrderCatchControler {
     /// [ CustOrder.id :  OrderRowView]
     private var orderRowViewRefrence: [ UUID : OrderRowView] = [:]
 
-    private var followupRowViewRefrence: [ UUID : Div] = [:]
+    private var followupRowViewRefrence: [ UUID : CustFollowUpRowView] = [:]
     
     lazy var listViewButton = Img()
         .src("/skyline/media/icon_list.png")
@@ -714,7 +714,6 @@ public class OrderCatchControler {
 
     }
     
-
     /// Executes a search on acording set loadOrderStatusType values
     func executeSearch(){
         switch loadOrderStatusType {
@@ -998,7 +997,9 @@ public class OrderCatchControler {
             pending = updated
             
             updated = []
+
             print("active \(active.count)")
+            
             active.forEach { _order in
                 
                 print("\(_order.id.uuidString) vs \(orderId.uuidString)")
@@ -1121,9 +1122,13 @@ public class OrderCatchControler {
 
         var isEven = true
 
+        // followupRowViewRefrence
+
         items.forEach { item in
 
             let view = followupRowView(data: item)
+
+            followupRowViewRefrence[item.id] = view
 
             if isEven {
                 firstView.appendChild(view)
@@ -2032,7 +2037,180 @@ public class OrderCatchControler {
     func followupRowView(data: CustFollowUp) -> CustFollowUpRowView {
 
         let view = CustFollowUpRowView(data) {
-            
+
+            loadingView(show: true)
+
+            API.custFollowup.getItem(followupId: data.id) { resp in 
+
+                loadingView(show: false)
+
+                guard let resp else {
+                    showError(.comunicationError, .unexpenctedMissingPayload)
+                    return
+                }
+                
+                guard resp.status == .ok else {
+                    showError(.generalError, resp.msg)
+                    return
+                }
+                
+                guard let payload = resp.data else {
+                    showError(.unexpectedResult, .unexpenctedMissingPayload)
+                    return
+                }
+
+                let followupView = ViewFollowup(
+                    account: payload.account,
+                    followup: payload.followup,
+                    items: payload.items
+                ) { closeType in
+
+                    let account: CustAcctSearch = .init(
+                            id: payload.account.id,
+                            folio: payload.account.folio,
+                            businessName: payload.account.businessName,
+                            costType: payload.account.costType,
+                            type: payload.account.type,
+                            firstName: payload.account.firstName,
+                            lastName: payload.account.lastName,
+                            mcc: payload.account.mcc,
+                            mobile: payload.account.mobile,
+                            email: payload.account.email,
+                            street: payload.account.street,
+                            colony: payload.account.colony,
+                            city: payload.account.city,
+                            state: payload.account.state,
+                            zip: payload.account.zip,
+                            country: payload.account.country,
+                            autoPaySpei: payload.account.autoPaySpei,
+                            autoPayOxxo: payload.account.autoPayOxxo,
+                            fiscalProfile: payload.account.fiscalProfile,
+                            fiscalRazon: payload.account.fiscalRazon,
+                            fiscalRfc: payload.account.fiscalRfc,
+                            fiscalRegime: payload.account.fiscalRegime,
+                            fiscalZip: payload.account.fiscalZip,
+                            cfdiUse: payload.account.cfdiUse,
+                            CardID: payload.account.CardID,
+                            rewardsLevel: payload.account.rewardsLevel,
+                            crstatus: payload.account.crstatus,
+                            isConcessionaire: payload.account.isConcessionaire,
+                            highPriorityNotes: []
+                        )
+
+                    switch closeType {
+                    case .noIntrest:
+                    break
+                    case .toOrder:
+                                            
+                        let order = StartServiceOrder(custAcct: account) { id, shownHighPriorityNotes, cfiles in
+                            
+                            OrderCatchControler.shared.loadFolio(orderid: id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                    
+                                var files = files
+                            
+                                var currentFiles: [CustOrderLoadFolioFiles] = []
+                                
+                                if !cfiles.isEmpty {
+
+                                    cfiles.forEach { file in
+                                        currentFiles.append(.init(
+                                            id: .init(),
+                                            type: .image,
+                                            file: file,
+                                            avatar: file
+                                        ))
+                                    }
+
+                                    files.append(contentsOf: currentFiles)
+
+                                    OrderCatchControler.shared.updateParameter(id, .files(currentFiles))
+
+                                }
+                                            
+                                OrderCatchControler.shared.updateParameter(id, .newOrder(.init(
+                                    id: id,
+                                    folio: order.folio,
+                                    createdAt: order.createdAt,
+                                    modifiedAt: order.modifiedAt,
+                                    closedAt: order.closedAt,
+                                    custAcct: order.custAcct,
+                                    type: order.type,
+                                    activeUser: order.workedBy ?? order.createdBy,
+                                    name: order.name,
+                                    mobile: order.mobile,
+                                    address: "\(order.street) \(order.colony) \(order.state)",
+                                    due: order.dueDate,
+                                    alerted: order.alerted,
+                                    fiscalDocumentStatus: .unrequest,
+                                    budgetStatus: .pending,
+                                    budget: nil,
+                                    pendingPickup: order.pendingPickup,
+                                    transferManagement: nil,
+                                    highPriority: order.highPriority,
+                                    description: order.description,
+                                    smallDescription: order.smallDescription,
+                                    balance: 0, // TODO: do proper calc
+                                    productionTime: 0, // TODO: do proper calc
+                                    route: order.route,
+                                    status: order.status
+                                )))
+                                
+                                let accoutOverview = AccoutOverview (
+                                    id: .id(order.custAcct)
+                                )
+                                
+                                accoutOverview.shownHighPriorityNotes.append(contentsOf: shownHighPriorityNotes)
+                                
+                                accoutOverview.loadOrder(
+                                    account: account,
+                                    order: order,
+                                    notes: notes,
+                                    payments: payments,
+                                    charges: charges,
+                                    pocs: pocs,
+                                    files: files,
+                                    contracts: contracts,
+                                    equipments: equipments,
+                                    rentals: rentals,
+                                    transferOrder: transferOrder,
+                                    orderHighPriorityNote: orderHighPriorityNote,
+                                    accountHighPriorityNote: accountHighPriorityNote,
+                                    tasks: tasks,
+                                    orderRoute: route,
+                                    loadFromCatch: loadFromCatch
+                                )
+                                
+                                addToDom(accoutOverview)
+                                
+                                minViewAcctRefrence[order.custAcct] = accoutOverview
+                                
+                                accoutOverview._orderView?.printOrder()
+                                
+                            }
+                            
+                        }
+                        
+                        addToDom(order)
+
+                    case .toPOS:
+                        
+                        let view = SalePointView(loadBy: .account(account))
+
+                        addToDom(view)
+                    }
+
+                    self.followupRowViewRefrence[payload.followup.id]?.remove()
+                    self.followupRowViewRefrence.removeValue(forKey: payload.followup.id)
+
+                } onClosing: {
+                    self.followupRowViewRefrence[payload.followup.id]?.remove()
+                    self.followupRowViewRefrence.removeValue(forKey: payload.followup.id)
+                }
+
+                addToDom(followupView)
+
+            }
+
         }
         
         followupRowViewRefrence[data.id] = view
@@ -2592,7 +2770,8 @@ public class OrderCatchControler {
         loadingView(show: true)
 
         API.custFollowup.getItems(
-            userId: custCatchID,
+            storeId: custCatchStore,
+            userId: nil,
             status: nil
         ) { resp in
             

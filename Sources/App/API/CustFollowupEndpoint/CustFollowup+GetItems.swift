@@ -6,6 +6,7 @@ import TCFireSignal
 extension CustFollowupComponents {
     
     static func getItems(
+        storeId: UUID?,
         userId: UUID?,
         status: CustFollowUpStatus?,
         callback: @escaping ( (_ resp: APIResponseGeneric<GetItemsResponse>?) -> () )
@@ -16,6 +17,7 @@ extension CustFollowupComponents {
             version,
             "getItems",
             GetItemsRequest(
+                storeId: storeId,
                 userId: userId,
                 status: status
             )

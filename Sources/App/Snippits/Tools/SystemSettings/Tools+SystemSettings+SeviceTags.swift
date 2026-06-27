@@ -357,7 +357,7 @@ extension ToolsView.SystemSettings {
 
         @DOM override var body: DOM.Content {
             
-                H3("Configuración de Etiquetas de Servicio").color(.lightBlueText)
+                H1("Configuración de Etiquetas de Servicio").color(.white)
                 
                 /* Categoria de cliente primario*/
                 Div{
@@ -1082,7 +1082,6 @@ extension ToolsView.SystemSettings {
                     .class(.oneHalf)
                     .color(.white)
                 }
-            
                 
                 Div("Guardar Cambios")
                     .border(width: .thin, style: .solid, color: .darkGray)

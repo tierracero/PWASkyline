@@ -50,7 +50,10 @@ class CustFollowUpRowView: Div {
         Div {
             
             Div {
-                H2(self.typeLabel)
+                
+                Div{
+                    H2(self.typeLabel)
+                }.class(.oneLineText)
                 
                 Div(self.statusLabel)
                     .class(.oneLineText)

@@ -752,6 +752,8 @@ class SalePointView: Div {
                 break
             case .transferOrder(_):
                 break
+            case .account(let account):
+            self.custAcct = account
             }
         }
     }
@@ -2535,11 +2537,17 @@ extension SalePointView {
     enum BudgetDownloadType {
         case print
     }
-    
+
+    // budget, transferInventory, transferOrder
     enum ViewLoader {
+
         case budget(HybridIdentifier)
+        
         case transferInventory(HybridIdentifier)
+        
         case transferOrder(HybridIdentifier)
+
+        case account (CustAcctSearch)
     }
 
 }

@@ -276,7 +276,6 @@ class CreateStoreLevelDepartement: Div {
             }
         }
 
-
         WebApp.current.wsevent.listen {
             
             if $0.isEmpty { return }
@@ -403,7 +402,6 @@ class CreateStoreLevelDepartement: Div {
                 break
             }
         }
-        
 
     }
     

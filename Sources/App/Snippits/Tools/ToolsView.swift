@@ -160,51 +160,49 @@ class ToolsView: Div {
                     }
                     
                     /* Website */
-                    if custCatchAccountType != .entrepreneur {
-                        Div{
-                            
-                            Table{
-                                Tr{
-                                    Td{
-                                        
-                                        Img()
-                                            .src("skyline/media/website_icon.png")
-                                            .height(100.px)
-                                        
-                                        Div("Pagina Web")
-                                            .textAlign(.center)
-                                            .margin(all: 7.px)
-                                            .color(.white)
-                                        
-                                    }
-                                    .verticalAlign(.middle)
-                                    .align(.center)
-                                }
-                            }
-                            .height(100.percent)
-                            .width(100.percent)
-                            
-                        }
-                        .padding(all: 7.px)
-                        .margin(all: 7.px)
-                        .height(150.px)
-                        .width(150.px)
-                        .class(.uibtn)
-                        .float(.left)
-                        .onClick {
-                            
-                            guard let tcaccount else {
-                                showError(.generalError, "No se localizaron datos de la centa")
-                                return
-                            }
-                            
+                    Div{
                         
-                            addToDom(WebPage(account: tcaccount))
-                            
-                            self.remove()
+                        Table{
+                            Tr{
+                                Td{
+                                    
+                                    Img()
+                                        .src("skyline/media/website_icon.png")
+                                        .height(100.px)
+                                    
+                                    Div("Pagina Web")
+                                        .textAlign(.center)
+                                        .margin(all: 7.px)
+                                        .color(.white)
+                                    
+                                }
+                                .verticalAlign(.middle)
+                                .align(.center)
+                            }
                         }
-                    } 
+                        .height(100.percent)
+                        .width(100.percent)
+                        
+                    }
+                    .padding(all: 7.px)
+                    .margin(all: 7.px)
+                    .height(150.px)
+                    .width(150.px)
+                    .class(.uibtn)
+                    .float(.left)
+                    .onClick {
+                        
+                        guard let tcaccount else {
+                            showError(.generalError, "No se localizaron datos de la centa")
+                            return
+                        }
+                        
                     
+                        addToDom(WebPage(account: tcaccount))
+                        
+                        self.remove()
+                    }
+                
                 }
                 .padding(all: 3.px)
                 .margin(all: 3.px)

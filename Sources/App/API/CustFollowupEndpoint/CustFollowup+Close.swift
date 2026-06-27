@@ -5,36 +5,28 @@ import TCFireSignal
 
 extension CustFollowupComponents {
     
-    static func update(
+    static func close(
         followupId: UUID,
-        nextDateAt: Int64?,
-        currentUser: UUID,
-        type: CustFollowUpType,
-        comment: String,
-        interest: CustFollowUpIntrest,
+        closeType: CloseType,
         callback: @escaping ( (_ resp: APIResponse?) -> () )
     ) {
         sendPost(
             rout,
             version,
-            "update",
-            UpdateRequest(
+            "close",
+            CloseRequest(
                 followupId: followupId,
-                nextDateAt: nextDateAt,
-                currentUser: currentUser,
-                type: type,
-                comment: comment,
-                interest: interest
+                closeType: closeType
             )
         ) { data in
             guard let data else {
                 callback(nil)
                 return
             }
-            do{
+            do {
                 callback(try JSONDecoder().decode(APIResponse.self, from: data))
             }
-            catch{
+            catch {
                 print("🔴 DEOCDING \(#function)")
                 print(error)
                 callback(nil)

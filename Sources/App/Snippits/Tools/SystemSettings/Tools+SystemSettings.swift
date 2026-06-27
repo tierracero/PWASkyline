@@ -42,6 +42,12 @@ extension ToolsView {
             .hidden(self.$selectedSetting.map{ $0 != .general })
             .height(100.percent)
             .width(100.percent)
+        
+        // communicationProfile
+        lazy var communicationProfileDiv = Div()
+            .hidden(self.$selectedSetting.map{ $0 != .communicationProfile })
+            .height(100.percent)
+            .width(100.percent)
 
         // advance configuration
         lazy var advancedlDiv = Div{
@@ -140,6 +146,18 @@ extension ToolsView {
                                     .onClick {
                                         self.selectedSetting = .general
                                     }
+                                
+                                Div("Comunicación")
+                                    .border(
+                                        width: .medium,
+                                        style: self.$selectedSetting.map{ $0 == .communicationProfile ? .solid : .none },
+                                        color: .skyBlue
+                                    )
+                                    .class(.uibtnLarge)
+                                    .width(95.percent)
+                                    .onClick {
+                                        self.selectedSetting = .communicationProfile
+                                    }
 
                                 /// Advanced
                                 Div("Avanzado")
@@ -167,6 +185,7 @@ extension ToolsView {
                         self.seviceTagsDiv
                         self.storeProductDiv
                         self.generalDiv
+                        self.communicationProfileDiv
                         self.advancedlDiv
                     }
                     .height(100.percent)
@@ -238,6 +257,25 @@ extension ToolsView {
                     pageProfile: payload.pageProfile,
                     socialProfile: payload.socialProfile
                 ))
+                
+                API.custAPIV1.getCommunicationProfile { communicationProfileResp in
+                    
+                    guard let communicationProfileResp else {
+                        return
+                    }
+                    
+                    guard communicationProfileResp.status == .ok else {
+                        return
+                    }
+                    
+                    guard let communicationProfile = communicationProfileResp.data else {
+                        return
+                    }
+                    
+                    self.communicationProfileDiv.appendChild(CommunicationProfile(
+                        communicationProfile: communicationProfile
+                    ))
+                }
 
 
                 
@@ -272,6 +310,9 @@ extension ToolsView.SystemSettings {
         
         /// ConfigGeneral
         case general
+        
+        /// CustCommunicationProfile
+        case communicationProfile
         
         ///  ConfigStoreProduct
         case storeProduct
@@ -444,4 +485,3 @@ func _downloadBackup(
         }
     }
 }
-

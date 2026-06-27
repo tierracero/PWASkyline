@@ -2829,14 +2829,13 @@ class WorkViewControler: PageController {
                                 case .account:
                                     loadAccountView(id: .id(custAcct.id))
                                 case .followup:
-                                    self.startFollowup(custAcct)
+                                    self.startFollowup(custAcct, custAcct.highPriorityNotes)
                                 }
                             }
 
                             self.appendChild(custDataView)
                             
-                    }
-                    )
+                    })
                 )
             }
             else{
@@ -3014,7 +3013,9 @@ class WorkViewControler: PageController {
                     case .account:
                         loadAccountView(id: .id(custAcct.id))
                     case .followup:
-                        self.startFollowup(custAcct)
+
+                    /// CustAcctSearch
+                        self.startFollowup(custAcct, custAcct.highPriorityNotes)
                     }
                 }
                 else{
@@ -3351,7 +3352,9 @@ class WorkViewControler: PageController {
             searchHistoricalPurchaseView = view
             addToDom(view)
         }
-        
+        else if caller == "tradesa_trip_control" {
+            
+        }
     }
     
     func searchFolio(_ advancedSearch: Bool,_ _term: String? = nil){
@@ -3993,10 +3996,11 @@ class WorkViewControler: PageController {
         }
     }
     
-    func startFollowup(_ account: CustAcctSearch) {
+    func startFollowup(_ account: CustAcctSearch, _ highPriorityNotes: [HighPriorityNote]?) {
 
-        let view =  CreateNewFollowup(
-            custAcct: account
+        let view = CreateNewFollowup(
+            custAcct: account,
+            highPriorityNotes: highPriorityNotes
         )
 
         addToDom(view)

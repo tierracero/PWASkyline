@@ -5860,6 +5860,7 @@ class OrderView: Div {
             
             addToDom(CreateCustContractView(
                 orderId: self.order.id,
+                contractName: contract.name,
                 configuration: configuration,
                 equipment: equipment
              ) { fileName in

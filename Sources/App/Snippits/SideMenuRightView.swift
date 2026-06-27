@@ -14,15 +14,6 @@ class SideMenuView: Div {
     
     private var callback: ((_ caller: String) -> ())
     
-    lazy var config = SideMenuItemView(
-        icon: "/skyline/media/gear.png",
-        title: "Ajustes y Herramientas",
-        subTitle: "Controla los ajustes operativos",
-        caller: "config"
-    ) { caller in
-        self.callback(caller)
-    }
-    
     init(
         callback: @escaping ((_ caller: String) -> ())
     ) {
@@ -33,6 +24,16 @@ class SideMenuView: Div {
         fatalError("init() has not been implemented")
     }
     
+    lazy var config = SideMenuItemView(
+        icon: "/skyline/media/gear.png",
+        title: "Ajustes y Herramientas",
+        subTitle: "Controla los ajustes operativos",
+        caller: "config"
+    ) { caller in
+        self.callback(caller)
+    }
+    
+
     @DOM override var body: DOM.Content {
         Div{
             
@@ -91,6 +92,18 @@ class SideMenuView: Div {
                 caller: "logout"
             ) { caller in
                 self.callback(caller)
+            }
+
+            // MARK: Customer Special Tools
+            if custCatchUrl == "tradesa.mx" {
+                SideMenuItemView(
+                    icon: "/skyline/media/store_gray.png",
+                    title: "Control de Viajes",
+                    subTitle: "Registra y maneja el historeal de viajes",
+                    caller: "tradesa_trip_control"
+                ) { caller in
+                    self.callback(caller)
+                }
             }
             
             Div("Tierra Cero Skyline [" +

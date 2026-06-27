@@ -16,10 +16,14 @@ class CreateNewFollowup: Div {
 
     var custAcct: CustAcctSearch
     
+    var highPriorityNotes: [HighPriorityNote]?
+
     init(
-        custAcct: CustAcctSearch
+        custAcct: CustAcctSearch,
+        highPriorityNotes: [HighPriorityNote]?
     ) {
         self.custAcct = custAcct
+        self.highPriorityNotes = highPriorityNotes
         super.init()
     }
     
@@ -74,6 +78,8 @@ class CreateNewFollowup: Div {
         .width(95.percent)
         .height(110.px)
     
+    var shownHighPriorityNotes: [UUID] = []
+
     @DOM override var body: DOM.Content {
         Div {
             
@@ -163,43 +169,38 @@ class CreateNewFollowup: Div {
                 .color(.gray)
             Div().class(.clear).height(3.px)
             
-            H2(self.$nextDateLabel)
-                .color(.white)
-            
-            Div().class(.clear).height(3.px)
-            
             Div {
-                Div {
 
-                    Div("Remover Fecha")
-                        .class(.uibtnLarge)
-                        .textAlign(.center)
-                        .width(95.percent)
-                        .float(.left)
-                        .onClick {
-                            self.nextDateAt = nil
-                            self.nextDateLabel = "Sin fecha seleccionada"
-                        }
-
-                }
-                .width(50.percent)
-                .float(.left)
+                H1(self.$nextDateLabel)
+                    .color(.white)
+                    .float(.left)
 
                 Div {
-
-                    Div("Seleccionar Fecha")
-                        .class(.uibtnLargeOrange)
-                        .textAlign(.center)
-                        .width(95.percent)
-                        .float(.left)
-                        .onClick {
-                            self.selectDate()
-                    }
+                    Img()
+                        .src("/skyline/media/calendar.png")
+                        .cursor(.pointer)
+                        .height(24.px)
                 }
-                .width(50.percent)
-                .float(.left)
+                .float(.right)
+                .onClick {
+                    self.selectDate()
+                }
 
-                Div().class(.clear)
+
+                Div {
+                    Img()
+                        .src("/skyline/media/cross.png")
+                        .cursor(.pointer)
+                        .height(24.px)
+                }
+                .hidden(self.$nextDateAt.map{ $0 == nil })
+                .marginRight(7.px)
+                .float(.right)
+                .onClick {
+                    self.nextDateAt = nil
+                    self.nextDateLabel = "Sin fecha seleccionada"
+                }
+
             }
             
             Div().class(.clear).height(7.px)
@@ -251,7 +252,7 @@ class CreateNewFollowup: Div {
         
         typeSelect.appendChild(
             Option("Seleccione tipo")
-                .value("")
+                .value("") 
         )
         
         interestSelect.appendChild(
@@ -265,7 +266,7 @@ class CreateNewFollowup: Div {
                 .value(item.rawValue)
             )
         }
-        
+
         CustFollowUpIntrest.allCases.forEach { item in
             interestSelect.appendChild(
                 Option(item.documentableName)
@@ -274,6 +275,8 @@ class CreateNewFollowup: Div {
         }
 
         typeListener = CustFollowUpType.followup.rawValue
+
+        interestListener = CustFollowUpIntrest.low.rawValue
 
         $typeListener.listen {
             self.type = CustFollowUpType(rawValue: $0)
@@ -324,12 +327,35 @@ class CreateNewFollowup: Div {
                     .value(item.id.uuidString)
                 )
             }
-            
-
         }
     }
     
-    func selectUser() {
+    override func didAddToDOM() {
+        super.didAddToDOM()
+
+        if let highPriorityNotes, !highPriorityNotes.isEmpty {
+
+            highPriorityNotes.forEach { note in
+                
+                if self.shownHighPriorityNotes.contains(note.id) {
+                    return
+                }
+                
+                self.shownHighPriorityNotes.append(note.id)
+                
+                addToDom(ViewHighPriorityNote(
+                    type: .account,
+                    note: note,
+                    folio: self.custAcct.folio,
+                    name: self.custAcct.firstName
+                ))
+                
+            }
+        }
+
+    }
+
+    func selectUser(_ compleat: Bool = false) {
         addToDom(
             SelectCustUsernameView(
                 type: (custCatchHerk > 3) ? .all : .store(custCatchStore),
@@ -337,6 +363,9 @@ class CreateNewFollowup: Div {
                 callback: { user in
                     self.currentUser = user.id
                     self.currentUserLabel = user.username
+                    if compleat {
+                        self.createFollowup()
+                    }
                 }
             )
         )
@@ -380,6 +409,7 @@ class CreateNewFollowup: Div {
         
         guard let currentUser else {
             showError(.invalidField, "Seleccione usuario")
+            selectUser(true)
             return
         }
         
@@ -426,6 +456,8 @@ class CreateNewFollowup: Div {
                     showError(.unexpectedResult, .unexpenctedMissingPayload)
                     return
                 }
+
+                self.remove()
                 
                 
 
