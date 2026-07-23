@@ -195,7 +195,7 @@ class AddChargeFormView: Div {
     
     @DOM override var body: DOM.Content {
         
-        VPopUp(.custome(w: 400, h: 500)) {
+        VPopUp(.custome(w: 600, h: 500)) {
 
             VTitle("Ingresar cargo") {
 
@@ -537,9 +537,10 @@ class AddChargeFormView: Div {
                 .custom("min-width", "0")
                 .hidden(self.$actionItems.map{ $0.isEmpty })
             }
-            .display(.flex)
-            .custom("flex-wrap", "wrap")
+            .id(.init("VBodyGrid"))
             .custom("align-items", "flex-start")
+            .custom("flex-wrap", "wrap")
+            .display(.flex)
         }
     }
     

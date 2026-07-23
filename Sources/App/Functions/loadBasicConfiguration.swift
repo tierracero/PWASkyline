@@ -10,8 +10,11 @@ import TCFundamentals
 import JavaScriptKit
 import Web
 
-public func loadBasicConfiguration( callback: @escaping ( (
-    _ status: GeneralStatus?) -> () )
+public func loadBasicConfiguration(
+    firtsLoad: Bool = false,
+    callback: @escaping ( (
+        _ status: GeneralStatus?
+    ) -> () )
 ){
     
     let activeSession = WebApp.current.window.localStorage.string(forKey: "activeSession") ?? ""
@@ -158,8 +161,9 @@ public func loadBasicConfiguration( callback: @escaping ( (
                 callback(nil)
             }
         }
-        
-        loadingView(show: true)
+        if !firtsLoad {
+            loadingView(show: true)
+        }
         
         API.custAPIV1.sincCustSettings { resp in
             
@@ -261,7 +265,9 @@ public func loadBasicConfiguration( callback: @escaping ( (
                 
                 API.fiscalV1.getProfile(type: .general, relation: nil) { resp in
                     
-                    loadingView(show: false)
+                    if !firtsLoad {
+                        loadingView(show: false)
+                    }
                     
                     guard let resp else {
                         return

@@ -19,108 +19,117 @@ extension MoneyManagerView {
         @State var items: [CustUserFinacialServicesQuick] = []
         
         @DOM override var body: DOM.Content {
-            //Select Code
-            Div{
-                
-                Div{
-                    
-                    /// Header
-                    Div {
-                        
-                        Img()
-                            .closeButton(.subView)
-                            .onClick {
-                                self.remove()
-                            }
-                        
-                        Div(" + Gastos")
-                            .marginRight(12.px)
-                            .marginTop(-7.px)
-                            .fontSize(20.px)
-                            .float(.right)
-                            .class(.uibtn)
-                            .onClick {
-                                
-                                addToDom(SpendingView { financial in
-                                    self.openFinancialRecord(financial: financial)
-                                    self.items.append(financial)
-                                })
-                                
-                            }
-                        
-                        if custCatchHerk > 1 {
-                            
-                            Div(" + Prestamo")
-                                .marginRight(12.px)
-                                .marginTop(-7.px)
-                                .fontSize(20.px)
-                                .float(.right)
-                                .class(.uibtn)
-                                .onClick {
-                                    addToDom(LendingView())
-                                }
+            VPopUp(.fitContent(w: 900)) {
+                VTitle("Servicios financieros") {
+                    USmallTitle(self.$items.map { "\($0.count) movimientos" })
+                        .class(Class(TCMoneyManagerClass.badge))
+
+                    USmallButton("＋ Gasto")
+                        .attribute("aria-label", "Registrar gasto")
+                        .onClick {
+                            addToDom(SpendingView { financial in
+                                self.openFinancialRecord(financial: financial)
+                                self.items.append(financial)
+                            })
                         }
-                        
-                        H2("Finanzas")
-                            .color(.lightBlueText)
-                            .marginLeft(7.px)
-                            .float(.left)
-                        
-                        Div().class(.clear)
-                        
-                    }
-                    
-                    Div().height(7.px)
-                    
-                    Div{
-                        ForEach(self.$items){ item in
-                            
-                            Div{
-                                Div("\(item.folio) \(item.type.description) \(item.comments)")
-                                    .class(.oneLineText)
-                                    .width(70.percent)
-                                    .float(.left)
-                                
-                                Div(item.balance.formatMoney)
-                                    .class(.oneLineText)
-                                    .textAlign(.right)
-                                    .width(30.percent)
-                                    .float(.right)
-                                
-                                Div().clear(.both)
-                            }
-                            .width(95.percent)
-                            .marginBottom(7.px)
-                            .class(.uibtn)
+
+                    if custCatchHerk > 1 {
+                        USmallButton("＋ Préstamo")
+                            .attribute("aria-label", "Registrar préstamo")
                             .onClick {
-                                self.openFinancialRecord(financial: item)
+                                addToDom(LendingView())
                             }
-                            
-                        }
-                        .hidden(self.$items.map{ $0.isEmpty })
-                        
-                        Table().noResult(label: "📝 No hay Operaciones Financieras a procesar")
-                            .hidden(self.$items.map{ !$0.isEmpty })
                     }
-                    .class(.roundDarkBlue)
-                    .padding(all: 7.px)
-                    .height(400.px)
-                    
+                } onClose: {
+                    self.remove()
                 }
-                .padding(all: 12.px)
-                
+
+                VBodyGrid {
+                    VGrid(.full) {
+                        VBox(.raised) {
+                            Div {
+                                Img()
+                                    .src("/skyline/media/money_bag.png")
+                                    .width(38.px)
+                                    .height(38.px)
+                                    .custom("object-fit", "contain")
+
+                                Div {
+                                    USubTitle("Movimientos por procesar")
+                                    UMinorTitle("Consulte saldos, gastos y capital otorgado desde un solo lugar.")
+                                        .marginTop(4.px)
+                                        .custom("line-height", "1.4")
+                                }
+                                .custom("min-width", "0")
+                            }
+                            .display(.grid)
+                            .custom("grid-template-columns", "48px minmax(0, 1fr)")
+                            .custom("align-items", "center")
+                            .custom("gap", "12px")
+                        }
+                        .class(Class(TCMoneyManagerClass.hero))
+                    }
+
+                    VGrid(.full) {
+                        Div {
+                            ForEach(self.$items) { item in
+                                Div {
+                                    Div {
+                                        USmallTitle("Folio \(item.folio)")
+                                            .class(Class(TCMoneyManagerClass.badge))
+
+                                        USubTitle(item.type.description)
+                                            .marginTop(6.px)
+
+                                        UMinorTitle(item.comments)
+                                            .marginTop(5.px)
+                                            .class(.oneLineText)
+                                    }
+                                    .class(Class(TCMoneyManagerClass.listIdentity))
+                                    .custom("min-width", "0")
+
+                                    Div {
+                                        Div(item.balance.formatMoney)
+                                            .class(Class(TCMoneyManagerClass.listAmount))
+
+                                        UMinorTitle("Saldo")
+                                            .marginTop(3.px)
+                                            .textAlign(.right)
+                                    }
+                                }
+                                .class(Class(TCMoneyManagerClass.listRow))
+                                .attribute("role", "button")
+                                .tabIndex(0)
+                                .onClick {
+                                    self.openFinancialRecord(financial: item)
+                                }
+                                .onKeyUp { _, event in
+                                    guard event.code == "Enter" || event.code == "Space" else {
+                                        return
+                                    }
+                                    event.preventDefault()
+                                    self.openFinancialRecord(financial: item)
+                                }
+                            }
+                        }
+                        .class(Class(TCMoneyManagerClass.list))
+                        .hidden(self.$items.map { $0.isEmpty })
+
+                        VBox(.standard) {
+                            Table().noResult(label: "📝 No hay operaciones financieras por procesar")
+                        }
+                        .class(Class(TCMoneyManagerClass.emptyState))
+                        .hidden(self.$items.map { !$0.isEmpty })
+                    }
+                }
             }
-            .backgroundColor(.grayBlack)
-            .borderRadius(all: 24.px)
-            .position(.absolute)
-            .width(35.percent)
-            .left(30.percent)
-            .top(20.percent)
-            .color(.white)
+            .class(Class(TCMoneyManagerClass.popup))
         }
         
         override func buildUI() {
             super.buildUI()
+
+            TCMoneyManagerTheme.apply(to: self)
             
             position(.absolute)
             height(100.percent)
@@ -220,6 +229,5 @@ extension MoneyManagerView {
     }
     
 }
-
 
 

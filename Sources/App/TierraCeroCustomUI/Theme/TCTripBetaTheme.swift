@@ -59,6 +59,9 @@ enum TCTripBetaTheme {
 
         let root = ".\(TCTripBetaClass.root)"
 
+        // Keep rule batches intentionally small. Building this entire theme in one
+        // RulesContent closure can exhaust the Swift/WASM bridge while Work is
+        // being constructed directly from an existing session.
         WebApp.current.addStylesheet {
             Rule(Pointer(root))
                 .custom("--tc-beta-ink", "#f7f8fa")
@@ -161,7 +164,9 @@ enum TCTripBetaTheme {
                 .custom("box-sizing", "border-box")
                 .custom("height", "calc(100% - 48px)")
                 .overflow(.auto)
+        }
 
+        WebApp.current.addStylesheet {
             // VGrid is deliberately layout-only. Do not add card visuals here.
             Rule(Pointer("\(root) .\(TCTripBetaClass.grid)"))
                 .position(.relative)
@@ -231,7 +236,9 @@ enum TCTripBetaTheme {
             Rule(Pointer("\(root) .\(TCTripBetaClass.boxInteractive):active"))
                 .custom("transform", "translateY(1px)")
                 .custom("box-shadow", "0 3px 10px rgba(0, 0, 0, 0.38)")
+        }
 
+        WebApp.current.addStylesheet {
             Rule(Pointer("\(root) .\(TCTripBetaClass.uiTitle)"))
                 .custom("margin", "0")
                 .custom("color", "var(--tc-beta-blue)")
@@ -290,7 +297,9 @@ enum TCTripBetaTheme {
                 .custom("min-height", "40px")
                 .custom("padding", "9px 16px")
                 .custom("font-size", "17px")
+        }
 
+        WebApp.current.addStylesheet {
             Rule(Pointer("\(root) .\(TCTripBetaClass.uiField)"))
                 .display(.grid)
                 .custom("gap", "4px")
@@ -317,7 +326,9 @@ enum TCTripBetaTheme {
 
             Rule(Pointer("\(root) input::placeholder, \(root) textarea::placeholder"))
                 .custom("color", "#747c85")
+        }
 
+        WebApp.current.addStylesheet {
             // Re-skin legacy TripController controls while the beta migration is incremental.
             Rule(Pointer("\(root) .uibtn, \(root) .uibtnLarge, \(root) .uibtnLargeOrange"))
                 .custom("border-radius", "9px !important")

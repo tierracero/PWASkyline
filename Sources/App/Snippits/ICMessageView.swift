@@ -32,17 +32,13 @@ class ICMessageView: Div {
     
     let data: API.custAPIV1.LoadMessaging
     
-    var smallChatIsOpen: State<Bool>
-    
     private var callback: ((_ id: API.custAPIV1.LoadMessaging) -> ())
     
     init(
         data: API.custAPIV1.LoadMessaging,
-        smallChatIsOpen: State<Bool>,
         callback: @escaping ((_ id: API.custAPIV1.LoadMessaging) -> ())
     ) {
         self.data = data
-        self.smallChatIsOpen = smallChatIsOpen
         self.callback = callback
         super.init()
     }
@@ -131,7 +127,6 @@ class ICMessageView: Div {
                 .class(Class(TCWorkDashboardClass.messagePreview))
         }
         .class(Class(TCWorkDashboardClass.messageContent))
-        .hidden(self.smallChatIsOpen.map{ !$0 })
 
         self.closeIcon
         

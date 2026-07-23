@@ -4,6 +4,7 @@
     <head>
         <title managedBy="webber">&lrm;</title>
 
+        <script managedBy="webber" type="text/javascript" name="app" src="/app.js" async></script>
         <script>
             window.tcInitialLoaderIsActive = true;
             window.tcPendingInitialLoadingText = "Cargando...";
@@ -14,13 +15,13 @@
                 }
 
                 const resourceType = {
-                    style: "estilos",
-                    script: "JavaScript",
-                    image: "imagen"
+                    style: "CSS",
+                    script: "JS",
+                    image: "IMG"
                 }[resource.getAttribute("as")] || "recurso";
                 const resourceURL = new URL(resource.href, window.location.href);
                 const resourceName = decodeURIComponent(resourceURL.pathname.split("/").pop());
-                const loadingText = `Cargando ${resourceType} · ${resourceName}...`;
+                const loadingText = `Cargando ${resourceType}`;
                 const loadingLabel = document.getElementById("initial-loading-label");
 
                 window.tcPendingInitialLoadingText = loadingText;
@@ -42,12 +43,16 @@
             These hints only download/cache resources; scripts still execute from
             their existing Swift view lifecycle.
         -->
+        <link managedBy="webber" rel="manifest" href="./site.webmanifest">
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+        <link rel="preconnect" href="https://code.jquery.com" crossorigin>
         <link rel="preload" href="/skyline/css/login.css" as="style" onload="reportInitialAsset(this)">
         <link rel="preload" href="/skyline/js/login.js" as="script" onload="reportInitialAsset(this)">
         <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" as="script" onload="reportInitialAsset(this)">
         <link rel="preload" href="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.waves.min.js" as="script" onload="reportInitialAsset(this)">
+        <link rel="preload" href="https://code.jquery.com/jquery-3.7.1.js" as="script" onload="reportInitialAsset(this)">
+        <link rel="preload" href="https://code.jquery.com/ui/1.14.1/jquery-ui.js" as="script" onload="reportInitialAsset(this)">
         <link rel="preload" href="/skyline/media/logoTierraCeroLongWhite.svg" as="image" type="image/svg+xml" onload="reportInitialAsset(this)">
         <link rel="preload" href="/images/defaultLogoWhiteLong.svg" as="image" type="image/svg+xml" onload="reportInitialAsset(this)">
         <link rel="preload" href="/skyline/media/usernameIconWhite.svg" as="image" type="image/svg+xml" onload="reportInitialAsset(this)">
@@ -83,8 +88,6 @@
         <link rel="prefetch" href="/skyline/media/followup.png" as="image" onload="reportInitialAsset(this)">
         <link rel="prefetch" href="/skyline/media/commercial_trip.png" as="image" onload="reportInitialAsset(this)">
 
-        <script managedBy="webber" type="text/javascript" name="app" src="/app.js" async></script>
-        <link managedBy="webber" rel="manifest" href="./site.webmanifest">
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content="Skyline Panel Control" />
@@ -337,7 +340,7 @@
                     <span class="loading-logo-orbit loading-logo-orbit-inner" aria-hidden="true"></span>
                     <img src="/skyline/media/logoTierraCeroLongWhite.svg" width="256px" alt="Tierra Cero">
                 </div><br>
-                <h3 id="initial-loading-label" style="font-size: 22px; margin-top:12px;">Cargando...</h3>
+                <h3 id="initial-loading-label" style="font-size: 18px; margin-top:12px;">Cargando...</h3>
                 <h4 style="font-size:16px; margin-top:12px;"></h4>
             </td></tr></table>
         </div>

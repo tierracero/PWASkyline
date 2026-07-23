@@ -15,7 +15,9 @@ extension CustCommercialTripsComponents {
     static func addCharge (
         tripId: UUID,
         item: AddChargeType,
-        callback: @escaping ( (_ resp: APIResponseGeneric<API.custOrderV1.AddChargeResponse>?) -> () )
+        callback: @escaping ((
+            _ resp: APIResponseGeneric<API.custCommercialTrips.AddChargeResponse>?
+        ) -> ())
     ) {
         sendPost(
             rout,
@@ -33,7 +35,10 @@ extension CustCommercialTripsComponents {
                 return
             }
             do{
-                callback(try decodeAPIResponse(APIResponseGeneric<API.custOrderV1.AddChargeResponse>.self, from: data))
+                callback(try decodeAPIResponse(
+                    APIResponseGeneric<API.custCommercialTrips.AddChargeResponse>.self,
+                    from: data
+                ))
             }
             catch{
                 print("🔴 API_DECODING_ERROR")
@@ -44,4 +49,3 @@ extension CustCommercialTripsComponents {
         
     }
 }
-

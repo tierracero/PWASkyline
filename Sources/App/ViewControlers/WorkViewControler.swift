@@ -23,6 +23,70 @@ private enum WorkNavigationSelection: Equatable {
     case tools
 }
 
+private enum WorkStartupStep: CaseIterable, Hashable {
+    case core
+    case communications
+    case workModules
+
+    var title: String {
+        switch self {
+        case .core:
+            return "NÚCLEO OPERATIVO"
+        case .communications:
+            return "COMUNICACIONES"
+        case .workModules:
+            return "MÓDULOS DE TRABAJO"
+        }
+    }
+}
+
+private enum WorkStartupState {
+    case waiting
+    case loading
+    case online
+    case failed
+    case skipped
+
+    var label: String {
+        switch self {
+        case .waiting:
+            return "EN ESPERA"
+        case .loading:
+            return "CARGANDO"
+        case .online:
+            return "ONLINE"
+        case .failed:
+            return "ERROR"
+        case .skipped:
+            return "OMITIDO"
+        }
+    }
+
+    var cssClass: String {
+        switch self {
+        case .waiting:
+            return TCWorkDashboardClass.startupStateWaiting
+        case .loading:
+            return TCWorkDashboardClass.startupStateLoading
+        case .online:
+            return TCWorkDashboardClass.startupStateOnline
+        case .failed:
+            return TCWorkDashboardClass.startupStateFailed
+        case .skipped:
+            return TCWorkDashboardClass.startupStateSkipped
+        }
+    }
+
+    var isTerminal: Bool {
+        switch self {
+        case .online, .failed, .skipped:
+            return true
+        case .waiting, .loading:
+            return false
+        }
+    }
+}
+
 class WorkViewControler: PageController {
     
     let ws = WS()
@@ -71,6 +135,11 @@ class WorkViewControler: PageController {
     @State private var selectedWorkNavigationItem: WorkNavigationSelection = .orders
     
     @State var serchPlaceHolder = ""
+
+    private var startupStates: [WorkStartupStep: WorkStartupState] = [:]
+    private var startupLabels: [WorkStartupStep: Span] = [:]
+    private var startupValues: [WorkStartupStep: Div] = [:]
+    private var startupSequenceIsCompleting = false
     
     lazy var sideMenu = SideMenuView { caller in
         self.sideMenuCaller(caller)
@@ -79,7 +148,6 @@ class WorkViewControler: PageController {
     @State var userHerk = 0
     
     /// ``Left Side Bar COMMUNICATION``
-    @State var smallChatIsOpen = true
     
     /// Presentation count for messages rendered in the "Nuevos" communication box.
     @State var chatCounter = 0
@@ -357,6 +425,9 @@ class WorkViewControler: PageController {
     }
     .class(Class(TCWorkDashboardClass.stats))
 
+    private lazy var startupProgressFill = Div()
+        .class(Class(TCWorkDashboardClass.startupProgressFill))
+
     lazy var startupOverlay = Div {
         Div()
             .class(Class(TCWorkDashboardClass.startupScan))
@@ -378,15 +449,14 @@ class WorkViewControler: PageController {
                 .class(Class(TCWorkDashboardClass.startupCopy))
 
             Div {
-                self.startupStatus("NÚCLEO OPERATIVO")
-                self.startupStatus("COMUNICACIONES")
-                self.startupStatus("MÓDULOS DE TRABAJO")
+                self.startupStatus(.core)
+                self.startupStatus(.communications)
+                self.startupStatus(.workModules)
             }
             .class(Class(TCWorkDashboardClass.startupStatuses))
 
             Div {
-                Div()
-                    .class(Class(TCWorkDashboardClass.startupProgressFill))
+                self.startupProgressFill
             }
             .class(Class(TCWorkDashboardClass.startupProgress))
         }
@@ -682,34 +752,107 @@ class WorkViewControler: PageController {
         }
     }
 
-    private func startupStatus(_ title: String) -> Div {
-        Div {
-            Span(title)
+    private func startupStatus(_ step: WorkStartupStep) -> Div {
+        let indicator = Div()
+            .class(Class(TCWorkDashboardClass.startupIndicator))
+        let label = Span(WorkStartupState.waiting.label)
+        let value = Div {
+            indicator
+            label
+        }
+        .class(
+            Class(TCWorkDashboardClass.startupState),
+            Class(WorkStartupState.waiting.cssClass)
+        )
 
-            Div {
-                Div()
-                    .class(Class(TCWorkDashboardClass.startupIndicator))
-                Span("ONLINE")
-            }
-            .display(.flex)
-            .custom("align-items", "center")
-            .custom("gap", "7px")
-            .color(.green)
+        startupLabels[step] = label
+        startupValues[step] = value
+
+        return Div {
+            Span(step.title)
+            value
         }
         .class(Class(TCWorkDashboardClass.startupStatus))
     }
 
     private func startDashboardStartupSequence() {
+        startupSequenceIsCompleting = false
+
+        WorkStartupStep.allCases.forEach {
+            updateStartupStep($0, state: .waiting)
+        }
+
+        updateStartupStep(.core, state: .loading)
+
         Dispatch.asyncAfter(0.08) {
             self.removeClass(Class(TCWorkDashboardClass.startupRoot))
         }
+    }
 
-        Dispatch.asyncAfter(1.86) {
+    private func updateStartupStep(
+        _ step: WorkStartupStep,
+        state: WorkStartupState
+    ) {
+        let allStateClasses = [
+            TCWorkDashboardClass.startupStateWaiting,
+            TCWorkDashboardClass.startupStateLoading,
+            TCWorkDashboardClass.startupStateOnline,
+            TCWorkDashboardClass.startupStateFailed,
+            TCWorkDashboardClass.startupStateSkipped
+        ]
+
+        if let value = startupValues[step] {
+            allStateClasses.forEach {
+                value.removeClass(Class($0))
+            }
+            value.class(Class(state.cssClass))
+        }
+
+        if let label = startupLabels[step] {
+            _ = label.innerText(state.label)
+        }
+
+        startupStates[step] = state
+
+        let completedSteps = WorkStartupStep.allCases.filter {
+            startupStates[$0]?.isTerminal == true
+        }.count
+        let progress = Double(completedSteps) / Double(WorkStartupStep.allCases.count)
+
+        startupProgressFill.custom(
+            "transform",
+            "scaleX(\(progress))"
+        )
+
+        guard completedSteps == WorkStartupStep.allCases.count else {
+            return
+        }
+
+        finishDashboardStartupSequence()
+    }
+
+    private func finishDashboardStartupSequence() {
+        guard !startupSequenceIsCompleting else {
+            return
+        }
+
+        startupSequenceIsCompleting = true
+
+        Dispatch.asyncAfter(0.45) {
             self.startupOverlay.class(Class(TCWorkDashboardClass.startupComplete))
         }
 
-        Dispatch.asyncAfter(2.42) {
+        Dispatch.asyncAfter(0.95) {
             self.startupOverlay.remove()
+        }
+    }
+
+    private func cancelPendingStartupSteps() {
+        WorkStartupStep.allCases.forEach { step in
+            guard startupStates[step]?.isTerminal != true else {
+                return
+            }
+            updateStartupStep(step, state: .skipped)
         }
     }
     
@@ -2246,6 +2389,7 @@ class WorkViewControler: PageController {
     override func didAddToDOM() {
         super.didAddToDOM()
 
+        loadingView(show: false)
         startDashboardStartupSequence()
         
         WebApp.current.document.head.body {
@@ -2265,9 +2409,11 @@ class WorkViewControler: PageController {
                 }
         }
         
-        loadBasicConfiguration { status in
+        loadBasicConfiguration(firtsLoad: true) { status in
         
             guard let status else {
+                self.updateStartupStep(.core, state: .failed)
+                self.cancelPendingStartupSteps()
                 
                 _ = JSObject.global.goToURL!("login")
                 
@@ -2279,23 +2425,44 @@ class WorkViewControler: PageController {
             }
             
             if status == .hotline {
+                self.updateStartupStep(.core, state: .online)
+                self.cancelPendingStartupSteps()
                 _ = JSObject.global.goToURL!("hotline")
                 return
             }
+
+            self.updateStartupStep(.core, state: .online)
             
             self.userHerk = custCatchHerk
             
             self.pmode = panelMode
             
-            self.loadConfiguration()
+            self.loadConfiguration(loadCommunications: false)
             
             self.initAlertManager()
+
+            self.updateStartupStep(.workModules, state: .loading)
             
             OrderCatchControler.shared.sincFolio(
                 accountid: nil,
                 current: [],
-                curTrans: []
-            )
+                curTrans: [],
+                initialLoad: true
+            ) { succeeded in
+                self.updateStartupStep(
+                    .workModules,
+                    state: succeeded ? .online : .failed
+                )
+            }
+
+            self.updateStartupStep(.communications, state: .loading)
+
+            self.loadCommMessages { succeeded in
+                self.updateStartupStep(
+                    .communications,
+                    state: succeeded ? .online : .failed
+                )
+            }
             
             OrderCatchControler.shared.emailViewControler.loadView()
             
@@ -2331,7 +2498,7 @@ class WorkViewControler: PageController {
         }
     }
     
-    func loadConfiguration(){
+    func loadConfiguration(loadCommunications: Bool = true){
         
         serviceIsActive = true
         
@@ -2568,15 +2735,18 @@ class WorkViewControler: PageController {
             
         }
         
-        loadCommMessages()
+        if loadCommunications {
+            loadCommMessages()
+        }
         
     }
     
-    func loadCommMessages(){
+    func loadCommMessages(completion: ((Bool) -> Void)? = nil){
         
         API.custAPIV1.loadMessaging { resp in
             
             guard let resp = resp else {
+                completion?(false)
                 return
             }
             
@@ -2585,6 +2755,8 @@ class WorkViewControler: PageController {
             self.processOrderChatsList()
             
             getWebsocketTokens()
+
+            completion?(true)
             
             /// Reload every 15 min
             Dispatch.asyncAfter(600) {
@@ -3690,7 +3862,7 @@ class WorkViewControler: PageController {
     
     func messageView(_ data: API.custAPIV1.LoadMessaging) -> ICMessageView {
         
-        return ICMessageView(data: data, smallChatIsOpen: self.$smallChatIsOpen) { data in
+        return ICMessageView(data: data) { data in
             
             switch data.subType {
             case .sale:

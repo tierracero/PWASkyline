@@ -19,7 +19,9 @@ class TripView: Div {
 
     private let initialTrip: CustCommercialTripsComponents.GetTripResponse?
 
-    private var loadedTrip: CustCommercialTripsComponents.GetTripResponse?
+    private var loadedTrip: CustCommercialTripsComponents.GetTripItem?
+
+    private var loadedAccount: CustAcctQuick?
 
     private let statusChangedCallback: (UUID, FiscalTripFollowupStatus) -> ()
 
@@ -42,8 +44,8 @@ class TripView: Div {
         balance: Int64 = 0,
         statusChangedCallback: @escaping (UUID, FiscalTripFollowupStatus) -> () = { _, _ in }
     ) {
-        self.tripId = trip.id
-        self.balance = balance
+        self.tripId = trip.trip.id
+        self.balance = trip.trip.balance
         self.initialTrip = trip
         self.statusChangedCallback = statusChangedCallback
 
@@ -179,11 +181,11 @@ class TripView: Div {
                 .width(33.percent)
 
                 VGrid(.oneThird) {
-                    
+
                 }
                 .float(.left)
                 .width(33.percent)
-                
+
             }
             .display(.grid)
             .custom("grid-template-columns", "repeat(3, minmax(0, 1fr))")
@@ -252,16 +254,19 @@ class TripView: Div {
     }
 
     private func render(
-        _ trip: CustCommercialTripsComponents.GetTripResponse
+        _ response: CustCommercialTripsComponents.GetTripResponse
     ) {
+        let trip = response.trip
+
         loadedTrip = trip
+        loadedAccount = response.account
         status = trip.status.rawValue
 
         balance = trip.balance
 
         fiscalId = trip.fiscalId
 
-        renderSummary(trip)
+        renderSummary(trip, account: response.account)
         renderOperador(trip.operadorId)
         renderVehical(trip.vehicalId, permit: trip.permitId)
         renderInsurances(trip)
@@ -289,7 +294,8 @@ class TripView: Div {
     }
 
     private func renderSummary(
-        _ trip: CustCommercialTripsComponents.GetTripResponse
+        _ trip: CustCommercialTripsComponents.GetTripItem,
+        account: CustAcctQuick
     ) {
         summaryView.innerHTML = ""
 
@@ -312,11 +318,11 @@ class TripView: Div {
                 }
                 .float(.right)
 
-                H3(trip.accountId.businessName)
+                H3(account.businessName)
                     .margin(all: 0.px)
                     .color(.white)
 
-                Div("Cuenta \(trip.accountId.folio) | Viaje \(String(trip.id.uuidString.prefix(8)).uppercased())")
+                Div("Cuenta \(account.folio) | Viaje \(String(trip.id.uuidString.prefix(8)).uppercased())")
                     .class(.oneLineText)
                     .color(.gray)
 
@@ -330,7 +336,7 @@ class TripView: Div {
 
     private func openFiscalTool() {
 
-        guard let trip = loadedTrip else {
+        guard let trip = loadedTrip, let account = loadedAccount else {
             showError(.unexpectedResult, .unexpenctedMissingPayload)
             return
         }
@@ -369,7 +375,7 @@ class TripView: Div {
             self.fiscalId = id
         }
 
-        searchAccountFiscal(term: trip.accountId.folio) { _, resp in 
+        searchAccountFiscal(term: account.folio) { _, resp in
                 if resp.count == 1, let reciver = resp.first {
                     fiscalView.reciver = reciver
                 }
@@ -380,12 +386,15 @@ class TripView: Div {
 
     private func printReleaseLetter() {
 
-        guard let trip = loadedTrip else {
+        guard let trip = loadedTrip, let account = loadedAccount else {
             showError(.unexpectedResult, .unexpenctedMissingPayload)
             return
         }
 
-        let printBody = TripPrintEngine(trip: trip).innerHTML
+        let printBody = TripPrintEngine(
+            trip: trip,
+            account: account
+        ).innerHTML
 
         _ = JSObject.global.renderGeneralPrint!(
             custCatchUrl,
@@ -464,7 +473,7 @@ class TripView: Div {
     }
 
     private func renderInsurances(
-        _ trip: CustCommercialTripsComponents.GetTripResponse
+        _ trip: CustCommercialTripsComponents.GetTripItem
     ) {
         resetPanel(insurancePanel, title: "Polizas de seguro")
         insurancePanel.appendChild(insuranceField("Civil", trip.insuranceCivilId))
@@ -630,6 +639,6 @@ class TripView: Div {
             }
             addToDom(view)
         }
-                                        
+
     }
 }

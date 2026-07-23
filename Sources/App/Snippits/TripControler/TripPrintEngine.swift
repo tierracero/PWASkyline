@@ -11,7 +11,9 @@ class TripPrintEngine: Div {
 
     override class var name: String { "div" }
 
-    let trip: CustCommercialTripsComponents.GetTripResponse
+    let trip: CustCommercialTripsComponents.GetTripItem
+
+    let account: CustAcctQuick
 
     var logo = "/skyline/media/logoTierraCeroLongBlack.svg"
 
@@ -57,8 +59,12 @@ class TripPrintEngine: Div {
     }
     .width(100.percent)
 
-    init(trip: CustCommercialTripsComponents.GetTripResponse) {
+    init(
+        trip: CustCommercialTripsComponents.GetTripItem,
+        account: CustAcctQuick
+    ) {
         self.trip = trip
+        self.account = account
         super.init()
     }
 
@@ -72,10 +78,10 @@ class TripPrintEngine: Div {
 
             self.sectionTitle("Datos del cliente")
             Div {
-                self.detail("Cuenta", self.trip.accountId.folio)
+                self.detail("Cuenta", self.account.folio)
                 self.detail("Cliente", self.accountName)
-                self.detail("Telefono", self.trip.accountId.mobile)
-                self.detail("Correo", self.trip.accountId.email)
+                self.detail("Telefono", self.account.mobile)
+                self.detail("Correo", self.account.email)
             }
             .display(.grid)
             .custom("grid-template-columns", "repeat(2, minmax(0, 1fr))")
@@ -154,8 +160,8 @@ class TripPrintEngine: Div {
     }
 
     private var accountName: String {
-        let name = "\(trip.accountId.businessName) \(trip.accountId.firstName) \(trip.accountId.lastName)".purgeSpaces
-        return name.isEmpty ? trip.accountId.folio : name
+        let name = "\(account.businessName) \(account.firstName) \(account.lastName)".purgeSpaces
+        return name.isEmpty ? account.folio : name
     }
 
     private func headerView() -> Div {

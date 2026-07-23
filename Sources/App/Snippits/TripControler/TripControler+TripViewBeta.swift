@@ -15,40 +15,51 @@ final class TripViewBeta: Div {
 
     override class var name: String { "div" }
 
-    let tripId: UUID
+    var trip: CustCommercialTripsComponents.GetTripItem
+
+    var account: CustAcctQuick
+
+    @State var notes: [CustGeneralNotesQuick]
+
+    @State var payments: [CustOrderLoadFolioPayments]
+
+    @State var charges: [CustOrderLoadFolioCharges]
+
+    @State var contracts: [CustPageContent]
+
+    @State var pocs: [CustPOCInventoryOrderView]
+
+    @State var orderHighPriorityNote: [HighPriorityNote]
+
+    @State var accountHighPriorityNote: [HighPriorityNote]
+
+    @State var cost: Int64
 
     @State var balance: Int64
 
     @State var fiscalId: UUID?
 
-    @State private var status = FiscalTripFollowupStatus.pending.rawValue
-
-    private let initialTrip: CustCommercialTripsComponents.GetTripResponse?
-
-    private var loadedTrip: CustCommercialTripsComponents.GetTripResponse?
+    @State private var status: String
 
     private let statusChangedCallback: (UUID, FiscalTripFollowupStatus) -> Void
 
     init(
-        tripId: UUID,
-        balance: Int64 = 0,
+        trip response: CustCommercialTripsComponents.GetTripResponse,
         statusChangedCallback: @escaping (UUID, FiscalTripFollowupStatus) -> Void = { _, _ in }
     ) {
-        self.tripId = tripId
-        self.balance = balance
-        self.initialTrip = nil
-        self.statusChangedCallback = statusChangedCallback
-        super.init()
-    }
-
-    init(
-        trip: CustCommercialTripsComponents.GetTripResponse,
-        balance: Int64 = 0,
-        statusChangedCallback: @escaping (UUID, FiscalTripFollowupStatus) -> Void = { _, _ in }
-    ) {
-        self.tripId = trip.id
-        self.balance = balance
-        self.initialTrip = trip
+        self.trip = response.trip
+        self.account = response.account
+        self.notes = response.notes
+        self.payments = response.payments
+        self.charges = response.charges
+        self.contracts = response.contracts
+        self.pocs = response.pocs
+        self.orderHighPriorityNote = response.orderHighPriorityNote
+        self.accountHighPriorityNote = response.accountHighPriorityNote
+        self.cost = response.trip.cost
+        self.balance = response.trip.balance
+        self.fiscalId = response.trip.fiscalId
+        self.status = response.trip.status.rawValue
         self.statusChangedCallback = statusChangedCallback
         super.init()
     }
@@ -112,7 +123,7 @@ final class TripViewBeta: Div {
     private lazy var vehicleBox = VBox()
 
     private lazy var complianceBox = VBox()
-    
+
     /// Charges Grid
     lazy var chargesAndPaymentsDemo = Div {
 
@@ -121,7 +132,7 @@ final class TripViewBeta: Div {
             /*
             /// Payment
             Div{
-                
+
                 Div{
                     Img()
                         .src("/skyline/media/coin.png")
@@ -130,7 +141,7 @@ final class TripViewBeta: Div {
                         .height(20.px)
                 }
                 .float(.left)
-                
+
                 Span("Pago")
             }
             .class(.uibtn)
@@ -139,11 +150,11 @@ final class TripViewBeta: Div {
                 self.openTripPayment()
             }
             */
-            
+
             /// charge
-            
+
             Div{
-                
+
                 Div{
                     Img()
                         .src("/skyline/media/price.png")
@@ -152,21 +163,21 @@ final class TripViewBeta: Div {
                         .height(20.px)
                 }
                 .float(.left)
-                
+
                 Span("Cargo")
             }
             .class(.uibtn)
             .float(.right)
             .onClick { _ in
-                self.openTripCharge()
+                self.addCharge()
             }
-            
+
             H2("Cargos y pagos")
                 .float(.left)
                 .color(.gray)
             /*
             Div{
-                
+
                 Img()
                     .src("/skyline/media/maximizeWindow.png")
                     .class(.iconWhite)
@@ -174,20 +185,20 @@ final class TripViewBeta: Div {
                     .cursor(.pointer)
                     .marginTop(7.px)
                     .height(18.px)
-                    
+
             }
             .float(.left)
             */
-            
+
             Div().clear(.both)
         }
-        
+
         Div().class(.clear).height(3.px)
-        
+
         Div{
 
             Table {
-                
+
                 THead {
                     Tr{
                         Td().width(20.px)
@@ -200,11 +211,11 @@ final class TripViewBeta: Div {
                 }
 
                 self.chargesTable
-                
+
             }
             .width(100.percent)
             .fontSize(18.px)
-            
+
         }
         .custom("width", "calc(100% - 240px)")
         .custom("height", "calc(100% - 46px)")
@@ -212,31 +223,31 @@ final class TripViewBeta: Div {
         .padding(all: 3.px)
         .overflow(.auto)
         .float(.left)
-        
+
         Div{
             Div{
                 Span("T. Cargos")
                     .fontSize(12.px)
                     .color(.white)
                 Div().class(.clear).marginTop(7.px)
-                
-                
+
+
                 Span("T. Pagos")
                     .fontSize(12.px)
                     .color(.white)
                 Div().class(.clear).marginTop(7.px)
-                
+
                 Span("Balance")
                     .fontSize(12.px)
                     .fontWeight(.bolder)
                     .color(.white)
                 Div().class(.clear).marginTop(7.px)
-                
+
             }
             .align(.right)
             .class(.oneHalf)
             .padding(all: 3.px)
-            
+
             Div{
                 Span(self.$tripChargesTotal)
                     .color(.gray)
@@ -254,26 +265,25 @@ final class TripViewBeta: Div {
             .align(.left)
             .class(.oneHalf)
             .padding(all: 3.px)
-            
+
             Div().clear(.both)
-            
+
         }
         .float(.right)
         .fontSize(16.px)
         .width(220.px)
-        
+
     }
     .class(Class(TCOrderViewClass.chargesCard))
-    .height(23.percent)
     .marginRight(3.px)
     .overflow(.hidden)
     .marginLeft(3.px)
     .overflow(.auto)
+    .height(250.px)
 
-    
     @DOM override var body: DOM.Content {
         VPopUp(.full) {
-            VTitle("Detalle del Viaje · \(String(self.tripId.uuidString.prefix(8)).uppercased())") {
+            VTitle("Detalle del Viaje · \(String(self.trip.id.uuidString.prefix(8)).uppercased())") {
                 USmallButton("Carta Liberación")
                     .onClick {
                         self.printReleaseLetter()
@@ -326,46 +336,14 @@ final class TripViewBeta: Div {
             )
         }
 
-        if let initialTrip {
-            render(initialTrip)
-        } else {
-            loadTrip()
-        }
+        renderTrip()
     }
 
-    private func loadTrip() {
-        loadingView(show: true)
-
-        API.custCommercialTrips.getTrip(tripId: tripId) { resp in
-            loadingView(show: false)
-
-            guard let resp else {
-                showError(.comunicationError, .serverConextionError)
-                return
-            }
-
-            guard resp.status == .ok else {
-                showError(.generalError, resp.msg)
-                return
-            }
-
-            guard let trip = resp.data else {
-                showError(.unexpectedResult, .unexpenctedMissingPayload)
-                return
-            }
-
-            self.render(trip)
-        }
-    }
-
-    private func render(
-        _ trip: CustCommercialTripsComponents.GetTripResponse
-    ) {
-        loadedTrip = trip
+    private func renderTrip() {
         status = trip.status.rawValue
+        cost = trip.cost
         balance = trip.balance
         fiscalId = trip.fiscalId
-
         renderSummary(trip)
         renderRoute(trip.locations)
         renderMerchandise(trip.merchandise)
@@ -376,7 +354,7 @@ final class TripViewBeta: Div {
     }
 
     private func renderSummary(
-        _ trip: CustCommercialTripsComponents.GetTripResponse
+        _ trip: CustCommercialTripsComponents.GetTripItem
     ) {
         summaryContent.innerHTML = ""
 
@@ -385,19 +363,23 @@ final class TripViewBeta: Div {
 
         summaryContent.appendChild(
             Div {
+
                 Div {
-                    H2(trip.accountId.businessName)
+                    H2(self.account.businessName)
                         .margin(all: 0.px)
                         .fontSize(22.px)
                         .color(.white)
 
-                    Div("Cuenta \(trip.accountId.folio)")
+                    Div("Cuenta \(self.account.folio)")
                         .marginTop(4.px)
                         .color(.gray)
                 }
 
                 self.summaryMetric("Creado", created)
+
                 self.summaryMetric("Actualizado", updated)
+
+                self.summaryMetric("costo", self.cost.formatMoney)
 
                 Div {
                     Div("Balance")
@@ -419,6 +401,7 @@ final class TripViewBeta: Div {
             .custom("grid-template-columns", "minmax(240px, 1fr) auto auto auto")
             .custom("align-items", "center")
             .custom("gap", "24px")
+            .custom("grid-auto-flow", "column")
         )
     }
 
@@ -649,7 +632,7 @@ final class TripViewBeta: Div {
     }
 
     private func renderCompliance(
-        _ trip: CustCommercialTripsComponents.GetTripResponse
+        _ trip: CustCommercialTripsComponents.GetTripItem
     ) {
         complianceBox.innerHTML = ""
         complianceBox.appendChild(UTitle("Cumplimiento"))
@@ -789,11 +772,6 @@ final class TripViewBeta: Div {
     }
 
     private func openFiscalTool() {
-        guard let trip = loadedTrip else {
-            showError(.unexpectedResult, .unexpenctedMissingPayload)
-            return
-        }
-
         let cartaPorte = CustFiscalCartaPorteItem(
             operadorType: trip.operadorId.operadorType,
             operadorName: trip.operadorId.operadorName,
@@ -832,7 +810,7 @@ final class TripViewBeta: Div {
             self.fiscalId = id
         }
 
-        searchAccountFiscal(term: trip.accountId.folio) { _, resp in
+        searchAccountFiscal(term: account.folio) { _, resp in
             if resp.count == 1 {
                 fiscalView.reciver = resp.first
             }
@@ -842,12 +820,10 @@ final class TripViewBeta: Div {
     }
 
     private func printReleaseLetter() {
-        guard let trip = loadedTrip else {
-            showError(.unexpectedResult, .unexpenctedMissingPayload)
-            return
-        }
-
-        let printBody = TripPrintEngine(trip: trip).innerHTML
+        let printBody = TripPrintEngine(
+            trip: trip,
+            account: account
+        ).innerHTML
 
         _ = JSObject.global.renderGeneralPrint!(
             custCatchUrl,
@@ -862,10 +838,7 @@ final class TripViewBeta: Div {
             return
         }
 
-        guard let currentStatus = loadedTrip?.status else {
-            status = newStatus.rawValue
-            return
-        }
+        let currentStatus = trip.status
 
         guard currentStatus != newStatus else {
             return
@@ -874,7 +847,7 @@ final class TripViewBeta: Div {
         loadingView(show: true)
 
         API.custCommercialTrips.changeTripStatus(
-            tripId: tripId,
+            tripId: trip.id,
             status: newStatus
         ) { resp in
             loadingView(show: false)
@@ -891,9 +864,9 @@ final class TripViewBeta: Div {
                 return
             }
 
-            self.loadedTrip?.status = newStatus
+            self.trip.status = newStatus
             self.status = newStatus.rawValue
-            self.statusChangedCallback(self.tripId, newStatus)
+            self.statusChangedCallback(self.trip.id, newStatus)
             showSuccess(.operacionExitosa, "Estatus actualizado")
         }
     }
@@ -942,58 +915,496 @@ final class TripViewBeta: Div {
 
     private lazy var chargesTable = TBody()
 
+    private var chargesRefrence: [UUID: OldChargeTrRow] = [:]
+
     private func renderChargesAndPayments(
-        _ trip: CustCommercialTripsComponents.GetTripResponse
+        _ trip: CustCommercialTripsComponents.GetTripItem
     ) {
         chargesTable.innerHTML = ""
-        tripChargesTotal = trip.balance.formatMoney
-        tripPaymentsTotal = "$0.00"
-        tripBalanceTotal = trip.balance.formatMoney
+        chargesRefrence.removeAll()
 
-        chargesTable.appendChild(
-            Tr {
-                Td("✎")
-                    .width(20.px)
-
-                Td("1.0")
-                    .width(50.px)
-
-                Td("Costo del viaje")
-
-                Td(trip.balance.formatMoney)
-                    .width(70.px)
-                    .align(.right)
-
-                Td(trip.balance.formatMoney)
-                    .width(70.px)
-                    .align(.right)
+        charges.forEach { charge in
+            let row = OldChargeTrRow(
+                isCharge: true,
+                id: charge.id,
+                name: charge.name,
+                cuant: charge.cuant,
+                price: charge.price,
+                puerchaseOrder: false
+            ) { viewId in
+                self.editCharge(
+                    viewId: viewId,
+                    ids: [charge.id],
+                    type: charge.type
+                )
             }
             .color(.gray)
-        )
+
+            chargesRefrence[row.viewId] = row
+            chargesTable.appendChild(row)
+        }
+
+        var groupedProducts: [UUID: [Int64: [CustPOCInventoryOrderView]]] = [:]
+
+        pocs.forEach { item in
+            groupedProducts[item.pocId, default: [:]][item.soldPrice ?? 0, default: []]
+                .append(item)
+        }
+
+        groupedProducts.values.forEach { prices in
+            prices.values.forEach { items in
+                let row = OldChargeTrRow(pocs: items) { viewId in
+                    self.editPoc(
+                        viewId: viewId,
+                        ids: items.map { $0.itemId }
+                    )
+                }
+                .color(.gray)
+
+                chargesRefrence[row.viewId] = row
+                chargesTable.appendChild(row)
+            }
+        }
+
+        payments.forEach { payment in
+            let row = OldChargeTrRow(
+                isCharge: false,
+                id: payment.id,
+                name: payment.description,
+                cuant: 100,
+                price: payment.cost,
+                puerchaseOrder: false
+            ) { _ in
+                self.openTripPayment()
+            }
+            .color(.gray)
+
+            chargesRefrence[row.viewId] = row
+            chargesTable.appendChild(row)
+        }
+
+        tripChargesTotal = trip.cost.formatMoney
+        tripPaymentsTotal = payments.reduce(Int64(0)) { total, payment in
+            total + payment.cost
+        }.formatMoney
+        tripBalanceTotal = trip.balance.formatMoney
     }
 
     private func openTripPayment() {
-        guard let trip = loadedTrip else {
-            showError(.unexpectedResult, .unexpenctedMissingPayload)
-            return
-        }
-
         showAlert(
             .alerta,
-            "Los pagos para viajes no están disponibles. Consulte la cuenta \(trip.accountId.folio)."
+            "Los pagos para viajes no están disponibles. Consulte la cuenta \(account.folio)."
         )
     }
 
-    private func openTripCharge() {
-        guard let trip = loadedTrip else {
-            showError(.unexpectedResult, .unexpenctedMissingPayload)
-            return
+    func addCharge() {
+
+        var socIds: [UUID] = []
+
+        self.charges.forEach { charge in
+
+            guard charge.type == .service else {
+                return
+            }
+
+            guard let id = charge.codeid else {
+                return
+            }
+
+            socIds.append(id)
         }
 
+        let addChargeFormView = AddChargeFormView(
+            accountId: self.account.id,
+            allowManualCharges: true,
+            allowWarrantyCharges: true,
+            socCanLoadAction: true,
+            costType: self.account.costType,
+            currentSOCMasters: socIds
+        ){ id, isWarenty, internalWarenty in
+
+            let view = ConfirmProductViewNew(
+                accountId: self.account.id,
+                costType: .cost_a,
+                pocid: id,
+                selectedInventoryIDs: [],
+                blockPurchaseOrders: false,
+                isWarenty: isWarenty,
+                internalWarenty: internalWarenty
+            ) { poc, price, costType, units, storeId, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
+
+                /// internal, external
+                var warenty: SoldObjectWarenty? = nil
+
+                if isWarenty, let internalWarenty {
+                    warenty = internalWarenty ? .internal : .external
+                }
+
+                loadingView(show: true)
+
+                API.custCommercialTrips.addCharge(
+                    tripId: self.trip.id,
+                    item: .product(.init(
+                        description: "\(poc.upc) \(poc.name) \(poc.model)".purgeSpaces,
+                        pocId: poc.id,
+                        from: soldObjectFrom,
+                        units: units,
+                        price: price,
+                        warenty: warenty
+                    ))
+                ) { resp in
+
+                    loadingView(show: false)
+
+                    guard let resp else {
+                        showError(.comunicationError, .serverConextionError)
+                        return
+                    }
+
+                    guard resp.status == .ok else {
+                        showError(.generalError, resp.msg)
+                        return
+                    }
+
+                    guard let payload = resp.data else {
+                        showError(.generalError, .unexpenctedMissingPayload)
+                        return
+                    }
+
+                    var pocs:[CustPOCInventoryOrderView] = []
+
+                    payload.chargeIds.forEach { id in
+
+                        pocs.append(.init(
+                            itemId: id,
+                            id: id,
+                            POC: poc.id,
+                            soldType: .order,
+                            custStore: storeId,
+                            custStoreBodegas: nil,
+                            custStoreSecciones: nil,
+                            comision: 0,
+                            points: 0,
+                            premierPoints: 0,
+                            series: "",
+                            warentSelfTo: nil,
+                            warentFabricTo: nil,
+                            soldPrice: price,
+                            pocId: poc.id,
+                            upc: poc.upc,
+                            name: poc.name,
+                            brand: poc.brand,
+                            model: poc.model,
+                            status: .sold
+                        ))
+
+                    }
+
+                    let tr = OldChargeTrRow(pocs: pocs) { viewId in
+                        self.editPoc(viewId: viewId, ids: payload.chargeIds )
+                    }
+                        .color(.gray)
+
+                    self.chargesRefrence[tr.viewId] = tr
+
+                    self.chargesTable.appendChild(tr)
+
+                    payload.chargeIds.forEach { id in
+
+                        let obj: CustPOCInventoryOrderView = .init(
+                          itemId: id,
+                            id: id,
+                            POC: poc.id,
+                            soldType: .order,
+                            custStore: storeId,
+                            custStoreBodegas: nil,
+                            custStoreSecciones: nil,
+                            comision: 0,
+                            points: 0,
+                            premierPoints: 0,
+                            series: "",
+                            warentSelfTo: nil,
+                            warentFabricTo: nil,
+                            soldPrice: price,
+                            pocId: poc.id,
+                            upc: poc.upc,
+                            name: poc.name,
+                            brand: poc.brand,
+                            model: poc.model,
+                            status: .sold
+                        )
+
+                        self.pocs.append(obj)
+
+                    }
+
+                    if payload.chargeIds.isEmpty {
+                        showSuccess(.operacionExitosa, "Producto agregado, refreque el folio para ver los cambios")
+                    }
+
+                    self.calcBalance()
+
+                }
+
+
+
+            }
+
+            addToDom(view)
+
+        }
+        addSoc: { soc, codeType, isWarenty, internalWarenty in
+
+            //service, product, manual, payment
+            var type: API.custCommercialTrips.AddChargeType = .manual(.init(
+                fiscCode: soc.fiscCode,
+                fiscUnit: soc.fiscUnit,
+                description: soc.description,
+                units: soc.units.fromCents.toInt,
+                price: soc.price,
+                cost: soc.cost
+            ))
+
+            if let socId = soc.id {
+                //showAlert(.alerta, "Contacte a Soporte TC ya que el protocolo completo aun no es soportado.")
+                type = .service(.init(
+                    id: socId,
+                    units: soc.units.fromCents.toInt,
+                    price: soc.price
+                ))
+
+            }
+
+            loadingView(show: true)
+
+            API.custCommercialTrips.addCharge(
+                tripId: self.trip.id,
+                item: type
+            ) { resp in
+
+                loadingView(show: false)
+
+                guard let resp else {
+                    showError(.comunicationError, .serverConextionError)
+                    return
+                }
+
+                guard resp.status == .ok else {
+                    showError(.generalError, resp.msg)
+                    return
+                }
+
+                guard let id = resp.id else {
+                    showError(.generalError, "No se pudo obtenr id del producto")
+                    return
+                }
+
+                guard let payload = resp.data else {
+                    showError(.unexpectedResult, .unexpenctedMissingPayload)
+                    return
+                }
+
+                var price = soc.price
+
+                if codeType == .adjustment{
+                    price = (price * -1)
+                }
+
+                    let tr = OldChargeTrRow(
+                        isCharge: true,
+                        id: id,
+                        name: soc.description,
+                        cuant: 100,
+                        price: price,
+                        puerchaseOrder: false
+                    ) { viewId in
+
+                        self.editCharge(
+                        viewId: viewId,
+                        ids: [id],
+                        type: (soc.id == nil) ? .manual : .service
+                        )
+
+                    }.color(.gray)
+
+                self.chargesRefrence[tr.viewId] = tr
+
+                self.chargesTable.appendChild (tr)
+
+                let obj: CustOrderLoadFolioCharges = .init(
+                    id: id,
+                    codeid: soc.id,
+                    type: (soc.id == nil) ? .manual : .service,
+                    name: soc.description,
+                    cuant: soc.units,
+                    price: price,
+                    status: .unbilled
+                )
+
+                self.charges.append(obj)
+
+                self.calcBalance()
+
+                payload.addedEfects.forEach { efect in
+
+                    switch efect {
+                    case .mediaContatacLocation:
+                        break
+                    case .highPriority:
+                        break
+                    }
+
+                }
+            }
+
+        }
+        addItem: { item, warenty in
+
+            loadingView(show: true)
+
+            API.custAPIV1.pocInventoryDetails(
+                id: item.i
+            ) { resp in
+
+                loadingView(show: false)
+
+                guard let resp = resp else {
+                    showError(.comunicationError, .serverConextionError)
+                    return
+                }
+
+                guard resp.status == .ok else {
+                    showError(.generalError, resp.msg)
+                    return
+                }
+
+                guard let payload = resp.data else {
+                    showError( .unexpectedResult, .unexpenctedMissingPayload)
+                    return
+                }
+
+                loadingView(show: true)
+
+                let view = ConfirmProductItemView(
+                    poc: item,
+                    item: payload.prod,
+                    warenty: warenty
+                ) { item in
+
+                    API.custCommercialTrips.addCharge(
+                        tripId: self.trip.id,
+                        item: .product(item)
+                    ) { resp in
+
+                        loadingView(show: false)
+
+                        guard let resp = resp else {
+                            showError(.comunicationError, .serverConextionError)
+                            return
+                        }
+
+                        guard resp.status == .ok else {
+                            showError(.generalError, resp.msg)
+                            return
+                        }
+
+                        guard let payload = resp.data else {
+                            showError( .unexpectedResult, .unexpenctedMissingPayload)
+                            return
+                        }
+
+                    }
+
+                }
+
+                addToDom(view)
+
+            }
+        }
+        addToDom(addChargeFormView)
+
+        addChargeFormView.searchTermInput.select()
+
+    }
+
+    private func editPoc(viewId: UUID, ids: [UUID]) {
         showAlert(
             .alerta,
-            "Los cargos para viajes no están disponibles. Consulte la cuenta \(trip.accountId.folio)."
+            "La edición de productos del viaje aún no está disponible."
         )
     }
-    
+
+    private func editCharge(
+        viewId: UUID,
+        ids: [UUID],
+        type: ChargeType
+    ) {
+        showAlert(
+            .alerta,
+            "La edición de cargos del viaje aún no está disponible."
+        )
+    }
+
+    private func calcBalance() {
+        let chargesTotal = charges.reduce(Int64(0)) { total, charge in
+            total + ((charge.price * charge.cuant) / 100)
+        } + pocs.reduce(Int64(0)) { total, item in
+            total + (item.soldPrice ?? 0)
+        }
+
+        let paymentsTotal = payments.reduce(Int64(0)) { total, payment in
+            total + payment.cost
+        }
+
+        cost = chargesTotal
+        balance = chargesTotal - paymentsTotal
+        trip.cost = cost
+        trip.balance = balance
+        tripChargesTotal = chargesTotal.formatMoney
+        tripPaymentsTotal = paymentsTotal.formatMoney
+        tripBalanceTotal = balance.formatMoney
+    }
+
 }
+
+extension TripViewBeta {
+
+    static func loadAndPresent(
+        tripId: UUID,
+        statusChangedCallback: @escaping (UUID, FiscalTripFollowupStatus) -> Void = { _, _ in }
+    ) {
+        loadingView(show: true)
+
+        API.custCommercialTrips.getTrip(tripId: tripId) { resp in
+            loadingView(show: false)
+
+            guard let resp else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+
+            guard resp.status == .ok else {
+                showError(.generalError, resp.msg)
+                return
+            }
+
+            guard let payload = resp.data else {
+                showError(.unexpectedResult, .unexpenctedMissingPayload)
+                return
+            }
+
+            addToDom(TripViewBeta(
+                trip: payload,
+                statusChangedCallback: statusChangedCallback
+            ))
+        }
+    }
+}
+
+/*
+sincCustConfig
+getProfile
+accountBalance
+loadMessaging
+loadFolios
+*/

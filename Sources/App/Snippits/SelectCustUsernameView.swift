@@ -43,73 +43,81 @@ class SelectCustUsernameView: Div {
     @State var userSelectListener = ""
     
     lazy var userSelect = Select($userSelectListener)
-        .class(.textFiledBlackDarkLarge)
-        .marginBottom(7.px)
-        .width(99.percent)
-        .fontSize(32.px)
-        .height(48.px)
+        .class(Class(TCTripBetaClass.uiControl))
+        .width(100.percent)
+        .height(44.px)
    
     @DOM override var body: DOM.Content {
-        
-        Div{
-            /// Header
-            Div {
-                
-                Img()
-                    .closeButton(.uiView2)
-                    .onClick{
-                        self.remove()
-                    }
-                
-                H2("Seleccione Usuario")
-                    .color(.lightBlueText)
-                    .height(35.px)
-                
+        VPopUp(.fitContent(w: 560)) {
+            VTitle("Seleccionar usuario") {
+                USmallTitle("Asignación")
+                    .class(Class(TCMoneyManagerClass.badge))
+            } onClose: {
+                self.remove()
             }
-            
-            Div{
-                
-                Span("Seleccione se la siguiente lista")
-                    .color(.gray)
-                
-                Div()
-                    .marginBottom(7.px)
-                    .class(.clear)
-                
-                self.userSelect
-                
-                Div()
-                    .marginBottom(7.px)
-                    .class(.clear)
-                
-                Div{
-                    Div("Seleccionar")
-                        .class(.uibtnLargeOrange)
+
+            VBodyGrid {
+                VGrid(.full) {
+                    VBox(.raised) {
+                        Div {
+                            Div {
+                                Img()
+                                    .src("/skyline/media/usernameIconWhite.svg")
+                                    .width(34.px)
+                                    .height(34.px)
+                            }
+                            .display(.flex)
+                            .custom("align-items", "center")
+                            .custom("justify-content", "center")
+                            .width(48.px)
+                            .height(48.px)
+                            .custom("border", "1px solid rgba(66, 183, 245, 0.3)")
+                            .custom("border-radius", "12px")
+                            .custom("background", "rgba(10, 55, 87, 0.58)")
+
+                            Div {
+                                USubTitle("Responsable")
+                                UMinorTitle("Seleccione un usuario disponible para continuar.")
+                                    .marginTop(4.px)
+                                    .custom("line-height", "1.4")
+                            }
+                            .custom("min-width", "0")
+                        }
+                        .class(Class(TCMoneyManagerClass.userSummary))
+
+                        UField("Usuario", required: true) {
+                            self.userSelect
+                        }
+                        .marginTop(16.px)
+                    }
+                    .class(Class(TCMoneyManagerClass.formCard))
+                }
+
+                VGrid(.half) {
+                    ULargeButton("Cancelar")
+                        .width(100.percent)
                         .onClick {
-                            
-                            self.selectUser()
-                            
+                            self.remove()
                         }
                 }
-                .align(.right)
-                
+
+                VGrid(.half) {
+                    ULargeButton("Seleccionar")
+                        .width(100.percent)
+                        .class(Class(TCMoneyManagerClass.primaryButton))
+                        .onClick {
+                            self.selectUser()
+                        }
+                }
             }
-            .position(.relative)
-            .overflow(.hidden)
-            
         }
-        .custom("left", "calc(50% - 274px)")
-        .custom("top", "calc(50% - 274px)")
-        .backgroundColor(.grayBlack)
-        .borderRadius(all: 24.px)
-        .position(.absolute)
-        .padding(all: 12.px)
-        .width(500.px)
-        
+        .class(Class(TCMoneyManagerClass.popup))
     }
     
     override func buildUI() {
         super.buildUI()
+
+        TCMoneyManagerTheme.apply(to: self)
         
         position(.absolute)
         height(100.percent)
@@ -213,4 +221,3 @@ extension SelectCustUsernameView {
     }
     
 }
-

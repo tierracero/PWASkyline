@@ -59,6 +59,12 @@ enum TCWorkDashboardClass {
     static let startupCopy = "tc-work-startup-copy"
     static let startupStatuses = "tc-work-startup-statuses"
     static let startupStatus = "tc-work-startup-status"
+    static let startupState = "tc-work-startup-state"
+    static let startupStateWaiting = "tc-work-startup-state-waiting"
+    static let startupStateLoading = "tc-work-startup-state-loading"
+    static let startupStateOnline = "tc-work-startup-state-online"
+    static let startupStateFailed = "tc-work-startup-state-failed"
+    static let startupStateSkipped = "tc-work-startup-state-skipped"
     static let startupIndicator = "tc-work-startup-indicator"
     static let startupProgress = "tc-work-startup-progress"
     static let startupProgressFill = "tc-work-startup-progress-fill"
@@ -634,7 +640,7 @@ enum TCWorkDashboardTheme {
                 .custom("background", "radial-gradient(circle at center, rgba(8, 35, 58, 0.52), rgba(2, 8, 17, 0.82) 58%, rgba(1, 5, 12, 0.94))")
                 .custom("opacity", "1")
                 .custom("transition", "opacity 460ms ease")
-                .zIndex(999999994)
+                .zIndex(999999999)
 
             Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupOverlay).\(TCWorkDashboardClass.startupComplete)"))
                 .custom("opacity", "0")
@@ -766,7 +772,7 @@ enum TCWorkDashboardTheme {
                 .width(100.percent)
                 .height(100.percent)
                 .custom("transform-origin", "left center")
-                .custom("transform", "scaleX(1)")
+                .custom("transform", "scaleX(0)")
                 .custom("background", "linear-gradient(90deg, #1379f4, #22c5ff, #72d84a)")
                 .custom("box-shadow", "0 0 12px rgba(34, 197, 255, 0.62)")
                 .custom("transition", "transform 1650ms cubic-bezier(0.2, 0.8, 0.2, 1) 120ms")
@@ -784,6 +790,50 @@ enum TCWorkDashboardTheme {
                     .custom("transform", "none !important")
                     .custom("filter", "none !important")
             }
+        }
+
+        WebApp.current.addStylesheet {
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupState)"))
+                .custom("display", "flex")
+                .custom("align-items", "center")
+                .custom("gap", "7px")
+                .custom("font-weight", "600")
+                .custom("transition", "color 180ms ease")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupStateWaiting)"))
+                .custom("color", "var(--tc-work-muted)")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupStateWaiting) .\(TCWorkDashboardClass.startupIndicator)"))
+                .custom("background", "#66798b")
+                .custom("box-shadow", "0 0 7px rgba(102, 121, 139, 0.46)")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupStateLoading)"))
+                .custom("color", "#4da3ff")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupStateLoading) .\(TCWorkDashboardClass.startupIndicator)"))
+                .custom("background", "#4da3ff")
+                .custom("box-shadow", "0 0 10px rgba(77, 163, 255, 0.9)")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupStateOnline)"))
+                .custom("color", "#72d84a")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupStateOnline) .\(TCWorkDashboardClass.startupIndicator)"))
+                .custom("background", "#72d84a")
+                .custom("box-shadow", "0 0 9px rgba(114, 216, 74, 0.82)")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupStateFailed)"))
+                .custom("color", "#ff6b62")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupStateFailed) .\(TCWorkDashboardClass.startupIndicator)"))
+                .custom("background", "#ff5b52")
+                .custom("box-shadow", "0 0 9px rgba(255, 91, 82, 0.78)")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupStateSkipped)"))
+                .custom("color", "#d4a75f")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupStateSkipped) .\(TCWorkDashboardClass.startupIndicator)"))
+                .custom("background", "#9b7d4d")
+                .custom("box-shadow", "0 0 7px rgba(155, 125, 77, 0.5)")
         }
     }
 }

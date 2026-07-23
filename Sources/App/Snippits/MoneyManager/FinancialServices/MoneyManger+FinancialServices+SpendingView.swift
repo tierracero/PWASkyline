@@ -62,23 +62,20 @@ extension MoneyManagerView.FinancialServicesView {
                 Option("Seleccione Opcion")
                     .value("")
             })
-            .class(.textFiledBlackDark)
-            .marginBottom(12.px)
-            .width(93.percent)
-            .textAlign(.right)
+            .class(Class(TCTripBetaClass.uiControl))
+            .width(100.percent)
             .disabled(true)
-            .height(36.px)
+            .height(42.px)
             .onChange({ _, select in
                 self.reciptType = FinacialServicesReciptType(rawValue: select.text)
             })
         
         lazy var amountField = InputText(self.$amount)
             .placeholder("Cantidad a otorgar/reportar")
-            .class(.textFiledBlackDark)
-            .marginBottom(12.px)
-            .width(93.percent)
+            .class(Class(TCTripBetaClass.uiControl))
+            .width(100.percent)
             .textAlign(.right)
-            .height(36.px)
+            .height(42.px)
             .onKeyDown({ tf, event in
                 
                 guard let _ = Float(event.key) else {
@@ -95,275 +92,278 @@ extension MoneyManagerView.FinancialServicesView {
         
         lazy var financialField = InputText(self.$financialTitle)
             .placeholder("Descripción o Motivo")
-            .class(.textFiledBlackDark)
-            .marginBottom(12.px)
-            .width(93.percent)
-            .textAlign(.right)
-            .height(36.px)
+            .class(Class(TCTripBetaClass.uiControl))
+            .width(100.percent)
+            .height(42.px)
         
         lazy var fiscalUUIDField = InputText(self.$reciptId)
             .hidden(self.$reciptType.map{ $0 != .fiscalDocument })
             .placeholder("fd703f26-9127-4089-bf97-154af8e9538e")
-            .class(.textFiledBlackDark)
-            .marginBottom(12.px)
-            .width(93.percent)
-            .textAlign(.right)
-            .height(36.px)
+            .class(Class(TCTripBetaClass.uiControl))
+            .width(100.percent)
+            .height(42.px)
         
         lazy var folioField = InputText(self.$reciptFolio)
             .placeholder("SERIES / FOLIO")
-            .class(.textFiledBlackDark)
-            .marginBottom(12.px)
-            .width(93.percent)
-            .textAlign(.right)
-            .height(36.px)
+            .class(Class(TCTripBetaClass.uiControl))
+            .width(100.percent)
+            .height(42.px)
         
         /// SearchVendorView
         @DOM override var body: DOM.Content {
-            
-            Div{
-                Div{
-                    
-                    /// Header
-                    Div {
-                        
-                        Img()
-                            .closeButton(.subView)
+            VPopUp(.fitContent(w: 900)) {
+                VTitle(
+                    self.$user.map {
+                        ($0?.id == custCatchID) ? "Reportar gasto / compra" : "Otorgar capital"
+                    }
+                ) {
+                    USmallTitle(
+                        self.$user.map {
+                            guard let user = $0 else {
+                                return "Seleccione usuario"
+                            }
+                            return user.id == custCatchID ? "Gasto propio" : "Transferencia"
+                        }
+                    )
+                    .class(Class(TCMoneyManagerClass.badge))
+                } onClose: {
+                    self.remove()
+                }
+
+                VBodyGrid {
+                    VGrid(.full) {
+                        VBox(.raised) {
+                            Div {
+                                Img()
+                                    .src("/skyline/media/coin.png")
+                                    .width(40.px)
+                                    .height(40.px)
+                                    .custom("object-fit", "contain")
+
+                                Div {
+                                    USubTitle("Nuevo movimiento financiero")
+                                    UMinorTitle("Capture el responsable, importe y soporte del movimiento.")
+                                        .marginTop(4.px)
+                                        .custom("line-height", "1.4")
+                                }
+                                .custom("min-width", "0")
+                            }
+                            .display(.grid)
+                            .custom("grid-template-columns", "50px minmax(0, 1fr)")
+                            .custom("align-items", "center")
+                            .custom("gap", "12px")
+                        }
+                        .class(Class(TCMoneyManagerClass.hero))
+                    }
+
+                    VGrid(.full) {
+                        VBox(.standard) {
+                            Div {
+                                Div {
+                                    Img()
+                                        .src("/skyline/media/usernameIconWhite.svg")
+                                        .width(30.px)
+                                        .height(30.px)
+                                }
+                                .display(.flex)
+                                .custom("align-items", "center")
+                                .custom("justify-content", "center")
+                                .width(48.px)
+                                .height(48.px)
+                                .custom("border", "1px solid rgba(66, 183, 245, 0.3)")
+                                .custom("border-radius", "12px")
+                                .custom("background", "rgba(10, 55, 87, 0.58)")
+
+                                Div {
+                                    USmallTitle("Responsable")
+                                    USubTitle("Seleccione un usuario")
+                                        .marginTop(4.px)
+                                    UMinorTitle("El usuario determina si se reporta un gasto o se otorga capital.")
+                                        .marginTop(4.px)
+                                }
+                                .custom("min-width", "0")
+
+                                if custCatchHerk > 1 {
+                                    USmallButton("Seleccionar")
+                                        .onClick {
+                                            var type = SelectCustUsernameView.LoadType.store(custCatchStore)
+
+                                            if custCatchHerk > 3 {
+                                                type = .all
+                                            }
+
+                                            addToDom(SelectCustUsernameView(
+                                                type: type,
+                                                ignore: [],
+                                                callback: { user in
+                                                    self.user = user
+                                                    self.amountField.select()
+                                                }
+                                            ))
+                                        }
+                                }
+                            }
+                            .class(Class(TCMoneyManagerClass.userSummary))
+                            .hidden(self.$user.map { $0 != nil })
+
+                            Div {
+                                Div {
+                                    Img()
+                                        .src("/skyline/media/usernameIconWhite.svg")
+                                        .width(30.px)
+                                        .height(30.px)
+                                }
+                                .display(.flex)
+                                .custom("align-items", "center")
+                                .custom("justify-content", "center")
+                                .width(48.px)
+                                .height(48.px)
+                                .custom("border", "1px solid rgba(66, 183, 245, 0.3)")
+                                .custom("border-radius", "12px")
+                                .custom("background", "rgba(10, 55, 87, 0.58)")
+
+                                Div {
+                                    USmallTitle("Usuario seleccionado")
+                                    USubTitle(self.$user.map { $0?.username ?? "" })
+                                        .marginTop(4.px)
+                                }
+                                .custom("min-width", "0")
+
+                                if custCatchHerk > 1 {
+                                    USmallButton("Cambiar")
+                                        .onClick {
+                                            var type = SelectCustUsernameView.LoadType.store(custCatchStore)
+
+                                            if custCatchHerk > 3 {
+                                                type = .all
+                                            }
+
+                                            addToDom(SelectCustUsernameView(
+                                                type: type,
+                                                ignore: [],
+                                                callback: { user in
+                                                    self.user = user
+                                                    self.amountField.select()
+                                                }
+                                            ))
+                                        }
+                                }
+                            }
+                            .class(Class(TCMoneyManagerClass.userSummary))
+                            .hidden(self.$user.map { $0 == nil })
+                        }
+                        .class(Class(TCMoneyManagerClass.formCard))
+                    }
+
+                    VGrid(.half) {
+                        UField(
+                            self.$user.map {
+                                ($0?.id == custCatchID) ? "Cantidad a otorgar" : "Cantidad a reportar"
+                            },
+                            required: true
+                        ) {
+                            self.amountField
+                        }
+                    }
+                    .hidden(self.$user.map { $0 == nil })
+
+                    VGrid(.half) {
+                        UField("Motivo o nombre", required: true) {
+                            self.financialField
+                        }
+                    }
+                    .hidden(self.$user.map { $0 == nil })
+
+                    VGrid(.full) {
+                        VBox(.standard) {
+                            Div {
+                                Div {
+                                    USubTitle("Proveedor y comprobante")
+                                    UMinorTitle("Seleccione el proveedor cuando la compra o pago ya fue realizado.")
+                                        .marginTop(4.px)
+                                }
+                                .custom("min-width", "0")
+
+                                USmallButton("Buscar proveedor")
+                                    .onClick {
+                                        addToDom(SearchVendorView(loadBy: nil) { account in
+                                            self.vendor = account
+                                        })
+                                    }
+                            }
+                            .display(.grid)
+                            .custom("grid-template-columns", "minmax(0, 1fr) auto")
+                            .custom("align-items", "center")
+                            .custom("gap", "12px")
+
+                            Div("Seleccione un proveedor para capturar el comprobante relacionado.")
+                                .class(Class(TCMoneyManagerClass.hint))
+                                .marginTop(14.px)
+                                .hidden(self.$vendor.map { $0 != nil })
+
+                            Div {
+                                Div {
+                                    USmallTitle("Proveedor seleccionado")
+                                    USubTitle(self.$vendor.map { $0?.razon ?? "" })
+                                        .marginTop(5.px)
+                                    UMinorTitle(self.$vendor.map { $0?.rfc ?? "" })
+                                        .marginTop(4.px)
+                                }
+
+                                Div {
+                                    UField("Tipo de comprobante", required: true) {
+                                        self.reciptTypeSelect
+                                    }
+
+                                    UField("UUID fiscal", required: true) {
+                                        self.fiscalUUIDField
+                                    }
+                                    .hidden(self.$reciptType.map { $0 != .fiscalDocument })
+
+                                    UField("Folio / serie", required: true) {
+                                        self.folioField
+                                    }
+                                }
+                                .class(Class(TCMoneyManagerClass.formGrid))
+                                .marginTop(14.px)
+                            }
+                            .hidden(self.$vendor.map { $0 == nil })
+                        }
+                        .class(Class(TCMoneyManagerClass.formCard))
+                    }
+                    .hidden(self.$user.map { $0?.id != custCatchID })
+
+                    VGrid(.half) {
+                        ULargeButton("Cancelar")
+                            .width(100.percent)
                             .onClick {
                                 self.remove()
                             }
-                        
-                        /// Titile
-                        H2(self.$user.map{ ($0?.id == custCatchID) ? "Reportar Gasto/Compra" : "Otorgar Capital" })
-                            .color(.lightBlueText)
-                            .float(.left)
-                        
-                        Div().class(.clear)
-                        
                     }
-                    
-                    Div().height(7.px)
-                    
-                    /// No target select view
-                    Div{
-                        Table{
-                            Tr{
-                                Td{
-                                    Span("🐼 Seleccione Usuario")
-                                    if custCatchHerk > 1 {
-                                        Div("Seleccione Usuario").class(.uibtnLargeOrange)
-                                            .onClick {
-                                                
-                                                var type = SelectCustUsernameView.LoadType.store(custCatchStore)
-                                                
-                                                if custCatchHerk > 3 {
-                                                    type = .all
-                                                }
-                                                
-                                                addToDom(SelectCustUsernameView(
-                                                    type: type,
-                                                    ignore: [],
-                                                    callback: { user in
-                                                        self.user = user
-                                                        self.amountField.select()
-                                                    }
-                                                ))
-                                            }
-                                    }
-                                }
-                                .verticalAlign(.middle)
-                                .align(.center)
+                    .hidden(self.$user.map { $0 == nil })
+
+                    VGrid(.half) {
+                        ULargeButton(
+                            self.$user.map {
+                                ($0?.id == custCatchID) ? "Reportar gasto / compra" : "Otorgar capital"
                             }
-                        }
-                        .height(100.percent)
+                        )
                         .width(100.percent)
+                        .class(Class(TCMoneyManagerClass.primaryButton))
+                        .onClick {
+                            self.createReport()
+                        }
                     }
-                    .hidden(self.$user.map{ $0 != nil })
-                    .height(400.px)
-                    
-                    /// Finicial data view
-                    Div{
-                        /// Select User
-                        Div("Usuario a Otorgar")
-                            .marginBottom(3.px)
-                            .color(.lightGray)
-                        
-                        Div(self.$user.map{ $0?.username ?? "" })
-                            .marginBottom(12.px)
-                            .fontSize(24.px)
-                            .color(.white)
-                        
-                        Div().clear(.both)
-                        
-                        
-                        Div{
-                            /// Amount
-                            Div(self.$user.map{ ($0?.id == custCatchID) ? "Cantidad a Otorgar" : "Cantidad a Reportar" })
-                                .marginBottom(3.px)
-                                .color(.lightGray)
-                        }
-                        .width(50.percent)
-                        .float(.left)
-                        
-                        Div{
-                            self.amountField
-                        }
-                        .width(50.percent)
-                        .float(.left)
-                        
-                        Div().clear(.both).marginBottom(7.px)
-                        
-                        Div{
-                            Div("Motivo o nombre")
-                                .marginBottom(3.px)
-                                .color(.lightGray)
-                        }
-                        .width(50.percent)
-                        .float(.left)
-                        
-                        Div{
-                            self.financialField
-                        }
-                        .width(50.percent)
-                        .float(.left)
-                        
-                        Div().clear(.both)
-                        
-                        Div{
-                            
-                            Div{
-                                
-                                /// Select Provider
-                                Div{
-                                    
-                                    Span("Seleccion Proveedor (opcional)")
-                                        .color(.lightGray)
-                                    
-                                    Div("Buscar Proveedor")
-                                        .marginBottom(7.px)
-                                        .marginTop(-7.px)
-                                        .float(.right)
-                                        .class(.uibtn)
-                                        .onClick {
-                                            addToDom( SearchVendorView(loadBy: nil) { account in
-                                                self.vendor = account
-                                            })
-                                        }
-                                    
-                                }
-                                .marginBottom(3.px)
-                                
-                                Div().clear(.both)
-                                
-                                Div("Seleccione solo si compra/pago ya fue realizada")
-                                    .hidden(self.$vendor.map{ $0 != nil })
-                                    .marginBottom(7.px)
-                                    .marginBottom(3.px)
-                                    .color(.yellowTC)
-                                    .align(.center)
-                                
-                                Div{
-                                    
-                                    Div(self.$vendor.map{ "\($0?.rfc ?? "") \($0?.razon ?? "")" })
-                                        .color(.cornflowerBlue)
-                                        .class(.oneLineText)
-                                        .marginBottom(12.px)
-                                        .fontSize(24.px)
-                                    
-                                    Div{
-                                        
-                                        Div("Tipo de Comprobante")
-                                            .marginBottom(3.px)
-                                            .color(.lightGray)
-                                        
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
-                                    
-                                    Div{
-                                        self.reciptTypeSelect
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
-                                    
-                                    Div().clear(.both).marginBottom(7.px)
-                                    
-                                    
-                                    Div{
-                                        
-                                        Div("UUID Fiscal")
-                                            .hidden(self.$reciptType.map{ $0 != .fiscalDocument })
-                                            .marginBottom(3.px)
-                                            .color(.lightGray)
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
-                                    
-                                    Div{
-                                        self.fiscalUUIDField
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
-                                    
-                                    Div().clear(.both).marginBottom(7.px)
-                                    
-                                    Div{
-                                        Div("Folio / Serie")
-                                            .marginBottom(3.px)
-                                            .color(.lightGray)
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
-                                    
-                                    
-                                    Div{
-                                        self.folioField
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
-                                    
-                                    Div().clear(.both)
-                                    
-                                }
-                                .hidden(self.$vendor.map{ $0 == nil })
-                                
-                            }
-                            .margin(all: 7.px)
-                            
-                        }
-                        .hidden(self.$user.map{ $0?.id != custCatchID })
-                        .class(.roundDarkBlue)
-                        .marginBottom(7.px)
-                        
-                        Div{
-                            
-                            Div(self.$user.map{ ($0?.id == custCatchID) ? "Reportar Gasto/Compra" : "Otorgar Capital" })
-                                .class(.uibtnLargeOrange)
-                                .marginBottom(7.px)
-                                .onClick {
-                                    self.createReport()
-                                }
-                            
-                        }
-                        .align(.center)
-                        
-                    }
-                    .hidden(self.$user.map{ $0 == nil })
+                    .hidden(self.$user.map { $0 == nil })
                 }
-                .padding(all: 12.px)
             }
-            .backgroundColor(.grayBlack)
-            .borderRadius(all: 24.px)
-            .position(.absolute)
-            .width(35.percent)
-            .left(30.percent)
-            .top(20.percent)
-            .color(.white)
-            
+            .class(Class(TCMoneyManagerClass.popup))
         }
         
         override func buildUI() {
             super.buildUI()
+
+            TCMoneyManagerTheme.apply(to: self)
             
             position(.absolute)
             height(100.percent)

@@ -559,12 +559,9 @@ class TripsControlerView: Div {
         .custom("gap", "10px")
         .padding(v: 9.px, h: 10.px)
         .onClick {
-            addToDom(TripViewBeta(
-                tripId: item.id,
-                balance: item.balance
-            ) { tripId, status in
+            TripViewBeta.loadAndPresent(tripId: item.id) { tripId, status in
                 self.updateTripStatus(tripId: tripId, status: status)
-            })
+            }
         }
         .marginBottom(8.px)
         .custom("border-left", "6px solid \(accent)")
@@ -681,14 +678,16 @@ class TripsControlerView: Div {
                 merchendises: payload.merchendises,
                 locations: payload.locations
             ) { resp in
+                let trip = resp.trip
+
                 let item = CustCommercialTripControlQuick(
-                    id: resp.id,
-                    createdAt: resp.createdAt,
-                    accountId: resp.accountId.id,
-                    name: resp.accountId.businessName,
-                    balance: 0,
-                    fiscalId: nil,
-                    status: resp.status
+                    id: trip.id,
+                    createdAt: trip.createdAt,
+                    accountId: resp.account.id,
+                    name: resp.account.businessName,
+                    balance: trip.balance,
+                    fiscalId: trip.fiscalId,
+                    status: trip.status
                 )
 
                 self.items.removeAll { $0.id == item.id }
@@ -701,8 +700,7 @@ class TripsControlerView: Div {
                 }
 
                 addToDom(TripViewBeta(
-                    trip: resp,
-                    balance: item.balance
+                    trip: resp
                 ) { tripId, status in
                     self.updateTripStatus(tripId: tripId, status: status)
                 })

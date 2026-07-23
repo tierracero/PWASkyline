@@ -898,10 +898,14 @@ public class OrderCatchControler {
     func sincFolio(
         accountid: HybridIdentifier?,
         current: [APIStoreSincObject],
-        curTrans: [APIStoreSincObject]
+        curTrans: [APIStoreSincObject],
+        initialLoad: Bool = false,
+        completion: ((Bool) -> Void)? = nil
     ){
         
-        loadingView(show: true)
+        if !initialLoad {
+            loadingView(show: true)
+        }
 
         API.custOrderV1.loadFolios(
             storeid: selectedStore?.id,
@@ -909,20 +913,25 @@ public class OrderCatchControler {
             current: current,
             curTrans: curTrans
         ) { resp in
-            
-            loadingView(show: false)
+
+            if !initialLoad {
+                loadingView(show: false)
+            }
 
             guard let resp else {
+                completion?(false)
                 showError(.comunicationError, "No se pudo comunicar con el servidor")
                 return
             }
             
             guard resp.status == .ok else {
+                completion?(false)
                 showError(.generalError, resp.msg)
                 return
             }
             
             guard let data = resp.data else {
+                completion?(false)
                 showError(.unexpectedResult, .unexpenctedMissingPayload)
                 return
             }
@@ -943,6 +952,8 @@ public class OrderCatchControler {
             self.routes = data.routes
             
             self.drawOrderView()
+
+            completion?(true)
             
         }
     }
