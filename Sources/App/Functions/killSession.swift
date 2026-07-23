@@ -9,6 +9,8 @@ import Foundation
 import Web
 
 public func killSession(){
+
+    CatchControler.shared.clearTaskAlerts()
     
     WebApp.current.window.localStorage.clear()
 

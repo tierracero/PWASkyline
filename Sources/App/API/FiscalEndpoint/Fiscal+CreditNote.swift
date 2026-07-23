@@ -39,7 +39,7 @@ extension FiscalComponents {
             }
             
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<FIAccountsServices>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<FIAccountsServices>.self, from: data))
             }
             catch{
                 print(error)

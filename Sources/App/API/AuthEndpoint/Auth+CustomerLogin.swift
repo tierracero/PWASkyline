@@ -45,7 +45,7 @@ extension AuthComponents {
 				}
 			
 				do{
-					let resp = try JSONDecoder().decode(
+					let resp = try decodeAPIResponse(
                         APIResponseGeneric<CustomerLoginResponse>.self, from: data)
 					
 					callback(resp)

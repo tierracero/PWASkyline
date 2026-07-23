@@ -277,7 +277,6 @@ class BudgetConfirmationView: Div {
         
         super.buildUI()
         
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)
@@ -390,7 +389,7 @@ class BudgetConfirmationView: Div {
                             self.custAcct = account
                         }
 
-                        self.appendChild(custDataView)
+                        addToDom(custDataView)
                         
                     }))
             }

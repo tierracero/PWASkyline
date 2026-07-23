@@ -43,7 +43,7 @@ extension CustComponents {
             
             do{
                 
-                let resp = try JSONDecoder().decode(APIResponseGeneric<[CustSocialPage]>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<[CustSocialPage]>.self, from: data)
                 
                 guard let pages = resp.data else {
                     showError(.unexpectedResult, .unexpenctedMissingPayload)

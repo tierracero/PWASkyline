@@ -36,7 +36,7 @@ extension CustComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<ConfirmConfirmartionSMSResponse>.self, from: payload)
+                let resp = try decodeAPIResponse(APIResponseGeneric<ConfirmConfirmartionSMSResponse>.self, from: payload)
                 callback(resp)
             }
             catch{

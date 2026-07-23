@@ -33,7 +33,7 @@ extension CustComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<AddPsychometricsTestQuestionResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<AddPsychometricsTestQuestionResponse>.self, from: data))
             }
             catch{
                 print("🔴 API_DECODING_ERROR")

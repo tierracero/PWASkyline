@@ -34,7 +34,7 @@ extension ThemeComponents {
             }
             
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<GetWebProductResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<GetWebProductResponse>.self, from: data))
             }
             catch{
                 print("⭕️ \(#file)")

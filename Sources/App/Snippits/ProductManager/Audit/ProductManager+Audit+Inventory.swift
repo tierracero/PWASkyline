@@ -2891,7 +2891,7 @@ extension ProductManagerView.AuditView {
                                                 loadFromCatch: loadFromCatch
                                             )
                                             
-                                            self.appendChild(accoutOverview)
+                                            addToDom(accoutOverview)
                                             
                                             minViewAcctRefrence[order.custAcct] = accoutOverview
                                             

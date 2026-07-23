@@ -25,7 +25,7 @@ extension CustComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<PrepareUserPermitionResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<PrepareUserPermitionResponse>.self, from: data))
             }
             catch{
                 print(error)

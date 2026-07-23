@@ -23,7 +23,7 @@ extension CustFollowupComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<GetItemResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<GetItemResponse>.self, from: data))
             }
             catch{
                 print("🔴 DEOCDING \(#function)")

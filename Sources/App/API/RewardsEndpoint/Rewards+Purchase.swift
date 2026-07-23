@@ -38,7 +38,7 @@ extension RewardsComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<PurchaseResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<PurchaseResponse>.self, from: data)
                 callback(resp)
             }
             catch{

@@ -29,7 +29,7 @@ extension CustAccountComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<LoadConcessionResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<LoadConcessionResponse>.self, from: data))
             }
             catch{
                 print("⭕️ load \(#function)")

@@ -42,7 +42,7 @@ extension APIComponents {
             
             do{
                 
-                let payload = try JSONDecoder().decode(APIResponseGeneric< [PostalCodesMexicoItem]>.self, from: data)
+                let payload = try decodeAPIResponse(APIResponseGeneric< [PostalCodesMexicoItem]>.self, from: data)
                 
                 guard let data = payload.data else {
                     callback(nil)

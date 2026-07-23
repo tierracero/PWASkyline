@@ -23,6 +23,8 @@ class App: WebApp {
                 print("⚠️ API MODE: \(developmentMode.rawValue)")
             }
 
+            ErrorReportingControler.shared.start()
+
             WebApp.shared.window.$location.listen {
                 self.toggalStyles($0.pathname.replace(from: "/", to: ""))
             }
@@ -74,6 +76,8 @@ class App: WebApp {
         }.willResignActive {
             print("Lifecycle.willResignActive")
         }.didBecomeActive {
+
+            ErrorReportingControler.shared.applicationDidBecomeActive()
 
             self.toggalStyles(WebApp.shared.window.location.pathname.replace(from: "/", to: ""))
             

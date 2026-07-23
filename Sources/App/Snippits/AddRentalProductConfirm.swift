@@ -36,6 +36,16 @@ class AddRentalProductConfirm: Div {
         self.currentUsedIDs = currentUsedIDs
         self.poc = poc
         self.callback = callback
+
+        switch costType {
+        case .cost_a:
+            self.cost = poc.pricea
+        case .cost_b:
+            self.cost = poc.priceb
+        case .cost_c:
+            self.cost = poc.pricec
+        }
+
         super.init()
     }
     
@@ -48,167 +58,113 @@ class AddRentalProductConfirm: Div {
     lazy var avatar = Img()
     
     @DOM override var body: DOM.Content {
-        Div{
-            
-            Img()
-                .closeButton(.uiView1)
-                .onClick{
-                    self.remove()
-                    
+        VPopUp(.semiFull) {
+            VTitle("Datos del producto") {
+                USmallTitle(self.poc.name)
+            } onClose: {
+                self.remove()
+            }
+
+            VBodyGrid {
+                VGrid(.oneForth) {
+                    VBox(.raised) {
+                        self.avatar
+                            .src("/skyline/media/tc-logo-512x512.png")
+                            .width(130.px)
+                            .height(130.px)
+                            .custom("object-fit", "contain")
+                            .custom("align-self", "center")
+
+                        UTitle(self.poc.name)
+                            .marginTop(10.px)
+
+                        UMinorTitle(self.poc.smallDescription)
+                            .marginTop(5.px)
+                            .custom("line-height", "1.4")
+
+                        Div {
+                            USmallTitle("TDP · \(self.poc.productionTime.toString) min")
+                            USubTitle("$\(self.cost.formatMoney)")
+                        }
+                        .display(.flex)
+                        .custom("align-items", "center")
+                        .custom("justify-content", "space-between")
+                        .custom("gap", "8px")
+                        .marginTop(14.px)
+                        .paddingTop(12.px)
+                        .custom("border-top", "1px solid var(--tc-beta-border)")
+
+                        UField("Descripción", required: false) {
+                            TextArea(self.$descr)
+                                .placeholder("Ingrese descripción")
+                                .width(100.percent)
+                                .height(105.px)
+                        }
+                        .marginTop(14.px)
+                    }
+                    .height(100.percent)
+                    .display(.flex)
+                    .custom("flex-direction", "column")
                 }
-            
-            H1("Datos del Producto")
-                .color(.lightBlueText)
-            
-            Div()
-                .class(.clear)
-                .marginTop(12.px)
-            
-            // General Product data
-            Div{
-                
-                Div{
-                
-                    self.avatar
-                        .src("/skyline/media/tc-logo-512x512.png")
-                        .height(150.px)
-                    
+
+                VGrid(.half) {
+                    VBox {
+                        UTitle("Configuración")
+                        UMinorTitle("Complete las opciones requeridas para este producto.")
+                            .marginTop(4.px)
+
+                        self.options
+                            .custom("height", "min(560px, calc(100vh - 230px))")
+                            .overflow(.auto)
+                            .marginTop(12.px)
+                            .paddingRight(5.px)
+                    }
+                    .height(100.percent)
                 }
-                .align(.center)
-                
-                Div().class(.clear)
-                
-                Div{
-                    Span("TDP: \(self.poc.productionTime.toString) mins")
+
+                VGrid(.oneForth) {
+                    VBox {
+                        UTitle("Productos")
+                        UMinorTitle("Seleccione una unidad disponible.")
+                            .marginTop(4.px)
+
+                        self.itemdiv
+                            .custom("height", "min(560px, calc(100vh - 230px))")
+                            .overflow(.auto)
+                            .marginTop(12.px)
+                            .paddingRight(5.px)
+                    }
+                    .height(100.percent)
+                }
+
+                VGrid(.full) {
+                    ULargeButton("+ Agregar producto")
                         .float(.right)
-                    Span("Nombre")
+                        .onClick(self.addItem)
                 }
-                
-                
-                
-                Div().class(.clear)
-                
-                Strong(self.poc.name)
-                
-                
-                Div().class(.clear)
-                
-                Span("Descripción")
-                
-                Div().class(.clear)
-                
-                Strong(self.poc.smallDescription)
-                
-                Div().class(.clear)
-                
-                Div{
-                    Span("Descripcion")
-                        .float(.left)
-                    
-                    Strong("$\(self.cost.formatMoney)")
-                }
-                .fontSize(24.px)
-                .align(.right)
-                .marginTop(7.px)
-                .marginBottom(7.px)
-                .marginRight(7.px)
-                
-                Div().class(.clear)
-                
-                TextArea(self.$descr)
-                    .placeholder("Ingrese descripción")
-                    .fontSize(24.px)
-                    .width(98.percent)
-                    .height(100.px)
-                
-                //description
-                
             }
-            .class(.oneThird)
-            .fontSize(18.px)
-            
-            // Product Options
-            Div{
-                
-                self.options
-                    .height(400.px)
-                    .class(.roundBlue)
-                    .overflow(.auto)
-                    .padding(all: 7.px)
-                    .custom("width","calc(100% - 14px)")
-                
-                Div().class(.clear)
-            }
-            .width(45.percent)
-            .float(.left)
-            
-            // Items (fisical items)
-            Div{
-                H2("Productos")
-                    .marginLeft(7.px)
-                    .marginRight(7.px)
-                
-                self.itemdiv
-                    .height(364.px)
-                    .class(.roundBlue)
-                    .overflow(.auto)
-                    .padding(all: 7.px)
-                    .margin(all: 7.px)
-                
-            }
-            .width(22.percent)
-            .float(.left)
-            
-            Div().class(.clear)
-            
-            Div{
-                
-                Div{
-                    Strong("+ Agregar Producto")
-                        .fontSize(24.px)
-                }
-                .align(.center)
-                .marginTop(9.px)
-                .class(.smallButtonBox)
-                .onClick(self.addItem)
-            }
-            .align(.right)
         }
-        .padding(all: 12.px)
-        .top(20.percent)
-        .width(75.percent)
-        .custom("left", "calc(12.5% - 12px)")
-        .position(.absolute)
-        .backgroundColor(.white)
-        .borderRadius(all: 24.px)
-        
     }
     
     override func buildUI() {
-        
+        super.buildUI()
+
         width(100.percent)
         height(100.percent)
         top(0.px)
         left(0.px)
         position(.absolute)
-        self.class(.transparantBlackBackGround)
     
-        switch self.costType{
-        case .cost_a:
-            cost = poc.pricea
-        case .cost_b:
-            cost = poc.priceb
-        case .cost_c:
-            cost = poc.pricec
-        }
-        
         self.poc.rentalActions.forEach { action in
             
-            options.appendChild(H2(action.name))
+            options.appendChild(UTitle(action.name))
             
             options.appendChild(Div().class(.clear))
             
-            options.appendChild(Span(action.smallDescription).fontSize(18.px))
+            options.appendChild(
+                UMinorTitle(action.smallDescription)
+                    .custom("line-height", "1.4")
+            )
             
             options.appendChild(Div().class(.clear))
             
@@ -227,15 +183,15 @@ class AddRentalProductConfirm: Div {
                 if option.isRequired {
                     optionDiv.appendChild(
                         Label(option.name)
-                            .color(.red)
-                            .fontSize(24.px)
+                            .custom("color", "var(--tc-beta-orange-hot)")
+                            .fontSize(15.px)
                     )
                     
                 }
                 else {
                     optionDiv.appendChild(
                         Label(option.name)
-                            .fontSize(24.px)
+                            .fontSize(15.px)
                     )
                 }
                 
@@ -243,9 +199,9 @@ class AddRentalProductConfirm: Div {
                 case .selection:
                     
                     let select = Select()
-                        .fontSize(24.px)
-                        .class(.textFiledLight)
-                        .width(90.percent)
+                        .fontSize(15.px)
+                        .class(.textFiledBlackDark)
+                        .width(100.percent)
                         .height(36.px)
                         .onChange { event, select in
                             self.optionValues[action.id]?[option.id] = select.value
@@ -266,9 +222,6 @@ class AddRentalProductConfirm: Div {
                     innerDiv.appendChild(
                         select
                     )
-                    innerDiv.appendChild(
-                        Span(option.help)
-                    )
                 case .addSum:
                     
                     innerDiv.appendChild(
@@ -277,32 +230,32 @@ class AddRentalProductConfirm: Div {
                             .onKeyUp { input, event in
                                 self.optionValues[action.id]?[option.id] = input.text
                             }
-                            .width(90.percent)
-                            .class(.textFiledLight)
+                            .width(100.percent)
+                            .class(.textFiledBlackDark)
                     )
 
                 case .textField:
                     innerDiv.appendChild(
                         InputText()
-                            .fontSize(24.px)
+                            .fontSize(15.px)
                             .placeholder(option.help)
                             .onKeyUp { input, event in
                                 self.optionValues[action.id]?[option.id] = input.text
                             }
-                            .width(90.percent)
-                            .class(.textFiledLight)
+                            .width(100.percent)
+                            .class(.textFiledBlackDark)
                     )
                 case .textArea:
                     innerDiv.appendChild(
                         TextArea()
-                            .fontSize(24.px)
+                            .fontSize(15.px)
                             .placeholder(option.help)
                             .onKeyUp { input, event in
                                 self.optionValues[action.id]?[option.id] = input.text
                             }
-                            .width(90.percent)
+                            .width(100.percent)
                             .height(70.px)
-                            .class(.textFiledLight)
+                            .class(.textFiledBlackDark)
                     )
                 case .checkBox:
                     break
@@ -310,7 +263,10 @@ class AddRentalProductConfirm: Div {
                     break
                 }
                 
-                innerDiv.appendChild(Span(option.help))
+                innerDiv.appendChild(
+                    UMinorTitle(option.help)
+                        .marginTop(4.px)
+                )
                 
                 optionDiv.appendChild(innerDiv)
                 
@@ -338,10 +294,11 @@ class AddRentalProductConfirm: Div {
             let box = InputCheckbox()
             
             itemdiv.appendChild(
-                Div{
+                VBox(.interactive) {
                     
                     box
-                        .float(.left)
+                        .width(18.px)
+                        .height(18.px)
                         .checked(self.$selecteItem.map{
                             if item.id == self.selecteItem {
                                 return true
@@ -351,13 +308,18 @@ class AddRentalProductConfirm: Div {
                             }
                         })
                     
-                    Strong(item.ecoNumber)
-                        .fontSize(24.px)
+                    Div {
+                        USubTitle(item.ecoNumber)
+                        USmallTitle("Disponible")
+                            .marginTop(3.px)
+                    }
                     
                 }
-                    .class(.smallButtonBox)
-                    .align(.right)
-                    .padding(all: 12.px)
+                    .display(.grid)
+                    .custom("grid-template-columns", "auto minmax(0, 1fr)")
+                    .custom("align-items", "center")
+                    .custom("gap", "10px")
+                    .padding(all: 10.px)
                     .marginBottom(7.px)
                     .onClick{
                         self.selecteItem = item.id

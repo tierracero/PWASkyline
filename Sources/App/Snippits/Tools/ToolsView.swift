@@ -30,198 +30,104 @@ class ToolsView: Div {
          fatalError("init() has not been implemented")
      }
      
-     */
+    */
     
     @DOM override var body: DOM.Content {
-        Div{
-            
-            /// Header
-            Div{
-                
-                Img()
-                    .closeButton(.subView)
-                    .onClick {
-                        self.remove()
-                    }
-                
-                H2("Ajustes y Herramientas")
-                    .color(.lightBlueText)
-                    .float(.left)
-                    .marginLeft(7.px)
-                
-                Div().class(.clear)
-                
-                Div {
-                    
-                    /// Services
-                    Div{
-                        
-                        Table{
-                            
-                            Tr{
-                                Td{
-                                    
-                                    Img() 
-                                        .src("skyline/media/service_icon.png")
-                                        .height(100.px)
-                                    
-                                    Div("Servicios")
-                                        .textAlign(.center)
-                                        .margin(all: 7.px)
-                                        .color(.white)
-                                }
-                                .verticalAlign(.middle)
-                                .align(.center)
-                            }
-                        }
-                        .height(100.percent)
-                        .width(100.percent)
-                        
-                    }
-                    .padding(all: 7.px)
-                    .margin(all: 7.px)
-                    .height(150.px)
-                    .width(150.px)
-                    .class(.uibtn)
-                    .float(.left)
-                    .onClick {
-                        addToDom(ServiceManager())
-                        self.remove()
-                    }
-                    
-                    /*.Adjustments */
-                    Div{
-                        
-                        Table{
-                            Tr{
-                                Td{
-                                    
-                                    Img()
-                                        .src("skyline/media/gear.png")
-                                        .height(100.px)
-                                    
-                                    Div("Ajustes")
-                                        .textAlign(.center)
-                                        .margin(all: 7.px)
-                                        .color(.white)
-                                }
-                                .verticalAlign(.middle)
-                                .align(.center)
-                            }
-                        }
-                        .height(100.percent)
-                        .width(100.percent)
-                        
-                    }
-                    .padding(all: 7.px)
-                    .margin(all: 7.px)
-                    .height(150.px)
-                    .width(150.px)
-                    .class(.uibtn)
-                    .float(.left)
-                    .onClick {
-                        addToDom(SystemSettings())
-                        self.remove()
-                    }
-                    
-                    /*.User and settings */
-                    Div{
-                        
-                        Table{
-                            Tr{
-                                Td{
-                                    
-                                    Img()
-                                        .src("skyline/media/user_configuration_icon.png")
-                                        .height(100.px)
-                                    
-                                    Div("Tiendas y Usuarios")
-                                        .textAlign(.center)
-                                        .margin(all: 7.px)
-                                        .color(.white)
-                                }
-                                .verticalAlign(.middle)
-                                .align(.center)
-                            }
-                        }
-                        .height(100.percent)
-                        .width(100.percent)
-                        
-                    }
-                    .padding(all: 7.px)
-                    .margin(all: 7.px)
-                    .height(150.px)
-                    .width(150.px)
-                    .class(.uibtn)
-                    .float(.left)
-                    .onClick {
-                        addToDom(SystemSettings.UserStoreConfiguration())
-                        self.remove()
-                    }
-                    
-                    /* Website */
-                    Div{
-                        
-                        Table{
-                            Tr{
-                                Td{
-                                    
-                                    Img()
-                                        .src("skyline/media/website_icon.png")
-                                        .height(100.px)
-                                    
-                                    Div("Pagina Web")
-                                        .textAlign(.center)
-                                        .margin(all: 7.px)
-                                        .color(.white)
-                                    
-                                }
-                                .verticalAlign(.middle)
-                                .align(.center)
-                            }
-                        }
-                        .height(100.percent)
-                        .width(100.percent)
-                        
-                    }
-                    .padding(all: 7.px)
-                    .margin(all: 7.px)
-                    .height(150.px)
-                    .width(150.px)
-                    .class(.uibtn)
-                    .float(.left)
-                    .onClick {
-                        
-                        guard let tcaccount else {
-                            showError(.generalError, "No se localizaron datos de la centa")
-                            return
-                        }
-                        
-                    
-                        addToDom(WebPage(account: tcaccount))
-                        
-                        self.remove()
-                    }
-                
-                }
-                .padding(all: 3.px)
-                .margin(all: 3.px)
-                
+        VPopUp(.custome(w: 980, h: 620)) {
+            VTitle("Ajustes y Herramientas") {
+                USmallTitle("Configuración del sistema")
+            } onClose: {
+                self.remove()
             }
-            
+
+            VBodyGrid {
+                self.menuItem(
+                    icon: "/skyline/media/service_icon.png",
+                    title: "Servicios",
+                    subtitle: "Administra servicios y configuraciones operativas"
+                ) {
+                    addToDom(ServiceManager())
+                    self.remove()
+                }
+
+                self.menuItem(
+                    icon: "/skyline/media/gear.png",
+                    title: "Ajustes",
+                    subtitle: "Configura las reglas generales del sistema"
+                ) {
+                    addToDom(SystemSettings())
+                    self.remove()
+                }
+
+                self.menuItem(
+                    icon: "/skyline/media/user_configuration_icon.png",
+                    title: "Tiendas y Usuarios",
+                    subtitle: "Gestiona tiendas, perfiles y accesos"
+                ) {
+                    addToDom(SystemSettings.UserStoreConfiguration())
+                    self.remove()
+                }
+
+                self.menuItem(
+                    icon: "/skyline/media/website_icon.png",
+                    title: "Página Web",
+                    subtitle: "Edita el contenido y la apariencia del sitio"
+                ) {
+                    guard let tcaccount else {
+                        showError(.generalError, "No se localizaron datos de la cuenta")
+                        return
+                    }
+
+                    addToDom(WebPage(account: tcaccount))
+                    self.remove()
+                }
+            }
         }
-        .backgroundColor(.backGroundGraySlate)
-        .borderRadius(all: 24.px)
-        .position(.absolute)
-        .padding(all: 7.px)
-        .height(80.percent)
-        .width(80.percent)
-        .left(10.percent)
-        .top(10.percent)
+    }
+
+    private func menuItem(
+        icon: String,
+        title: String,
+        subtitle: String,
+        action: @escaping () -> Void
+    ) -> VGrid {
+        VGrid(.half) {
+            VBox(.interactive) {
+                Img()
+                    .src(icon)
+                    .width(78.px)
+                    .height(78.px)
+                    .custom("object-fit", "contain")
+
+                Div {
+                    USubTitle(title)
+                    UMinorTitle(subtitle)
+                        .marginTop(7.px)
+                        .custom("line-height", "1.45")
+                }
+                .custom("min-width", "0")
+            }
+            .height(100.percent)
+            .display(.grid)
+            .custom("grid-template-columns", "78px minmax(0, 1fr)")
+            .custom("align-items", "center")
+            .custom("gap", "18px")
+            .attribute("aria-label", title)
+            .onClick {
+                action()
+            }
+            .onKeyUp { _, event in
+                guard event.code == "Enter" || event.code == "Space" else { return }
+                event.preventDefault()
+                action()
+            }
+        }
+        .custom("min-height", "190px")
     }
     
     override func buildUI() {
-        self.class(.transparantBlackBackGround)
+        super.buildUI()
+
         position(.absolute)
         height(100.percent)
         width(100.percent)

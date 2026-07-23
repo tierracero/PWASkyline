@@ -93,7 +93,6 @@ class ServiceAccionItemView: Div {
     
     override func didAddToDOM() {
         super.didAddToDOM()
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)

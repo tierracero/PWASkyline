@@ -334,7 +334,7 @@ class IMSocialChatView: Div {
         
         getUsers(storeid: nil, onlyActive: false) { users in
         
-            API.wsV1.loadChatData(
+            API.webSocketV1.loadChatData(
                 type: self.roomType,
                 profileType: self.profileType,
                 roomid: self.roomid
@@ -502,7 +502,7 @@ class IMSocialChatView: Div {
          )
          */
         
-        let payload = API.wsV1.SendMessageNotification(
+        let payload = API.webSocketV1.SendMessageNotification(
             event: "sendMessage",
             payload: .init(
                 connid: custCatchChatConnID,
@@ -580,7 +580,7 @@ class IMSocialChatView: Div {
         
     }
     
-    func updateMessageStatus(_ data: API.wsV1.UpdateMessageStatus){
+    func updateMessageStatus(_ data: API.webSocketV1.UpdateMessageStatus){
         
         switch data.type {
         case .allmsgs:
@@ -627,7 +627,7 @@ class IMSocialChatView: Div {
                         return
                     }
                     
-                    let payload: API.wsV1.WebSocketPayload<API.wsV1.SocialMessageWasRead> = .init(
+                    let payload: API.webSocketV1.WebSocketPayload<API.webSocketV1.SocialMessageWasRead> = .init(
                         event: "socialMessageWasRead",
                         payload: .init(
                             socialAcct: roomAccountId
@@ -701,7 +701,7 @@ class IMSocialChatView: Div {
                 
                 loadingView(show: true)
                 
-                API.wsV1.archiveChat(
+                API.webSocketV1.archiveChat(
                     roomid: self.roomid,
                     pageid: ""
                 ) { resp in

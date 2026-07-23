@@ -12,6 +12,8 @@ import LanguagePack
 import Web
 
 public class LoginViewcontroler: PageController {
+
+    private static let meshBackgroundID = "tc-login-mesh-background"
 	
 	@State var hello = "Hola!"
 	
@@ -28,6 +30,8 @@ public class LoginViewcontroler: PageController {
     @State var viewPassword: Bool = false
     
     @State var mobileConfirmationText = "..."
+
+    private var isTransitioningToWork = false
     
     var passwordRecoveryToken = ""
     
@@ -126,6 +130,218 @@ public class LoginViewcontroler: PageController {
 	
 	lazy var loader = LoaderView()
 
+    lazy var meshBackground = Div()
+        .id(.init(Self.meshBackgroundID))
+        .class(Class("tc-login-mesh-background"))
+
+    lazy var mainLoginBox = Div {
+        VBox(.raised) {
+
+            UTitle(self.$hello)
+                .class(Class("tc-login-main-title"))
+                .fontSize(32.px)
+
+            Div().clear(.both).height(12.px)
+
+            UMinorTitle("Ingresa tu usuario y contraseña")
+                .class(Class("tc-login-main-copy"))
+
+            Div().clear(.both).height(12.px)
+            Div{
+                Label("Usuario")
+                .color(.gray)
+            }.align(.left)
+            
+
+            Div().clear(.both).height(3.px)
+
+            self.usernameField
+                    .width(100.percent)
+                    .marginBottom(0.px)
+                    .onReturn { input in
+                        guard !input.text.isEmpty else { return }
+
+                        if self.password.isEmpty {
+                            self.passwordField.select()
+                            return
+                        }
+
+                        self.login()
+                    }
+
+            Div {
+                Div {
+
+                    Div{
+                        Label("Contraseña")
+                        .color(.gray)
+                    }
+                    .align(.left)
+
+                    Div().clear(.both).height(3.px)
+
+                    self.passwordTextField
+                        .hidden(self.$viewPassword.map { !$0 })
+                        .onKeyUp { input, event in
+                            if event.code == "Enter" || event.code == "NumpadEnter" {
+                                guard !self.usernameField.text.isEmpty else { return }
+                                guard !input.text.isEmpty else { return }
+                                self.login()
+                            }
+                        }
+
+                    self.passwordField
+                        .hidden(self.$viewPassword)
+                        .onReturn { input in
+                            guard !self.usernameField.text.isEmpty else { return }
+                            guard !input.text.isEmpty else { return }
+                            self.login()
+                        }
+
+                    Img()
+                        .src(self.$viewPassword.map { !$0 ? "/skyline/media/hidePassword.webp" : "/skyline/media/viewPassword.png" })
+                        .class(.iconWhite, Class("tc-login-main-password-toggle"))
+                        .marginTop(18.px)
+                        .cursor(.pointer)
+                        .onClick {
+                            self.viewPassword = !self.viewPassword
+
+                            if self.viewPassword {
+                                self.passwordTextField.select()
+                            }
+                        }
+                }
+                .class(Class("tc-login-main-password"))
+            }
+            .class(Class("tc-login-main-field"))
+
+            Div {
+                ULargeButton(LString(String.forgotPassword))
+                    .class(Class("tc-login-main-secondary"))
+                    .width(100.percent)
+                    .onClick {
+                        self.passwordRecoveryMode = .confirmUsername
+                        self.usernameRevoveryField.select()
+                    }
+
+                ULargeButton(LString(String.login))
+                    .class(Class("tc-login-main-primary"))
+                    .width(100.percent)
+                    .onClick {
+                        self.login()
+                    }
+            }
+            .class(Class("tc-login-main-actions"))
+        }
+        .class(Class("tc-login-main-card"))
+        .custom("backdrop-filter", "blur(3px) !important")
+        .custom("border", "none !important")
+    }
+    .class(Class("tc-login-main-root"))
+
+    lazy var loginBox = VPopUp(.fitContent(w: 560)) {
+        VTitle("Recuperar clave") {
+            USmallTitle("Paso 1 de 2")
+        } onClose: {
+            self.passwordRecoveryMode = nil
+        }
+
+        VBodyGrid {
+            VGrid(.full) {
+                VBox(.raised) {
+                    UMinorTitle("Ingresa tu usuario para iniciar el proceso de recuperación.")
+                        .class(Class("tc-login-recovery-copy"))
+                        .custom("line-height", "1.5")
+
+                    UField("Usuario", required: false) {
+                        self.usernameRevoveryField
+                            .width(100.percent)
+                            .marginBottom(0.px)
+                            .onReturn { input in
+                                guard !input.text.isEmpty else { return }
+                                self.requestPasswordRecovery()
+                            }
+                    }
+                    .marginTop(16.px)
+                }
+                .class(Class("tc-login-recovery-card"))
+            }
+
+            VGrid(.half) {
+                ULargeButton("Cancelar")
+                    .class(Class("tc-login-recovery-secondary"))
+                    .width(100.percent)
+                    .onClick {
+                        self.passwordRecoveryMode = nil
+                    }
+            }
+
+            VGrid(.half) {
+                ULargeButton("Continuar")
+                    .class(Class("tc-login-recovery-primary"))
+                    .width(100.percent)
+                    .onClick {
+                        self.requestPasswordRecovery()
+                    }
+            }
+        }
+    }
+    .class(Class("tc-login-recovery-popup"))
+    .hidden(self.$passwordRecoveryMode.map { $0 != .confirmUsername })
+
+    lazy var passwordRecoveryBox = VPopUp(.fitContent(w: 560)) {
+        VTitle("Confirma tu celular") {
+            USmallTitle("Paso 2 de 2")
+        } onClose: {
+            self.passwordRecoveryMode = nil
+        }
+
+        VBodyGrid {
+            VGrid(.full) {
+                VBox(.raised) {
+                    UMinorTitle(self.$mobileConfirmationText)
+                        .class(Class("tc-login-recovery-copy"))
+                        .custom("line-height", "1.5")
+
+                    UField("Número celular", required: false) {
+                        self.mobileRevoveryField
+                            .width(100.percent)
+                            .marginBottom(0.px)
+                            .onReturn { input in
+                                guard !input.text.isEmpty else { return }
+                            }
+                    }
+                    .marginTop(16.px)
+                }
+                .class(Class("tc-login-recovery-card"))
+            }
+
+            VGrid(.half) {
+                ULargeButton("Cancelar")
+                    .class(Class("tc-login-recovery-secondary"))
+                    .width(100.percent)
+                    .onClick {
+                        self.passwordRecoveryMode = nil
+                    }
+            }
+
+            VGrid(.half) {
+                ULargeButton("Confirmar")
+                    .class(Class("tc-login-recovery-primary"))
+                    .width(100.percent)
+                    .onClick {
+                        self.requestPasswordRecoveryConfirmCellphone()
+                    }
+            }
+        }
+    }
+    .class(Class("tc-login-recovery-popup"))
+    .hidden(self.$passwordRecoveryMode.map { $0 != .confirmMobile })
+
+
+
+
+
 	@DOM public override var body: DOM.Content {
         Script()
             .src("https://js.hcaptcha.com/1/api.js")
@@ -137,7 +353,7 @@ public class LoginViewcontroler: PageController {
             .src("skyline/js/login.js")
             .type("text/javascript")
             .onLoad {
-                
+                self.startMeshBackground()
             }
         
         Link()
@@ -154,6 +370,8 @@ public class LoginViewcontroler: PageController {
                 self.cssIsLoaded = true
             }
         
+		self.meshBackground
+
 		self.loader
 		
 		Div {
@@ -237,7 +455,7 @@ public class LoginViewcontroler: PageController {
 			}
 			
 		}
-		.class(.bodyWrap)
+		.class(.bodyWrap, Class("tc-login-content-layer"))
 		
 		Div{
 			
@@ -249,101 +467,7 @@ public class LoginViewcontroler: PageController {
 							.width(250.px)
 							.marginBottom(24.px)
 						
-						Div{
-							
-							H1(self.$hello)
-                                .marginRight(0.px)
-                                .marginLeft(0.px)
-                                .textAlign(.center)
-								.class(.heroTitle, .mt0)
-							
-							P("Ingresa tu usuario y contraseña")
-								.class(.heroParagraph)
-							
-							self.usernameField
-								.onReturn { input in
-                                    
-                                    /// User is not empty
-									guard !input.text.isEmpty else {return}
-									
-                                    /// Password is empty
-                                    if self.password.isEmpty {
-                                        self.passwordField.select()
-                                        return
-                                    }
-                                    
-                                    self.login()
-									
-								}
-							
-                            Div{
-                                
-                                self.passwordTextField
-                                    .hidden(self.$viewPassword.map{ !$0 })
-                                    .onKeyUp { input, event in
-                                        if event.code == "Enter" || event.code == "NumpadEnter" {
-                                            guard !self.usernameField.text.isEmpty else {return}
-                                            guard !input.text.isEmpty else {return}
-                                            self.login()
-                                        }
-                                    }
-                                self.passwordField
-                                    .hidden(self.$viewPassword)
-                                    .onReturn { input in
-                                        guard !self.usernameField.text.isEmpty else {return}
-                                        guard !input.text.isEmpty else {return}
-                                        self.login()
-                                    }
-                                
-                                Img()
-                                    .src(self.$viewPassword.map{ !$0 ? "/skyline/media/hidePassword.webp" : "/skyline/media/viewPassword.png" })
-                                    .class(.iconWhite)
-                                    .position(.relative)
-                                    .marginRight(12.px)
-                                    .cursor(.pointer)
-                                    .float(.right)
-                                    .width(24.px)
-                                    .top(-35.px)
-                                    .onClick {
-                                        self.viewPassword = !self.viewPassword
-                                        
-                                        if self.viewPassword {
-                                            self.passwordTextField.select()
-                                        }
-                                        
-                                    }
-                                
-                            }
-                            .marginBottom(24.px)
-                            .width(90.percent)
-                            
-							Div{
-								
-                                A(LString(String.forgotPassword))
-									.class(.button)
-									.onClick {
-                                        self.passwordRecoveryMode = .confirmUsername
-                                        self.usernameRevoveryField.select()
-									}
-                                    .float(.left)
-                                    .marginRight(0.px)
-								
-                                A(LString(String.login))
-									.class(.button, .buttonPrimary)
-									.onClick {
-										self.login()
-									}
-							}
-							.class(.heroCta)
-							.align(.right)
-							 
-							 
-						}
-						.boxShadow(h: 3.px, v: 3.px, blur: 64.px, color: .black)
-						.backgroundColor(.hex(0x23272f))
-						.borderRadius(all: 24.px)
-						.padding(all: 24.px)
-						.width(450.px)
+							self.mainLoginBox
 						
 					}
 					.align(.center)
@@ -360,6 +484,7 @@ public class LoginViewcontroler: PageController {
 		.position(.absolute)
 		.top(0.px)
 		.left(0.px)
+		.class(Class("tc-login-content-layer"))
 		
 		P("Bienvenidos a Tierra Cero Skyline [" +
         "\(SkylineWeb().version.mode.rawValue) " +
@@ -371,117 +496,10 @@ public class LoginViewcontroler: PageController {
 			.marginRight(24.px)
 			.position(.absolute)
 			.bottom(0.px)
+			.class(Class("tc-login-content-layer"))
 		
-        Div{
-            
-            Div{
-                Div{
-                    
-                    H2("Recuperar Clave 🔑")
-                        .marginRight(0.px)
-                        .marginLeft(0.px)
-                        .textAlign(.center)
-                        .class(.heroTitle, .mt0)
-                    
-                    P("Ingresa tu usuario para iniciar proceso")
-                        .class(.heroParagraph)
-                    
-                    self.usernameRevoveryField
-                        .onReturn { input in
-                            guard !input.text.isEmpty else {return}
-                            self.requestPasswordRecovery()
-                        }
-                    
-                }
-                .align(.center)
-                
-                Div{
-                    
-                    A("Cancelar")
-                        .class(.button)
-                        .onClick {
-                            self.passwordRecoveryMode = nil
-                        }
-                        .float(.left)
-                        .marginRight(0.px)
-                    
-                    A("Continuar...")
-                        .class(.button, .buttonPrimary)
-                        .onClick {
-                            self.requestPasswordRecovery()
-                        }
-                }
-                .class(.heroCta)
-                .align(.right)
-                
-            }
-            .boxShadow(h: 3.px, v: 3.px, blur: 64.px, color: .black)
-            .backgroundColor(.hex(0x23272f))
-            .borderRadius(all: 24.px)
-            .position(.absolute)
-            .padding(all: 24.px)
-            .width(450.px)
-            .top(25.percent)
-            .custom("left", "calc(50% - 225px)")
-            .hidden(self.$passwordRecoveryMode.map{ !($0 == .confirmUsername) })
-            
-            Div{
-                Div{
-                    
-                    H2("Confirme Celular 📱")
-                        .marginRight(0.px)
-                        .marginLeft(0.px)
-                        .textAlign(.center)
-                        .class(.heroTitle, .mt0)
-                    
-                    P(self.$mobileConfirmationText)
-                        .class(.heroParagraph)
-                    
-                    self.mobileRevoveryField
-                        .onReturn { input in
-                            guard !input.text.isEmpty else {return}
-                        }
-                    
-                }
-                .align(.center)
-                
-                Div{
-                    
-                    A("Cancelar")
-                        .class(.button)
-                        .onClick {
-                            self.passwordRecoveryMode = nil
-                        }
-                        .float(.left)
-                        .marginRight(0.px)
-                    
-                    A("Confirmar")
-                        .class(.button, .buttonPrimary)
-                        .onClick {
-                            self.requestPasswordRecoveryConfirmCellphone()
-                        }
-                }
-                .class(.heroCta)
-                .align(.right)
-                
-            }
-            .boxShadow(h: 3.px, v: 3.px, blur: 64.px, color: .black)
-            .backgroundColor(.hex(0x23272f))
-            .borderRadius(all: 24.px)
-            .position(.absolute)
-            .padding(all: 24.px)
-            .width(450.px)
-            .top(25.percent)
-            .custom("left", "calc(50% - 225px)")
-            .hidden(self.$passwordRecoveryMode.map{ !($0 == .confirmMobile) })
-            
-        }
-        .backgroundColor(.transparentBlack)
-        .hidden(self.$passwordRecoveryMode.map{ $0 == nil })
-        .width(100.percent)
-        .height(100.percent)
-        .position(.absolute)
-        .top(0.px)
+        self.loginBox
+        self.passwordRecoveryBox
         
         WebApp.current.loadingView
 		
@@ -492,6 +510,9 @@ public class LoginViewcontroler: PageController {
 	public override func buildUI() {
         
 		super.buildUI()
+
+        self.class(Class("tc-login-mesh-page"))
+        TCTripBetaTheme.apply(to: self.mainLoginBox)
         
         height(100.percent)
         width(100.percent)
@@ -546,12 +567,24 @@ public class LoginViewcontroler: PageController {
             self.animate()
         }
 
-        rendered()
+		rendered()
 	}
+
+    private func startMeshBackground() {
+        _ = JSObject.global.startLoginMeshEffect.function?
+            .callAsFunction(Self.meshBackgroundID)
+    }
+
+    private func stopMeshBackground() {
+        _ = JSObject.global.stopLoginMeshEffect.function?
+            .callAsFunction(Self.meshBackgroundID)
+    }
 	
     public override func didAddToDOM() {
         
         print("💎 LOGIN didAddToDOM")
+
+        startMeshBackground()
     
         loadBasicConfiguration() { status in
         
@@ -570,7 +603,7 @@ public class LoginViewcontroler: PageController {
                 return
             }
             
-            History.pushState(path: "work")
+            self.transitionToWork()
             
             WebApp.current.window.localStorage.set(getNow(), forKey: "sessionControl")
         }
@@ -766,6 +799,8 @@ public class LoginViewcontroler: PageController {
             let today = "\(JSDate().fullYear)\(JSDate().month)\(JSDate().day)"
             
             WebApp.current.window.localStorage.set( JSString(today), forKey: "activeSession")
+
+            ErrorReportingControler.shared.sessionDidBecomeAvailable()
             
             if let jsonData = try? JSONEncoder().encode(data.linkedProfile) {
                 if let jsonString = String(data: jsonData, encoding: .utf8){
@@ -778,7 +813,7 @@ public class LoginViewcontroler: PageController {
                 return
             }
             
-            History.pushState(path: "work")
+            self.transitionToWork()
             
             
         }
@@ -853,8 +888,21 @@ public class LoginViewcontroler: PageController {
 
         }
     }
-	
+
+    public override func didRemoveFromDOM() {
+        stopMeshBackground()
+        super.didRemoveFromDOM()
+    }
+
+    private func transitionToWork() {
+        guard !isTransitioningToWork else { return }
+        isTransitioningToWork = true
+
+        self.class(Class("tc-login-handoff"))
+
+        Dispatch.asyncAfter(0.56) {
+            History.pushState(path: "work")
+        }
+    }
+
 }
-
-
-

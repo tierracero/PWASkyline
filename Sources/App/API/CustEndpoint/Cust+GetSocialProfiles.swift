@@ -40,7 +40,7 @@ extension CustComponents {
             }
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<GetSocialProfilesResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<GetSocialProfilesResponse>.self, from: data)
                 
                 guard let profiles = resp.data?.profiles else {
                     callback([])

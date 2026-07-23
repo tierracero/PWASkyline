@@ -34,7 +34,7 @@ extension CustComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<AddDocumentationIncidenceReportResponse>?.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<AddDocumentationIncidenceReportResponse>?.self, from: data))
             }
             catch{
                 print("🔴 API_DECODING_ERROR")

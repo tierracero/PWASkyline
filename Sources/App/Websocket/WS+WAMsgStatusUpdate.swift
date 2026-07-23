@@ -10,11 +10,11 @@ import TCFundamentals
 import TCFireSignal
 
 extension WS {
-    func waMsgStatusUpdate(_ payload: String) -> API.wsV1.WSMsgStatusUpdate? {
+    func waMsgStatusUpdate(_ payload: String) -> API.webSocketV1.WSMsgStatusUpdate? {
         
         if let data = payload.data(using: .utf8) {
             do {
-                return try JSONDecoder().decode(API.wsV1.WSMsgStatusUpdateNotification.self, from: data).payload
+                return try JSONDecoder().decode(API.webSocketV1.WSMsgStatusUpdateNotification.self, from: data).payload
             } catch {
                 print(error)
                 return nil

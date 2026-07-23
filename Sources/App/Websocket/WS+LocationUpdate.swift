@@ -13,11 +13,11 @@ import TCFundamentals
 import TCFireSignal
 
 extension WS {
-    func locationUpdate(_ payload: String) -> API.wsV1.WSLocationUpdate? {
+    func locationUpdate(_ payload: String) -> API.webSocketV1.WSLocationUpdate? {
         
         if let data = payload.data(using: .utf8) {
             do {
-                return try JSONDecoder().decode(API.wsV1.WSLocationUpdateNotification.self, from: data).payload
+                return try JSONDecoder().decode(API.webSocketV1.WSLocationUpdateNotification.self, from: data).payload
             } catch {
                 print(error)
                 return nil

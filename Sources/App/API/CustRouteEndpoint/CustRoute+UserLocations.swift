@@ -26,7 +26,7 @@ extension CustRouteComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<UserLocationsResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<UserLocationsResponse>.self, from: data))
             }
             catch{
                 print(error)

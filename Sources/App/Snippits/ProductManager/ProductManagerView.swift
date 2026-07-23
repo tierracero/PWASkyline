@@ -387,7 +387,7 @@ class ProductManagerView: Div {
                             .marginTop(23.px)
                             .onClick {
                                 
-                                self.appendChild(CreateStoreLevelDepartement(
+                                addToDom(CreateStoreLevelDepartement(
                                     callback: { id, name in
                                         /*
                                         self.department = id
@@ -727,7 +727,6 @@ class ProductManagerView: Div {
         
         super.buildUI()
         
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)

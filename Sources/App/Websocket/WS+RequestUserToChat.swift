@@ -11,11 +11,11 @@ import TCFireSignal
 
 extension WS {
     
-    func requestUserToChat(_ payload: String) -> API.wsV1.RequestUserToChatResponse? {
+    func requestUserToChat(_ payload: String) -> API.webSocketV1.RequestUserToChatResponse? {
         
         if let data = payload.data(using: .utf8) {
             do {
-                return try JSONDecoder().decode(API.wsV1.WebSocketPayload<API.wsV1.RequestUserToChatResponse>.self, from: data).payload
+                return try JSONDecoder().decode(API.webSocketV1.WebSocketPayload<API.webSocketV1.RequestUserToChatResponse>.self, from: data).payload
             } catch {
                 print(error)
                 return nil

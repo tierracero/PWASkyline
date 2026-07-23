@@ -33,7 +33,7 @@ extension CustPOCComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<CustFiscalInventoryControl>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<CustFiscalInventoryControl>.self, from: data)
                 callback(resp)
             }
             catch{

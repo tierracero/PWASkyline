@@ -32,7 +32,7 @@ extension CustPDVComponents {
                 }
             
                 do{
-                    let resp = try JSONDecoder().decode(APIResponseGeneric<RequestGlobalFiscalDocumentResponse>.self, from: data)
+                    let resp = try decodeAPIResponse(APIResponseGeneric<RequestGlobalFiscalDocumentResponse>.self, from: data)
                     callback(resp)
                 }
                 catch{

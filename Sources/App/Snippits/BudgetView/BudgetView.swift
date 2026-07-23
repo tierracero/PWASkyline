@@ -846,7 +846,6 @@ class BudgetView: Div {
     override func buildUI() {
         super.buildUI()
         
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)
@@ -1338,7 +1337,7 @@ class BudgetView: Div {
     
     func aproveBudget(){
         
-        self.appendChild(ConfirmView(type: .aproveDeny, title: "Aprobar Presupuesto", message: "Confirme la aprobacion del presupuesto ", callback: { isConfirmed, comment in
+        addToDom(ConfirmView(type: .aproveDeny, title: "Aprobar Presupuesto", message: "Confirme la aprobacion del presupuesto ", callback: { isConfirmed, comment in
             if isConfirmed {
                 
                 loadingView(show: true)

@@ -34,7 +34,7 @@ extension WSComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<LoadChatDataResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<LoadChatDataResponse>.self, from: data)
                 callback(resp)
             }
             catch{

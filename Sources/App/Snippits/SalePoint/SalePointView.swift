@@ -382,7 +382,7 @@ class SalePointView: Div {
                                         
                                     }
 
-                                    self.appendChild(custDataView)
+                                    addToDom(custDataView)
                                     
                                 }))
                         }
@@ -704,7 +704,6 @@ class SalePointView: Div {
         
         if !isSubView {
             
-            self.class(.transparantBlackBackGround)
             height(100.percent)
             position(.absolute)
             width(100.percent)
@@ -1060,7 +1059,7 @@ class SalePointView: Div {
                                 let cardex = payload.cardex
                                 
                                 
-                                self.appendChild(ConcessionConfirmationView(
+                                addToDom(ConcessionConfirmationView(
                                     accountid: custAcct.id,
                                     accountFolio: custAcct.folio,
                                     accountName: "\(custAcct.fiscalRfc) \(custAcct.fiscalRazon)",
@@ -1159,7 +1158,7 @@ class SalePointView: Div {
         
         paymentView.datePickerIsHidden = true
         
-        self.appendChild(paymentView)
+        addToDom(paymentView)
         
         paymentView.paymentInput.select()
         
@@ -1338,7 +1337,7 @@ class SalePointView: Div {
                                 
                             }
 
-                            self.appendChild(custDataView)
+                            addToDom(custDataView)
                             
                         }))
                 }
@@ -1412,7 +1411,7 @@ class SalePointView: Div {
                 cardex: []
             )
             
-            self.appendChild(view)
+            addToDom(view)
             
             self.selectedInventoryIDs.append(contentsOf: ids)
             
@@ -1909,7 +1908,7 @@ class SalePointView: Div {
             }
         )
         
-        self.appendChild(_view)
+        addToDom(_view)
         
         _view.quantInput.select()
         

@@ -76,7 +76,6 @@ class CancelationConfirmView: Div {
         top(0.px)
         left(0.px)
         position(.absolute)
-        self.class(.transparantBlackBackGround)
             .zIndex(999999998)
         
         switch self.type {

@@ -16,6 +16,8 @@ class CartaPorteMerchendise: Div {
     override class var name: String { "div" }
     
     let merchadise: FiscalMercanciaItem
+
+    private let canRemove: Bool
     
     private var callback: ((
         _ id: UUID
@@ -23,11 +25,13 @@ class CartaPorteMerchendise: Div {
     
     init(
         merchadise: FiscalMercanciaItem,
+        canRemove: Bool = true,
         callback: @escaping ((
             _ id: UUID
         ) -> ())
     ) {
         self.merchadise = merchadise
+        self.canRemove = canRemove
         self.callback = callback
         super.init()
     }
@@ -183,33 +187,35 @@ class CartaPorteMerchendise: Div {
             .color(.white)
             
         }
-        .custom("width", "calc(100% - 50px)")
+        .custom("width", canRemove ? "calc(100% - 50px)" : "100%")
         .float(.left)
         
-        Div {
-            Table {
-                Tr {
-                    Td {
-                        Img()
-                            .src("/skyline/media/cross.png")
-                            .cursor(.pointer)
-                            .onClick { _, event in
-                                event.stopPropagation()
-                                
-                                self.callback(self.merchadise.id)
-                                
-                            }
+        if canRemove {
+            Div {
+                Table {
+                    Tr {
+                        Td {
+                            Img()
+                                .src("/skyline/media/cross.png")
+                                .cursor(.pointer)
+                                .onClick { _, event in
+                                    event.stopPropagation()
+                                    
+                                    self.callback(self.merchadise.id)
+                                    
+                                }
+                        }
+                        .verticalAlign(.middle)
+                        .align(.center)
                     }
-                    .verticalAlign(.middle)
-                    .align(.center)
                 }
+                .height(100.percent)
+                .width(100.percent)
             }
-            .height(100.percent)
-            .width(100.percent)
+            .height(85.px)
+            .width(50.px)
+            .float(.left)
         }
-        .height(85.px)
-        .width(50.px)
-        .float(.left)
         
         Div().clear(.both).marginBottom(3.px)
         

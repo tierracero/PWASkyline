@@ -31,7 +31,7 @@ extension CustPOCComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<GetPOCReponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<GetPOCReponse>.self, from: data)
                 callback(resp)
             }
             catch{

@@ -29,7 +29,7 @@ extension CustComponents {
             
             do{
                 
-                callback( try JSONDecoder().decode(APIResponseGeneric<GetBodegaDetailsResponse>.self, from: data) )
+                callback( try decodeAPIResponse(APIResponseGeneric<GetBodegaDetailsResponse>.self, from: data) )
                 
             }
             catch {

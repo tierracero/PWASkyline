@@ -341,7 +341,6 @@ class EditChargePOCView: Div {
         top(0.px)
         left(0.px)
         position(.fixed)
-        self.class(.transparantBlackBackGround)
         .zIndex(999999998)
         
         super.buildUI()

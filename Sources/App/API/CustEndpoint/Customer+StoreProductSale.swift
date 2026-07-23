@@ -32,7 +32,7 @@ extension CustComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<StoreProductSaleResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<StoreProductSaleResponse>.self, from: data))
             }
             catch{
                 print("🔴  🔴  🔴  🔴  🔴  🔴  🔴  🔴  🔴  🔴  🔴  🔴  🔴  🔴")

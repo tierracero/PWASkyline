@@ -33,7 +33,7 @@ extension CustOrderComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<SignDigitalContractResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<SignDigitalContractResponse>.self, from: data))
             }
             catch {
                 callback(nil)

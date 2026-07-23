@@ -31,7 +31,7 @@ extension ThemeComponents {
             }
             
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<GetViewProfilesResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<GetViewProfilesResponse>.self, from: data))
             }
             catch{
                 print("⭕️ \(#file)")

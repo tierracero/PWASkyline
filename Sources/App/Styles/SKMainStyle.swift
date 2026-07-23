@@ -192,6 +192,9 @@ public class SKMainStyle: Stylesheet {
             .fontSize(18.px)
             .height(23.px)
             .color(.white)
+            .custom("color-scheme", "dark")
+
+        "input.textFiledBlackDark[type=\"date\"]::-webkit-calendar-picker-indicator,input.textFiledBlackDark[type=\"time\"]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:1;cursor:pointer;}"
         
         Rule(Class.textFiledBlackDarkMedium)
             .border(width: BorderWidthType.thin, style: .solid, color: .grayBlackDark)

@@ -1,3 +1,4 @@
+import './errorReportingIndexedDB.js'
 import { WasmFs } from '@wasmer/wasmfs'
 import { WASI } from '@wasmer/wasi'
 import { devSocket } from './wasi/devSocket.js'

@@ -34,7 +34,7 @@ extension CustAccountComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<CustCredit>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<CustCredit>.self, from: data)
                 callback(resp)
             }
             catch{

@@ -11,11 +11,11 @@ import TCFundamentals
 import TCFireSignal
 
 extension WS {
-    func asyncFileOCR(_ payload: String) -> API.wsV1.AsyncFileOCR? {
+    func asyncFileOCR(_ payload: String) -> API.webSocketV1.AsyncFileOCR? {
         
         if let data = payload.data(using: .utf8) {
             do {
-                return try JSONDecoder().decode(API.wsV1.AsyncFileOCRNotification.self, from: data).payload
+                return try JSONDecoder().decode(API.webSocketV1.AsyncFileOCRNotification.self, from: data).payload
             } catch {
                 
                 print(error)

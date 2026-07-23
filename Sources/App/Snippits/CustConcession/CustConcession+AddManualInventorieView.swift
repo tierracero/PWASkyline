@@ -217,7 +217,6 @@ extension CustConcessionView {
         override func buildUI() {
             super.buildUI()
             
-            self.class(.transparantBlackBackGround)
             position(.absolute)
             height(100.percent)
             width(100.percent)
@@ -903,7 +902,7 @@ extension CustConcessionView {
 
                         let cardex: [CustPOCCardex] = payload.cardex
 
-                        self.appendChild(ConcessionConfirmationView(
+                        addToDom(ConcessionConfirmationView(
                             accountid: self.account.id,
                             accountFolio: self.account.folio,
                             accountName: "\(self.account.fiscalRfc) \(self.account.fiscalRazon)",

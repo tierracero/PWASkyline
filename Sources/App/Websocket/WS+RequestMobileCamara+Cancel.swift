@@ -11,11 +11,11 @@ import TCFireSignal
 
 extension WS {
     
-    func requestMobileCamaraCancel(_ payload: String) -> API.wsV1.RequestMobileCamaraCancelResponse? {
+    func requestMobileCamaraCancel(_ payload: String) -> API.webSocketV1.RequestMobileCamaraCancelResponse? {
         
         if let data = payload.data(using: .utf8) {
             do {
-                return try JSONDecoder().decode(API.wsV1.WebSocketPayload<API.wsV1.RequestMobileCamaraCancelResponse>.self, from: data).payload
+                return try JSONDecoder().decode(API.webSocketV1.WebSocketPayload<API.webSocketV1.RequestMobileCamaraCancelResponse>.self, from: data).payload
             } catch {
                 print(error)
                 return nil

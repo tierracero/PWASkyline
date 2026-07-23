@@ -30,7 +30,7 @@ extension CustPDVComponents {
             }
         
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<[GetBudgetsObjeto]>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<[GetBudgetsObjeto]>.self, from: data))
             }
             catch{
                 print(error)

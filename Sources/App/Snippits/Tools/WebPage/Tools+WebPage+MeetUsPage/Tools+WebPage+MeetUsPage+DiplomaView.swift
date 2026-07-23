@@ -409,7 +409,6 @@ extension ToolsView.WebPage.MeetUsPage {
         }
         
         override func buildUI() {
-            self.class(.transparantBlackBackGround)
             position(.absolute)
             height(100.percent)
             width(100.percent)

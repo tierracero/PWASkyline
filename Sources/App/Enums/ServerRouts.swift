@@ -12,6 +12,7 @@ public enum ServerRouts: String {
     case api = ""
     case auth = "auth/"
     case cust = "cust/"
+    case custCommercialTrips = "custCommercialTrips/"
     case custExcel = "custExcel/"
     case custFollowup = "custFollowup/"
     case custAccount = "custAccount/"
@@ -26,5 +27,5 @@ public enum ServerRouts: String {
     case soc = "custSOC/"
     case theme = "theme/"
     case papaContador = "papaContador/"
-    case ws = "ws/"
+    case webSocket = "webSocket/"
 }

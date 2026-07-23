@@ -1055,7 +1055,6 @@ class StartServiceOrderEquipmentView: Div {
     }
     
     override func buildUI() {
-        self.class(.transparantBlackBackGround)
         height(100.percent)
         position(.absolute)
         width(100.percent)
@@ -1153,7 +1152,7 @@ class StartServiceOrderEquipmentView: Div {
             
         }
         
-        self.appendChild(view)
+        addToDom(view)
         
         view.termInput.select()
     }
@@ -1190,7 +1189,7 @@ class StartServiceOrderEquipmentView: Div {
             self.tag2Focus()
         }
         
-        self.appendChild(view)
+        addToDom(view)
         
         view.termInput.select()
         
@@ -1235,7 +1234,7 @@ class StartServiceOrderEquipmentView: Div {
             
         }
         
-        self.appendChild(view)
+        addToDom(view)
         
         view.termInput.select()
     }

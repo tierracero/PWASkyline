@@ -28,7 +28,7 @@ extension CustFollowupComponents {
             }
             do {
 
-                let payload = try JSONDecoder().decode(APIResponseGeneric<GetCampaignsResponse>.self, from: data)
+                let payload = try decodeAPIResponse(APIResponseGeneric<GetCampaignsResponse>.self, from: data)
 
                 getCampaignsResponse = payload
 

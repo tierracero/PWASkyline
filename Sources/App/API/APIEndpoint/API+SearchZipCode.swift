@@ -31,7 +31,7 @@ extension APIComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<[PostalCodesMexicoItem]>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<[PostalCodesMexicoItem]>.self, from: data))
             }
             catch{
                 print("🔴 API_DECODING_ERROR")

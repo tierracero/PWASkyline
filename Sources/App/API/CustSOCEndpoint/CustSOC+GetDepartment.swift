@@ -29,7 +29,7 @@ extension CustSOCComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<CustSvcDeps>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<CustSvcDeps>.self, from: data)
                 callback(resp)
             }
             catch{

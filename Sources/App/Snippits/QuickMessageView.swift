@@ -100,7 +100,6 @@ class QuickMessageView: Div {
         super.buildUI()
         
         
-        self.class(.transparantBlackBackGround)
         height(100.percent)
         position(.absolute)
         width(100.percent)

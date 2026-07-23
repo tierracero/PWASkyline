@@ -32,7 +32,7 @@ extension CustComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<SeccionNameAvalabilityResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<SeccionNameAvalabilityResponse>.self, from: data)
                 callback(resp)
             }
             catch{

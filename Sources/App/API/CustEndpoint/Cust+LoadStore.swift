@@ -30,7 +30,7 @@ extension CustComponents {
             }
             
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<LoadStoreResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<LoadStoreResponse>.self, from: data))
             }
             catch{
                 print("🔴 API_DECODING_ERROR")

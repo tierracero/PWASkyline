@@ -136,7 +136,6 @@ extension ManagePOC {
         
         override func buildUI() {
             super.buildUI()
-            self.class(.transparantBlackBackGround)
             position(.absolute)
             height(100.percent)
             width(100.percent)
@@ -273,7 +272,7 @@ extension ManagePOC {
                 return
             }
             
-            self.appendChild(ConfirmView(
+            addToDom(ConfirmView(
                 type: .yesNo,
                 title: "Crear Tipo de Producto",
                 message: "Confirm creacion de:\n\"\(selectedBrand)\"") { isConfirmed, comment in

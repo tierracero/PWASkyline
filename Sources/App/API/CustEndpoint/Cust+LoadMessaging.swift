@@ -27,7 +27,7 @@ extension CustComponents {
             }
             
             do{
-                let resp = try JSONDecoder().decode([LoadMessaging].self, from: data)
+                let resp = try decodeAPIResponse([LoadMessaging].self, from: data)
                 callback(resp)
             }
             catch{

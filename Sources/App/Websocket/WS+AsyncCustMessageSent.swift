@@ -11,11 +11,11 @@ import TCFireSignal
 
 extension WS {
     
-    func asyncCustMessageSent(_ payload: String) -> API.wsV1.AsyncCustOrderLoadFolioNotes? {
+    func asyncCustMessageSent(_ payload: String) -> API.webSocketV1.AsyncCustOrderLoadFolioNotes? {
         
         if let data = payload.data(using: .utf8) {
             do {
-                return try JSONDecoder().decode(API.wsV1.AsyncCustOrderLoadFolioNotesNotification.self, from: data).payload
+                return try JSONDecoder().decode(API.webSocketV1.AsyncCustOrderLoadFolioNotesNotification.self, from: data).payload
             } catch {
                 
                 print(error)

@@ -245,12 +245,12 @@ class ManualAddressSearch: Div {
                         .align(.center)
                         .onClick {
 
-                            guard let latitude = Double(self.latitude) else {
+                            guard let latitude = Double(self.latitude.purgeSpaces) else {
                                 showError(.generalError, "Latitud invalida")
                                 return
                             }
 
-                            guard let longitude = Double(self.longitude) else {
+                            guard let longitude = Double(self.longitude.purgeSpaces) else {
                                 showError(.generalError, "Longitud invalida")
                                 return
                             }
@@ -318,7 +318,6 @@ class ManualAddressSearch: Div {
     override func buildUI() {
         super.buildUI()
         
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)

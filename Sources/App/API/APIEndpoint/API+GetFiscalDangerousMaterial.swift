@@ -27,7 +27,7 @@ extension APIComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<GetFiscalCodeResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<GetFiscalCodeResponse>.self, from: data)
                 callback(resp)
             }
             catch{

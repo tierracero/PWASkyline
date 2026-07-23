@@ -17,7 +17,8 @@ public class OrderCatchControler {
     
     @State var viewType: OrderViewMode
 
-    @State var macroViewType: MacroViewType
+    /// orderView, followUpView, rentalView, dateView, tripView
+    @State var macroViewType: MacroViewType = .orderView
 
     let ws = WS()
     
@@ -27,11 +28,11 @@ public class OrderCatchControler {
 
         self.viewType = OrderViewMode(rawValue: (WebApp.current.window.localStorage.string(forKey: "viewType") ?? "")) ?? .listView
 
-        self.macroViewType = MacroViewType(rawValue: (WebApp.current.window.localStorage.string(forKey: "macroViewType") ?? "")) ?? .orderView
+        let macroViewType = MacroViewType(rawValue: (WebApp.current.window.localStorage.string(forKey: "macroViewType") ?? "")) ?? .orderView
 
         self.custCatchAccountType = TCAccountType(rawValue: (WebApp.current.window.localStorage.string(forKey: "custCatchAccountType") ?? "") ) ?? .buisness
 
-        switch self.macroViewType {    
+        switch macroViewType {    
         case .followUpView:
             if !linkedProfile.contains(.bizFollowUp) {
                 if linkedProfile.contains(.bizODS) {
@@ -46,6 +47,8 @@ public class OrderCatchControler {
                 }
 
             }
+            case .tripView: 
+                self.macroViewType = .tripView
         }
 
         $viewType.listen {
@@ -65,7 +68,6 @@ public class OrderCatchControler {
         }
         
         WebApp.current.wsevent.listen {
-
 
             if $0.isEmpty { return }
             
@@ -111,6 +113,15 @@ public class OrderCatchControler {
     private var active: [CustOrderLoadFolios] = []
     
     private var pendingPickup: [CustOrderLoadFolios] = []
+
+    /// Presentation-only counters used by the Work dashboard summary strip.
+    @State var pendingCount = 0
+
+    @State var activeCount = 0
+
+    @State var attentionCount = 0
+
+    @State var finalizedCount = 0
     
     /// Orders that have ather status
     private var other: [CustOrderLoadFolios] = []
@@ -140,8 +151,8 @@ public class OrderCatchControler {
     lazy var listViewButton = Img()
         .src("/skyline/media/icon_list.png")
         .class(self.$viewType.map{$0 == .listView ?  .iconBlue : .iconWhite})
-        .marginLeft(18.px)
-        .height(28.px)
+        .marginBottom(3.px)
+        .height(24.px)
         .onClick { img, event in
             if self.viewType == .listView { return }
             self.viewType = .listView
@@ -152,8 +163,8 @@ public class OrderCatchControler {
     lazy var calendarViewButton = Img()
         .src("/skyline/media/icon_calendar.png")
         .class(self.$viewType.map{$0 == .calendarView ? .iconBlue : .iconWhite})
-        .marginLeft(18.px)
-        .height(28.px)
+        .marginBottom(3.px)
+        .height(24.px)
         .onClick { img, event in
             if self.viewType == .calendarView { return }
             self.viewType = .calendarView
@@ -164,8 +175,8 @@ public class OrderCatchControler {
     lazy var userViewButton = Img()
         .src("/skyline/media/icon_user.png")
         .class(self.$viewType.map{$0 == .userView ? .iconBlue : .iconWhite})
-        .marginLeft(18.px)
-        .height(28.px)
+        .marginBottom(3.px)
+        .height(24.px)
         .onClick { img, event in
             if self.viewType == .userView { return }
             self.viewType = .userView
@@ -177,8 +188,8 @@ public class OrderCatchControler {
         .src("/skyline/media/icon_route.png")
         .class(self.$viewType.map{$0 == .routeView ? .iconBlue : .iconWhite})
         .hidden(self.$custCatchAccountType.map{ $0 == .entrepreneur })
-        .marginLeft(18.px)
-        .height(28.px)
+        .marginBottom(3.px)
+        .height(24.px)
         .onClick { img, event in
             if self.viewType == .routeView { return }
             self.viewType = .routeView
@@ -260,8 +271,42 @@ public class OrderCatchControler {
 
     lazy var pendingSpareOrderView = Div()
 
+    lazy var selectStoreMenuBackgroung = Div()
+        .hidden(self.$selectStoreMenuIsHidden)
+        .id(.init("selectStoreMenuBackgroung"))
+        .position(.fixed)
+        .top(0.px)
+        .left(0.px)
+        .custom("width", "100vw")
+        .custom("height", "100vh")
+        .custom("background", "rgba(0, 7, 14, 0.77)")
+        .custom("backdrop-filter", "blur(4px)")
+        .custom("-webkit-backdrop-filter", "blur(4px)")
+        .zIndex(999999991)
+        .onClick { _, event in
+            self.selectStoreMenuIsHidden = true
+            event.stopPropagation()
+        }
+
+    lazy var loadOrderStatusBackgroung = Div()
+        .hidden(self.$loadOrderStatusTypeIsHidden)
+        .id(.init("loadOrderStatusBackgroung"))
+        .position(.fixed)
+        .top(0.px)
+        .left(0.px)
+        .custom("width", "100vw")
+        .custom("height", "100vh")
+        .custom("background", "rgba(0, 7, 14, 0.77)")
+        .custom("backdrop-filter", "blur(4px)")
+        .custom("-webkit-backdrop-filter", "blur(4px)")
+        .zIndex(999999991)
+        .onClick { _, event in
+            self.loadOrderStatusTypeIsHidden = true
+            event.stopPropagation()
+        }
+
     lazy var selectStoreMenuButton = Div{
-        
+
         Div{
             
             Div(self.$selectedStore.map{ $0?.name ?? "Todas las tienda" })
@@ -290,7 +335,10 @@ public class OrderCatchControler {
          }
         .width(207.px)
         .class(.uibtn)
+        .position(.relative)
+        .zIndex(2)
         .onClick { _, event in
+            self.loadOrderStatusTypeIsHidden = true
             self.selectStoreMenuIsHidden = !self.selectStoreMenuIsHidden
             event.stopPropagation()
         }
@@ -332,17 +380,19 @@ public class OrderCatchControler {
         .position(.absolute)
         .borderRadius(12.px)
         .padding(all: 3.px)
-        .margin(all: 3.px)
-        .marginTop(7.px)
+        .custom("top", "calc(100% + 6px)")
+        .right(0.px)
         .width(250.px)
-        .zIndex(1)
+        .zIndex(3)
         .onClick { _, event in
             event.stopPropagation()
         }
     }
+    .position(.relative)
+    .zIndex(self.$selectStoreMenuIsHidden.map { $0 ? 0 : 999999992 })
     
     lazy var loadOrderStatusButton = Div{
-        
+
         Div{
             
             Div{
@@ -375,6 +425,7 @@ public class OrderCatchControler {
              .float(.right)
              .width(18.px)
              .onClick { _, event in
+                 self.selectStoreMenuIsHidden = true
                  self.loadOrderStatusTypeIsHidden = !self.loadOrderStatusTypeIsHidden
                  event.stopPropagation()
              }
@@ -383,6 +434,8 @@ public class OrderCatchControler {
          }
         .width(207.px)
         .class(.uibtn)
+        .position(.relative)
+        .zIndex(2)
         .onClick { _, event in
             self.executeSearch()
             event.stopPropagation()
@@ -515,19 +568,22 @@ public class OrderCatchControler {
             Div().height(12.px)
             
         }
+        .id(.init("ViewOrderStatusMenu"))
         .hidden(self.$loadOrderStatusTypeIsHidden)
         .backgroundColor(.transparentBlack)
         .position(.absolute)
         .borderRadius(12.px)
         .padding(all: 3.px)
-        .margin(all: 3.px)
-        .marginTop(7.px)
+        .custom("top", "calc(100% + 6px)")
+        .right(0.px)
         .width(207.px)
-        .zIndex(1)
+        .zIndex(3)
         .onClick { _, event in
             event.stopPropagation()
         }
     }
+    .position(.relative)
+    .zIndex(self.$loadOrderStatusTypeIsHidden.map { $0 ? 0 : 999999992 })
 
     lazy var loadFollowUpsButton = Div{
         
@@ -1050,31 +1106,37 @@ public class OrderCatchControler {
             
     }
 
-    func asyncAddOrder(loadId: UUID , view: Div, rows: [CustOrderLoadFolios]) {
+    func asyncAddOrder(
+        loadId: UUID,
+        view: Div,
+        rows: [CustOrderLoadFolios],
+        index: Int = 0
+    ) {
 
-        if rows.isEmpty || loadId != loadingSessionId {
+        guard loadId == loadingSessionId, rows.indices.contains(index) else {
             return
         }
 
-        var rows = rows
+        Dispatch.asyncAfter(index == 0 ? 0.01 : 0.03) {
+            guard loadId == self.loadingSessionId,
+                  rows.indices.contains(index) else {
+                return
+            }
 
-        guard let row = rows.first else {
-            asyncAddOrder(loadId: loadId, view: view, rows: rows)
-            return
-        }
+            let item = self.orderRowView(rows[index])
 
-        rows.removeFirst()
+            item.filter(.opacity(0))
 
-        let item = orderRowView(row)
+            view.appendChild(item)
 
-        item.filter(.opacity(0))
+            item.fadeIn()
 
-        view.appendChild(item)
-
-        item.fadeIn()
-
-        Dispatch.asyncAfter(0.10) {
-            self.asyncAddOrder(loadId: loadId, view: view, rows: rows)
+            self.asyncAddOrder(
+                loadId: loadId,
+                view: view,
+                rows: rows,
+                index: index + 1
+            )
         }
 
     }
@@ -1082,6 +1144,11 @@ public class OrderCatchControler {
     func drawFollowupView( items: [CustFollowUp]) {
 
         macroViewType = .followUpView
+
+        pendingCount = 0
+        activeCount = items.count
+        attentionCount = 0
+        finalizedCount = 0
                 
         followupRowViewRefrence.forEach { id, view in
             view.remove()
@@ -1147,22 +1214,34 @@ public class OrderCatchControler {
         
         macroViewType = .orderView
 
-        followupRowViewRefrence.forEach { id, view in
-            view.remove()
+        let now = getNow()
+        let dueSoonLimit = now + 259_200
+        let requiresAttention: (CustOrderLoadFolios) -> Bool = { order in
+            guard let due = order.due else { return false }
+            return due >= now && due <= dueSoonLimit
+        }
+        let countRequiringAttention: ([CustOrderLoadFolios]) -> Int = { orders in
+            orders.reduce(into: 0) { count, order in
+                if requiresAttention(order) {
+                    count += 1
+                }
+            }
         }
 
-        followupRowViewRefrence.removeAll()
-
-        orderRowViewRefrence.forEach { id, view in
-            view.remove()
-        }
-
-        orderRowViewRefrence.removeAll()
+        pendingCount = pending.count
+        activeCount = active.count
+        attentionCount = countRequiringAttention(pending)
+            + countRequiringAttention(pendingSpare)
+            + countRequiringAttention(active)
+        finalizedCount = pendingPickup.count
 
         let thisLoadingSessionId : UUID = .init()
 
         loadingSessionId = thisLoadingSessionId
-        
+
+        // Clearing the two column roots already runs didRemoveFromDOM recursively.
+        // Removing every row first would schedule an animation and timer per row,
+        // only for the same subtree to be cleared immediately afterward.
         firstView.innerHTML = ""
         container.removeClass(.oneHalf)
         container.removeClass(.oneThirdOrderGrid)
@@ -1175,6 +1254,9 @@ public class OrderCatchControler {
         activeOrderView.innerHTML = ""
         finilizeOrderView.innerHTML = ""
         pendingSpareOrderView.innerHTML = ""
+
+        followupRowViewRefrence.removeAll(keepingCapacity: true)
+        orderRowViewRefrence.removeAll(keepingCapacity: true)
 
         let totalItems: Int = [
             pending.count,
@@ -1536,20 +1618,17 @@ public class OrderCatchControler {
             secondView.class([.oneHalf, .roundGrayBlackDark])
             
             getUsers(storeid: nil, onlyActive: false) { users in
+
+                guard self.loadingSessionId == thisLoadingSessionId,
+                      self.viewType == .userView else {
+                    return
+                }
                 
                 let userRefrence = Dictionary(uniqueKeysWithValues: users.map{ value in ( value.id, value) })
                 
-                let userByName = users.map{ $0.username }.sorted()
-                
-                var userIdsByUsernameSorted: [UUID] = []
-                
-                userByName.forEach { username in
-                    userRefrence.forEach { id, udata in
-                        if username == udata.username {
-                            userIdsByUsernameSorted.append(id)
-                        }
-                    }
-                }
+                let userIdsByUsernameSorted = users
+                    .sorted { $0.username < $1.username }
+                    .map { $0.id }
                 
                 /// View One
                 if !self.pending.isEmpty {
@@ -1840,6 +1919,8 @@ public class OrderCatchControler {
                         }
                     }
                     
+                    var destinationIndex = 0
+
                     userIdsByUsernameSorted.forEach { userId in
                         
                         var userName = "USER_ND"
@@ -1849,52 +1930,37 @@ public class OrderCatchControler {
                         }
                         
                         if orderCount > 0 {
-                            
-                            var cc = 0
-                            
+
                             if let orders = orderRefrence[userId] {
-                                
-                                if cc.isEven {
-                                    self.firstView.appendChild(
-                                        Div{
-                                            H2(orders.count.toString)
-                                                .marginLeft(7.px)
-                                                .float(.right)
-                                                .opacity(0.5)
-                                                .color(.gray)
-                                            
-                                            H2(userName)
-                                                .color(.white)
-                                                .float(.right)
-                                            
-                                            Div().clear(.both)
-                                        }.margin(all: 7.px)
-                                    )
-                                    orders.forEach { item in
-                                        self.firstView.appendChild(self.orderRowView(item))
-                                    }
-                                    
-                                }
-                                else {
-                                    self.secondView.appendChild(
-                                        Div{
-                                            H2(orders.count.toString)
-                                                .marginLeft(7.px)
-                                                .float(.right)
-                                                .opacity(0.5)
-                                                .color(.gray)
-                                            
-                                            H2(userName)
-                                                .color(.white)
-                                                .float(.right)
-                                            
-                                            Div().clear(.both)
-                                        }.margin(all: 7.px)
-                                    )
-                                    orders.forEach { item in
-                                        self.secondView.appendChild(self.orderRowView(item))
-                                    }
-                                }
+
+                                let destination = destinationIndex.isEven
+                                    ? self.firstView
+                                    : self.secondView
+
+                                destination.appendChild(
+                                    Div{
+                                        H2(orders.count.toString)
+                                            .marginLeft(7.px)
+                                            .float(.right)
+                                            .opacity(0.5)
+                                            .color(.gray)
+
+                                        H2(userName)
+                                            .color(.white)
+                                            .float(.right)
+
+                                        Div().clear(.both)
+                                    }.margin(all: 7.px)
+                                )
+
+                                let userInnerView = Div()
+                                destination.appendChild(userInnerView)
+                                self.asyncAddOrder(
+                                    loadId: thisLoadingSessionId,
+                                    view: userInnerView,
+                                    rows: orders
+                                )
+                                destinationIndex += 1
                             }
                         }
                         else {
@@ -1914,9 +1980,14 @@ public class OrderCatchControler {
                                         Div().clear(.both)
                                     }.margin(all: 7.px)
                                 )
-                                orders.forEach { item in
-                                    self.secondView.appendChild(self.orderRowView(item))
-                                }
+
+                                let userInnerView = Div()
+                                self.secondView.appendChild(userInnerView)
+                                self.asyncAddOrder(
+                                    loadId: thisLoadingSessionId,
+                                    view: userInnerView,
+                                    rows: orders
+                                )
                             }
                         }
                     }
@@ -2027,6 +2098,12 @@ public class OrderCatchControler {
                 }
             
         })
+
+        view.borderLeft(
+            width: .thick,
+            style: .solid,
+            color: data.status.color
+        )
         
         orderRowViewRefrence[data.id] = view
         
@@ -2317,24 +2394,32 @@ public class OrderCatchControler {
             let transferOrder: CustTranferManager? = transferOrderCatch[orderid]
             let route: CustOrderRoute? = custOrderRouteCatch[orderid]
             
-            callback(
-                account,
-                order,
-                notes,
-                payments,
-                charges,
-                pocs,
-                files,
-                contracts,
-                equipments,
-                rentals,
-                transferOrder,
-                orderHighPriorityNote,
-                accountHighPriorityNote,
-                tasks,
-                route,
-                true
-            )
+            loadingView(show: true)
+
+            // A cache hit used to build the complete order view inside the click
+            // event. Give the browser a frame to paint the loading state first.
+            Dispatch.asyncAfter(0.05) {
+                loadingView(show: false)
+
+                callback(
+                    account,
+                    order,
+                    notes,
+                    payments,
+                    charges,
+                    pocs,
+                    files,
+                    contracts,
+                    equipments,
+                    rentals,
+                    transferOrder,
+                    orderHighPriorityNote,
+                    accountHighPriorityNote,
+                    tasks,
+                    route,
+                    true
+                )
+            }
             
         }
         else{
@@ -2738,7 +2823,7 @@ public class OrderCatchControler {
     
     func customerOrderStatusUpdate(orderId: UUID, status: CustFolioStatus ) {
         
-        let payload = API.wsV1.CustomerOrderStatusUpdateNotification(
+        let payload = API.webSocketV1.CustomerOrderStatusUpdateNotification(
             event: "customerOrderStatusUpdate",
             payload: .init(
                 connid: custCatchChatConnID,
@@ -2801,6 +2886,7 @@ public class OrderCatchControler {
 
 extension OrderCatchControler {
     
+    /// orderView, followUpView, rentalView, dateView, tripView
     enum MacroViewType: String {
 
         case orderView
@@ -2808,6 +2894,10 @@ extension OrderCatchControler {
         case followUpView
 
         //case rentalView
+
+        //case dateView
+
+        case tripView
 
     }
     

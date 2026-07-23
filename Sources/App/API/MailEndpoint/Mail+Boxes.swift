@@ -81,7 +81,7 @@ extension MailComponents {
             
             if let data = xhr.responseText?.data(using: .utf8) {
                 do {
-                    let resp = try JSONDecoder().decode(MailAPIResponset<[MailBox]>.self, from: data)
+                    let resp = try decodeAPIResponse(MailAPIResponset<[MailBox]>.self, from: data)
                     callback(resp)
                 } catch  {
                     print("📩  📩  📩  📩  📩  📩  📩  \(#function)")

@@ -37,6 +37,8 @@ class AccountCreditView: PageController {
     @State var customerType: CustCreditCustomerType = .personal
     
     @State var creditFolio: String? = nil
+
+    @State var status: CustCreditStatus? = nil
     
     /// `--  Credit Data  --`
     
@@ -677,7 +679,7 @@ class AccountCreditView: PageController {
             /// Información Financiera / Informacion de Trabajo
             Div{
                 Div{
-                    H2(self.$customerType.map{ ($0 == .empresarial) ? "Información Financiera" : "Informacion de Trabajo"} )
+                    H2(self.$customerType.map{ ($0 == .empresarial) ? "Información Financiera" : "Informacion Personal / Trabajo"} )
                         .marginBottom(7.px)
                         .color(.lightBlueText)
                     
@@ -1246,7 +1248,7 @@ class AccountCreditView: PageController {
             */
             /// CustCreditRefrenceType
             /// spouce, offspring, parent, siblin, family, freind, workRefrence
-            self.refrenceOneRelationTypeListener = payload.refrenceOneRelationType.rawValue
+            self.refrenceOneRelationTypeListener = payload.refrenceOneRelationType?.rawValue ?? ""
             
             self.refrenceOneNames = payload.refrenceOneNames
             
@@ -1254,7 +1256,7 @@ class AccountCreditView: PageController {
             
             /// TelephoneType
             /// mobile, landLine
-            self.refrenceOneTelephoneTypeListener = payload.refrenceOneTelephoneType.rawValue
+            self.refrenceOneTelephoneTypeListener = payload.refrenceOneTelephoneType?.rawValue ?? ""
             
             self.refrenceOneTelephone = payload.refrenceOneTelephone
             
@@ -1267,7 +1269,7 @@ class AccountCreditView: PageController {
             */
             /// CustCreditRefrenceType
             /// spouce, offspring, parent, siblin, family, freind, workRefrence
-            self.refrenceTwoRelationTypeListener = payload.refrenceTwoRelationType.rawValue
+            self.refrenceTwoRelationTypeListener = payload.refrenceTwoRelationType?.rawValue ?? ""
             
             self.refrenceTwoNames = payload.refrenceTwoNames
             
@@ -1275,7 +1277,7 @@ class AccountCreditView: PageController {
             
             /// TelephoneType
             /// mobile, landLine
-            self.refrenceTwoTelephoneTypeListener = payload.refrenceTwoTelephoneType.rawValue
+            self.refrenceTwoTelephoneTypeListener = payload.refrenceTwoTelephoneType?.rawValue ?? ""
             
             self.refrenceTwoTelephone = payload.refrenceTwoTelephone
             
@@ -1288,7 +1290,7 @@ class AccountCreditView: PageController {
             */
             /// CustCreditRefrenceType
             /// spouce, offspring, parent, siblin, family, freind, workRefrence
-            self.refrenceThreeRelationTypeListener = payload.refrenceThreeRelationType.rawValue
+            self.refrenceThreeRelationTypeListener = payload.refrenceThreeRelationType?.rawValue ?? ""
             
             self.refrenceThreeNames = payload.refrenceThreeNames
             
@@ -1296,7 +1298,7 @@ class AccountCreditView: PageController {
             
             /// TelephoneType
             /// mobile, landLine
-            self.refrenceThreeTelephoneTypeListener = payload.refrenceThreeTelephoneType.rawValue
+            self.refrenceThreeTelephoneTypeListener = payload.refrenceThreeTelephoneType?.rawValue ?? ""
             
             self.refrenceThreeTelephone = payload.refrenceThreeTelephone
             

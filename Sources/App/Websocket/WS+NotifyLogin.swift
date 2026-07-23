@@ -10,14 +10,14 @@ import TCFundamentals
 import TCFireSignal
 
 extension WS {
-    func notifyLogin(_ payload: String) -> API.wsV1.NotifyLogin? {
+    func notifyLogin(_ payload: String) -> API.webSocketV1.NotifyLogin? {
         
         print("⭐️  notifyLogin  ⭐️")
         print(payload)
         
         if let data = payload.data(using: .utf8) {
             do {
-                return try JSONDecoder().decode(API.wsV1.NotifyLoginNotification.self, from: data).payload
+                return try JSONDecoder().decode(API.webSocketV1.NotifyLoginNotification.self, from: data).payload
             } catch {
                 print(error)
                 return nil

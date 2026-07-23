@@ -35,7 +35,7 @@ extension CustPOCComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<TranferReportResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<TranferReportResponse>.self, from: data))
             }
             catch{
                 print("🔴  🔴  🔴  🔴  🔴  🔴  🔴  🔴  🔴  🔴  🔴  🔴  🔴  🔴  🔴  🔴  ")

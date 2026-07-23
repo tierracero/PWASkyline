@@ -26,7 +26,7 @@ extension AuthComponents {
                 }
             
                 do{
-                    let resp = try JSONDecoder().decode(
+                    let resp = try decodeAPIResponse(
                         APIResponseGeneric<GetChatTokenResponse>.self, from: data)
                     
                     callback(resp)

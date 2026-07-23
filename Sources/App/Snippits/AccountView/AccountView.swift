@@ -1858,7 +1858,7 @@ class AccountView: PageController {
         
     }
     
-    func getProfilePicture(){
+    func getProfilePicture() {
         
         let view = CameraView(type: .picture) { picture in
             
@@ -1919,64 +1919,57 @@ class AccountView: PageController {
     }
     
     func activateCredit(){
-        
-        if account.type == .personal {
-            showError(.generalError, "Actualmente no se soporta Creditos Personales")
-            return
+
+        if self.type.wrappedValue == .personal {
+            addToDom(ActvatePersonalCreditConfirmationView(
+                firstName: self.firstName,
+                lastName: self.lastName,
+                mobile: self.mobile,
+                IDTypeIsValid: self.IDType != nil,
+                IDNum: self.IDNum,
+                curp: self.curp
+            ) {
+                self.activatePersonalCreditFaceOne()
+            })
         }
-        
-        addToDom(ConfirmationView(
-            type: .acceptDeny,
-            title: "Alta de Credito",
-            message: "¿Desea activar ",
-            callback: { isConfirmed, comment in
+        else {
+            addToDom(ActvateBuissnessCreditConfirmationView(
+                businessName: self.businessName,
+                fiscalRazon: self.fiscalRazon,
+                fiscalRfc: self.fiscalRfc,
+                fiscalPOCFirstName: self.fiscalPOCFirstName,
+                fiscalPOCLastName: self.fiscalPOCLastName,
+                fiscalPOCMobile: self.fiscalPOCMobile
+            ) {
                 self.activateBuissnessCreditFaceOne()
-            }
-        ))
+            })
+        }
         
     }
     
-    func activateBuissnessCreditFaceOne(){
-        
-        if self.businessName.isEmpty {
-            showError(.generalError, .requierdValid("Nombre del Negocio"))
-            return
-        }
-        
-        if self.fiscalRazon.isEmpty {
-            showError(.generalError, .requierdValid("Razon Social"))
-            return
-        }
-        
-        if self.fiscalRfc.isEmpty {
-            showError(.generalError, .requierdValid("RFC Fiscal"))
-            return
-        }
-        
-        if self.fiscalPOCFirstName.isEmpty {
-            showError(.generalError, .requierdValid("Primer Nombre de contacto fiscal"))
-            return
-        }
-        
-        if self.fiscalPOCLastName.isEmpty {
-            showError(.generalError, .requierdValid("Primer Apellido de contacto fiscal"))
-            return
-        }
-        
-        if self.fiscalPOCMobile.isEmpty {
-            showError(.generalError, .requierdValid("Movil de contacto fiscal"))
-            return
-        }
+    func activatePersonalCreditFaceOne(){
         
         addToDom(AccountCreditActivationView(
             accountId: self.account.id,
             accountType: self.type.wrappedValue,
             creditId: self.cracct
         ){ creditId in
+            self.cracct = creditId
             self.loadCreditView(creditId)
         })
         
+    }
+    
+    func activateBuissnessCreditFaceOne(){
         
+        addToDom(AccountCreditActivationView(
+            accountId: self.account.id,
+            accountType: self.type.wrappedValue,
+            creditId: self.cracct
+        ){ creditId in
+            self.cracct = creditId
+            self.loadCreditView(creditId)
+        })
         
     }
     
@@ -2059,4 +2052,3 @@ extension AccountView {
         case credit
     }
 }
-

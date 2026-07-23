@@ -32,7 +32,7 @@ extension CustComponents {
             }
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<CustStoreLinesAPI>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<CustStoreLinesAPI>.self, from: data)
                 
                 callback(resp)
                 

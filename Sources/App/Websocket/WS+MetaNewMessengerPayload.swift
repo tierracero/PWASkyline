@@ -11,11 +11,11 @@ import TCFireSignal
 
 extension WS {
     
-    func metaNewMessengerPayload(_ payload: String) -> API.wsV1.MetaNewMessengerPayload? {
+    func metaNewMessengerPayload(_ payload: String) -> API.webSocketV1.MetaNewMessengerPayload? {
         
         if let data = payload.data(using: .utf8) {
             do {
-                return try JSONDecoder().decode(API.wsV1.MetaNewMessengerPayloadNotification.self, from: data).payload
+                return try JSONDecoder().decode(API.webSocketV1.MetaNewMessengerPayloadNotification.self, from: data).payload
             }
             catch {
                 

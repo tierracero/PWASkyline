@@ -33,7 +33,7 @@ extension CustPOCComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<GetMermsResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<GetMermsResponse>.self, from: data))
             }
             catch{
                 print("🔴 decoding error")

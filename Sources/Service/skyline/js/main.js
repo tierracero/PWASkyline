@@ -1917,51 +1917,6 @@ function hCaptchaTokenFailed(object){
     document.dispatchEvent(event);
 }
 
-function initmap( url, lat, lon, storeName){
-    
-    marker = null
-    
-    $(`#mapkitjs`).height(250)
-    
-    $(`#mapkitjs`).html('')
-    
-    map = new mapkit.Map("mapkitjs");
-    
-    mapkit.init({
-        authorizationCallback: function(done) {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", `https://intratc.co/api/jwt/${url}`);
-            xhr.addEventListener("load", function() {
-                
-                console.log("🗾  🗾  🗾  🗾  🗾  🗾  🗾  🗾  🗾  ")
-                console.log(`https://intratc.co/api/jwt/${url}`)
-                console.log(this.responseText)
-                
-                done(this.responseText);
-            });
-            xhr.send();
-        },
-        language: "es"
-    });
-
-    var MarkerAnnotation = mapkit.MarkerAnnotation
-    
-    var annotations = new mapkit.CoordinateRegion(
-        new mapkit.Coordinate(parseFloat(lat), parseFloat(lon)),
-        new mapkit.CoordinateSpan(0.020528323102041, 0.043467582244898)
-    );
-
-    map.region = annotations;
-
-    marker = new mapkit.MarkerAnnotation(map.center, {
-        draggable: false,
-        selected: false,
-        title: storeName
-    });
-
-    map.addAnnotation(marker);
-}
-
 
 function initmap( url, lat, lon, storeName){
     

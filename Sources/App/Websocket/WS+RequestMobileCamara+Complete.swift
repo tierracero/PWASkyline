@@ -9,11 +9,11 @@ import TCFundamentals
 import TCFireSignal
 
 extension WS {
-    func requestMobileCamaraComplete(_ payload: String) -> API.wsV1.RequestMobileCamaraCompleteResponse? {
+    func requestMobileCamaraComplete(_ payload: String) -> API.webSocketV1.RequestMobileCamaraCompleteResponse? {
         
         if let data = payload.data(using: .utf8) {
             do {
-                return try JSONDecoder().decode(API.wsV1.WebSocketPayload<API.wsV1.RequestMobileCamaraCompleteResponse>.self, from: data).payload
+                return try JSONDecoder().decode(API.webSocketV1.WebSocketPayload<API.webSocketV1.RequestMobileCamaraCompleteResponse>.self, from: data).payload
             } catch {
                 print("🔴  requestMobileCamaraComplete")
                 print(error)

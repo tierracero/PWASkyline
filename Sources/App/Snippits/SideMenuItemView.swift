@@ -37,34 +37,40 @@ class SideMenuItemView: Div {
     }
     
     @DOM override var body: DOM.Content {
-        Div{
+        VBox(.interactive) {
             Img()
                 .src(self.icon)
-                .marginRight(7.px)
-                .height(40.px)
-        }
-        .float(.left)
-        Div{
-            Div{
-                
-                Strong(self.title)
-                    .fontSize(24.px)
-                    
+                .width(46.px)
+                .height(46.px)
+                .custom("object-fit", "contain")
+
+            Div {
+                USubTitle(self.title)
+                    .class(.oneLineText)
+
+                UMinorTitle(self.subTitle)
+                    .class(.oneLineText)
+                    .marginTop(4.px)
             }
-            .class(.oneLineText)
-            Div(self.subTitle)
-                .class(.oneLineText)
-                .fontSize(18.px)
+            .custom("min-width", "0")
         }
-        .float(.left)
-        .custom("width", "calc(100% - 48px)")
-        Div().class(.clear)
+        .display(.grid)
+        .custom("grid-template-columns", "46px minmax(0, 1fr)")
+        .custom("align-items", "center")
+        .custom("gap", "12px")
+        .attribute("aria-label", self.title)
     }
     
     override func buildUI() {
-        margin(all: 7.px)
-        cursor(.pointer)
+        super.buildUI()
+
+        marginBottom(10.px)
         onClick {
+            self.callback(self.caller)
+        }
+        onKeyUp { _, event in
+            guard event.code == "Enter" || event.code == "Space" else { return }
+            event.preventDefault()
             self.callback(self.caller)
         }
     }

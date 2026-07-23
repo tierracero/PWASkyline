@@ -27,7 +27,7 @@ extension CustComponents {
             }
             
             do {
-                callback(try JSONDecoder().decode(APIResponseGeneric<DailyCutSelectUserResponse>.self, from: payload))
+                callback(try decodeAPIResponse(APIResponseGeneric<DailyCutSelectUserResponse>.self, from: payload))
             }
             catch{
                 print("🔴 API_DECODING_ERROR")

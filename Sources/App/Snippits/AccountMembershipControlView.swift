@@ -600,7 +600,6 @@ class AccountMembershipControlView: Div {
     override func buildUI() {
         super.buildUI()
         
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)
@@ -782,7 +781,7 @@ class AccountMembershipControlView: Div {
         
         /// let selectedDateStamp = "\(date.year)/\(date.month)/\(date.day)"
         
-        self.appendChild(
+        addToDom(
             SelectCalendarDate(
                 type: nil,
                 selectedDateStamp: selectedDateStamp,

@@ -28,7 +28,7 @@ extension CustComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode([CustDocumentationRuleManagerQuick].self, from: data)
+                let resp = try decodeAPIResponse([CustDocumentationRuleManagerQuick].self, from: data)
                 callback(resp)
             }
             catch{

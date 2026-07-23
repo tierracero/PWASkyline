@@ -23,7 +23,7 @@ extension PapaContadorComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<[FIAccounts]>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<[FIAccounts]>.self, from: data)
                 callback(resp)
             }
             catch{

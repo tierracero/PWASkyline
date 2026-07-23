@@ -15,8 +15,8 @@ public struct SkylineWeb {
 	public private(set) var version: VersionControl = .init(
         mode: .beta,
         major: 0,
-        minor: 22,
-        patch: 26
+        minor: 24,
+        patch: 2
     )
 	
 	public init() {}
@@ -256,8 +256,8 @@ open class _SkyLine {
 	public private(set) var version: VersionControl = .init(
         mode: .beta,
         major: 0,
-        minor: 22,
-        patch: 26
+        minor: 24,
+        patch: 2
     )
 	
 	public lazy var loadingView = Div {

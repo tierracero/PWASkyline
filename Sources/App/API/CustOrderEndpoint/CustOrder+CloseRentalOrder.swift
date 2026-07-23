@@ -99,7 +99,7 @@ extension CustOrderComponents {
 			}
 			
 			do{
-				let resp = try JSONDecoder().decode(ApiResponse.self, from: data)
+				let resp = try decodeAPIResponse(ApiResponse.self, from: data)
 				callback(resp)
 			}
 			catch{

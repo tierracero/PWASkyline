@@ -157,7 +157,7 @@ class OrderRentalView: Div {
                                     }
                                 }
                                 
-                                self.appendChild(
+                                addToDom(
                                     ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: PREPARADO", callback: { confirmed, _ in
                                     if confirmed {
                                         loadingView(show: true)
@@ -202,7 +202,7 @@ class OrderRentalView: Div {
                             else{
                                 /// Validad if user has permition to remove isReady flag
                                 if custCatchHerk >= configStoreProcessing.restrictOrderClosing {
-                                    self.appendChild(ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: NO preparado", callback: { confirmed, _ in
+                                    addToDom(ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: NO preparado", callback: { confirmed, _ in
                                         if confirmed {
                                             loadingView(show: true)
                                             API.custOrderV1.rentalReadyStatus(accountid: self.orderView.order.custAcct, orderid: self.orderView.order.id, orderFolio: self.orderView.order.folio, rentalid: self.rental.id, ecoNumber: self.rental.ecoNumber, isReady: false) { resp in
@@ -298,7 +298,7 @@ class OrderRentalView: Div {
                                 }
                                 else{
                                     
-                                    self.appendChild(ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: ENTREGADO", callback: { confirmed, _ in
+                                    addToDom(ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: ENTREGADO", callback: { confirmed, _ in
                                         if confirmed {
                                             loadingView(show: true)
                                             API.custOrderV1.rentalPickedStatus(accountid: self.orderView.order.custAcct, orderid: self.orderView.order.id, orderFolio: self.orderView.order.folio, rentalid: self.rental.id, ecoNumber: self.rental.ecoNumber, pickedUp: false) { resp in
@@ -343,7 +343,7 @@ class OrderRentalView: Div {
                             else{
                                 /// Validad if user has permition to remove isReady flag
                                 if custCatchHerk >= configStoreProcessing.restrictOrderClosing {
-                                    self.appendChild(ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: NO entregado", callback: { confirmed, _ in
+                                    addToDom(ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: NO entregado", callback: { confirmed, _ in
                                         if confirmed {
                                             loadingView(show: true)
                                             API.custOrderV1.rentalPickedStatus(accountid: self.orderView.order.custAcct, orderid: self.orderView.order.id, orderFolio: self.orderView.order.folio, rentalid: self.rental.id, ecoNumber: self.rental.ecoNumber, pickedUp: false) { resp in

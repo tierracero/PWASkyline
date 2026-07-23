@@ -20,7 +20,7 @@ extension WSComponents {
             version,
             "getChatRoom",
             
-            API.wsV1.GetChatRoomRequest(
+            API.webSocketV1.GetChatRoomRequest(
                 roomid: roomid
             )
         ) { payload in
@@ -30,7 +30,7 @@ extension WSComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<CustChatRoomProfile>.self, from: payload)
+                let resp = try decodeAPIResponse(APIResponseGeneric<CustChatRoomProfile>.self, from: payload)
                 callback(resp)
             }
             catch{

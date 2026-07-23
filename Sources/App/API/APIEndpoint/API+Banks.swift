@@ -36,7 +36,7 @@ extension APIComponents {
 				return
 			}
 			do{
-				let resp = try JSONDecoder().decode([BanksItem].self, from: data)
+				let resp = try decodeAPIResponse([BanksItem].self, from: data)
                 
                 banks = resp
                 

@@ -2566,7 +2566,6 @@ class ManagePOC: Div {
         
         super.buildUI()
         
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)
@@ -4265,7 +4264,7 @@ class ManagePOC: Div {
             return
         }
         
-        self.appendChild(ConfirmView(
+        addToDom(ConfirmView(
             type: .yesNo,
             title: "Crear Marca",
             message: "Confirm creacion de:\n\"\(selectedBrand.capitalizingFirstLetters(true))\"") { isConfirmed, comment in

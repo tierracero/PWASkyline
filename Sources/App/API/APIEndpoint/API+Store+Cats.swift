@@ -30,7 +30,7 @@ extension APIComponents {
             }
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<StoreCatsResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<StoreCatsResponse>.self, from: data)
                 callback(resp)
             }
             catch{

@@ -38,7 +38,7 @@ extension CustComponents {
             
             do{
                 
-                let resp = try JSONDecoder().decode(APIResponseGeneric<[CustStoreDepsRental]>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<[CustStoreDepsRental]>.self, from: data)
                 
                 guard let deps = resp.data else {
                     callback(nil)

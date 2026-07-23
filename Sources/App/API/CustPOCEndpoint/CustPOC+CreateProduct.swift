@@ -151,7 +151,7 @@ extension CustPOCComponents {
             }
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<CreateProductResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<CreateProductResponse>.self, from: data)
                 callback(resp)
             }
             catch{

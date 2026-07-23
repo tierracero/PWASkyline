@@ -13,7 +13,7 @@ extension WS {
     func notifyAddMercadoLibreProfile(_ payload: String) -> MercadoLibreProfile? {
         if let data = payload.data(using: .utf8) {
             do {
-                return try JSONDecoder().decode(API.wsV1.AddMercadoLibreProfileNotification.self, from: data).payload
+                return try JSONDecoder().decode(API.webSocketV1.AddMercadoLibreProfileNotification.self, from: data).payload
             } catch {
                 print(error)
                 return nil

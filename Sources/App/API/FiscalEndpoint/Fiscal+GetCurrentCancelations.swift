@@ -28,7 +28,7 @@ extension FiscalComponents {
             }
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<[CustFiscalCancelationManager]>.self, from: payload)
+                let resp = try decodeAPIResponse(APIResponseGeneric<[CustFiscalCancelationManager]>.self, from: payload)
                 callback(resp)
             }
             catch{

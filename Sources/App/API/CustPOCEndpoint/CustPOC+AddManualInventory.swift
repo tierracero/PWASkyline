@@ -50,7 +50,7 @@ extension CustPOCComponents {
             }
             
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<AddManualInventoryResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<AddManualInventoryResponse>.self, from: data))
             }
             catch{
                 print("⭕️ load \(#function)")

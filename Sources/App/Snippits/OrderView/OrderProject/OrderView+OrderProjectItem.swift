@@ -228,7 +228,6 @@ extension OrderView {
         
         override func buildUI() {
             super.buildUI()
-            self.class(.transparantBlackBackGround)
             height(100.percent)
             width(100.percent)
             position(.fixed)

@@ -88,7 +88,7 @@ func searchCharge(
         
         if let data = xhr.responseText?.data(using: .utf8) {
             do {
-                let resp = try JSONDecoder().decode([SearchChargeResponse].self, from: data)
+                let resp = try decodeAPIResponse([SearchChargeResponse].self, from: data)
                 
                 callback(term,resp)
                 

@@ -10,11 +10,11 @@ import TCFireSignal
 
 extension WS {
     
-    func requestMobileCamaraProgress(_ payload: String) -> API.wsV1.RequestMobileCamaraProgressResponse? {
+    func requestMobileCamaraProgress(_ payload: String) -> API.webSocketV1.RequestMobileCamaraProgressResponse? {
         
         if let data = payload.data(using: .utf8) {
             do {
-                return try JSONDecoder().decode(API.wsV1.WebSocketPayload<API.wsV1.RequestMobileCamaraProgressResponse>.self, from: data).payload
+                return try JSONDecoder().decode(API.webSocketV1.WebSocketPayload<API.webSocketV1.RequestMobileCamaraProgressResponse>.self, from: data).payload
             } catch {
                 print(error)
                 return nil

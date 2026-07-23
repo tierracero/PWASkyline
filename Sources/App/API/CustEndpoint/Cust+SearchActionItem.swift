@@ -78,7 +78,7 @@ extension CustComponents {
             
             if let data = xhr.responseText?.data(using: .utf8) {
                 do {
-                    let resp = try JSONDecoder().decode([CustSaleActionQuick].self, from: data)
+                    let resp = try decodeAPIResponse([CustSaleActionQuick].self, from: data)
                     
                     callback(term,resp)
                     

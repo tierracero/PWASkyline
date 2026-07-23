@@ -27,7 +27,7 @@ extension WSComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<CreateCustChatRoomResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<CreateCustChatRoomResponse>.self, from: data)
                 callback(resp)
             }
             catch{

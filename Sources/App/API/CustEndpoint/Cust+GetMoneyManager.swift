@@ -31,7 +31,7 @@ extension CustComponents {
             }
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<GetMoneyManagerResponse>.self, from: payload)
+                let resp = try decodeAPIResponse(APIResponseGeneric<GetMoneyManagerResponse>.self, from: payload)
                 
                 callback(resp)
                 

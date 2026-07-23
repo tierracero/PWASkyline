@@ -31,10 +31,10 @@ class SearchCustomerView: Div {
     @State var term = ""
     
     lazy var seachCustomerField = InputText(self.$term)
-        .placeholder("Ingrese Telefono")
-        .width(70.percent)
-        .height(52.px)
-        .fontSize(36.px)
+        .placeholder("Ingrese teléfono")
+        .width(100.percent)
+        .height(48.px)
+        .fontSize(18.px)
         .class(.textFiledLight)
         .onKeyUp { input, event in
             if event.code == "Enter" || event.code ==  "NumpadEnter" {
@@ -44,69 +44,37 @@ class SearchCustomerView: Div {
     
     
     @DOM override var body: DOM.Content {
-        Div{
-            
-            Img()
-                .closeButton(.subView)
-                .onClick{
-                    self.remove()
-                }
-            
-            H2("Buscar Cliente")
-                .color(.lightBlueText)
-            
-            Div()
-                .class(.clear)
-                .marginTop(3.px)
-            
-            Span("Ingese telefono, nombre empresa o nombre y apellido.")
-            
-            Div{
-                
-                Div()
-                    .class(.clear)
-                    .marginTop(12.px)
-                
-                self.seachCustomerField
-                
-                Div()
-                    .class(.clear)
-                    .marginTop(12.px)
-                
-                Div{
-                    Img()
-                        .src("/skyline/media/zoom.png")
-                        .height(24.px)
-                        .paddingRight(7.px)
-                    
-                    Span("Buscar Cliente")
-                }
-                .width(70.percent)
-                .fontSize(36.px)
-                .align(.center)
-                .class(.smallButtonBox)
-                .onClick(self.searchCustomer)
-                
-                Div()
-                    .class(.clear)
-                    .marginTop(12.px)
+        
+        VPopUp(.fitContent(w: 560)) {
+
+            VTitle("Buscar Cliente") {
+            } onClose: {
+                self.remove()
             }
-            .align(.center)
-            
+
+            VBodyGrid {
+                VGrid(.full) {
+                    VBox(.raised) {
+                        UMinorTitle("Ingrese teléfono, nombre de empresa, o nombre y apellido.")
+                            .custom("line-height", "1.5")
+
+                        UField("Teléfono, empresa o nombre", required: false) {
+                            self.seachCustomerField
+                        }
+                        .marginTop(14.px)
+
+                        ULargeButton("Buscar Cliente")
+                            .width(100.percent)
+                            .marginTop(16.px)
+                            .onClick(self.searchCustomer)
+                    }
+                }
+            }
         }
-        .custom("left", "calc(50% - 274px)")
-        .custom("top", "calc(50% - 134px)")
-        .borderRadius(all: 24.px)
-        .backgroundColor(.white)
-        .position(.absolute)
-        .padding(all: 12.px)
-        .height(220.px)
-        .width(500.px)
     }
     
     override func buildUI() {
         
-        self.class(.transparantBlackBackGround)
         width(100.percent)
         height(100.percent)
         top(0.px)
@@ -155,4 +123,3 @@ class SearchCustomerView: Div {
         $term.removeAllListeners()
     }
 }
-

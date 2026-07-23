@@ -73,7 +73,6 @@ class AddRentalSelectProduct: Div {
         top(0.px)
         left(0.px)
         position(.absolute)
-        self.class(.transparantBlackBackGround)
     
         print("🟡  curr id ->")
         print(self.currentUsedIDs)

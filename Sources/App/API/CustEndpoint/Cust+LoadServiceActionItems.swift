@@ -31,7 +31,7 @@ extension CustComponents {
             }
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<LoadServiceSaleActionItemsResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<LoadServiceSaleActionItemsResponse>.self, from: data)
                 callback(resp)
             }
             catch{

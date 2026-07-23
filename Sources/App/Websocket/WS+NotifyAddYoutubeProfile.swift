@@ -17,7 +17,7 @@ extension WS {
         
         if let data = payload.data(using: .utf8) {
             do {
-                return try JSONDecoder().decode(API.wsV1.AddYoutubeProfileNotification.self, from: data).payload
+                return try JSONDecoder().decode(API.webSocketV1.AddYoutubeProfileNotification.self, from: data).payload
             } catch {
                 print(error)
                 return nil

@@ -27,7 +27,7 @@ extension CustComponents {
             }
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<API.custAPIV1.GetYoutubeChannelsResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<API.custAPIV1.GetYoutubeChannelsResponse>.self, from: data)
                 callback(resp)
             }
             catch{

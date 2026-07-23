@@ -1,7 +1,88 @@
+<!-- WebSources/main.html -->
 <!DOCTYPE html>
 <html managedBy="webber" lang="es-MX" style="background-color: #1D2026;">
     <head>
         <title managedBy="webber">&lrm;</title>
+
+        <script>
+            window.tcInitialLoaderIsActive = true;
+            window.tcPendingInitialLoadingText = "Cargando...";
+
+            function reportInitialAsset(resource) {
+                if (!window.tcInitialLoaderIsActive) {
+                    return;
+                }
+
+                const resourceType = {
+                    style: "estilos",
+                    script: "JavaScript",
+                    image: "imagen"
+                }[resource.getAttribute("as")] || "recurso";
+                const resourceURL = new URL(resource.href, window.location.href);
+                const resourceName = decodeURIComponent(resourceURL.pathname.split("/").pop());
+                const loadingText = `Cargando ${resourceType} · ${resourceName}...`;
+                const loadingLabel = document.getElementById("initial-loading-label");
+
+                window.tcPendingInitialLoadingText = loadingText;
+                if (loadingLabel) {
+                    loadingLabel.innerText = loadingText;
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                const loadingLabel = document.getElementById("initial-loading-label");
+                if (loadingLabel && window.tcInitialLoaderIsActive) {
+                    loadingLabel.innerText = window.tcPendingInitialLoadingText;
+                }
+            });
+        </script>
+
+        <!--
+            Warm the login scene while the WebAssembly application is loading.
+            These hints only download/cache resources; scripts still execute from
+            their existing Swift view lifecycle.
+        -->
+        <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+        <link rel="preload" href="/skyline/css/login.css" as="style" onload="reportInitialAsset(this)">
+        <link rel="preload" href="/skyline/js/login.js" as="script" onload="reportInitialAsset(this)">
+        <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" as="script" onload="reportInitialAsset(this)">
+        <link rel="preload" href="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.waves.min.js" as="script" onload="reportInitialAsset(this)">
+        <link rel="preload" href="/skyline/media/logoTierraCeroLongWhite.svg" as="image" type="image/svg+xml" onload="reportInitialAsset(this)">
+        <link rel="preload" href="/images/defaultLogoWhiteLong.svg" as="image" type="image/svg+xml" onload="reportInitialAsset(this)">
+        <link rel="preload" href="/skyline/media/usernameIconWhite.svg" as="image" type="image/svg+xml" onload="reportInitialAsset(this)">
+        <link rel="preload" href="/skyline/media/passwordIconWhite.svg" as="image" type="image/svg+xml" onload="reportInitialAsset(this)">
+        <link rel="preload" href="/skyline/media/hidePassword.webp" as="image" type="image/webp" onload="reportInitialAsset(this)">
+        <link rel="preload" href="/skyline/media/viewPassword.png" as="image" type="image/png" onload="reportInitialAsset(this)">
+
+        <!--
+            Fetch the initial Work dashboard shell at low priority so the login
+            transition can reuse the browser cache without delaying startup.
+        -->
+        <link rel="prefetch" href="/skyline/css/main.css" as="style" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/css/jcrop.css" as="style" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/js/main.js" as="script" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/js/socialjs.js" as="script" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/js/jcrop.js" as="script" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/js/JsBarcode.all.min.js" as="script" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/media/bgBlueTech02.jpg" as="image" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/media/tierraceroRoundLogoWhite.svg" as="image" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/media/notificationIcon.png" as="image" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/media/icon_add_message.png" as="image" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/media/gear.png" as="image" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/media/icon_pending@128.png" as="image" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/media/icon_active@128.png" as="image" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/media/icon_alert@128.png" as="image" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/media/icon-checkmark.svg" as="image" type="image/svg+xml" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/media/mobileScannerWhite.png" as="image" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/images/zoom.png" as="image" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/images/bizRoundLogoWhite.svg" as="image" type="image/svg+xml" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/media/report-icon.png" as="image" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/media/icon-money.png" as="image" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/media/service_order.png" as="image" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/media/followup.png" as="image" onload="reportInitialAsset(this)">
+        <link rel="prefetch" href="/skyline/media/commercial_trip.png" as="image" onload="reportInitialAsset(this)">
+
         <script managedBy="webber" type="text/javascript" name="app" src="/app.js" async></script>
         <link managedBy="webber" rel="manifest" href="./site.webmanifest">
         <meta charset="utf-8" />
@@ -25,6 +106,7 @@
          <script src="/js/ProductAuditPDFEngine.js" type="text/javascript" async defer></script>
         <script>
             function removeInitalElements(){
+                window.tcInitialLoaderIsActive = false;
                 const element_01 = document.getElementById("element_01");
                 const element_02 = document.getElementById("element_02");
                 const element_03 = document.getElementById("element_03");
@@ -110,12 +192,153 @@
                 width: 0;
                 background: linear-gradient(to left, #00ffff, #1379f4);
             }
+            #element_02 {
+                overflow: hidden;
+                isolation: isolate;
+                background:
+                    radial-gradient(circle at 15% 48%, rgba(9, 67, 110, 0.14), transparent 30%),
+                    radial-gradient(circle at 78% 42%, rgba(10, 42, 82, 0.16), transparent 34%),
+                    linear-gradient(120deg, #050a0f 0%, #07111c 52%, #030509 100%);
+            }
+            #element_02 table {
+                position: relative;
+                z-index: 2;
+            }
+            #element_02::before,
+            #element_02::after {
+                position: absolute;
+                z-index: 0;
+                content: "";
+                pointer-events: none;
+            }
+            #element_02::before {
+                inset: -30%;
+                opacity: 0.72;
+                background:
+                    radial-gradient(ellipse at 18% 48%, rgba(9, 69, 113, 0.24), transparent 24%),
+                    radial-gradient(ellipse at 47% 28%, rgba(8, 47, 86, 0.2), transparent 22%),
+                    radial-gradient(ellipse at 76% 66%, rgba(12, 37, 72, 0.23), transparent 28%),
+                    repeating-linear-gradient(
+                        112deg,
+                        transparent 0 15%,
+                        rgba(8, 47, 84, 0.1) 15.5% 20%,
+                        transparent 20.5% 32%
+                    );
+                filter: blur(20px) saturate(112%);
+                animation: loading-background-drift 15s ease-in-out infinite alternate;
+            }
+            #element_02::after {
+                inset: -18% -35%;
+                opacity: 0.55;
+                background: linear-gradient(
+                    112deg,
+                    transparent 31%,
+                    rgba(9, 69, 113, 0.03) 38%,
+                    rgba(8, 54, 96, 0.18) 47%,
+                    rgba(11, 35, 67, 0.1) 55%,
+                    transparent 66%
+                );
+                mix-blend-mode: screen;
+                animation: loading-background-sweep 10s ease-in-out infinite;
+            }
+            @keyframes loading-background-drift {
+                0% { transform: translate3d(-6%, -3%, 0) scale(1.04) rotate(-1deg); }
+                50% { transform: translate3d(4%, 2%, 0) scale(1.1) rotate(1deg); }
+                100% { transform: translate3d(-1%, 6%, 0) scale(1.06) rotate(-0.5deg); }
+            }
+            @keyframes loading-background-sweep {
+                0%, 12% { transform: translate3d(-28%, 0, 0) skewX(-13deg); }
+                50% { transform: translate3d(7%, 0, 0) skewX(-13deg); }
+                88%, 100% { transform: translate3d(30%, 0, 0) skewX(-13deg); }
+            }
+            .loading-logo {
+                position: relative;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 256px;
+                max-width: 65vw;
+                min-height: 76px;
+                isolation: isolate;
+            }
+            .loading-logo img {
+                position: relative;
+                z-index: 2;
+                display: block;
+                width: 100%;
+                height: auto;
+                filter: drop-shadow(0 0 12px rgba(19, 121, 244, 0.24));
+            }
+            .loading-logo-orbit {
+                position: absolute;
+                z-index: 1;
+                left: 50%;
+                top: 50%;
+                border-style: solid;
+                border-color: transparent;
+                border-radius: 50%;
+                pointer-events: none;
+                will-change: transform;
+            }
+            .loading-logo-orbit-outer {
+                width: 425px;
+                height: 425px;
+                margin: -212.5px 0 0 -212.5px;
+                border-width: 4px;
+                border-top-color: #22c5ff;
+                border-right-color: #1379f4;
+                border-bottom-color: #245cff;
+                filter: drop-shadow(0 0 8px rgba(34, 197, 255, 0.5));
+                animation: loading-logo-giro 1.7s linear infinite;
+            }
+            .loading-logo-orbit-inner {
+                width: 347.5px;
+                height: 347.5px;
+                margin: -173.75px 0 0 -173.75px;
+                border-width: 3px;
+                border-top-color: #1379f4;
+                border-bottom-color: #22c5ff;
+                border-left-color: #245cff;
+                filter: drop-shadow(0 0 6px rgba(19, 121, 244, 0.46));
+                animation: loading-logo-giro-reverse 1.25s linear infinite;
+            }
+            @keyframes loading-logo-giro {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+            @keyframes loading-logo-giro-reverse {
+                from { transform: rotate(360deg); }
+                to { transform: rotate(0deg); }
+            }
+            @media (max-width: 480px) {
+                .loading-logo-orbit-outer {
+                    width: 350px;
+                    height: 350px;
+                    margin: -175px 0 0 -175px;
+                }
+                .loading-logo-orbit-inner {
+                    width: 282.5px;
+                    height: 282.5px;
+                    margin: -141.25px 0 0 -141.25px;
+                }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .loading-logo-orbit,
+                #element_02::before,
+                #element_02::after {
+                    animation-play-state: paused;
+                }
+            }
         </style>
         <div id="element_02" style="position:absolute; width:100%; height: 100%; top: 0px; left: 0px">
             <table width="100%" height="100%"><tr><td align="center" valign="middle">
-                <img src="/skyline/media/logoTierraCeroLongWhite.svg" width="256px"><br>
-                <h3>Cargando...</h3>
-                <h4></h4>
+                <div class="loading-logo">
+                    <span class="loading-logo-orbit loading-logo-orbit-outer" aria-hidden="true"></span>
+                    <span class="loading-logo-orbit loading-logo-orbit-inner" aria-hidden="true"></span>
+                    <img src="/skyline/media/logoTierraCeroLongWhite.svg" width="256px" alt="Tierra Cero">
+                </div><br>
+                <h3 id="initial-loading-label" style="font-size: 22px; margin-top:12px;">Cargando...</h3>
+                <h4 style="font-size:16px; margin-top:12px;"></h4>
             </td></tr></table>
         </div>
         <div class="progress" id="element_03">

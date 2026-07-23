@@ -58,6 +58,8 @@ class AccountCreditActivationView: PageController {
     }
     
     @State var creditFolio: String? = nil
+
+    @State var status: CustCreditStatus? = nil
     
     /// `--  Credit Data  --`
     
@@ -595,7 +597,7 @@ class AccountCreditActivationView: PageController {
                     .float(.right)
                     .width(24.px)
                     .onClick{
-                        
+                        self.remove()
                     }
                 
                 H2(self.$creditId.map{ ($0 == nil) ? "Activar Credito - Solicitud Inicial" : "Activar Credito - Autorizacion" })
@@ -730,7 +732,6 @@ class AccountCreditActivationView: PageController {
                         self.homeStatusSelect
                         
                         Div().height(7.px)
-                        
                         
                     }
                     .margin(all: 3.px)
@@ -1094,8 +1095,7 @@ class AccountCreditActivationView: PageController {
                     .class(.uibtnLargeOrange)
                     .float(.right)
                     .onClick {
-                        
-                        self.saveCreditRequest()
+                        self.sendCreditRequest()
                         
                     }
                 
@@ -1124,7 +1124,6 @@ class AccountCreditActivationView: PageController {
     }
     
     public override func buildUI() {
-        self.class(.transparantBlackBackGround)
         height(100.percent)
         position(.absolute)
         width(100.percent)
@@ -1220,16 +1219,25 @@ class AccountCreditActivationView: PageController {
         
     }
     
-    func saveCreditRequest(){
+    func sendCreditRequest(){
         
+        let isBusinessCredit = customerType == .empresarial
+        let legalRepresentetiveLabel = isBusinessCredit ? "Representante Legal" : "Supervisor Directo"
+        let yearsInCurrentWorkLabel = isBusinessCredit ? "Antiguedad de la empresa" : "Años en el trabajo"
+        let yearsInCurrentHomeLabel = isBusinessCredit ? "Años en el mismo domicilio" : "Años en domicilio"
+        let totalIncomeLabel = isBusinessCredit ? "Credito Solicitado" : "Total de Ingresos Mensuales"
+        let referenceNameLabel = isBusinessCredit ? "Nombre de empresa" : "Nombre"
+        let referenceLastNameLabel = isBusinessCredit ? "Contacto de empresa" : "Apellido"
 
         /// event, billDate, absoluteBalance
         guard let creditType = CustCreditType(rawValue: typeListener) else {
+            showError(.requiredField, "Ingrese: Tipo de Credito")
             return
         }
         
         /// daily, weekly, monthly, bymester, bymonthly, trimester, forthmester, semester, yearly, manual
         guard let eventType = CreateODS(rawValue: eventTypeListener) else {
+            showError(.requiredField, "Ingrese: Tipo de Facturacion")
             return
         }
         
@@ -1238,67 +1246,210 @@ class AccountCreditActivationView: PageController {
         
         /// How many days are given to pay
         guard let daysToPay = Float(daysToPay) else {
+            showError(.requiredField, "Ingrese: Días de pago")
             return
         }
         
         guard let downPayment = Float(downPayment) else {
+            showError(.requiredField, "Ingrese: Enganche")
             return
         }
         
         guard let intresRate = Float(intresRate) else {
+            showError(.requiredField, "Ingrese: Taza de Interes")
             return
         }
         
         guard let creditLimit = Float(creditLimit) else {
+            showError(.requiredField, "Ingrese: Limite de Credito")
             return
         }
         
         guard let yearsInCurrentWork = Float(yearsInCurrentWork) else {
+            showError(.requiredField, "Ingrese: \(yearsInCurrentWorkLabel)")
             return
         }
         
         guard let yearsInCurrentHome = Float(yearsInCurrentHome) else {
+            showError(.requiredField, "Ingrese: \(yearsInCurrentHomeLabel)")
             return
         }
         
         guard let totalIncome = Float(totalIncome) else {
+            showError(.requiredField, "Ingrese: \(totalIncomeLabel)")
             return
         }
         
         /// owner, rent, family
         guard let homeStatus = CustCreditCustomerHomeStatus(rawValue: homeStatusListener) else {
+            showError(.requiredField, "Ingrese: Estado de domicilio")
             return
         }
         
+        if legalRepresentetive.purgeSpaces.isEmpty {
+            showError(.requiredField, "Ingrese: \(legalRepresentetiveLabel)")
+            return
+        }
+        
+        if weeklySchedule.purgeSpaces.isEmpty {
+            showError(.requiredField, "Ingrese: Horario Semanal")
+            return
+        }
+        
+        if saturdaySchedule.purgeSpaces.isEmpty {
+            showError(.requiredField, "Ingrese: Horario Sabatino")
+            return
+        }
+        
+        if sundaySchedule.purgeSpaces.isEmpty {
+            showError(.requiredField, "Ingrese: Horario Dominical")
+            return
+        }
+
+        let refrenceOneRelationType = CustCreditRefrenceType(rawValue: refrenceOneRelationTypeListener)
+        let refrenceTwoRelationType = CustCreditRefrenceType(rawValue: refrenceTwoRelationTypeListener)
+        let refrenceThreeRelationType = CustCreditRefrenceType(rawValue: refrenceThreeRelationTypeListener)
+
+        let refrenceOneTelephoneType = TelephoneType(rawValue: refrenceOneTelephoneTypeListener)
+        let refrenceTwoTelephoneType = TelephoneType(rawValue: refrenceTwoTelephoneTypeListener)
+        let refrenceThreeTelephoneType = TelephoneType(rawValue: refrenceThreeTelephoneTypeListener)
+        /*
         guard let refrenceOneRelationType = CustCreditRefrenceType(rawValue: refrenceOneRelationTypeListener) else {
+            showError(.requiredField, "Ingrese: Tipo de Referencia 1")
             return
         }
         
         guard let refrenceTwoRelationType = CustCreditRefrenceType(rawValue: refrenceTwoRelationTypeListener) else {
+            showError(.requiredField, "Ingrese: Tipo de Referencia 2")
             return
         }
         
         guard let refrenceThreeRelationType = CustCreditRefrenceType(rawValue: refrenceThreeRelationTypeListener) else {
+            showError(.requiredField, "Ingrese: Tipo de Referencia 3")
             return
         }
-        
+
         guard let refrenceOneTelephoneType = TelephoneType(rawValue: refrenceOneTelephoneTypeListener) else {
+            showError(.requiredField, "Ingrese: Tipo de Telefono Referencia 1")
             return
         }
         
         guard let refrenceTwoTelephoneType = TelephoneType(rawValue: refrenceTwoTelephoneTypeListener) else {
+            showError(.requiredField, "Ingrese: Tipo de Telefono Referencia 2")
             return
         }
         
         guard let refrenceThreeTelephoneType = TelephoneType(rawValue: refrenceThreeTelephoneTypeListener) else {
+            showError(.requiredField, "Ingrese: Tipo de Telefono Referencia 3")
             return
         }
         
+        if refrenceOneNames.purgeSpaces.isEmpty {
+            showError(.requiredField, "Ingrese: \(referenceNameLabel) Referencia 1")
+            return
+        }
+        
+        if refrenceOneLastNames.purgeSpaces.isEmpty {
+            showError(.requiredField, "Ingrese: \(referenceLastNameLabel) Referencia 1")
+            return
+        }
+        
+        if refrenceOneTelephone.purgeSpaces.isEmpty {
+            showError(.requiredField, "Ingrese: Telefono Referencia 1")
+            return
+        }
+        
+        if refrenceTwoNames.purgeSpaces.isEmpty {
+            showError(.requiredField, "Ingrese: \(referenceNameLabel) Referencia 2")
+            return
+        }
+        
+        if refrenceTwoLastNames.purgeSpaces.isEmpty {
+            showError(.requiredField, "Ingrese: \(referenceLastNameLabel) Referencia 2")
+            return
+        }
+        
+        if refrenceTwoTelephone.purgeSpaces.isEmpty {
+            showError(.requiredField, "Ingrese: Telefono Referencia 2")
+            return
+        }
+        
+        if refrenceThreeNames.purgeSpaces.isEmpty {
+            showError(.requiredField, "Ingrese: \(referenceNameLabel) Referencia 3")
+            return
+        }
+        
+        if refrenceThreeLastNames.purgeSpaces.isEmpty {
+            showError(.requiredField, "Ingrese: \(referenceLastNameLabel) Referencia 3")
+            return
+        }
+        
+        if refrenceThreeTelephone.purgeSpaces.isEmpty {
+            showError(.requiredField, "Ingrese: Telefono Referencia 3")
+            return
+        }
+        */
+
         loadingView(show: true)
         
         if let creditId {
             
-            
+            API.custAccountV1.updateCreditRequest(
+                creditId: creditId,
+                creditType: creditType,
+                eventType: eventType,
+                downPayment: downPayment,
+                intresRate: intresRate,
+                creditLimit: creditLimit,
+                daysToPay: daysToPay,
+                billDate: billDate,
+                yearsInCurrentWork: yearsInCurrentWork,
+                yearsInCurrentHome: yearsInCurrentHome,
+                totalIncome: totalIncome,
+                homeStatus: homeStatus,
+                weeklySchedule: weeklySchedule,
+                saturdaySchedule: saturdaySchedule,
+                sundaySchedule: sundaySchedule,
+                workName: workName,
+                workPhone: workPhone,
+                workSupervisor: workSupervisor,
+                refrenceOneRelationType: refrenceOneRelationType,
+                refrenceOneNames: refrenceOneNames,
+                refrenceOneLastNames: refrenceOneLastNames,
+                refrenceOneTelephoneType: refrenceOneTelephoneType,
+                refrenceOneTelephone: refrenceOneTelephone,
+                refrenceTwoRelationType: refrenceTwoRelationType,
+                refrenceTwoNames: refrenceTwoNames,
+                refrenceTwoLastNames: refrenceTwoLastNames,
+                refrenceTwoTelephoneType: refrenceTwoTelephoneType,
+                refrenceTwoTelephone: refrenceTwoTelephone,
+                refrenceThreeRelationType: refrenceThreeRelationType,
+                refrenceThreeNames: refrenceThreeNames,
+                refrenceThreeLastNames: refrenceThreeLastNames,
+                refrenceThreeTelephoneType: refrenceThreeTelephoneType,
+                refrenceThreeTelephone: refrenceThreeTelephone,
+                idType: IdentificationTypes(rawValue: idTypeListener),
+                idFront: idFront,
+                idBack: idBack,
+                legalRepresentetive: legalRepresentetive
+            ) { resp in
+                
+                loadingView(show: false)
+                
+                guard let resp else {
+                    showError(.generalError, .serverConextionError)
+                    return
+                }
+                
+                guard resp.status == .ok else {
+                    showError(.generalError, resp.msg)
+                    return
+                }
+                
+                self.callback(creditId)
+                
+                self.remove()
+            }
             
         }
         else {
@@ -1364,7 +1515,7 @@ class AccountCreditActivationView: PageController {
                  self.creditId = payload.creditId
                  
                  self.creditFolio = payload.folio
-             
+
                  self.callback(payload.creditId)
                  
                  self.remove()

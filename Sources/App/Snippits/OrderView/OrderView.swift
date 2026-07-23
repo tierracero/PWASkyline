@@ -46,6 +46,7 @@ class OrderView: Div {
     @State var tasks: [CustTaskAuthorizationManagerQuick]
     let orderRoute: CustOrderRoute?
     var loadFromCatch: Bool
+    private var hasParsedOrderData = false
     
     init(
         accountView: AccoutOverview,
@@ -181,6 +182,7 @@ class OrderView: Div {
     lazy var chargesTable = TBody()
     
     lazy var equipmentView = Div()
+        .class(Class(TCOrderViewClass.equipmentCard))
         .backgroundColor(r: 22, g: 25, b: 30)
         .padding(v: 0.px, h: 7.px)
         .borderRadius(12.px)
@@ -201,6 +203,7 @@ class OrderView: Div {
         mobile: self.order.mobile,
         notes: self.notes,
         lastCommunicationMethod: self.$lastCommunicationMethod,
+        deferInitialLoad: true,
         callback: { note in
             
         })
@@ -208,8 +211,9 @@ class OrderView: Div {
     lazy var messageGridDiv = Div{
         self.messageGrid
     }
+        .class(Class(TCOrderViewClass.notesCard))
         .custom("height", "calc(100% - 30px)")
-    .class(.twoThird)
+        .custom("width", "calc(75% - 0px)")
     
     lazy var fileLoader: InputFile = InputFile()
         .id(Id(stringLiteral: "fileLoader\(self.order.id)"))
@@ -312,16 +316,18 @@ class OrderView: Div {
                         .overflow(.auto)
                     
                 }
+                .class(Class(TCOrderViewClass.filesCard))
                 .float(.right)
-                .width(33.percent)
+                .width(25.percent)
                 .custom("height", "calc(100% - 33px)")
             }
+            .class(Class(TCOrderViewClass.communicationsGrid))
             .height(40.percent)
             .marginRight(3.px)
             .marginLeft(3.px)
             .overflow(.auto)
             
-            /// Charges
+            /// Charges Grid
             Div{
                 Div{
                     
@@ -360,7 +366,7 @@ class OrderView: Div {
                             
                         }
                         
-                        self.appendChild(pv)
+                        addToDom(pv)
                         
                         if self.total <= 0 {
                             pv.paymentDescription.select()
@@ -413,7 +419,7 @@ class OrderView: Div {
                         }
                     }
                     
-                    H2("Cargos y Pagos")
+                    H2("Cargos y pagos")
                         .float(.left)
                         .color(.gray)
                     /*
@@ -444,7 +450,7 @@ class OrderView: Div {
                             Tr{
                                 Td().width(20.px)
                                 Td("Unis").width(50.px)
-                                Td("Description")
+                                Td("Descripción")
                                 Td("CUni").width(70.px)
                                 Td("STotal").width(70.px)
                             }
@@ -519,6 +525,7 @@ class OrderView: Div {
                 .width(220.px)
                 
             }
+            .class(Class(TCOrderViewClass.chargesCard))
             .height(23.percent)
             .marginRight(3.px)
             .overflow(.hidden)
@@ -526,6 +533,7 @@ class OrderView: Div {
             .overflow(.auto)
         
         }
+        .class(Class(TCOrderViewClass.mainColumn))
         .boxShadow(h: 1.px, v: 1.px, blur: 7.px, color: .black)
         .class(.roundGrayBlackDark, .twoThird)
         .custom("height", "calc(100% - 3px)")
@@ -818,6 +826,7 @@ class OrderView: Div {
                     }
                    
                 }
+                .class(Class(TCOrderViewClass.summaryHeaderActions))
                 
                 Div().clear(.both).height(3.px)
                 
@@ -825,7 +834,7 @@ class OrderView: Div {
                     
                     Div{
                         
-                        Span("Folio")
+                        Span("Orden ·")
                             .marginRight(7.px)
                             .color(.gray)
                         
@@ -851,7 +860,7 @@ class OrderView: Div {
                                  
                                  Div{
                                      Img()
-                                         .src(self.$statusMenuIsHidden.map{ $0 ? "/skyline/media/dropDown.png" : "/skyline/media/dropDownClose.png"  })
+                                         .src(self.$statusMenuIsHidden.map{ $0 ? "/skyline/media/dropDown.png" : "/skyline/media/dropDownClose.png" })
                                          .class(.iconWhite)
                                          .paddingTop(7.px)
                                          .opacity(0.5)
@@ -1022,6 +1031,7 @@ class OrderView: Div {
                     Div().clear(.both)
                     
                 }
+                .class(Class(TCOrderViewClass.summaryIdentity))
                 .marginBottom(7.px)
             
                 Div().class(.clear)
@@ -1356,6 +1366,7 @@ class OrderView: Div {
                         .float(.left)
                         
                     }
+                    .class(Class(TCOrderViewClass.rewardsCard))
                     .hidden(self.accountView.$cardId.map{ !$0.isEmpty })
                     
                     Div{
@@ -1381,6 +1392,7 @@ class OrderView: Div {
                         .float(.left)
                         
                     }
+                    .class(Class(TCOrderViewClass.rewardsCard))
                     .hidden(self.accountView.$cardId.map{ $0.isEmpty })
                 
                     Div().clear(.both).height(5.px)
@@ -1465,7 +1477,7 @@ class OrderView: Div {
                         
                         Div{
                             
-                            Span("Encuestas Tecnico")
+                            Span("Encuestas Técnico")
                                 .fontSize(16.px)
                             Div().class(.clear).marginTop(7.px)
                             Div{
@@ -1536,6 +1548,7 @@ class OrderView: Div {
                         
                         Div().clear(.both)
                     }
+                    .class(Class(TCOrderViewClass.surveysCard))
                 }
 
                 Div().class(.clear).marginTop(12.px)
@@ -1607,6 +1620,7 @@ class OrderView: Div {
                     .hidden(self.$orderContract.map{ $0.isEmpty })
                     
                 }
+                .class(Class(TCOrderViewClass.detailsStack))
                 
                 Div().class(.clear).marginTop(12.px)
                 
@@ -1619,12 +1633,13 @@ class OrderView: Div {
                         .height(24.px)
                         .padding(all: 3.px)
                     
-                    H2("Direccion de servicio")
+                    H2("Dirección de servicio")
                         .marginBottom(3.px)
                         .fontSize(24.px)
                         .marginTop(7.px)
 
                 }
+                .class(Class(TCOrderViewClass.addressHeader))
                 .cursor(.pointer)
                 .onClick { self.requierServiceAddress = !self.requierServiceAddress }
                 
@@ -1803,6 +1818,7 @@ class OrderView: Div {
                     Div().class(.clear)
                         .marginBottom(7.px)
                 }
+                .class(Class(TCOrderViewClass.addressBody))
                 .boxShadow(h: 2.px, v: 2.px, blur: 3.px, color: .grayBlackDark)
                 .class(.roundGrayBlackDark)
                 .hidden(self.$requierServiceAddress.map{!$0})
@@ -1810,6 +1826,7 @@ class OrderView: Div {
                 Div().class(.clear).marginTop(24.px)
                 
             }
+            .class(Class(TCOrderViewClass.summaryScroll))
             .custom("height", "calc(100% - 73px)") 
             .marginBottom(7.px)
             .overflow(.auto)
@@ -1848,7 +1865,7 @@ class OrderView: Div {
                     .borderRadius(all: 12.px)
                     .cursor(.pointer)
                     .onClick({ div, event in
-                        self.appendChild(ConfirmView(type: .yesNo, title: "Adoptar Orden", message: "Confirme que va adoptar la orden", callback: { isConfirmed, _ in
+                        addToDom(ConfirmView(type: .yesNo, title: "Adoptar Orden", message: "Confirme que va adoptar la orden", callback: { isConfirmed, _ in
                             
                             if isConfirmed {
                                 
@@ -1970,6 +1987,7 @@ class OrderView: Div {
                 Div().clear(.both)
                 
             }
+            .class(Class(TCOrderViewClass.outcomeBar))
             .boxShadow(h: 1.px, v: 1.px, blur: 7.px, color: .black)
             .borderRadius(12.px)
             .marginRight(7.px)
@@ -1978,6 +1996,7 @@ class OrderView: Div {
             .height(63.px)
             
         }
+        .class(Class(TCOrderViewClass.sideColumn))
         //.custom("height", "calc(100% - 10px)")
         .custom("width", "calc(34% - 7px)")
         .height(100.percent)
@@ -1989,8 +2008,19 @@ class OrderView: Div {
         
     }
     
+    func toggleOrderEditMode() {
+        if editMode {
+            saveOrderDetails()
+            return
+        }
+
+        editMode = true
+    }
+
     override func buildUI() {
         super.buildUI()
+
+        self.class(Class(TCOrderViewClass.body))
         
         width(100.percent)
         height(100.percent)
@@ -2216,10 +2246,13 @@ class OrderView: Div {
         parseOrderData()
         
         if loadFromCatch {
+            let orderId = order.id
+            let modifiedAt = order.modifiedAt
+
             API.custOrderV1.loadOrder(
-                identifier: .id(order.id),
-                modifiedAt: order.modifiedAt
-            ){ resp in
+                identifier: .id(orderId),
+                modifiedAt: modifiedAt
+            ){ [weak self] resp in
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -2242,49 +2275,58 @@ class OrderView: Div {
                 case .load(let loadOrderResponse):
                     
                     /// Order Detail Catch
-                    acctMinCatch[self.order.id] = loadOrderResponse.account
-                    orderCatch[self.order.id] = loadOrderResponse.order
-                    notesCatch[self.order.id] = loadOrderResponse.notes
-                    paymentsCatch[self.order.id] = loadOrderResponse.payments
-                    chargesCatch[self.order.id] = loadOrderResponse.charges
-                    pocsCatch[self.order.id] = loadOrderResponse.pocs
-                    filesCatch[self.order.id] = loadOrderResponse.files
-                    contractsCatch[self.order.id] = loadOrderResponse.contracts
-                    equipmentsCatch[self.order.id] = loadOrderResponse.equipments
-                    rentalsCatch[self.order.id] = loadOrderResponse.rentals
+                    acctMinCatch[orderId] = loadOrderResponse.account
+                    orderCatch[orderId] = loadOrderResponse.order
+                    notesCatch[orderId] = loadOrderResponse.notes
+                    paymentsCatch[orderId] = loadOrderResponse.payments
+                    chargesCatch[orderId] = loadOrderResponse.charges
+                    pocsCatch[orderId] = loadOrderResponse.pocs
+                    filesCatch[orderId] = loadOrderResponse.files
+                    contractsCatch[orderId] = loadOrderResponse.contracts
+                    equipmentsCatch[orderId] = loadOrderResponse.equipments
+                    rentalsCatch[orderId] = loadOrderResponse.rentals
                     if let transferOrder = loadOrderResponse.transferOrder {
-                        transferOrderCatch[self.order.id] = transferOrder
+                        transferOrderCatch[orderId] = transferOrder
                     }
                     if let route = loadOrderResponse.route {
-                        custOrderRouteCatch[self.order.id] = route
+                        custOrderRouteCatch[orderId] = route
                     }
                     
-                    self.accountView.acctType = loadOrderResponse.account.type
-                    self.accountView.cardId = loadOrderResponse.account.CardID
-                    
-                    self.order = loadOrderResponse.order
-                    self.notes = loadOrderResponse.notes
-                    self.payments = loadOrderResponse.payments
-                    self.charges = loadOrderResponse.charges
-                    self.pocs = loadOrderResponse.pocs
-                    self.files = loadOrderResponse.files
-                    self.contracts = loadOrderResponse.contracts
-                    self.equipments = loadOrderResponse.equipments
-                    self.rentals = loadOrderResponse.rentals
-                    self.transferOrder = loadOrderResponse.transferOrder
-                    
-                    self.parseOrderData()
+                    // Keep the cached content interactive while refreshed data is
+                    // applied in a later browser turn.
+                    Dispatch.asyncAfter(0.05) { [weak self] in
+                        guard let self, self.isInDOM else {
+                            return
+                        }
+
+                        self.accountView.acctType = loadOrderResponse.account.type
+                        self.accountView.cardId = loadOrderResponse.account.CardID
+
+                        self.order = loadOrderResponse.order
+                        self.notes = loadOrderResponse.notes
+                        self.payments = loadOrderResponse.payments
+                        self.charges = loadOrderResponse.charges
+                        self.pocs = loadOrderResponse.pocs
+                        self.files = loadOrderResponse.files
+                        self.contracts = loadOrderResponse.contracts
+                        self.equipments = loadOrderResponse.equipments
+                        self.rentals = loadOrderResponse.rentals
+                        self.transferOrder = loadOrderResponse.transferOrder
+
+                        self.parseOrderData()
+                    }
                     
                 }
                 
             }
         }
         
-        WebApp.current.wsevent.listen {
-            
-            if $0.isEmpty { return }
-            
-            let (event, _) = self.ws.recive($0)
+        WebApp.current.wsevent.listen { [weak self] value in
+
+            guard let self else { return }
+            if value.isEmpty { return }
+
+            let (event, _) = self.ws.recive(value)
             
             guard let event else {
                 return
@@ -2292,7 +2334,7 @@ class OrderView: Div {
             
             switch event {
             case .wsLocationUpdate:
-                if let payload = self.ws.locationUpdate($0) {
+                if let payload = self.ws.locationUpdate(value) {
                     if payload.order == self.order.id {
 
                         guard let lat = Double(payload.lat), let lon = Double(payload.lon) else {
@@ -2304,7 +2346,7 @@ class OrderView: Div {
                     }
                 }
             case .asyncFileUpload:
-                if let payload = self.ws.asyncFileUpload($0) {
+                if let payload = self.ws.asyncFileUpload(value) {
                     
                     if let view = self.fileViewCatch[payload.eventid] {
                         
@@ -2317,7 +2359,7 @@ class OrderView: Div {
                     }
                 }
             case .asyncFileUpdate:
-                if let payload = self.ws.asyncFileUpdate($0) {
+                if let payload = self.ws.asyncFileUpdate(value) {
                     
                     if let view = self.fileViewCatch[payload.eventId] {
                         
@@ -2576,7 +2618,7 @@ class OrderView: Div {
             return
         }
         
-        let printBody = OrderPrintEngine(
+        let printBody = OrderPrintEngine( 
             order: self.order,
             notes: self.notes,
             payments: self.payments,
@@ -2800,9 +2842,14 @@ class OrderView: Div {
             
         }
         
-        messageGrid.notes = notes
-        
-        messageGrid.loadMessages()
+        let messages = messageGrid
+        messages.notes = notes
+
+        if hasParsedOrderData {
+            messages.loadMessages()
+        }
+
+        hasParsedOrderData = true
         
         equipmentViewRefrence.removeAll()
         equipmentView.innerHTML = ""
@@ -3467,7 +3514,7 @@ class OrderView: Div {
 
             }
             
-            self.appendChild(view)
+            addToDom(view)
             
         }
         addSoc: { soc, codeType, isWarenty, internalWarenty in
@@ -3642,7 +3689,7 @@ class OrderView: Div {
                            
             }
         }
-        self.appendChild(addChargeFormView)
+        addToDom(addChargeFormView)
         
         addChargeFormView.searchTermInput.select()
         
@@ -3651,7 +3698,7 @@ class OrderView: Div {
 
     // MARK: Charges Modification
     func removeCharge(viewId: UUID, id: UUID, name: String, amount: Int64) {
-        self.appendChild(
+        addToDom(
             ConfirmView(
                 type: .yesNo,
                 title: "Eliminar Cargo",
@@ -3735,7 +3782,7 @@ class OrderView: Div {
     
     func editCharge(viewId: UUID, ids: [UUID], type: ChargeType) {
         
-        self.appendChild(EditChargePOCView(
+        addToDom(EditChargePOCView(
             type: type,
             viewId: viewId,
             ids: ids,
@@ -3797,7 +3844,7 @@ class OrderView: Div {
     
     // MARK: POCs Modification
     func removePoc(viewId: UUID, ids: [UUID], name: String, amount: Int64) {
-        self.appendChild(
+        addToDom(
             ConfirmView(
                 type: .yesNo,
                 title: "Eliminar Producto",
@@ -3852,7 +3899,7 @@ class OrderView: Div {
     
     func editPoc(viewId: UUID, ids: [UUID]) {
         
-        self.appendChild(EditChargePOCView(
+        addToDom(EditChargePOCView(
             type: .product,
             viewId: viewId,
             ids: ids,
@@ -3917,7 +3964,7 @@ class OrderView: Div {
     }
     
     func removeRental(id: UUID, name: String, amount: Int64) {
-        self.appendChild(
+        addToDom(
             ConfirmView(
                 type: .yesNo,
                 title: "Eliminar Cargo de Renta",
@@ -3972,7 +4019,7 @@ class OrderView: Div {
     
     func editRental(viewId: UUID, itemId: UUID) {
         /*
-        self.appendChild(EditChargePOCView(
+        addToDom(EditChargePOCView(
             type: .rental,
             viewId: viewId,
             ids: [itemId],
@@ -4048,7 +4095,7 @@ class OrderView: Div {
             return
         }
         
-        self.appendChild(
+        addToDom(
             ConfirmView(
                 type: .yesNo,
                 title: "Eliminar Pago",
@@ -4152,7 +4199,7 @@ class OrderView: Div {
             selectedDateStamp = "\(uts.year)/\(uts.month)/\(uts.day)"
         }
         
-        self.appendChild(
+        addToDom(
             
             SelectCalendarDate(
                 type: .folio,
@@ -4432,7 +4479,7 @@ class OrderView: Div {
         switch self.order.type {
         case .folio:
             
-            self.appendChild(CancelationConfirmView( type: self.order.type, rentals: self.rentals, equipments: self.equipments){ rentals, equipments in
+            addToDom(CancelationConfirmView( type: self.order.type, rentals: self.rentals, equipments: self.equipments){ rentals, equipments in
                 
                 self.equipments = equipments
                 
@@ -4468,7 +4515,7 @@ class OrderView: Div {
             break
         case .rental:
             
-            self.appendChild(CancelationConfirmView( type: self.order.type, rentals: self.rentals, equipments: self.equipments){ rentals, equipments in
+            addToDom(CancelationConfirmView( type: self.order.type, rentals: self.rentals, equipments: self.equipments){ rentals, equipments in
                 
                 self.rentals = rentals
                 
@@ -4548,7 +4595,7 @@ class OrderView: Div {
         
             print("🐼 003")
             
-            self.appendChild(FinalizeConfirmView(
+            addToDom(FinalizeConfirmView(
                 type: self.order.type,
                 rentals: self.rentals,
                 equipments: self.equipments
@@ -4627,7 +4674,7 @@ class OrderView: Div {
             
         case .rental:
             
-            self.appendChild(FinalizeConfirmView( type: self.order.type, rentals: self.rentals, equipments: self.equipments){ rentals, equipments in
+            addToDom(FinalizeConfirmView( type: self.order.type, rentals: self.rentals, equipments: self.equipments){ rentals, equipments in
                 
                 var pickedUp = true
                 
@@ -4833,7 +4880,7 @@ class OrderView: Div {
         
         switch self.order.type {
         case .folio:
-            self.appendChild(ReactivateConfirmOrderRentalView(type: self.order.type, rentals: self.rentals, equipments: self.equipments){ reacts in
+            addToDom(ReactivateConfirmOrderRentalView(type: self.order.type, rentals: self.rentals, equipments: self.equipments){ reacts in
                 self.reactivateAct(reacts)
             })
         case .date:
@@ -4841,7 +4888,7 @@ class OrderView: Div {
         case .sale:
             break
         case .rental:
-            self.appendChild(ReactivateConfirmOrderRentalView(type: self.order.type, rentals: self.rentals, equipments: self.equipments){ reacts in
+            addToDom(ReactivateConfirmOrderRentalView(type: self.order.type, rentals: self.rentals, equipments: self.equipments){ reacts in
                 self.reactivateAct(reacts)
             })
             
@@ -5414,6 +5461,8 @@ class OrderView: Div {
 
     func proccessPayment(_ code: FiscalPaymentCodes, _ description: String, _ amount: Float, _ provider: String, _ lastFour: String, _ auth: String, _ uts: Int64?){
         
+        print("⚠️ API.custOrderV1.addPayment")
+
         API.custOrderV1.addPayment(
             orderid: order.id,
             storeId: custCatchStore,
@@ -5424,6 +5473,10 @@ class OrderView: Div {
             lastFour: lastFour,
             auth: auth
         ) { resp in
+
+            Console.clear()
+            
+            print("🟢 API.custOrderV1.addPayment")
             
             loadingView(show: false)
             
@@ -5443,14 +5496,14 @@ class OrderView: Div {
             }
             
             let obj: CustOrderLoadFolioPayments = .init(
-                id: payload.paymentId,
-                folio: payload.paymentFolio,
+                id: payload.payment.id,
+                folio: payload.payment.folio,
                 type: .payment,
                 cost: amount.toCents,
                 ref: "",
                 description: description,
                 auth: auth,
-                status: BillingStatus.unbilled
+                status: .unbilled
             )
             
             let tr = OldChargeTrRow(
@@ -5483,7 +5536,19 @@ class OrderView: Div {
             self.status = payload.status
             
             OrderCatchControler.shared.updateParameter(self.order.id, .orderStatus(payload.status))
-            
+
+            print("⚠️ PaymentReciptFormView")
+
+            let view = PaymentReciptFormView(
+                order: self.order,
+                payment: payload.payment,
+                oldbalance: payload.oldbalance,
+                newbalance: payload.newbalance,
+                status: payload.status
+            )
+
+            addToDom(view)
+
         }
     }
     
@@ -5832,8 +5897,10 @@ class OrderView: Div {
                     zip: self.zip
                 ) { resp in
 
-
                 }
+
+                self.loadLocation(coordinate.latitude, coordinate.longitude)
+                
             }
             
         }

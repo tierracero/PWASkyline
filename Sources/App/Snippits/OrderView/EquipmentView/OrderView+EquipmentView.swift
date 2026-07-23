@@ -408,6 +408,7 @@ extension OrderView {
                 .hidden(!configServiceTags.tag6)
                 
             }
+            .class(Class(TCOrderViewClass.equipmentMeta))
             .height(100.percent)
             .width(35.percent)
             .overflow(.auto)
@@ -529,6 +530,7 @@ extension OrderView {
                         Div().class(.clear)
                         
                     }
+                    .class(Class(TCOrderViewClass.equipmentChecks))
                     .height(100.percent)
                     .width(60.percent)
                     .float(.left)
@@ -693,11 +695,13 @@ extension OrderView {
                         
                         
                     }
+                    .class(Class(TCOrderViewClass.equipmentDiagnosis))
                     .height(99.percent)
                     .width(40.percent)
                     .overflow(.auto)
                     .float(.left)
                 }
+                .class(Class(TCOrderViewClass.equipmentOverview))
                 .custom("height", "calc(100% - 58px)")
                 
                 Div{
@@ -761,7 +765,7 @@ extension OrderView {
                                         
                                     }
                                     else{
-                                        self.appendChild(
+                                        addToDom(
                                             ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: PREPARADO", callback: { confirmed,_ in
                                             if confirmed {
                                                 loadingView(show: true)
@@ -814,7 +818,7 @@ extension OrderView {
                                 else{
                                     /// Validad if user has permition to remove isReady flag
                                     if custCatchHerk >= configStoreProcessing.restrictOrderClosing {
-                                        self.appendChild(ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: NO preparado", callback: { confirmed, _ in
+                                        addToDom(ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: NO preparado", callback: { confirmed, _ in
                                             if confirmed {
                                                 loadingView(show: true)
                                                 API.custOrderV1.equipmentReadyStatus(
@@ -948,7 +952,7 @@ extension OrderView {
                                         }
                                     }
                                     else{
-                                        self.appendChild(ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: ENTREGADO", callback: { confirmed, _ in
+                                        addToDom(ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: ENTREGADO", callback: { confirmed, _ in
                                             if confirmed {
                                                 loadingView(show: true)
                                                 API.custOrderV1.equipmentPickedStatus(
@@ -1012,7 +1016,7 @@ extension OrderView {
                                     /// Validad if user has permition to remove isReady flag
                                     if custCatchHerk >= configStoreProcessing.restrictOrderClosing {
                                         
-                                        self.appendChild(ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: NO entregado", callback: { confirmed, _ in
+                                        addToDom(ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: NO entregado", callback: { confirmed, _ in
                                             
                                             if confirmed {
                                                 
@@ -1555,6 +1559,7 @@ extension OrderView {
                     .float(.right)
                     
                 }
+                .class(Class(TCOrderViewClass.equipmentWorkflow))
                 .backgroundColor(r: 35, g: 39, b: 47)
                 .borderRadius(12.px)
                 .padding(all: 3.px)
@@ -1562,6 +1567,7 @@ extension OrderView {
                 .height(45.px)
                 
             }
+            .class(Class(TCOrderViewClass.equipmentDetails))
             .height(100.percent)
             .width(65.percent)
             .overflow(.auto)
@@ -1571,6 +1577,9 @@ extension OrderView {
         
         override func buildUI() {
             super.buildUI()
+
+            self.class(Class(TCOrderViewClass.equipment))
+
             height(100.percent)
             width(100.percent)
             

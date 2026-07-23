@@ -43,7 +43,7 @@ extension CustComponents {
             }
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<Comment>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<Comment>.self, from: data)
                 callback(resp)
             }
             catch{

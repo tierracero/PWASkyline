@@ -245,7 +245,6 @@ class SocialManagerConfirmView: Div {
     
     override func buildUI() {
         super.buildUI()
-        self.class(.transparantBlackBackGround)
         self.zIndex(99999999)
         position(.absolute)
         height(100.percent)

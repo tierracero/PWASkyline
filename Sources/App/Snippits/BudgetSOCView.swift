@@ -92,41 +92,41 @@ class BudgetSOCView: Div {
   
     lazy var searchTermInput = InputText(self.$searchTerm)
         .placeholder("Modelo / SKU / SOC / POC")
-        .width(95.percent)
-        .class(.textFiledLightLarge)
-        .fontSize(23.px)
+        .width(100.percent)
+        .class(.textFiledBlackDark)
+        .fontSize(16.px)
         .disabled(self.$chargeId.map{ $0 != nil })
         .onFocus { tf in tf.select() }
     
     lazy var amountInput = InputText(self.$amount)
         .placeholder("Cantidad")
-        .width(25.percent)
-        .class(.textFiledLight)
-        .fontSize(23.px)
+        .width(100.percent)
+        .class(.textFiledBlackDark)
+        .fontSize(16.px)
         .disabled(self.$actionItems.map{ $0.count > 0 })
         .onFocus { tf in tf.select() }
     
     lazy var nameInput = InputText(self.$name)
-        .placeholder("Description")
-        .width(95.percent)
-        .class(.textFiledLightLarge)
-        .fontSize(23.px)
+        .placeholder("Descripción")
+        .width(100.percent)
+        .class(.textFiledBlackDark)
+        .fontSize(16.px)
         .disabled(self.$chargeId.map{ $0 != nil })
         .onFocus { tf in tf.select() }
     
     lazy var salePriceInput = InputText(self.$price)
         .placeholder("0.00")
-        .width(25.percent)
-        .class(.textFiledLightLarge)
-        .fontSize(23.px)
+        .width(100.percent)
+        .class(.textFiledBlackDark)
+        .fontSize(16.px)
         .disabled(self.$chargeId.map{ $0 != nil })
         .onFocus { tf in tf.select() }
     
     lazy var costAmountInput = InputText(self.$costAmount)
-        .class(.textFiledLightLarge)
+        .class(.textFiledBlackDark)
         .placeholder("0.00")
-        .width(25.percent)
-        .fontSize(23.px)
+        .width(100.percent)
+        .fontSize(16.px)
         .disabled(self.$chargeId.map{ $0 != nil })
         .onFocus { tf in tf.select() }
     
@@ -135,60 +135,37 @@ class BudgetSOCView: Div {
     }
     
     @DOM override var body: DOM.Content {
-        Div{
-            
-            Div {
-                
-                Img()
-                    .closeButton(.uiView2)
-                    .onClick{
-                        self.remove()
-                    }
-                    .hidden(self.$actionItems.map{ ($0.count != 0) })
-                
-                H2("Ingresar Presupuesto")
-                    .color(.lightBlueText)
-                
-                Div().class(.clear)
+        VPopUp(.semiFull) {
+            VTitle("Ingresar presupuesto") {
+                USmallTitle(self.soc.n)
+            } onClose: {
+                self.remove()
+            }
+
+            VBodyGrid {
+                Div {
+                    VBox(.raised) {
                 
                 /// Modelo / SKU / SOC / POC
-                Div{
-                    Label("SKU / UPC")
-                        .fontSize(12.px)
-                    Div {
-                        self.searchTermInput
-                    }
+                UField("SKU / UPC", required: false) {
+                    self.searchTermInput
                 }
-                .class(.section)
-                
-                Div().class(.clear)
+                .marginBottom(12.px)
                 
                 /// Amount
-                Div{
-                    Label("Cantidad")
-                        .fontSize(12.px)
-                    Div {
-                        self.amountInput
-                    }
+                UField("Cantidad", required: false) {
+                    self.amountInput
                 }
-                .class(.section)
-                Div().class(.clear)
+                .marginBottom(12.px)
                 
                 /// Description
-                Div{
-                    Label("Description")
-                        .fontSize(12.px)
-                    Div {
-                        self.nameInput
-                    }
+                UField("Descripción", required: false) {
+                    self.nameInput
                 }
-                .class(.section)
-                Div().class(.clear)
+                .marginBottom(12.px)
                 
                 /// Sale Price
-                Div{
-                    Label("Precio")
-                        .fontSize(12.px)
+                UField("Precio", required: false) {
                     Div {
                         
                         Span{
@@ -206,7 +183,7 @@ class BudgetSOCView: Div {
                             .custom("width", "fit-content")
                             .padding(all: 7.px)
                             .marginLeft(0.px)
-                            .class(.uibutton)
+                            .class(.uibtn)
                             .float(.right)
                             .onClick { _ in
                                 self.addInternalCostIsHidden = false
@@ -229,7 +206,7 @@ class BudgetSOCView: Div {
                             .custom("width", "fit-content")
                             .padding(all: 7.px)
                             .marginLeft(0.px)
-                            .class(.uibutton)
+                            .class(.uibtn)
                             .float(.right)
                             .hidden(self.$changePriceViewIsHidden.map{ !$0 })
                             .onClick { _ in
@@ -244,13 +221,10 @@ class BudgetSOCView: Div {
                     }
                     
                 }
-                .class(.section)
-                Div().class(.clear)
+                .marginBottom(12.px)
                 
                 /// `My Cost`
-                Div{
-                    Label("Costo Interno")
-                        .fontSize(12.px)
+                UField("Costo interno", required: false) {
                     Div {
                         
                         Img()
@@ -268,14 +242,14 @@ class BudgetSOCView: Div {
                         self.costAmountInput
                     }
                 }
-                .class(.section)
+                .marginBottom(12.px)
                 .hidden(self.$addInternalCostIsHidden)
                 
                 /// `Change Price`
                 Div{
                     if custCatchHerk > 1 {
                         Div{
-                            Label("Precio Public")
+                            Label("Precio público")
                             Div{
                                 Div{
                                     Span("$")
@@ -292,7 +266,7 @@ class BudgetSOCView: Div {
                                     self.price = self.pricea
                                 }
                             }
-                            .class(.uibutton)
+                            .class(.uibtn)
                         }
                         .class(.section)
                         
@@ -316,7 +290,7 @@ class BudgetSOCView: Div {
                                 }
                                 
                             }
-                            .class(.uibutton)
+                            .class(.uibtn)
                             
                         }
                         .class(.section)
@@ -340,7 +314,7 @@ class BudgetSOCView: Div {
                                     self.price = self.pricec
                                 }
                             }
-                            .class(.uibutton)
+                            .class(.uibtn)
                             
                         }
                         .class(.section)
@@ -354,9 +328,10 @@ class BudgetSOCView: Div {
                         Div{
                             
                             InputText(self.$customePrice)
-                                .class(.textFiledLight)
+                                .class(.textFiledBlackDark)
                                 .marginRight(3.px)
-                                .width(100.px)
+                                .width(100.percent)
+                                .fontSize(16.px)
                                 .onKeyDown({ tf, event in
                                     guard let _ = Float(event.key) else {
                                         if !ignoredKeys.contains(event.key) {
@@ -374,7 +349,7 @@ class BudgetSOCView: Div {
                             .paddingRight(7.px)
                             .paddingLeft(7.px)
                             .margin(all: 0.px)
-                            .class(.uibutton)
+                            .class(.uibtn)
                             .fontSize(18.px)
                             .onClick {
                                 
@@ -429,59 +404,48 @@ class BudgetSOCView: Div {
                 
                 Div().class(.clear)
                 
-                Div{
-                    Div {
-                        Span()
-                            .class(.ico)
-                            .backgroundImage("images/shopping_basket.png")
-                            .width(22.px)
-                        Span(" Agregar")
-                            .fontSize(22.px)
-                    }
-                    .class(.uibutton)
+                Div {
+                    ULargeButton("Agregar al presupuesto")
+                    .float(.right)
                     .onClick {
                         self.addChargeToOrder()
                     }
                 }
-                .align(.right)
                 
                 Div().class(.clear)
                 
                 
-            }
-            .class(self.$actionItems.map{ ($0.count == 0) ? .fullWidth : .oneHalf })
-            
-            Div{
-                
-                Img()
-                    .closeButton(.uiView2)
-                    .onClick{
-                        self.remove()
                     }
-                
-                self.actionView
+                    .position(.relative)
+                }
+                .custom("flex", "1 1 460px")
+                .custom("min-width", "0")
+
+                Div {
+                    VBox {
+                        UTitle("Acciones del servicio")
+                        UMinorTitle("Complete la configuración requerida para el presupuesto.")
+                            .marginTop(4.px)
+
+                        self.actionView
+                            .marginTop(12.px)
+                    }
+                    .height(100.percent)
+                    .overflow(.auto)
+                }
+                .custom("flex", "1 1 460px")
+                .custom("min-width", "0")
+                .hidden(self.$actionItems.map{ $0.isEmpty })
             }
-            .hidden(self.$actionItems.map{ ($0.count == 0) })
-            .overflow(.auto)
-            .class(.oneHalf)
-            
+            .display(.flex)
+            .custom("flex-wrap", "wrap")
+            .custom("align-items", "flex-start")
         }
-        .width(self.$actionItems.map{ ($0.count == 0) ? 40.percent : 80.percent })
-        .left(self.$actionItems.map{ ($0.count == 0) ? 30.percent : 10.percent })
-        .top(self.$actionItems.map{ ($0.count == 0) ? 35.percent : 15.percent })
-        .borderRadius(all: 24.px)
-        .backgroundColor(.white)
-        .maxHeight(70.percent)
-        .position(.absolute)
-        .padding(all: 12.px)
-        .overflow(.auto)
-        .top(25.percent)
     }
     
     override func buildUI() {
         super.buildUI()
         
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)

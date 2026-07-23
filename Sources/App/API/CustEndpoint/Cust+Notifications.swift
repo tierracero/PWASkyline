@@ -27,7 +27,12 @@ extension CustComponents {
             }
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<[CustTaskAuthorizationManagerQuick]>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<[CustTaskAuthorizationManagerQuick]>.self, from: data)
+
+                if resp.status == .ok, let alerts = resp.data {
+                    CatchControler.shared.syncTaskAlerts(alerts)
+                }
+
                 callback(resp)
             }
             catch{

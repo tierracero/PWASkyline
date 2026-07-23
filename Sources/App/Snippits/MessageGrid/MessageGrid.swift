@@ -30,6 +30,8 @@ class MessageGrid: Div {
     
     /// Order Mobile
     let mobile: String
+
+    let deferInitialLoad: Bool
     
     var notes: [CustOrderLoadFolioNotes]
     
@@ -46,6 +48,7 @@ class MessageGrid: Div {
         mobile: String,
         notes: [CustOrderLoadFolioNotes],
         lastCommunicationMethod: State<MessagingCommunicationMethods?>,
+        deferInitialLoad: Bool = false,
         callback: @escaping ((_ note: CustOrderLoadFolioNotes) -> ())
     ) {
         
@@ -57,6 +60,7 @@ class MessageGrid: Div {
         self.mobile = mobile
         self.notes = notes
         self.lastCommunicationMethod = lastCommunicationMethod
+        self.deferInitialLoad = deferInitialLoad
         self.callback = callback
         
         super.init()
@@ -335,13 +339,22 @@ class MessageGrid: Div {
             }
         }
         
-        loadMessages()
+        if deferInitialLoad {
+            Dispatch.asyncAfter(0.05) { [weak self] in
+                guard let self, self.isInDOM else { return }
+                self.loadMessages()
+            }
+        }
+        else {
+            loadMessages()
+        }
         
-        WebApp.current.wsevent.listen {
-            
-            if $0.isEmpty { return }
-            
-            let (event, _) = self.ws.recive($0)
+        WebApp.current.wsevent.listen { [weak self] value in
+
+            guard let self else { return }
+            if value.isEmpty { return }
+
+            let (event, _) = self.ws.recive(value)
             
             guard let event else {
                 return
@@ -351,7 +364,7 @@ class MessageGrid: Div {
             
             switch event {
             case .requestMobileCamaraComplete:
-                if let payload = self.ws.requestMobileCamaraComplete($0) {
+                if let payload = self.ws.requestMobileCamaraComplete(value) {
                     
                     guard let note = payload.note else {
                         return
@@ -392,7 +405,7 @@ class MessageGrid: Div {
                     
                 }
             case .requestMobileCamaraFail:
-                if let payload = self.ws.requestMobileCamaraFail($0) {
+                if let payload = self.ws.requestMobileCamaraFail(value) {
                     
                     if  let view = self.noteViewCatche[payload.eventid] {
                         view.remove()
@@ -400,7 +413,7 @@ class MessageGrid: Div {
                     
                 }
             case .requestMobileCamaraInitiate:
-                if let payload = self.ws.requestMobileCamaraInitiate($0) {
+                if let payload = self.ws.requestMobileCamaraInitiate(value) {
                     
                     if  let view = self.noteViewCatche[payload.eventid] {
                         
@@ -412,14 +425,14 @@ class MessageGrid: Div {
                     
                 }
             case .requestMobileCamaraProgress:
-                if let payload = self.ws.requestMobileCamaraProgress($0) {
+                if let payload = self.ws.requestMobileCamaraProgress(value) {
                     if let view = self.noteViewCatche[payload.eventid] {
                         view.activity = "Cargando \(payload.percent.toString)%"
                     }
                 }
             
             case .requestMobileCamaraCancel:
-                if let payload = self.ws.requestMobileCamaraCancel($0) {
+                if let payload = self.ws.requestMobileCamaraCancel(value) {
                     
                     if  let view = self.noteViewCatche[payload.eventid] {
                         view.remove()
@@ -427,13 +440,13 @@ class MessageGrid: Div {
                     
                 }
             case .requestMobileCamaraSelected:
-                if let payload = self.ws.requestMobileCamaraSelected($0) {
+                if let payload = self.ws.requestMobileCamaraSelected(value) {
                     if let view = self.noteViewCatche[payload.eventid] {
                         view.activity = "Iniciando Carga.."
                     }
                 }
             case .asyncFileUpload:
-                if let payload = self.ws.asyncFileUpload($0) {
+                if let payload = self.ws.asyncFileUpload(value) {
                     
                     if let view = self.noteViewCatche[payload.eventid] {
                         
@@ -444,7 +457,7 @@ class MessageGrid: Div {
                     }
                 }
             case .asyncFileUpdate:
-                if let payload = self.ws.asyncFileUpdate($0) {
+                if let payload = self.ws.asyncFileUpdate(value) {
                     
                     if let view = self.noteViewCatche[payload.eventId] {
                         
@@ -455,7 +468,7 @@ class MessageGrid: Div {
             case .asyncFileOCR:
                 break
             case .waMsgReactionUpdate:
-                if let payload = self.ws.waMsgReactionUpdate($0) {
+                if let payload = self.ws.waMsgReactionUpdate(value) {
                     
                     self.noteViewCatche.forEach { viewId, view in
                         
@@ -467,7 +480,7 @@ class MessageGrid: Div {
                     
                 }
             case .waMsgStatusUpdate:
-                if let payload = self.ws.waMsgStatusUpdate($0) {
+                if let payload = self.ws.waMsgStatusUpdate(value) {
                     
                     self.noteViewCatche.forEach { viewId, view in
                         
@@ -488,6 +501,7 @@ class MessageGrid: Div {
     func loadMessages(){
         
         self.grid.innerHTML = ""
+        self.noteViewCatche.removeAll()
         
         self.notes.reversed().forEach { note in
             

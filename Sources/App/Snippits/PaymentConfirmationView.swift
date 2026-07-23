@@ -292,7 +292,6 @@ class PaymentConfirmationView: Div {
     override func buildUI() {
         super.buildUI()
         
-        self.class(.transparantBlackBackGround)
         id("paymentConfirmationView")
         height(100.percent)
         position(.absolute)
@@ -356,7 +355,7 @@ class PaymentConfirmationView: Div {
                             
                         }
 
-                        self.appendChild(custDataView)
+                        addToDom(custDataView)
                         
                     }))
             }
@@ -671,7 +670,7 @@ class PaymentConfirmationView: Div {
 
                     }
 
-                    self.appendChild(custDataView)
+                    addToDom(custDataView)
                     
                 }))
         }

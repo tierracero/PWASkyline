@@ -104,21 +104,21 @@ class RequestTastView: Div {
                     }
                 
                 H2{
-                    
-                    
+
                     Img()
                         .src("/skyline/media/notificationIcon.png")
                         .marginRight(7.px)
                         .height(24.px)
                     
                     Span("Crear Tarea")
+                    
                 }
                 .color(.lightBlueText)
             }
             
             Div().class(.clear).height(7.px)
             
-            Div{
+            Div {
                 H2("Seleccione tipo de Tarea")
                     .color(.white)
                 
@@ -249,7 +249,6 @@ class RequestTastView: Div {
     override func buildUI() {
         super.buildUI()
         
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)

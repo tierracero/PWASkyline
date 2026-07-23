@@ -18,6 +18,8 @@ public struct API {
     public typealias custAccountV1 = CustAccountComponents
     public typealias custPDVV1 = CustPDVComponents
 
+    public typealias custCommercialTrips = CustCommercialTripsComponents
+
     public typealias custExcel = CustExcelComponents
     public typealias custFollowup = CustFollowupComponents
 
@@ -38,7 +40,7 @@ public struct API {
     public typealias saleManagerV1 = SaleManagerComponents
     public typealias themeV1 = ThemeComponents
     //public typealias papaContadorV1 = PapaContadorComponents
-    public typealias wsV1 = WSComponents
+    public typealias webSocketV1 = WSComponents
     
     public typealias rewardsV1 = RewardsComponents
     

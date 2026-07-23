@@ -27,7 +27,7 @@ extension CustOrderComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<GetWorkLoadPromisResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<GetWorkLoadPromisResponse>.self, from: data)
                 callback(resp)
             }
             catch{

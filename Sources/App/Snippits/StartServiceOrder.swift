@@ -802,7 +802,7 @@ class StartServiceOrder: Div {
                 Img()
                     .closeButton(.uiView2)
                     .onClick {
-                        self.appendChild(ConfirmationView(
+                        addToDom(ConfirmationView(
                             type: .yesNo,
                             title: "Confirme Salida",
                             message: "¿Quiere salir? Se perderan todos los datos.",
@@ -2499,7 +2499,6 @@ class StartServiceOrder: Div {
     }
     
     override func buildUI() {
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)
@@ -2859,7 +2858,7 @@ class StartServiceOrder: Div {
     }
     
     func selectDate() {
-        self.appendChild(
+        addToDom(
             SelectCalendarDate(
                 type: .folio,
                 selectedDateStamp: self.selectedDateStamp,
@@ -3268,7 +3267,7 @@ class StartServiceOrder: Div {
             
         }
         
-        self.appendChild(view)
+        addToDom(view)
         
         view.termInput.select()
     }
@@ -3306,7 +3305,7 @@ class StartServiceOrder: Div {
             self.tag2Focus()
         }
         
-        self.appendChild(view)
+        addToDom(view)
         
         view.termInput.select()
         
@@ -3351,7 +3350,7 @@ class StartServiceOrder: Div {
             self.tag2SelctedItemID = model.id
         }
         
-        self.appendChild(view)
+        addToDom(view)
         
         view.termInput.select()
     }
@@ -3950,7 +3949,7 @@ class StartServiceOrder: Div {
                 
             }
             
-            self.appendChild(view)
+            addToDom(view)
             
         }
         addSoc: { soc, codeType, isWarenty, internalWarenty in
@@ -4080,7 +4079,7 @@ class StartServiceOrder: Div {
             
         }
         
-        self.appendChild(pv)
+        addToDom(pv)
         
         if self.total <= 0 {
             pv.paymentDescription.select()

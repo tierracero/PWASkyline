@@ -10,6 +10,7 @@ import TCFundamentals
 import TCFireSignal
 
 extension CustOrderComponents {
+    
 	
 	static func addPayment (
 		orderid: UUID,
@@ -20,7 +21,7 @@ extension CustOrderComponents {
 		provider: String,
 		lastFour: String,
 		auth: String,
-		callback: @escaping ( (_ resp: APIResponseGeneric<AddPaymentResponse>?) -> () )
+        callback: @escaping ( (_ resp: APIResponseGeneric<AddPaymentResponse>?) -> () )
 	) {
 		sendPost(
 			rout,
@@ -42,7 +43,7 @@ extension CustOrderComponents {
 				return
 			}
 			do{
-				callback(try JSONDecoder().decode(APIResponseGeneric<AddPaymentResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<AddPaymentResponse>.self, from: data))
 			}
 			catch{
 				callback(nil)

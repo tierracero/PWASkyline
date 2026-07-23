@@ -35,108 +35,105 @@ class SideMenuView: Div {
     
 
     @DOM override var body: DOM.Content {
-        Div{
-            
-            Div().height(60.px)
-            
-            Img()
-                .closeButton(.sideMenu)
-                .float(.right)
-                .position(.sticky)
-                .right(15.px)
-                .top(15.px)
-                .cursor(.pointer)
-                .zIndex(99)
-                .onClick {
-                    self.callback("close")
-                }
-            
-            H1("Herramientas")
-                .color(.lightBlueText)
-            
-            if linkedProfile.contains(.POCs) || linkedProfile.contains(.budgetManager){
-                
-                // Cobranza
-                SideMenuItemView(
-                    icon: "/skyline/media/zoom.png",
-                    title: "Buscar en Compras",
-                    subTitle: "Buscar productos en compras pasadas",
-                    caller: "historicalPriceSearch"
-                ) { caller in
-                    self.callback(caller)
-                }
-                
-                
-                // Tienda y productos
-                SideMenuItemView(
-                    icon: "/skyline/media/store.png",
-                    title: "Productos",
-                    subTitle: "Manejo de tienda y productos",
-                    caller: "storeAndProducts"
-                ) { caller in
-                    self.callback(caller)
-                }
-            }
-            
-            if linkedProfile.contains(.configDieneroProvedores) {
-                // Configuracion
-                self.config
-                
-            }
-            
-            // Cerrar Session
-            SideMenuItemView(
-                icon: "/skyline/media/power.png",
-                title: "Cerrar Sesion",
-                subTitle: "No olvides cerra la session por seguridad",
-                caller: "logout"
-            ) { caller in
-                self.callback(caller)
+        Div {
+            VTitle("Herramientas") {
+                USmallTitle("Tierra Cero Skyline")
+            } onClose: {
+                self.callback("close")
             }
 
-            // MARK: Customer Special Tools
-            if custCatchUrl == "tradesa.mx" {
+            Div {
+                if linkedProfile.contains(.POCs) || linkedProfile.contains(.budgetManager) {
+                    // Cobranza
+                    SideMenuItemView(
+                        icon: "/skyline/media/zoom.png",
+                        title: "Buscar en Compras",
+                        subTitle: "Buscar productos en compras pasadas",
+                        caller: "historicalPriceSearch"
+                    ) { caller in
+                        self.callback(caller)
+                    }
+
+                    // Tienda y productos
+                    SideMenuItemView(
+                        icon: "/skyline/media/store.png",
+                        title: "Productos",
+                        subTitle: "Manejo de tienda y productos",
+                        caller: "storeAndProducts"
+                    ) { caller in
+                        self.callback(caller)
+                    }
+                }
+
+                if linkedProfile.contains(.configDieneroProvedores) {
+                    // Configuracion
+                    self.config
+                }
+
                 SideMenuItemView(
-                    icon: "/skyline/media/store_gray.png",
+                    icon: "/skyline/media/commercial_trip.png",
                     title: "Control de Viajes",
-                    subTitle: "Registra y maneja el historeal de viajes",
+                    subTitle: "Registra y maneja el historial de viajes",
                     caller: "tradesa_trip_control"
                 ) { caller in
                     self.callback(caller)
                 }
+
+                // Cerrar Session
+                SideMenuItemView(
+                    icon: "/skyline/media/power.png",
+                    title: "Cerrar Sesión",
+                    subTitle: "Cierra la sesión para proteger tu cuenta",
+                    caller: "logout"
+                ) { caller in
+                    self.callback(caller)
+                }
             }
-            
+            .custom("height", "calc(100% - 96px)")
+            .custom("box-sizing", "border-box")
+            .padding(all: 12.px)
+            .overflow(.auto)
+
             Div("Tierra Cero Skyline [" +
             "\(SkylineWeb().version.mode.rawValue) " +
             "\(SkylineWeb().version.major.toString)." +
             "\(SkylineWeb().version.minor.toString)." +
             "\(SkylineWeb().version.patch.toString)" +
             "]")
-                .position(.absolute)
-                .float(.right)
-                .bottom(7.px)
-                .right(7.px)
-            
+                .height(48.px)
+                .custom("box-sizing", "border-box")
+                .custom("color", "var(--tc-beta-muted)")
+                .fontSize(12.px)
+                .padding(v: 15.px, h: 12.px)
+                .textAlign(.right)
         }
-        .width(33.percent)
+        .class(Class(TCTripBetaClass.popUpPanel))
+        .custom("width", "min(460px, 100vw)")
+        .custom("max-width", "100vw")
+        .custom("max-height", "100vh")
         .height(100.percent)
         .position(.absolute)
         .right(0.px)
         .top(0.px)
-        .backgroundColor(.white)
-        .overflow(.auto)
+        .custom("border-radius", "18px 0 0 18px")
+        .custom("border-right", "0")
         .onClick { _, event in
             event.stopPropagation()
         }
     }
     
     override func buildUI() {
+        super.buildUI()
+
+        TCTripBetaTheme.apply(to: self)
+
         onClick {
             self.callback("")
         }
         width(100.percent)
         height(100.percent)
-        backgroundColor(.transparentBlack)
+        custom("background", "rgba(1, 0, 19, 0.82)")
+        custom("backdrop-filter", "blur(3px)")
         position(.fixed)
         top(0.px)
         left(0.px)

@@ -664,7 +664,6 @@ class ProductTransferView: Div {
     override func buildUI() {
         super.buildUI()
         
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)
@@ -927,7 +926,7 @@ class ProductTransferView: Div {
             }
         )
         
-        self.appendChild(_view)
+        addToDom(_view)
         
         _view.quantInput.select()
         

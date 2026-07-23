@@ -51,7 +51,7 @@ extension CustRouteComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<CreateResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<CreateResponse>.self, from: data))
             }
             catch{
                 print(error)

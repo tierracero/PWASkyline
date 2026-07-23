@@ -31,20 +31,20 @@ extension CustAccountComponents {
         workName: String,
         workPhone: String,
         workSupervisor: String,
-        refrenceOneRelationType: CustCreditRefrenceType,
+        refrenceOneRelationType: CustCreditRefrenceType?,
         refrenceOneNames: String,
         refrenceOneLastNames: String,
-        refrenceOneTelephoneType: TelephoneType,
+        refrenceOneTelephoneType: TelephoneType?,
         refrenceOneTelephone: String,
-        refrenceTwoRelationType: CustCreditRefrenceType,
+        refrenceTwoRelationType: CustCreditRefrenceType?,
         refrenceTwoNames: String,
         refrenceTwoLastNames: String,
-        refrenceTwoTelephoneType: TelephoneType,
+        refrenceTwoTelephoneType: TelephoneType?,
         refrenceTwoTelephone: String,
-        refrenceThreeRelationType: CustCreditRefrenceType,
+        refrenceThreeRelationType: CustCreditRefrenceType?,
         refrenceThreeNames: String,
         refrenceThreeLastNames: String,
-        refrenceThreeTelephoneType: TelephoneType,
+        refrenceThreeTelephoneType: TelephoneType?,
         refrenceThreeTelephone: String,
         idType: IdentificationTypes?,
         idFront: String,
@@ -103,7 +103,7 @@ extension CustAccountComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<CreditResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<CreditResponse>.self, from: data)
                 callback(resp)
             }
             catch{

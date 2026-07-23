@@ -27,16 +27,15 @@ extension CustComponents {
                 id: id,
                 name: name
             )
-        ) { payload in
+        ) { data in
             
-            guard let data = payload else {
+            guard let data else {
                 callback(nil)
                 return
             }
             
             do {
-                let resp = try JSONDecoder().decode(APIResponseGeneric<ActionItemAvalabilityResponse>.self, from: data)
-                callback(resp)
+                callback(try decodeAPIResponse(APIResponseGeneric<ActionItemAvalabilityResponse>.self, from: data))
             }
             catch {
                 callback(nil)

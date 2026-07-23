@@ -80,7 +80,7 @@ extension CustPDVComponents {
                 }
             
                 do{
-                    let resp = try JSONDecoder().decode(APIResponseGeneric<CloseSaleResponse>.self, from: data)
+                    let resp = try decodeAPIResponse(APIResponseGeneric<CloseSaleResponse>.self, from: data)
                     callback(resp)
                 }
                 catch{

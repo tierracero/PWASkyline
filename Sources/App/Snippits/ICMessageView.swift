@@ -62,15 +62,17 @@ class ICMessageView: Div {
     @State var status: CustAlertRefrenceStatus = .new
     
     @State var isFoccused = false
+
+    private var displayName: String {
+        let name = data.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        return name.isEmpty ? data.subType.description.capitalized : name
+    }
     
     lazy var closeIcon = Img()
         .hidden(self.$isFoccused.map{ !$0 })
         .src("/skyline/media/cross.png")
-        .marginRight(7.px)
-        .marginTop(7.px)
+        .class(Class(TCWorkDashboardClass.messageDismiss))
         .cursor(.pointer)
-        .float(.right)
-        .width(24.px)
         .onClick { img, event in
             
             img.load("/skyline/media/loader.gif")
@@ -96,90 +98,50 @@ class ICMessageView: Div {
         }
     
     @DOM override var body: DOM.Content {
-        /// Icon (mail / avatar) && ( folio / nick )
-        Div{
-            
+        /// Keep the channel recognizable while giving the message content
+        /// the majority of the card width.
+        Div {
             Img()
                 .src(self.$icon)
-                .custom("width", "calc(100% - 14px)")
-            
-            Div{
-                
-                Img()
-                    .src(self.$socialIcon)
-                    .hidden(self.$socialIcon.map{ $0.isEmpty })
-                    .height(12.px)
-                
-                Span(self.$chatNick)
-                    .hidden(self.$socialIcon.map{ !$0.isEmpty })
-            }
-            .class(.oneLineText)
-            .fontSize(12.px)
-            .align(.center)
-            .color(.gray)
-                
+                .hidden(self.$socialIcon.map{ !$0.isEmpty })
+                .class(Class(TCWorkDashboardClass.messageChannelIcon))
+
+            Img()
+                .src(self.$socialIcon)
+                .hidden(self.$socialIcon.map{ $0.isEmpty })
+                .class(Class(TCWorkDashboardClass.messageChannelIcon))
+
+            Span(self.$chatNick)
+                .hidden(self.$socialIcon.map{ !$0.isEmpty })
+                .class(.oneLineText, Class(TCWorkDashboardClass.messageFolio))
         }
-        .overflow(.hidden)
-        .float(.left)
-        .borderRadius(all: 26.px)
-        .padding(all: 3.px)
-        .align(.center)
-        .height(52.px)
-        .width(46.px)
+        .class(Class(TCWorkDashboardClass.messageChannel))
         
         Div {
-            /// (name / user) (time)
-            Div{
-                
-                Div(self.data.name)
-                    .class(.oneLineText)
-                    .float(.left)
-                    .color(.lightGray)
-                    .custom("width", "calc(100% - 100px)")
-                    .overflow(.hidden)
-                
-                Div(self.$lastMessageAtText).float(.right)
-                    .float(.right)
-                    .class(.oneLineText)
-                    .color(.gray)
-                    .width(100.px)
-                
-                Div().class(.clear)
+            Div {
+                Div(self.displayName)
+                    .class(.oneLineText, Class(TCWorkDashboardClass.messageSender))
+
+                Div(self.$lastMessageAtText)
+                    .class(.oneLineText, Class(TCWorkDashboardClass.messageTime))
             }
+            .class(Class(TCWorkDashboardClass.messageHeader))
             
-            /// Activity
             Div(self.$activity.map{ $0.replace(from: "\n", to: "") })
-                .width(self.$isFoccused.map{ $0 ? 80.percent : 100.percent })
-                .class(.oneLineText)
-                .margin(all: 3.px)
-                .fontSize(23.px)
-                .color(.white)
-                .float(.left)
-            
-            self.closeIcon
-            
-            Div().class(.clear)
+                .class(Class(TCWorkDashboardClass.messagePreview))
         }
-        .overflow(.hidden)
+        .class(Class(TCWorkDashboardClass.messageContent))
         .hidden(self.smallChatIsOpen.map{ !$0 })
-        .custom("width", "calc(100% - 52px)")
-        .float(.left)
-        
-        Div().class(.clear)
+
+        self.closeIcon
         
     }
     
     override func buildUI() {
         
         super.buildUI()
-        backgroundColor(.backGroundGraySlate)
-        borderRadius(all: 12.px)
-        padding(all: 3.px)
-        overflow(.hidden)
+        self.class(Class(TCWorkDashboardClass.messageCard))
         cursor(.pointer)
-        overflow(.hidden)
-        marginTop(3.px)
-        height(56.px)
         onClick {
             self.callback(self.data)
         }

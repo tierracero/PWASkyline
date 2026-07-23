@@ -27,7 +27,7 @@ extension CustComponents {
             }
             
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<CustCommunicationProfile>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<CustCommunicationProfile>.self, from: data))
             }
             catch {
                 callback(nil)

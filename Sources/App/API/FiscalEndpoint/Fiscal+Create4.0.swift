@@ -35,7 +35,7 @@ extension FiscalComponents {
         provider: String,
         auth: String,
         lastFour: String,
-        cartaPorte: FiscalCartaPorte?,
+        cartaPorte: CustFiscalCartaPorteItem?,
         globalInformation: InformacionGlobal?,
         callback: @escaping ( (_ resp: APIResponseGeneric<CreateResponse>?) -> () )
     ) {
@@ -75,7 +75,7 @@ extension FiscalComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<CreateResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<CreateResponse>.self, from: data)
                 callback(resp)
             }
             catch{

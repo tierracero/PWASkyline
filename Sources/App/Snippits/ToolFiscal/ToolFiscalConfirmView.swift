@@ -34,7 +34,7 @@ class ToolFiscalConfirmView: Div {
     var provider: String
     var auth: String
     var lastFour: String
-    var cartaPorte: FiscalCartaPorte?
+    var cartaPorte: CustFiscalCartaPorteItem?
     var globalInformation: InformacionGlobal?
     let total: String
     
@@ -62,7 +62,7 @@ class ToolFiscalConfirmView: Div {
         provider: String,
         auth: String,
         lastFour: String,
-        cartaPorte: FiscalCartaPorte?,
+        cartaPorte: CustFiscalCartaPorteItem?,
         globalInformation: InformacionGlobal?,
         total: String,
         callback: @escaping ((
@@ -182,7 +182,6 @@ class ToolFiscalConfirmView: Div {
     override func buildUI() {
         super.buildUI()
         
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)
@@ -202,6 +201,8 @@ class ToolFiscalConfirmView: Div {
             detailView.appendChild(
                 H2("").color(.white)
             )
+        case .comertialTrip:
+        viewName = "Factura Viajes"
         }
         
         if cartaPorte != nil {
@@ -467,7 +468,7 @@ class ToolFiscalConfirmView: Div {
      var provider: String
      var auth: String
      var lastFour: String
-     var cartaPorte: FiscalCartaPorte?
+     var cartaPorte: CustFiscalCartaPorteItem?
      var globalInformation: InformacionGlobal?
      */
     

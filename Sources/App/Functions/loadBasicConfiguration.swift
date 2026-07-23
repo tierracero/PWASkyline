@@ -125,6 +125,13 @@ public func loadBasicConfiguration( callback: @escaping ( (
         custCatchStore = _custCatchStore
         custCatchGroop = _custCatchGroop
         panelMode = _panelMode
+
+        CatchControler.shared.loadTaskAlertsFromLocalDatabase(
+            userId: _custCatchID,
+            username: _custCatchUser
+        )
+
+        ErrorReportingControler.shared.sessionDidBecomeAvailable()
         
         print("⭐️  panelMode \(panelMode)")
 
@@ -412,4 +419,3 @@ public func loadBasicConfiguration( callback: @escaping ( (
         }        
     }
 }
-

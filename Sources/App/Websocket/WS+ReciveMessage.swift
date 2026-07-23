@@ -11,11 +11,11 @@ import TCFireSignal
 
 extension WS {
     
-    func reciveMessage(_ payload: String) -> API.wsV1.ReciveMessage? {
+    func reciveMessage(_ payload: String) -> API.webSocketV1.ReciveMessage? {
         
         if let data = payload.data(using: .utf8) {
             do {
-                return try JSONDecoder().decode(API.wsV1.ReciveMessageNotification.self, from: data).payload
+                return try JSONDecoder().decode(API.webSocketV1.ReciveMessageNotification.self, from: data).payload
             } catch {
                 print(error)
                 return nil

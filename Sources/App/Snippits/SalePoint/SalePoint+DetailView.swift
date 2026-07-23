@@ -484,6 +484,7 @@ extension SalePointView {
                                                 }
                                                 addToDom(view)
                                             }
+                                        
                                         }
                                 }
                                 .hidden(self.$status.map{ !($0 == .unbilled || $0 == .billed) })
@@ -581,7 +582,6 @@ extension SalePointView {
         }
         
         override func buildUI() {
-            self.class(.transparantBlackBackGround)
             position(.absolute)
             height(100.percent)
             width(100.percent)
@@ -1071,7 +1071,7 @@ extension SalePointView {
                                 
                             }
 
-                            self.appendChild(custDataView)
+                            addToDom(custDataView)
                             
                         }))
                 }

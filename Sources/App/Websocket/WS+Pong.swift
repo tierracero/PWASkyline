@@ -11,11 +11,11 @@ import TCFireSignal
 
 extension WS {
     
-    func pong(_ payload: String) -> API.wsV1.PongNotification? {
+    func pong(_ payload: String) -> API.webSocketV1.PongNotification? {
         
         if let data = payload.data(using: .utf8) {
             do {
-                return try JSONDecoder().decode(API.wsV1.PongNotification.self, from: data)
+                return try JSONDecoder().decode(API.webSocketV1.PongNotification.self, from: data)
             } catch {
                 return nil
             }

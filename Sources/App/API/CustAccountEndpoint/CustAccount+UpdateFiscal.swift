@@ -43,7 +43,7 @@ extension CustAccountComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponse.self, from: data)
+                let resp = try decodeAPIResponse(APIResponse.self, from: data)
                 callback(resp)
             }
             catch{

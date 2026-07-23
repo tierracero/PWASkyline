@@ -38,7 +38,7 @@ extension CustPOCComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<RemoveMediaResponseType>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<RemoveMediaResponseType>.self, from: data)
                 callback(resp)
             }
             catch{

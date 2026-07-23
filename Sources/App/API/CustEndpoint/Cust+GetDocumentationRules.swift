@@ -25,7 +25,7 @@ extension CustComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<GetDocumentationRulesResponse>?.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<GetDocumentationRulesResponse>?.self, from: data)
                 callback(resp)
             }
             catch{

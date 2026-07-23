@@ -30,7 +30,7 @@ extension CustComponents {
             
             do{
                 
-                let resp = try JSONDecoder().decode(APIResponseGeneric<[GetBudgetsObjeto]>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<[GetBudgetsObjeto]>.self, from: data)
                 
                 guard let data = resp.data else {
                     callback([])

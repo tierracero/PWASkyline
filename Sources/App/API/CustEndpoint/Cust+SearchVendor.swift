@@ -48,7 +48,7 @@ func searchVendor(
         
         if let data = xhr.responseText?.data(using: .utf8) {
             do {
-                let resp = try JSONDecoder().decode([CustVendorsQuick].self, from: data)
+                let resp = try decodeAPIResponse([CustVendorsQuick].self, from: data)
                 
                 callback(term,resp)
                 

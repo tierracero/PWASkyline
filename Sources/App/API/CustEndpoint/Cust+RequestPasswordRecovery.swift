@@ -30,7 +30,7 @@ extension CustComponents {
             }
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<RequestPasswordRecoveryResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<RequestPasswordRecoveryResponse>.self, from: data)
                 callback(resp)
             }
             catch{

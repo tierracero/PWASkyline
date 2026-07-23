@@ -24,7 +24,7 @@ extension PapaContadorComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<[LoadActiveTCAccountResponse]>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<[LoadActiveTCAccountResponse]>.self, from: data)
                 callback(resp)
             }
             catch{

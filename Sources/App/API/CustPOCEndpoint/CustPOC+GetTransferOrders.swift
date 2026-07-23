@@ -31,7 +31,7 @@ extension CustPOCComponents {
             
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<GetTransferOrdersResponse>.self, from: payload)
+                let resp = try decodeAPIResponse(APIResponseGeneric<GetTransferOrdersResponse>.self, from: payload)
                 callback(resp)
             }
             catch{

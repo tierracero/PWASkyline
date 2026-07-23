@@ -28,55 +28,77 @@ class SelectNewOrderTypeView: Div {
     }
     
     @DOM override var body: DOM.Content {
-        Div{
-            
-            Img()
-                .closeButton(.view)
-                .onClick{
-                    //SkylineApp.current.$keyUp.removeAllListeners()
-                    self.callback(nil)
-                    self.remove()
+        VPopUp(.fitContent(w: 760)) {
+            VTitle("Seleccione tipo de orden") {
+                USmallTitle("Nueva operación")
+            } onClose: {
+                self.callback(nil)
+                self.remove()
+            }
+
+            VBodyGrid {
+                if configStoreProcessing.moduleProfile.contains(.rental) {
+                    self.orderTypeOption(
+                        icon: "/skyline/DocumentFamilyIcons/rental.svg",
+                        title: "Orden de renta",
+                        subtitle: "Reserva y entrega de productos en renta",
+                        orderType: .rental
+                    )
                 }
-            
-            H2("Selcione tipo de orden")
-                .color(.lightBlueText)
-            
-            Div()
-                .class(.clear)
-                .marginTop(3.px)
-            
-            Div("Orden de Renta")
-            .fontSize(36.px)
-            .align(.center)
-            .class(.largeButtonBox)
-            .hidden({ !configStoreProcessing.moduleProfile.contains(.rental) }())
-            .onClick(self.startNewRental)
-            
-            Div()
-                .class(.clear)
-                .marginTop(12.px)
-                .hidden({ !configStoreProcessing.moduleProfile.contains(.rental) }())
-            
-            Div("Orden de Servicio")
-            .fontSize(36.px)
-            .align(.center)
-            .class(.largeButtonBox)
-            .hidden({ !configStoreProcessing.moduleProfile.contains(.order) }())
-            .onClick(self.startNewOrder)
-            
-            Div()
-                .class(.clear)
-                .marginTop(12.px)
-                .hidden({ !configStoreProcessing.moduleProfile.contains(.order) }())
-            
+
+                if configStoreProcessing.moduleProfile.contains(.order) {
+                    self.orderTypeOption(
+                        icon: "/skyline/DocumentFamilyIcons/order.svg",
+                        title: "Orden de servicio",
+                        subtitle: "Diagnóstico, trabajo y seguimiento operativo",
+                        orderType: .order
+                    )
+                }
+            }
         }
-        .padding(all: 12.px)
-        .width(40.percent)
-        .position(.absolute)
-        .left(30.percent)
-        .top(30.percent)
-        .backgroundColor(.white)
-        .borderRadius(all: 24.px)
+    }
+
+    private func orderTypeOption(
+        icon: String,
+        title: String,
+        subtitle: String,
+        orderType: CustOrderProfiles
+    ) -> VGrid {
+        let showsMultipleTypes = configStoreProcessing.moduleProfile.contains(.rental) &&
+            configStoreProcessing.moduleProfile.contains(.order)
+
+        return VGrid(showsMultipleTypes ? .half : .full) {
+            VBox(.interactive) {
+                Img()
+                    .src(icon)
+                    .width(68.px)
+                    .height(68.px)
+                    .custom("object-fit", "contain")
+
+                Div {
+                    USubTitle(title)
+                    UMinorTitle(subtitle)
+                        .marginTop(6.px)
+                        .custom("line-height", "1.4")
+                }
+                .custom("min-width", "0")
+            }
+            .height(100.percent)
+            .display(.grid)
+            .custom("grid-template-columns", "68px minmax(0, 1fr)")
+            .custom("align-items", "center")
+            .custom("gap", "16px")
+            .attribute("aria-label", title)
+            .onClick {
+                self.selectOrderType(orderType)
+            }
+            .onKeyUp { _, event in
+                guard event.code == "Enter" || event.code == "Space" else { return }
+                event.preventDefault()
+                self.selectOrderType(orderType)
+            }
+        }
+        .custom("min-height", "155px")
     }
     
     override func buildUI() {
@@ -87,7 +109,6 @@ class SelectNewOrderTypeView: Div {
         top(0.px)
         left(0.px)
         position(.absolute)
-        self.class(.transparantBlackBackGround)
         /*
         moño corbata corbaton fajin camisa patanlon chaleco  chaznet frack smokin
          
@@ -122,6 +143,10 @@ class SelectNewOrderTypeView: Div {
         self.remove()
         //SkylineApp.current.$keyUp.removeAllListeners()
     }
+
+    private func selectOrderType(_ orderType: CustOrderProfiles) {
+        self.callback(orderType)
+        self.remove()
+    }
     
 }
-

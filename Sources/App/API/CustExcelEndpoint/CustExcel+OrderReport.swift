@@ -25,12 +25,13 @@ extension CustExcelComponents {
                 payload: payload
             )
         ) { data in
+        
             guard let data else {
                 callback(nil)
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<OrderReportResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<OrderReportResponse>.self, from: data))
             }
             catch{
                 print("🔴 DEOCDING \(#function)")

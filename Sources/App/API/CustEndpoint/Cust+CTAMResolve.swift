@@ -33,7 +33,7 @@ extension CustComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponse.self, from: payload))
+                callback(try decodeAPIResponse(APIResponse.self, from: payload))
             }
             catch{
                 print("🔴 API_DECODING_ERROR")

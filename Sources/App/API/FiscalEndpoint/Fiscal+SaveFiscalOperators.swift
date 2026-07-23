@@ -39,7 +39,7 @@ extension FiscalComponents {
             }
             
             do{
-                callback(try JSONDecoder().decode(APIResponse.self, from: data))
+                callback(try decodeAPIResponse(APIResponse.self, from: data))
             }
             catch{
                 print(error)

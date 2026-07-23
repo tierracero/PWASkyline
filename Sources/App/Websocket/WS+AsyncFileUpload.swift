@@ -14,7 +14,7 @@ extension WS {
         
         if let data = payload.data(using: .utf8) {
             do {
-                return try JSONDecoder().decode(API.wsV1.AsyncFileUpload.self, from: data).payload
+                return try JSONDecoder().decode(API.webSocketV1.AsyncFileUpload.self, from: data).payload
             } catch {
                 
                 print(error)

@@ -15,99 +15,50 @@ class MoneyManagerView: Div {
     override class var name: String { "div" }
     
     @DOM override var body: DOM.Content {
-        //Select Code
-        Div{
-            
-            Div{
-                
-                /// Header
-                Div {
-                    
-                    Img()
-                        .closeButton(.subView)
+        VPopUp(.fitContent(w: 980)) {
+            VTitle("Dinero y cortes") {
+                if custCatchHerk > 1 {
+                    USmallButton("Auditar")
+                        .attribute("aria-label", "Auditar movimientos de dinero")
                         .onClick {
-                            self.remove()
+                            addToDom(AuditView())
                         }
-                    
-                    if custCatchHerk > 1 {
-                        
-                        Div("Auditar")
-                            .marginRight(12.px)
-                            .marginTop(-7.px)
-                            .fontSize(20.px)
-                            .float(.right)
-                            .class(.uibtn)
-                            .onClick {
-                                addToDom(AuditView())
-                            }
-                    }
-                    
-                    
-                    Div("Historial")
-                        .marginRight(12.px)
-                        .marginTop(-7.px)
-                        .fontSize(20.px)
-                        .float(.right)
-                        .class(.uibtn)
-                        .onClick {
-                            addToDom(HistoryView())
-                        }
-                    
-                    H2("Dinero y Cortes")
-                        .color(.lightBlueText)
-                        .marginLeft(7.px)
-                        .float(.left)
-                    
-                    Div().class(.clear)
-                    
                 }
-                
-                Div().height(7.px)
-                
-                Div{
-                    Img()
-                        .src("/skyline/media/coin.png")
-                        .marginRight(12.px)
-                        .height(24.px)
-                        .width(24.px)
-                        
-                    if custCatchHerk > 1 {
-                        
-                        Strong("Otorgar Dinero / Gastos")
-                            .fontSize(36.px)
-                            .color(.white)
+
+                USmallButton("Historial")
+                    .attribute("aria-label", "Consultar historial de movimientos")
+                    .onClick {
+                        addToDom(HistoryView())
                     }
-                    else {
-                        
-                        Strong("Reportar Gastos")
-                            .fontSize(36.px)
-                            .color(.white)
-                    }
-                    
+            } onClose: {
+                self.remove()
+            }
+
+            VBodyGrid {
+                VGrid(.full) {
+                    UMinorTitle("Seleccione una operación financiera")
+                        .custom("line-height", "1.4")
                 }
-                .custom("width", "calc(100% - 12px)")
-                .class(.uibtnLarge)
-                .onClick {
+
+                self.actionCard(
+                    icon: "/skyline/media/coin.png",
+                    eyebrow: custCatchHerk > 1 ? "Administración" : "Gastos",
+                    title: custCatchHerk > 1 ? "Otorgar dinero / gastos" : "Reportar gastos",
+                    detail: custCatchHerk > 1
+                        ? "Registre préstamos, gastos y movimientos financieros."
+                        : "Capture y documente un gasto realizado.",
+                    accent: "#ff9f0a"
+                ) {
                     addToDom(FinancialServicesView())
                 }
-                
-                Div().height(7.px)
-                
-                Div{
-                    Img()
-                        .src("/skyline/media/security.png")
-                        .marginRight(12.px)
-                        .height(24.px)
-                        .width(24.px)
-                        
-                    Strong("Corte Caja/Banco")
-                        .fontSize(36.px)
-                        .color(.white)
-                }
-                .custom("width", "calc(100% - 12px)")
-                .class(.uibtnLarge)
-                .onClick {
-                    
+
+                self.actionCard(
+                    icon: "/skyline/media/security.png",
+                    eyebrow: "Corte propio",
+                    title: "Corte de caja / banco",
+                    detail: "Prepare el corte correspondiente a su usuario actual.",
+                    accent: "#1887c7"
+                ) {
                     addToDom(NewDailyCutView(
                         type: .bankDeposit,
                         user: API.custAPIV1.UserList(
@@ -116,27 +67,15 @@ class MoneyManagerView: Div {
                             name: custCatchUser
                         )
                     ))
-                    
                 }
-                
-                
-                Div().height(7.px)
-                
-                Div{
-                    Img()
-                        .src("/skyline/media/spreadsheet.png")
-                        .marginRight(12.px)
-                        .height(24.px)
-                        .width(24.px)
-                        
-                    Strong("Recbir Corte")
-                        .fontSize(36.px)
-                        .color(.white)
-                }
-                .custom("width", "calc(100% - 12px)")
-                .class(.uibtnLarge)
-                .onClick {
-                    
+
+                self.actionCard(
+                    icon: "/skyline/media/spreadsheet.png",
+                    eyebrow: "Transferencias",
+                    title: "Recibir corte",
+                    detail: "Seleccione un usuario y reciba su transferencia general.",
+                    accent: "#72d84a"
+                ) {
                     addToDom(
                         NewDailyCutView.NewDailyCutSelectUserView { user in
                             addToDom(
@@ -147,26 +86,14 @@ class MoneyManagerView: Div {
                             )
                         }
                     )
-                    
                 }
-                
             }
-            .padding(all: 12.px)
-            
         }
-        .backgroundColor(.grayBlack)
-        .borderRadius(all: 24.px)
-        .position(.absolute)
-        .width(40.percent)
-        .left(30.percent)
-        .top(25.percent)
-        .color(.white)
     }
     
     override func buildUI() {
         super.buildUI()
         
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)
@@ -174,6 +101,67 @@ class MoneyManagerView: Div {
         top(0.px)
         
     }
-    
-    
+
+    private func actionCard(
+        icon: String,
+        eyebrow: String,
+        title: String,
+        detail: String,
+        accent: String,
+        action: @escaping () -> Void
+    ) -> VGrid {
+        VGrid(.oneThird) {
+            VBox(.interactive) {
+                Div {
+                    Img()
+                        .src(icon)
+                        .width(42.px)
+                        .height(42.px)
+                        .custom("object-fit", "contain")
+                }
+                .display(.flex)
+                .custom("align-items", "center")
+                .custom("justify-content", "center")
+                .width(56.px)
+                .height(56.px)
+                .custom("background", "rgba(8, 20, 31, 0.68)")
+                .custom("border", "1px solid rgba(122, 148, 168, 0.22)")
+                .borderRadius(all: 12.px)
+
+                Div {
+                    USmallTitle(eyebrow)
+                        .custom("text-transform", "uppercase")
+                        .custom("letter-spacing", "0.06em")
+
+                    USubTitle(title)
+                        .marginTop(5.px)
+
+                    UMinorTitle(detail)
+                        .marginTop(7.px)
+                        .custom("line-height", "1.35")
+                }
+                .custom("min-width", "0")
+
+                Div("›")
+                    .fontSize(30.px)
+                    .custom("line-height", "1")
+                    .color(.lightBlueText)
+            }
+            .display(.grid)
+            .custom("grid-template-columns", "56px minmax(0, 1fr) auto")
+            .custom("align-items", "center")
+            .custom("gap", "13px")
+            .custom("min-height", "152px")
+            .custom("border-left", "3px solid \(accent)")
+            .attribute("aria-label", title)
+            .onClick {
+                action()
+            }
+            .onKeyUp { _, event in
+                guard event.code == "Enter" || event.code == "Space" else { return }
+                event.preventDefault()
+                action()
+            }
+        }
+    }
 }

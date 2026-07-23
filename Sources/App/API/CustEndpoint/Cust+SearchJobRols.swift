@@ -48,7 +48,7 @@ func searchJobRols(
         
         if let data = xhr.responseText?.data(using: .utf8) {
             do {
-                let resp = try JSONDecoder().decode([JobRolsQuick].self, from: data)
+                let resp = try decodeAPIResponse([JobRolsQuick].self, from: data)
                 
                 callback(term,resp)
                 

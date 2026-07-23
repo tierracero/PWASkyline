@@ -31,7 +31,7 @@ extension PapaContadorComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<GetFiscPaymentOrdersResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<GetFiscPaymentOrdersResponse>.self, from: data)
                 callback(resp)
             }
             catch{

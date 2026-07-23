@@ -85,7 +85,6 @@ class AddRentalSelectDepartment: Div {
         top(0.px)
         left(0.px)
         position(.absolute)
-        self.class(.transparantBlackBackGround)
         
         API.custAPIV1.loadRentalStoreLevels(id: nil, full: nil) { resp in
             
@@ -155,7 +154,7 @@ class AddRentalSelectDepartment: Div {
                                 self.innerBody.appendChild(
                                     /// shows squered off button of departments
                                     AddRentalSelectProduct(costType: self.costType, currentUsedIDs: self.currentUsedIDs, pocs: data.pocs, callback: { poc in
-                                        self.appendChild(
+                                        addToDom(
                                             /// Shows confirmation window
                                             /// icon, detail , data and inventory list
                                             AddRentalProductConfirm(costType: self.costType, currentUsedIDs: self.currentUsedIDs, poc:  poc, callback: { rentalObject in

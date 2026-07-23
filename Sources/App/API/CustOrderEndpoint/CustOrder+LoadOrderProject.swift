@@ -30,7 +30,7 @@ extension CustOrderComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<LoadOrderProjectResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<LoadOrderProjectResponse>.self, from: data))
             }
             catch{
                 print("🔴 API_DECODING_ERROR")

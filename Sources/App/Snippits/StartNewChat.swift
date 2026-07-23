@@ -64,7 +64,6 @@ class StartNewChat: Div {
     }
     
     override func buildUI() {
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)
@@ -135,7 +134,7 @@ class StartNewChat: Div {
         
         loadingView(show: true)
         
-        API.wsV1.createCustChatRoom(id: id) { resp in
+        API.webSocketV1.createCustChatRoom(id: id) { resp in
             
             loadingView(show: false)
             

@@ -13,6 +13,16 @@ import MailAPICore
 import FetchAPI
 import Web
 
+private enum WorkNavigationSelection: Equatable {
+    case analytics
+    case orders
+    case followups
+    case sales
+    case trips
+    case products
+    case tools
+}
+
 class WorkViewControler: PageController {
     
     let ws = WS()
@@ -22,6 +32,10 @@ class WorkViewControler: PageController {
     var serviceIsActive = false
     
     var newOrderInProccess = false
+
+    var tripViewIsLoaded = false
+
+    var tripViewIsLoading = false
     
     /// Order List Catch
     var pending: [CustOrderLoadFolios] = []
@@ -53,6 +67,8 @@ class WorkViewControler: PageController {
     @State var WSToken = ""
     
     @State var pmode: PanelMode? = nil
+
+    @State private var selectedWorkNavigationItem: WorkNavigationSelection = .orders
     
     @State var serchPlaceHolder = ""
     
@@ -63,20 +79,17 @@ class WorkViewControler: PageController {
     @State var userHerk = 0
     
     /// ``Left Side Bar COMMUNICATION``
-    @State var smallChatIsOpen = false
+    @State var smallChatIsOpen = true
     
-    /// Count of msg (chatCounter) and emails (emailCounter)
-    @State var globalCounter = 0
-    
+    /// Presentation count for messages rendered in the "Nuevos" communication box.
     @State var chatCounter = 0
     
     @State var orderMessageList: [API.custAPIV1.LoadMessaging] = []
     
     var orderMessageView: [UUID:ICMessageView] = [:]
     
-    lazy var sideBar = Div{
-        Div().height(7.px)
-    }.class(.sideBar)
+    lazy var sideBar = Div()
+        .class(.sideBar, Class(TCWorkDashboardClass.leftRail))
     
     lazy var comunicationBoxNewMessagesView = Div()
     
@@ -84,41 +97,13 @@ class WorkViewControler: PageController {
     
     /// this box will contain Intant Messages and Mails
 
-    lazy var communicationBox = Div{
-        Div{
-            Strong("Chat")
-                 .marginRight(7.px)
-                 .cursor(.pointer)
-                 .fontSize(18.px)
-                 .color(.white)
-        }
-        .class(.oneLineText)
-        .height(35.px)
-        .hidden(self.$smallChatIsOpen)
-        
-        Div{
-            // TODO: add counter
-           Strong("Chat")
-                .color(.white)
-                .marginRight(12.px)
-                .cursor(.pointer)
-                .fontSize(28.px)
-                .float(.left)
-                
-        }
-        .hidden(self.$smallChatIsOpen.map{ !$0 })
-        .class(.oneLineText)
-        .height(35.px)
-        
-        Div().class(.clear)
-        
-        Div{
+    lazy var communicationBox = Div {
+        Div {
+            Div().height(3.px)
             self.comunicationBoxNewMessagesView
             self.comunicationBoxOldMessagesView
         }
-        .custom("height", "calc(100% - 35px)")
         .overflow(.auto)
-        
     }
     .class(.communicationBox)
     
@@ -133,7 +118,7 @@ class WorkViewControler: PageController {
     /// [ RoomToken :  IMChatRoomView ]
 //    var chatRoomRefrence: [String:IMChatRoomView] = [:]
     
-    /// Pupulated by API.wsV1.custFetchUsers
+    /// Pupulated by API.webSocketV1.custFetchUsers
     @State var privateChatList: [CustChatRoomProfile] = []
     
     @State var publicChatList: [CustChatRoomProfile] = []
@@ -182,96 +167,79 @@ class WorkViewControler: PageController {
     }
     
     lazy var chatBar = Div {
-        Div().height(7.px)
-        
-        Div{
-            Div("Mis Chats")
-                .class(.oneLineText)
-                .fontSize(12.px)
-                .color(.lightBlueText)
+        Div("Centro de mensajes")
+            .fontSize(18.px)
+            .fontWeight(.bold)
+
+        Div {
             
-            self.privateChatBox
+            Div{
+                Span("Nuevos")
+
+                Span(self.$chatCounter.map { count in
+                    count > 99 ? "99+" : count.toString
+                })
+                .marginLeft(5.px)
+                .padding(v: 1.px, h: 5.px)
+                .borderRadius(all: 10.px)
+                .backgroundColor(.blue)
+                .color(.white)
+                .fontSize(10.px)
+                .hidden(self.$chatCounter.map { $0 == 0 })
+            }
             
-            Div().height(7.px)
+            Div("Historial")
+            .cursor(.default)
+            .opacity(0.3)
             
-            Hr()
-            
-            Div().height(7.px)
-            
-            Div("Clientes")
-                .class(.oneLineText)
-                .fontSize(12.px)
-                .color(.lightBlueText)
-            
-            self.publicChatBox
+            Div("Equipo")
+            .cursor(.default)
+            .opacity(0.3)
+
         }
-        .overflow(.auto)
-        .custom("height", "calc(100% - 233px)")
-        
-        Div().height(7.px)
-        
-        Div{
-            Img()
-                .src("/skyline/media/add.png")
-                .width(40.px)
-            
-            Div().height(3.px)
-            
-            Div("+ Chat")
-                .fontSize(12.px)
-                .color(.dimGray)
-            
+        .class(Class(TCWorkDashboardClass.messageTabs))
+
+        Div {
+            self.communicationBox
         }
-        .cursor(.pointer)
-        .align(.center)
-        .height(61.px)
+        .class(Class(TCWorkDashboardClass.messageBody))
+
+        Div {
+            Span("＋")
+                .color(.lightBlueText)
+                .fontSize(22.px)
+            Span("Chat de Equipo")
+        }
+        .class(Class(TCWorkDashboardClass.messageAction))
+        .cursor(.default)
+        .opacity(0.3)
         .onClick {
             self.newPrivateChat()
         }
-        
-        Div().height(7.px)
-        
-        Div{
+
+        Div {
             Img()
                 .src("/skyline/media/documentation_icon.png")
-                .width(40.px)
-            
-            Div().height(3.px)
-            
-            Div("M&P")
-                .fontSize(12.px)
-                .color(.dimGray)
-        
+                .width(20.px)
+            Span("Documentación")
         }
-        .cursor(.pointer)
-        .align(.center)
-        .height(61.px)
+        .class(Class(TCWorkDashboardClass.messageAction))
         .onClick {
-            self.newPrivateChat()
+            addToDom(SkylineDocumentationView())
         }
-        
-        Div().height(7.px)
-        
-        Div{
-            
+
+        Div {
             Img()
                 .src("/images/bizRoundLogoWhite.svg")
-                .width(40.px)
-            
-            Div().height(3.px)
-            
-            Div("Ayuda")
-                .fontSize(12.px)
-                .color(.dimGray)
+                .width(20.px)
+            Span("Ayuda")
         }
-        .cursor(.pointer)
-        .align(.center)
-        .height(61.px)
-        .onClick{
-            
+        .class(Class(TCWorkDashboardClass.messageAction))
+        .onClick {
+            addToDom(SkylineDocumentationView())
         }
-        
-    }.class(.chatBar)
+    }
+    .class(.chatBar, Class(TCWorkDashboardClass.messages))
     
     //lazy var chatRoom: IMChatRoomView? = nil
     
@@ -294,6 +262,456 @@ class WorkViewControler: PageController {
     var posSubView: Div? = nil
     
     lazy var posView: SalePointView? = nil
+
+    lazy var workTopIdentity = Div {
+        
+        Div {
+            Img()
+                .src("/skyline/media/notificationIcon.png")
+                .class(Class(TCWorkDashboardClass.topIcon))
+
+            Span(CatchControler.shared.$taskAlerts.map { alerts in
+                alerts.count > 99 ? "99+" : alerts.count.toString
+            })
+                .fontSize(10.px)
+                .color(.white)
+                .backgroundColor(.blue)
+                .borderRadius(all: 12.px)
+                .padding(v: 2.px, h: 5.px)
+                .position(.absolute)
+                .right(-12.px)
+                .top(-6.px)
+                .hidden(CatchControler.shared.$taskAlerts.map { $0.isEmpty })
+        }
+        .position(.relative)
+        .cursor(.pointer)
+        .onClick {
+            self.processAlertManager(manualLoad: true)
+        }
+
+        Img()
+            .src("/skyline/media/icon_add_message.png")
+            .class(Class(TCWorkDashboardClass.topIcon))
+            .onClick {
+                self.newPrivateChat()
+            }
+
+        Span(self.$username)
+            .class(.oneLineText)
+            .fontSize(14.px)
+            .custom("max-width", "100px")
+
+        Img()
+            .src("/skyline/media/gear.png")
+            .class(Class(TCWorkDashboardClass.topIcon))
+            .onClick {
+                self.sideMenuIsHidden = !self.sideMenuIsHidden
+            }
+    }
+    .class(Class(TCWorkDashboardClass.topIdentity))
+
+    lazy var workStatsView = Div {
+        Div {
+            Div("Pendientes")
+                .class(Class(TCWorkDashboardClass.statLabel))
+            Div(OrderCatchControler.shared.$pendingCount.map { $0.toString })
+                .class(Class(TCWorkDashboardClass.statValue))
+            Img()
+                .src("/skyline/media/icon_pending@128.png")
+                .class(Class(TCWorkDashboardClass.statIcon))
+        }
+        .class(Class(TCWorkDashboardClass.statCard))
+
+        Div {
+            Div("En proceso")
+                .class(Class(TCWorkDashboardClass.statLabel))
+            Div(OrderCatchControler.shared.$activeCount.map { $0.toString })
+                .class(Class(TCWorkDashboardClass.statValue))
+            Img()
+                .src("/skyline/media/icon_active@128.png")
+                .class(Class(TCWorkDashboardClass.statIcon))
+        }
+        .class(Class(TCWorkDashboardClass.statCard))
+
+        Div {
+            Div("Por vencer")
+                .class(Class(TCWorkDashboardClass.statLabel))
+            Div(OrderCatchControler.shared.$attentionCount.map { $0.toString })
+                .class(Class(TCWorkDashboardClass.statValue))
+            Img()
+                .src("/skyline/media/icon_alert@128.png")
+                .class(Class(TCWorkDashboardClass.statIcon))
+        }
+        .class(Class(TCWorkDashboardClass.statCard))
+
+        Div {
+            Div("Finalizadas")
+                .class(Class(TCWorkDashboardClass.statLabel))
+            Div(OrderCatchControler.shared.$finalizedCount.map { $0.toString })
+                .class(Class(TCWorkDashboardClass.statValue))
+            Img()
+                .src("/skyline/media/icon-checkmark.svg")
+                .class(Class(TCWorkDashboardClass.statIcon))
+        }
+        .class(Class(TCWorkDashboardClass.statCard))
+    }
+    .class(Class(TCWorkDashboardClass.stats))
+
+    lazy var startupOverlay = Div {
+        Div()
+            .class(Class(TCWorkDashboardClass.startupScan))
+
+        Div {
+            Div {
+                Div()
+                    .class(Class(TCWorkDashboardClass.startupRing))
+
+                Img()
+                    .src("/skyline/media/tierraceroRoundLogoWhite.svg")
+            }
+            .class(Class(TCWorkDashboardClass.startupEmblem))
+
+            Div("SKYLINE CONTROL")
+                .class(Class(TCWorkDashboardClass.startupTitle))
+
+            Div("SECUENCIA DE INICIO")
+                .class(Class(TCWorkDashboardClass.startupCopy))
+
+            Div {
+                self.startupStatus("NÚCLEO OPERATIVO")
+                self.startupStatus("COMUNICACIONES")
+                self.startupStatus("MÓDULOS DE TRABAJO")
+            }
+            .class(Class(TCWorkDashboardClass.startupStatuses))
+
+            Div {
+                Div()
+                    .class(Class(TCWorkDashboardClass.startupProgressFill))
+            }
+            .class(Class(TCWorkDashboardClass.startupProgress))
+        }
+        .class(Class(TCWorkDashboardClass.startupCore))
+    }
+    .class(Class(TCWorkDashboardClass.startupOverlay))
+    .attribute("aria-hidden", "true")
+
+    lazy var serviceContainer = Div{
+
+        if linkedProfile.contains(.bizODS) || linkedProfile.contains(.bizFollowUp) {
+
+            /// Buttons
+            Div{
+
+                Div {
+                    OrderCatchControler.shared.listViewButton
+                    Span("Lista")
+                }
+                .class(Class(TCWorkDashboardClass.toolbarPrimary))
+                .class(OrderCatchControler.shared.$viewType.map { viewType in
+                    Class(viewType == .listView
+                        ? TCWorkDashboardClass.toolbarPrimaryActive
+                        : TCWorkDashboardClass.toolbarPrimaryInactive)
+                })
+                .display(OrderCatchControler.shared.$macroViewType.map {
+                    $0 == .followUpView ? .none : .inlineFlex
+                })
+
+                Div {
+                    OrderCatchControler.shared.userViewButton
+                    Span("Usuario")
+                }
+                .class(Class(TCWorkDashboardClass.toolbarPrimary))
+                .class(OrderCatchControler.shared.$viewType.map { viewType in
+                    Class(viewType == .userView
+                        ? TCWorkDashboardClass.toolbarPrimaryActive
+                        : TCWorkDashboardClass.toolbarPrimaryInactive)
+                })
+                .display(OrderCatchControler.shared.$macroViewType.map {
+                    $0 == .followUpView ? .none : .inlineFlex
+                })
+
+                Div {
+                    OrderCatchControler.shared.calendarViewButton
+                    Span("Calendario")
+                }
+                .class(Class(TCWorkDashboardClass.toolbarPrimary))
+                .class(OrderCatchControler.shared.$viewType.map { viewType in
+                    Class(viewType == .calendarView
+                        ? TCWorkDashboardClass.toolbarPrimaryActive
+                        : TCWorkDashboardClass.toolbarPrimaryInactive)
+                })
+                .display(OrderCatchControler.shared.$macroViewType.map {
+                    $0 == .followUpView ? .none : .inlineFlex
+                })
+
+                Div {
+                    OrderCatchControler.shared.routeViewButton
+                    Span("Ruta")
+                }
+                .class(Class(TCWorkDashboardClass.toolbarPrimary))
+                .class(OrderCatchControler.shared.$viewType.map { viewType in
+                    Class(viewType == .routeView
+                        ? TCWorkDashboardClass.toolbarPrimaryActive
+                        : TCWorkDashboardClass.toolbarPrimaryInactive)
+                })
+                .display(OrderCatchControler.shared.$macroViewType.map {
+                    $0 == .followUpView ? .none : .inlineFlex
+                })
+
+                OrderCatchControler.shared.loadOrderStatusButton
+                    .hidden(OrderCatchControler.shared.$macroViewType.map { $0 == .followUpView })
+                    .float(.right)
+
+                if linkedProfile.contains(.bizFollowUp) {
+                    OrderCatchControler.shared.loadFollowUpsButton
+                        .hidden(OrderCatchControler.shared.$macroViewType.map { $0 == .orderView })
+                        .float(.right)
+                }
+                Div{
+                    OrderCatchControler.shared.selectStoreMenuButton
+                    .hidden(self.$userHerk.map{ $0 < 3 })
+                }
+                .hidden(OrderCatchControler.shared.$stores.map{ $0.count < 2 })
+                .float(.right)
+                
+        /*
+
+                Div("|")
+                    .marginRight(7.px)
+                    .fontSize(24.px)
+                    .color(.white)
+                    .float(.right)
+                
+                /// Delegate
+                Div{
+                    Img()
+                        .src("/skyline/media/icon_delegate.png")
+                        .height(18.px)
+                        .marginLeft(7.px)
+                    
+                    Span("Delegar")
+                }
+                .onClick({
+                    
+                })
+                .marginRight(12.px)
+                .class(.uibtn)
+                .float(.right)
+                
+                /// Transfer
+                Div{
+                    Img()
+                        .src("/skyline/media/icon_trasfer.png")
+                        .height(18.px)
+                        .marginLeft(7.px)
+                    
+                    Span("Transferir")
+                }
+                .marginRight(7.px)
+                .class(.uibtn)
+                .float(.right)
+                .onClick{
+                    
+                }
+                
+                /// Recive
+                Div{
+                    Img()
+                        .src("/skyline/media/icon_recive.png")
+                        .height(18.px)
+                        .marginLeft(7.px)
+                    
+                    Span("Recibir")
+                }
+                .onClick({
+                    
+                })
+                .marginRight(7.px)
+                .class(.uibtn)
+                .float(.right)
+                */
+            }
+            .margin(all: 0.px)
+            .class(Class(TCWorkDashboardClass.toolbar))
+            .hidden(self.$pmode.map{ $0 != .serviceOrder })
+            
+            Div{
+                
+                Div{
+                    Img()
+                        .src("/skyline/media/reload.png")
+                        .height(18.px)
+                        .marginLeft(7.px)
+                    
+                    Span("Por Vencer")
+                }
+                .onClick({
+                    
+                })
+                .class(.uibtn)
+                .float(.right)
+                
+                /// Mis Ordenes
+                Div{
+                    
+                    Img()
+                        .src("/skyline/media/reload.png")
+                        .height(18.px)
+                        .marginLeft(7.px)
+                    
+                    Span("Vencidos")
+                }
+                .onClick({
+                    
+                })
+                .class(.uibtn)
+                .float(.right)
+                
+                Div{
+                    Img()
+                        .src("/skyline/media/reload.png")
+                        .height(18.px)
+                        .marginLeft(7.px)
+                    
+                    Span("Por Vencer")
+                }
+                .onClick({
+                    
+                })
+                .class(.uibtn)
+                .float(.right)
+                
+                
+                Div().class(.clear)
+                
+            }
+            .marginBottom(3.px)
+            .marginRight(12.px)
+            .marginLeft(12.px)
+            .marginTop(7.px)
+            .hidden(self.$pmode.map{ $0 != .clubMembership })
+
+            self.workStatsView
+                .hidden(self.$pmode.map { $0 != .serviceOrder })
+            
+            /// Grid
+            Div{
+                OrderCatchControler.shared.container
+                    .class(Class(TCWorkDashboardClass.orderColumn))
+                OrderCatchControler.shared.secondView
+                    .class(Class(TCWorkDashboardClass.orderColumn))
+            }
+            .custom("height", "calc(100% - 176px)")
+            .padding(top: 0.px, right: 12.px, bottom: 12.px, left: 12.px)
+            .class(Class(TCWorkDashboardClass.orderGrid))
+            
+        }
+        else if linkedProfile.contains(.bizPDV) {
+            
+            SalePointView(loadBy: nil, isSubView: true)
+            
+        }
+        
+        Div().clear(.both)
+    }
+    .custom("width", "calc(100% - 458px)")
+    .custom("height", "calc(100% - 70px)")
+    .backgroundColor(.transparent)
+    .borderRadius(all: 0.px)
+    .position(.absolute)
+    .overflow(.hidden)
+    .left(178.px)
+    .top(70.px)
+    .class(Class(TCWorkDashboardClass.workspace))
+    .hidden(OrderCatchControler.shared.$macroViewType.map {
+        $0 != .orderView && $0 != .followUpView
+    })
+
+    /*
+    lazy var followupContainer = Div()
+         .custom("width", "calc(100% - 458px)")
+        .custom("height", "calc(100% - 70px)")
+        .backgroundColor(.transparent)
+        .borderRadius(all: 0.px)
+        .position(.absolute)
+        .overflow(.hidden)
+        .left(178.px)
+        .top(70.px)
+        .class(Class(TCWorkDashboardClass.workspace))
+        .hidden(OrderCatchControler.shared.$macroViewType.map{ ( $0 != .followupView ) })
+    */
+
+    lazy var tripContainer = Div()
+         .custom("width", "calc(100% - 458px)")
+        .custom("height", "calc(100% - 70px)")
+        .backgroundColor(.transparent)
+        .borderRadius(all: 0.px)
+        .position(.absolute)
+        .overflow(.hidden)
+        .left(178.px)
+        .top(70.px)
+        .class(Class(TCWorkDashboardClass.workspace))
+        .hidden(OrderCatchControler.shared.$macroViewType.map{ ( $0 != .tripView ) })
+
+    private func workNavigationItem(
+        selection: WorkNavigationSelection?,
+        icon: String,
+        title: String,
+        action: @escaping () -> Void
+    ) -> Div {
+        Div {
+            Img()
+                .src(icon)
+                .class(Class(TCWorkDashboardClass.navIcon))
+            Span(title)
+                .fontSize(15.px)
+        }
+        .class(Class(TCWorkDashboardClass.navItem))
+        .class(self.$selectedWorkNavigationItem.map { selected -> Class? in
+            selected == selection
+                ? Class(TCWorkDashboardClass.navItemActive)
+                : nil
+        })
+        .onClick {
+
+            if let selection {
+                self.selectedWorkNavigationItem = selection
+            }
+
+            action()
+        }
+    }
+
+    private func startupStatus(_ title: String) -> Div {
+        Div {
+            Span(title)
+
+            Div {
+                Div()
+                    .class(Class(TCWorkDashboardClass.startupIndicator))
+                Span("ONLINE")
+            }
+            .display(.flex)
+            .custom("align-items", "center")
+            .custom("gap", "7px")
+            .color(.green)
+        }
+        .class(Class(TCWorkDashboardClass.startupStatus))
+    }
+
+    private func startDashboardStartupSequence() {
+        Dispatch.asyncAfter(0.08) {
+            self.removeClass(Class(TCWorkDashboardClass.startupRoot))
+        }
+
+        Dispatch.asyncAfter(1.86) {
+            self.startupOverlay.class(Class(TCWorkDashboardClass.startupComplete))
+        }
+
+        Dispatch.asyncAfter(2.42) {
+            self.startupOverlay.remove()
+        }
+    }
     
     @DOM override var body: DOM.Content {
         
@@ -348,48 +766,29 @@ class WorkViewControler: PageController {
             .type("text/javascript")
         
         Div()
-        .class(.blur)
+        .class(.blur, Class(TCWorkDashboardClass.background))
         .backgroundImage("skyline/media/bgBlueTech02.jpg")
         .width(100.percent)
         .height(100.percent) 
         .backgroundSize(all: .cover)
+
+        self.startupOverlay
         
         // top Menu
         Div{
             Div{
-                
-                Img()
-                    .src("images/gear2.png")
-                    .cursor(.pointer)
-                    .float(.right)
-                    .height(35.px)
-                    .marginTop(10.px)
-                    .onClick{
-                        self.sideMenuIsHidden = !self.sideMenuIsHidden
-                    }
+
+                self.workTopIdentity
                 
                 Span()
                     .paddingRight(7.px)
                 
                 // Crear Cuenta
                 Div{
-                    Span()
-                        .backgroundImage("/skyline/media/addBlueIcon.png")
-                        .opacity(0.5)
-                        .height(40.px)
-                        .width(40.px)
-                        .marginTop(5.px)
-                        .paddingRight(20.px)
-                        .backgroundSize(h: 100.percent, v: 100.percent)
-                    
-                    Span()
-                        .paddingRight(7.px)
+                    Span("+")
+                        .class(Class(TCWorkDashboardClass.actionPlus))
                     
                     Span("Cuenta")
-                        .marginTop(10.px)
-                        .fontSize(18.px)
-                        .height(35.px)
-                        .color(.gray)
                     
                 }
                 .class(.topBarButton)
@@ -411,30 +810,17 @@ class WorkViewControler: PageController {
                                 
                             }
 
-                            self.appendChild(custDataView)
+                            addToDom(custDataView)
                             
                         }))
                     
                 }
 
                 Div{
-                    Span()
-                        .backgroundImage("/skyline/media/addBlueIcon.png")
-                        .opacity(0.5)
-                        .height(40.px)
-                        .width(40.px)
-                        .marginTop(5.px)
-                        .paddingRight(20.px)
-                        .backgroundSize(h: 100.percent, v: 100.percent)
+                    Span("+")
+                        .class(Class(TCWorkDashboardClass.actionPlus))
                     
-                    Span()
-                        .paddingRight(7.px)
-                    
-                    Span("Seguimineto")
-                        .marginTop(10.px)
-                        .fontSize(18.px)
-                        .height(35.px)
-                        .color(.gray)
+                    Span("Seguimiento")
                     
                 }
                 .display(self.$pmode.map{ ($0 == .serviceOrder) ? .inlineBlock : .none })
@@ -446,100 +832,15 @@ class WorkViewControler: PageController {
                 // Punto de Venta
                 if linkedProfile.contains(.bizPDV) {
                     Div{
-                        Span()
-                            .backgroundImage("/skyline/media/addBlueIcon.png")
-                            .opacity(0.5)
-                            .height(40.px)
-                            .width(40.px)
-                            .marginTop(5.px)
-                            .paddingRight(20.px)
-                            .backgroundSize(h: 100.percent, v: 100.percent)
-                        
-                        Span()
-                            .paddingRight(7.px)
+                        Span("+")
+                            .class(Class(TCWorkDashboardClass.actionPlus))
                         
                         Span("Venta")
-                            .marginTop(10.px)
-                            .fontSize(18.px)
-                            .height(35.px)
-                            .color(.gray)
                         
                     }
                     .class(.topBarButton)
                     .onClick {
-                        
-                        if let view = self.posView {
-                            
-                            view.display(.block)
-                            
-                            self.posSubView?.remove()
-                            
-                            self.posSubView = nil
-                            
-                            return
-                        }
-                        
-                        let salePoint = SalePointView(loadBy: nil) {
-                            // MARK: Close View
-                            
-                            self.posView?.remove()
-                            
-                            self.posView = nil
-                            
-                        } minimizeView: {
-                            // MARK: Minimize View
-                            
-                            print("🟢  Will try to lower window 001")
-                            
-                            let subView = Div{
-                                Div{
-                                    Img()
-                                        .src("/skyline/media/star_yellow.png")
-                                        .marginTop(3.px)
-                                        .width(22.px)
-                                }
-                                .marginRight(7.px)
-                                .float(.left)
-                                
-                                Span("PDV")
-                                    .color(.white)
-                                
-                            }
-                                .border(width: .medium, style: .solid, color: .slateGray)
-                                .custom("width", "fit-content")
-                                .backgroundColor(.grayBlack)
-                                .borderRadius(all: 12.px)
-                                .class(.oneLineText)
-                                .padding(all: 7.px)
-                                .margin(all: 7.px)
-                                .cursor(.pointer)
-                                .fontSize(23.px)
-                                .color(.white)
-                                .float(.left)
-                                .onClick {
-                                    
-                                    self.posSubView?.remove()
-                                    
-                                    self.posSubView = nil
-                                    
-                                    if let view = self.posView {
-                                        view.display(.block)
-                                    }
-                                }
-                            
-                            self.posSubView = subView
-                            
-                            WebApp.current.minimizedGrid.appendChild(subView)
-                            
-                            self.posView?.display(.none)
-                            
-                        }
-
-                        
-                        self.posView = salePoint
-                        
-                        self.appendChild(salePoint)
-                        
+                        self.openSalePoint()
                     }
                 }
                    
@@ -550,23 +851,10 @@ class WorkViewControler: PageController {
                 // Punto de Venta
                 if linkedProfile.contains(.bizODS) {
                     Div{
-                        Span()
-                            .backgroundImage("/skyline/media/addBlueIcon.png")
-                            .opacity(0.5)
-                            .height(40.px)
-                            .width(40.px)
-                            .marginTop(5.px)
-                            .paddingRight(20.px)
-                            .backgroundSize(h: 100.percent, v: 100.percent)
-                        
-                        Span()
-                            .paddingRight(7.px)
+                        Span("+")
+                            .class(Class(TCWorkDashboardClass.actionPlus))
                         
                         Span("Orden")
-                            .marginTop(10.px)
-                            .fontSize(18.px)
-                            .height(35.px)
-                            .color(.gray)
                         
                     }
                     .display(self.$pmode.map{ ($0 == .serviceOrder) ? .inlineBlock : .none })
@@ -584,7 +872,7 @@ class WorkViewControler: PageController {
                             }
                         }
                         else{
-                            self.appendChild(SelectNewOrderTypeView { orderType in
+                            addToDom(SelectNewOrderTypeView { orderType in
                                 
                                 self.newOrderInProccess = false
                                 
@@ -629,94 +917,50 @@ class WorkViewControler: PageController {
                     ))
                 }
                 
-                InputButton()
-                    .backgroundSize(h: 100.percent, v: 100.percent)
-                    .backgroundImage("images/zoom.png")
-                    .marginRight(7.px)
-                    .marginLeft(3.px)
-                    .marginTop(12.px)
-                    .cursor(.pointer)
-                    .class(.button)
-                    .height(35.px)
-                    .width(35.px)
-                    .float(.right)
-                    .onClick {
-                        self.searchFolio(false)
-                    }
-                
-                InputText(self.$searchTerm)
-                    .borderColor(.grayBlackDark)
-                    .backgroundColor(.grayBlack)
-                    .color(.white)
-                    .placeholder(self.$serchPlaceHolder)
-                    .height(35.px)
-                    .float(.right)
-                    .fontSize(24.px)
-                    .width(250.px)
-                    .marginRight(7.px)
-                    .marginTop(10.px)
-                    .onKeyUp({ tf, event in
-                        
-                        var _term = tf.text
-                        
-                        Dispatch.asyncAfter(0.37) {
-                            if _term == tf.text {
-                                _term = _term.replace(from: "'", to: "-").replace(from: "`", to: "-")
-                                if _term.count > 8 && _term.contains("-") {
-                                    
-                                    if ignoredKeys.contains(tf.text) {
-                                        return
+                Div {
+                    InputButton()
+                        .backgroundSize(h: 100.percent, v: 100.percent)
+                        .backgroundImage("images/zoom.png")
+                        .cursor(.pointer)
+                        .class(.button)
+                        .onClick {
+                            self.searchFolio(false)
+                        }
+
+                    InputText(self.$searchTerm)
+                        .placeholder(self.$serchPlaceHolder)
+                        .onKeyUp({ tf, event in
+                            var _term = tf.text
+
+                            Dispatch.asyncAfter(0.37) {
+                                if _term == tf.text {
+                                    _term = _term.replace(from: "'", to: "-").replace(from: "`", to: "-")
+                                    if _term.count > 8 && _term.contains("-") {
+                                        if ignoredKeys.contains(tf.text) {
+                                            return
+                                        }
+
+                                        self.searchFolio(false)
+
+                                        Dispatch.asyncAfter(0.25) {
+                                            self.searchTerm = ""
+                                        }
                                     }
-                                    
-                                    self.searchFolio(false)
-                                    
-                                    Dispatch.asyncAfter(0.25) {
-                                        self.searchTerm = ""
-                                    }
-                                    
                                 }
                             }
+                        })
+                        .onEnter {
+                            self.searchFolio(false)
                         }
-                        
-                    })
-                    .onEnter {
-                        self.searchFolio(false)
-                    }
-                
-                Img()
-                    .src("/skyline/media/mobileScannerWhite.png")
-                    .marginRight(7.px)
-                    .marginTop(12.px)
-                    .cursor(.pointer)
-                    .height(32.px)
-                    .float(.right)
-                    .onClick {
-                        
-                        API.custAPIV1.requestMobileCamara(
-                            type: .scanner,
-                            connid: custCatchChatConnID,
-                            eventid: self.viewid,
-                            relatedid: nil,
-                            relatedfolio: "",
-                            multipleTakes: false
-                        ) { resp in
-                            
-                            loadingView(show: false)
-                            
-                            guard let resp else {
-                                showError(.comunicationError, .serverConextionError)
-                                return
-                            }
-                            
-                            guard resp.status == .ok else {
-                                showError(.generalError, resp.msg)
-                                return
-                            }
-                            
-                            showSuccess(.operacionExitosa, "Entre en la notificacion en su movil.")
-                            
+
+                    Img()
+                        .src("/skyline/media/mobileScannerWhite.png")
+                        .cursor(.pointer)
+                        .onClick {
+                            self.requestMobileScanner()
                         }
-                    }
+                }
+                .class(Class(TCWorkDashboardClass.searchBox))
              
                 Div().clear(.both)
                 
@@ -726,224 +970,34 @@ class WorkViewControler: PageController {
             
         }
         .align(.center)
-        .custom("background", "#000000 url(images/top_bgrepeat.jpeg) repeat-x")
+        .custom("background", "rgba(3, 14, 29, 0.92)")
         .custom("-webkit-box-shadow", "0px 2px 15px #333333")
         .custom("box-shadow", "0px 2px 15px #333333")
         .custom("text-shadow", "1px 0 0 #666666")
-        .width(100.percent)
-        .height(55.px)
+        .custom("width", "calc(100% - 178px)")
+        .height(70.px)
         .color(.white)
         .position(.absolute)
+        .left(178.px)
         .top(0.px)
         .boxShadow(h: 0.px, v: 2.px, blur: 15.px, color: .hex(333333))
         .zIndex(999999990)
+        .class(Class(TCWorkDashboardClass.topBar))
         .onClick {
             OrderCatchControler.shared.loadOrderStatusTypeIsHidden = true
             OrderCatchControler.shared.selectStoreMenuIsHidden = true
         }
-        
-        // Work Grid
-        Div{
-            
-            if linkedProfile.contains(.bizODS) || linkedProfile.contains(.bizFollowUp) {
-                
-                /// Buttons
-                Div{
-                    
-                    Img()
-                        .src("/skyline/media/history_setting_icon_orange.png")
-                        .height(28.px)
-                        .marginRight(7.px)
-                        .marginLeft(18.px)
-                        .onClick {
-                            addToDom(ToolsView.HistorySettings.OrderProcessing())
-                        }
-                    
-    
-                        OrderCatchControler.shared.listViewButton
-                        
-                        OrderCatchControler.shared.userViewButton
-                        
-                        OrderCatchControler.shared.calendarViewButton
-                        
-                        OrderCatchControler.shared.routeViewButton
-                    
-                    
-                    OrderCatchControler.shared.loadOrderStatusButton
-                        .float(.right)
 
-                    if linkedProfile.contains(.bizFollowUp) {
-                        OrderCatchControler.shared.loadFollowUpsButton
-                            .float(.right)
-                    }
-                    Div{
-                        OrderCatchControler.shared.selectStoreMenuButton
-                        .hidden(self.$userHerk.map{ $0 < 3 })
-                    }
-                    .hidden(OrderCatchControler.shared.$stores.map{ $0.count < 2 })
-                    .float(.right)
-                    
-            /*
-
-                    Div("|")
-                        .marginRight(7.px)
-                        .fontSize(24.px)
-                        .color(.white)
-                        .float(.right)
-                    
-                    /// Delegate
-                    Div{
-                        Img()
-                            .src("/skyline/media/icon_delegate.png")
-                            .height(18.px)
-                            .marginLeft(7.px)
-                        
-                        Span("Delegar")
-                    }
-                    .onClick({
-                        
-                    })
-                    .marginRight(12.px)
-                    .class(.uibtn)
-                    .float(.right)
-                    
-                    /// Transfer
-                    Div{
-                        Img()
-                            .src("/skyline/media/icon_trasfer.png")
-                            .height(18.px)
-                            .marginLeft(7.px)
-                        
-                        Span("Transferir")
-                    }
-                    .marginRight(7.px)
-                    .class(.uibtn)
-                    .float(.right)
-                    .onClick{
-                        
-                    }
-                    
-                    /// Recive
-                    Div{
-                        Img()
-                            .src("/skyline/media/icon_recive.png")
-                            .height(18.px)
-                            .marginLeft(7.px)
-                        
-                        Span("Recibir")
-                    }
-                    .onClick({
-                        
-                    })
-                    .marginRight(7.px)
-                    .class(.uibtn)
-                    .float(.right)
-                    */
-                }
-                .marginBottom(0.px)
-                .marginRight(12.px)
-                .marginLeft(12.px)
-                .marginTop(7.px)
-                .hidden(self.$pmode.map{ $0 != .serviceOrder })
-                
-                Div{
-                    
-                    Div{
-                        Img()
-                            .src("/skyline/media/reload.png")
-                            .height(18.px)
-                            .marginLeft(7.px)
-                        
-                        Span("Por Vencer")
-                    }
-                    .onClick({
-                        
-                    })
-                    .class(.uibtn)
-                    .float(.right)
-                    
-                    /// Mis Ordenes
-                    Div{
-                        
-                        Img()
-                            .src("/skyline/media/reload.png")
-                            .height(18.px)
-                            .marginLeft(7.px)
-                        
-                        Span("Vencidos")
-                    }
-                    .onClick({
-                        
-                    })
-                    .class(.uibtn)
-                    .float(.right)
-                    
-                    Div{
-                        Img()
-                            .src("/skyline/media/reload.png")
-                            .height(18.px)
-                            .marginLeft(7.px)
-                        
-                        Span("Por Vencer")
-                    }
-                    .onClick({
-                        
-                    })
-                    .class(.uibtn)
-                    .float(.right)
-                    
-                    
-                    Div().class(.clear)
-                    
-                }
-                .marginBottom(3.px)
-                .marginRight(12.px)
-                .marginLeft(12.px)
-                .marginTop(7.px)
-                .hidden(self.$pmode.map{ $0 != .clubMembership })
-                
-                /// Grid
-                Div{
-                    OrderCatchControler.shared.container
-                    OrderCatchControler.shared.secondView
-                }
-                .custom("height", "calc(100% - 73px)")
-                .padding(all: 7.px)
-             
-            }
-            else if linkedProfile.contains(.bizPDV) {
-                
-                SalePointView(loadBy: nil, isSubView: true)
-                
-            }
-            
-            Div().clear(.both)
-        }
-        .custom("width", "calc(100% - 150px)")
-        .custom("height", "calc(100% - 75px)")
-        .backgroundColor(.rgba( 0, 0, 0, 0.8))
-        .borderRadius(all: 24.px)
-        .position(.absolute)
-        .overflow(.hidden)
-        .left(75.px)
-        .top(65.px)
-        .onClick {
-            OrderCatchControler.shared.loadOrderStatusTypeIsHidden = true
-            OrderCatchControler.shared.selectStoreMenuIsHidden = true
-        }
+        // Service Grid
+        self.serviceContainer
         
+        // Trip Contaier:
+        self.tripContainer
+
         // Side Bar
         self.sideBar
-            .onClick {
-                OrderCatchControler.shared.loadOrderStatusTypeIsHidden = true
-                OrderCatchControler.shared.selectStoreMenuIsHidden = true
-            }
         
         self.chatBar
-            .onClick {
-                OrderCatchControler.shared.loadOrderStatusTypeIsHidden = true
-                OrderCatchControler.shared.selectStoreMenuIsHidden = true
-            }
         
         /// side Menu
         self.sideMenu
@@ -951,6 +1005,10 @@ class WorkViewControler: PageController {
         self.userLocationsButton
         
         OrderCatchControler.shared.addRouteButton
+
+        OrderCatchControler.shared.selectStoreMenuBackgroung
+
+        OrderCatchControler.shared.loadOrderStatusBackgroung
         
         WebApp.current.loadingView
         
@@ -1018,6 +1076,10 @@ class WorkViewControler: PageController {
 
     override func buildUI() {
         super.buildUI()
+
+        TCWorkDashboardTheme.install()
+        self.class(Class(TCWorkDashboardClass.root))
+        self.class(Class(TCWorkDashboardClass.startupRoot))
         
         if let str = WebApp.current.window.localStorage.string(forKey: "linkedProfile") {
             if let data = str.data(using: .utf8) {
@@ -1068,7 +1130,7 @@ class WorkViewControler: PageController {
                     print("⚡️ Welcome")
                     
                     /// load chat rooms
-                    API.wsV1.custFetchUsers { resp in
+                    API.webSocketV1.custFetchUsers { resp in
                         
                         guard let resp else {
                             return
@@ -1078,7 +1140,6 @@ class WorkViewControler: PageController {
                             return
                         }
                         do {
-                            print("⚠️  ⚠️  custFetchUsers  ⚠️  ⚠️  custFetchUsers  ⚠️  ⚠️  custFetchUsers  ⚠️  ⚠️  custFetchUsers  ⚠️  ⚠️  custFetchUsers  ⚠️  ⚠️  custFetchUsers  ⚠️  ⚠️")
                             let data = try JSONEncoder().encode(resp)
                             print(String(data: data, encoding: .utf8)!)
                         }
@@ -1136,7 +1197,7 @@ class WorkViewControler: PageController {
                                             
                                         })
                                     
-                                    self.appendChild(self.chatRoomNew!)
+                                    addToDom(self.chatRoomNew!)
                                     
                                     Dispatch.asyncAfter(0.5) {
                                         //dragElement("chatWindows")
@@ -1165,7 +1226,7 @@ class WorkViewControler: PageController {
                                             
                                         })
                                     
-                                    self.appendChild(self.chatRoomNew!)
+                                    addToDom(self.chatRoomNew!)
                                 }
                                  
                             }
@@ -1316,7 +1377,7 @@ class WorkViewControler: PageController {
                                             
                                         })
                                     
-                                    self.appendChild(self.chatRoomNew!)
+                                    addToDom(self.chatRoomNew!)
                                     
                                     Dispatch.asyncAfter(0.5) {
                                         //dragElement("chatWindows")
@@ -1345,7 +1406,7 @@ class WorkViewControler: PageController {
                                             
                                         })
                                     
-                                    self.appendChild(self.chatRoomNew!)
+                                    addToDom(self.chatRoomNew!)
                                 }
                                  
                             }
@@ -1379,7 +1440,7 @@ class WorkViewControler: PageController {
                                 
                             })
                         
-                        self.appendChild(self.chatRoomNew!)
+                        addToDom(self.chatRoomNew!)
                         
                         
                     }
@@ -1450,7 +1511,7 @@ class WorkViewControler: PageController {
                         /// No bububle  pull data and create bubble
                         else {
                             
-                            API.wsV1.getChatRoom(
+                            API.webSocketV1.getChatRoom(
                                 roomid: .folio(payload.roomToken)
                             ) { resp in
                                 
@@ -1510,7 +1571,7 @@ class WorkViewControler: PageController {
                                                 
                                             })
                                         
-                                        self.appendChild(self.chatRoomNew!)
+                                        addToDom(self.chatRoomNew!)
                                         
                                         Dispatch.asyncAfter(0.5) {
                                             //dragElement("chatWindows")
@@ -1539,7 +1600,7 @@ class WorkViewControler: PageController {
                                                 
                                             })
                                         
-                                        self.appendChild(self.chatRoomNew!)
+                                        addToDom(self.chatRoomNew!)
                                     }
                                      
                                 }
@@ -1714,8 +1775,9 @@ class WorkViewControler: PageController {
                                 /// ther `order` that is loaded is the same that the `note` is intended to,
                                 /// will modifi note status and  push it to UI
                                 //status = .viewed
+
                                 accoutOverview._orderView?.messageGrid.reciveMessage(note: payload.note)
-                                
+
                             }
                         }
                     }
@@ -1775,18 +1837,19 @@ class WorkViewControler: PageController {
             case .asyncCropImage:
                 break
             case .waMsgStatusUpdate:
-                
-//                if let payload = self.ws.waMsgStatusUpdate($0){
-//
-//                    print("⚠️ Compleat function ⚠️ ")
-//                    print("⚠️ Compleat function ⚠️ ")
-//
-//                    // tengo que buscar en la refs de laceunta y ver  si ezta abierto la venta y actualizar
-//
-//                }
-//                else{
-//
-//                }
+                /*
+               if let payload = self.ws.waMsgStatusUpdate($0){
+
+                   print("⚠️ Compleat function ⚠️ ")
+                   print("⚠️ Compleat function ⚠️ ")
+
+                   // tengo que buscar en la refs de laceunta y ver  si ezta abierto la venta y actualizar
+
+               }
+               else{
+
+               }
+               */
                     break
             case .NotifyAddFacebookProfile:
                 /// This will be managed  by  ``SocialManagerAddProfileView``
@@ -2035,7 +2098,7 @@ class WorkViewControler: PageController {
                 if let payload = self.ws.custTaskDenied($0) {
                     
                     if payload.alertType == .changePrice {
-                        /// Manages in difrent view
+                        /// Manages in difrent viewf
                         return
                     }
                     
@@ -2091,7 +2154,7 @@ class WorkViewControler: PageController {
                             
                             minViewAcctRefrence[order.custAcct] = accoutOverview
                             
-                            self.appendChild(accoutOverview)
+                            addToDom(accoutOverview)
                             
                         }
                         
@@ -2150,13 +2213,13 @@ class WorkViewControler: PageController {
         $sideMenuIsHidden.listen {
             if $0 {
                 self.sideMenu.fadeOut( end:.hidden)
-//                    .display(.none)
-//                    .filter(.opacity(0))
+                //    .display(.none)
+                //    .filter(.opacity(0))
             }
             else{
                 self.sideMenu.fadeIn(begin: .display(.block))
-//                    .display(.block)
-//                    .filter(.opacity(100))
+                //    .display(.block)
+                //    .filter(.opacity(100))
             }
         }
         
@@ -2182,6 +2245,8 @@ class WorkViewControler: PageController {
     
     override func didAddToDOM() {
         super.didAddToDOM()
+
+        startDashboardStartupSequence()
         
         WebApp.current.document.head.body {
             
@@ -2274,167 +2339,73 @@ class WorkViewControler: PageController {
         
         username = String(parts[0])
         
-        var activeModules = 0
-        
-        /// ``My Account and Stadistics``
-        /// General user has access to self data,
-        /// Supervisor Group and team data
-        /// Finalcial PoC also has insights to payment data
-        /// Owner has hier view plus payment data
-        activeModules += 1
-        
-        sideBar.appendChild(
-            Div{
-                Img()
-                    .src("/skyline/media/report-icon.png")
-                    .cursor(.pointer)
-                    .onClick {
-                        let view = AnaliticsView(asMainView: false, notification: nil)
-                        addToDom(view)
-                    }
-                Div("Estadisticas")
-                    .class(.oneLineText)
-                    .fontSize(12.px)
-                    .color(.gray)
-            }
-            .margin(all: 3.px)
-            .align(.center)
-            .height(57.px)
-        )
-        
-        /// ``Messaging Center``
-        /// all coms to target user
-        activeModules += 1
-        sideBar.appendChild(
-            Div{
-                Img()
-                    .src("/skyline/media/notificationIcon.png")
-                    .padding(all: 3.px)
-                    .cursor(.pointer)
-                    .width(30.px)
-                    .onClick {
-                        self.processAlertManager(manualLoad: true)
-                    }
-                
-                Div("Tareas y Notificaciones")
-                    .class(.oneLineText)
-                    .fontSize(12.px)
-                    .color(.gray)
-            }
-            .margin(all: 3.px)
-            .align(.center)
-            .height(57.px)
-        )
-        
-        /// ``Cargos & Gastos``
-        /// Spending and tickets
-        activeModules += 1
-        sideBar.appendChild(
-            Div{
-                Img()
-                    .src("/skyline/media/icon-money.png")
-                
-                    .padding(all: 3.px)
-                    .cursor(.pointer)
-                    .onClick {
-                        addToDom(MoneyManagerView())
-                    }
-                Div("Finanzas")
-                    .class(.oneLineText)
-                    .fontSize(12.px)
-                    .color(.gray)
-            }
-            .margin(all: 3.px)
-            .align(.center)
-            .height(57.px)
-        )
-        
-        /// Facturas
-        if custCatchHerk > 1 {
-            activeModules += 1
-            sideBar.appendChild(
-                Div{
-                    Img()
-                        .src("/skyline/media/icon-fiscal.png")
-                        .padding(all: 3.px)
-                        .cursor(.pointer)
-                        
-                    Div("Facturacion")
-                        .class(.oneLineText)
-                        .fontSize(12.px)
-                        .color(.gray)
-                }
-                .margin(all: 3.px)
-                .align(.center)
-                .height(57.px)
-                    .onClick {
-                        addToDom(ToolFiscal(
-                            loadType: .manual,
-                            folio: nil,
-                            callback: { id, folio, pdf, xml in
-                                
-                            }))
-                    }
-            )
-        }
-        
+        sideBar.innerHTML = ""
 
-        if custCatchAccountType != .entrepreneur {
-
-            /// ``+ Like``
-            activeModules += 1
-            sideBar.appendChild(
-                Div{
-                    Img()
-                        .src("/skyline/media/icon-like.png")
-                        .padding(all: 3.px)
-                        .cursor(.pointer)
-                    
-                    Div("Sociales")
-                        .class(.oneLineText)
-                        .fontSize(12.px)
-                        .color(.gray)
-                }
-                .margin(all: 3.px)
-                .align(.center)
-                .height(57.px)
-                .onClick {
-                    
-                    if custCatchUser.contains("@tierracero.com") || custCatchUser.contains("@centrodeservicios.cc") {
-                        addToDom(SocialManagerView())
-                    }
-                    else{
-                        print("🔴 \(custCatchUrl) does not have perm for social ")
-                    }
-                    
-                }
-            )
-            
-        }
-
-        let buttonHeight = (activeModules * 63) + 20
-        
-        sideBar.appendChild(Div().height(7.px))
-        
         sideBar.appendChild(
-            self.communicationBox
-                .class(.roundDarkBlue)
-                .padding(all: 2.px)
-                .margin(all: 3.px)
-                .borderRadius(all: 7)
-                .backgroundColor(.transparentBlack)
-                .custom("height", "calc(100% - \(buttonHeight.toString)px)")
-                .onMouseOver {
-                    Dispatch.asyncAfter(0.3) {
-                        self.smallChatIsOpen = true
-                    }
-                }
-                .onMouseLeave {
-                    Dispatch.asyncAfter(0.3) {
-                        self.smallChatIsOpen = false
-                    }
-                }
+            Div {
+                Img()
+                    .src("/skyline/media/logoTierraCeroLongWhite.svg")
+            }
+            .class(Class(TCWorkDashboardClass.brand))
         )
+
+        let navigation = Div()
+            .class(Class(TCWorkDashboardClass.navigation))
+
+        navigation.appendChild(
+            workNavigationItem(
+                selection: .analytics,
+                icon: "/skyline/media/report-icon.png",
+                title: "Estadistícas"
+            ) {
+                addToDom(AnaliticsView(asMainView: false, notification: nil))
+            }
+        )
+
+
+        navigation.appendChild(
+            workNavigationItem(
+                selection: nil,
+                icon: "/skyline/media/icon-money.png",
+                title: "Finanzad"
+            ) {
+                addToDom(MoneyManagerView())
+            }
+        )
+
+        navigation.appendChild(
+            workNavigationItem(
+                selection: .orders,
+                icon: "/skyline/media/service_order.png",
+                title: "Ordenes"
+            ) {
+                OrderCatchControler.shared.drawOrderView()
+            }
+        )
+
+        navigation.appendChild(
+            workNavigationItem(
+                selection: .followups,
+                icon: "/skyline/media/followup.png",
+                title: "Seguimientos"
+            ) {
+                OrderCatchControler.shared.loadFollowups()
+            }
+        )
+
+
+        navigation.appendChild(
+            workNavigationItem(
+                selection: .trips,
+                icon: "/skyline/media/commercial_trip.png",
+                title: "Viajes"
+            ) {
+                self.loadTripView()
+            }
+        )
+
+
+        sideBar.appendChild(navigation)
         
         self.$privateChatList.listen {
             
@@ -2482,7 +2453,7 @@ class WorkViewControler: PageController {
                             
                         })
                     
-                    self.appendChild(self.chatRoomNew!)
+                    addToDom(self.chatRoomNew!)
                     
                     Dispatch.asyncAfter(0.5) {
                         //dragElement("chatWindows")
@@ -2632,7 +2603,7 @@ class WorkViewControler: PageController {
             // No Results Create Customer
             
             if results.isEmpty {
-                self.appendChild(
+                addToDom(
                     
                     // TODO: if  cust has preselected chose account must show proper UI else account type selector
                     
@@ -2730,7 +2701,7 @@ class WorkViewControler: PageController {
                                                 loadFromCatch: loadFromCatch
                                             )
                                             
-                                            self.appendChild(accoutOverview)
+                                            addToDom(accoutOverview)
                                             
                                             minViewAcctRefrence[order.custAcct] = accoutOverview
                                             
@@ -2754,7 +2725,7 @@ class WorkViewControler: PageController {
                                         }
                                         
                                     }
-                                    self.appendChild(order)
+                                    addToDom(order)
                                     
                                 case .rental:
 
@@ -2813,7 +2784,7 @@ class WorkViewControler: PageController {
                                                 loadFromCatch: loadFromCatch
                                             )
                                             
-                                            self.appendChild(accoutOverview)
+                                            addToDom(accoutOverview)
                                             
                                             minViewAcctRefrence[order.custAcct] = accoutOverview
                                             
@@ -2823,7 +2794,7 @@ class WorkViewControler: PageController {
                                         }
                                         
                                     }
-                                    self.appendChild(order)
+                                    addToDom(order)
                                 case .date:
                                     break
                                 case .account:
@@ -2833,7 +2804,7 @@ class WorkViewControler: PageController {
                                 }
                             }
 
-                            self.appendChild(custDataView)
+                            addToDom(custDataView)
                             
                     })
                 )
@@ -2925,7 +2896,7 @@ class WorkViewControler: PageController {
                                     loadFromCatch: loadFromCatch
                                 )
                                 
-                                self.appendChild(accoutOverview)
+                                addToDom(accoutOverview)
                                 
                                 minViewAcctRefrence[order.custAcct] = accoutOverview
                                 
@@ -2937,7 +2908,7 @@ class WorkViewControler: PageController {
                             }
                             
                         }
-                        self.appendChild(order)
+                        addToDom(order)
 
                     case .rental:
 
@@ -2996,7 +2967,7 @@ class WorkViewControler: PageController {
                                     loadFromCatch: loadFromCatch
                                 )
                                 
-                                self.appendChild(accoutOverview)
+                                addToDom(accoutOverview)
                                 
                                 minViewAcctRefrence[order.custAcct] = accoutOverview
                                 
@@ -3006,7 +2977,7 @@ class WorkViewControler: PageController {
                             }
                             
                         }
-                        self.appendChild(order)
+                        addToDom(order)
 
                     case .date:
                         break
@@ -3101,7 +3072,7 @@ class WorkViewControler: PageController {
                                         loadFromCatch: loadFromCatch
                                     )
                                     
-                                    self.appendChild(accoutOverview)
+                                    addToDom(accoutOverview)
                                     
                                     minViewAcctRefrence[order.custAcct] = accoutOverview
                                     
@@ -3113,7 +3084,7 @@ class WorkViewControler: PageController {
                                 }
                                 
                             }
-                            self.appendChild(order)
+                            addToDom(order)
                         case .rental:
                             let order = StartRentalOrder(custAcct: custAcct) { id in
                                 
@@ -3170,7 +3141,7 @@ class WorkViewControler: PageController {
                                         loadFromCatch: loadFromCatch
                                     )
                                     
-                                    self.appendChild(accoutOverview)
+                                    addToDom(accoutOverview)
                                     
                                     minViewAcctRefrence[order.custAcct] = accoutOverview
                                     
@@ -3180,7 +3151,7 @@ class WorkViewControler: PageController {
                                 }
                                 
                             }
-                            self.appendChild(order)
+                            addToDom(order)
                         case .date:
                             break
                         case .account:
@@ -3190,13 +3161,13 @@ class WorkViewControler: PageController {
                         }
                     }
                     
-                    self.appendChild(view)
+                    addToDom(view)
                     
                 }
             }
         }
         
-        self.appendChild(seachBox)
+        addToDom(seachBox)
         
         seachBox.seachCustomerField.select()
         
@@ -3206,7 +3177,11 @@ class WorkViewControler: PageController {
         
         sideMenuIsHidden = true
         
-        if caller == "delegate"{
+        if caller == "tradesa_trip_control" {
+            selectedWorkNavigationItem = .trips
+            loadTripView()
+        }
+        else if caller == "delegate"{
             
         }
         else if caller == "config"{
@@ -3352,9 +3327,6 @@ class WorkViewControler: PageController {
             searchHistoricalPurchaseView = view
             addToDom(view)
         }
-        else if caller == "tradesa_trip_control" {
-            
-        }
     }
     
     func searchFolio(_ advancedSearch: Bool,_ _term: String? = nil){
@@ -3455,7 +3427,7 @@ class WorkViewControler: PageController {
                                 loadFromCatch: false
                             )
                              
-                            self.appendChild(accoutOverview)
+                            addToDom(accoutOverview)
                              
                             minViewAcctRefrence[loadOrderResponse.order.custAcct] = accoutOverview
                              
@@ -3494,7 +3466,7 @@ class WorkViewControler: PageController {
                     
                     let salePoint = SalePointView(loadBy: .budget(.folio(term)))
                     
-                    self.appendChild(salePoint)
+                    addToDom(salePoint)
                     
                     
                 case .budgetOrder:
@@ -3562,6 +3534,8 @@ class WorkViewControler: PageController {
                     showAlert(.alerta, "\(type.description) aun no es soportado")
                 case .followup: 
                     break
+                case .comertialTrip:
+                    showAlert(.alerta, "\(type.description) aun no es soportado")
                 }
                 
                 return
@@ -3654,7 +3628,7 @@ class WorkViewControler: PageController {
                          loadFromCatch: loadFromCatch
                      )
                      
-                     self.appendChild(accoutOverview)
+                     addToDom(accoutOverview)
                      
                      minViewAcctRefrence[order.custAcct] = accoutOverview
                      
@@ -3690,6 +3664,8 @@ class WorkViewControler: PageController {
         comunicationBoxOldMessagesView.innerHTML = ""
         
         orderMessageView.removeAll()
+
+        var renderedNewMessageCount = 0
         
         orderMessageList.forEach { msg in
             
@@ -3700,6 +3676,7 @@ class WorkViewControler: PageController {
             }
             
             if msg.status == .new {
+                renderedNewMessageCount += 1
                 comunicationBoxNewMessagesView.appendChild(view)
             }
             else {
@@ -3707,6 +3684,8 @@ class WorkViewControler: PageController {
             }
             
         }
+
+        chatCounter = renderedNewMessageCount
     }
     
     func messageView(_ data: API.custAPIV1.LoadMessaging) -> ICMessageView {
@@ -3752,7 +3731,7 @@ class WorkViewControler: PageController {
                     
                     minViewAcctRefrence[order.custAcct] = accoutOverview
                     
-                    self.appendChild(accoutOverview)
+                    addToDom(accoutOverview)
                     
                 }
                 
@@ -3781,8 +3760,8 @@ class WorkViewControler: PageController {
                 ) { chatIsArchived in
                     if chatIsArchived {
                         
-//                        self.chatBubbleRefrence[room.token]?.remove()
-//                        self.chatBubbleRefrence.removeValue(forKey: room.token)
+                    //    self.chatBubbleRefrence[room.token]?.remove()
+                    //    self.chatBubbleRefrence.removeValue(forKey: room.token)
                     }
                     self.chatRoomNew = nil
                 } sentMessage: { room, message, lastMessageAt in
@@ -3803,6 +3782,86 @@ class WorkViewControler: PageController {
         }
     }
     
+    func requestMobileScanner() {
+        API.custAPIV1.requestMobileCamara(
+            type: .scanner,
+            connid: custCatchChatConnID,
+            eventid: self.viewid,
+            relatedid: nil,
+            relatedfolio: "",
+            multipleTakes: false
+        ) { resp in
+            loadingView(show: false)
+
+            guard let resp else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+
+            guard resp.status == .ok else {
+                showError(.generalError, resp.msg)
+                return
+            }
+
+            showSuccess(.operacionExitosa, "Entre en la notificacion en su movil.")
+        }
+    }
+
+    func openSalePoint() {
+        if let view = self.posView {
+            view.display(.block)
+            self.posSubView?.remove()
+            self.posSubView = nil
+            return
+        }
+
+        let salePoint = SalePointView(loadBy: nil) {
+            self.posView?.remove()
+            self.posView = nil
+        } minimizeView: {
+            let subView = Div {
+                Div {
+                    Img()
+                        .src("/skyline/media/star_yellow.png")
+                        .marginTop(3.px)
+                        .width(22.px)
+                }
+                .marginRight(7.px)
+                .float(.left)
+
+                Span("PDV")
+                    .color(.white)
+            }
+            .border(width: .medium, style: .solid, color: .slateGray)
+            .custom("width", "fit-content")
+            .backgroundColor(.grayBlack)
+            .borderRadius(all: 12.px)
+            .class(.oneLineText)
+            .padding(all: 7.px)
+            .margin(all: 7.px)
+            .cursor(.pointer)
+            .fontSize(23.px)
+            .color(.white)
+            .float(.left)
+            .onClick {
+                self.posSubView?.remove()
+                self.posSubView = nil
+
+                if let view = self.posView {
+                    view.display(.block)
+                }
+            }
+
+            self.posSubView = subView
+            WebApp.current.minimizedGrid.appendChild(subView)
+            self.posView?.display(.none)
+        }
+
+        self.posView = salePoint
+
+        addToDom(salePoint)
+    }
+
     func newPrivateChat() {
         
         var currentIDs: [UUID] = []
@@ -3818,7 +3877,7 @@ class WorkViewControler: PageController {
             
         }
         
-        self.appendChild(
+        addToDom(
             StartNewChat(currentChatIds: currentIDs, callback: { room in
                 self.privateChatList.append(room)
             })
@@ -4007,6 +4066,56 @@ class WorkViewControler: PageController {
         
     }
 
+    func loadTripView() {
+
+        if tripViewIsLoaded {
+            OrderCatchControler.shared.macroViewType = .tripView
+            return
+        }
+
+        guard !tripViewIsLoading else { return }
+
+        tripViewIsLoading = true
+
+        loadingView(show: true)
+
+        let tripsRequestExecutedAt = Date().timeIntervalSince1970
+
+        API.custCommercialTrips.getTrips(
+            accountId: nil,
+            type: .current
+        ) { resp in
+            self.tripViewIsLoading = false
+            loadingView(show: false)
+
+            guard let resp = resp else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+
+            guard resp.status == .ok else {
+                showError(.generalError, resp.msg)
+                return
+            }
+
+            guard let payload = resp.data else {
+                showError(.unexpectedResult, .payloadDecodError)
+                return
+            }
+
+            self.tripViewIsLoaded = true
+
+            let view = TripsControlerView(
+                items: payload.items,
+                lastTripsRequestExecutedAt: tripsRequestExecutedAt
+            )
+
+            self.tripContainer.appendChild(view)
+            OrderCatchControler.shared.macroViewType = .tripView
+        }
+
+    }
+
 }
 
 extension WorkViewControler {
@@ -4020,7 +4129,7 @@ extension WorkViewControler {
         case chat
         case mail
     }
-    
+
 }
 
 func loadAccountView( id: HybridIdentifier) {

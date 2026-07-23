@@ -457,7 +457,6 @@ class InventoryItemDetailView: Div {
     
     override func buildUI() {
         
-        self.class(.transparantBlackBackGround)
         height(100.percent)
         position(.absolute)
         width(100.percent)

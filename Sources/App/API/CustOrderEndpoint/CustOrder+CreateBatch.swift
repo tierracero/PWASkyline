@@ -39,7 +39,7 @@ extension CustOrderComponents {
             }
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<CreateBatchResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<CreateBatchResponse>.self, from: data)
                 callback(resp)
             }
             catch{

@@ -139,7 +139,6 @@ class ConfirmartionSMSView: Div {
     }
     
     override func buildUI() {
-        self.class(.transparantBlackBackGround)
         height(100.percent)
         width(100.percent)
         position(.fixed)

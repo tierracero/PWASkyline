@@ -28,7 +28,7 @@ extension CustComponents {
             }
             
             do{
-                var resp = try JSONDecoder().decode(APIResponseGeneric<String>.self, from: payload)
+                var resp = try decodeAPIResponse(APIResponseGeneric<String>.self, from: payload)
                 
                 var decoded: APIResponseGeneric<GetJobRecruitmentProfilerResponse?> = .init(
                     status: resp.status,
@@ -40,7 +40,7 @@ extension CustComponents {
                 if let data = resp.data?.decryptc?.data(using: .utf8) {
                     
                     do {
-                        let response = try JSONDecoder().decode(GetJobRecruitmentProfilerResponse.self, from: data)
+                        let response = try decodeAPIResponse(GetJobRecruitmentProfilerResponse.self, from: data)
                         decoded.data = response
                     }
                     catch { }

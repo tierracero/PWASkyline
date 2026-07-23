@@ -224,6 +224,7 @@ public class AccoutOverview: Div {
                 
                 }
         }
+        .class(Class(TCOrderViewClass.compactActions))
         .hidden(self.$order.map{$0 == nil ? true : false})
         .cursor(.pointer)
         .float(.right)
@@ -260,7 +261,8 @@ public class AccoutOverview: Div {
                  }
                  Div().clear(.both)
                  
-             }
+            }
+            .class(Class(TCOrderViewClass.printAction))
             .class(.uibtn)
             .onClick {
                 
@@ -482,6 +484,7 @@ public class AccoutOverview: Div {
         
         /// Seperator
         Div()
+            .class(Class(TCOrderViewClass.quickSeparator))
             .marginRight(12.px)
             .paddingRight(12.px)
             .borderRight(width: .thin, style: .solid, color: .lightGray)
@@ -500,6 +503,7 @@ public class AccoutOverview: Div {
             */
             Span("Activos")
         }
+        .class(Class(TCOrderViewClass.activeOrdersAction))
         .class(.uibtn)
         .float(.right)
         .onClick { _ in
@@ -517,6 +521,7 @@ public class AccoutOverview: Div {
             */
             Span("Historial")
         }
+        .class(Class(TCOrderViewClass.historyAction))
         .class(.uibtn)
         .float(.right)
         .onClick { _ in
@@ -531,8 +536,9 @@ public class AccoutOverview: Div {
                 .marginLeft(7.px)
                 .height(18.px)
             
-            Span("Orden")
+            Span("Nueva orden")
         }
+        .class(Class(TCOrderViewClass.newOrderAction))
         .class(.uibtn)
         .float(.right)
         .onClick { _ in
@@ -549,6 +555,7 @@ public class AccoutOverview: Div {
         }
         
     }
+        .class(Class(TCOrderViewClass.quickTools))
         .marginRight(7.px)
         .float(.right)
         .hidden(self.$load.map{$0 == .order ? false : true})
@@ -572,6 +579,7 @@ public class AccoutOverview: Div {
         .hidden(self.$load.map{$0 == .metrics ? false : true})
     
     lazy var accountButton = Div("Cuenta")
+        .class(Class(TCOrderViewClass.accountBreadcrumb))
         .cursor(.pointer)
         .fontSize(22.px)
         .borderRadius(all: 7.px)
@@ -589,7 +597,8 @@ public class AccoutOverview: Div {
             self.loadAccout()
         }
     
-    lazy var orderButton = Div("Ordenes")
+    lazy var orderButton = Div("Órdenes")
+        .class(Class(TCOrderViewClass.orderBreadcrumb))
         .cursor(.pointer)
         .fontSize(22.px)
         .borderRadius(all: 7.px)
@@ -642,6 +651,15 @@ public class AccoutOverview: Div {
         }
     
     lazy var _orderView: OrderView? = nil
+
+    lazy var orderHeaderTitle = Div {
+        Span("Orden · ")
+        Span(self.$order.map { $0?.folio ?? "" })
+        Span(self.$orderStatus.map { $0?.description ?? "" })
+            .class(Class(TCOrderViewClass.headerStatus))
+    }
+        .class(Class(TCOrderViewClass.headerTitle))
+        .hidden(self.$load.map { $0 != .order })
     
     @DOM public override var body: DOM.Content {
         
@@ -651,6 +669,8 @@ public class AccoutOverview: Div {
                 
                 Img()
                     .src("/skyline/media/cross.png")
+                    .class(Class(TCOrderViewClass.windowAction))
+                    .class(Class(TCOrderViewClass.closeAction))
                     .float(.right)
                     .marginRight(7.px)
                     .cursor(.pointer)
@@ -673,10 +693,25 @@ public class AccoutOverview: Div {
                         
                         self.remove()
                     }
+
+                Img()
+                    .src("/skyline/media/pencil.png")
+                    .class(Class(TCOrderViewClass.windowAction))
+                    .class(Class(TCOrderViewClass.editAction))
+                    .float(.right)
+                    .marginRight(12.px)
+                    .cursor(.pointer)
+                    .width(24.px)
+                    .hidden(self.$load.map { $0 != .order })
+                    .onClick {
+                        self._orderView?.toggleOrderEditMode()
+                    }
                 
                 Img()
                     .src("/skyline/media/lowerWindow.png")
                     .class(.iconWhite)
+                    .class(Class(TCOrderViewClass.windowAction))
+                    .class(Class(TCOrderViewClass.handoffAction))
                     .float(.right)
                     .marginRight(18.px)
                     .marginLeft(18.px)
@@ -687,6 +722,10 @@ public class AccoutOverview: Div {
                     }
                 
                 self.accountButton
+
+                Span("/")
+                    .class(Class(TCOrderViewClass.breadcrumbDivider))
+                    .hidden(self.$load.map { $0 != .order })
                 
                 self.orderButton
                 
@@ -701,10 +740,13 @@ public class AccoutOverview: Div {
                 self.fiscalQuickTool
                 
                 self.metricsQuickTool
+
+                self.orderHeaderTitle
                 
                 Div().class(.clear)
                 
             }
+            .class(Class(TCOrderViewClass.toolbar))
             .paddingBottom(3.px)
             
             //Work Grid
@@ -724,11 +766,13 @@ public class AccoutOverview: Div {
                 .custom("width", "calc(100% - 6px)")
                 
             }
+            .class(Class(TCOrderViewClass.content))
             .custom("height", "calc(100% - 40px)")
             
             Div().class(.clear)
             
         }
+        .class(Class(TCOrderViewClass.shell))
         .padding(all: 7.px)
         .borderRadius(all: 24.px)
         .backgroundColor(.grayBlack)
@@ -741,7 +785,8 @@ public class AccoutOverview: Div {
     }
     
     public override func buildUI() {
-        self.class(.transparantBlackBackGround)
+        TCOrderViewTheme.install()
+
         height(100.percent)
         position(.absolute)
         width(100.percent)
@@ -750,6 +795,14 @@ public class AccoutOverview: Div {
         
         if !isSuperView {
             zIndex(1)
+        }
+
+        $load.listen { currentView in
+            if currentView == .order {
+                self.class(Class(TCOrderViewClass.root))
+            } else {
+                self.removeClass(Class(TCOrderViewClass.root))
+            }
         }
         
     }
@@ -922,24 +975,32 @@ public class AccoutOverview: Div {
             
             acctType = account.type
             
-            callback(
-                account,
-                order,
-                notes,
-                payments,
-                charges,
-                pocs,
-                files,
-                contracts,
-                equipments,
-                rentals,
-                transferOrder,
-                orderHighPriorityNote,
-                accountHighPriorityNote,
-                tasks,
-                routeCatch,
-                true
-            )
+            loadingView(show: true)
+
+            // Keep cache hits asynchronous so constructing another order for an
+            // existing account cannot monopolize the originating click event.
+            Dispatch.asyncAfter(0.05) {
+                loadingView(show: false)
+
+                callback(
+                    account,
+                    order,
+                    notes,
+                    payments,
+                    charges,
+                    pocs,
+                    files,
+                    contracts,
+                    equipments,
+                    rentals,
+                    transferOrder,
+                    orderHighPriorityNote,
+                    accountHighPriorityNote,
+                    tasks,
+                    routeCatch,
+                    true
+                )
+            }
             
         }
         else{
@@ -1251,7 +1312,7 @@ public class AccoutOverview: Div {
                     orderRoute: route,
                     loadFromCatch: loadFromCatch
                 )
-                self.appendChild(accoutOverview)
+                addToDom(accoutOverview)
             }
         
 

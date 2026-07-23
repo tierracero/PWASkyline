@@ -45,7 +45,7 @@ extension CustComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<String>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<String>.self, from: data))
             }
             catch {
                 callback(nil)

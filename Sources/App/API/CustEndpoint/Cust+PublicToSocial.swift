@@ -52,7 +52,7 @@ extension CustComponents {
             }
             do{
                 
-                let resp = try JSONDecoder().decode(APIResponseGeneric<PublicToSocialResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<PublicToSocialResponse>.self, from: data)
                 callback(resp)
                 
             }

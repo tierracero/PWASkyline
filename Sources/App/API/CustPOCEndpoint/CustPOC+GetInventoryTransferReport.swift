@@ -35,7 +35,7 @@ extension CustPOCComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<GetInventoryTransferReportResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<GetInventoryTransferReportResponse>.self, from: data))
             }
             catch{
                 print(error)

@@ -350,7 +350,7 @@ func heartBeat() {
         return
     }
     
-    let payload = API.wsV1.PingNotification(event: "ping", payload: .init(
+    let payload = API.webSocketV1.PingNotification(event: "ping", payload: .init(
         msg: "💗 ⚡️ heartBeat",
         connId: custCatchChatConnID
     ))

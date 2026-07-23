@@ -223,7 +223,7 @@ class CreateCustContractView: Div {
                 }
             }
             .custom("max-height", "calc(80vh - 115px)")
-            .custom("display", "grid")
+            .display(.grid)
             .custom("grid-template-columns", "repeat(\(self.fieldColumnCount), minmax(0, 1fr))")
             .custom("column-gap", "14px")
             .overflow(.auto)
@@ -252,7 +252,6 @@ class CreateCustContractView: Div {
     override func buildUI() {
         super.buildUI()
         
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)

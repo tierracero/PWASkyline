@@ -348,14 +348,13 @@ class ServiceAccionView: Div {
     
     override func didAddToDOM() {
         super.didAddToDOM()
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)
         left(0.px)
         top(0.px)
         
-        self.appendChild(Script()
+        addToDom(Script()
                 .type("text/javascript")
                 .src("https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js")
                 .onLoad {

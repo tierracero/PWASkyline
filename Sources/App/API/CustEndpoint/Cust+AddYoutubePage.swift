@@ -36,7 +36,7 @@ extension CustComponents {
             }
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<CustSocialPageQuick>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<CustSocialPageQuick>.self, from: data)
                 callback(resp)
             }
             catch{

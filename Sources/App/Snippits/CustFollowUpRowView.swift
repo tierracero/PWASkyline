@@ -30,6 +30,17 @@ class CustFollowUpRowView: Div {
     var elapsedLabel = "..."
     
     var closedAtLabel = ""
+
+    private var statusColor: Color {
+        switch data.status {
+        case .open:
+            return .folioRowDefaultColor
+        case .successful:
+            return .green
+        case .closed:
+            return .gray
+        }
+    }
     
     lazy var dateView = Div()
     
@@ -57,7 +68,16 @@ class CustFollowUpRowView: Div {
                 
                 Div(self.statusLabel)
                     .class(.oneLineText)
-                    .paddingTop(3.px)
+                    .display(.inlineBlock)
+                    .padding(v: 3.px, h: 7.px)
+                    .borderRadius(all: 9.px)
+                    .backgroundColor(self.statusColor)
+                    .color(.white)
+                    .fontSize(10.px)
+                    .fontWeight(.bold)
+                    .custom("max-width", "84px")
+                    .custom("box-sizing", "border-box")
+                    .custom("letter-spacing", "0.35px")
                 
                 if !self.closedAtLabel.isEmpty {
                     Div(self.closedAtLabel)
@@ -138,15 +158,9 @@ class CustFollowUpRowView: Div {
         super.buildUI()
         
         self.class(.smallButtonBox)
-        
-        switch self.data.status {
-        case .open:
-            backgroundColor(.folioRowDefaultColor)
-        case .successful:
-            backgroundColor(.green)
-        case .closed:
-            backgroundColor(.gray)
-        }
+        backgroundColor(.transparentBlack)
+        borderLeft(width: .thick, style: .solid, color: statusColor)
+        custom("box-sizing", "border-box")
         
         onClick {
             self.callback()

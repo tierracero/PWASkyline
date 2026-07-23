@@ -28,7 +28,7 @@ extension CustComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<GetDocumentationBookResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<GetDocumentationBookResponse>.self, from: data))
             }
             catch{
                 print("🔴 API_DECODING_ERROR")

@@ -24,7 +24,7 @@ extension CustPOCComponents {
 				return
 			}
 			do{
-				let resp = try JSONDecoder().decode(APIResponseGeneric<LoadDepPOCInventoryResponse>.self, from: data)
+				let resp = try decodeAPIResponse(APIResponseGeneric<LoadDepPOCInventoryResponse>.self, from: data)
 				callback(resp)
 			}
 			catch{

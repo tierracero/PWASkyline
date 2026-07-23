@@ -10,6 +10,51 @@ import TCFundamentals
 import TCFireSignal
 import Web
 
+private func fiscalOfficialDateUnixTimestamp(_ value: String) -> Int64? {
+    
+    let dateParts = value
+        .trimmingCharacters(in: .whitespacesAndNewlines)
+        .split(separator: "-", omittingEmptySubsequences: false)
+
+    guard dateParts.count == 3 else { return nil }
+    
+    guard let year = Int(dateParts[0]) else { return nil }
+    
+    guard let month = Int(dateParts[1]) else { return nil }
+    
+    guard let day = Int(dateParts[2]) else { return nil }
+
+    guard (1...12).contains(month), (1...31).contains(day) else { return nil }
+
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = .current
+
+    let now = Date()
+
+    var components = DateComponents()
+    components.calendar = calendar
+    components.timeZone = calendar.timeZone
+    components.year = year
+    components.month = month
+    components.day = day
+    components.hour = now.hour 
+    components.minute = now.minute
+    components.second = 0
+
+    guard let date = calendar.date(from: components) else { return nil }
+
+    let validated = calendar.dateComponents([.year, .month, .day], from: date)
+    guard validated.year == year, validated.month == month, validated.day == day else {
+        return nil
+    }
+
+    var uts = date.timeIntervalSince1970
+
+    uts += ((60 * 60 * 6) + 5)
+
+    return Int64(uts)
+}
+
 class ToolFiscal: Div {
     
     override class var name: String { "div" }
@@ -17,7 +62,7 @@ class ToolFiscal: Div {
     /// manual, order{id}, sale{id}, loadFiscalDoc{id}
     @State var loadType: LoadType
     
-    @State var cartaPorte: FiscalCartaPorte?
+    @State var cartaPorte: CustFiscalCartaPorteItem?
     
     @State var folio: String?
     
@@ -121,6 +166,8 @@ class ToolFiscal: Div {
     @State var hiringMode: HiringMode? = nil
     
     @State var comment = ""
+
+    @State var officialDateInput = ""
     
     /// Payment States START
     
@@ -212,6 +259,12 @@ class ToolFiscal: Div {
         .marginBottom(7.px)
         .width(99.percent)
         .fontSize(23.px)
+
+    lazy var officialDateField = InputDate(self.$officialDateInput)
+        .class(.textFiledBlackDarkLarge)
+        .custom("width", "calc(100% - 25px)")
+        .fontSize(23.px)
+        .height(31.px)
     
     lazy var fiscalView = Div()
         .custom("height", "calc(100% - 50px)")
@@ -1171,7 +1224,6 @@ class ToolFiscal: Div {
         
         super.buildUI()
         
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)
@@ -1745,7 +1797,7 @@ class ToolFiscal: Div {
             _ provider: String,
             _ auth: String,
             _ lastFour: String,
-            _ cartaPorte: FiscalCartaPorte?,
+            _ cartaPorte: CustFiscalCartaPorteItem?,
             _ globalInformation: InformacionGlobal?
         ) -> ())
     ){
@@ -1772,6 +1824,9 @@ class ToolFiscal: Div {
         case .salePinGlobalSale(let globalInformation):
             type = .sale
             globalIds = globalInformation.sales.map{ $0.id }
+        case .comertialTrip(let tripId, let _,  let _):
+            type = .comertialTrip
+            relid = tripId
         }
         
         // validate payment
@@ -1946,6 +2001,21 @@ class ToolFiscal: Div {
             )
             
         }
+
+        var officialDate: Int64? = nil
+
+        let officialDateValue = officialDateInput.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if !officialDateValue.isEmpty {
+
+            guard let timestamp = fiscalOfficialDateUnixTimestamp(officialDateValue) else {
+                showError(.requiredField, "Ingrese una fecha oficial valida")
+                officialDateField.select()
+                return
+            }
+
+            officialDate = timestamp
+        }
         
         renderdData(
             taxMode,
@@ -1955,7 +2025,7 @@ class ToolFiscal: Div {
             reciver.id,
             relid,
             folio,
-            nil,
+            officialDate,
             profile.id,
             reciverRazon,
             reciverRfc,
@@ -2096,8 +2166,6 @@ class ToolFiscal: Div {
                     return
                 }
                 
-                
-                
                 guard let payload = resp.data else {
                     showError(.unexpectedResult, "No se obtuvo data del servidor")
                     self.infoDiv.color(.gold)
@@ -2127,7 +2195,7 @@ class ToolFiscal: Div {
                 var printTicket = false
                 
                 switch self.loadType {
-                case .manual, .loadFiscalDoc, .salePinGlobalSale:
+                case .manual, .loadFiscalDoc, .salePinGlobalSale, .comertialTrip:
                     break
                 case .order:
                     if configStore.print.document == .miniprinter {
@@ -2938,7 +3006,8 @@ extension ToolFiscal {
         case sale(id: UUID)
         case loadFiscalDoc(id: UUID)
         case salePinGlobalSale(payload: RequestSalePointGlobalFiscal)
-        
+        case comertialTrip(tripId: UUID, balance: Int64, cartaPorte: CustFiscalCartaPorteItem)
+
         var description: String {
             switch self {
             case .manual:
@@ -2951,6 +3020,8 @@ extension ToolFiscal {
                 return "Ver Documento"
             case .salePinGlobalSale:
                 return  "Factura Global PDV"
+            case .comertialTrip:
+                return "Factura Viaje Comercial"
             }
         }
     }
@@ -2980,6 +3051,24 @@ extension ToolFiscal {
         }
         
         let rightView = Div {
+
+            Div{
+                Div{
+                    Label("Fecha de Pago (opcional):")
+                        .color(.white)
+                }
+                .width(50.percent)
+                .float(.left)
+                Div{
+                    self.officialDateField
+                }
+                .width(50.percent)
+                .float(.left)
+
+                Div().clear(.both)
+            }
+
+            Div().clear(.both).height(3.px)
             
             Label("Forma de Pago:")
                 .marginBottom(3.px)
@@ -3311,7 +3400,7 @@ extension ToolFiscal {
                                     
                                 }
                                 
-                                self.appendChild(view)
+                                addToDom(view)
                                 
                             }
                             addSoc: { soc, codeType, isWarenty, internalWarenty in
@@ -3354,7 +3443,7 @@ extension ToolFiscal {
                             addItem: { item, warenty in
                                 
                             }
-                            self.appendChild(addChargeFormView)
+                            addToDom(addChargeFormView)
                             
                             addChargeFormView.searchTermInput.select()
                             
@@ -4293,6 +4382,43 @@ extension ToolFiscal {
             }
             
             self.items = _items
+        
+        case .comertialTrip(let id, let balance, let cartaPorte ):
+
+            let units:Int64 = 1 * 1000000
+                
+            let unitCost:Int64 = balance * 10000
+            
+            let total:Int64 = unitCost * 1
+
+            let trasladados: [FiscalItemTaxItem] = [
+                .init(
+                    type: .iva,
+                    factor: .tasa,
+                    taza: "0.160000"
+                )
+            ]
+
+            self.cartaPorte = cartaPorte
+            self.items = [.init(
+                        type: .manual,
+                        id: nil,
+                        fiscCode: "78101802",
+                        fiscCodeDescription: "Servicios de transporte de carga por carretera (en camión) a nivel regional y nacional",
+                        fiscUnit: "E48",
+                        fiscUnitDescription: "Unidad de servicio",
+                        series: "",
+                        code: "",
+                        name: "TRASLADO DE MERCANCIA",
+                        discount: 0,
+                        units: units,
+                        unitCost: unitCost,
+                        total: total,
+                        taxes: .init(
+                            retenidos: [],
+                            trasladados: trasladados
+                        )
+                    )]
         }
         
         if (custCatchHerk > 2 && linkedProfile.contains(.billing)) || self.loadType != .manual {
@@ -4404,7 +4530,7 @@ extension ToolFiscal {
                             )
                         }
 
-                        self.appendChild(custDataView)
+                        addToDom(custDataView)
                         
                     }
                 ))

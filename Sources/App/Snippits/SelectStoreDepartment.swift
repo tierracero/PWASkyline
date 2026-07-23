@@ -114,7 +114,7 @@ class SelectStoreDepartment: Div {
                                     return
                                 }
                                 
-                                self.appendChild(
+                                addToDom(
                                     
                                     CreateStoreLevelCategoria(
                                         depid: depid,
@@ -174,7 +174,7 @@ class SelectStoreDepartment: Div {
                                     return
                                 }
                                 
-                                self.appendChild(
+                                addToDom(
                                     
                                     CreateStoreLevelLine(
                                         catid: catid,
@@ -288,7 +288,7 @@ class SelectStoreDepartment: Div {
                         .marginTop(7.px)
                         .onClick{
                             
-                            self.appendChild(CreateStoreLevelDepartement { id, name in
+                            addToDom(CreateStoreLevelDepartement { id, name in
                                 self.loadCatsInDep(id, name)
                             } deleted: {
                                 
@@ -337,7 +337,7 @@ class SelectStoreDepartment: Div {
                                 return
                             }
                             
-                            self.appendChild(
+                            addToDom(
                                 CreateStoreLevelCategoria(
                                     depid: depid,
                                     depname: self.selectedDepartment
@@ -389,7 +389,7 @@ class SelectStoreDepartment: Div {
                                 return
                             }
                             
-                            self.appendChild(
+                            addToDom(
                                 CreateStoreLevelLine(
                                     catid: catid,
                                     catname: self.selectedCategory
@@ -427,7 +427,6 @@ class SelectStoreDepartment: Div {
     }
     
     override func buildUI() {
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)

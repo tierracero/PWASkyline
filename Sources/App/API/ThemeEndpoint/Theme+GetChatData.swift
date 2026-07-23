@@ -32,7 +32,7 @@ extension ThemeComponents {
             }
             
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<CustChatConfiguration>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<CustChatConfiguration>.self, from: data))
             }
             catch{
                 print("⭕️ \(#file)")

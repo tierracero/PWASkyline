@@ -29,7 +29,7 @@ extension ThemeComponents {
             }
             
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<GetWebButtonsResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<GetWebButtonsResponse>.self, from: data))
             }
             catch{
                 print("⭕️ \(#file)")

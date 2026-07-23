@@ -18,14 +18,26 @@ class CartaPorteUbicacion: Div {
     private var callback: ((
         _ id: UUID
     ) -> ())
+
+    private let canRemove: Bool
+
+    private var editCallback: ((
+        _ placement: FiscalLocationItem
+    ) -> ())?
     
     init(
         placement: FiscalLocationItem,
+        canRemove: Bool? = nil,
+        edit: ((
+            _ placement: FiscalLocationItem
+        ) -> ())? = nil,
         callback: @escaping ((
             _ id: UUID
         ) -> ())
     ) {
         self.placement = placement
+        self.canRemove = canRemove ?? (placement.placementType == .destino)
+        self.editCallback = edit
         self.callback = callback
         super.init()
     }
@@ -140,29 +152,36 @@ class CartaPorteUbicacion: Div {
             
             Div("Calle")
                 .class(.oneLineText)
-                .width(25.percent)
+                .width(self.$isHomeItem.map{ $0 ? 25.percent : 22.percent })
                 .color(.white)
                 .float(.left)
             
             Div("Numero")
                 .class(.oneLineText)
-                .width(15.percent)
+                .width(self.$isHomeItem.map{ $0 ? 15.percent : 12.percent })
                 .color(.white)
                 .float(.left)
             
             Div("Refrence")
                 .class(.oneLineText)
-                .width(25.percent)
+                .width(self.$isHomeItem.map{ $0 ? 25.percent : 22.percent })
                 .color(.white)
                 .float(.left)
             
             Div("State")
                 .class(.oneLineText)
-                .width(20.percent)
+                .width(self.$isHomeItem.map{ $0 ? 20.percent : 17.percent })
                 .color(.white)
                 .float(.left)
             
             Div("Codigo Postal")
+                .color(.yellowTC)
+                .class(.oneLineText)
+                .width(self.$isHomeItem.map{ $0 ? 15.percent : 12.percent })
+                .float(.left)
+
+            Div("Distancia (km)")
+                .hidden(self.$isHomeItem)
                 .color(.yellowTC)
                 .class(.oneLineText)
                 .width(15.percent)
@@ -178,28 +197,35 @@ class CartaPorteUbicacion: Div {
             Div(self.$street.map{ $0.isEmpty ? "Calle" : $0 })
                 .color(self.$street.map{ $0.isEmpty ? .gray : .white })
                 .class(.oneLineText)
-                .width(25.percent)
+                .width(self.$isHomeItem.map{ $0 ? 25.percent : 22.percent })
                 .float(.left)
 
             Div(self.$number.map{ $0.isEmpty ? "Numero" : $0 })
                 .color(self.$street.map{ $0.isEmpty ? .gray : .white })
                 .class(.oneLineText)
-                .width(15.percent)
+                .width(self.$isHomeItem.map{ $0 ? 15.percent : 12.percent })
                 .float(.left)
 
             Div(self.$refrence.map{ $0.isEmpty ? "Edificio blanco con negro" : $0 })
                 .color(self.$refrence.map{ $0.isEmpty ? .gray : .white })
                 .class(.oneLineText)
-                .width(25.percent)
+                .width(self.$isHomeItem.map{ $0 ? 25.percent : 22.percent })
                 .float(.left)
 
             Div(self.placement.state.description)
                 .class(.oneLineText)
-                .width(20.percent)
+                .width(self.$isHomeItem.map{ $0 ? 20.percent : 17.percent })
                 .color(.white)
                 .float(.left)
 
             Div(self.placement.zipCode)
+                .class(.oneLineText)
+                .width(self.$isHomeItem.map{ $0 ? 15.percent : 12.percent })
+                .color(.white)
+                .float(.left)
+
+            Div(self.placement.distance?.fromCents.toString ?? "")
+                .hidden(self.$isHomeItem)
                 .class(.oneLineText)
                 .width(15.percent)
                 .color(.white)
@@ -213,7 +239,7 @@ class CartaPorteUbicacion: Div {
     @DOM override var body: DOM.Content {
         Div().clear(.both).marginBottom(3.px)
         
-        if placement.placementType == .origen {
+        if editCallback == nil && !canRemove {
             self.bodyDiv
         }
         else {
@@ -224,18 +250,40 @@ class CartaPorteUbicacion: Div {
             
             Div{
                 Table{
-                    Tr{
-                        Td{
-                            Img()
-                                .src("/skyline/media/cross.png")
-                                .cursor(.pointer)
-                                .onClick { _, event in
-                                    event.stopPropagation()
-                                    self.callback(self.placement.id)
-                                }
+                    if self.editCallback != nil {
+                        Tr{
+                            Td{
+                                Img()
+                                    .src("/skyline/media/pencil.png")
+                                    .height(18.px)
+                                    .width(18.px)
+                                    .title("Editar ubicacion")
+                                    .cursor(.pointer)
+                                    .onClick { _, event in
+                                        event.stopPropagation()
+                                        self.editCallback?(self.placement)
+                                    }
+                            }
+                            .verticalAlign(.middle)
+                            .align(.center)
                         }
-                        .verticalAlign(.middle)
-                        .align(.center)
+                    }
+
+                    if self.canRemove {
+                        Tr{
+                            Td{
+                                Img()
+                                    .src("/skyline/media/cross.png")
+                                    .title("Eliminar ubicacion")
+                                    .cursor(.pointer)
+                                    .onClick { _, event in
+                                        event.stopPropagation()
+                                        self.callback(self.placement.id)
+                                    }
+                            }
+                            .verticalAlign(.middle)
+                            .align(.center)
+                        }
                     }
                 }
                 .height(100.percent)

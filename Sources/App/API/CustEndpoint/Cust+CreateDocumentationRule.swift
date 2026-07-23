@@ -32,7 +32,7 @@ extension CustComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<CustDocumentationRuleManager>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<CustDocumentationRuleManager>.self, from: data))
             }
             catch{
                 print("🔴 API_DECODING_ERROR")

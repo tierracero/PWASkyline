@@ -13,7 +13,6 @@ class OrdersSuperView: Div {
     
     override class var name: String { "div" }
     
-    
     let workView: WorkViewControler
     
     init(
@@ -103,7 +102,6 @@ class OrdersSuperView: Div {
     override func buildUI() {
         super.buildUI()
         
-        self.class(.transparantBlackBackGround)
         height(100.percent)
         position(.absolute)
         width(100.percent)
@@ -339,7 +337,7 @@ class OrdersSuperView: Div {
                         
                         minViewAcctRefrence[order.custAcct] = accoutOverview
                         
-                        self.appendChild(accoutOverview)
+                        addToDom(accoutOverview)
                     }
    
         }

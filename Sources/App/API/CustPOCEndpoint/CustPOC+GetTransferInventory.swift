@@ -29,7 +29,7 @@ extension CustPOCComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<GetTransferInventoryResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<GetTransferInventoryResponse>.self, from: data)
                 callback(resp)
             }
             catch{

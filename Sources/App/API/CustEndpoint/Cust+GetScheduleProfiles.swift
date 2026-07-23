@@ -24,7 +24,7 @@ extension CustComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<GetScheduleProfilesResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<GetScheduleProfilesResponse>.self, from: data))
             }
             catch {
                 callback(nil)

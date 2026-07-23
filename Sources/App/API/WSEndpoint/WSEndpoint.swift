@@ -13,6 +13,6 @@ import TCFundamentals
 import TCFireSignal
 
 extension WSComponents {
-    static var rout: ServerRouts = .ws
+    static var rout: ServerRouts = .webSocket
     static var version: ServerVersion? = .v1
 }

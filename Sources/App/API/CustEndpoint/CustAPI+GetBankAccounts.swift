@@ -23,7 +23,7 @@ extension CustComponents {
 				return
 			}
 			do{
-				let resp = try JSONDecoder().decode(APIResponseGeneric<GetBankAccountsResponse>.self, from: data)
+				let resp = try decodeAPIResponse(APIResponseGeneric<GetBankAccountsResponse>.self, from: data)
 				callback(resp)
 			}
 			catch{

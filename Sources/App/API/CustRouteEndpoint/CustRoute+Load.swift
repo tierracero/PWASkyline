@@ -29,7 +29,7 @@ extension CustRouteComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<LoadResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<LoadResponse>.self, from: data))
             }
             catch{
                 print(error)

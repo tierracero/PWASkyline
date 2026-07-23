@@ -78,7 +78,7 @@ class StartRentalOrder: Div {
                         self.remove()
                     }
                     else {
-                        self.appendChild(ConfirmView(
+                        addToDom(ConfirmView(
                             type: .yesNo,
                             title: "Confirme Salida",
                             message: "¿Quiere salir? Se perderan todos los datos.",
@@ -286,7 +286,6 @@ class StartRentalOrder: Div {
         top(0.px)
         left(0.px)
         position(.absolute)
-        self.class(.transparantBlackBackGround)
         
         /*
         SkylineApp.current.$keyUp.listen {
@@ -313,7 +312,7 @@ class StartRentalOrder: Div {
     }
     
     func selectDate() {
-        self.appendChild(
+        addToDom(
             SelectCalendarDate(
                             type: .rental,
                             selectedDateStamp: self.selectedDateStamp,
@@ -357,7 +356,7 @@ class StartRentalOrder: Div {
         
         self.isAddingProduct = true
 
-        self.appendChild(AddRentalSelectDepartment(
+        addToDom(AddRentalSelectDepartment(
             costType: self.custAcct.costType,
             currentUsedIDs: self.currentUsedIDs,
             uts: self.uts,
@@ -434,7 +433,7 @@ class StartRentalOrder: Div {
             self.addPayment()
         }
         
-        self.appendChild(view)
+        addToDom(view)
 
         view.timeField.select()
         
@@ -457,7 +456,7 @@ class StartRentalOrder: Div {
             self.closeSale(code, description, amount.fromCents, provider, lastFour, auth)
         }
         
-        self.appendChild(paymentView)
+        addToDom(paymentView)
         
         paymentView.paymentInput.select()
         

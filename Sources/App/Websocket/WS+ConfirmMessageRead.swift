@@ -17,7 +17,7 @@ extension WS {
     ///   - token: Message Token
     func confirmMessageRead(_ roomToken: String, token: String) {
         
-        let payload = API.wsV1.UpdateMessageStatusNotification(
+        let payload = API.webSocketV1.UpdateMessageStatusNotification(
             event: "updateMessageStatus",
             payload: .init(
                 roomToken: roomToken,

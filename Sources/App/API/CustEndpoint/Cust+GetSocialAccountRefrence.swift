@@ -33,7 +33,7 @@ extension CustComponents {
             }
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<[CustSocialAccounts]>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<[CustSocialAccounts]>.self, from: data)
                 
                 guard let accounts = resp.data else {
                     callback([])

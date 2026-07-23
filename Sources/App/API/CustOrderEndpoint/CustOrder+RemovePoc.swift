@@ -37,7 +37,7 @@ extension CustOrderComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<RemovePOCResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<RemovePOCResponse>.self, from: data)
                 callback(resp)
             }
             catch{

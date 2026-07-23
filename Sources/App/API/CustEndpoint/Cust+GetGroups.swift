@@ -31,7 +31,7 @@ extension CustComponents {
             }
             
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<[CustPageContentQuick]>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<[CustPageContentQuick]>.self, from: data))
             }
             catch {
                 

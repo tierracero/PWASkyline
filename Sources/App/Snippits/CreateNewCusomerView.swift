@@ -50,159 +50,93 @@ class CreateNewCusomerView: Div {
     }
     
     @DOM override var body: DOM.Content {
-        Div{
-            
-            Img()
-                .closeButton(.view)
-                .onClick{
-                    self.remove()
-                }
-            
-            H1("Seleccione tipo de Cliente")
-                .color(.lightBlueText)
-            
-            Div()
-                .class(.clear)
-                .marginTop(12.px)
-            
-            Div{
-            
-                if self.custType == .general {
-                    
-                    // Personal
-                    
-                    Div{
-                        Img()
-                            .src("/skyline/media/icon-personal.png")
-                            .height(48.px)
-                            .marginLeft(10.percent)
-                            .marginRight(25.px)
-                        
-                        Span("Cuenta")
-                        .marginRight(12.percent)
-
-                        B("P")
-                            .color(.highlighBlue)
-                        Span("ersonal")
-                    }
-                    .align(.left)
-                    .fontSize(48.px)
-                    .width(80.percent)
-                    .class(.smallButtonBox)
-                    .marginBottom(7.px)
-                    .onClick {
-                        self.createCustForm(acctType: .personal)
-                    }
-                    
-                    Div()
-                        .class(.clear)
-                        .marginTop(12.px)
-                    
-                }
-                
-                // Biz - Fisical
-                Div{
-                    Img()
-                        .src("/skyline/media/icon-biz.png")
-                        .height(48.px)
-                        .marginLeft(10.percent)
-                        .marginRight(25.px)
-                    
-                    Span("Empresa ")
-                    
-                    B("F")
-                        .color(.highlighBlue)
-                    Span("isica")
-                }
-                .align(.left)
-                .fontSize(48.px)
-                .width(80.percent)
-                .class(.smallButtonBox)
-                .marginBottom(7.px)
-                .onClick {
-                    self.createCustForm(acctType: .empresaFisica)
-                }
-                
-                Div()
-                    .class(.clear)
-                    .marginTop(12.px)
-                
-                // biz - Moral
-                
-                Div{
-                    Img()
-                        .src("/skyline/media/icon-biz.png")
-                        .height(48.px)
-                        .marginLeft(10.percent)
-                        .marginRight(25.px)
-                    
-                    Span("Empresa ")
-                    B("M")
-                        .color(.highlighBlue)
-                    Span("oral")
-                }
-                .align(.left)
-                .fontSize(48.px)
-                .width(80.percent)
-                .class(.smallButtonBox)
-                .marginBottom(7.px)
-                .onClick {
-                    self.createCustForm(acctType: .empresaMoral)
-                }
-                
-                Div()
-                    .class(.clear)
-                    .marginTop(12.px)
-                
-                // Non Profit
-                
-                Div{
-                    Img()
-                        .src("/skyline/media/icon-nonprofit.png")
-                        .height(48.px)
-                        .marginLeft(10.percent)
-                        .marginRight(25.px)
-                    
-                    B("O")
-                        .color(.highlighBlue)
-                    Span("rganizacion")
-                }
-                .align(.left)
-                .fontSize(48.px)
-                .width(80.percent)
-                .class(.smallButtonBox)
-                .marginBottom(7.px)
-                .onClick {
-                    self.createCustForm(acctType: .organizacion)
-                }
+        VPopUp(.fitContent(w: 820)) {
+            VTitle("Seleccione tipo de cliente") {
+                USmallTitle("Nueva cuenta")
+            } onClose: {
+                self.remove()
             }
-            .align(.center)
 
-            Div()
-                .class(.clear)
-                .marginTop(12.px)
-            
+            VBodyGrid {
+                if self.custType == .general {
+                    self.customerTypeOption(
+                        icon: "/skyline/media/icon-personal.png",
+                        title: "Cuenta personal",
+                        subtitle: "Persona para compras y servicios",
+                        accountType: .personal
+                    )
+                }
+
+                self.customerTypeOption(
+                    icon: "/skyline/media/icon-biz.png",
+                    title: "Empresa física",
+                    subtitle: "Actividad empresarial a nombre propio",
+                    accountType: .empresaFisica
+                )
+
+                self.customerTypeOption(
+                    icon: "/skyline/media/icon-biz.png",
+                    title: "Empresa moral",
+                    subtitle: "Sociedad o entidad mercantil",
+                    accountType: .empresaMoral
+                )
+
+                self.customerTypeOption(
+                    icon: "/skyline/media/icon-nonprofit.png",
+                    title: "Organización",
+                    subtitle: "Asociación o entidad sin fines de lucro",
+                    accountType: .organizacion
+                )
+            }
         }
-        .borderRadius(all: 24.px)
-        .backgroundColor(.white)
-        .padding(all: 12.px)
-        .width(50.percent)
-        .position(.absolute)
-        .left(25.percent)
-        .top(24.percent)
+    }
+
+    private func customerTypeOption(
+        icon: String,
+        title: String,
+        subtitle: String,
+        accountType: CustAcctTypes
+    ) -> VGrid {
+        VGrid(.half) {
+            VBox(.interactive) {
+                Img()
+                    .src(icon)
+                    .width(64.px)
+                    .height(64.px)
+                    .custom("object-fit", "contain")
+
+                Div {
+                    USubTitle(title)
+                    UMinorTitle(subtitle)
+                        .marginTop(5.px)
+                        .custom("line-height", "1.4")
+                }
+                .custom("min-width", "0")
+            }
+            .display(.grid)
+            .custom("grid-template-columns", "64px minmax(0, 1fr)")
+            .custom("align-items", "center")
+            .custom("gap", "15px")
+            .attribute("aria-label", title)
+            .onClick {
+                self.createCustForm(acctType: accountType)
+            }
+            .onKeyUp { _, event in
+                guard event.code == "Enter" || event.code == "Space" else { return }
+                event.preventDefault()
+                self.createCustForm(acctType: accountType)
+            }
+        }
     }
     
     override func buildUI() {
         super.buildUI()
         
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)
         left(0.px)
         top(0.px)
-        
-        super.buildUI()
     }
     
     func createCustForm( acctType: CustAcctTypes){
@@ -220,4 +154,3 @@ class CreateNewCusomerView: Div {
     }
     
 }
-

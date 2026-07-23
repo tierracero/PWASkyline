@@ -30,7 +30,7 @@ extension FiscalComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<LoadDocumentsResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<LoadDocumentsResponse>.self, from: data)
                 callback(resp)
             }
             catch{

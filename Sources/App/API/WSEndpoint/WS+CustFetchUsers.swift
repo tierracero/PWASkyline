@@ -27,7 +27,7 @@ extension WSComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<CustFetchUsersResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<CustFetchUsersResponse>.self, from: data)
                 callback(resp)
             }
             catch{

@@ -71,6 +71,9 @@ deps.appendFromMain("git@github.com:tierracero/LanguagePack.git",
 deps.appendFromMain("git@github.com:tierracero/WaWebAPICore.git",
                 targets: .product(name: "WaWebAPICore", package: "WaWebAPICore"))
 
+deps.appendFromMain("git@github.com:tierracero/SkylineDocumentationCore.git",
+                             targets: .product(name: "SkylineDocumentationCore", package: "SkylineDocumentationCore"))
+
 let package: Package = Package(
     name: "Tierra Cero | Skyline2.0",
     platforms: [
@@ -93,7 +96,8 @@ let package: Package = Package(
             ],
             resources: [
                 .copy("favicon.ico"),
-                .copy("skyline/"),
+                .copy("skyline"),
+                .copy("tutorial"),
                 .copy("images"),
                 .copy("js"),
                 .copy("css")

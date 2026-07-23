@@ -15,7 +15,7 @@ extension WS {
         
         if let data = payload.data(using: .utf8) {
             do {
-                return try JSONDecoder().decode(API.wsV1.CustTaskAuthRequest.self, from: data).payload
+                return try JSONDecoder().decode(API.webSocketV1.CustTaskAuthRequest.self, from: data).payload
             }
             catch {
                 print(error)

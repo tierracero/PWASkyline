@@ -33,7 +33,7 @@ extension CustOrderComponents {
             }
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<CustOrderManagerType>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<CustOrderManagerType>.self, from: data)
                 callback(resp)
             }
             catch{

@@ -38,7 +38,7 @@ extension CustPDVComponents {
                 }
             
                 do{
-                    let resp = try JSONDecoder().decode(APIResponseGeneric<SendToConcessionResponse>.self, from: data)
+                    let resp = try decodeAPIResponse(APIResponseGeneric<SendToConcessionResponse>.self, from: data)
                     callback(resp)
                 }
                 catch{

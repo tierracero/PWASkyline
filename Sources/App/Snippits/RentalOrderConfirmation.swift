@@ -359,7 +359,6 @@ class RentalOrderConfirmation: Div {
         top(0.px)
         left(0.px)
         position(.absolute)
-        self.class(.transparantBlackBackGround)
         super.buildUI()
 
         recalculateDueHour()

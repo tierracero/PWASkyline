@@ -187,7 +187,6 @@ class SearchCustomerQuickView: Div {
         top(0.px)
         left(0.px)
         position(.absolute)
-        self.class(.transparantBlackBackGround)
         
         $results.listen {
             

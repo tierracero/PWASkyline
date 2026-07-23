@@ -52,7 +52,7 @@ extension CustComponents {
             }
             
             do {
-                callback(try JSONDecoder().decode(APIResponseGeneric<CustMoneyManager>.self, from: payload))
+                callback(try decodeAPIResponse(APIResponseGeneric<CustMoneyManager>.self, from: payload))
             }
             catch{
                 print("🔴 API_DECODING_ERROR")

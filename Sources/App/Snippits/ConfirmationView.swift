@@ -68,113 +68,69 @@ public class ConfirmationView: Div {
     
     lazy var reasonField = TextArea(self.$reason)
        .placeholder("Ingrese razon por el cambio.")
-       .custom("width","calc(100% - 24px)")
+       .width(100.percent)
        .class(.textFiledBlackDark)
-       .height(70.px)
-       .height(31.px)
+       .height(92.px)
     
-    lazy var negativeButton = Div {
-        Div {
-            Strong(self.type.negative)
-        }
-        .padding(all: 7.px)
-    }
-    .custom("width", "calc(50% - 5px)")
-    .marginRight(10.px)
-    .class(.redButton)
-    .cursor(.pointer)
-    .float(.left)
+    lazy var negativeButton = ULargeButton(self.type.negative)
+    .width(100.percent)
+    .custom("border", "1px solid rgba(255, 104, 96, 0.55)")
+    .custom("color", "#ff8a82")
     .id("no")
     .onClick {
         self.processRresponse(isConfimed: false)
     }
     
     @DOM public override var body: DOM.Content {
-        
-        Div{
-            Div{
-                
-                
-                Img()
-                    .closeButton(.uiView4)
-                    .onClick{
-                        self.remove()
-                    }
-                
-                H2(self.title)
-                    .color(.lightBlueText)
-                
-                Div()
-                    .class(.clear)
-                    .marginTop(7.px)
-                
-                P(self.message)
-                    .fontSize(32.px)
-                    .color(.white)
-                
-                Div()
-                    .class(.clear)
-                    .marginTop(7.px)
-                
-                if self.comments != .notRequired {
-                    
-                    Div{
-                        
-                        Label("Ingrese Comentario")
-                    
-                        Div().class(.clear).marginTop(7.px)
-                        
-                        self.reasonField
-                        
-                    }
-                    
-                    Div()
-                        .class(.clear)
-                        .marginTop(7.px)
-                }
-                
-                Div{
-                    
-                    self.negativeButton
-                    
-                    Div{
-                        Div{
-                            Strong(self.type.positive)
+        VPopUp(.fitContent(w: 620)) {
+            VTitle(self.title) {
+                USmallTitle("Confirmación")
+            } onClose: {
+                self.remove()
+            }
+
+            VBodyGrid {
+                VGrid(.full) {
+                    VBox(.raised) {
+                        UMinorTitle(self.message)
+                            .fontSize(20.px)
+                            .custom("line-height", "1.5")
+                            .whiteSpace(.initial)
+
+                        if self.comments != .notRequired {
+                            UField(
+                                "Ingrese comentario",
+                                required: self.comments != .optional
+                            ) {
+                                self.reasonField
+                            }
+                            .marginTop(16.px)
                         }
-                        .padding(all: 7.px)
                     }
-                    .custom("width", "calc(50% - 5px)")
-                    .class(.greenButton)
-                    .cursor(.pointer)
-                    .float(.left)
+                }
+
+                if self.type != .ok {
+                    VGrid(.half) {
+                        self.negativeButton
+                    }
+                }
+
+                VGrid(self.type == .ok ? .full : .half) {
+                    ULargeButton(self.type.positive)
+                    .width(100.percent)
                     .id("ok")
                     .onClick {
                         self.processRresponse(isConfimed: true)
                     }
                 }
-                
-                Div()
-                    .class(.clear)
-                    .marginTop(12.px)
-                
             }
-            .margin(all: 7.px)
         }
-        .backgroundColor(.grayBlack)
-        .borderRadius(all: 24.px)
-        .position(.absolute)
-        .width(40.percent)
-        .left(30.percent)
-        .top(25.percent)
-        .color(.white)
-        
     }
     
     public override func buildUI() {
         
         super.buildUI()
         
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)

@@ -35,7 +35,7 @@ extension RewardsComponents {
                 return
             }
             do{
-                callback(try JSONDecoder().decode(APIResponseGeneric<PayWithPointsResponse>.self, from: data))
+                callback(try decodeAPIResponse(APIResponseGeneric<PayWithPointsResponse>.self, from: data))
             }
             catch{
                 print("⭕️  \(#file)  \(#function)")

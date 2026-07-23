@@ -12,7 +12,7 @@ import TCFireSignal
 extension FiscalComponents {
     
     static func getCartaPorteHistory(
-        callback: @escaping ( (_ resp: APIResponseGeneric<[FiscalCartaPorte]>?) -> () )
+        callback: @escaping ( (_ resp: APIResponseGeneric<[CustFiscalCartaPorteItem]>?) -> () )
     ) {
         
         sendPost(
@@ -28,7 +28,7 @@ extension FiscalComponents {
             }
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<[FiscalCartaPorte]>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<[CustFiscalCartaPorteItem]>.self, from: data)
                 callback(resp)
             }
             catch{

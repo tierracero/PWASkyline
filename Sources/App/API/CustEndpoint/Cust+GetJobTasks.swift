@@ -27,7 +27,7 @@ extension CustComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<GetJobTasksResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<GetJobTasksResponse>.self, from: data)
                 callback(resp)
             }
             catch {

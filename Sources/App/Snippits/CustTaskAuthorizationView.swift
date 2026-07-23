@@ -80,7 +80,7 @@ class CustTaskAuthorizationView: Div {
                                     return
                                 }
                                 
-                                var levels: [CustTaskAuthorizationManagerAlertLevel]
+                                var levels: [CustTaskAuthorizationManagerAlertLevel] = []
                                 
                                 switch alertManagerConfiguration.level {
                                 case .low:
@@ -273,7 +273,6 @@ class CustTaskAuthorizationView: Div {
     override func buildUI() {
         super.buildUI()
         
-        self.class(.transparantBlackBackGround)
         position(.absolute)
         height(100.percent)
         width(100.percent)
@@ -587,6 +586,8 @@ class CustTaskAuthorizationView: Div {
     func addTask(_ task: CustTaskAuthorizationManagerQuick){
         
         alertsView.appendChild(CustTaskAuthorizationRow(task: task){
+
+            API.custAPIV1.notifications { _ in }
             
             if task.alertType == .budget || task.alertType == .order {
                 self.remove()

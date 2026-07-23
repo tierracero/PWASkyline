@@ -34,7 +34,7 @@ extension CustComponents {
                 return
             }
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<CorrectImageSizeRegistrationResponse>?.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<CorrectImageSizeRegistrationResponse>?.self, from: data)
                 callback(resp)
             }
             catch{

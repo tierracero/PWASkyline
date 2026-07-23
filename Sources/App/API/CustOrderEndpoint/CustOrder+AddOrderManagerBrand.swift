@@ -31,7 +31,7 @@ extension CustOrderComponents {
             }
             
             do{
-                let resp = try JSONDecoder().decode(APIResponseGeneric<AddOrderManagerBrandResponse>.self, from: data)
+                let resp = try decodeAPIResponse(APIResponseGeneric<AddOrderManagerBrandResponse>.self, from: data)
                 callback(resp)
             }
             catch{
