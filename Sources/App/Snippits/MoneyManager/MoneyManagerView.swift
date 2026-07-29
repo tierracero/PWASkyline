@@ -57,8 +57,11 @@ class MoneyManagerView: Div {
                         .custom("grid-template-columns", "50px minmax(0, 1fr)")
                         .custom("align-items", "center")
                         .custom("gap", "12px")
+                        
                     }
-                    .class(Class(TCMoneyManagerClass.hero))
+                    // .class(Class(TCMoneyManagerClass.hero))
+                    .custom("background-color", "rgba(37, 44, 59, 1.0) !important")
+                    
                 }
 
                 self.actionCard(
@@ -227,6 +230,8 @@ enum TCMoneyManagerTheme {
 
         isInstalled = true
         let root = ".\(TCMoneyManagerClass.root)"
+        // Match direct and nested financial views mounted in a SuperView.
+        let modalHost = ".transparantBlackBackGround:has(.\(TCMoneyManagerClass.root))"
 
         WebApp.current.addStylesheet {
             CSSRule(Pointer(root))
@@ -240,8 +245,14 @@ enum TCMoneyManagerTheme {
             CSSRule(Pointer("\(root)[hidden], \(root) [hidden]"))
                 .custom("display", "none !important")
 
+            // Replace the legacy opaque black veil with a low-opacity glass veil.
+            CSSRule(Pointer(modalHost))
+                .custom("background", "rgba(1, 8, 17, 0.18) !important")
+                .custom("backdrop-filter", "blur(8px) saturate(120%)")
+                .custom("-webkit-backdrop-filter", "blur(8px) saturate(120%)")
+
             CSSRule(Pointer("\(root) .\(TCMoneyManagerClass.popup)"))
-                .custom("background", "rgba(1, 7, 14, 0.5)")
+                .custom("background", "rgba(1, 7, 14, 0.18)")
                 .custom("backdrop-filter", "blur(12px) saturate(120%)")
                 .custom("-webkit-backdrop-filter", "blur(12px) saturate(120%)")
 

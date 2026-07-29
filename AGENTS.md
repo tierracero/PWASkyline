@@ -59,3 +59,15 @@ The app integrates Skyline business workflows including service orders, point of
 Always ask the user for confirmation before running any build or test command. Do not treat a request to implement or fix code as implicit permission to run builds or tests. If the user does not confirm, complete the audit with non-build checks and clearly report that builds and tests were not run.
 
 No work is complete without concrete evidence: a focused build/test/lint/manual validation result where feasible, a reviewed diff, and git status confirming only intended files changed.
+
+## UI Theme Invariants
+
+- TripController UI roots apply `TCTripBetaTheme` first and `TCCrystalSurfaceTheme` with the `.trip` variant second. Trip-specific crystal selectors must remain more specific than legacy `tc-trip-beta-theme` selectors so the crystal controls win the cascade.
+- The GOOD_STYLE control language uses compact dark-blue inputs with a `#245a7c` border, light text, and crystal gradient buttons. Reuse `TCCrystalSurfaceClass.goodButton` for prominent search/actions instead of introducing one-off button colors.
+- `SearchCustomerView`, `CreateNewCusomerView`, and `CreateNewCustomerDataView` are crystal modal content. `SuperView` in `addToDom.swift` must remove the legacy `.transparantBlackBackGround` host for these views and use a low-opacity glass veil so the workspace remains visible.
+- Dark crystal macro containers use a translucent glass surface; their inner headers use a solid side-panel color, and the header/body surfaces keep a visible gap (12px by default) instead of touching.
+- Dark crystal views should preserve a three-layer composition: (1) the workspace veil remains low-opacity and blurred, (2) the modal/container shell is translucent, and (3) each inner header/body surface uses its own translucent or solid treatment. Layered opacity and backdrop blur should create the combined glass effect through superposition; do not make every layer opaque or flatten the view into one black panel.
+- Main objects and primary accents may use the reference treatment: vivid cyan/blue titles, borders, and left-edge rails; dark graphite inner cards for readable content; and restrained orange labels for semantic markers such as Origen/Destino. Keep these accents focused on hierarchy and state rather than saturating every surface.
+- Define Swift Web UI colors with the explicit RGB initializer (`.init(r:g:b:)`); do not use hex literals in `.color(...)` calls. Keep reusable palette values centralized when the same accent appears in multiple views.
+- Use `#252c3b` for dark-crystal accent bars and divider rails unless a state-specific color is required; keep the color consistent across headers, section bars, and selected controls.
+- `TripPrintEngine` intentionally preserves its explicit white print canvas even when the scoped Trip theme is registered.

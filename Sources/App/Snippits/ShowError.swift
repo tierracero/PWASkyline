@@ -35,7 +35,7 @@ public class ShowError: Div {
 					
 					Td{
 						Img()
-							.src("/skyline/media/icon-error.svg")
+							.src("/skyline/media/cross.png")
 							.width(96.px)
 							.padding(all: 24.px)
 						

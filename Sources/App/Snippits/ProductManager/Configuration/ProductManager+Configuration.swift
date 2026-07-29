@@ -34,6 +34,8 @@ extension ProductManagerView {
             .height(34.px)
         
         var productItemViews: [ UUID : Div ] = [:]
+
+        private var discontinueRenderId = UUID()
         
         @DOM override var body: DOM.Content {
             
@@ -149,7 +151,9 @@ extension ProductManagerView {
         }
         
         func getToDiscontinue() {
-            
+            let renderId = UUID()
+            discontinueRenderId = renderId
+
             guard let daysLimit = Int(self.daysLimit) else {
                 showError(.invalidField, "Ingrese dias sin venta.")
                 daysLimitField.select()
@@ -161,6 +165,9 @@ extension ProductManagerView {
             API.custPOCV1.getToDiscontinue(
                 limit: daysLimit
             ) { [self] resp in
+                guard renderId == self.discontinueRenderId else {
+                    return
+                }
                 
                 loadingView(show: false)
                 
@@ -180,19 +187,47 @@ extension ProductManagerView {
                 }
                 
                 self.requestProductDiscontinueViewIsHidden = true
-                
                 self.mainContainer.innerHTML = ""
+                self.productItemViews.removeAll(keepingCapacity: true)
+                self.asyncAddDiscontinueProduct(
+                    renderId: renderId,
+                    items: data
+                )
                 
-                data.forEach { item in
-                    
-                    let view = pocItemView(item: item)
-                    
-                    self.productItemViews[item.poc.id] = view
-                    
-                    self.mainContainer.appendChild(view)
-                    
+            }
+        }
+
+        private func asyncAddDiscontinueProduct(
+            renderId: UUID,
+            items: [CustPOCComponents.GetToDiscontinueItem],
+            index: Int = 0
+        ) {
+            guard renderId == discontinueRenderId,
+                  items.indices.contains(index) else {
+                return
+            }
+
+            let item = items[index]
+            let view = pocItemView(item: item)
+
+            guard renderId == discontinueRenderId else {
+                view.remove()
+                return
+            }
+
+            productItemViews[item.poc.id] = view
+            mainContainer.appendChild(view)
+
+            Dispatch.asyncAfter(0.01) {
+                guard renderId == self.discontinueRenderId else {
+                    return
                 }
-                
+
+                self.asyncAddDiscontinueProduct(
+                    renderId: renderId,
+                    items: items,
+                    index: index + 1
+                )
             }
         }
         
@@ -434,6 +469,8 @@ extension ProductManagerView {
         
 
         override func didRemoveFromDOM() {
+            discontinueRenderId = UUID()
+            productItemViews.removeAll()
             super.didRemoveFromDOM()
             $requestProductDiscontinueViewIsHidden.removeAllListeners()
             $daysLimit.removeAllListeners()

@@ -562,6 +562,8 @@ extension AccountView {
                         type: .personal,
                         costType: .cost_a,
                         isConcessionaire: false,
+                        isolateWorkspace: false,
+                        favorite: false,
                         contacto1: "",
                         contacto2: "",
                         contactTel: "",
@@ -818,4 +820,3 @@ extension AccountView {
         }
     }
 }
-

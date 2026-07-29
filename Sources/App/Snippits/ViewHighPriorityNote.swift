@@ -46,86 +46,85 @@ class ViewHighPriorityNote: Div {
     @State var isHighPriority = true
     
     @DOM override var body: DOM.Content {
-        //Select Code
-        Div{
-            
-            Div{
-                
-                /// Header
-                Div {
-                    
+
+        VPopUp (.fitContent(w: 450)) {
+            Div {
+                H2 {
                     Img()
-                        .closeButton(.subView)
-                        .onClick {
-                            self.remove()
-                        }
-                    
-                    H2{
-                        
-                        Img()
-                            .src("/skyline/media/icons_alert.png")
-                            .marginRight(7.px)
-                            .height(24.px)
-                        
-                        Span("Nota de Alta Prioridad")
+                        .src("/skyline/media/icons_alert.png")
+                        .height(24.px)
+
+                    Span("Nota de Alta Prioridad")
+                }
+                .class(Class(TCCrystalSurfaceClass.highPriorityTitle))
+
+                Img()
+                    .closeButton(.subView)
+                    .class(Class(TCCrystalSurfaceClass.highPriorityClose))
+                    .onClick {
+                        self.remove()
                     }
-                        .color(.red)
-                        .marginLeft(7.px)
-                        .float(.left)
-                    
-                    Div().class(.clear)
-                    
-                }
-                
-                Div().height(7.px)
-                
-                Div{
+            }
+            .class(Class(TCCrystalSurfaceClass.highPriorityHeader))
+
+            VBox(.raised) {
+                Div {
                     Span("\(getDate(self.note.createdAt).formatedLong) \(getDate(self.note.createdAt).time)")
-                        .marginRight(7.px)
-                        .color(.gray)
-                    
                     Span(self.$username)
-                        .color(.gray)
                 }
-                
-                Div().height(7.px)
+                .class(Class(TCCrystalSurfaceClass.highPriorityMeta))
+
                 H1(self.note.activity)
-                Div().height(7.px)
-                
-                Div{
-                    Div("Ok")
-                        .class(.uibtnLargeOrange)
-                        .float(.right)
-                        .onClick{
-                            self.remove()
-                        }
-                    
+                    .class(Class(TCCrystalSurfaceClass.highPriorityBody))
+
+                Div {
+
                     Div("Bajar Prioridad")
-                        .hidden(self.$isHighPriority.map{ !$0 })
-                        .class(.uibtnLarge)
+                        .display(self.$isHighPriority.map { !$0 ? .none : .block })
+                        .hidden(self.$isHighPriority.map { !$0 })
+                        .float(.left)
+                        .class(
+                            Class(TCCrystalSurfaceClass.highPriorityLower)
+                        )
                         .onClick {
                             self.lowerNotePriority()
                         }
-
                 }
-                
+                .width(50.percent)
+                .float(.left)
+
+                Div {
+
+                    Div("Ok")
+                    .float(.right)
+                    .display(.block)
+                        .class(
+                            Class(TCCrystalSurfaceClass.highPriorityConfirm)
+                        )
+                        .onClick {
+                            self.remove()
+                        }                    
+                }
+                .width(50.percent)
+                .float(.left)
+
+                Div().clear(.both)
+
             }
-            .padding(all: 12.px)
-            
+            .custom("height", "auto !important")
+
+
         }
-        .backgroundColor(.grayBlack)
-        .borderRadius(all: 24.px)
-        .position(.absolute)
-        .width(40.percent)
-        .left(30.percent)
-        .top(25.percent)
-        .color(.white)
+        .id(.init("VPopUp"))
+        //.class(Class(TCCrystalSurfaceClass.highPriorityPanel))
     }
     
     override func buildUI() {
         super.buildUI()
+
+        TCCrystalSurfaceTheme.apply(to: self, variant: .highPriorityNote)
         
-        position(.absolute)
+        position(.fixed)
         height(100.percent)
         width(100.percent)
         left(0.px)

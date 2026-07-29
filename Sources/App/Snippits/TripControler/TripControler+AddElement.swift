@@ -108,88 +108,88 @@ class TripControlerAddElement<Item>: Div {
     }
 
     lazy var itemsContainer = Div()
-        .height(100.percent)
-        .width(100.percent)
+        .class(Class(TCCrystalSurfaceClass.tripPickerList))
 
     @DOM override var body: DOM.Content {
         Div {
+            Div {
+                H2(self.title)
+                    .class(
+                        Class(TCTripBetaClass.titleText),
+                        Class(TCCrystalSurfaceClass.tripPickerTitle)
+                    )
 
-            Img()
-                .closeButton(.uiView2)
-                .onClick {
-                    self.remove()
+                Div {
+                    Div("+ Agregar")
+                        .class(
+                            Class(TCTripBetaClass.uiButton),
+                            Class(TCTripBetaClass.uiSmallButton),
+                            Class(TCCrystalSurfaceClass.tripPickerCreate)
+                        )
+                        .onClick {
+                            self.create()
+                            self.remove()
+                        }
+
+                    Img()
+                        .closeButton(.uiView2)
+                        .class(Class(TCCrystalSurfaceClass.tripPickerClose))
+                        .onClick {
+                            self.remove()
+                        }
                 }
-
-            Div("+ Agregar")
-                .color(.goldenRod)
-                .marginRight(12.px)
-                .padding(all: 3.px)
-                .marginTop(-3.px)
-                .class(.uibtn)
-                .float(.right)
-                .onClick {
-                    self.create()
-                    self.remove()
-                }
-
-            H2(self.title)
-                .color(.lightBlueText)
-                .margin(all: 0.px)
-
-            Div().class(.clear)
+                .class(
+                    Class(TCTripBetaClass.titleActions),
+                    Class(TCCrystalSurfaceClass.tripPickerActions)
+                )
+            }
+            .class(
+                Class(TCTripBetaClass.title),
+                Class(TCCrystalSurfaceClass.tripPickerHeader)
+            )
 
             Div {
-                self.itemsContainer 
+                self.itemsContainer
             }
-            .class(.roundBlue)
-            .overflow(.auto)
-            .height(250.px)
-            
+            .class(Class(TCCrystalSurfaceClass.tripPickerBody))
         }
-        .backgroundColor(.backGroundGraySlate)
-        .borderRadius(all: 24.px)
-        .position(.absolute)
-        .padding(all: 12.px)
-        .width(46.percent)
-        .left(27.percent)
-        .top(12.percent)
+        .class(
+            Class(TCTripBetaClass.popUpPanel),
+            Class(TCTripBetaClass.popUpPanelFitContent),
+            Class(TCCrystalSurfaceClass.tripPickerPanel)
+        )
     }
 
     override func buildUI() {
         super.buildUI()
 
         TCTripBetaTheme.apply(to: self)
-
-        position(.absolute)
-        height(100.percent)
-        width(100.percent)
-        top(0.px)
-        left(0.px)
+        TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
+        self.class(Class(TCCrystalSurfaceClass.tripPicker))
+        self.attribute("role", "dialog")
+        self.attribute("aria-modal", "true")
 
         if items.isEmpty {
             itemsContainer.appendChild(
-                Table {
-                    Tr {
-                         Td {
-                            H2("👾 No hay opciones disponibles")
-                            .padding(all: 12.px)
-                            .color(.gray)
-                            
-                            Div("+ Agregar")
-                            .padding(all: 5.px)
-                            .class(.uibtn)
-                            .onClick {
-                                self.create()
-                                self.remove()
-                            }
+                Div {
+                    Div("👾")
+                        .class(Class(TCCrystalSurfaceClass.tripPickerEmptyIcon))
 
-                         }
-                         .verticalAlign(.middle)
-                         .align(.center)
-                    }
+                    H2("No hay opciones disponibles")
+                        .class(Class(TCCrystalSurfaceClass.tripPickerEmptyTitle))
+
+                    Div("+ Agregar")
+                        .class(
+                            Class(TCTripBetaClass.uiButton),
+                            Class(TCTripBetaClass.uiSmallButton),
+                            Class(TCCrystalSurfaceClass.tripPickerCreate)
+                        )
+                        .onClick {
+                            self.create()
+                            self.remove()
+                        }
                 }
-                .width(100.percent)
-                .height(100.percent)
+                .class(Class(TCCrystalSurfaceClass.tripPickerEmpty))
             )
             return
         }
@@ -198,19 +198,22 @@ class TripControlerAddElement<Item>: Div {
             itemsContainer.appendChild(
                 Div {
                     Div(self.titleForItem(item))
-                        .color(.white)
-                        .fontSize(18.px)
-                        .class(.oneLineText)
+                        .class(
+                            .oneLineText,
+                            Class(TCCrystalSurfaceClass.tripPickerItemTitle)
+                        )
 
                     Div(self.subtitleForItem(item))
-                        .color(.gray)
-                        .fontSize(14.px)
-                        .class(.oneLineText)
+                        .class(
+                            .oneLineText,
+                            Class(TCCrystalSurfaceClass.tripPickerItemSubtitle)
+                        )
                 }
-                .class(.roundGrayBlackDark)
-                .padding(all: 10.px)
-                .marginBottom(8.px)
-                .cursor(.pointer)
+                .class(
+                    Class(TCTripBetaClass.box),
+                    Class(TCTripBetaClass.boxInteractive),
+                    Class(TCCrystalSurfaceClass.tripPickerItem)
+                )
                 .onClick {
                     self.callback(item)
                     self.remove()

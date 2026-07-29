@@ -16,7 +16,7 @@ extension ProductManagerView.AuditView {
         
         override class var name: String { "div" }
 
-        @State var merms: [CustFiscalInventoryControl] = []
+        private var mermRenderId = UUID()
         
         @State var storeSelectListener = ""
         
@@ -58,17 +58,6 @@ extension ProductManagerView.AuditView {
         
         lazy var resultDiv = Div{
             Table().noResult(label: "📈 Seleccione una tienda para iniciar")
-            .hidden(self.$merms.map{ !($0.isEmpty) })
-
-            ForEach(self.$merms) { merm in
-
-                ProductTransferViewRow(item: merm, removed: { id in
-                    
-                })
-
-            }
-            .hidden(self.$merms.map{ $0.isEmpty })
-
         }
         .custom("height", "calc(100% - 85px)")
         .overflow(.auto)
@@ -323,6 +312,9 @@ extension ProductManagerView.AuditView {
                 return
             }
             
+            let renderId = UUID()
+            mermRenderId = renderId
+
             loadingView(show: true)
             
             API.custPOCV1.getMerms(
@@ -330,6 +322,9 @@ extension ProductManagerView.AuditView {
                 startAt: startAtUTS,
                  endAt: endAtUTS
             ) { resp in
+                guard renderId == self.mermRenderId else {
+                    return
+                }
 
                 loadingView(show: false)
                 
@@ -348,10 +343,57 @@ extension ProductManagerView.AuditView {
                     return
                 }
 
-                self.merms = payload.merms
+                self.resultDiv.innerHTML = ""
+
+                if payload.merms.isEmpty {
+                    self.resultDiv.appendChild(
+                        Table().noResult(label: "Sin mermas para el periodo seleccionado")
+                    )
+                    return
+                }
+
+                self.asyncAddMerm(
+                    renderId: renderId,
+                    items: payload.merms
+                )
                 
             }
 
+        }
+
+        private func asyncAddMerm(
+            renderId: UUID,
+            items: [CustFiscalInventoryControl],
+            index: Int = 0
+        ) {
+            guard renderId == mermRenderId,
+                  items.indices.contains(index) else {
+                return
+            }
+
+            let view = ProductTransferViewRow(
+                item: items[index],
+                removed: { _ in }
+            )
+
+            guard renderId == mermRenderId else {
+                view.remove()
+                return
+            }
+
+            resultDiv.appendChild(view)
+
+            Dispatch.asyncAfter(0.01) {
+                guard renderId == self.mermRenderId else {
+                    return
+                }
+
+                self.asyncAddMerm(
+                    renderId: renderId,
+                    items: items,
+                    index: index + 1
+                )
+            }
         }
         
         func downloadCardexReport(startAt: Int64, endAt: Int64, storeId: UUID, payload: CustPOCComponents.CardexResponse) {
@@ -439,8 +481,8 @@ extension ProductManagerView.AuditView {
         
 
         override func didRemoveFromDOM() {
+            mermRenderId = UUID()
             super.didRemoveFromDOM()
-            $merms.removeAllListeners()
             $storeSelectListener.removeAllListeners()
             $dateSelectListener.removeAllListeners()
             $startAt.removeAllListeners()

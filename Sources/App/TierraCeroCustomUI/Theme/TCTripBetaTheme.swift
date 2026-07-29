@@ -126,7 +126,7 @@ enum TCTripBetaTheme {
                 .custom("overflow", "hidden")
                 .custom("text-overflow", "ellipsis")
                 .custom("white-space", "nowrap")
-                .custom("color", "var(--tc-beta-blue)")
+                .custom("color", "var(--tc-beta-ink)")
                 .custom("font-size", "22px")
                 .custom("font-weight", "700")
 
@@ -208,7 +208,7 @@ enum TCTripBetaTheme {
                 .custom("padding", "14px")
                 .custom("overflow", "hidden")
                 .custom("background", "var(--tc-beta-surface)")
-                .custom("border", "1px solid var(--tc-beta-border)")
+                // .custom("border", "1px solid var(--tc-beta-border)")
                 .custom("border-radius", "13px")
                 .custom("color", "var(--tc-beta-ink)")
 

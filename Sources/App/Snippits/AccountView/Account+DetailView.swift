@@ -34,6 +34,8 @@ extension AccountView {
             self.type = account.type.rawValue
             self.thirdPartyService = account.thirdPartyService
             self.isConcessionaire = account.isConcessionaire
+            self.isolateWorkspace = account.isolateWorkspace
+            self.favorite = account.favorite
             self.sendOrderCommunication = account.sendOrderCommunication
             self.firstName = account.firstName
             self.secondName = account.secondName
@@ -113,6 +115,10 @@ extension AccountView {
         @State var thirdPartyService: Bool
         
         @State var isConcessionaire: Bool
+
+        @State var isolateWorkspace: Bool
+
+        @State var favorite: Bool
         
         @State var sendOrderCommunication: Bool
 
@@ -196,6 +202,10 @@ extension AccountView {
         lazy var sendOrderCommunicationToggle = InputCheckbox().toggle(self.$sendOrderCommunication)
         
         lazy var isConcessionaireToggle = InputCheckbox().toggle(self.$isConcessionaire)
+
+        lazy var isolateWorkspaceToggle = InputCheckbox().toggle(self.$isolateWorkspace)
+
+        lazy var favoriteToggle = InputCheckbox().toggle(self.$favorite)
         
         lazy var costTypeSelect = Select(self.$costType)
              .custom("width","calc(100% - 24px)")
@@ -495,6 +505,7 @@ extension AccountView {
                             .color(.lightBlueText)
                             .height(35.px)
                     }
+                    .class(Class(TCAccountViewClass.editorHeader))
                     
                     Div().clear(.both)
                     
@@ -548,7 +559,41 @@ extension AccountView {
                                         Div().clear(.both).marginBottom(7.px)
                                     }
                                     .hidden(self.$type.map{ $0 == CustAcctTypes.personal.rawValue })
-                                    
+
+                                    /// Espacio de trabajo aislado
+                                    Div {
+
+                                        Div("Aislar espacio de trabajo")
+                                            .class(.oneLineText)
+                                            .width(70.percent)
+                                            .float(.left)
+
+                                        Div{
+                                            self.isolateWorkspaceToggle
+                                        }
+                                        .width(30.percent)
+                                        .float(.left)
+
+                                        Div().clear(.both).marginBottom(7.px)
+                                    }
+
+                                    /// Cuenta favorita
+                                    Div {
+
+                                        Div("Cuenta favorita")
+                                            .class(.oneLineText)
+                                            .width(70.percent)
+                                            .float(.left)
+
+                                        Div{
+                                            self.favoriteToggle
+                                        }
+                                        .width(30.percent)
+                                        .float(.left)
+
+                                        Div().clear(.both).marginBottom(7.px)
+                                    }
+
                                     /// Mensajes en Ordenes
                                     Div{
                                         Div("Mensajes en Ordenes")
@@ -985,6 +1030,7 @@ extension AccountView {
                         .float(.left)
                         
                     }
+                    .class(Class(TCAccountViewClass.editorBody))
                     .custom("height", "calc(100% - 100px)")
                     .class(.roundDarkBlue)
                     .overflow(.auto)
@@ -997,12 +1043,15 @@ extension AccountView {
                                 self.saveAccountDetails()
                             }
                     }
+                    .class(Class(TCAccountViewClass.editorActions))
                     .align(.right)
                     
                 }
+                .class(Class(TCAccountViewClass.editorFrame))
                 .height(100.percent)
                 .margin(all: 7.px)
             }
+            .class(Class(TCAccountViewClass.editorShell))
             .custom("left", "calc(50% - 600px)")
             .custom("top", "calc(50% - 350px)")
             .backgroundColor(.grayBlack)
@@ -1014,6 +1063,8 @@ extension AccountView {
         
         override func buildUI() {
             super.buildUI()
+
+            TCAccountViewTheme.apply(to: self, variant: .detail)
             
             position(.absolute)
             height(100.percent)
@@ -1169,6 +1220,8 @@ extension AccountView {
                 custType: type,
                 thirdPartyService: thirdPartyService,
                 isConcessionaire: isConcessionaire,
+                isolateWorkspace: isolateWorkspace,
+                favorite: favorite,
                 sendOrderCommunication: sendOrderCommunication,
                 costType: costType,
                 businessName: businessName,
@@ -1249,6 +1302,16 @@ extension AccountView {
                 
                 if self.accountView.isConcessionaire != self.isConcessionaire {
                     self.accountView.isConcessionaire = self.isConcessionaire
+                }
+
+                if self.accountView.isolateWorkspace != self.isolateWorkspace {
+                    self.accountView.isolateWorkspace = self.isolateWorkspace
+                    self.accountView.account.isolateWorkspace = self.isolateWorkspace
+                }
+
+                if self.accountView.favorite != self.favorite {
+                    self.accountView.favorite = self.favorite
+                    self.accountView.account.favorite = self.favorite
                 }
                 
                 if self.accountView.sendOrderCommunication != self.sendOrderCommunication {

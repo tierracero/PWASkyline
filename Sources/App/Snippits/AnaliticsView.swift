@@ -242,6 +242,7 @@ class AnaliticsView: PageController {
     @DOM public override var body: DOM.Content {
         
         Div{
+            
             Div{
                 
                 if !self.asMainView {
@@ -263,6 +264,7 @@ class AnaliticsView: PageController {
                 
             }
             .marginTop(7.px)
+
             Div{
                 
                 Div{
@@ -439,6 +441,7 @@ class AnaliticsView: PageController {
             
         }
         .backgroundColor(self.$asMainView.map{ $0 ? .transparentBlack : .grayBlack })
+        .class(Class(TCCrystalSurfaceClass.analyticsPanel))
         .borderRadius(all: 24.px)
         .position(.absolute)
         .height(85.percent)
@@ -464,6 +467,8 @@ class AnaliticsView: PageController {
     
     public override func buildUI() {
         super.buildUI()
+
+        TCCrystalSurfaceTheme.apply(to: self, variant: .analytics)
         
         height(100.percent)
         position(.absolute)
@@ -521,7 +526,7 @@ class AnaliticsView: PageController {
         }
         
         if self.asMainView {
-            loadBasicConfiguration { status in
+            loadBasicStatus { status in
                 
                 guard let status else {
                     History.pushState(path: "login")

@@ -12,9 +12,8 @@ import Web
 
 public func loadBasicConfiguration(
     firtsLoad: Bool = false,
-    callback: @escaping ( (
-        _ status: GeneralStatus?
-    ) -> () )
+    internalCommunicationsCompletion: @escaping () -> Void = {},
+    callback: @escaping (_ status: GeneralStatus?) -> Void
 ){
     
     let activeSession = WebApp.current.window.localStorage.string(forKey: "activeSession") ?? ""
@@ -418,8 +417,25 @@ public func loadBasicConfiguration(
                 }
                 
                 callback(settings.account.status)
-            
 
+                let currentTime = getNow()
+                let internalCommunications = settings.internalCommunications.filter {
+                    guard let expiredAt = $0.expiredAt else {
+                        return true
+                    }
+                    return expiredAt >= currentTime
+                }
+
+                if !internalCommunications.isEmpty {
+                    Dispatch.async {
+                        addToDom(InternalCommunicationView(
+                            internalCommunications: internalCommunications,
+                            onDismiss: internalCommunicationsCompletion
+                        ))
+                    }
+                } else {
+                    internalCommunicationsCompletion()
+                }
                 
             }
         }        

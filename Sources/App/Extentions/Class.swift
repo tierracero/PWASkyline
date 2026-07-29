@@ -292,6 +292,10 @@ extension Class {
     
     public static var colLg9: Class { "col-lg-9" }
     
+    public static var toolbarPrimary: Class { "toolbarPrimary" }
+
+    public static var toolbarPrimaryActive: Class { "toolbarPrimaryActive" }
+    
 
 }
 

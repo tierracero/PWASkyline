@@ -990,6 +990,7 @@ class CreateNewCustomerDataView: Div {
                 $0 ? 15.percent : 30.percent
             })
             .borderRadius(all: 24.px)
+            .class(Class(TCCrystalSurfaceClass.customerDataPanel))
             .backgroundColor(.white)
             .position(.absolute)
             .top(10.percent)
@@ -1446,6 +1447,7 @@ class CreateNewCustomerDataView: Div {
                 $0 ? 5.percent : 20.percent
             })
             .top(10.percent)
+            .class(Class(TCCrystalSurfaceClass.customerDataPanel))
             .backgroundColor(.white)
             .borderRadius(all: 24.px)
         }
@@ -1615,6 +1617,7 @@ class CreateNewCustomerDataView: Div {
         }
         
         super.buildUI()
+        TCCrystalSurfaceTheme.apply(to: self, variant: .customerData)
     }
     
     override func didAddToDOM() {
@@ -1943,6 +1946,8 @@ class CreateNewCustomerDataView: Div {
             type: self.acctType,
             costType: .cost_a,
             isConcessionaire: false,
+            isolateWorkspace: false,
+            favorite: false,
             
             contacto1: self.contacto1,
             contacto2: self.contacto2,

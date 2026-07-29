@@ -15,6 +15,7 @@ import Web
 
 private enum WorkNavigationSelection: Equatable {
     case analytics
+    case accounts
     case orders
     case followups
     case sales
@@ -149,19 +150,21 @@ class WorkViewControler: PageController {
     
     /// ``Left Side Bar COMMUNICATION``
     
-    /// Presentation count for messages rendered in the "Nuevos" communication box.
-    @State var chatCounter = 0
-    
-    @State var orderMessageList: [API.custAPIV1.LoadMessaging] = []
-    
-    var orderMessageView: [UUID:ICMessageView] = [:]
-    
     lazy var sideBar = Div()
         .class(.sideBar, Class(TCWorkDashboardClass.leftRail))
     
     lazy var comunicationBoxNewMessagesView = Div()
     
     lazy var comunicationBoxOldMessagesView = Div()
+
+    private var communicationRefreshId = UUID()
+
+    private lazy var communicationController = CommunicationCenterController(
+        newMessagesView: self.comunicationBoxNewMessagesView,
+        historicalMessagesView: self.comunicationBoxOldMessagesView
+    ) { [weak self] message in
+        self?.openCommunicationMessage(message)
+    }
     
     /// this box will contain Intant Messages and Mails
 
@@ -244,7 +247,7 @@ class WorkViewControler: PageController {
             Div{
                 Span("Nuevos")
 
-                Span(self.$chatCounter.map { count in
+                Span(self.communicationController.$unreadCount.map { count in
                     count > 99 ? "99+" : count.toString
                 })
                 .marginLeft(5.px)
@@ -253,7 +256,7 @@ class WorkViewControler: PageController {
                 .backgroundColor(.blue)
                 .color(.white)
                 .fontSize(10.px)
-                .hidden(self.$chatCounter.map { $0 == 0 })
+                .hidden(self.communicationController.$unreadCount.map { $0 == 0 })
             }
             
             Div("Historial")
@@ -472,62 +475,28 @@ class WorkViewControler: PageController {
             /// Buttons
             Div{
 
-                Div {
-                    OrderCatchControler.shared.listViewButton
-                    Span("Lista")
+                Div{
+                    Img()
+                        .src("/skyline/media/history_setting_icon_orange.png")
+                        .marginRight(18.px)
+                        .marginLeft(18.px)
+                        .cursor(.pointer)
+                        .marginTop(7.px)
+                        .height(28.px)
+                        .onClick {
+                            addToDom(ToolsView.HistorySettings.OrderProcessing())
+                        }
                 }
-                .class(Class(TCWorkDashboardClass.toolbarPrimary))
-                .class(OrderCatchControler.shared.$viewType.map { viewType in
-                    Class(viewType == .listView
-                        ? TCWorkDashboardClass.toolbarPrimaryActive
-                        : TCWorkDashboardClass.toolbarPrimaryInactive)
-                })
-                .display(OrderCatchControler.shared.$macroViewType.map {
-                    $0 == .followUpView ? .none : .inlineFlex
-                })
+                .float(.left)
 
-                Div {
-                    OrderCatchControler.shared.userViewButton
-                    Span("Usuario")
-                }
-                .class(Class(TCWorkDashboardClass.toolbarPrimary))
-                .class(OrderCatchControler.shared.$viewType.map { viewType in
-                    Class(viewType == .userView
-                        ? TCWorkDashboardClass.toolbarPrimaryActive
-                        : TCWorkDashboardClass.toolbarPrimaryInactive)
-                })
-                .display(OrderCatchControler.shared.$macroViewType.map {
-                    $0 == .followUpView ? .none : .inlineFlex
-                })
+                OrderCatchControler.shared.listViewButton
 
-                Div {
-                    OrderCatchControler.shared.calendarViewButton
-                    Span("Calendario")
-                }
-                .class(Class(TCWorkDashboardClass.toolbarPrimary))
-                .class(OrderCatchControler.shared.$viewType.map { viewType in
-                    Class(viewType == .calendarView
-                        ? TCWorkDashboardClass.toolbarPrimaryActive
-                        : TCWorkDashboardClass.toolbarPrimaryInactive)
-                })
-                .display(OrderCatchControler.shared.$macroViewType.map {
-                    $0 == .followUpView ? .none : .inlineFlex
-                })
+                OrderCatchControler.shared.userViewButton
+            
+                OrderCatchControler.shared.calendarViewButton
 
-                Div {
-                    OrderCatchControler.shared.routeViewButton
-                    Span("Ruta")
-                }
-                .class(Class(TCWorkDashboardClass.toolbarPrimary))
-                .class(OrderCatchControler.shared.$viewType.map { viewType in
-                    Class(viewType == .routeView
-                        ? TCWorkDashboardClass.toolbarPrimaryActive
-                        : TCWorkDashboardClass.toolbarPrimaryInactive)
-                })
-                .display(OrderCatchControler.shared.$macroViewType.map {
-                    $0 == .followUpView ? .none : .inlineFlex
-                })
-
+                OrderCatchControler.shared.routeViewButton
+                
                 OrderCatchControler.shared.loadOrderStatusButton
                     .hidden(OrderCatchControler.shared.$macroViewType.map { $0 == .followUpView })
                     .float(.right)
@@ -537,6 +506,7 @@ class WorkViewControler: PageController {
                         .hidden(OrderCatchControler.shared.$macroViewType.map { $0 == .orderView })
                         .float(.right)
                 }
+                
                 Div{
                     OrderCatchControler.shared.selectStoreMenuButton
                     .hidden(self.$userHerk.map{ $0 < 3 })
@@ -696,6 +666,59 @@ class WorkViewControler: PageController {
     .hidden(OrderCatchControler.shared.$macroViewType.map {
         $0 != .orderView && $0 != .followUpView
     })
+
+
+    lazy var accountContainer = Div{
+
+        /// Top Menu Buttons
+        Div{
+
+            Div{
+                Img()
+                    .src("/skyline/media/reload.png")
+                    .height(18.px)
+                    .marginRight(7.px)
+
+                Span("Recargar")
+            }
+            .class(.uibtn)
+            .float(.right)
+            .onClick {
+                OrderCatchControler.shared.loadAccounts(force: true)
+            }
+        }
+        .margin(all: 0.px)
+        .class(Class(TCWorkDashboardClass.toolbar))
+
+        Div().clear(.both).height(7.px)
+
+        /// Grid
+        Div{
+            OrderCatchControler.shared.accountContainer
+                .class(Class(TCWorkDashboardClass.orderColumn))
+            OrderCatchControler.shared.accountSecondContainer
+                .class(Class(TCWorkDashboardClass.orderColumn))
+        }
+        .custom("height", "calc(100% - 67px)")
+        .padding(top: 0.px, right: 12.px, bottom: 12.px, left: 12.px)
+        .class(Class(TCWorkDashboardClass.orderGrid))
+
+
+        Div().clear(.both)
+    }
+    .custom("width", "calc(100% - 458px)")
+    .custom("height", "calc(100% - 70px)")
+    .backgroundColor(.transparent)
+    .borderRadius(all: 0.px)
+    .position(.absolute)
+    .overflow(.hidden)
+    .left(178.px)
+    .top(70.px)
+    .class(Class(TCWorkDashboardClass.workspace))
+    .hidden(OrderCatchControler.shared.$macroViewType.map {
+        $0 != .accountView
+    })
+
 
     /*
     lazy var followupContainer = Div()
@@ -1137,6 +1160,8 @@ class WorkViewControler: PageController {
         // Trip Contaier:
         self.tripContainer
 
+        self.accountContainer
+
         // Side Bar
         self.sideBar
         
@@ -1248,9 +1273,6 @@ class WorkViewControler: PageController {
         }
         
         WebApp.current.wsevent.listen {
-            
-            print("🟡 WSEvent")
-            
             if $0.isEmpty { return }
             
             let (event, _) = self.ws.recive($0)
@@ -1259,14 +1281,9 @@ class WorkViewControler: PageController {
                 return
             }
 
-            print("⚡️ WSEvent \(event.rawValue)")
-            
             switch event {
             case .pong:
-                if let payload = self.ws.pong($0)?.payload {
-                    print("⚡️ Pong \(getDate().time)")
-                    print(payload.msg)
-                }
+                _ = self.ws.pong($0)
             case .welcome:
                 
                 if let _ = self.ws.welcome($0) {
@@ -1834,78 +1851,16 @@ class WorkViewControler: PageController {
             case .alertStatusUpdate:
                 
                 if let payload = self.ws.alertStatusUpdate($0){
-                    
-                    print("⭐️ alertStatusUpdate  \(payload.status)")
-                    
-                    var _orderMessageList: [API.custAPIV1.LoadMessaging] = []
-                    
-                    if payload.status == .replied {
-                        
-                        self.orderMessageView[payload.orderid]?.remove()
-                        
-                        self.orderMessageView.removeValue(forKey: payload.orderid)
-                        
-                        self.orderMessageList.forEach { item in
-                            
-                            if item.orderid == payload.orderid {
-                                return
-                            }
-                            
-                            _orderMessageList.append(item)
-                            
-                        }
-                        
-                    }
-                    else{
-                        
-                        self.orderMessageList.forEach { item in
-                            
-                            if item.orderid == payload.orderid {
-                                
-                                print("🟢  UPDATE")
-                                
-                                _orderMessageList.append(.init(
-                                    id: item.id,
-                                    orderid: item.orderid,
-                                    type: item.type,
-                                    subType: item.subType,
-                                    folio: item.folio,
-                                    lastMessageAt: item.lastMessageAt,
-                                    userid: item.userid,
-                                    name: item.name,
-                                    avatar: item.avatar,
-                                    activity: item.activity,
-                                    status: payload.status
-                                ))
-                            }
-                            else {
-                                
-                                print("⚪️  maintain")
-                                
-                                _orderMessageList.append(item)
-                            }
-                            
-                        }
-                        
-                    }
-                    
-                    self.orderMessageList = _orderMessageList
-                    
-                    self.processOrderChatsList()
-                    
+                    self.communicationController.updateStatus(
+                        conversationId: payload.orderid,
+                        status: payload.status
+                    )
                 }
                 
             case .asyncCustMessageSent:
-                
-                print("⭐️ asyncCustMessageSent")
-                
                 if let payload = self.ws.asyncCustMessageSent($0){
                     
                     if payload.fromMe { return }
-                    
-                    self.orderMessageView[payload.rel]?.remove()
-                    
-                    self.orderMessageView.removeValue(forKey: payload.rel)
                     
                     //var status: CustAlertRefrenceStatus = .new
                     
@@ -1931,7 +1886,7 @@ class WorkViewControler: PageController {
                         userid = .id(createdBy)
                     }
                     
-                    var newOrderMessageList: [API.custAPIV1.LoadMessaging] = [.init(
+                    let message = API.custAPIV1.LoadMessaging(
                         id: payload.note.id,
                         orderid: payload.rel,
                         type: .message, // CustAlertRefrenceType
@@ -1943,32 +1898,11 @@ class WorkViewControler: PageController {
                         avatar: "",
                         activity: payload.note.activity,
                         status: .new
-                    )]
-                    
-                    // Construct newOrderMessageList not including note to be update to avoid duplicate entries
-                    self.orderMessageList.forEach { msg in
-                        
-                        if msg.orderid == payload.rel {
-                            return
-                        }
-                        
-                        newOrderMessageList.append(msg)
-                        
-                    }
-                    
-                    // emprty origianl list
-                    self.orderMessageList.removeAll()
-                    
-                    // add previos notes
-                    self.orderMessageList.append(contentsOf: newOrderMessageList)
-                    
-                    self.processOrderChatsList()
+                    )
+
+                    self.communicationController.upsert(message)
                     
                 }
-                else {
-                    print("🟡 asyncCustMessageSent")
-                }
-                
             case .asyncFileUpload:
                 break
             case .asyncFileUpdate:
@@ -2004,27 +1938,15 @@ class WorkViewControler: PageController {
             case .metaNewMessengerPayload:
                 
                 if let payload = self.ws.metaNewMessengerPayload($0){
-                    
-                    print("🟢  metaNewMessengerPayload  payload ok")
-                    
-                    self.orderMessageView[payload.socialAccount]?.remove()
-                    
-                    self.orderMessageView.removeValue(forKey: payload.socialAccount)
-                    
                     // their is an Active Chat Room
                     if let chatRoomNew = self.chatRoomNew {
-                        print("💎  found chat room")
                         // Get Active Char Room id
                         
                         if let roomAccountId = chatRoomNew.roomAccountId {
                             // The message target id is the sale room id
-                            print("💎  \(payload.socialAccount) vs \(roomAccountId)")
                             if payload.socialAccount == roomAccountId {
                                 
                                 chatRoomNew.addMessageToGrid(payload.message)
-                                
-                                print("stop message ⚠️")
-                                
                                 return
                             }
                             
@@ -2032,31 +1954,8 @@ class WorkViewControler: PageController {
                     }
                     
                     if let alert = payload.alert {
-                        
-                        
-                        var newOrderMessageList: [API.custAPIV1.LoadMessaging] = []
-                        
-                        // Construct newOrderMessageList not including note to be update to avoid duplicate entries
-                        self.orderMessageList.forEach { msg in
-                            if msg.id == alert.id { return }
-                            newOrderMessageList.append(msg)
-                        }
-                        
-                        // emprty origianl list
-                        self.orderMessageList.removeAll()
-                        
-                        // add new note
-                        self.orderMessageList.append(alert)
-                        
-                        // add previos notes
-                        self.orderMessageList.append(contentsOf: newOrderMessageList)
-                        
-                        self.processOrderChatsList()
-                        
+                        self.communicationController.upsert(alert)
                     }
-                    
-                    self.processOrderChatsList()
-                    
                 }
                 
             case .addSocialReaction:
@@ -2409,7 +2308,12 @@ class WorkViewControler: PageController {
                 }
         }
         
-        loadBasicConfiguration(firtsLoad: true) { status in
+        loadBasicConfiguration(
+            firtsLoad: true,
+            internalCommunicationsCompletion: { [weak self] in
+                self?.initAlertManager()
+            }
+        ) { status in
         
             guard let status else {
                 self.updateStartupStep(.core, state: .failed)
@@ -2438,8 +2342,6 @@ class WorkViewControler: PageController {
             self.pmode = panelMode
             
             self.loadConfiguration(loadCommunications: false)
-            
-            self.initAlertManager()
 
             self.updateStartupStep(.workModules, state: .loading)
             
@@ -2497,6 +2399,12 @@ class WorkViewControler: PageController {
             
         }
     }
+
+    override func didRemoveFromDOM() {
+        communicationRefreshId = UUID()
+        communicationController.shutdown()
+        super.didRemoveFromDOM()
+    }
     
     func loadConfiguration(loadCommunications: Bool = true){
         
@@ -2529,14 +2437,39 @@ class WorkViewControler: PageController {
             }
         )
 
+        navigation.appendChild(
+            workNavigationItem(
+                selection: nil,
+                icon: "/skyline/media/icon-fiscal.png",
+                title: "Facturacíon"
+            ) {
+                addToDom(ToolFiscal(
+                    loadType: .manual,
+                    folio: nil,
+                    callback: { id, folio, pdf, xml in
+
+                    })
+                )
+            }
+        )
 
         navigation.appendChild(
             workNavigationItem(
                 selection: nil,
                 icon: "/skyline/media/icon-money.png",
-                title: "Finanzad"
+                title: "Finanzas"
             ) {
                 addToDom(MoneyManagerView())
+            }
+        )
+
+        navigation.appendChild(
+            workNavigationItem(
+                selection: .accounts,
+                icon: "/skyline/media/account.png",
+                title: "Cuentas"
+            ) {
+                OrderCatchControler.shared.loadAccounts()
             }
         )
 
@@ -2742,28 +2675,55 @@ class WorkViewControler: PageController {
     }
     
     func loadCommMessages(completion: ((Bool) -> Void)? = nil){
-        
+        let refreshId = UUID()
+        communicationRefreshId = refreshId
+        let request = communicationController.beginRequest()
+
         API.custAPIV1.loadMessaging { resp in
-            
+            guard self.communicationController.isCurrentRequest(request.id) else {
+                completion?(false)
+                return
+            }
+
             guard let resp = resp else {
                 completion?(false)
                 return
             }
-            
-            self.orderMessageList = resp
-            
-            self.processOrderChatsList()
-            
+
+            guard self.communicationController.replaceSnapshot(
+                resp,
+                requestId: request.id,
+                startingAt: request.revision
+            ) else {
+                completion?(false)
+
+                guard refreshId == self.communicationRefreshId else {
+                    return
+                }
+
+                Dispatch.asyncAfter(0.5) {
+                    guard refreshId == self.communicationRefreshId else {
+                        return
+                    }
+
+                    self.loadCommMessages()
+                }
+                return
+            }
+
             getWebsocketTokens()
 
             completion?(true)
-            
+
             /// Reload every 15 min
             Dispatch.asyncAfter(600) {
+                guard refreshId == self.communicationRefreshId else {
+                    return
+                }
+
                 self.loadCommMessages()
             }
         }
-        
     }
     
     /// Start New Service Order
@@ -3373,6 +3333,7 @@ class WorkViewControler: PageController {
         else if caller == "storeAndProducts"{
             
             if let storeProductManagerView {
+                print("🤖  storeProductManagerView in catch")
                 storeProductManagerSubView?.remove()
                 storeProductManagerSubView = nil
                 storeProductManagerView.display(.block)
@@ -3381,10 +3342,13 @@ class WorkViewControler: PageController {
             }
             
             let view = ProductManagerView {
+                print("🤖  storeProductManagerView in remove")
                 self.storeProductManagerView?.remove()
+                self.storeProductManagerView = nil
             } minimize: {
-                
+                print("🤖  storeProductManagerView in minimize")
                 guard let storeProductManagerView = self.storeProductManagerView else {
+                    print("🤖  storeProductManagerView in minimize  🔴")
                     return
                 }
                 
@@ -3435,7 +3399,9 @@ class WorkViewControler: PageController {
             }
 
             storeProductManagerView = view
+
             addToDom(view)
+            
         }
         else if caller == "historicalPriceSearch"{
             
@@ -3829,42 +3795,10 @@ class WorkViewControler: PageController {
         }
     }
     
-    func processOrderChatsList(){
-        
-        comunicationBoxNewMessagesView.innerHTML = ""
-        
-        comunicationBoxOldMessagesView.innerHTML = ""
-        
-        orderMessageView.removeAll()
-
-        var renderedNewMessageCount = 0
-        
-        orderMessageList.forEach { msg in
-            
-            let view = messageView(msg)
-            
-            if let orderid = msg.orderid {
-                self.orderMessageView[orderid] = view
-            }
-            
-            if msg.status == .new {
-                renderedNewMessageCount += 1
-                comunicationBoxNewMessagesView.appendChild(view)
-            }
-            else {
-                comunicationBoxOldMessagesView.appendChild(view)
-            }
-            
-        }
-
-        chatCounter = renderedNewMessageCount
-    }
-    
-    func messageView(_ data: API.custAPIV1.LoadMessaging) -> ICMessageView {
-        
-        return ICMessageView(data: data) { data in
-            
-            switch data.subType {
+    private func openCommunicationMessage(
+        _ data: API.custAPIV1.LoadMessaging
+    ) {
+        switch data.subType {
             case .sale:
                 break
             case .order:
@@ -3949,8 +3883,6 @@ class WorkViewControler: PageController {
                 
                 addToDom(view)
                 
-            }
-            
         }
     }
     

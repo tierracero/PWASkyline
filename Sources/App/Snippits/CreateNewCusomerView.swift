@@ -137,6 +137,8 @@ class CreateNewCusomerView: Div {
         width(100.percent)
         left(0.px)
         top(0.px)
+
+        TCCrystalSurfaceTheme.apply(to: self, variant: .customerCreation)
     }
     
     func createCustForm( acctType: CustAcctTypes){

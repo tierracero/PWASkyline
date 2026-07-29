@@ -23,6 +23,8 @@ class OldChargeTrRow: Tr {
     
     @State var name: String
     
+    @State var cost: Int64?
+
     @State var cuant: Int64
     
     @State var price: Int64
@@ -33,12 +35,12 @@ class OldChargeTrRow: Tr {
         _ viewId: UUID
     ) -> ())
     
-    
     init(
         preCharge: Bool = false,
         isCharge: Bool,
         id: UUID,
         name: String,
+        cost: Int64? = nil,
         cuant: Int64,
         price: Int64,
         puerchaseOrder: Bool,
@@ -52,6 +54,7 @@ class OldChargeTrRow: Tr {
         self.pocs = []
         self.name = name
         self.cuant = cuant
+        self.cost = cost
         self.price = price
         self.puerchaseOrder = puerchaseOrder
         self.edit = edit

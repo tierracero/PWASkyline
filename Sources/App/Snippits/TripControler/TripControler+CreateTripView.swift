@@ -85,6 +85,10 @@ class CreateTripView: Div {
 
     @State var balance: String = ""
 
+    @State var odometerInitial = ""
+
+    @State var odometerFinal = ""
+
     @State var requierTrailer: Bool = false
 
     @State var autoForm: Bool = true 
@@ -128,6 +132,27 @@ class CreateTripView: Div {
                                     field.select()
                                 }
                         }
+
+                        Div {
+                            UField("Odómetro inicial", required: false) {
+                                UTextField(self.$odometerInitial)
+                                    .placeholder("Opcional")
+                                    .onFocus { field in
+                                        field.select()
+                                    }
+                            }
+
+                            UField("Odómetro final", required: false) {
+                                UTextField(self.$odometerFinal)
+                                    .placeholder("Opcional")
+                                    .onFocus { field in
+                                        field.select()
+                                    }
+                            }
+                        }
+                        .display(.grid)
+                        .custom("grid-template-columns", "repeat(2, minmax(0, 1fr))")
+                        .custom("gap", "10px")
                     }
                     .display(.grid)
                     .custom("grid-template-columns", "minmax(240px, 1fr) minmax(190px, 280px)")
@@ -194,6 +219,7 @@ class CreateTripView: Div {
         super.buildUI()
 
         TCTripBetaTheme.apply(to: self)
+        TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
         
         position(.fixed)
         height(100.percent)
@@ -259,6 +285,8 @@ class CreateTripView: Div {
         $merchendise.removeAllListeners()
         $locations.removeAllListeners()
         $balance.removeAllListeners()
+        $odometerInitial.removeAllListeners()
+        $odometerFinal.removeAllListeners()
         $requierTrailer.removeAllListeners()
     }
 
@@ -1443,6 +1471,37 @@ class CreateTripView: Div {
             return
         }
 
+        let odometerInitialValue: Int64?
+        if odometerInitial.purgeSpaces.isEmpty {
+            odometerInitialValue = nil
+        }
+        else if let value = Int64(odometerInitial.purgeSpaces), value >= 0 {
+            odometerInitialValue = value
+        }
+        else {
+            showError(.invalidFormat, "El odómetro inicial debe ser un número entero válido")
+            return
+        }
+
+        let odometerFinalValue: Int64?
+        if odometerFinal.purgeSpaces.isEmpty {
+            odometerFinalValue = nil
+        }
+        else if let value = Int64(odometerFinal.purgeSpaces), value >= 0 {
+            odometerFinalValue = value
+        }
+        else {
+            showError(.invalidFormat, "El odómetro final debe ser un número entero válido")
+            return
+        }
+
+        if let odometerInitialValue,
+           let odometerFinalValue,
+           odometerFinalValue < odometerInitialValue {
+            showError(.invalidFormat, "El odómetro final no puede ser menor al inicial")
+            return
+        }
+
         guard locations.contains(where: { $0.placementType == .origen }),
               locations.contains(where: { $0.placementType == .destino }) else {
             showError(.requiredField, "Agregue Origen y Destino")
@@ -1496,7 +1555,9 @@ class CreateTripView: Div {
             remolques: trailerIds,
             locations: tripLocations,
             merchandise: tripMerchandise,
-            balance: balance
+            balance: balance,
+            odometerInitial: odometerInitialValue,
+            odometerFinal: odometerFinalValue
         ) { resp in
             loadingView(show: false)
 

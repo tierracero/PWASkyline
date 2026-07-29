@@ -12,6 +12,7 @@ public class SplashScreen: PageController {
 	
 	@DOM public override var body: DOM.Content {
 		Div {
+            /*
 			Table{
 				Tr{
 					Td{
@@ -27,11 +28,12 @@ public class SplashScreen: PageController {
 			}
 			.width(100.percent)
 			.height(100.percent)
+            */
 		}
 		.position(.fixed)
 		.width(100.percent)
 		.height(100.percent)
-        .background(.linearGradient(angle: -30, .black/20, .rgb( 14, 27, 40)/80, .black))
+        .backgroundColor(.init(r: 29, g: 32, b: 38))
 	}
 	
 	public override func buildUI() {
@@ -53,10 +55,10 @@ public class SplashScreen: PageController {
             return
         }
         
-        loadBasicConfiguration { status in
+        loadBasicStatus { status in
             
             guard let status else {
-                Dispatch.asyncAfter(0.5) {
+                Dispatch.asyncAfter(0) {
                     /// Session
                     History.pushState(path: "login")
                 }

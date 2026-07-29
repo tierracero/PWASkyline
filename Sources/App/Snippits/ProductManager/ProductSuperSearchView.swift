@@ -15,6 +15,11 @@ class ProductSuperSearchView: Div {
     override class var name: String { "div" }
     
     var searchTerm: State<String>
+
+    private var searchId = UUID()
+    private var searchRenderId = UUID()
+    private var searchResultViewsById: [UUID: SearchItemPOCView] = [:]
+    private var isActive = true
     
     private var callback: ((
     ) -> ())
@@ -45,7 +50,6 @@ class ProductSuperSearchView: Div {
         .onPaste {
             
             Dispatch.asyncAfter(0.3) {
-                print(self.searchTerm.wrappedValue)
                 self.search()
             }
             
@@ -128,6 +132,7 @@ class ProductSuperSearchView: Div {
     
     override func didAddToDOM() {
         super.didAddToDOM()
+        isActive = true
         searchProductField.select()
         
         self.fadeIn(time: 0.3, begin: .display(.block)) {
@@ -135,61 +140,124 @@ class ProductSuperSearchView: Div {
         }
         
     }
+
+    override func didRemoveFromDOM() {
+        searchId = UUID()
+        searchRenderId = UUID()
+        searchResultViewsById.removeAll()
+        isActive = false
+        super.didRemoveFromDOM()
+    }
     
     func search(){
-         
+        let currentSearchId = UUID()
+        searchId = currentSearchId
         let term = searchTerm.wrappedValue.purgeSpaces
          
          if term.count < 4 {
+             searchRenderId = UUID()
+             searchResultViewsById.removeAll()
              self.productResultDiv.innerHTML = ""
              return
          }
          
          Dispatch.asyncAfter(0.5) {
-             
-             if term != self.searchTerm.wrappedValue.purgeSpaces {
+             guard self.isActive,
+                   currentSearchId == self.searchId,
+                   term == self.searchTerm.wrappedValue.purgeSpaces else {
                  return
              }
              
              self.searchProductField.class(.isLoading)
              
              searchPOC(term: term, costType: .cost_a, getCount: true) { _term, resp in
-                 
-                 self.searchProductField.removeClass(.isLoading) 
-
-                 if term != _term {
+                 guard self.isActive,
+                       currentSearchId == self.searchId,
+                       term == _term,
+                       term == self.searchTerm.wrappedValue.purgeSpaces else {
                      return
                  }
-                 
+
+                 self.searchProductField.removeClass(.isLoading)
+
+                 self.searchRenderId = currentSearchId
+                 self.searchResultViewsById.removeAll(keepingCapacity: true)
                  self.productResultDiv.innerHTML = ""
-                 
-                 resp.forEach { item in
-                     self.productResultDiv.appendChild(
-                        
-                        SearchItemPOCView(
-                            searchTerm: _term,
-                            poc: item,
-                            callback: { update, deleted in
-                                
-                                let view = ManagePOC(
-                                    leveltype: CustProductType.all,
-                                    levelid: nil,
-                                    levelName: "",
-                                    pocid: item.id,
-                                    titleText: "",
-                                    quickView: false
-                                ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
-                                    update( name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
-                                } deleted: {
-                                    deleted()
-                                }
-                                
-                                addToDom(view)
-                                
-                            })
-                     )
-                 }
+
+                 self.asyncAddSearchResult(
+                     results: resp,
+                     term: term,
+                     searchId: currentSearchId
+                 )
              }
          }
      }
+
+    private func asyncAddSearchResult(
+        results: [SearchPOCResponse],
+        term: String,
+        searchId: UUID,
+        index: Int = 0
+    ) {
+        guard isActive,
+              searchId == self.searchId,
+              searchId == searchRenderId,
+              results.indices.contains(index) else {
+            return
+        }
+
+        let result = results[index]
+        let view = makeSearchResultView(result, searchTerm: term)
+
+        guard isActive,
+              searchId == self.searchId,
+              searchId == searchRenderId else {
+            view.remove()
+            return
+        }
+
+        searchResultViewsById[result.id] = view
+        productResultDiv.appendChild(view)
+
+        Dispatch.asyncAfter(0.01) {
+            guard self.isActive,
+                  searchId == self.searchId,
+                  searchId == self.searchRenderId else {
+                return
+            }
+
+            self.asyncAddSearchResult(
+                results: results,
+                term: term,
+                searchId: searchId,
+                index: index + 1
+            )
+        }
+    }
+
+    private func makeSearchResultView(
+        _ item: SearchPOCResponse,
+        searchTerm: String
+    ) -> SearchItemPOCView {
+        SearchItemPOCView(
+            searchTerm: searchTerm,
+            poc: item
+        ) { update, deleted in
+            let view = ManagePOC(
+                leveltype: .all,
+                levelid: nil,
+                levelName: "",
+                pocid: item.id,
+                titleText: "",
+                quickView: false
+            ) { _, upc, brand, model, name, _, price, avatar, reqSeries in
+                update(name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
+            } deleted: {
+                self.searchResultViewsById.removeValue(forKey: item.id)
+                deleted()
+            }
+
+            addToDom(view)
+        }
+    }
 }

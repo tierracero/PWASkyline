@@ -13,17 +13,17 @@ class OrderRowView: Div {
     
     override class var name: String { "div" }
     
-    var folio = ""
+    let folio: String
 
-    var typeOrder = ""
+    let typeOrder: String
     
     @State var uname = "..."
     
-    var createDate = "..."
+    let createDate: String
 
-    var timeElaps = "..."
+    let timeElaps: String
 
-    @State var balance = "..."
+    let balance: String
     
     @State var alerted: Bool = false
     
@@ -34,6 +34,8 @@ class OrderRowView: Div {
     @State var budgetIcon = ""
     
     var data: CustOrderLoadFolios
+
+    @State private var statusColor: Color
     
     private var callback: () -> Void
 
@@ -43,13 +45,24 @@ class OrderRowView: Div {
     ) {
         self.data = data
         self.callback = callback
+        self.statusColor = data.status.color
+        self.folio = Self.formattedFolio(data.folio)
+        self.typeOrder = Self.orderTypeLabel(data.type)
+        self.createDate = getDate(data.createdAt).formatedLong
+        self.timeElaps = orderTimeMesure(
+            uts: data.createdAt,
+            type: .createdAt
+        ).timeString
+        self.balance = "$\(data.balance.formatMoney)"
+        self.dateView = Self.makeDateView(data.due)
+        super.init()
     }
     
     required init() {
         fatalError("init() has not been implemented")
     }
     
-    lazy var dateView = Div()
+    let dateView: Div
     
     @DOM override var body: DOM.Content {
         Div{
@@ -93,7 +106,7 @@ class OrderRowView: Div {
                         Strong(self.timeElaps)
                             .color(.black)
                         
-                        Strong(self.$balance)
+                        Strong(self.balance)
                             .float(.right)
                         
                     }
@@ -110,7 +123,6 @@ class OrderRowView: Div {
                         .class(.oneLineText)
                         .marginBottom(3.px)
                         .color(.grayBlack)
-                        .fontSize(14.px)
                         .fontSize(16.px)
                     
                     if !self.data.address.isEmpty {
@@ -164,6 +176,7 @@ class OrderRowView: Div {
             .float(.right)
             .custom("width", "calc(100% - 92px)")
             .class(.smallButtonBox)
+            .border(width: .thin, style: .solid, color: self.$statusColor.map{  $0 ?? .white})
             .backgroundColor(.init(r: 255, g: 255, b: 255, a: 0.77))
             
             Div().class(.clear)
@@ -198,13 +211,6 @@ class OrderRowView: Div {
             self.callback()
         }
         
-        if data.folio.contains("-") {
-            let parts = data.folio.explode("-")
-            if parts.count > 1 {
-                folio = parts[1]
-            }
-        }
-        
         $budget.listen {
             switch $0 {
             case .budgetRequested:
@@ -216,25 +222,6 @@ class OrderRowView: Div {
             case .approved, .canceled, nil:
                  break
             }
-        }
-        
-        switch self.data.type{
-        case .folio:
-            typeOrder = "S"
-        case .date:
-            typeOrder = "C"
-        case .sale:
-            typeOrder = "V"
-        case .rental:
-            typeOrder = "R"
-        case .mercadoLibre:
-            typeOrder = "M"
-        case .claroShop:
-            typeOrder = "CS"
-        case .amazon:
-            typeOrder = "A"
-        case .ebay:
-            typeOrder = "E"
         }
         
         if let activeUser = data.activeUser {
@@ -250,38 +237,6 @@ class OrderRowView: Div {
             }
         }
         
-        if let dueDate = data.due {
-
-            let calc = orderTimeMesure(uts: dueDate, type: .date)
-            
-            let _div = Div(calc.timeString)
-                .fontSize(24.px)
-            
-            switch calc.color {
-            case .blue:
-                break
-            case .green:
-                _div.color(.green)
-            case .orange:
-                _div.color(.orange)
-            case .red:
-                _div.color(.red)
-            }
-            
-            self.dateView = _div
-            
-        }
-        
-        let _calc = orderTimeMesure(uts: self.data.createdAt, type: .createdAt)
-        
-        let date = getDate(self.data.createdAt)
-        
-        createDate = date.formatedLong
-        
-        timeElaps = _calc.timeString
-        
-        balance = "$\( self.data.balance.formatMoney)"
-        
         alerted = data.alerted
         
         highPriority = data.highPriority
@@ -290,14 +245,78 @@ class OrderRowView: Div {
         
     }
 
+    func applyStatus(_ status: CustFolioStatus) {
+        data.status = status
+        statusColor = status.color
+        backgroundColor(status.color)
+        borderLeft(
+            width: .thick,
+            style: .solid,
+            color: status.color
+        )
+    }
+
+    private static func formattedFolio(_ folio: String) -> String {
+        guard folio.contains("-") else {
+            return ""
+        }
+
+        let parts = folio.explode("-")
+        return parts.count > 1 ? parts[1] : folio
+    }
+
+    private static func orderTypeLabel(
+        _ type: FolioTypes
+    ) -> String {
+        switch type {
+        case .folio:
+            return "S"
+        case .date:
+            return "C"
+        case .sale:
+            return "V"
+        case .rental:
+            return "R"
+        case .mercadoLibre:
+            return "M"
+        case .claroShop:
+            return "CS"
+        case .amazon:
+            return "A"
+        case .ebay:
+            return "E"
+        }
+    }
+
+    private static func makeDateView(_ dueDate: Int64?) -> Div {
+        guard let dueDate else {
+            return Div()
+        }
+
+        let calculation = orderTimeMesure(uts: dueDate, type: .date)
+        let view = Div(calculation.timeString)
+            .fontSize(24.px)
+
+        switch calculation.color {
+        case .blue:
+            break
+        case .green:
+            view.color(.green)
+        case .orange:
+            view.color(.orange)
+        case .red:
+            view.color(.red)
+        }
+
+        return view
+    }
+
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
         $uname.removeAllListeners()
-        $balance.removeAllListeners()
         $alerted.removeAllListeners()
         $highPriority.removeAllListeners()
         $budget.removeAllListeners()
         $budgetIcon.removeAllListeners()
     }
 }
-

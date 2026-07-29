@@ -64,7 +64,10 @@ class ProductManagerView: Div {
     
     @State var productTranferMode = false
     
-    @State var selectedProductIds: [UUID] = []
+    private var selectedProductIds: Set<UUID> = []
+
+    private var productRenderId = UUID()
+    private var isActive = true
     
     var pocRowRefrence: [UUID:StoreItemPOCView] = [:]
     
@@ -258,21 +261,16 @@ class ProductManagerView: Div {
                             
                             self.productTranferMode = false
                             
-                            self.selectedProductIds = []
+                            self.clearSelectedProducts()
                             
                             switch self.levelView {
                             case .department:
                                 break
                             case .category:
-                                
-                                print("Return to  dep")
-                                
                                 self.department = nil
                                 self.departmentName  = ""
                                 
                             case .line:
-                                print("return to cat")
-                                
                                 self.category = nil
                                 self.categoryName  = ""
                                 
@@ -297,8 +295,7 @@ class ProductManagerView: Div {
                     .float(.right)
                     .onClick {
                         if self.productTranferMode {
-                            print("productTranferMode 🟢 007")
-                            self.selectedProductIds = []
+                            self.clearSelectedProducts()
                             self.productTranferMode = false
                         }
                         else {
@@ -416,7 +413,7 @@ class ProductManagerView: Div {
                                         ) { isEdited, id, name in
                                             
                                             self.productTranferMode = false
-                                            self.selectedProductIds = []
+                                            self.clearSelectedProducts()
                                             
                                             if isEdited {
                                                 var cc = 0
@@ -510,7 +507,7 @@ class ProductManagerView: Div {
                                         ) { isEdited, id, tierName in
                                             
                                             self.productTranferMode = false
-                                            self.selectedProductIds = []
+                                            self.clearSelectedProducts()
                                             
                                             if isEdited {
                                                 //@State var categories: [CustStoreCatsQuick] = []
@@ -609,7 +606,7 @@ class ProductManagerView: Div {
                                                 
                                                 
                                                 self.productTranferMode = false
-                                                self.selectedProductIds = []
+                                                self.clearSelectedProducts()
                                                 
                                                 
                                                 if isEdited {
@@ -752,7 +749,7 @@ class ProductManagerView: Div {
                 
                 self.backLink = ""
                 
-                self.productsView.innerHTML = ""
+                self.clearProductRows()
                 
                 self.levelView = .department
                 
@@ -776,87 +773,8 @@ class ProductManagerView: Div {
                 self.title = "DEP: \(self.departmentName)"
                 
                 self.categories = []
-                
-                self.productsView.innerHTML = ""
-                
-                self.catPOCs.forEach { poc in
-                    
-                    let view = StoreItemPOCView(
-                        searchTerm: "",
-                        poc: .init(
-                            id: poc.id,
-                            upc: poc.upc,
-                            name: poc.name,
-                            brand: poc.brand,
-                            model: poc.model,
-                            price: poc.pricea,
-                            avatar: poc.avatar,
-                            units: nil,
-                            reqSeries: poc.reqSeries
-                        )
-                    ) { update, deleted in
-                        
-                        if self.productTranferMode {
-                            print("productTranferMode 🟢 001")
-                            if !self.selectedProductIds.contains(poc.id) {
-                                print("productTranferMode 🟢")
-                                self.selectedProductIds.append(poc.id)
-                            }
-                            else {
-                                
-                                print("productTranferMode 🟡")
-                                
-                                var _selectedProductIds: [UUID] = []
-                                
-                                self.selectedProductIds.forEach { id in
-                                    if id == poc.id {
-                                        return
-                                    }
-                                    _selectedProductIds.append(id)
-                                }
-                                
-                                self.selectedProductIds = _selectedProductIds
-                                
-                            }
-                            return
-                        }
-                        
-                        let view = ManagePOC(
-                            leveltype: CustProductType.all,
-                            levelid: nil,
-                            levelName: "",
-                            pocid: poc.id,
-                            titleText: "",
-                            quickView: false
-                        ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
-                            update( name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
-                        } deleted: {
-                            deleted()
-                        }
-                        /*
-                                _ pocid: UUID,
-        _ upc: String,
-        _ brand: String,
-        _ model: String,
-        _ name: String,
-        _ cost: Int64,
-        _ price: Int64,
-        _ avatar: String,
-        _ reqSeries: Bool
-                        */
-                        
-                        addToDom(view)
-                    }.border(
-                        width: .thick,
-                        style: self.$selectedProductIds.map{ $0.contains(poc.id) ? .solid : .none },
-                        color: .skyBlue
-                    )
-                    
-                    self.pocRowRefrence[poc.id] = view
-                    
-                    self.productsView.appendChild(view)
-                    
-                }
+
+                self.addProductToDom(pocs: self.catPOCs)
                 
                 self.levelView = .category
                 
@@ -886,75 +804,8 @@ class ProductManagerView: Div {
                 self.title = "CAT: \(self.categoryName)"
                 
                 self.lines = []
-                
-                self.productsView.innerHTML = ""
-                
-                self.linePOCs.forEach { poc in
-                    
-                    let view = StoreItemPOCView(
-                        searchTerm: "",
-                        poc: .init(
-                            id: poc.id,
-                            upc: poc.upc,
-                            name: poc.name,
-                            brand: poc.brand,
-                            model: poc.model,
-                            price: poc.pricea,
-                            avatar: poc.avatar,
-                            units: nil,
-                            reqSeries: poc.reqSeries
-                        )
-                    )
-                    { update, deleted in
-                        
-                        if self.productTranferMode {
-                            print("productTranferMode 🟢 002")
-                            if !self.selectedProductIds.contains(poc.id) {
-                                self.selectedProductIds.append(poc.id)
-                            }
-                            else {
-                                
-                                var _selectedProductIds: [UUID] = []
-                                
-                                self.selectedProductIds.forEach { id in
-                                    if id == poc.id {
-                                        return
-                                    }
-                                    _selectedProductIds.append(id)
-                                }
-                                
-                                self.selectedProductIds = _selectedProductIds
-                                
-                            }
-                            return
-                        }
-                        
-                        let view = ManagePOC(
-                            leveltype: CustProductType.all,
-                            levelid: nil,
-                            levelName: "",
-                            pocid: poc.id,
-                            titleText: "",
-                            quickView: false
-                        ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
-                            update( name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
-                        } deleted: {
-                            deleted()
-                        }
-                        
-                        
-                        addToDom(view)
-                    }.border(
-                        width: BorderWidthType.thick,
-                        style: self.$selectedProductIds.map{ $0.contains(poc.id) ? .solid : .none },
-                        color: .skyBlue
-                    )
-                    
-                    self.pocRowRefrence[poc.id] = view
-                    
-                    self.productsView.appendChild(view)
-                    
-                }
+
+                self.addProductToDom(pocs: self.linePOCs)
                 
                 self.levelView = .line
                 
@@ -965,9 +816,15 @@ class ProductManagerView: Div {
     
     override func didAddToDOM() {
         super.didAddToDOM()
+        isActive = true
     }
     
     override func didRemoveFromDOM() {
+        productRenderId = UUID()
+        isActive = false
+        productSuperSearchView?.remove()
+        productSuperSearchView = nil
+        pocRowRefrence.removeAll()
         super.didRemoveFromDOM()
         $department.removeAllListeners()
         $departmentName.removeAllListeners()
@@ -984,7 +841,6 @@ class ProductManagerView: Div {
         $title.removeAllListeners()
         $backLink.removeAllListeners()
         $productTranferMode.removeAllListeners()
-        $selectedProductIds.removeAllListeners()
         $searchTerm.removeAllListeners()
     }
     
@@ -998,6 +854,9 @@ class ProductManagerView: Div {
         loadingView(show: true)
         
         API.v1.storeDeps(curObjs: []) { resp in
+            guard self.isActive else {
+                return
+            }
             
             loadingView(show: false)
             
@@ -1045,7 +904,7 @@ class ProductManagerView: Div {
             ) { isEdited, id, depname in
                 
                 self.productTranferMode = false
-                self.selectedProductIds = []
+                self.clearSelectedProducts()
                 
                 if isEdited {
                     var cc = 0
@@ -1067,10 +926,15 @@ class ProductManagerView: Div {
     }
     
     func loadDepartment(_ depid: UUID,_ depname: String){
-        
+        let renderId = UUID()
+        productRenderId = renderId
+
         loadingView(show: true)
         
         API.custAPIV1.storeLoadDepartment(id: depid) { resp in
+            guard renderId == self.productRenderId else {
+                return
+            }
             
             loadingView(show: false)
             
@@ -1113,7 +977,7 @@ class ProductManagerView: Div {
                 ) { isEdited, id, tierName in
                     
                     self.productTranferMode = false
-                    self.selectedProductIds = []
+                    self.clearSelectedProducts()
                     
                     if isEdited {
                         var cc = 0
@@ -1134,16 +998,24 @@ class ProductManagerView: Div {
                 
             }
             
-            self.addProductToDom(pocs: payload.prods)
+            self.addProductToDom(
+                pocs: payload.prods,
+                renderId: renderId
+            )
             
         }
     }
     
     func loadCategorie(_ catid: UUID,_ catname: String) {
-        
+        let renderId = UUID()
+        productRenderId = renderId
+
         loadingView(show: true)
         
         API.custAPIV1.storeLoadCategorie(id: catid) { resp in
+            guard renderId == self.productRenderId else {
+                return
+            }
             
             loadingView(show: false)
             
@@ -1189,7 +1061,7 @@ class ProductManagerView: Div {
                 ) { isEdited, id, tierName in
                     
                     self.productTranferMode = false
-                    self.selectedProductIds = []
+                    self.clearSelectedProducts()
                     
                     if isEdited {
                         var cc = 0
@@ -1209,16 +1081,24 @@ class ProductManagerView: Div {
                 
             }
             
-            self.addProductToDom(pocs: payload.prods)
+            self.addProductToDom(
+                pocs: payload.prods,
+                renderId: renderId
+            )
             
         }
     }
     
     func loadLine(_ lineid: UUID,_ linename: String){
-        
+        let renderId = UUID()
+        productRenderId = renderId
+
         loadingView(show: true)
         
         API.custAPIV1.storeLoadLine(id: lineid) { resp in
+            guard renderId == self.productRenderId else {
+                return
+            }
             
             loadingView(show: false)
             
@@ -1242,7 +1122,10 @@ class ProductManagerView: Div {
             
             self.line = lineid
             
-            self.addProductToDom(pocs: payload.prods)
+            self.addProductToDom(
+                pocs: payload.prods,
+                renderId: renderId
+            )
             
         }
     
@@ -1293,7 +1176,7 @@ class ProductManagerView: Div {
             level: level,
             levelId: levelId,
             levelName: levelName,
-            pocids: selectedProductIds,
+            pocids: Array(selectedProductIds),
             storeDeps: storeDeps,
             callback: {
                 
@@ -1312,6 +1195,7 @@ class ProductManagerView: Div {
                     self.pocRowRefrence[id]?.remove()
                     self.pocRowRefrence.removeValue(forKey: id)
                 }
+                self.selectedProductIds.removeAll()
             }
         ))
         
@@ -1337,69 +1221,17 @@ class ProductManagerView: Div {
                 titleText: "Departamento \(departmentName)",
                 quickView: false
             ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
-                
-                let view = StoreItemPOCView(
-                    searchTerm: "",
-                    poc: .init(
-                        id: pocid,
-                        upc: upc,
-                        name: name,
-                        brand: brand,
-                        model: model,
-                        price: price,
-                        avatar: avatar,
-                        units: nil,
-                        reqSeries: reqSeries
-                    )
-                ) { update, deleted in
-                    
-                    if self.productTranferMode {
-                        print("productTranferMode 🟢 003")
-                        if !self.selectedProductIds.contains(pocid) {
-                            self.selectedProductIds.append(pocid)
-                        }
-                        else {
-                            
-                            var _selectedProductIds: [UUID] = []
-                            
-                            self.selectedProductIds.forEach { id in
-                                if id == pocid {
-                                    return
-                                }
-                                _selectedProductIds.append(id)
-                            }
-                            
-                            self.selectedProductIds = _selectedProductIds
-                            
-                        }
-                        return
-                    }
-                    
-                    let view = ManagePOC(
-                        leveltype: CustProductType.all,
-                        levelid: nil,
-                        levelName: "",
-                        pocid: pocid,
-                        titleText: "",
-                        quickView: false
-                    ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
-                        
-                        update( name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
-                        
-                    } deleted: {
-                        deleted()
-                    }
-                    
-                    addToDom(view)
-                }.border(
-                    width: BorderWidthType.thick,
-                    style: self.$selectedProductIds.map{ $0.contains(pocid) ? .solid : .none },
-                    color: .skyBlue
+                self.appendCreatedProduct(
+                    id: pocid,
+                    upc: upc,
+                    brand: brand,
+                    model: model,
+                    name: name,
+                    cost: cost,
+                    price: price,
+                    avatar: avatar,
+                    reqSeries: reqSeries
                 )
-                
-                self.pocRowRefrence[pocid] = view
-                
-                self.productsView.appendChild(view)
                 
             }
             deleted: {
@@ -1419,71 +1251,17 @@ class ProductManagerView: Div {
                 titleText: "Categoria \(categoryName)",
                 quickView: false
             ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
-                
-                let view = StoreItemPOCView(
-                    searchTerm: "",
-                    poc: .init(
-                        id: pocid,
-                        upc: upc,
-                        name: name,
-                        brand: brand,
-                        model: model,
-                        price: price,
-                        avatar: avatar,
-                        units: nil,
-                        reqSeries: reqSeries
-                    )
-                ) { update, deleted in
-                    
-                    if self.productTranferMode {
-                        print("productTranferMode 🟢 004")
-                        if !self.selectedProductIds.contains(pocid) {
-                            self.selectedProductIds.append(pocid)
-                        }
-                        else {
-                            
-                            var _selectedProductIds: [UUID] = []
-                            
-                            self.selectedProductIds.forEach { id in
-                                if id == pocid {
-                                    return
-                                }
-                                _selectedProductIds.append(id)
-                            }
-                            
-                            self.selectedProductIds = _selectedProductIds
-                            
-                        }
-                        return
-                    }
-                    
-                    let view = ManagePOC(
-                        leveltype: CustProductType.all,
-                        levelid: nil,
-                        levelName: "",
-                        pocid: pocid,
-                        titleText: "",
-                        quickView: false
-                    ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
-                        
-                        update( name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
-                        
-                    }
-                    deleted: {
-                        deleted()
-                    }
-                    
-                    
-                    addToDom(view)
-                }.border(
-                    width: .thick,
-                    style: self.$selectedProductIds.map{ $0.contains(pocid) ? .solid : .none },
-                    color: .skyBlue
+                self.appendCreatedProduct(
+                    id: pocid,
+                    upc: upc,
+                    brand: brand,
+                    model: model,
+                    name: name,
+                    cost: cost,
+                    price: price,
+                    avatar: avatar,
+                    reqSeries: reqSeries
                 )
-                
-                self.pocRowRefrence[pocid] = view
-                
-                self.productsView.appendChild(view)
                 
             } deleted: {
                 
@@ -1501,70 +1279,17 @@ class ProductManagerView: Div {
                 titleText: "Liena \(lineName)",
                 quickView: false
             ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
-                
-                let view = StoreItemPOCView(
-                    searchTerm: "",
-                    poc: .init(
-                        id: pocid,
-                        upc: upc,
-                        name: name,
-                        brand: brand,
-                        model: model,
-                        price: price,
-                        avatar: avatar,
-                        units: nil,
-                        reqSeries: reqSeries
-                    )
-                ) { update, deleted in
-                    
-                    if self.productTranferMode {
-                        print("productTranferMode 🟢 005")
-                        if !self.selectedProductIds.contains(pocid) {
-                            self.selectedProductIds.append(pocid)
-                        }
-                        else {
-                            
-                            var _selectedProductIds: [UUID] = []
-                            
-                            self.selectedProductIds.forEach { id in
-                                if id == pocid {
-                                    return
-                                }
-                                _selectedProductIds.append(id)
-                            }
-                            
-                            self.selectedProductIds = _selectedProductIds
-                            
-                        }
-                        return
-                    }
-                    
-                    let view = ManagePOC(
-                        leveltype: CustProductType.all,
-                        levelid: nil,
-                        levelName: "",
-                        pocid: pocid,
-                        titleText: "",
-                        quickView: false
-                    ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
-                        
-                        update( name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
-                        
-                    }
-                    deleted: {
-                        deleted()
-                    }
-                    
-                    addToDom(view)
-                }.border(
-                    width: BorderWidthType.thick,
-                    style: self.$selectedProductIds.map{ $0.contains(pocid) ? .solid : .none },
-                    color: .skyBlue
+                self.appendCreatedProduct(
+                    id: pocid,
+                    upc: upc,
+                    brand: brand,
+                    model: model,
+                    name: name,
+                    cost: cost,
+                    price: price,
+                    avatar: avatar,
+                    reqSeries: reqSeries
                 )
-                
-                self.pocRowRefrence[pocid] = view
-                
-                self.productsView.appendChild(view)
                 
             } deleted: {
                 
@@ -1576,152 +1301,214 @@ class ProductManagerView: Div {
     }
     
     func addProductToDom(pocs: [CustPOCQuick]){
-        
-        self.productsView.innerHTML = ""
-        
-        var suspende: [CustPOCQuick] = []
-        
-        pocs.forEach { poc in
-            
-            if poc.status == .suspended {
-                suspende.append(poc)
+        let renderId = UUID()
+        productRenderId = renderId
+        addProductToDom(pocs: pocs, renderId: renderId)
+    }
+
+    private func addProductToDom(
+        pocs: [CustPOCQuick],
+        renderId: UUID
+    ) {
+        guard renderId == productRenderId else {
+            return
+        }
+
+        productsView.innerHTML = ""
+        pocRowRefrence.removeAll(keepingCapacity: true)
+
+        let active = pocs.filter { $0.status != .suspended }
+        let suspended = pocs.filter { $0.status == .suspended }
+        asyncAddProduct(
+            renderId: renderId,
+            products: active + suspended
+        )
+    }
+
+    private func clearProductRows() {
+        productRenderId = UUID()
+        productsView.innerHTML = ""
+        pocRowRefrence.removeAll(keepingCapacity: true)
+    }
+
+    private func asyncAddProduct(
+        renderId: UUID,
+        products: [CustPOCQuick],
+        index: Int = 0
+    ) {
+        guard renderId == productRenderId,
+              products.indices.contains(index) else {
+            return
+        }
+
+        let product = products[index]
+        let view = makeProductRow(
+            product,
+            suspended: product.status == .suspended
+        )
+
+        guard renderId == productRenderId else {
+            view.remove()
+            return
+        }
+
+        productsView.appendChild(view)
+
+        Dispatch.asyncAfter(0.01) {
+            guard renderId == self.productRenderId else {
                 return
             }
-            
-            let view = StoreItemPOCView(
-                searchTerm: "",
-                poc: .init(
-                    id: poc.id,
-                    upc: poc.upc,
-                    name: poc.name,
-                    brand: poc.brand,
-                    model: poc.model,
-                    price: poc.pricea,
-                    avatar: poc.avatar,
-                    units: nil,
-                    reqSeries: poc.reqSeries
-                )
-            ) { update, deleted in
-                
-                if self.productTranferMode {
-                    print("productTranferMode 🟢 006")
-                    if !self.selectedProductIds.contains(poc.id) {
-                        print("🟡 add")
-                        self.selectedProductIds.append(poc.id)
-                    }
-                    else {
-                        print("🟡 remove")
-                        var _selectedProductIds: [UUID] = []
-                        
-                        self.selectedProductIds.forEach { id in
-                            if id == poc.id {
-                                return
-                            }
-                            _selectedProductIds.append(id)
-                        }
-                        
-                        self.selectedProductIds = _selectedProductIds
-                        
-                    }
-                    return
-                }
-                
-                let view = ManagePOC(
-                    leveltype: CustProductType.all,
-                    levelid: nil,
-                    levelName: "",
-                    pocid: poc.id,
-                    titleText: "",
-                    quickView: false
-                ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
-                    
-                    update( name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
-                    
-                } deleted: {
-                    deleted()
-                }
-                
-                addToDom(view)
-            }.border(
-                width: BorderWidthType.thick,
-                style: self.$selectedProductIds.map{ $0.contains(poc.id) ? .solid : .none },
-                color: .lightBlue
+
+            self.asyncAddProduct(
+                renderId: renderId,
+                products: products,
+                index: index + 1
             )
-            
-            self.pocRowRefrence[poc.id] = view
-            
-            self.productsView.appendChild(view)
-            
         }
-        
-        suspende.forEach { poc in
-            
-            let view = StoreItemPOCView(
-                searchTerm: "",
-                poc: .init(
-                    id: poc.id,
-                    upc: poc.upc,
-                    name: poc.name,
-                    brand: poc.brand,
-                    model: poc.model,
-                    price: poc.pricea,
-                    avatar: poc.avatar,
-                    units: nil,
-                    reqSeries: poc.reqSeries
-                )
-            ) { update, deleted in
-                
-                if self.productTranferMode {
-                    print("productTranferMode 🟢 006")
-                    if !self.selectedProductIds.contains(poc.id) {
-                        print("🟡 add")
-                        self.selectedProductIds.append(poc.id)
-                    }
-                    else {
-                        print("🟡 remove")
-                        var _selectedProductIds: [UUID] = []
-                        
-                        self.selectedProductIds.forEach { id in
-                            if id == poc.id {
-                                return
-                            }
-                            _selectedProductIds.append(id)
-                        }
-                        
-                        self.selectedProductIds = _selectedProductIds
-                        
-                    }
-                    return
-                }
-                
-                let view = ManagePOC(
-                    leveltype: CustProductType.all,
-                    levelid: nil,
-                    levelName: "",
-                    pocid: poc.id,
-                    titleText: "",
-                    quickView: false
-                ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
-                    
-                    update( name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
-                    
-                } deleted: {
-                    deleted()
-                }
-                
-                addToDom(view)
-            }.border(
-                width: BorderWidthType.thick,
-                style: self.$selectedProductIds.map{ $0.contains(poc.id) ? .solid : .none },
-                color: .lightBlue
+    }
+
+    private func makeProductRow(
+        _ poc: CustPOCQuick,
+        suspended: Bool = false
+    ) -> StoreItemPOCView {
+        let view = StoreItemPOCView(
+            searchTerm: "",
+            poc: productSearchResponse(from: poc)
+        ) { update, deleted in
+            if self.productTranferMode {
+                self.toggleSelectedProduct(poc.id)
+                return
+            }
+
+            self.openProductEditor(
+                pocId: poc.id,
+                update: update,
+                deleted: deleted
             )
-                .opacity(0.5)
-            
-            self.pocRowRefrence[poc.id] = view
-            
-            self.productsView.appendChild(view)
-            
         }
+
+        configureProductSelectionBorder(view, id: poc.id)
+
+        if suspended {
+            view.opacity(0.5)
+        }
+
+        pocRowRefrence[poc.id] = view
+        return view
+    }
+
+    private func openProductEditor(
+        pocId: UUID,
+        update: @escaping (
+            String,
+            String,
+            Int64,
+            String,
+            Bool
+        ) -> Void,
+        deleted: @escaping () -> Void
+    ) {
+        let view = ManagePOC(
+            leveltype: .all,
+            levelid: nil,
+            levelName: "",
+            pocid: pocId,
+            titleText: "",
+            quickView: false
+        ) { _, upc, brand, model, name, _, price, avatar, reqSeries in
+            update(name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
+        } deleted: {
+            self.selectedProductIds.remove(pocId)
+            self.pocRowRefrence.removeValue(forKey: pocId)
+            deleted()
+        }
+
+        addToDom(view)
+    }
+
+    private func toggleSelectedProduct(_ id: UUID) {
+        if selectedProductIds.contains(id) {
+            selectedProductIds.remove(id)
+        } else {
+            selectedProductIds.insert(id)
+        }
+
+        if let view = pocRowRefrence[id] {
+            configureProductSelectionBorder(view, id: id)
+        }
+    }
+
+    private func clearSelectedProducts() {
+        selectedProductIds.removeAll()
+        pocRowRefrence.forEach { id, view in
+            configureProductSelectionBorder(view, id: id)
+        }
+    }
+
+    private func configureProductSelectionBorder(
+        _ view: StoreItemPOCView,
+        id: UUID
+    ) {
+        view.border(
+            width: .thick,
+            style: selectedProductIds.contains(id) ? .solid : .none,
+            color: .lightBlue
+        )
+    }
+
+    private func productSearchResponse(
+        from poc: CustPOCQuick
+    ) -> SearchPOCResponse {
+        .init(
+            id: poc.id,
+            upc: poc.upc,
+            name: poc.name,
+            brand: poc.brand,
+            model: poc.model,
+            price: poc.pricea,
+            avatar: poc.avatar,
+            units: nil,
+            reqSeries: poc.reqSeries
+        )
+    }
+
+    private func appendCreatedProduct(
+        id: UUID,
+        upc: String,
+        brand: String,
+        model: String,
+        name: String,
+        cost: Int64,
+        price: Int64,
+        avatar: String,
+        reqSeries: Bool
+    ) {
+        let product = CustPOCQuick(
+            id: id,
+            name: name,
+            pseudoName: "",
+            upc: upc,
+            brand: brand,
+            model: model,
+            pseudoModel: "",
+            tagOne: "",
+            tagTwo: "",
+            tagThree: "",
+            fiscCode: "",
+            fiscUnit: "",
+            cost: cost,
+            pricea: price,
+            priceb: price,
+            pricec: price,
+            pricecr: price,
+            avatar: avatar,
+            inCredit: false,
+            reqSeries: reqSeries,
+            status: .active
+        )
+
+        let view = makeProductRow(product)
+        productsView.appendChild(view)
     }
     
     func loadProductTransferView(){

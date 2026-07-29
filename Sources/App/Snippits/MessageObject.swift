@@ -122,12 +122,15 @@ class MessageObject: Div {
     
     override func buildUI() {
         super.buildUI()
+
+        TCMessageObjectTheme.apply(to: self)
         
         switch self.style {
         case .light:
             backgroundColor(.white)
         case .dark:
-            backgroundColor(.grayBlack)
+            self.class(Class(TCMessageObjectClass.dark))
+            backgroundColor(.transparent)
             
             titleColor = .gray
             bodyColor = .lightGray
@@ -227,6 +230,7 @@ class MessageObject: Div {
                 
                 
             }
+            .class(Class(TCMessageObjectClass.meta))
             .color(self.$titleColor)
             .marginRight(12.px)
             .marginLeft(12.px)
@@ -238,6 +242,7 @@ class MessageObject: Div {
             switch self.note.subType {
             case .msg,  .msgQry, .msgRsp:
                 Div(self.$activity)
+                    .class(Class(TCMessageObjectClass.bubble))
                     .textAlign(.left)
                     .float(.left)
                     .marginLeft(35.px)
@@ -256,6 +261,8 @@ class MessageObject: Div {
                     .width(70.percent)
                     .float(.left)
                 }
+                .class(Class(TCMessageObjectClass.bubble))
+                .class(Class(TCMessageObjectClass.media))
                 .textAlign(.left)
                 .float(.left)
                 .marginLeft(35.px)
@@ -281,6 +288,8 @@ class MessageObject: Div {
                         .fontSize(12.px)
                         .width(100.px)
                 }
+                .class(Class(TCMessageObjectClass.bubble))
+                .class(Class(TCMessageObjectClass.media))
                 .textAlign(.left)
                 .float(.left)
                 .marginLeft(35.px)
@@ -292,6 +301,7 @@ class MessageObject: Div {
                 .fontSize(18.px)
             case .link:
                 Span("Un suoported media")
+                    .class(Class(TCMessageObjectClass.bubble))
             case .voice:
                 Div{
                     Audio()
@@ -300,6 +310,8 @@ class MessageObject: Div {
                         .width(250.px)
                         .controls(true)
                 }
+                .class(Class(TCMessageObjectClass.bubble))
+                .class(Class(TCMessageObjectClass.media))
                 .textAlign(.left)
                 .marginRight(35.px)
                 .color(.white)
@@ -319,6 +331,8 @@ class MessageObject: Div {
                     .width(70.percent)
                     .controls(true)
                 }
+                .class(Class(TCMessageObjectClass.bubble))
+                .class(Class(TCMessageObjectClass.media))
                 .textAlign(.left)
                 .marginRight(35.px)
                 .color(.white)
@@ -358,6 +372,7 @@ class MessageObject: Div {
                             .width(100.percent)
                             .height(100.percent)
                     }
+                    .class(Class(TCMessageObjectClass.avatar))
                     .border(width: .medium, style: .solid, color: .lightGray)
                     .borderRadius(all: 22.5.px)
                     .backgroundColor(.white)
@@ -378,6 +393,7 @@ class MessageObject: Div {
             
             
         }
+        .class(Class(TCMessageObjectClass.customer))
     }
     
     func loadUserMesage(_ note: CustOrderLoadFolioNotes) -> Div {
@@ -394,6 +410,7 @@ class MessageObject: Div {
                 Strong(self.$userName)
                     .color(self.$style.map{ ($0 == .light) ? .black : .white })
             }
+            .class(Class(TCMessageObjectClass.meta))
             .color(self.titleColor)
             .marginRight(12.px)
             .marginLeft(12.px)
@@ -405,6 +422,7 @@ class MessageObject: Div {
             switch self.note.subType {
             case .msg,  .msgQry, .msgRsp:
                 Div(self.$activity)
+                    .class(Class(TCMessageObjectClass.bubble))
                     .textAlign(.right)
                     .float(.right)
                     .marginRight(35.px)
@@ -426,6 +444,8 @@ class MessageObject: Div {
                     .width(70.percent)
                     .float(.right)
                 }
+                .class(Class(TCMessageObjectClass.bubble))
+                .class(Class(TCMessageObjectClass.media))
                 .borderRadius(all: 24.px)
                 .maxWidth(50.percent)
                 .display(.tableCell)
@@ -447,6 +467,8 @@ class MessageObject: Div {
                         .width(100.px)
                         
                 }
+                .class(Class(TCMessageObjectClass.bubble))
+                .class(Class(TCMessageObjectClass.media))
                 .borderRadius(all: 24.px)
                 .maxWidth(50.percent)
                 .display(.tableCell)
@@ -458,6 +480,7 @@ class MessageObject: Div {
                 .color(.white)
             case .link:
                 Span("Un supported media")
+                    .class(Class(TCMessageObjectClass.bubble))
             case .voice:
                 
                 Div{
@@ -467,6 +490,8 @@ class MessageObject: Div {
                         .width(250.px)
                         .controls(true)
                 }
+                .class(Class(TCMessageObjectClass.bubble))
+                .class(Class(TCMessageObjectClass.media))
                 .textAlign(.right)
                 .float(.right)
                 .marginRight(35.px)
@@ -487,6 +512,8 @@ class MessageObject: Div {
                     .width(25.percent)
                     .controls(true)
                 }
+                .class(Class(TCMessageObjectClass.bubble))
+                .class(Class(TCMessageObjectClass.media))
                 .textAlign(.right)
                 .float(.right)
                 .marginRight(35.px)
@@ -510,6 +537,7 @@ class MessageObject: Div {
                         .width(100.percent)
                         .height(100.percent)
                 }
+                .class(Class(TCMessageObjectClass.avatar))
                 .border(width: .medium, style: .solid, color: .lightGray)
                 .borderRadius(all: 22.5.px)
                 .backgroundColor(.white)
@@ -567,6 +595,7 @@ class MessageObject: Div {
             Div().clear(.both).marginTop(3.px)
             
         }
+        .class(Class(TCMessageObjectClass.user))
     }
     
     func loadGeneralMesage(_ note: CustOrderLoadFolioNotes) -> Div {
@@ -584,6 +613,7 @@ class MessageObject: Div {
                 Strong(self.$userName)
                     .color(self.$style.map{ ($0 == .light) ? .black : .white })
             }
+                .class(Class(TCMessageObjectClass.meta))
                 .align(.left)
                 .fontSize(13.px)
                 .marginLeft(12.px)
@@ -597,6 +627,8 @@ class MessageObject: Div {
                 
                 if self.note.type == .altaPrioridad {
                     Div(self.$activity)
+                        .class(Class(TCMessageObjectClass.bubble))
+                        .class(Class(TCMessageObjectClass.highPriority))
                         .color(r: 255, g: 84, b: 84)
                         .borderRadius(all: 24.px)
                         .maxWidth(70.percent)
@@ -616,12 +648,14 @@ class MessageObject: Div {
                                 self.lowerNotePriority()
                             }
                     }
+                    .class(Class(TCMessageObjectClass.actions))
                     .align(.right)
                     
                 }
                 else {
                     
                     Div(self.$activity)
+                        .class(Class(TCMessageObjectClass.bubble))
                         .borderRadius(all: 24.px)
                         .color(self.$bodyColor)
                         .maxWidth(70.percent)
@@ -638,6 +672,8 @@ class MessageObject: Div {
                     self.mediaImage
                         .width(25.percent)
                 }
+                .class(Class(TCMessageObjectClass.bubble))
+                .class(Class(TCMessageObjectClass.media))
                 .textAlign(.left)
                 .float(.left)
                 .marginLeft(35.px)
@@ -658,6 +694,8 @@ class MessageObject: Div {
                         .fontSize(16.px)
                         .color(.lightGray)
                 }
+                .class(Class(TCMessageObjectClass.bubble))
+                .class(Class(TCMessageObjectClass.media))
                 .textAlign(.left)
                 .float(.left)
                 .marginLeft(35.px)
@@ -671,6 +709,7 @@ class MessageObject: Div {
                 
             case .link:
                 Span("Un suoported media")
+                    .class(Class(TCMessageObjectClass.bubble))
             case .voice:
                 Div{
                     Audio()
@@ -679,6 +718,8 @@ class MessageObject: Div {
                         .width(250.px)
                         .controls(true)
                 }
+                .class(Class(TCMessageObjectClass.bubble))
+                .class(Class(TCMessageObjectClass.media))
                 .textAlign(.left)
                 .float(.left)
                 .marginLeft(35.px)
@@ -700,6 +741,8 @@ class MessageObject: Div {
                     .width(25.percent)
                     .controls(true)
                 }
+                .class(Class(TCMessageObjectClass.bubble))
+                .class(Class(TCMessageObjectClass.media))
                 .textAlign(.left)
                 .float(.left)
                 .marginLeft(35.px)
@@ -721,6 +764,7 @@ class MessageObject: Div {
                             .width(100.percent)
                             .height(100.percent)
                     }
+                    .class(Class(TCMessageObjectClass.avatar))
                     .borderRadius(all: 22.5.px)
                     .overflow(.hidden)
                     .width(35.px)
@@ -739,6 +783,7 @@ class MessageObject: Div {
             
             Div().class(.clear).marginTop(3.px)
         }
+        .class(Class(TCMessageObjectClass.general))
     }
     
     func downloadMedia(file: String, type: MediaDownloadType, size: MediaDownloadSize){

@@ -147,6 +147,10 @@ class TripPrintEngine: Div {
     override func buildUI() {
         super.buildUI()
 
+        // Keep the print canvas white; this only registers the scoped Trip theme
+        // for any shared controls rendered inside the print view.
+        TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
+
         if let _logo = custWebFilesLogos?.logoIndexWhite.avatar {
             if !_logo.isEmpty {
                 logo = "https://\(custCatchUrl)\(skylineUrlPatch)/contenido/\(_logo)"

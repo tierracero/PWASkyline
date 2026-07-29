@@ -20,7 +20,7 @@ extension MoneyManagerView.FinancialServicesView {
             _ financial: CustUserFinacialServicesQuick
         ) -> ())
         
-        init(
+        init( 
             callback: @escaping ((
                 _ financial: CustUserFinacialServicesQuick
             ) -> ())
@@ -33,8 +33,10 @@ extension MoneyManagerView.FinancialServicesView {
         required init() {
             fatalError("init() has not been implemented")
         }
-        
+
         @State var user: CustUsername? = nil
+
+        @State var selectedId: UUID? = nil
         
         @State var financialTitle: String = ""
         
@@ -129,6 +131,7 @@ extension MoneyManagerView.FinancialServicesView {
                 } onClose: {
                     self.remove()
                 }
+                .backgroundColor(.init(r: 37, g: 44, b: 59))
 
                 VBodyGrid {
                     VGrid(.full) {
@@ -153,7 +156,8 @@ extension MoneyManagerView.FinancialServicesView {
                             .custom("align-items", "center")
                             .custom("gap", "12px")
                         }
-                        .class(Class(TCMoneyManagerClass.hero))
+                        //.class(Class(TCMoneyManagerClass.hero))
+                    .custom("background-color", "rgba(37, 44, 59, 1.0) !important")
                     }
 
                     VGrid(.full) {
@@ -418,6 +422,8 @@ extension MoneyManagerView.FinancialServicesView {
                     
                 }
             }
+
+            financialField.select()
         }
         
         func createReport(){

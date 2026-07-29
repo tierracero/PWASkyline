@@ -195,9 +195,9 @@ public class SKLogInStyle: Stylesheet {
             .custom("filter", "blur(5px)")
 
         Rule(Pointer(".tc-login-mesh-page.tc-login-handoff .tc-login-mesh-background canvas"))
-            .custom("opacity", "0")
-            .custom("transform", "scale(1.06)")
-            .custom("filter", "brightness(0.42) blur(5px)")
+            .custom("opacity", "1")
+            .custom("transform", "scale(1.035)")
+            .custom("filter", "brightness(0.72) blur(2px)")
 
         Rule(Pointer(".tc-login-recovery-popup"))
             .custom("background", "rgba(1, 9, 22, 0.62) !important")

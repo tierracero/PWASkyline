@@ -28,6 +28,8 @@ extension CustComponents {
         type: CustAcctTypes,
         costType: CustAcctCostTypes,
         isConcessionaire: Bool,
+        isolateWorkspace: Bool = false,
+        favorite: Bool = false,
         
         contacto1: String,
         contacto2: String,
@@ -83,6 +85,8 @@ extension CustComponents {
                 type: type,
                 costType: costType,
                 isConcessionaire: isConcessionaire,
+                isolateWorkspace: isolateWorkspace,
+                favorite: favorite,
                 
                 contacto1: contacto1,
                 contacto2: contacto2,

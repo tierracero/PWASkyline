@@ -239,6 +239,7 @@ class RequestTastView: Div {
         .custom("left", "calc(50% - 225px)")
         .custom("top", "calc(50% - 250px)")
         .backgroundColor(.grayBlack)
+        .class(Class(TCCrystalSurfaceClass.taskPanel))
         .borderRadius(all: 24.px)
         .position(.absolute)
         .padding(all: 12.px)
@@ -248,6 +249,8 @@ class RequestTastView: Div {
     
     override func buildUI() {
         super.buildUI()
+
+        TCCrystalSurfaceTheme.apply(to: self, variant: .taskRequest)
         
         position(.absolute)
         height(100.percent)

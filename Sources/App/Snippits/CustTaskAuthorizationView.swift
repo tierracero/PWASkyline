@@ -40,8 +40,8 @@ class CustTaskAuthorizationView: Div {
     @State var levelSelectListener = ""
     
     lazy var frequencySelect = USelectField(self.$frequencySelectListener)
-        .width(100.percent)
         .custom("min-height", "42px")
+        .width(100.percent)
     
     lazy var levelSelect = USelectField(self.$levelSelectListener)
         .width(100.percent)

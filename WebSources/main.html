@@ -113,9 +113,16 @@
                 const element_01 = document.getElementById("element_01");
                 const element_02 = document.getElementById("element_02");
                 const element_03 = document.getElementById("element_03");
-                element_01.remove(); 
-                element_02.remove(); 
-                element_03.remove(); 
+
+                [element_02, element_03].forEach((element) => {
+                    element?.classList.add("initial-loader-exit");
+                });
+
+                window.setTimeout(() => {
+                    element_01?.remove();
+                    element_02?.remove();
+                    element_03?.remove();
+                }, 220);
             }
             function goToLogin(){
                 window.location = `login`
@@ -198,6 +205,8 @@
             #element_02 {
                 overflow: hidden;
                 isolation: isolate;
+                opacity: 1;
+                transition: opacity 220ms ease-out;
                 background:
                     radial-gradient(circle at 15% 48%, rgba(9, 67, 110, 0.14), transparent 30%),
                     radial-gradient(circle at 78% 42%, rgba(10, 42, 82, 0.16), transparent 34%),
@@ -243,6 +252,15 @@
                 );
                 mix-blend-mode: screen;
                 animation: loading-background-sweep 10s ease-in-out infinite;
+            }
+            #element_03 {
+                opacity: 1;
+                transition: opacity 160ms ease-out;
+            }
+            #element_02.initial-loader-exit,
+            #element_03.initial-loader-exit {
+                opacity: 0;
+                pointer-events: none;
             }
             @keyframes loading-background-drift {
                 0% { transform: translate3d(-6%, -3%, 0) scale(1.04) rotate(-1deg); }

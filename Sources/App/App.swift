@@ -91,7 +91,7 @@ class App: WebApp {
                 
             }
             
-            loadBasicConfiguration { status in
+            loadBasicStatus { status in
             
                 let path = WebApp.shared.window.location.pathname.replace(from: "/", to: "")
                 

@@ -11,6 +11,292 @@ import TCFireSignal
 import LanguagePack
 import Web
 
+private typealias AccountViewBetaRule = CSSRule
+
+/// Account presentation aligned with `TripViewBeta`.
+///
+/// This remains scoped to `AccountView`; only layout presentation and visual
+/// hierarchy change. Account state, bindings, and actions remain untouched.
+private enum AccountViewTripBetaStyle {
+    static let rootClass = "tc-account-trip-beta-style"
+    static let avatarClass = "tc-account-trip-beta-avatar"
+
+    private static var isInstalled = false
+
+    static func apply(to view: BaseElement) {
+        install()
+        view.class(Class(rootClass))
+    }
+
+    private static func install() {
+        guard !isInstalled else {
+            return
+        }
+
+        isInstalled = true
+
+        let root = ".\(TCAccountViewClass.root).\(TCAccountViewClass.overview).\(rootClass)"
+        let summary = "\(root) > .\(TCAccountViewClass.summary)"
+        let content = "\(root) > .\(TCAccountViewClass.content)"
+        let header = "\(root) .\(TCAccountViewClass.header)"
+        let identity = "\(root) .\(TCAccountViewClass.identity)"
+        let panel = "\(root) .\(TCAccountViewClass.panel)"
+        let panelHeader = "\(root) .\(TCAccountViewClass.panelHeader)"
+        let financeToolbar = "\(root) .\(TCAccountViewClass.financeToolbar)"
+        let host = ".\(TCAccountViewClass.overviewHost)"
+        let hostShell = "\(host) > .\(TCOrderViewClass.shell)"
+        let hostToolbar = "\(host) .\(TCOrderViewClass.toolbar)"
+        let hostContent = "\(host) .\(TCOrderViewClass.content)"
+        let hostTab = "\(hostToolbar) > .\(TCAccountViewClass.overviewTab)"
+        let activeHostTab = "\(hostToolbar) > .\(TCAccountViewClass.overviewTabActive)"
+        let hostActions = "\(hostToolbar) > .\(TCAccountViewClass.overviewActions)"
+
+        WebApp.current.addStylesheet {
+            AccountViewBetaRule(Pointer(host))
+                .custom("--tc-account-beta-ink", "#edf7ff")
+                .custom("--tc-account-beta-blue", "#49b9f5")
+                .custom("background", "transparent !important")
+                .custom("backdrop-filter", "none")
+                .custom("-webkit-backdrop-filter", "none")
+
+            AccountViewBetaRule(Pointer(hostShell))
+                .custom("top", "18px !important")
+                .custom("left", "18px !important")
+                .custom("width", "calc(100% - 36px) !important")
+                .custom("height", "calc(100% - 36px) !important")
+                .custom("padding", "0 !important")
+                .custom("border", "1px solid rgba(73, 149, 195, 0.26)")
+                .custom("border-radius", "18px !important")
+                .custom("background", "transparent !important")
+                .custom("box-shadow", "none !important")
+                .custom("backdrop-filter", "none")
+                .custom("-webkit-backdrop-filter", "none")
+                .custom("overflow", "hidden")
+
+            AccountViewBetaRule(Pointer(hostToolbar))
+                .custom("height", "54px")
+                .custom("min-height", "54px")
+                .custom("padding", "0 18px !important")
+                .custom("display", "flex")
+                .custom("align-items", "center")
+                .custom("border", "0")
+                .custom("border-bottom", "1px solid rgba(73, 149, 195, 0.28)")
+                .custom("border-radius", "0")
+                .custom("background", "rgba(2, 18, 32, 0.78) !important")
+                .custom("box-shadow", "none !important")
+                .custom("backdrop-filter", "blur(14px) saturate(118%)")
+                .custom("-webkit-backdrop-filter", "blur(14px) saturate(118%)")
+
+            AccountViewBetaRule(Pointer(hostContent))
+                .custom("height", "calc(100% - 54px) !important")
+
+            AccountViewBetaRule(Pointer("\(hostToolbar) > .clear"))
+                .custom("display", "none")
+        }
+
+        WebApp.current.addStylesheet {
+            AccountViewBetaRule(Pointer(hostTab))
+                .custom("height", "54px")
+                .custom("padding", "0 12px !important")
+                .custom("margin", "0 8px 0 0 !important")
+                .custom("display", "inline-flex")
+                .custom("align-items", "center")
+                .custom("border", "0 !important")
+                .custom("border-bottom", "3px solid transparent !important")
+                .custom("border-radius", "0 !important")
+                .custom("background", "transparent !important")
+                .custom("box-shadow", "none !important")
+                .custom("color", "rgba(168, 190, 208, 0.82) !important")
+                .custom("font-size", "18px !important")
+                .custom("font-weight", "650")
+
+            AccountViewBetaRule(Pointer(activeHostTab))
+                .custom("border-bottom-color", "var(--tc-account-beta-blue) !important")
+                .custom("background", "rgba(73, 185, 245, 0.08) !important")
+                .custom("color", "var(--tc-account-beta-ink) !important")
+
+            AccountViewBetaRule(Pointer(hostActions))
+                .custom("margin-left", "auto !important")
+                .custom("margin-right", "0 !important")
+                .custom("float", "none !important")
+
+            AccountViewBetaRule(Pointer(root))
+                .custom("--tc-account-beta-ink", "#edf7ff")
+                .custom("--tc-account-beta-muted", "#99a0aa")
+                .custom("--tc-account-beta-blue", "#49b9f5")
+                .custom("--tc-account-beta-orange", "#ff7704")
+                .custom("--tc-account-beta-orange-soft", "#f9be70")
+                .custom("--tc-account-beta-border", "rgba(73, 149, 195, 0.28)")
+                .custom("--tc-account-beta-surface", "rgba(6, 24, 42, 0.44)")
+                .custom("--tc-account-beta-raised", "rgba(10, 39, 63, 0.52)")
+                .custom("position", "relative")
+                .custom("isolation", "isolate")
+                .custom("min-height", "0 !important")
+                .custom("padding", "12px !important")
+                .custom("border", "0")
+                .custom("border-radius", "0")
+                .custom("background", "linear-gradient(145deg, rgba(12, 45, 72, 0.24), rgba(4, 17, 31, 0.10)) !important")
+                .custom("box-shadow", "none")
+                .custom("backdrop-filter", "blur(12px) saturate(118%)")
+                .custom("-webkit-backdrop-filter", "blur(12px) saturate(118%)")
+                .custom("color", "var(--tc-account-beta-ink)")
+
+            AccountViewBetaRule(Pointer("\(root), \(root) *"))
+                .custom("box-sizing", "border-box")
+
+            AccountViewBetaRule(Pointer("\(summary), \(content)"))
+                .custom("height", "100% !important")
+                .custom("border", "1px solid var(--tc-account-beta-border) !important")
+                .custom("border-radius", "14px !important")
+                .custom("background", "var(--tc-account-beta-surface) !important")
+                .custom("box-shadow", "inset 0 1px 0 rgba(255, 255, 255, 0.04)")
+                .custom("backdrop-filter", "blur(14px)")
+                .custom("-webkit-backdrop-filter", "blur(14px)")
+
+            AccountViewBetaRule(Pointer(summary))
+                .custom("width", "calc(33.333% - 6px) !important")
+                .custom("margin-right", "12px")
+
+            AccountViewBetaRule(Pointer(content))
+                .custom("width", "calc(66.667% - 6px) !important")
+                .custom("padding", "6px")
+        }
+
+        WebApp.current.addStylesheet {
+            AccountViewBetaRule(Pointer("\(root) .\(TCAccountViewClass.summaryBody)"))
+                .custom("padding", "12px !important")
+
+            AccountViewBetaRule(Pointer(header))
+                .custom("min-height", "48px")
+                .custom("padding", "8px 12px !important")
+                .custom("margin-bottom", "12px !important")
+                .custom("border", "1px solid rgba(102, 184, 236, 0.22)")
+                .custom("border-radius", "11px !important")
+                .custom("background", "#252c3b !important")
+                .custom("box-shadow", "none")
+
+            AccountViewBetaRule(Pointer("\(header) h2"))
+                .custom("margin", "0 !important")
+                .custom("color", "var(--tc-account-beta-blue) !important")
+                .custom("font-size", "22px !important")
+                .custom("font-weight", "700")
+                .custom("text-shadow", "none")
+
+            AccountViewBetaRule(Pointer(identity))
+                .custom("min-height", "58px")
+                .custom("padding", "14px !important")
+                .custom("margin-bottom", "12px !important")
+                .custom("border", "1px solid var(--tc-account-beta-border)")
+                .custom("border-radius", "13px !important")
+                .custom("background", "var(--tc-account-beta-raised) !important")
+                .custom("box-shadow", "0 10px 24px rgba(0, 0, 0, 0.24)")
+
+            AccountViewBetaRule(Pointer("\(identity) > div"))
+                .custom("padding", "0")
+                .custom("border", "0")
+                .custom("border-radius", "0")
+                .custom("background", "transparent")
+                .custom("font-size", "16px !important")
+
+            AccountViewBetaRule(Pointer("\(identity) label"))
+                .custom("color", "var(--tc-account-beta-orange-soft) !important")
+        }
+
+        WebApp.current.addStylesheet {
+            AccountViewBetaRule(Pointer(panel))
+                .custom("padding", "12px !important")
+                .custom("border", "1px solid var(--tc-account-beta-border) !important")
+                .custom("border-radius", "13px !important")
+                .custom("background", "var(--tc-account-beta-surface) !important")
+                .custom("box-shadow", "0 8px 22px rgba(0, 0, 0, 0.20)")
+                .custom("backdrop-filter", "blur(12px)")
+                .custom("-webkit-backdrop-filter", "blur(12px)")
+
+            AccountViewBetaRule(Pointer(panelHeader))
+                .custom("min-height", "38px")
+                .custom("padding", "2px 0 8px !important")
+                .custom("margin-bottom", "10px !important")
+                .custom("border", "0 !important")
+                .custom("border-bottom", "1px solid rgba(102, 184, 236, 0.22) !important")
+                .custom("border-radius", "0 !important")
+                .custom("background", "transparent !important")
+                .custom("box-shadow", "none")
+
+            AccountViewBetaRule(Pointer("\(panelHeader) h3"))
+                .custom("margin", "0 !important")
+                .custom("color", "var(--tc-account-beta-blue) !important")
+                .custom("font-size", "20px !important")
+                .custom("font-weight", "700")
+                .custom("text-shadow", "none")
+
+            AccountViewBetaRule(Pointer(financeToolbar))
+                .custom("min-height", "42px")
+                .custom("height", "auto !important")
+                .custom("padding", "4px 6px !important")
+                .custom("margin", "10px 3px 12px !important")
+                .custom("border", "0 !important")
+                .custom("border-bottom", "1px solid rgba(102, 184, 236, 0.22) !important")
+                .custom("border-radius", "0 !important")
+                .custom("background", "transparent !important")
+                .custom("box-shadow", "none")
+
+            AccountViewBetaRule(Pointer("\(root) .roundDarkBlue, \(root) .roundGrayBlackDark, \(root) .roundGrayBlack, \(root) .roundBlue"))
+                .custom("border", "1px solid rgba(58, 66, 72, 0.82) !important")
+                .custom("border-radius", "10px !important")
+                .custom("background", "rgba(20, 23, 25, 0.72) !important")
+                .custom("box-shadow", "none !important")
+        }
+
+        WebApp.current.addStylesheet {
+            AccountViewBetaRule(Pointer("\(root) label"))
+                .custom("color", "var(--tc-account-beta-muted) !important")
+
+            AccountViewBetaRule(Pointer("\(root) input, \(root) select, \(root) textarea"))
+                .custom("border", "1px solid #245a7c !important")
+                .custom("border-radius", "8px !important")
+                .custom("background", "rgba(3, 21, 38, 0.90) !important")
+                .custom("color", "var(--tc-account-beta-ink) !important")
+                .custom("box-shadow", "none !important")
+
+            AccountViewBetaRule(Pointer("\(root) input:focus, \(root) select:focus, \(root) textarea:focus"))
+                .custom("border-color", "var(--tc-account-beta-blue) !important")
+                .custom("outline", "2px solid rgba(73, 185, 245, 0.16)")
+
+            AccountViewBetaRule(Pointer("\(root) .uibtn, \(root) .uibtnLarge, \(root) .uibtnLargeOrange"))
+                .custom("border", "1px solid #245a7c !important")
+                .custom("border-radius", "9px !important")
+                .custom("background", "#1b1f22 !important")
+                .custom("background-image", "none !important")
+                .custom("color", "var(--tc-account-beta-orange-soft) !important")
+                .custom("box-shadow", "none !important")
+                .custom("transition", "background 140ms ease, color 140ms ease, transform 140ms ease")
+
+            AccountViewBetaRule(Pointer("\(root) .uibtn:hover, \(root) .uibtnLarge:hover, \(root) .uibtnLargeOrange:hover"))
+                .custom("background", "var(--tc-account-beta-blue) !important")
+                .custom("color", "#ffffff !important")
+                .custom("transform", "translateY(-1px)")
+
+            AccountViewBetaRule(Pointer("\(root) .\(avatarClass)"))
+                .custom("padding", "4px")
+                .custom("border", "1px solid #245a7c")
+                .custom("background", "rgba(20, 23, 25, 0.76)")
+                .custom("box-shadow", "0 8px 20px rgba(0, 0, 0, 0.28)")
+
+            AccountViewBetaRule(Pointer("\(root) ::-webkit-scrollbar"))
+                .custom("width", "8px")
+                .custom("height", "8px")
+
+            AccountViewBetaRule(Pointer("\(root) ::-webkit-scrollbar-track"))
+                .custom("background", "rgba(2, 13, 24, 0.28)")
+
+            AccountViewBetaRule(Pointer("\(root) ::-webkit-scrollbar-thumb"))
+                .custom("border", "2px solid rgba(2, 13, 24, 0.28)")
+                .custom("border-radius", "999px")
+                .custom("background", "rgba(73, 185, 245, 0.34)")
+        }
+    }
+}
+
 class AccountView: PageController {
     
     override class var name: String { "div" }
@@ -35,6 +321,10 @@ class AccountView: PageController {
         self.thirdPartyService = account.thirdPartyService
         
         self.isConcessionaire = account.isConcessionaire
+
+        self.isolateWorkspace = account.isolateWorkspace
+
+        self.favorite = account.favorite
         
         self.sendOrderCommunication = account.sendOrderCommunication
         
@@ -151,6 +441,10 @@ class AccountView: PageController {
     @State var thirdPartyService: Bool
     
     @State var isConcessionaire: Bool
+
+    @State var isolateWorkspace: Bool
+
+    @State var favorite: Bool
     
     @State var sendOrderCommunication: Bool
     
@@ -607,11 +901,13 @@ class AccountView: PageController {
     @DOM override var body: DOM.Content {
         
         Div{
-            
+            /*
             Div{
+            */  
                 
                 Div{
                     
+
                     Img()
                         .src( "/skyline/media/pencil.png" )
                         .padding(all: 3.px)
@@ -620,119 +916,13 @@ class AccountView: PageController {
                         .float(.right)
                         .height(24.px)
                         .onClick {
-                            
-                            let account = CustAcct(
-                                id: self.account.id,
-                                folio: self.account.folio,
-                                createdAt: getNow(),
-                                modifiedAt: getNow(),
-                                expiredAt: nil,
-                                basePlanId: nil,
-                                basePlanName: nil,
-                                username: "",
-                                password: "",
-                                pin: 0,
-                                businessName: self.businessName,
-                                costType: self.costType,
-                                type: self.type.wrappedValue,
-                                store:  nil,
-                                thirdPartyService: self.thirdPartyService,
-                                sendOrderCommunication: self.sendOrderCommunication,
-                                title: self.title,
-                                firstName: self.firstName,
-                                secondName: self.secondName,
-                                lastName: self.lastName,
-                                secondLastName: self.secondLastName,
-                                sexo: self.sexo,
-                                birthDay: Int(self.birthDay),
-                                birthMonth: Int(self.birthDay),
-                                birthYear: Int(self.birthDay),
-                                rfc: self.rfc,
-                                curp: self.curp,
-                                nss: self.account.nss,
-                                IDType: self.IDType,
-                                IDNum: self.IDNum,
-                                tcc: "",
-                                telephone: self.telephone,
-                                t2cc: "",
-                                telephone2: self.telephone2,
-                                mcc: "",
-                                mobile: self.mobile,
-                                m2cc: "",
-                                mobile2: self.mobile2,
-                                email: self.email,
-                                email2: self.email2,
-                                street: self.street,
-                                colony: self.colony,
-                                city: self.city,
-                                state: self.state,
-                                country: self.country,
-                                zip: self.zip,
-                                mailStreet: self.mailStreet,
-                                mailColony: self.mailColony,
-                                mailCity: self.mailCity,
-                                mailState: self.mailState,
-                                mailCountry: self.mailCountry,
-                                mailZip: self.mailZip,
-                                autoPaySpei: "",
-                                autoPayOxxo: "",
-                                fiscalProfile: self.fiscalProfile,
-                                fiscalRazon: self.fiscalRazon,
-                                fiscalRfc: self.fiscalRfc,
-                                fiscalRegime: self.fiscalRegime,
-                                fiscalZip: self.fiscalZip,
-                                fiscalPOCFirstName: self.fiscalPOCFirstName,
-                                fiscalPOCLastName: self.fiscalPOCLastName,
-                                fmcc: "",
-                                fiscalPOCMobile: self.fiscalPOCMobile,
-                                fiscalPOCMobileValidaded: self.fiscalPOCMobileValidaded,
-                                fiscalPOCMail: self.fiscalPOCMail,
-                                fiscalPOCMailValidaded: self.fiscalPOCMailValidaded,
-                                cfdiUse: self.cfdiUse,
-                                fiscalRecipt: self.account.fiscalRecipt,
-                                autoFact: self.autoFact,
-                                billDate: nil,
-                                cracct: self.cracct,
-                                crstatus: self.crstatus,
-                                isConcessionaire: self.isConcessionaire,
-                                contacto1: self.contacto1,
-                                contacto2: self.contacto2,
-                                ctcc: "",
-                                contactTel: self.contactTel,
-                                contactMail: self.contactMail,
-                                validated: self.validated,
-                                due: 0,
-                                balance: 0,
-                                CardID: "",
-                                rewardsLevel: self.rewardsLevel,
-                                rewards: Int(self.rewardsBalanceText) ?? 0,
-                                lat: "",
-                                lon: "",
-                                telegramId: nil,
-                                avatar: "",
-                                status: self.account.status
-                            )
-                            
-                            addToDom(DetailView(
-                                account: account,
-                                accountView: self
-                            ))
-                            
+                            self.editAccount()
                         }
                     
                     H2("Datos de la Cuenta")
                         .color(.lightBlueText)
                         .class(.oneLineText)
-                }
-                
-                Div().class(.clear).height(3.px)
-                
-                Div{
-                    
-                    Div(self.$status.map{ $0.description })
-                        .fontSize(26.px)
-                        .float(.right)
-                        .color(.white)
+
                     
                     Label{
                         Span("Cuenta")
@@ -743,6 +933,7 @@ class AccountView: PageController {
                         .color(.goldenRod)
                         .fontSize(26.px)
                 }
+                .class(Class(TCAccountViewClass.identity))
                 Div().class(.clear).height(7.px)
                 
                 /// Tarjeta de Lealtad y usuario
@@ -750,6 +941,7 @@ class AccountView: PageController {
                     Div{
                         self.avatar
                             .src("skyline/media/defaultPanda.png")
+                            .class(Class(AccountViewTripBetaStyle.avatarClass))
                             .borderRadius(12.px)
                             .cursor(.pointer)
                             .height(100.px)
@@ -940,6 +1132,50 @@ class AccountView: PageController {
                     
                 }
                 .hidden(self.type.map{ $0 == .personal })
+
+                /// Espacio de trabajo aislado
+                Div{
+
+                    Div().height(3.px).clear(.both)
+
+                    Div("Espacio de trabajo aislado")
+                        .class(.oneLineText)
+                        .width(80.percent)
+                        .float(.left)
+
+                    Div{
+                        InputCheckbox()
+                            .toggle(self.$isolateWorkspace, true)
+                            .opacity(0.5)
+                    }
+                    .width(20.percent)
+                    .float(.left)
+
+                    Div().height(3.px).clear(.both)
+
+                }
+
+                /// Cuenta favorita
+                Div{
+
+                    Div().height(3.px).clear(.both)
+
+                    Div("Cuenta favorita")
+                        .class(.oneLineText)
+                        .width(80.percent)
+                        .float(.left)
+
+                    Div{
+                        InputCheckbox()
+                            .toggle(self.$favorite, true)
+                            .opacity(0.5)
+                    }
+                    .width(20.percent)
+                    .float(.left)
+
+                    Div().height(3.px).clear(.both)
+
+                }
 
                 /// Mensajes en Ordenes
                 Div{
@@ -1359,10 +1595,14 @@ class AccountView: PageController {
                 
                 Div().class(.clear)
                     .marginBottom(12.px)
-                
+            /*    
             }
+            .class(Class(TCAccountViewClass.summaryBody))
             .color(.gray)
+            */
         }
+        //.class(Class(TCAccountViewClass.summary))
+        .class(Class(TCAccountViewClass.summaryBody))
         .height(100.percent)
         .width(33.percent)
         .float(.left)
@@ -1432,6 +1672,7 @@ class AccountView: PageController {
                     
                     Div().class(.clear)
                 }
+                .class(Class(TCAccountViewClass.panelHeader))
                 
                 self.planAndServiceDiv
                     .custom("height", "calc(100% - 30px)")
@@ -1440,6 +1681,7 @@ class AccountView: PageController {
                     .marginTop(7.px)
                 
             }
+            .class(Class(TCAccountViewClass.panel))
             .custom("width", "calc(50% - 12px)")
             .height(40.percent)
             .padding(all: 3.px)
@@ -1470,6 +1712,7 @@ class AccountView: PageController {
                     H3("Notas")
                         .color(.lightGray)
                 }
+                .class(Class(TCAccountViewClass.panelHeader))
                 
                 Div().clear(.both)
                 
@@ -1479,6 +1722,7 @@ class AccountView: PageController {
                     .overflow(.auto)
                     .marginTop(7.px)
             }
+            .class(Class(TCAccountViewClass.panel))
             .custom("width", "calc(50% - 12px)")
             .height(40.percent)
             .padding(all: 3.px)
@@ -1589,7 +1833,7 @@ class AccountView: PageController {
                 }
 
             }
-            .height(30.px)
+            .class(Class(TCAccountViewClass.financeToolbar))
             
             Div{
                 Div{
@@ -1650,6 +1894,7 @@ class AccountView: PageController {
                         H3("Cargos")
                             .color(.lightGray)
                     }
+                    .class(Class(TCAccountViewClass.panelHeader))
                     
                     self.unbilledDiv
                         .custom("height", "calc(100% - 30px)")
@@ -1657,6 +1902,7 @@ class AccountView: PageController {
                         .marginTop(7.px)
                         .overflow(.auto)
                 }
+                .class(Class(TCAccountViewClass.panel))
                 .custom("width", "calc(50% - 12px)")
                 .custom("height", "calc(100% - 24px)")
                 .padding(all: 3.px)
@@ -1669,6 +1915,7 @@ class AccountView: PageController {
                         H3("Estados de Cuenta")
                             .color(.lightGray)
                     }
+                    .class(Class(TCAccountViewClass.panelHeader))
                     
                     self.billingDiv
                         .custom("height", "calc(100% - 30px)")
@@ -1677,6 +1924,7 @@ class AccountView: PageController {
                         .overflow(.auto)
                     
                 }
+                .class(Class(TCAccountViewClass.panel))
                 .custom("width", "calc(50% - 12px)")
                 .custom("height", "calc(100% - 24px)")
                 .padding(all: 3.px)
@@ -1691,6 +1939,7 @@ class AccountView: PageController {
                 .custom("height", "calc(60% - 42px)")
             
         }
+        // .class(Class(TCAccountViewClass.content))
         .height(100.percent)
         .width(66.percent)
         .float(.left)
@@ -1700,6 +1949,15 @@ class AccountView: PageController {
     
     override func buildUI() {
         super.buildUI()
+
+        TCTripBetaTheme.install()
+        self.class(Class(TCTripBetaClass.root))
+
+        // TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
+
+        // TCAccountViewTheme.apply(to: self, variant: .overview)
+
+        AccountViewTripBetaStyle.apply(to: self)
         
         self.height(100.percent)
         self.marginBottom(7.px)
@@ -1858,6 +2116,107 @@ class AccountView: PageController {
         
     }
     
+    func editAccount() {
+
+        let account = CustAcct(
+            id: self.account.id,
+            folio: self.account.folio,
+            createdAt: getNow(),
+            modifiedAt: getNow(),
+            expiredAt: nil,
+            basePlanId: nil,
+            basePlanName: nil,
+            username: "",
+            password: "",
+            pin: 0,
+            businessName: self.businessName,
+            costType: self.costType,
+            type: self.type.wrappedValue,
+            store:  nil,
+            thirdPartyService: self.thirdPartyService,
+            sendOrderCommunication: self.sendOrderCommunication,
+            title: self.title,
+            firstName: self.firstName,
+            secondName: self.secondName,
+            lastName: self.lastName,
+            secondLastName: self.secondLastName,
+            sexo: self.sexo,
+            birthDay: Int(self.birthDay),
+            birthMonth: Int(self.birthDay),
+            birthYear: Int(self.birthDay),
+            rfc: self.rfc,
+            curp: self.curp,
+            nss: self.account.nss,
+            IDType: self.IDType,
+            IDNum: self.IDNum,
+            tcc: "",
+            telephone: self.telephone,
+            t2cc: "",
+            telephone2: self.telephone2,
+            mcc: "",
+            mobile: self.mobile,
+            m2cc: "",
+            mobile2: self.mobile2,
+            email: self.email,
+            email2: self.email2,
+            street: self.street,
+            colony: self.colony,
+            city: self.city,
+            state: self.state,
+            country: self.country,
+            zip: self.zip,
+            mailStreet: self.mailStreet,
+            mailColony: self.mailColony,
+            mailCity: self.mailCity,
+            mailState: self.mailState,
+            mailCountry: self.mailCountry,
+            mailZip: self.mailZip,
+            autoPaySpei: "",
+            autoPayOxxo: "",
+            fiscalProfile: self.fiscalProfile,
+            fiscalRazon: self.fiscalRazon,
+            fiscalRfc: self.fiscalRfc,
+            fiscalRegime: self.fiscalRegime,
+            fiscalZip: self.fiscalZip,
+            fiscalPOCFirstName: self.fiscalPOCFirstName,
+            fiscalPOCLastName: self.fiscalPOCLastName,
+            fmcc: "",
+            fiscalPOCMobile: self.fiscalPOCMobile,
+            fiscalPOCMobileValidaded: self.fiscalPOCMobileValidaded,
+            fiscalPOCMail: self.fiscalPOCMail,
+            fiscalPOCMailValidaded: self.fiscalPOCMailValidaded,
+            cfdiUse: self.cfdiUse,
+            fiscalRecipt: self.account.fiscalRecipt,
+            autoFact: self.autoFact,
+            billDate: nil,
+            cracct: self.cracct,
+            crstatus: self.crstatus,
+            isConcessionaire: self.isConcessionaire,
+            isolateWorkspace: self.isolateWorkspace,
+            favorite: self.favorite,
+            contacto1: self.contacto1,
+            contacto2: self.contacto2,
+            ctcc: "",
+            contactTel: self.contactTel,
+            contactMail: self.contactMail,
+            validated: self.validated,
+            due: 0,
+            balance: 0,
+            CardID: "",
+            rewardsLevel: self.rewardsLevel,
+            rewards: Int(self.rewardsBalanceText) ?? 0,
+            lat: "",
+            lon: "",
+            telegramId: nil,
+            avatar: "",
+            status: self.account.status
+        )
+        
+        addToDom(DetailView(
+            account: account,
+            accountView: self
+        ))
+    }
     func getProfilePicture() {
         
         let view = CameraView(type: .picture) { picture in

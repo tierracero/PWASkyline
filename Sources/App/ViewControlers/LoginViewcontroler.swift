@@ -586,7 +586,7 @@ public class LoginViewcontroler: PageController {
 
         startMeshBackground()
     
-        loadBasicConfiguration() { status in
+        loadBasicStatus { status in
         
             guard let status else {
                 /// no session will remain in page
@@ -904,5 +904,5 @@ public class LoginViewcontroler: PageController {
             History.pushState(path: "work")
         }
     }
-
+    
 }

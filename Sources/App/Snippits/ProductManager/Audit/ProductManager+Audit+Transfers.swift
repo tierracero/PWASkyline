@@ -70,6 +70,8 @@ extension ProductManagerView.AuditView {
         }
         .custom("height", "calc(100% - 85px)")
         .overflow(.auto)
+
+        private var transferRenderId = UUID()
         
         @DOM override var body: DOM.Content {
             /// Filter View
@@ -372,6 +374,9 @@ extension ProductManagerView.AuditView {
                 return
             }
             
+            let renderId = UUID()
+            transferRenderId = renderId
+
             loadingView(show: true)
             
             API.custPOCV1.tranferReport(
@@ -380,9 +385,15 @@ extension ProductManagerView.AuditView {
                 startAt: startAtUTS,
                 endAt: endAtUTS
             ) { resp in
-                
+                guard renderId == self.transferRenderId else {
+                    return
+                }
+
                 getUsers(storeid: nil, onlyActive: false) { users in
-                 
+                    guard renderId == self.transferRenderId else {
+                        return
+                    }
+
                     loadingView(show: false)
                     
                     guard let resp else {
@@ -1050,6 +1061,7 @@ extension ProductManagerView.AuditView {
         
 
         override func didRemoveFromDOM() {
+            transferRenderId = UUID()
             super.didRemoveFromDOM()
             $fromStoreSelectListener.removeAllListeners()
             $toStoreSelectListener.removeAllListeners()

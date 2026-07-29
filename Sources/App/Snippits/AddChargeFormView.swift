@@ -148,7 +148,15 @@ class AddChargeFormView: Div {
         }
     
     lazy var resultBox = Div()
-        .position(.absolute)
+        
+    lazy var resultBoxContainer = Div{
+        Div{
+            self.resultBox 
+        }
+    }
+    .backgroundColor(.transparentBlack)
+    .position(.absolute)
+
     
     lazy var amountInput = InputText(self.$amount)
         .placeholder("Cantidad")
@@ -195,7 +203,7 @@ class AddChargeFormView: Div {
     
     @DOM override var body: DOM.Content {
         
-        VPopUp(.custome(w: 600, h: 500)) {
+        VPopUp(.custome(w: 600, h: 330)) {
 
             VTitle("Ingresar cargo") {
 
@@ -206,317 +214,291 @@ class AddChargeFormView: Div {
             VBodyGrid {
                 Div {
                     
-                    VBox(.interactive) {
-                
-                    /// Modelo / SKU / SOC / POC
-                    UField("SKU / UPC", required: false) {
-                            self.searchTermInput
-                    }
-                    .marginBottom(12.px)
+                    VBox(.standard) {
                     
-                    self.resultBox
-                        .width(100.percent)
-                        .zIndex(1)
-                    
-                    /// Amount
-                    UField("Cantidad", required: false) {
-                        self.amountInput
-                    }
-                    .marginBottom(12.px)
-                    
-                    /// Description
-                    UField("Descripción", required: false) {
-                        self.nameInput
-                    }
-                    .marginBottom(12.px)
-                    
-                    /// Sale Price
-                    UField("Precio", required: false) {
-                        Div {
-                            
-                            Span{
-                                /// Add Internal cost
-                                Div{
-                                    Img()
-                                        .src("/skyline/media/add.png")
-                                        .height(12.px)
-                                        .marginRight(7.px)
-                                    
-                                    Span("Costo Interno")
-                                        .fontSize(14.px)
-                                }
-                                .hidden(self.$addInternalCostIsHidden.map{ !$0 })
-                                .custom("width", "fit-content")
-                                .padding(all: 7.px)
-                                .marginLeft(0.px)
-                                .class(.uibtn)
-                                .float(.right)
-                                .onClick { _ in
-                                    self.addInternalCostIsHidden = false
-                                    self.costAmountInput.select()
-                                }
-                            }
-                            .hidden(self.$chargeId.map { $0 != nil })
-                            
-                            Span{
-                                ///
-                                Div{
-                                    Img()
-                                        .src("/skyline/media/random.png")
-                                        .height(12.px)
-                                        .marginRight(7.px)
-                                    
-                                    Span("C.P.")
-                                        .fontSize(14.px)
-                                }
-                                .custom("width", "fit-content")
-                                .padding(all: 7.px)
-                                .marginLeft(0.px)
-                                .class(.uibtn)
-                                .float(.right)
-                                .hidden(self.$changePriceViewIsHidden.map{ !$0 })
-                                .onClick { _ in
-                                    self.changePriceViewIsHidden = false
-                                }
-                            }
-                            .hidden(self.$chargeId.map { $0 == nil })
-                            .float(.right)
-                            
-                            self.salePriceInput
-                            
+                        /// Modelo / SKU / SOC / POC
+                        UField("SKU / UPC", required: false) {
+                                self.searchTermInput
                         }
+                        .marginBottom(12.px)
                         
-                    }
-                    .marginBottom(12.px)
-                    
-                    /// `My Cost`
-                    UField("Costo interno", required: false) {
-                        Div {
-                            
-                            Img()
-                                .src("/skyline/media/cross.png")
-                                .height(18.px)
-                                .margin(all: 3.px)
-                                .cursor(.pointer)
-                                .float(.right)
-                                .onClick { _ in
-                                    showAlert(.alerta, "Costo interno removido")
-                                    self.costAmount = "0.00"
-                                    self.addInternalCostIsHidden = true
-                                }
-                            
-                            self.costAmountInput
+                        self.resultBox
+                            .width(100.percent)
+                            .zIndex(1)
+                        
+                        /// Description
+                        UField("Descripción", required: false) {
+                            self.nameInput
                         }
-                    }
-                    .marginBottom(12.px)
-                    .hidden(self.$addInternalCostIsHidden)
-                    
-                    /// `Change Price`
-                    Div{
-                        if custCatchHerk > 1 {
-                            Div{
-                                Label("Precio Public")
-                                Div{
-                                    Div{
-                                        Span("$")
-                                            .marginRight(7.px)
-                                        Span(self.$pricea)
-                                    }
-                                    .custom("width", "fit-content")
-                                    .paddingRight(7.px)
-                                    .paddingLeft(7.px)
-                                    .margin(all: 0.px)
-                                    .fontSize(23.px)
-                                    .onClick {
-                                        self.changePriceViewIsHidden = true
-                                        self.price = self.pricea
-                                    }
-                                }
-                                .class(.uibtn)
-                            }
-                            .class(.section)
-                            
-                            Div{
-                                Label("Medio Mayoreo")
-                                
-                                Div{
-                                    Div{
-                                        Span("$")
-                                            .marginRight(7.px)
-                                        Span(self.$priceb)
-                                    }
-                                    .custom("width", "fit-content")
-                                    .paddingRight(7.px)
-                                    .paddingLeft(7.px)
-                                    .margin(all: 0.px)
-                                    .fontSize(23.px)
-                                    .onClick {
-                                        self.changePriceViewIsHidden = true
-                                        self.price = self.priceb
-                                    }
-                                    
-                                }
-                                .class(.uibtn)
-                                
-                            }
-                            .class(.section)
-                            
-                            Div{
-                                Label("Precio Mayoreo")
-                                
-                                Div{
-                                    Div{
-                                        Span("$")
-                                            .marginRight(7.px)
-                                        Span(self.$pricec)
-                                    }
-                                    .custom("width", "fit-content")
-                                    .paddingRight(7.px)
-                                    .paddingLeft(7.px)
-                                    .margin(all: 0.px)
-                                    .fontSize(23.px)
-                                    .onClick {
-                                        self.changePriceViewIsHidden = true
-                                        self.price = self.pricec
-                                    }
-                                }
-                                .class(.uibtn)
-                                
-                            }
-                            .class(.section)
-                        }
-
-                        /// Custome price
+                        .marginBottom(12.px)
+                        
                         Div{
-                            Label("Precio Personal")
-                            
+
+                            VGrid(.oneForth) {
+                                /// Amount  
+                                UField("Cantidad", required: false) {
+                                    self.amountInput
+                                }
+                            }
+
+                            VGrid(.oneForth) {} .height(35.px)
+
+                            VGrid(.oneForth) {
+                                /// `My Cost`
+                                UField("Costo interno", required: false) {
+                                    Div {
+                                        self.costAmountInput
+                                    }
+                                }
+                            }
+
+                            VGrid(.oneForth) {
+                                /// Sale Price
+                                UField("Precio", required: false) {
+                                    Div {
+                                        
+                                        Span{
+                                            ///
+                                            Div{
+                                                Img()
+                                                    .src("/skyline/media/random.png")
+                                                    .height(12.px)
+                                                    .marginRight(7.px)
+                                                
+                                                Span("C.P.")
+                                                    .fontSize(14.px)
+                                            }
+                                            .custom("width", "fit-content")
+                                            .padding(all: 7.px)
+                                            .marginLeft(0.px)
+                                            .class(.uibtn)
+                                            .float(.right)
+                                            .hidden(self.$changePriceViewIsHidden.map{ !$0 })
+                                            .onClick { _ in
+                                                self.changePriceViewIsHidden = false
+                                            }
+                                        }
+                                        .hidden(self.$chargeId.map { $0 == nil })
+                                        .float(.right)
+                                        
+                                        self.salePriceInput
+                                        
+                                    }
+                                    
+                                }                                
+                            }
+
+                        }
+                        .display(.grid)
+                        .custom("grid-template-columns", "repeat(12, minmax(0, 1fr))")
+                        .custom("gap", "12px")
+                        .marginBottom(12.px)
+
+                        
+
+                        
+                        /// `Change Price`
+                        Div{
+                            if custCatchHerk > 1 {
+                                Div{
+                                    Label("Precio Public")
+                                    Div{
+                                        Div{
+                                            Span("$")
+                                                .marginRight(7.px)
+                                            Span(self.$pricea)
+                                        }
+                                        .custom("width", "fit-content")
+                                        .paddingRight(7.px)
+                                        .paddingLeft(7.px)
+                                        .margin(all: 0.px)
+                                        .fontSize(23.px)
+                                        .onClick {
+                                            self.changePriceViewIsHidden = true
+                                            self.price = self.pricea
+                                        }
+                                    }
+                                    .class(.uibtn)
+                                }
+                                .class(.section)
+                                
+                                Div{
+                                    Label("Medio Mayoreo")
+                                    
+                                    Div{
+                                        Div{
+                                            Span("$")
+                                                .marginRight(7.px)
+                                            Span(self.$priceb)
+                                        }
+                                        .custom("width", "fit-content")
+                                        .paddingRight(7.px)
+                                        .paddingLeft(7.px)
+                                        .margin(all: 0.px)
+                                        .fontSize(23.px)
+                                        .onClick {
+                                            self.changePriceViewIsHidden = true
+                                            self.price = self.priceb
+                                        }
+                                        
+                                    }
+                                    .class(.uibtn)
+                                    
+                                }
+                                .class(.section)
+                                
+                                Div{
+                                    Label("Precio Mayoreo")
+                                    
+                                    Div{
+                                        Div{
+                                            Span("$")
+                                                .marginRight(7.px)
+                                            Span(self.$pricec)
+                                        }
+                                        .custom("width", "fit-content")
+                                        .paddingRight(7.px)
+                                        .paddingLeft(7.px)
+                                        .margin(all: 0.px)
+                                        .fontSize(23.px)
+                                        .onClick {
+                                            self.changePriceViewIsHidden = true
+                                            self.price = self.pricec
+                                        }
+                                    }
+                                    .class(.uibtn)
+                                    
+                                }
+                                .class(.section)
+                            }
+
+                            /// Custome price
                             Div{
+                                Label("Precio Personal")
                                 
-                                self.customeSalePriceInput
-                                
-                                Span("Personalizado")
-                                .class(.uibtn)
-                                .float(.right)
-                                .fontSize(18.px)
-                                .onClick {
+                                Div{
                                     
-                                    guard let _price = Float(self.customeSalePriceInput.text.replace(from: ",", to: "") )?.toCents else {
-                                        showError(.generalError, "Ingrese un precio  valido")
-                                        self.customeSalePriceInput.select()
-                                        return
-                                    }
+                                    self.customeSalePriceInput
                                     
-                                    if custCatchHerk > 4 {
+                                    Span("Personalizado")
+                                    .class(.uibtn)
+                                    .float(.right)
+                                    .fontSize(18.px)
+                                    .onClick {
                                         
-                                        self.changePriceViewIsHidden = true
-                                        
-                                        self.price = _price.formatMoney.replace(from: ",", to: "").replace(from: "$", to: "")
-                                        
-                                    }
-                                    else {
-                                        
-                                        guard let socid = self.chargeId else {
-                                            showError(.unexpectedResult, "No se localizo id del cargo.")
+                                        guard let _price = Float(self.customeSalePriceInput.text.replace(from: ",", to: "") )?.toCents else {
+                                            showError(.generalError, "Ingrese un precio  valido")
+                                            self.customeSalePriceInput.select()
                                             return
                                         }
                                         
-                                        addToDom(CustTaskAuthRequestWaitView(
-                                            type: .service,
-                                            id: socid,
-                                            requestedPrice: _price,
-                                            reason: "",
-                                            callback: { auth in
-                                                self.changePriceViewIsHidden = true
-                                                if auth {
-                                                    self.price = _price.formatMoney.replace(from: ",", to: "").replace(from: "$", to: "")
-                                                }
-                                            })
-                                        )
+                                        if custCatchHerk > 4 {
+                                            
+                                            self.changePriceViewIsHidden = true
+                                            
+                                            self.price = _price.formatMoney.replace(from: ",", to: "").replace(from: "$", to: "")
+                                            
+                                        }
+                                        else {
+                                            
+                                            guard let socid = self.chargeId else {
+                                                showError(.unexpectedResult, "No se localizo id del cargo.")
+                                                return
+                                            }
+                                            
+                                            addToDom(CustTaskAuthRequestWaitView(
+                                                type: .service,
+                                                id: socid,
+                                                requestedPrice: _price,
+                                                reason: "",
+                                                callback: { auth in
+                                                    self.changePriceViewIsHidden = true
+                                                    if auth {
+                                                        self.price = _price.formatMoney.replace(from: ",", to: "").replace(from: "$", to: "")
+                                                    }
+                                                })
+                                            )
+                                        }
                                     }
                                 }
                             }
-                        }
-                        .class(.section)
-                        
-                    }
-                    .hidden(self.$changePriceViewIsHidden.map{ $0 })
-                    
-                    Div().class(.clear)
-                    
-                    Div{
-                        
-                        if self.allowWarrantyCharges {
+                            .class(.section)
                             
-                                Div{
-                                    
-                                    InputCheckbox()
-                                        .toggle(self.$processAsWarenty)
-                                        .width(18.px)
-                                        .height(18.px)
-                                        .marginRight(7.px)
-                                        .float(.left)
-                                    
-                                    Div("Agregar como garantía")
-                                        .color(self.$processAsWarenty.map{ $0 ? .white : .gray })
-                                        .marginTop(3.px)
-                                        .fontSize(22.px)
-                                        .float(.left)
-                                    
-                                    Div().clear(.both)
-                                    
+                        }
+                        .hidden(self.$changePriceViewIsHidden.map{ $0 })
+                        
+                        Div().class(.clear)
+                        
+                        Div{
+                            
+                            if self.allowWarrantyCharges {
+                                
                                     Div{
                                         
-                                        InputRadio()
-                                            .id(.init("internalWarenty"))
-                                            .name("typeOfWarentie")
-                                            .width(18.px)
-                                            .height(18.px)
+                                        InputCheckbox().toggle(self.$processAsWarenty)
                                             .marginRight(7.px)
-                                            .onClick { input in
-                                                self.processAsInternalWarenty = true
-                                            }
+                                            .float(.left)
                                         
-                                        Label("Garantía interna")
-                                            .for("internalWarenty")
-                                            .marginRight(12.px)
+                                        Div("Agregar como garantía")
+                                            .color(self.$processAsWarenty.map{ $0 ? .white : .gray })
+                                            .marginTop(3.px)
+                                            .fontSize(22.px)
+                                            .float(.left)
                                         
-                                        InputRadio()
-                                            .id(.init("exteralWarenty"))
-                                            .name("typeOfWarentie")
-                                            .width(18.px)
-                                            .height(18.px)
-                                            .marginRight(7.px)
-                                            .onClick { input in
-                                                self.processAsInternalWarenty = false
-                                            }
+                                        Div().clear(.both)
                                         
-                                        Label("Garantía externa")
-                                            .for("exteralWarenty")
+                                        Div{
                                             
+                                            InputRadio()
+                                                .id(.init("internalWarenty"))
+                                                .name("typeOfWarentie")
+                                                .width(18.px)
+                                                .height(18.px)
+                                                .marginRight(7.px)
+                                                .onClick { input in
+                                                    self.processAsInternalWarenty = true
+                                                }
+                                            
+                                            Label("Garantía interna")
+                                                .for("internalWarenty")
+                                                .marginRight(12.px)
+                                            
+                                            InputRadio()
+                                                .id(.init("exteralWarenty"))
+                                                .name("typeOfWarentie")
+                                                .width(18.px)
+                                                .height(18.px)
+                                                .marginRight(7.px)
+                                                .onClick { input in
+                                                    self.processAsInternalWarenty = false
+                                                }
+                                            
+                                            Label("Garantía externa")
+                                                .for("exteralWarenty")
+                                                
+                                            
+                                        }
+                                        .hidden(self.$processAsWarenty.map{ !$0 })
                                         
                                     }
-                                    .hidden(self.$processAsWarenty.map{ !$0 })
-                                    
-                                }
-                            .float(.left)
+                                .float(.left)
+                            }
+                            
+                            ULargeButton("Agregar")
+                            .float(.right)
+                            .onClick {
+                                self.addChargeToOrder()
+                            }
                         }
                         
-                        ULargeButton("Agregar")
-                        .float(.right)
-                        .onClick {
-                            self.addChargeToOrder()
-                        }
+                        Div().class(.clear)
+                        
                     }
-                    
-                    Div().class(.clear)
-                    
-                    
-                        }
-                        .position(.relative)
-                        .onClick {
-                            self.searchTerm = ""
-                            self.resultBox.innerHTML = ""
-                        }
+                    .position(.relative)
+                    .onClick {
+                        self.searchTerm = ""
+                        self.resultBox.innerHTML = ""
+                    }
                 }
                 .custom("flex", "1 1 460px")
                 .custom("min-width", "0")
@@ -546,7 +528,10 @@ class AddChargeFormView: Div {
     
     override func buildUI() {
         super.buildUI()
-        
+
+        TCTripBetaTheme.apply(to: self)
+        TCCrystalSurfaceTheme.apply(to: self, variant: .addCharge)
+
         position(.absolute)
         height(100.percent)
         width(100.percent)
@@ -698,7 +683,7 @@ class AddChargeFormView: Div {
                         break
                     }
                     
-                })
+                }).margin(all: 3.px)
             )
         }
     }
@@ -740,7 +725,7 @@ class AddChargeFormView: Div {
         
             loadingView(show: false)
             
-            guard let resp = resp else {
+            guard let resp else {
                 showError(.comunicationError, .serverConextionError)
                 return
             }

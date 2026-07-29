@@ -14,6 +14,8 @@ extension CustCommercialTripsComponents {
         insuranceCivilId: UUID?,
         insuranceAmbientId: UUID?,
         insurancePayloadId: UUID?,
+        odometerInitial: Int64,
+        odometerFinal: Int64,
         callback: @escaping ((_ resp: APIResponse?) -> ())
     ) {
         sendPost(
@@ -28,7 +30,9 @@ extension CustCommercialTripsComponents {
                 hasDangerousMaterial: hasDangerousMaterial,
                 insuranceCivilId: insuranceCivilId,
                 insuranceAmbientId: insuranceAmbientId,
-                insurancePayloadId: insurancePayloadId
+                insurancePayloadId: insurancePayloadId,
+                odometerInitial: odometerInitial,
+                odometerFinal: odometerFinal
             )
         ) { data in
             

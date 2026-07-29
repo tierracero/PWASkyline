@@ -515,6 +515,26 @@ public class SKMainStyle: Stylesheet {
         Rule(Class.communicationBox.hover)
             .width(400.px)
      
+        Rule(Class.toolbarPrimary)
+            .custom("display", "inline-flex")
+            .custom("flex-direction", "column")
+            .custom("align-items", "center")
+            .custom("justify-content", "center")
+            .custom("height", "54px")
+            .custom("margin", "7px 12px 0 0")
+            .custom("box-sizing", "border-box")
+            .custom("border", "1px solid transparent")
+            .custom("border-bottom", "2px solid transparent")
+            .custom("border-radius", "8px 8px 0 0")
+            .custom("background", "transparent")
+            .custom("cursor", "pointer")
+
+        Rule(Class.toolbarPrimaryActive)
+            .custom("border-color", "rgba(77, 163, 255, 0.2) !important")
+            .custom("border-bottom-color", "var(--tc-work-blue) !important")
+            .custom("background", "rgba(35, 82, 129, 0.34) !important")
+            .custom("cursor", "default")
+
     }
     
 }

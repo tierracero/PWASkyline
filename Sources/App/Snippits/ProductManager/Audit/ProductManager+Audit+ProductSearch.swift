@@ -13,9 +13,9 @@ import Web
 extension ProductManagerView.AuditView {
 
     class ProductSearch: Div {
-        
+
         override class var name: String { "div" }
-        
+
         var parsablePOCs: State<[SearchPOCResponse]>
         
         private var callback: ((
@@ -37,6 +37,12 @@ extension ProductManagerView.AuditView {
         }
         
         @State var searchTerm = ""
+
+        private var searchId = UUID()
+        private var searchRenderId = UUID()
+        private var searchResultViewsById: [UUID: SearchItemPOCView] = [:]
+        private var currentIds: Set<UUID> = []
+        private var isActive = true
         
         lazy var searchProductField = InputText(self.$searchTerm)
             .placeholder("Buscar Producto...")
@@ -66,8 +72,6 @@ extension ProductManagerView.AuditView {
             .class(.roundDarkBlue, .transparantBlackBackGround)
             .custom("height", "calc(100% - 35px)")
             .overflow(.auto)
-        
-        @State var currentIds: [UUID] = []
         
         @DOM override var body: DOM.Content {
             
@@ -143,15 +147,24 @@ extension ProductManagerView.AuditView {
             top(0.px)
             
             parsablePOCs.listen {
-                self.currentIds = $0.map{ $0.id }
+                guard self.isActive else {
+                    return
+                }
+
+                let ids = Set($0.map(\.id))
+                ids.subtracting(self.currentIds).forEach { id in
+                    self.searchResultViewsById.removeValue(forKey: id)?.remove()
+                }
+                self.currentIds = ids
             }
             
-            self.currentIds = parsablePOCs.wrappedValue.map{ $0.id }
+            self.currentIds = Set(parsablePOCs.wrappedValue.map(\.id))
             
         }
         
         override func didAddToDOM() {
             super.didAddToDOM()
+            isActive = true
             searchProductField.select()
             
             self.fadeIn(time: 0.3, begin: .display(.block)) {
@@ -161,78 +174,124 @@ extension ProductManagerView.AuditView {
         }
         
         func search(_ pause: Double = 0.5){
-             
+            let currentSearchId = UUID()
+            searchId = currentSearchId
             let term = searchTerm.purgeSpaces
              
              if term.count < 4 {
+                 searchRenderId = UUID()
+                 searchResultViewsById.removeAll()
                  self.productResultDiv.innerHTML = ""
                  return
              }
              
              Dispatch.asyncAfter(pause) {
-                 
-                 if term != self.searchTerm.purgeSpaces {
+                 guard self.isActive,
+                       currentSearchId == self.searchId,
+                       term == self.searchTerm.purgeSpaces else {
                      return
                  }
                  
                  self.searchProductField.class(.isLoading)
                  
                  searchPOC(term: term, costType: .cost_a, getCount: false) { _term, resp in
-                     
-                     self.searchProductField.removeClass(.isLoading)
-
-                     if term != _term {
+                     guard self.isActive,
+                           currentSearchId == self.searchId,
+                           term == _term,
+                           term == self.searchTerm.purgeSpaces else {
                          return
                      }
-                     
+
+                     self.searchProductField.removeClass(.isLoading)
+                     self.searchRenderId = currentSearchId
+                     self.searchResultViewsById.removeAll(keepingCapacity: true)
                      self.productResultDiv.innerHTML = ""
-                     
-                     resp.forEach { item in
-                         
-                         if self.currentIds.contains(item.id) {
-                             return
-                         }
-                         
-                         self.productResultDiv.appendChild(
-                            
-                            SearchItemPOCView(
-                                searchTerm: _term,
-                                poc: item
-                            ) { _, _ in
-                                
-                                if self.currentIds.contains(item.id) {
-                                    return
-                                }
-                                
-                                self.parsablePOCs.wrappedValue.append(item)
-                            }.hidden(self.$currentIds.map{ $0.contains(item.id) })
-                            
-                         )
-                     }
+
+                     self.asyncAddSearchResult(
+                         results: resp,
+                         term: term,
+                         searchId: currentSearchId
+                     )
                  }
              }
          }
-        
-        func removeItem(id: UUID) {
-            
-            var items: [SearchPOCResponse] = []
-            
-            parsablePOCs.wrappedValue.forEach { item in
-                if item.id == id {
+
+        private func asyncAddSearchResult(
+            results: [SearchPOCResponse],
+            term: String,
+            searchId: UUID,
+            index: Int = 0
+        ) {
+            guard isActive,
+                  searchId == self.searchId,
+                  searchId == searchRenderId,
+                  results.indices.contains(index) else {
+                return
+            }
+
+            let result = results[index]
+
+            if !currentIds.contains(result.id) {
+                let view = makeSearchResultView(result, term: term)
+
+                guard isActive,
+                      searchId == self.searchId,
+                      searchId == searchRenderId else {
+                    view.remove()
                     return
                 }
-                items.append(item)
+
+                searchResultViewsById[result.id] = view
+                productResultDiv.appendChild(view)
             }
+
+            Dispatch.asyncAfter(0.01) {
+                guard self.isActive,
+                      searchId == self.searchId,
+                      searchId == self.searchRenderId else {
+                    return
+                }
+
+                self.asyncAddSearchResult(
+                    results: results,
+                    term: term,
+                    searchId: searchId,
+                    index: index + 1
+                )
+            }
+        }
+
+        private func makeSearchResultView(
+            _ item: SearchPOCResponse,
+            term: String
+        ) -> SearchItemPOCView {
+            SearchItemPOCView(
+                searchTerm: term,
+                poc: item
+            ) { _, _ in
+                guard !self.currentIds.contains(item.id) else {
+                    return
+                }
+
+                self.parsablePOCs.wrappedValue.append(item)
+                self.searchResultViewsById.removeValue(forKey: item.id)?.remove()
+            }
+        }
+
+        func removeItem(id: UUID) {
             
-            parsablePOCs.wrappedValue = items
+            parsablePOCs.wrappedValue.removeAll { $0.id == id }
             
         }
         
 
         override func didRemoveFromDOM() {
+            searchId = UUID()
+            searchRenderId = UUID()
+            searchResultViewsById.removeAll()
+            isActive = false
             super.didRemoveFromDOM()
             $searchTerm.removeAllListeners()
-            $currentIds.removeAllListeners()
         }
     }
 }

@@ -32,7 +32,9 @@ public class OrderCatchControler {
 
         self.custCatchAccountType = TCAccountType(rawValue: (WebApp.current.window.localStorage.string(forKey: "custCatchAccountType") ?? "") ) ?? .buisness
 
-        switch macroViewType {    
+        switch macroViewType {
+        case .accountView:
+            self.macroViewType = .accountView
         case .followUpView:
             if !linkedProfile.contains(.bizFollowUp) {
                 if linkedProfile.contains(.bizODS) {
@@ -141,62 +143,137 @@ public class OrderCatchControler {
     private var deleteDelegates: [UUID] = []
 
 
-    private var loadingSessionId: UUID = .init()
+    private enum OrderRowRenderOperation {
+        case dashboard
+        case search
+        case route
+    }
+
+    private var orderRenderId = UUID()
+    private var orderSearchId = UUID()
+    private var followupRenderId = UUID()
+    private var routeRenderId = UUID()
+    private var favoriteAccountsRequestId = UUID()
+    private var favoriteAccountsIsLoading = false
+    private var favoriteAccountsHaveLoaded = false
+    private var favoriteAccounts: [CustAcctQuick] = []
     
     /// [ CustOrder.id :  OrderRowView]
     private var orderRowViewRefrence: [ UUID : OrderRowView] = [:]
 
     private var followupRowViewRefrence: [ UUID : CustFollowUpRowView] = [:]
+
+    private var orderSectionHeaders: [CustFolioStatus: H2] = [:]
+
+    private var orderSectionCountViews: [CustFolioStatus: Span] = [:]
     
-    lazy var listViewButton = Img()
+    lazy var listViewButtonImg = Img()
         .src("/skyline/media/icon_list.png")
         .class(self.$viewType.map{$0 == .listView ?  .iconBlue : .iconWhite})
         .marginBottom(3.px)
         .height(24.px)
-        .onClick { img, event in
-            if self.viewType == .listView { return }
-            self.viewType = .listView
-            img.removeClass(.iconWhite)
-            WebApp.current.window.localStorage.set( JSString(self.viewType.rawValue), forKey: "viewType")
-        }
+
+    lazy var listViewButton = Div {
+        self.listViewButtonImg
+        Span("Lista")
+    }
+    .class(Class(TCWorkDashboardClass.toolbarPrimary))
+    .class(self.$viewType.map { viewType in
+        Class(viewType == .listView
+            ? TCWorkDashboardClass.toolbarPrimaryActive
+            : TCWorkDashboardClass.toolbarPrimaryInactive)
+    })
+    .display(self.$macroViewType.map {
+        $0 == .followUpView ? .none : .inlineFlex
+    })
+    .onClick { img, event in
+        if self.viewType == .listView { return }
+        self.viewType = .listView
+        self.listViewButtonImg.removeClass(.iconWhite)
+        WebApp.current.window.localStorage.set( JSString(self.viewType.rawValue), forKey: "viewType")
+    }
     
-    lazy var calendarViewButton = Img()
+    
+    lazy var calendarViewButtonImg = Img()
         .src("/skyline/media/icon_calendar.png")
         .class(self.$viewType.map{$0 == .calendarView ? .iconBlue : .iconWhite})
         .marginBottom(3.px)
         .height(24.px)
-        .onClick { img, event in
-            if self.viewType == .calendarView { return }
-            self.viewType = .calendarView
-            img.removeClass(.iconWhite)
-            WebApp.current.window.localStorage.set( JSString(self.viewType.rawValue), forKey: "viewType")
-        }
+
+    lazy var calendarViewButton = Div {
+        self.calendarViewButtonImg
+        Span("Calendario")
+    }
+    .class(Class(TCWorkDashboardClass.toolbarPrimary))
+    .class(self.$viewType.map { viewType in
+        Class(viewType == .calendarView
+            ? TCWorkDashboardClass.toolbarPrimaryActive
+            : TCWorkDashboardClass.toolbarPrimaryInactive)
+    })
+    .display(self.$macroViewType.map {
+        $0 == .followUpView ? .none : .inlineFlex
+    })
+    .onClick { 
+        if self.viewType == .calendarView { return }
+        self.viewType = .calendarView
+        self.calendarViewButtonImg.removeClass(.iconWhite)
+        WebApp.current.window.localStorage.set( JSString(self.viewType.rawValue), forKey: "viewType")
+    }
     
-    lazy var userViewButton = Img()
+    lazy var userViewButtonImg = Img()
         .src("/skyline/media/icon_user.png")
         .class(self.$viewType.map{$0 == .userView ? .iconBlue : .iconWhite})
         .marginBottom(3.px)
         .height(24.px)
-        .onClick { img, event in
-            if self.viewType == .userView { return }
-            self.viewType = .userView
-            img.removeClass(.iconWhite)
-            WebApp.current.window.localStorage.set( JSString(self.viewType.rawValue), forKey: "viewType")
-        }
+        
+    lazy var userViewButton = Div {
+        self.userViewButtonImg
+        Span("Usuario")
+    }
+    .class(Class(TCWorkDashboardClass.toolbarPrimary))
+    .class(self.$viewType.map { viewType in
+        Class(viewType == .userView
+            ? TCWorkDashboardClass.toolbarPrimaryActive
+            : TCWorkDashboardClass.toolbarPrimaryInactive)
+    })
+    .display(self.$macroViewType.map {
+        $0 == .followUpView ? .none : .inlineFlex
+    })
+    .onClick { 
+        if self.viewType == .userView { return }
+        self.viewType = .userView
+        self.userViewButtonImg.removeClass(.iconWhite)
+        WebApp.current.window.localStorage.set( JSString(self.viewType.rawValue), forKey: "viewType")
+    }
     
-    lazy var routeViewButton = Img()
+    lazy var routeViewButtonImg = Img()
         .src("/skyline/media/icon_route.png")
         .class(self.$viewType.map{$0 == .routeView ? .iconBlue : .iconWhite})
         .hidden(self.$custCatchAccountType.map{ $0 == .entrepreneur })
         .marginBottom(3.px)
         .height(24.px)
-        .onClick { img, event in
-            if self.viewType == .routeView { return }
-            self.viewType = .routeView
-            img.removeClass(.iconWhite)
-            WebApp.current.window.localStorage.set( JSString(self.viewType.rawValue), forKey: "viewType")
-        }
     
+
+    lazy var routeViewButton = Div {
+        self.routeViewButtonImg
+        Span("Ruta")
+    }
+    .class(Class(TCWorkDashboardClass.toolbarPrimary))
+    .class(self.$viewType.map { viewType in
+        Class(viewType == .routeView
+            ? TCWorkDashboardClass.toolbarPrimaryActive
+            : TCWorkDashboardClass.toolbarPrimaryInactive)
+    })
+    .display(self.$macroViewType.map {
+        $0 == .followUpView ? .none : .inlineFlex
+    })
+    .onClick {
+        if self.viewType == .routeView { return }
+        self.viewType = .routeView
+        self.routeViewButtonImg.removeClass(.iconWhite)
+        WebApp.current.window.localStorage.set( JSString(self.viewType.rawValue), forKey: "viewType")
+    }
+
     lazy var addRouteButton = Div{
         Div{
             Img()
@@ -770,6 +847,19 @@ public class OrderCatchControler {
 
     }
     
+
+    lazy var accountContainer = Div{
+
+    }
+    .custom("height", "calc(100% - 0px)")
+    .overflow(.auto)
+
+    lazy var accountSecondContainer = Div{
+
+    }
+    .custom("height", "calc(100% - 0px)")
+    .overflow(.auto)
+
     /// Executes a search on acording set loadOrderStatusType values
     func executeSearch(){
         switch loadOrderStatusType {
@@ -777,7 +867,8 @@ public class OrderCatchControler {
             self.sincFolio(
                 accountid: nil,
                 current: [],
-                curTrans: []
+                curTrans: [],
+                renderAsSearch: true
             )
         case .byState(let state):
             self.sincByState(state)
@@ -787,7 +878,9 @@ public class OrderCatchControler {
     }
     
     func sincByState(_ state: OrderState) {
-        
+        let searchId = UUID()
+        orderSearchId = searchId
+
         loadingView(show: true)
 
 
@@ -797,7 +890,10 @@ public class OrderCatchControler {
             store: self.selectedStore?.id,
             account: nil
         ) { resp in
-            
+            guard searchId == self.orderSearchId else {
+                return
+            }
+
             loadingView(show: false)
             
             guard let resp else {
@@ -829,14 +925,16 @@ public class OrderCatchControler {
             
             self.other = orders
             
-            self.drawOrderView()
+            self.drawOrderView(operation: .search, renderId: searchId)
             
         }
         
     }
     
     func sincByStatus(_ status: CustFolioStatus) {
-        
+        let searchId = UUID()
+        orderSearchId = searchId
+
         loadingView(show: true)
         
         API.custOrderV1.loadOrderByStatus(
@@ -844,6 +942,9 @@ public class OrderCatchControler {
             store: self.selectedStore?.id,
             account: nil
         ) { resp in
+            guard searchId == self.orderSearchId else {
+                return
+            }
 
             loadingView(show: false)
             
@@ -889,7 +990,7 @@ public class OrderCatchControler {
                 self.other = orders
             }
             
-            self.drawOrderView()
+            self.drawOrderView(operation: .search, renderId: searchId)
             
             
         }
@@ -900,8 +1001,13 @@ public class OrderCatchControler {
         current: [APIStoreSincObject],
         curTrans: [APIStoreSincObject],
         initialLoad: Bool = false,
+        renderAsSearch: Bool = false,
         completion: ((Bool) -> Void)? = nil
     ){
+        let requestId = UUID()
+        if renderAsSearch {
+            orderSearchId = requestId
+        }
         
         if !initialLoad {
             loadingView(show: true)
@@ -913,6 +1019,9 @@ public class OrderCatchControler {
             current: current,
             curTrans: curTrans
         ) { resp in
+            if renderAsSearch, requestId != self.orderSearchId {
+                return
+            }
 
             if !initialLoad {
                 loadingView(show: false)
@@ -951,7 +1060,11 @@ public class OrderCatchControler {
             
             self.routes = data.routes
             
-            self.drawOrderView()
+            if renderAsSearch {
+                self.drawOrderView(operation: .search, renderId: requestId)
+            } else {
+                self.drawOrderView()
+            }
 
             completion?(true)
             
@@ -966,12 +1079,15 @@ public class OrderCatchControler {
             if custBudgetManagerStatus == nil {
                 orderCatch[orderId]?.budgetRequest = nil
             }
-            orderRowViewRefrence.forEach { id, view in
-                if orderId == id {
-                    view.budget = custBudgetManagerStatus
-                }
-            }
+            orderRowViewRefrence[orderId]?.budget = custBudgetManagerStatus
         case .orderStatus(let custFolioStatus):
+            let currentStatus = orderRowViewRefrence[orderId]?.data.status
+                ?? orderInCurrentSnapshot(orderId)?.status
+
+            guard currentStatus != custFolioStatus else {
+                return
+            }
+
             customerOrderStatusUpdate(orderId: orderId, status: custFolioStatus)
             updateOrderStatus(orderId, custFolioStatus)
         case .orderBalance(let balance):
@@ -983,27 +1099,12 @@ public class OrderCatchControler {
         case .alertStatus(let isAlerted):
             
             orderCatch[orderId]?.alerted = isAlerted
-            
-            orderRowViewRefrence.forEach { id, view in
-                if orderId == id {
-                    view.alerted = isAlerted
-                }
-            }
-            
-            //drawOrderView()
+            orderRowViewRefrence[orderId]?.alerted = isAlerted
             
         case .hightPriorityStatus(let isHighPriority):
             
             orderCatch[orderId]?.highPriority = isHighPriority
-            
-            orderRowViewRefrence.forEach { id, view in
-                if orderId == id {
-                    print("🟢  found view !!")
-                    view.highPriority = isHighPriority
-                }
-            }
-            
-            //drawOrderView()
+            orderRowViewRefrence[orderId]?.highPriority = isHighPriority
             
         case .pendingPickup(let isPendingPickup):
             break
@@ -1022,128 +1123,248 @@ public class OrderCatchControler {
     }
 
     func updateOrderStatus(_ orderId: UUID, _ custFolioStatus: CustFolioStatus){
-        
-            var order: CustOrderLoadFolios? = nil
-            
-            var uiview: OrderRowView? = nil
-            
-            /// WEBSOCKET
+        guard var order = orderRowViewRefrence[orderId]?.data
+            ?? orderInCurrentSnapshot(orderId) else {
+            return
+        }
 
-            orderRowViewRefrence.forEach { id, view in
-                if orderId == id {
-                    order = view.data
-                    uiview = view
-                }
-            }
-            
-            guard var order else {
-                print("🟢 🟡   OrderCatchControler  No se localizo orden")
-                return
-            }
-            
-            if order.status == custFolioStatus {
-                print("🟢 🟡  OrderCatchControler  same status")
-                return
-            }
-            
-            uiview?.remove()
-            
-            orderCatch[orderId]?.status = custFolioStatus        
-            
-            orderRowViewRefrence[order.id]?.data.status = custFolioStatus
-            
-            order.status = custFolioStatus
-            
-            var updated: [CustOrderLoadFolios] = []
-            pending.forEach { _order in
-                if _order.id == orderId {
-                    return
-                }
-                updated.append(_order)
-            }
-            pending = updated
-            
-            updated = []
+        guard order.status != custFolioStatus else {
+            return
+        }
 
-            print("active \(active.count)")
-            
-            active.forEach { _order in
-                
-                print("\(_order.id.uuidString) vs \(orderId.uuidString)")
-                
-                if _order.id == orderId {
-                    return
-                }
-                updated.append(_order)
-            }
-            active = updated
-            
-            updated = []
-            pendingSpare.forEach { _order in
-                if _order.id == orderId {
-                    return
-                }
-                updated.append(_order)
-            }
-            pendingSpare = updated
-            
-            updated = []
-            pendingPickup.forEach { _order in
-                if _order.id == orderId {
-                    return
-                }
-                updated.append(_order)
-            }
-            pendingPickup = updated
-            
-            switch custFolioStatus {
-            case .pending:
-                print("💎 add to pending")
-                pending.append(order)
-            case .active:
-                print("💎 add to active")
-                active.append(order)
-            case .pendingSpare:
-                print("💎 add to pendingSpare")
-                pendingSpare.append(order)
-            case .canceled, .finalize:
-                print("💎 add to pendingPickup")
-                pendingPickup.append(order)
-            case .archive, .collection, .sideStatus, .saleWait:
+        let existingView = orderRowViewRefrence[orderId]
+
+        pending.removeAll { $0.id == orderId }
+        active.removeAll { $0.id == orderId }
+        pendingSpare.removeAll { $0.id == orderId }
+        pendingPickup.removeAll { $0.id == orderId }
+        other.removeAll { $0.id == orderId }
+
+        order.status = custFolioStatus
+        orderCatch[orderId]?.status = custFolioStatus
+
+        switch custFolioStatus {
+        case .pending:
+            pending.append(order)
+        case .active:
+            active.append(order)
+        case .pendingSpare:
+            pendingSpare.append(order)
+        case .canceled, .finalize:
+            pendingPickup.append(order)
+        case .archive, .collection, .sideStatus, .saleWait:
+            break
+        }
+
+        refreshOrderCounters()
+
+        guard macroViewType == .orderView else {
+            return
+        }
+
+        if viewType == .listView {
+            existingView?.remove()
+            orderRowViewRefrence.removeValue(forKey: orderId)
+
+            guard let target = listContainer(for: custFolioStatus) else {
                 return
             }
-            
-            self.drawOrderView()
-            
+
+            ensureListSectionMounted(for: custFolioStatus)
+            // Indexed insertion resolves its anchor from SwifWeb's tracked child
+            // list. Status changes can unmount a section during this callback,
+            // leaving that anchor detached from the browser node.
+            target.appendChild(orderRowView(order))
+        } else if custFolioStatus == .archive
+                    || custFolioStatus == .collection
+                    || custFolioStatus == .sideStatus
+                    || custFolioStatus == .saleWait {
+            existingView?.remove()
+            orderRowViewRefrence.removeValue(forKey: orderId)
+        } else {
+            existingView?.applyStatus(custFolioStatus)
+        }
     }
 
-    func asyncAddOrder(
-        loadId: UUID,
+    private func orderInCurrentSnapshot(_ orderId: UUID) -> CustOrderLoadFolios? {
+        for orders in [pending, active, pendingSpare, pendingPickup, other] {
+            if let order = orders.first(where: { $0.id == orderId }) {
+                return order
+            }
+        }
+        return nil
+    }
+
+    private func listContainer(for status: CustFolioStatus) -> Div? {
+        switch status {
+        case .pending:
+            return pendingOrderView
+        case .active:
+            return activeOrderView
+        case .pendingSpare:
+            return pendingSpareOrderView
+        case .canceled, .finalize:
+            return finilizeOrderView
+        case .archive, .collection, .sideStatus, .saleWait:
+            return nil
+        }
+    }
+
+    private func refreshOrderCounters() {
+        let now = getNow()
+        let dueSoonLimit = now + 259_200
+
+        let countRequiringAttention: ([CustOrderLoadFolios]) -> Int = { orders in
+            orders.reduce(into: 0) { count, order in
+                guard let due = order.due,
+                      due >= now,
+                      due <= dueSoonLimit else {
+                    return
+                }
+                count += 1
+            }
+        }
+
+        pendingCount = pending.count
+        activeCount = active.count
+        attentionCount = countRequiringAttention(pending)
+            + countRequiringAttention(pendingSpare)
+            + countRequiringAttention(active)
+        finalizedCount = pendingPickup.count
+
+        updateListSectionCount(.pending, count: pending.count)
+        updateListSectionCount(.pendingSpare, count: pendingSpare.count)
+        updateListSectionCount(.active, count: active.count)
+        updateListSectionCount(.finalize, count: pendingPickup.count)
+    }
+
+    private func updateListSectionCount(
+        _ status: CustFolioStatus,
+        count: Int
+    ) {
+        orderSectionCountViews[status]?.innerHTML = count.toString
+
+        if count == 0 {
+            orderSectionHeaders.removeValue(forKey: status)?.remove()
+            orderSectionCountViews.removeValue(forKey: status)
+            // Keep the section container out of both the browser tree and
+            // SwifWeb's tracked children until it is mounted again.
+            listContainer(for: status)?.remove()
+        }
+    }
+
+    private func makeOrderSectionHeader(
+        status: CustFolioStatus,
+        count: Int
+    ) -> H2 {
+        let countView = Span(count.toString)
+            .marginLeft(12.px)
+            .opacity(0.5)
+            .color(.gray)
+
+        let header = H2{
+            Span(status.description)
+                .color(status.color)
+            countView
+        }
+        .margin(all: 7.px)
+
+        orderSectionHeaders[status] = header
+        orderSectionCountViews[status] = countView
+        return header
+    }
+
+    private func ensureListSectionMounted(
+        for status: CustFolioStatus
+    ) {
+        let sectionStatus: CustFolioStatus
+        let root: Div
+        let sectionContainer: Div
+        let count: Int
+
+        switch status {
+        case .pending:
+            sectionStatus = .pending
+            root = firstView
+            sectionContainer = pendingOrderView
+            count = pending.count
+        case .pendingSpare:
+            sectionStatus = .pendingSpare
+            root = firstView
+            sectionContainer = pendingSpareOrderView
+            count = pendingSpare.count
+        case .active:
+            sectionStatus = .active
+            root = secondView
+            sectionContainer = activeOrderView
+            count = active.count
+        case .canceled, .finalize:
+            sectionStatus = .finalize
+            root = secondView
+            sectionContainer = finilizeOrderView
+            count = pendingPickup.count
+        case .archive, .collection, .sideStatus, .saleWait:
+            return
+        }
+
+        guard orderSectionHeaders[sectionStatus] == nil else {
+            return
+        }
+
+        root.appendChild(
+            makeOrderSectionHeader(
+                status: sectionStatus,
+                count: count
+            )
+        )
+        root.appendChild(sectionContainer)
+    }
+
+    private func asyncAddOrder(
+        renderId: UUID,
+        operation: OrderRowRenderOperation,
         view: Div,
         rows: [CustOrderLoadFolios],
         index: Int = 0
     ) {
 
-        guard loadId == loadingSessionId, rows.indices.contains(index) else {
+        guard isCurrentRender(renderId, operation: operation),
+              rows.indices.contains(index) else {
             return
         }
 
         Dispatch.asyncAfter(index == 0 ? 0.01 : 0.03) {
-            guard loadId == self.loadingSessionId,
+            guard self.isCurrentRender(renderId, operation: operation),
                   rows.indices.contains(index) else {
+                return
+            }
+
+            guard self.isCurrentRender(renderId, operation: operation) else {
                 return
             }
 
             let item = self.orderRowView(rows[index])
 
-            item.filter(.opacity(0))
+            guard self.isCurrentRender(renderId, operation: operation) else {
+                item.remove()
+                return
+            }
 
+            if rows.count <= 35 {
+                item.filter(.opacity(0))
+            }
             view.appendChild(item)
 
-            item.fadeIn()
+            if rows.count <= 35 {
+                item.fadeIn()
+            }
 
+            guard self.isCurrentRender(renderId, operation: operation) else {
+                return
+            }
             self.asyncAddOrder(
-                loadId: loadId,
+                renderId: renderId,
+                operation: operation,
                 view: view,
                 rows: rows,
                 index: index + 1
@@ -1152,9 +1373,26 @@ public class OrderCatchControler {
 
     }
 
+    private func isCurrentRender(
+        _ renderId: UUID,
+        operation: OrderRowRenderOperation
+    ) -> Bool {
+        switch operation {
+        case .dashboard:
+            return renderId == orderRenderId
+        case .search:
+            return renderId == orderSearchId
+        case .route:
+            return renderId == routeRenderId
+        }
+    }
+
     func drawFollowupView( items: [CustFollowUp]) {
 
         macroViewType = .followUpView
+        orderRenderId = UUID()
+        orderSearchId = UUID()
+        routeRenderId = UUID()
 
         pendingCount = 0
         activeCount = items.count
@@ -1172,10 +1410,11 @@ public class OrderCatchControler {
         }
 
         orderRowViewRefrence.removeAll()
+        orderSectionHeaders.removeAll()
+        orderSectionCountViews.removeAll()
 
-        let thisLoadingSessionId : UUID = .init()
-
-        loadingSessionId = thisLoadingSessionId
+        let renderId = UUID()
+        followupRenderId = renderId
         
         firstView.innerHTML = ""
         container.removeClass(.oneHalf)
@@ -1198,57 +1437,80 @@ public class OrderCatchControler {
 
         // LOAD DATA
 
-        var isEven = true
-
-        // followupRowViewRefrence
-
-        items.forEach { item in
-
-            let view = followupRowView(data: item)
-
-            followupRowViewRefrence[item.id] = view
-
-            if isEven {
-                firstView.appendChild(view)
-            }
-            else {
-                secondView.appendChild(view)
-            }
-
-            isEven = !isEven
-
-        }
+        asyncAddFollowup(
+            renderId: renderId,
+            items: items
+        )
 
     }
 
-    func drawOrderView(){
+    private func asyncAddFollowup(
+        renderId: UUID,
+        items: [CustFollowUp],
+        index: Int = 0
+    ) {
+        guard renderId == followupRenderId,
+              items.indices.contains(index) else {
+            return
+        }
+
+        Dispatch.asyncAfter(index == 0 ? 0.01 : 0.03) {
+            guard renderId == self.followupRenderId,
+                  items.indices.contains(index) else {
+                return
+            }
+
+            let item = items[index]
+            let view = self.followupRowView(data: item)
+
+            guard renderId == self.followupRenderId else {
+                view.remove()
+                return
+            }
+
+            self.followupRowViewRefrence[item.id] = view
+
+            if index.isEven {
+                self.firstView.appendChild(view)
+            } else {
+                self.secondView.appendChild(view)
+            }
+
+            guard renderId == self.followupRenderId else {
+                return
+            }
+
+            self.asyncAddFollowup(
+                renderId: renderId,
+                items: items,
+                index: index + 1
+            )
+        }
+    }
+
+    func drawOrderView() {
+        followupRenderId = UUID()
+        orderSearchId = UUID()
+        if viewType != .routeView {
+            routeRenderId = UUID()
+        }
+        orderRenderId = UUID()
+        drawOrderView(operation: .dashboard, renderId: orderRenderId)
+    }
+
+    private func drawOrderView(
+        operation: OrderRowRenderOperation,
+        renderId: UUID
+    ){
+        if operation == .search {
+            orderRenderId = UUID()
+            followupRenderId = UUID()
+            routeRenderId = UUID()
+        }
         
         macroViewType = .orderView
 
-        let now = getNow()
-        let dueSoonLimit = now + 259_200
-        let requiresAttention: (CustOrderLoadFolios) -> Bool = { order in
-            guard let due = order.due else { return false }
-            return due >= now && due <= dueSoonLimit
-        }
-        let countRequiringAttention: ([CustOrderLoadFolios]) -> Int = { orders in
-            orders.reduce(into: 0) { count, order in
-                if requiresAttention(order) {
-                    count += 1
-                }
-            }
-        }
-
-        pendingCount = pending.count
-        activeCount = active.count
-        attentionCount = countRequiringAttention(pending)
-            + countRequiringAttention(pendingSpare)
-            + countRequiringAttention(active)
-        finalizedCount = pendingPickup.count
-
-        let thisLoadingSessionId : UUID = .init()
-
-        loadingSessionId = thisLoadingSessionId
+        refreshOrderCounters()
 
         // Clearing the two column roots already runs didRemoveFromDOM recursively.
         // Removing every row first would schedule an animation and timer per row,
@@ -1268,6 +1530,8 @@ public class OrderCatchControler {
 
         followupRowViewRefrence.removeAll(keepingCapacity: true)
         orderRowViewRefrence.removeAll(keepingCapacity: true)
+        orderSectionHeaders.removeAll(keepingCapacity: true)
+        orderSectionCountViews.removeAll(keepingCapacity: true)
 
         let totalItems: Int = [
             pending.count,
@@ -1304,21 +1568,15 @@ public class OrderCatchControler {
             if !pending.isEmpty {
                 
                 self.firstView.appendChild(
-                    H2{
-                        Span(CustFolioStatus.pending.description)
-                            .color(CustFolioStatus.pending.color)
-                        
-                        Span(self.pending.count.toString)
-                            .marginLeft(12.px)
-                            .opacity(0.5)
-                            .color(.gray)
-                    }
-                        .margin(all: 7.px)
+                    makeOrderSectionHeader(
+                        status: .pending,
+                        count: pending.count
+                    )
                 )
                     
                 firstView.appendChild(pendingOrderView)
 
-                asyncAddOrder(loadId: thisLoadingSessionId, view: pendingOrderView, rows: pending) //  pending
+                asyncAddOrder(renderId: renderId, operation: operation, view: pendingOrderView, rows: pending) // pending
 
 
             }
@@ -1326,22 +1584,15 @@ public class OrderCatchControler {
             if !pendingSpare.isEmpty {
                 
                 firstView.appendChild(
-                    H2{
-                        Span(CustFolioStatus.pendingSpare.description)
-                            .color(CustFolioStatus.pendingSpare.color)
-                        
-                        Span(self.pendingSpare.count.toString)
-                            .marginLeft(12.px)
-                            .opacity(0.5)
-                            .color(.gray)
-                    }
-                        
-                        .margin(all: 7.px)
+                    makeOrderSectionHeader(
+                        status: .pendingSpare,
+                        count: pendingSpare.count
+                    )
                 )
 
                 firstView.appendChild(pendingSpareOrderView)
 
-                asyncAddOrder(loadId: thisLoadingSessionId, view: pendingSpareOrderView, rows: pendingSpare)
+                asyncAddOrder(renderId: renderId, operation: operation, view: pendingSpareOrderView, rows: pendingSpare)
                 
             }
             if !inOrder.isEmpty {
@@ -1361,48 +1612,35 @@ public class OrderCatchControler {
             if !active.isEmpty {
                 
                 self.secondView.appendChild(
-                    H2{
-                        Span(CustFolioStatus.active.description)
-                            .color(CustFolioStatus.active.color)
-                        
-                        Span(self.active.count.toString)
-                            .marginLeft(12.px)
-                            .opacity(0.5)
-                            .color(.gray)
-                    }
-                    .margin(all: 7.px)
-                    
+                    makeOrderSectionHeader(
+                        status: .active,
+                        count: active.count
+                    )
                 )
 
                 self.secondView.appendChild(activeOrderView)
 
-                asyncAddOrder(loadId: thisLoadingSessionId, view: activeOrderView, rows: active)
+                asyncAddOrder(renderId: renderId, operation: operation, view: activeOrderView, rows: active)
 
             }
             if !pendingPickup.isEmpty {
                 
                 secondView.appendChild(
-                    H2{
-                        Span(CustFolioStatus.finalize.description)
-                            .color(CustFolioStatus.finalize.color)
-                        
-                        Span(self.pendingPickup.count.toString)
-                            .marginLeft(12.px)
-                            .opacity(0.5)
-                            .color(.gray)
-                    }
-                    .margin(all: 7.px)
+                    makeOrderSectionHeader(
+                        status: .finalize,
+                        count: pendingPickup.count
+                    )
                 )
 
                 secondView.appendChild(finilizeOrderView)
                 
-                asyncAddOrder(loadId: thisLoadingSessionId, view: finilizeOrderView, rows: pendingPickup)
+                asyncAddOrder(renderId: renderId, operation: operation, view: finilizeOrderView, rows: pendingPickup)
 
             }
             
             if orderCount > 0 {
                 
-                asyncAddOrder(loadId: thisLoadingSessionId, view: secondView, rows: other)
+                asyncAddOrder(renderId: renderId, operation: operation, view: secondView, rows: other)
                 
             }
             else {
@@ -1423,9 +1661,9 @@ public class OrderCatchControler {
                     cc += 1
                 }
 
-                asyncAddOrder(loadId: thisLoadingSessionId, view: firstView, rows: evenItems)
+                asyncAddOrder(renderId: renderId, operation: operation, view: firstView, rows: evenItems)
 
-                asyncAddOrder(loadId: thisLoadingSessionId, view: secondView, rows: oddItems)
+                asyncAddOrder(renderId: renderId, operation: operation, view: secondView, rows: oddItems)
             }
             
         case .calendarView:
@@ -1614,7 +1852,7 @@ public class OrderCatchControler {
 
             /// View One
             self.firstView.appendChild(H1("Sin Cita / Vencidos \(generalPayload.count.toString)").color(.white).marginBottom(7.px))
-            self.asyncAddOrder(loadId: thisLoadingSessionId, view: self.firstView, rows: generalPayload)
+            self.asyncAddOrder(renderId: renderId, operation: operation, view: self.firstView, rows: generalPayload)
 
             /// View Two
             self.secondView.appendChild(OrderCalendarView(selectedDateStamp: "", __workMap: workMap, callback: { selectedDateStamp, uts, highPriority in
@@ -1630,7 +1868,7 @@ public class OrderCatchControler {
             
             getUsers(storeid: nil, onlyActive: false) { users in
 
-                guard self.loadingSessionId == thisLoadingSessionId,
+                guard self.isCurrentRender(renderId, operation: operation),
                       self.viewType == .userView else {
                     return
                 }
@@ -1702,7 +1940,7 @@ public class OrderCatchControler {
 
                         self.pendingOrderView.appendChild(userInnerView)
 
-                        self.asyncAddOrder(loadId: thisLoadingSessionId, view: userInnerView, rows: items) 
+                        self.asyncAddOrder(renderId: renderId, operation: operation, view: userInnerView, rows: items)
 
                     }
                     
@@ -1766,7 +2004,7 @@ public class OrderCatchControler {
 
                         self.pendingSpareOrderView.appendChild(userInnerView)
 
-                        self.asyncAddOrder(loadId: thisLoadingSessionId, view: userInnerView, rows: items)
+                        self.asyncAddOrder(renderId: renderId, operation: operation, view: userInnerView, rows: items)
                         
                     }
                     
@@ -1844,7 +2082,7 @@ public class OrderCatchControler {
 
                         self.activeOrderView.appendChild(userInnerView)
 
-                        self.asyncAddOrder(loadId: thisLoadingSessionId, view: userInnerView, rows: items)
+                        self.asyncAddOrder(renderId: renderId, operation: operation, view: userInnerView, rows: items)
                         
                     }
                     
@@ -1911,7 +2149,7 @@ public class OrderCatchControler {
 
                         self.finilizeOrderView.appendChild(userInnerView)
 
-                        self.asyncAddOrder(loadId: thisLoadingSessionId, view: userInnerView, rows: items)
+                        self.asyncAddOrder(renderId: renderId, operation: operation, view: userInnerView, rows: items)
                         
                     }
                     
@@ -1967,7 +2205,8 @@ public class OrderCatchControler {
                                 let userInnerView = Div()
                                 destination.appendChild(userInnerView)
                                 self.asyncAddOrder(
-                                    loadId: thisLoadingSessionId,
+                                    renderId: renderId,
+                                    operation: operation,
                                     view: userInnerView,
                                     rows: orders
                                 )
@@ -1995,7 +2234,8 @@ public class OrderCatchControler {
                                 let userInnerView = Div()
                                 self.secondView.appendChild(userInnerView)
                                 self.asyncAddOrder(
-                                    loadId: thisLoadingSessionId,
+                                    renderId: renderId,
+                                    operation: operation,
                                     view: userInnerView,
                                     rows: orders
                                 )
@@ -2017,98 +2257,9 @@ public class OrderCatchControler {
     }
     
     func orderRowView(_ data: CustOrderLoadFolios) -> OrderRowView {
-        
-        let view = OrderRowView(data: data, callback: { 
-    
-                /// Search If their is a acctid refrence
-                if let accountid = minViewOrderAccountRefrence[data.id] {
-                    
-                    /// Search if AccoutOverview is available
-                    if let accoutOverview = minViewAcctRefrence[accountid] {
-                        
-                        if accoutOverview.order?.id == data.id {
-                            
-                            /// The current order is lodad only show
-                            /// remove small button
-                            minViewDivRefrence[accountid]?.remove()
-                            ///  remove small button refrence
-                            minViewDivRefrence.removeValue(forKey: accountid)
-                            /// Show AccoutOverview
-                            accoutOverview.display(.block)
-                            
-                            accoutOverview.load = .order
-                            
-                            return
-                        }
-                        else{
-                            
-                            /// Load Order
-                            /// remove small button
-                            minViewDivRefrence[accountid]?.remove()
-                            ///  remove small button refrence
-                            minViewDivRefrence.removeValue(forKey: accountid)
-                            /// Show AccoutOverview
-                            accoutOverview.display(.block)
-                            
-                            accoutOverview.loadOrder(id: data.id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
-                                accoutOverview.loadOrder(
-                                    account: account,
-                                    order: order,
-                                    notes: notes,
-                                    payments: payments,
-                                    charges: charges, 
-                                    pocs: pocs,
-                                    files: files,
-                                    contracts: contracts,
-                                    equipments: equipments,
-                                    rentals: rentals,
-                                    transferOrder: transferOrder,
-                                    orderHighPriorityNote: orderHighPriorityNote,
-                                    accountHighPriorityNote: accountHighPriorityNote,
-                                    tasks: tasks,
-                                    orderRoute: route,
-                                    loadFromCatch: loadFromCatch
-                                )
-                                
-                                accoutOverview.load = .order
-                                
-                            }
-                            return
-                        }
-                    }
-                    
-                }
-                
-                self.loadFolio(orderid: data.id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
-                    let accoutOverview = AccoutOverview (
-                        id: .id(order.custAcct)
-                    )
-                    
-                    accoutOverview.loadOrder(
-                        account: account,
-                        order: order,
-                        notes: notes,
-                        payments: payments,
-                        charges: charges,
-                        pocs: pocs,
-                        files: files,
-                        contracts: contracts,
-                        equipments: equipments, 
-                        rentals: rentals,
-                        transferOrder: transferOrder,
-                        orderHighPriorityNote: orderHighPriorityNote,
-                        accountHighPriorityNote: accountHighPriorityNote,
-                        tasks: tasks,
-                        orderRoute: route,
-                        loadFromCatch: loadFromCatch
-                    )
-                    
-                    minViewAcctRefrence[order.custAcct] = accoutOverview
-                    
-                    addToDom(accoutOverview)
-                }
-            
-        })
+        let view = OrderRowView(data: data) {
+            self.openOrder(data.id)
+        }
 
         view.borderLeft(
             width: .thick,
@@ -2120,6 +2271,141 @@ public class OrderCatchControler {
         
         return view
         
+    }
+
+    private func openOrder(_ orderId: UUID) {
+        if let accountId = minViewOrderAccountRefrence[orderId] {
+            if restoreExistingAccountView(
+                accountId: accountId,
+                orderId: orderId
+            ) {
+                return
+            }
+
+            if loadOrderIntoExistingAccountView(
+                accountId: accountId,
+                orderId: orderId
+            ) {
+                return
+            }
+        }
+
+        loadOrderIntoNewAccountView(orderId: orderId)
+    }
+
+    private func restoreExistingAccountView(
+        accountId: UUID,
+        orderId: UUID
+    ) -> Bool {
+        guard let accountOverview = minViewAcctRefrence[accountId],
+              accountOverview.order?.id == orderId else {
+            return false
+        }
+
+        minViewDivRefrence[accountId]?.remove()
+        minViewDivRefrence.removeValue(forKey: accountId)
+        accountOverview.display(.block)
+        accountOverview.load = .order
+        return true
+    }
+
+    private func loadOrderIntoExistingAccountView(
+        accountId: UUID,
+        orderId: UUID
+    ) -> Bool {
+        guard let accountOverview = minViewAcctRefrence[accountId] else {
+            return false
+        }
+
+        minViewDivRefrence[accountId]?.remove()
+        minViewDivRefrence.removeValue(forKey: accountId)
+        accountOverview.display(.block)
+
+        accountOverview.loadOrder(id: orderId) {
+            account,
+            order,
+            notes,
+            payments,
+            charges,
+            pocs,
+            files,
+            contracts,
+            equipments,
+            rentals,
+            transferOrder,
+            orderHighPriorityNote,
+            accountHighPriorityNote,
+            tasks,
+            route,
+            loadFromCatch in
+            accountOverview.loadOrder(
+                account: account,
+                order: order,
+                notes: notes,
+                payments: payments,
+                charges: charges,
+                pocs: pocs,
+                files: files,
+                contracts: contracts,
+                equipments: equipments,
+                rentals: rentals,
+                transferOrder: transferOrder,
+                orderHighPriorityNote: orderHighPriorityNote,
+                accountHighPriorityNote: accountHighPriorityNote,
+                tasks: tasks,
+                orderRoute: route,
+                loadFromCatch: loadFromCatch
+            )
+            accountOverview.load = .order
+        }
+
+        return true
+    }
+
+    private func loadOrderIntoNewAccountView(orderId: UUID) {
+        loadFolio(orderid: orderId) {
+            account,
+            order,
+            notes,
+            payments,
+            charges,
+            pocs,
+            files,
+            contracts,
+            equipments,
+            rentals,
+            transferOrder,
+            orderHighPriorityNote,
+            accountHighPriorityNote,
+            tasks,
+            route,
+            loadFromCatch in
+            let accountOverview = AccoutOverview(
+                id: .id(order.custAcct)
+            )
+
+            accountOverview.loadOrder(
+                account: account,
+                order: order,
+                notes: notes,
+                payments: payments,
+                charges: charges,
+                pocs: pocs,
+                files: files,
+                contracts: contracts,
+                equipments: equipments,
+                rentals: rentals,
+                transferOrder: transferOrder,
+                orderHighPriorityNote: orderHighPriorityNote,
+                accountHighPriorityNote: accountHighPriorityNote,
+                tasks: tasks,
+                orderRoute: route,
+                loadFromCatch: loadFromCatch
+            )
+
+            minViewAcctRefrence[order.custAcct] = accountOverview
+            addToDom(accountOverview)
+        }
     }
 
     func followupRowView(data: CustFollowUp) -> CustFollowUpRowView {
@@ -2509,12 +2795,12 @@ public class OrderCatchControler {
     func drawRouteView(){
         
         macroViewType = .orderView
+        followupRenderId = UUID()
 
         orderRowViewRefrence.removeAll()
 
-        let thisLoadingSessionId : UUID = .init()
-
-        loadingSessionId = thisLoadingSessionId
+        let renderId = UUID()
+        routeRenderId = renderId
 
         container.class(.oneHalf)
         secondView.class([.oneHalf, .roundGrayBlackDark])
@@ -2602,7 +2888,12 @@ public class OrderCatchControler {
         }
         
         /// View One
-        self.asyncAddOrder(loadId: thisLoadingSessionId, view: self.firstView, rows: generalPayload) 
+        self.asyncAddOrder(
+            renderId: renderId,
+            operation: .route,
+            view: self.firstView,
+            rows: generalPayload
+        )
         
         /// View Two
         if routes.isEmpty {
@@ -2677,23 +2968,64 @@ public class OrderCatchControler {
         }
         
         getUsers(storeid: nil, onlyActive: false) { users in
-        
-            let userRefrence: [ UUID: CustUsername ] = Dictionary(uniqueKeysWithValues: users.map{ ($0.id, $0) })
-        
-            self.routes.forEach { route in
-                
-                var supervisorUser = "N/A"
-                
-                if let uname = userRefrence[route.supervisor]?.username.explode("@").first {
-                    supervisorUser = "@\(uname)"
-                }
-                    
-                let view = self.routeItemRow(route, supervisorUser)
-                
-                self.secondView.appendChild(view)
-                
+            guard renderId == self.routeRenderId,
+                  self.viewType == .routeView else {
+                return
             }
-            
+
+            let userRefrence: [ UUID: CustUsername ] = Dictionary(uniqueKeysWithValues: users.map{ ($0.id, $0) })
+
+            self.asyncAddRoute(
+                renderId: renderId,
+                routes: self.routes,
+                userRefrence: userRefrence
+            )
+        }
+    }
+
+    private func asyncAddRoute(
+        renderId: UUID,
+        routes: [CustOrderRoute],
+        userRefrence: [UUID: CustUsername],
+        index: Int = 0
+    ) {
+        guard renderId == routeRenderId,
+              routes.indices.contains(index) else {
+            return
+        }
+
+        Dispatch.asyncAfter(index == 0 ? 0.01 : 0.03) {
+            guard renderId == self.routeRenderId,
+                  routes.indices.contains(index) else {
+                return
+            }
+
+            let route = routes[index]
+            var supervisorUser = "N/A"
+
+            if let uname = userRefrence[route.supervisor]?.username.explode("@").first {
+                supervisorUser = "@\(uname)"
+            }
+
+            let view = self.routeItemRow(route, supervisorUser)
+
+            guard renderId == self.routeRenderId else {
+                view.remove()
+                return
+            }
+
+            self.secondView.appendChild(view)
+
+            guard renderId == self.routeRenderId else {
+                return
+            }
+
+            self.asyncAddRoute(
+                renderId: renderId,
+                routes: routes,
+                userRefrence: userRefrence,
+                index: index + 1
+            )
         }
     }
     
@@ -2861,8 +3193,97 @@ public class OrderCatchControler {
         
     }
 
+    func loadAccounts(force: Bool = false) {
+        self.macroViewType = .accountView
+
+        if !force {
+            if favoriteAccountsHaveLoaded {
+                drawFavoriteAccounts(favoriteAccounts)
+                return
+            }
+
+            if favoriteAccountsIsLoading {
+                return
+            }
+        }
+
+        let requestId = UUID()
+        favoriteAccountsRequestId = requestId
+        favoriteAccountsIsLoading = true
+
+        loadingView(show: true)
+
+        API.custAccountV1.favorite { resp in
+            guard requestId == self.favoriteAccountsRequestId else {
+                return
+            }
+
+            self.favoriteAccountsIsLoading = false
+            loadingView(show: false)
+
+            guard let resp else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+
+            guard resp.status == .ok else {
+                showError(.generalError, resp.msg)
+                return
+            }
+
+            guard let favoriteAccounts = resp.data else {
+                showError(.unexpectedResult, .unexpenctedMissingPayload)
+                return
+            }
+
+            self.favoriteAccounts = favoriteAccounts
+            self.favoriteAccountsHaveLoaded = true
+            self.drawFavoriteAccounts(favoriteAccounts)
+        }
+    }
+
+    private func drawFavoriteAccounts(_ favoriteAccounts: [CustAcctQuick]) {
+        accountContainer.innerHTML = ""
+        accountSecondContainer.innerHTML = ""
+
+        guard !favoriteAccounts.isEmpty else {
+            accountContainer.appendChild(
+                Div("No hay cuentas favoritas")
+                    .color(.gray)
+                    .padding(all: 18.px)
+                    .align(.center)
+            )
+            return
+        }
+
+        favoriteAccounts.enumerated().forEach { index, account in
+            let row = AccountRowView(
+                data: .init(
+                    id: account.id,
+                    folio: account.folio,
+                    businessName: account.businessName,
+                    firstName: account.firstName,
+                    lastName: account.lastName,
+                    street: account.street,
+                    colony: account.colony,
+                    city: account.city
+                )
+            ) { accountId in
+                loadAccountView(id: .id(accountId))
+            }
+
+            if index % 2 == 0 {
+                accountContainer.appendChild(row)
+            } else {
+                accountSecondContainer.appendChild(row)
+            }
+        }
+    }
+
     func loadFollowups() {
-        
+        let requestId = UUID()
+        followupRenderId = requestId
+
         loadingView(show: true)
 
         API.custFollowup.getItems(
@@ -2870,7 +3291,10 @@ public class OrderCatchControler {
             userId: nil,
             status: nil
         ) { resp in
-            
+            guard requestId == self.followupRenderId else {
+                return
+            }
+
             loadingView(show: false)
             
             guard let resp else {
@@ -2899,6 +3323,8 @@ extension OrderCatchControler {
     
     /// orderView, followUpView, rentalView, dateView, tripView
     enum MacroViewType: String {
+
+        case accountView
 
         case orderView
         

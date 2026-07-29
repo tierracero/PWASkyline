@@ -85,6 +85,8 @@ extension ProductManagerView.AuditView {
         }
         .custom("height", "calc(100% - 85px)")
         .overflow(.auto)
+
+        private var cardexRenderId = UUID()
         
         @DOM override var body: DOM.Content {
             /// Filter View
@@ -440,6 +442,9 @@ extension ProductManagerView.AuditView {
                 return
             }
             
+            let renderId = UUID()
+            cardexRenderId = renderId
+
             loadingView(show: true)
             
             API.custPOCV1.cardex(
@@ -448,6 +453,10 @@ extension ProductManagerView.AuditView {
                 startAt: startAtUTS,
                 endAt: endAtUTS
             ) { resp in
+                guard renderId == self.cardexRenderId else {
+                    return
+                }
+
                 loadingView(show: false)
                 
                 guard let resp else {
@@ -520,42 +529,6 @@ extension ProductManagerView.AuditView {
                     
                     totalFinalCost += item.finalBalance
                     
-                    let avatar = Img()
-                        .src("/skyline/media/512.png")
-                        .borderRadius(all: 12.px)
-                        .marginRight(7.px)
-                        .objectFit(.cover)
-                        .height(75.px)
-                        .width(75.px)
-                        .float(.left)
-                    
-                    tableBody.appendChild(Tr{
-                        Td{
-                            avatar
-                        }
-                        Td(item.poc.upc)
-                        Td("\(item.poc.name) \(item.poc.brand) \(item.poc.model)".purgeSpaces)
-                        Td(item.poc.cost.formatMoney)
-                            .align(.right)
-                        Td(item.poc.pricea.formatMoney)
-                            .align(.right)
-                        Td(item.initalBalance.formatMoney)
-                            .align(.right)
-                        Td(item.initalInventory.toString)
-                            .align(.right)
-                        Td(item.addedInventory.toString)
-                            .align(.right)
-                        Td(item.removeInventory.toString)
-                            .align(.right)
-                        Td(item.finalInventory.toString)
-                            .align(.right)
-                        Td(item.finalBalance.formatMoney)
-                            .align(.right)
-                    }.class(.hoverFocusBlack))
-                    
-                    if let pDir = customerServiceProfile?.account.pDir, !item.poc.avatar.isEmpty {
-                        avatar.load("https://intratc.co/cdn/\(pDir)/thump_\(item.poc.avatar)")
-                    }
                 }
                 
                 let costTaxSI = calcSubTotal(
@@ -721,7 +694,74 @@ extension ProductManagerView.AuditView {
                 self.resultDiv.appendChild(Div().clear(.both).height(3.px))
                 
                 self.resultDiv.appendChild(table)
+
+                self.asyncAddCardexRow(
+                    renderId: renderId,
+                    items: payload.objects,
+                    tableBody: tableBody
+                )
                 
+            }
+        }
+
+        private func asyncAddCardexRow(
+            renderId: UUID,
+            items: [CustPOCComponents.CardexObject],
+            tableBody: TBody,
+            index: Int = 0
+        ) {
+            guard renderId == cardexRenderId,
+                  items.indices.contains(index) else {
+                return
+            }
+
+            let item = items[index]
+            let avatar = Img()
+                .src("/skyline/media/512.png")
+                .borderRadius(all: 12.px)
+                .marginRight(7.px)
+                .objectFit(.cover)
+                .height(75.px)
+                .width(75.px)
+                .float(.left)
+
+            let row = Tr{
+                Td{ avatar }
+                Td(item.poc.upc)
+                Td("\(item.poc.name) \(item.poc.brand) \(item.poc.model)".purgeSpaces)
+                Td(item.poc.cost.formatMoney).align(.right)
+                Td(item.poc.pricea.formatMoney).align(.right)
+                Td(item.initalBalance.formatMoney).align(.right)
+                Td(item.initalInventory.toString).align(.right)
+                Td(item.addedInventory.toString).align(.right)
+                Td(item.removeInventory.toString).align(.right)
+                Td(item.finalInventory.toString).align(.right)
+                Td(item.finalBalance.formatMoney).align(.right)
+            }.class(.hoverFocusBlack)
+
+            guard renderId == cardexRenderId else {
+                row.remove()
+                return
+            }
+
+            tableBody.appendChild(row)
+
+            if let pDir = customerServiceProfile?.account.pDir,
+               !item.poc.avatar.isEmpty {
+                avatar.load("https://intratc.co/cdn/\(pDir)/thump_\(item.poc.avatar)")
+            }
+
+            Dispatch.asyncAfter(0.01) {
+                guard renderId == self.cardexRenderId else {
+                    return
+                }
+
+                self.asyncAddCardexRow(
+                    renderId: renderId,
+                    items: items,
+                    tableBody: tableBody,
+                    index: index + 1
+                )
             }
         }
         
@@ -933,6 +973,7 @@ extension ProductManagerView.AuditView {
         }
 
         override func didRemoveFromDOM() {
+            cardexRenderId = UUID()
             super.didRemoveFromDOM()
             $typeSelectListener.removeAllListeners()
             $selectCustomerListener.removeAllListeners()

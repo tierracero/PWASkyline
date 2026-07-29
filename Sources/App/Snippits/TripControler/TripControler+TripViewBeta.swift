@@ -25,6 +25,8 @@ final class TripViewBeta: Div {
 
     @State var charges: [CustOrderLoadFolioCharges]
 
+    @State var costs: [CustGastosEgresos]
+
     @State var contracts: [CustPageContent]
 
     @State var pocs: [CustPOCInventoryOrderView]
@@ -41,6 +43,8 @@ final class TripViewBeta: Div {
 
     @State private var status: String
 
+    @State var financialView:  FinancialView = .charges
+
     private let statusChangedCallback: (UUID, FiscalTripFollowupStatus) -> Void
 
     init(
@@ -52,6 +56,7 @@ final class TripViewBeta: Div {
         self.notes = response.notes
         self.payments = response.payments
         self.charges = response.charges
+        self.costs = response.costs
         self.contracts = response.contracts
         self.pocs = response.pocs
         self.orderHighPriorityNote = response.orderHighPriorityNote
@@ -124,155 +129,268 @@ final class TripViewBeta: Div {
 
     private lazy var complianceBox = VBox()
 
+
+
     /// Charges Grid
     lazy var chargesAndPaymentsDemo = Div {
 
-        Div{
+        Div {
 
-            /*
-            /// Payment
             Div{
 
+                /*
+                /// Payment
                 Div{
-                    Img()
-                        .src("/skyline/media/coin.png")
-                        .marginLeft(7.px)
-                        .marginTop(3.px)
-                        .height(20.px)
-                }
-                .float(.left)
 
-                Span("Pago")
-            }
-            .class(.uibtn)
-            .float(.right)
-            .onClick {
-                self.openTripPayment()
-            }
-            */
-
-            /// charge
-
-            Div{
-
-                Div{
-                    Img()
-                        .src("/skyline/media/price.png")
-                        .marginLeft(7.px)
-                        .marginTop(3.px)
-                        .height(20.px)
-                }
-                .float(.left)
-
-                Span("Cargo")
-            }
-            .class(.uibtn)
-            .float(.right)
-            .onClick { _ in
-                self.addCharge()
-            }
-
-            H2("Cargos y pagos")
-                .float(.left)
-                .color(.gray)
-            /*
-            Div{
-
-                Img()
-                    .src("/skyline/media/maximizeWindow.png")
-                    .class(.iconWhite)
-                    .marginLeft(7.px)
-                    .cursor(.pointer)
-                    .marginTop(7.px)
-                    .height(18.px)
-
-            }
-            .float(.left)
-            */
-
-            Div().clear(.both)
-        }
-
-        Div().class(.clear).height(3.px)
-
-        Div{
-
-            Table {
-
-                THead {
-                    Tr{
-                        Td().width(20.px)
-                        Td("Unis").width(50.px)
-                        Td("Descripción")
-                        Td("CUni").width(70.px)
-                        Td("STotal").width(70.px)
+                    Div{
+                        Img()
+                            .src("/skyline/media/coin.png")
+                            .marginLeft(7.px)
+                            .marginTop(3.px)
+                            .height(20.px)
                     }
-                    .color(.lightGray)
+                    .float(.left)
+
+                    Span("Pago")
+                }
+                .class(.uibtn)
+                .float(.right)
+                .onClick {
+                    self.openTripPayment()
+                }
+                */
+
+                // Add Charge
+                Div{
+
+                    Div{
+                        Img()
+                            .src("/skyline/media/price.png")
+                            .marginLeft(7.px)
+                            .marginTop(3.px)
+                            .height(20.px)
+                    }
+                    .float(.left)
+
+                    Span("Cargo")
+                }
+                .class(.uibtn)
+                .marginTop(24.px)
+                .float(.right)
+                .onClick { _ in
+                    self.addCharge()
                 }
 
-                self.chargesTable
+                Div {
+                    Span("Cargos y Pagos")
+                        .marginRight(7.px)
+                        .marginLeft(7.px)
+                        .fontSize(20.px)
+                        .float(.left)
+                        .color(.gray)
+                }
+                .class(.toolbarPrimary, .toolbarPrimaryActive)
 
+                Div {
+                    Span("Costos")
+                        .marginRight(7.px)
+                        .marginLeft(7.px)
+                        .fontSize(20.px)
+                        .float(.left)
+                        .color(.gray)
+                }
+                .class(.toolbarPrimary)
+                .marginTop(24.px)
+                .onClick {
+                    self.financialView = .costs
+                }
+
+
+                /*
+                Div{
+
+                    Img()
+                        .src("/skyline/media/maximizeWindow.png")
+                        .class(.iconWhite)
+                        .marginLeft(7.px)
+                        .cursor(.pointer)
+                        .marginTop(7.px)
+                        .height(18.px)
+
+                }
+                .float(.left)
+                */
+
+                Div().clear(.both)
             }
-            .width(100.percent)
-            .fontSize(18.px)
 
-        }
-        .custom("width", "calc(100% - 240px)")
-        .custom("height", "calc(100% - 46px)")
-        .class(.roundGrayBlackDark)
-        .padding(all: 3.px)
-        .overflow(.auto)
-        .float(.left)
+            Div().class(.clear).height(7.px)
 
-        Div{
             Div{
-                Span("T. Cargos")
-                    .fontSize(12.px)
-                    .color(.white)
-                Div().class(.clear).marginTop(7.px)
 
+                Table {
 
-                Span("T. Pagos")
-                    .fontSize(12.px)
-                    .color(.white)
-                Div().class(.clear).marginTop(7.px)
+                    THead {
+                        Tr{
+                            Td().width(20.px)
+                            Td("Unis").width(50.px)
+                            Td("Descripción")
+                            Td("Cost").width(70.px)
+                            .color(.lightGray)
+                            Td("CUni").width(70.px)
+                            Td("STotal").width(70.px)
+                        }
+                        .color(.lightGray)
+                    }
 
-                Span("Balance")
-                    .fontSize(12.px)
-                    .fontWeight(.bolder)
-                    .color(.white)
-                Div().class(.clear).marginTop(7.px)
+                    self.chargesTable
+
+                }
+                .width(100.percent)
+                .fontSize(18.px)
 
             }
-            .align(.right)
-            .class(.oneHalf)
+            .custom("width", "calc(100% - 240px)")
+            .custom("height", "calc(100% - 46px)")
+            .class(.roundGrayBlackDark)
             .padding(all: 3.px)
+            .overflow(.auto)
+            .float(.left)
 
             Div{
-                Span(self.$tripChargesTotal)
-                    .color(.gray)
-                Div().class(.clear).marginTop(7.px)
+                Div{
+                    Span("T. Cargos")
+                        .fontSize(12.px)
+                        .color(.white)
+                    Div().class(.clear).marginTop(7.px)
 
-                Span(self.$tripPaymentsTotal)
-                    .color(.gray)
-                Div().class(.clear).marginTop(7.px)
 
-                Span(self.$tripBalanceTotal)
-                    .fontWeight(.bolder)
-                    .color(.lightGray)
-                Div().class(.clear).marginTop(7.px)
+                    Span("T. Pagos")
+                        .fontSize(12.px)
+                        .color(.white)
+                    Div().class(.clear).marginTop(7.px)
+
+                    Span("Balance")
+                        .fontSize(12.px)
+                        .fontWeight(.bolder)
+                        .color(.white)
+                    Div().class(.clear).marginTop(7.px)
+
+                }
+                .align(.right)
+                .class(.oneHalf)
+                .padding(all: 3.px)
+
+                Div{
+                    Span(self.$tripChargesTotal)
+                        .color(.gray)
+                    Div().class(.clear).marginTop(7.px)
+
+                    Span(self.$tripPaymentsTotal)
+                        .color(.gray)
+                    Div().class(.clear).marginTop(7.px)
+
+                    Span(self.$tripBalanceTotal)
+                        .fontWeight(.bolder)
+                        .color(.lightGray)
+                    Div().class(.clear).marginTop(7.px)
+                }
+                .align(.left)
+                .class(.oneHalf)
+                .padding(all: 3.px)
+
+                Div().clear(.both)
+
             }
-            .align(.left)
-            .class(.oneHalf)
-            .padding(all: 3.px)
-
-            Div().clear(.both)
-
+            .float(.right)
+            .fontSize(16.px)
+            .width(220.px)
         }
-        .float(.right)
-        .fontSize(16.px)
-        .width(220.px)
+        .hidden(self.$financialView.map{ $0 != .charges })
 
+        Div {
+
+            Div{
+
+                Div {
+                    Span("Cargos y Pagos")
+                        .marginRight(7.px)
+                        .marginLeft(7.px)
+                        .fontSize(20.px)
+                        .float(.left)
+                        .color(.gray)
+                }
+                .class(.toolbarPrimary)
+                .onClick {
+                    self.financialView = .charges
+                }
+
+                Div {
+                    Span("Costos")
+                        .marginRight(7.px)
+                        .marginLeft(7.px)
+                        .fontSize(20.px)
+                        .float(.left)
+                        .color(.gray)
+                }
+                .class(.toolbarPrimary, .toolbarPrimaryActive)
+
+                // Add Charge
+                Div {
+
+                    Div {
+                        Img()
+                            .src("/skyline/media/price.png")
+                            .marginLeft(7.px)
+                            .marginTop(3.px)
+                            .height(20.px)
+                    }
+                    .float(.left)
+
+                    Span("Cargo")
+                }
+                .marginTop(24.px)
+                .class(.uibtn)
+                .float(.right)
+                .onClick { _ in
+                    self.addCost()
+                }
+
+                Div().clear(.both)
+            }
+
+            Div().class(.clear).height(7.px)
+
+            Div{
+
+                Table {
+
+                    THead {
+                        Tr{
+                            Td().width(20.px)
+                            Td("Unis").width(50.px)
+                            Td("Descripción")
+                            Td("Cost").width(70.px)
+                            .color(.lightGray)
+                            Td("CUni").width(70.px)
+                            Td("STotal").width(70.px)
+                        }
+                        .color(.lightGray)
+                    }
+
+                    self.costTable
+
+                }
+                .width(100.percent)
+                .fontSize(18.px)
+
+            }
+            .custom("height", "calc(100% - 46px)")
+            .class(.roundGrayBlackDark)
+            .padding(all: 3.px)
+            .overflow(.auto)
+        }
+        .hidden(self.$financialView.map{ $0 != .costs })
     }
     .class(Class(TCOrderViewClass.chargesCard))
     .marginRight(3.px)
@@ -283,7 +401,8 @@ final class TripViewBeta: Div {
 
     @DOM override var body: DOM.Content {
         VPopUp(.full) {
-            VTitle("Detalle del Viaje · \(String(self.trip.id.uuidString.prefix(8)).uppercased())") {
+
+            VTitle("Detalle del Viaje · \(self.trip.folio)") {
                 USmallButton("Carta Liberación")
                     .onClick {
                         self.printReleaseLetter()
@@ -322,6 +441,7 @@ final class TripViewBeta: Div {
         super.buildUI()
 
         TCTripBetaTheme.apply(to: self)
+        TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
 
         position(.fixed)
         left(0.px)
@@ -334,6 +454,10 @@ final class TripViewBeta: Div {
                 Option(status.description)
                     .value(status.rawValue)
             )
+        }
+
+        $costs.listen {
+            self.renderCosts($0)
         }
 
         renderTrip()
@@ -351,6 +475,7 @@ final class TripViewBeta: Div {
         renderVehicle(trip.vehicalId, permit: trip.permitId)
         renderCompliance(trip)
         renderChargesAndPayments(trip)
+        renderCosts(costs)
     }
 
     private func renderSummary(
@@ -805,7 +930,7 @@ final class TripViewBeta: Div {
                 balance: trip.balance,
                 cartaPorte: cartaPorte
             ),
-            folio: String(trip.id.uuidString.prefix(8)).uppercased()
+            folio: trip.folio
         ) { id, _, _, _ in
             self.fiscalId = id
         }
@@ -915,7 +1040,45 @@ final class TripViewBeta: Div {
 
     private lazy var chargesTable = TBody()
 
+    private lazy var costTable = TBody()
+
     private var chargesRefrence: [UUID: OldChargeTrRow] = [:]
+
+    private func renderCosts(_ costs: [CustGastosEgresos]) {
+
+        costTable.innerHTML = ""
+
+        costs.forEach { item in
+            costTable.appendChild(
+                Tr {
+                    Td {
+                        Img()
+                            .src("/skyline/media/coin.png")
+                            .class(.iconWhite)
+                            .height(18.px)
+                    }
+                    .width(20.px)
+
+                    Td("1.00")
+                        .width(50.px)
+
+                    Td(item.description)
+                        .class(.oneLineText)
+
+                    Td(item.receiptAmount.formatMoney)
+                        .color(.lightGray)
+                        .width(70.px)
+
+                    Td(item.receiptAmount.formatMoney)
+                        .width(70.px)
+
+                    Td(item.receiptAmount.formatMoney)
+                        .width(70.px)
+                }
+                .color(.gray)
+            )
+        }
+    }
 
     private func renderChargesAndPayments(
         _ trip: CustCommercialTripsComponents.GetTripItem
@@ -928,6 +1091,7 @@ final class TripViewBeta: Div {
                 isCharge: true,
                 id: charge.id,
                 name: charge.name,
+                cost: charge.cost,
                 cuant: charge.cuant,
                 price: charge.price,
                 puerchaseOrder: false
@@ -1236,6 +1400,7 @@ final class TripViewBeta: Div {
                     codeid: soc.id,
                     type: (soc.id == nil) ? .manual : .service,
                     name: soc.description,
+                    cost: soc.cost ?? 0,
                     cuant: soc.units,
                     price: price,
                     status: .unbilled
@@ -1327,6 +1492,19 @@ final class TripViewBeta: Div {
 
     }
 
+    func addCost() {
+
+        let view = MoneyManagerView.FinancialServicesView.GastosEgresosView(
+            ownerType: .trip,
+            owner: self.trip.id
+        ) { gasto in
+            self.costs.append(gasto)
+        }
+
+        addToDom(view)
+        
+    }
+
     private func editPoc(viewId: UUID, ids: [UUID]) {
         showAlert(
             .alerta,
@@ -1399,6 +1577,12 @@ extension TripViewBeta {
             ))
         }
     }
+
+    enum FinancialView {
+        case charges
+        case costs
+    }
+
 }
 
 /*

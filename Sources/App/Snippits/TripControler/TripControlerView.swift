@@ -743,6 +743,7 @@ class TripControlerView: Div {
         super.buildUI()
 
         TCTripBetaTheme.apply(to: self)
+        TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
         
         height(100.percent)
         
@@ -1271,6 +1272,5 @@ extension TripControlerView {
     }
     
 }
-
 
 

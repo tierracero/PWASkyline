@@ -145,6 +145,7 @@ public class AccoutOverview: Div {
         .float(.right)
         
     }
+        .class(Class(TCAccountViewClass.overviewActions))
         .overflowX(.auto)
         .marginRight(7.px)
         .align(.right)
@@ -580,6 +581,12 @@ public class AccoutOverview: Div {
     
     lazy var accountButton = Div("Cuenta")
         .class(Class(TCOrderViewClass.accountBreadcrumb))
+        .class(Class(TCAccountViewClass.overviewTab))
+        .class(self.$load.map { currentView -> Class? in
+            currentView == .account
+                ? Class(TCAccountViewClass.overviewTabActive)
+                : nil
+        })
         .cursor(.pointer)
         .fontSize(22.px)
         .borderRadius(all: 7.px)
@@ -599,6 +606,12 @@ public class AccoutOverview: Div {
     
     lazy var orderButton = Div("Órdenes")
         .class(Class(TCOrderViewClass.orderBreadcrumb))
+        .class(Class(TCAccountViewClass.overviewTab))
+        .class(self.$load.map { currentView -> Class? in
+            currentView == .order
+                ? Class(TCAccountViewClass.overviewTabActive)
+                : nil
+        })
         .cursor(.pointer)
         .fontSize(22.px)
         .borderRadius(all: 7.px)
@@ -652,15 +665,6 @@ public class AccoutOverview: Div {
     
     lazy var _orderView: OrderView? = nil
 
-    lazy var orderHeaderTitle = Div {
-        Span("Orden · ")
-        Span(self.$order.map { $0?.folio ?? "" })
-        Span(self.$orderStatus.map { $0?.description ?? "" })
-            .class(Class(TCOrderViewClass.headerStatus))
-    }
-        .class(Class(TCOrderViewClass.headerTitle))
-        .hidden(self.$load.map { $0 != .order })
-    
     @DOM public override var body: DOM.Content {
         
         Div {
@@ -741,8 +745,6 @@ public class AccoutOverview: Div {
                 
                 self.metricsQuickTool
 
-                self.orderHeaderTitle
-                
                 Div().class(.clear)
                 
             }
@@ -802,6 +804,12 @@ public class AccoutOverview: Div {
                 self.class(Class(TCOrderViewClass.root))
             } else {
                 self.removeClass(Class(TCOrderViewClass.root))
+            }
+
+            if currentView == .account {
+                self.class(Class(TCAccountViewClass.overviewHost))
+            } else {
+                self.removeClass(Class(TCAccountViewClass.overviewHost))
             }
         }
         

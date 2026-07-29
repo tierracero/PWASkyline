@@ -209,6 +209,7 @@ class TripControlerManageOperator: Div {
         super.buildUI()
 
         TCTripBetaTheme.apply(to: self)
+        TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
 
         position(.absolute)
         height(100.percent)

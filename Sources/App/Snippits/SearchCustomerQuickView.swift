@@ -47,12 +47,11 @@ class SearchCustomerQuickView: Div {
     @State var canCreateAccount = true
     
     lazy var seachCustomerField = InputText(self.$term)
-        .custom("width","calc(100% - 210px)")
         .placeholder("Mobile, RFC, correo, razon...")
-        .class(.textFiledBlackDark)
-        .marginRight(7.px)
-        .height(29.px)
-        .float(.left)
+        .class(
+            .textFiledBlackDark,
+            Class(TCCrystalSurfaceClass.customerLookupInput)
+        )
         .onKeyUp { tf, event in
             
             if ignoredKeys.contains(tf.text) {
@@ -81,112 +80,90 @@ class SearchCustomerQuickView: Div {
         .height(100.percent)
         .width(100.percent)
     }
-        .custom("height","calc(100% - 70px)")
-        .class(.roundDarkBlue)
+        .class(
+            .roundDarkBlue,
+            Class(TCCrystalSurfaceClass.customerLookupEmpty)
+        )
         .overflow(.hidden)
     
     lazy var resultDiv = Div()
-        .custom("height","calc(100% - 70px)")
-        .class(.roundDarkBlue)
+        .class(
+            .roundDarkBlue,
+            Class(TCCrystalSurfaceClass.customerLookupList)
+        )
         .overflow(.auto)
     
     @DOM override var body: DOM.Content {
-        Div{
-            
-            /// Header
-            Div{
-                
-                Img()
-                    .closeButton(.subView)
-                    .onClick{
-                        self.remove()
-                    }
-                
-                H2("Buscar Cuenta de Cliente")
-                    .color(.lightBlueText)
-                
-                Div().class(.clear)
-                
+        VPopUp(.custome(w: 820, h: 610)) {
+            VTitle("Buscar Cuenta de Cliente") {
+            } onClose: {
+                self.remove()
             }
-            .marginBottom(7.px)
-            
-            /// Tool
-            Div{
-                self.seachCustomerField
-                
-                Div{
-                    Div{
-                        Img()
-                            .src("/skyline/media/zoom.png")
-                            .paddingRight(0.px)
-                            .height(18.px)
+
+            VBodyGrid {
+                Div {
+                    Div {
+                        self.seachCustomerField
+
+                        Div {
+                            Img()
+                                .src("/skyline/media/zoom.png")
+                                .height(18.px)
+
+                            Label("Buscar")
+                        }
+                        .class(
+                            .uibtn,
+                            Class(TCCrystalSurfaceClass.customerLookupSearch)
+                        )
+                        .onClick {
+                            self.searchCustomer()
+                        }
+
+                        Div {
+                            Img()
+                                .src("/skyline/media/add.png")
+                                .height(18.px)
+
+                            Label("Crear")
+                        }
+                        .hidden(self.$canCreateAccount.map { !$0 })
+                        .class(
+                            .uibtn,
+                            Class(TCCrystalSurfaceClass.customerLookupCreate)
+                        )
+                        .onClick {
+                            self.create(self.term)
+                            self.remove()
+                        }
                     }
-                    .marginRight(7.px)
-                    .float(.left)
-                    
-                    Label("Buscar")
-                }
-                .marginRight(7.px)
-                .class(.uibtn)
-                .float(.left)
-                .onClick {
-                    self.searchCustomer()
-                }
-                
-                Div{
-                    
-                    Div{
-                        Img()
-                            .src("/skyline/media/add.png")
-                            .paddingRight(0.px)
-                            .height(18.px)
+                    .class(Class(TCCrystalSurfaceClass.customerLookupToolbar))
+
+                    Div {
+                        self.noResultDiv
+                            .hidden(self.$results.map { !$0.isEmpty })
+
+                        self.resultDiv
+                            .hidden(self.$results.map { $0.isEmpty })
                     }
-                    .marginRight(7.px)
-                    .float(.left)
-                    
-                    Label("Crear")
+                    .class(Class(TCCrystalSurfaceClass.customerLookupResults))
                 }
-                .hidden(self.$canCreateAccount.map{ !$0 })
-                .marginRight(7.px)
-                .class(.uibtn)
-                .float(.left)
-                .onClick {
-                    
-                    self.create(self.term)
-                    
-                    self.remove()
-                    
-                }
-                
-                Div().class(.clear)
+                .class(Class(TCCrystalSurfaceClass.customerLookupBody))
             }
-            .marginBottom(7.px)
-            
-            self.noResultDiv
-                .hidden(self.$results.map{ !$0.isEmpty })
-            
-            self.resultDiv
-                .hidden(self.$results.map{ $0.isEmpty })
         }
-        .backgroundColor(.backGroundGraySlate)
-        .borderRadius(all: 24.px)
-        .position(.absolute)
-        .padding(all: 12.px)
-        .height(50.percent)
-        .width(40.percent)
-        .left(30.percent)
-        .top(25.percent)
     }
     
     override func buildUI() {
         
         super.buildUI()
+
+        TCCrystalSurfaceTheme.apply(to: self, variant: .customerLookup)
         
         width(100.percent)
         height(100.percent)
         top(0.px)
         left(0.px)
-        position(.absolute)
+        position(.fixed)
         
         $results.listen {
             
@@ -197,71 +174,62 @@ class SearchCustomerQuickView: Div {
                 let bizname = "\(prof.fiscalRfc) \(prof.fiscalRazon) \(prof.businessName)".purgeSpaces
                 
                 self.resultDiv.appendChild(
-                    Div{
+                    Div {
                         
                         if prof.isConcessionaire {
                             
-                            Div{
+                            Div {
                                 Span("Concessionario")
-                                    .color(.gray)
                                 
                                 Img()
                                     .src("skyline/media/icon-fiscal.png")
                                     .width(18.px)
                                 
                             }
-                            
-                            Div().clear(.both)
+                            .class(Class(TCCrystalSurfaceClass.customerLookupBadge))
                         }
-                    
+
                         if !bizname.isEmpty {
                             
                             Div(bizname)
-                                .class(.oneLineText)
-                                .fontSize(18.px)
-                            
-                            Div().clear(.both).paddingTop(7.px)
+                                .class(
+                                    .oneLineText,
+                                    Class(TCCrystalSurfaceClass.customerLookupBusiness)
+                                )
                         }
                         
                         if prof.CardID.isEmpty {
                             Div("\(prof.firstName) \(prof.lastName)")
-                                .class(.oneLineText)
-                                .fontSize(23.px)
+                                .class(
+                                    .oneLineText,
+                                    Class(TCCrystalSurfaceClass.customerLookupName)
+                                )
                         }
                         else {
-                            Div{
+                            Div {
                                 
                                 Div("\(prof.firstName) \(prof.lastName)")
-                                    .custom("width", "calc(100% - 50px)")
-                                    .class(.oneLineText)
-                                    .fontSize(23.px)
-                                    .float(.left)
+                                    .class(
+                                        .oneLineText,
+                                        Class(TCCrystalSurfaceClass.customerLookupName)
+                                    )
                                 
-                                Div{
-                                    Table{
-                                        Tr{
-                                            Td{
-                                                Img()
-                                                    .src("skyline/media/star_yellow.png")
-                                                    .width(18.px)
-                                            }
-                                            .verticalAlign(.middle)
-                                            .align(.center)
-                                        }
-                                    }
-                                    .height(100.percent)
+                                Div {
+                                    Img()
+                                        .src("skyline/media/star_yellow.png")
+                                        .width(18.px)
                                 }
-                                .width(50.px)
-                                .float(.left)
-                                
-                                Div().clear(.both)
+                                .class(Class(TCCrystalSurfaceClass.customerLookupReward))
                                 
                             }
+                            .class(Class(TCCrystalSurfaceClass.customerLookupMeta))
                         }
                         
                     }
-                    .width(96.percent)
-                    .class(.uibtnLarge)
+                    .class(
+                        .uibtnLarge,
+                        Class(TCCrystalSurfaceClass.customerLookupItem)
+                    )
                     .onClick {
                         self.callback(prof)
                         self.remove()

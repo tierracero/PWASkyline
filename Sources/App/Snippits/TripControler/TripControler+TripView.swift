@@ -207,6 +207,7 @@ class TripView: Div {
         super.buildUI()
 
         TCTripBetaTheme.apply(to: self)
+        TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
 
         position(.absolute)
         height(100.percent)
@@ -322,7 +323,7 @@ class TripView: Div {
                     .margin(all: 0.px)
                     .color(.white)
 
-                Div("Cuenta \(account.folio) | Viaje \(String(trip.id.uuidString.prefix(8)).uppercased())")
+                Div("Cuenta \(account.folio) | Viaje \(trip.folio)")
                     .class(.oneLineText)
                     .color(.gray)
 
@@ -370,7 +371,7 @@ class TripView: Div {
 
         let fiscalView = ToolFiscal(
             loadType: .comertialTrip(tripId: trip.id, balance: trip.balance, cartaPorte: cartaPorte),
-            folio: String(trip.id.uuidString.prefix(8)).uppercased()
+            folio: trip.folio
         ) { id, folio, pdf, xml in
             self.fiscalId = id
         }

@@ -43,6 +43,7 @@ extension MoneyManagerView {
                 } onClose: {
                     self.remove()
                 }
+                
 
                 VBodyGrid {
                     VGrid(.full) {
@@ -67,7 +68,8 @@ extension MoneyManagerView {
                             .custom("align-items", "center")
                             .custom("gap", "12px")
                         }
-                        .class(Class(TCMoneyManagerClass.hero))
+                        //.class(Class(TCMoneyManagerClass.hero))
+                    .custom("background-color", "rgba(37, 44, 59, 1.0) !important")
                     }
 
                     VGrid(.full) {

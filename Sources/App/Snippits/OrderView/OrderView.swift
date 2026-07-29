@@ -169,6 +169,10 @@ class OrderView: Div {
     
     @State var orderContract: [CustomerCustomeScript] = []
 
+    @State var hideServiceLetterContainer: Bool = true
+
+    @State var hideContractContainer: Bool = true
+
     var chargesRefrence: [ UUID: OldChargeTrRow ] = [:]
     
     var rentalViewRefrence: [UUID:OrderRentalView] = [:]
@@ -213,8 +217,44 @@ class OrderView: Div {
     }
         .class(Class(TCOrderViewClass.notesCard))
         .custom("height", "calc(100% - 30px)")
-        .custom("width", "calc(75% - 0px)")
+        .width(70.percent)
     
+    lazy var filesGridDiv = Div{
+        Div{
+            
+            self.fileLoader
+                .hidden(true)
+            
+            Img()
+                .onClick{ self.fileLoader.click() }
+                .src("/skyline/media/add.png")
+                .cursor(.pointer)
+                .float(.right)
+                .height(24.px)
+            
+            Img()
+                .src("/skyline/media/download2.png")
+                .float(.right)
+                .height(24.px)
+                .marginRight(12.px)
+            
+            H3("Archivos")
+                .color(.gray)
+        }
+        .marginTop(5.px)
+        
+        self.filesGrid
+            .custom("height", "calc(100% - 25px)")
+            .class(.roundGrayBlackDark)
+            .marginTop(7.px)
+            .overflow(.auto)
+        
+    }
+    .class(Class(TCOrderViewClass.filesCard))
+    .float(.right)
+    .width(30.percent)
+    .custom("height", "calc(100% - 33px)")
+
     lazy var fileLoader: InputFile = InputFile()
         .id(Id(stringLiteral: "fileLoader\(self.order.id)"))
         .accept(["image/png", "image/gif", "image/jpeg", "application/pdf", "video/*", "video", "pages", "numbers", "key"])
@@ -285,41 +325,7 @@ class OrderView: Div {
                 self.messageGridDiv
                 
                 /// Files
-                Div{
-                    Div{
-                        
-                        self.fileLoader
-                            .hidden(true)
-                        
-                        Img()
-                            .onClick{ self.fileLoader.click() }
-                            .src("/skyline/media/add.png")
-                            .cursor(.pointer)
-                            .float(.right)
-                            .height(24.px)
-                        
-                        Img()
-                            .src("/skyline/media/download2.png")
-                            .float(.right)
-                            .height(24.px)
-                            .marginRight(12.px)
-                        
-                        H3("Archivos")
-                            .color(.gray)
-                    }
-                    .marginTop(5.px)
-                    
-                    self.filesGrid
-                        .custom("height", "calc(100% - 25px)")
-                        .class(.roundGrayBlackDark)
-                        .marginTop(7.px)
-                        .overflow(.auto)
-                    
-                }
-                .class(Class(TCOrderViewClass.filesCard))
-                .float(.right)
-                .width(25.percent)
-                .custom("height", "calc(100% - 33px)")
+                self.filesGridDiv
             }
             .class(Class(TCOrderViewClass.communicationsGrid))
             .height(40.percent)
@@ -540,7 +546,8 @@ class OrderView: Div {
         .padding(all: 0.px)
         
         Div {
-            
+
+            /// Content View
             Div{
                 
                 Div{
@@ -745,7 +752,8 @@ class OrderView: Div {
                         }
 
                     if custCatchAccountType != .entrepreneur {
-                                            
+
+                        /*                    
                         Div{
                             Div{
                                 Img()
@@ -764,6 +772,7 @@ class OrderView: Div {
                         .onClick {
                             self.addOrderProject()
                         }
+                        */
                         
                         Div{
                             Div{
@@ -833,6 +842,8 @@ class OrderView: Div {
                 Div{
                     
                     Div{
+
+                        Div().clear(.both).height(7.px)
                         
                         Span("Orden ·")
                             .marginRight(7.px)
@@ -844,6 +855,7 @@ class OrderView: Div {
                         
                     }
                     .width(55.percent)
+                    .fontSize(22.px)
                     .float(.left)
                     
                     Div{
@@ -862,11 +874,14 @@ class OrderView: Div {
                                      Img()
                                          .src(self.$statusMenuIsHidden.map{ $0 ? "/skyline/media/dropDown.png" : "/skyline/media/dropDownClose.png" })
                                          .class(.iconWhite)
-                                         .paddingTop(7.px)
-                                         .opacity(0.5)
-                                         .width(18.px)
+                                         .opacity(0.8)
+                                         .width(28.px)
                                  }
-                                 .borderLeft(width: BorderWidthType.thin, style: .solid, color: .gray)
+                                 .borderLeft(
+                                    width: BorderWidthType.thin,
+                                    style: .solid,
+                                    color: self.$status.map { $0.color }
+                                 )
                                  .hidden(self.$status.map{
                                     
                                      [
@@ -881,13 +896,21 @@ class OrderView: Div {
                                  .paddingLeft(7.px)
                                  .marginLeft(7.px)
                                  .float(.right)
-                                 .width(18.px)
+                                 .width(28.px)
                                 
                                  Div().clear(.both)
                                  
-                             }
+                            }
                             .width(91.percent)
+                            .backgroundColor(self.$status.map { $0.crystalTintColor })
+                            .border(
+                                width: .thin,
+                                style: .solid,
+                                color: self.$status.map { $0.color }
+                            )
                             .class(.uibtn)
+                            .class(Class(TCOrderViewClass.headerStatus))
+                            .class(Class(TCOrderViewClass.statusControl))
                             .onClick {
                                 
                                 if [
@@ -912,6 +935,7 @@ class OrderView: Div {
                                 .width(90.percent)
                                 .marginTop(7.px)
                                 .class(.uibtn)
+                                .class(Class(TCOrderViewClass.statusOption))
                                 .onClick { _, event in
                                     self.changeOrderStatus(.pending)
                                     self.statusMenuIsHidden = true
@@ -926,6 +950,7 @@ class OrderView: Div {
                                 .width(90.percent)
                                 .marginTop(7.px)
                                 .class(.uibtn)
+                                .class(Class(TCOrderViewClass.statusOption))
                                 .onClick { _, event in
                                     self.changeOrderStatus(.active)
                                     self.statusMenuIsHidden = true
@@ -940,6 +965,7 @@ class OrderView: Div {
                                 .width(90.percent)
                                 .marginTop(7.px)
                                 .class(.uibtn)
+                                .class(Class(TCOrderViewClass.statusOption))
                                 .onClick { _, event in
                                     self.changeOrderStatus(.saleWait)
                                     self.statusMenuIsHidden = true
@@ -954,6 +980,7 @@ class OrderView: Div {
                                 .width(90.percent)
                                 .marginTop(7.px)
                                 .class(.uibtn)
+                                .class(Class(TCOrderViewClass.statusOption))
                                 .onClick { _, event in
                                     self.changeOrderStatus(.archive)
                                     self.statusMenuIsHidden = true
@@ -968,6 +995,7 @@ class OrderView: Div {
                                 .width(90.percent)
                                 .marginTop(7.px)
                                 .class(.uibtn)
+                                .class(Class(TCOrderViewClass.statusOption))
                                 .onClick { _, event in
                                     self.changeOrderStatus(.collection)
                                     self.statusMenuIsHidden = true
@@ -981,6 +1009,7 @@ class OrderView: Div {
                                 .width(90.percent)
                                 .marginTop(7.px)
                                 .class(.uibtn)
+                                .class(Class(TCOrderViewClass.statusOption))
                                 .onClick { _, event in
                                     self.changeOrderStatus(.finalize)
                                     self.statusMenuIsHidden = true
@@ -994,6 +1023,7 @@ class OrderView: Div {
                                 .width(90.percent)
                                 .marginTop(7.px)
                                 .class(.uibtn)
+                                .class(Class(TCOrderViewClass.statusOption))
                                 .onClick { _, event in
                                     self.changeOrderStatus(.canceled)
                                     self.statusMenuIsHidden = true
@@ -1003,6 +1033,7 @@ class OrderView: Div {
                                 
                                 Div().height(12.px)
                             }
+                            .class(Class(TCOrderViewClass.statusMenu))
                             .hidden(self.$statusMenuIsHidden)
                             .backgroundColor(.transparentBlack)
                             .position(.absolute)
@@ -1021,7 +1052,15 @@ class OrderView: Div {
                             
                             Div(self.$status.map{ $0.description })
                                 .color(self.$status.map{ $0.color})
+                                .backgroundColor(self.$status.map { $0.crystalTintColor })
+                                .border(
+                                    width: .thin,
+                                    style: .solid,
+                                    color: self.$status.map { $0.color }
+                                )
                                 .class(.oneLineText)
+                                .class(Class(TCOrderViewClass.headerStatus))
+                                .class(Class(TCOrderViewClass.statusControl))
                         }
                         
                     }
@@ -1170,11 +1209,11 @@ class OrderView: Div {
                 .hidden(self.$onWorkUser.map{ $0 == nil })
                 .fontSize(28.px)
                 
-                Div().class(.clear).marginBottom(7.px)
+                Div().class(.clear).height(7.px)
                 
                 /// Name Mobile
                 Div {
-                    H3("Contacto")
+                    H2("Contacto")
                         .fontSize(16.px)
                         .color(.gray)
                     
@@ -1182,7 +1221,7 @@ class OrderView: Div {
                         
                         Img()
                             .src("/skyline/media/usernameIconWhite.svg")
-                            .height(18.px)
+                            .height(22.px)
                             .paddingTop( 3.px)
                             .paddingRight(7.px)
                             .float(.left)
@@ -1193,7 +1232,7 @@ class OrderView: Div {
                             .hidden(self.$editMode.map{$0})
                             .marginBottom(7.px)
                             .color(.goldenRod)
-                            .fontSize(22.px)
+                            .fontSize(24.px)
                             .float(.left)
                         
                         InputText(self.$orderName)
@@ -1217,14 +1256,14 @@ class OrderView: Div {
                             .class(.iconWhite)
                             .paddingRight(7.px)
                             .paddingTop( 3.px)
-                            .height(18.px)
+                            .height(22.px)
                             .float(.left)
                         
                         Span(self.$mobile)
                             .hidden(self.$editMode.map{$0})
                             .marginBottom(7.px)
                             .color(.goldenRod)
-                            .fontSize(20.px)
+                            .fontSize(24.px)
                             .float(.left)
                         
                         InputText(self.$mobile)
@@ -1569,14 +1608,21 @@ class OrderView: Div {
                         Span("Carta de Servicio")
                         .color(.yellowTC)
                     }
+                    .class(Class(TCOrderViewClass.detailHeader))
+                    .cursor(.pointer)
+                    .onClick {
+                        self.hideServiceLetterContainer = !self.hideServiceLetterContainer
+                    }
 
                     Div().clear(.both).height(3.px)
                     
                     Div{
                         Span("-- No hay Carta de Servicio")
+                            .hidden(self.$contratc.map{ $0 != nil })
                             .color(.gray)
                     }
-                    .hidden(self.$contratc.map{ $0 != nil })
+                    .class(Class(TCOrderViewClass.detailBody))
+                    .hidden(self.$hideServiceLetterContainer)
                     .align(.center)
                      
                     //orderContract
@@ -1608,15 +1654,23 @@ class OrderView: Div {
                             Span("Contratos")
                             .color(.yellowTC)
                         }
+                        .class(Class(TCOrderViewClass.detailHeader))
+                        .cursor(.pointer)
+                        .onClick {
+                            self.hideContractContainer = !self.hideContractContainer
+                        }
 
                         Div().clear(.both).height(3.px)
 
                         Div {
                             
                         }
+                        .class(Class(TCOrderViewClass.detailBody))
+                        .hidden(self.$hideContractContainer)
                         .class(.roundDarkBlue)
-                        .height(150.px)
+
                     }
+                    .class(Class(TCOrderViewClass.detailSection))
                     .hidden(self.$orderContract.map{ $0.isEmpty })
                     
                 }
@@ -1827,7 +1881,7 @@ class OrderView: Div {
                 
             }
             .class(Class(TCOrderViewClass.summaryScroll))
-            .custom("height", "calc(100% - 73px)") 
+            .custom("height", "calc(100% - 95px)") 
             .marginBottom(7.px)
             .overflow(.auto)
             
@@ -1886,9 +1940,6 @@ class OrderView: Div {
                                     }
                                     
                                     self.onWorkUser = custCatchID
-                                    
-                                    OrderCatchControler.shared.updateParameter(self.order.id, .orderStatus(.active))
-                                    
                                     self.status = .active
                                     
                                 }
@@ -1906,40 +1957,49 @@ class OrderView: Div {
                 Div {
                     
                     Div{
-                        
-                        Img()
-                            .src("/skyline/media/checkmark.png")
-                            .height(24.px)
-                            .marginRight(7.px)
-                        
-                        Span(configServiceTags.typeOfServiceObject.positiveTag)
-                            .fontSize(24.px)
-                    }
-                    .float(.right)
-                    .class(.uibtn)
-                    .onClick {
-                        self.initiateOrderFinalization(force: false)
-                    }
-                    
-                    Div{
                         Img()
                             .src("/skyline/media/cross.png")
-                            .height(24.px)
-                            .marginRight(7.px)
+                            .height(17.px)
+                            .marginRight(5.px)
                         
                         Span(configServiceTags.typeOfServiceObject.negativeTag)
-                            .fontSize(24.px)
+                            .fontSize(15.px)
                     }
                     .marginRight(7.px)
                     .float(.right)
                     .class(.uibtn)
+                    .custom("white-space", "nowrap")
+                    .custom("flex-shrink", "0")
                     .onClick {
                         self.initiateOrderCancelation()
                     }
+
+                    Div{
+                        
+                        Img()
+                            .src("/skyline/media/checkmark.png")
+                            .height(17.px)
+                            .marginRight(5.px)
+                        
+                        Span(configServiceTags.typeOfServiceObject.positiveTag)
+                            .fontSize(15.px)
+                    }
+                    .float(.left)
+                    .class(.uibtn)
+                    .custom("white-space", "nowrap")
+                    .custom("flex-shrink", "0")
+                    .onClick {
+                        self.initiateOrderFinalization(force: false)
+                    }
+                    
                     
                 }
-                .paddingTop(12.px)
+                .paddingTop(7.px)
+                .width(100.percent)
+                .custom("box-sizing", "border-box")
+                .custom("gap", "7px")
                 .hidden(self.$status.map { ( $0 == .pendingSpare || $0 == .active ) ? false : true })
+                .display(self.$status.map { ( $0 == .pendingSpare || $0 == .active ) ? .flex : .none })
                 
                 /// cnx fini
                 Div {
@@ -1981,8 +2041,13 @@ class OrderView: Div {
                     Div().clear(.both)
                     
                 }
-                .paddingTop(12.px)
+                .paddingTop(7.px)
+                .width(100.percent)
+                .custom("box-sizing", "border-box")
+                .custom("gap", "7px")
                 .hidden(self.$status.map { ( $0 == .finalize || $0 == .canceled || $0 == .archive ) ? false : true })
+                .display(self.$status.map { ( $0 == .finalize || $0 == .canceled || $0 == .archive ) ? .flex : .none })
+                
                 
                 Div().clear(.both)
                 
@@ -1993,7 +2058,7 @@ class OrderView: Div {
             .marginRight(7.px)
             .marginLeft(7.px)
             .overflow(.auto)
-            .height(63.px)
+            .height(85.px)
             
         }
         .class(Class(TCOrderViewClass.sideColumn))
@@ -2081,9 +2146,9 @@ class OrderView: Div {
         })
         
         $status.listen {
-            OrderCatchControler.shared.updateParameter( self.order.id, .orderStatus($0))
             self.accountView.orderStatus = $0
             self.statusMenuIsHidden = true
+            OrderCatchControler.shared.updateParameter(self.order.id, .orderStatus($0))
         }
         
         $budgetStatus.listen {
@@ -3509,8 +3574,6 @@ class OrderView: Div {
                     self.calcBalance()
                     
                 }
-                
-            
 
             }
             
@@ -3600,6 +3663,7 @@ class OrderView: Div {
                     codeid: soc.id,
                     type: (soc.id == nil) ? .manual : .service,
                     name: soc.description,
+                    cost: soc.cost ?? 0,
                     cuant: soc.units,
                     price: price,
                     status: .unbilled
@@ -3801,6 +3865,7 @@ class OrderView: Div {
                                 codeid: obj.codeid,
                                 type: obj.type,
                                 name: name,
+                                cost: cost,
                                 cuant: units,
                                 price: price,
                                 status: obj.status
@@ -5116,6 +5181,7 @@ class OrderView: Div {
                     codeid: charge.SOC,
                     type: (charge.SOC == nil) ? .manual : .service,
                     name: charge.name,
+                    cost: charge.cost,
                     cuant: charge.cuant,
                     price: charge.price,
                     status: charge.status
@@ -5534,8 +5600,6 @@ class OrderView: Div {
             self.calcBalance()
             
             self.status = payload.status
-            
-            OrderCatchControler.shared.updateParameter(self.order.id, .orderStatus(payload.status))
 
             print("⚠️ PaymentReciptFormView")
 
@@ -5622,8 +5686,6 @@ class OrderView: Div {
             self.calcBalance()
             
             self.status = payload.status ?? .active
-            
-            OrderCatchControler.shared.updateParameter(self.order.id, .orderStatus(self.status))
             
         }
     }

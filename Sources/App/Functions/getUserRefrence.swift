@@ -26,7 +26,6 @@ func getUserRefrence(id: HybridIdentifier, callback: @escaping ( (_ user: CustUs
             state.listen {
                 callback($0)
             }
-            debugPrint("🤖 getUserRefrence Waiting Async [UUID]")
             return
         }
         
@@ -45,7 +44,6 @@ func getUserRefrence(id: HybridIdentifier, callback: @escaping ( (_ user: CustUs
             state.listen {
                 callback($0)
             }
-            debugPrint("🤖 getUserRefrence Waiting Async [String]")
             return
         }
         
@@ -62,33 +60,30 @@ func getUserRefrence(id: HybridIdentifier, callback: @escaping ( (_ user: CustUs
         loadingView(show: false)
         
         guard let resp else {
+            finishUserReferenceRequest(id: id, user: nil)
             showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
             return
         }
 
         guard resp.status == .ok else {
+            finishUserReferenceRequest(id: id, user: nil)
             showError(.generalError, resp.msg)
             return
         }
         
         guard let data = resp.data else {
+            finishUserReferenceRequest(id: id, user: nil)
             showError(.unexpectedResult, .unexpenctedMissingPayload)
             return
         }
         
         guard let uname = data.users.first else {
+            finishUserReferenceRequest(id: id, user: nil)
             showError(.generalError, "No se localizar informacion del usuario solicitado")
             return
         }
-        
-        switch id {
-        case .id(let uUID):
-            getUserRefrenceListenerByUUID[uUID]?.wrappedValue = uname
-            //getUserRefrenceListenerByUUID.removeValue(forKey: uUID)
-        case .folio(let string):
-            getUserRefrenceListenerByToken[string]?.wrappedValue = uname
-            //getUserRefrenceListenerByToken.removeValue(forKey: string)
-        }
+
+        finishUserReferenceRequest(id: id, user: uname)
         
         userCathByUUID[uname.id] = uname
         
@@ -96,5 +91,19 @@ func getUserRefrence(id: HybridIdentifier, callback: @escaping ( (_ user: CustUs
         
         callback(uname)
         
+    }
+}
+
+private func finishUserReferenceRequest(
+    id: HybridIdentifier,
+    user: CustUsername?
+) {
+    switch id {
+    case .id(let userId):
+        getUserRefrenceListenerByUUID[userId]?.wrappedValue = user
+        getUserRefrenceListenerByUUID.removeValue(forKey: userId)
+    case .folio(let token):
+        getUserRefrenceListenerByToken[token]?.wrappedValue = user
+        getUserRefrenceListenerByToken.removeValue(forKey: token)
     }
 }

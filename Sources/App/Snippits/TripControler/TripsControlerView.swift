@@ -8,6 +8,7 @@ import TCFireSignal
 import Web
 
 struct TripControlGridItem: Hashable {
+    
     let item: CustCommercialTripControlQuick
 
     static func == (lhs: TripControlGridItem, rhs: TripControlGridItem) -> Bool {
@@ -158,6 +159,7 @@ class TripsControlerView: Div {
 
         Div {
             Div {
+                /*
                 Img()
                     .src("/skyline/media/commercial_trip.png")
                     .width(30.px)
@@ -172,6 +174,15 @@ class TripsControlerView: Div {
                         .fontSize(11.px)
                         .color(.gray)
                 }
+                */
+                Img()
+                        .src("/skyline/media/history_setting_icon_orange.png")
+                        .height(28.px)
+                        .marginRight(7.px)
+                        .marginLeft(18.px)
+                        .onClick {
+                            addToDom(ToolsView.HistorySettings.TripProcessing())
+                        }
             }
             .display(.flex)
             .custom("align-items", "center")
@@ -186,7 +197,7 @@ class TripsControlerView: Div {
             .position(.relative)
             .marginRight(7.px)
             .float(.right)
-            .zIndex(21)
+            //.zIndex(21)
 
             Div().class(.clear)
         }
@@ -279,6 +290,7 @@ class TripsControlerView: Div {
         super.buildUI()
 
         TCTripBetaTheme.apply(to: self)
+        TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
         width(100.percent)
         height(100.percent)
         position(.relative)
@@ -507,9 +519,7 @@ class TripsControlerView: Div {
         accent: String
     ) -> Div {
         
-        let identifier = item.folio.isEmpty
-            ? String(item.id.uuidString.prefix(8)).uppercased()
-            : item.folio
+        let identifier = item.folio
 
         return VBox(.interactive) {
             Div {

@@ -32,14 +32,18 @@ class ICMessageView: Div {
     
     let data: API.custAPIV1.LoadMessaging
     
-    private var callback: ((_ id: API.custAPIV1.LoadMessaging) -> ())
+    private let callback: (API.custAPIV1.LoadMessaging) -> Void
+
+    private let dismissCallback: (API.custAPIV1.LoadMessaging) -> Void
     
     init(
         data: API.custAPIV1.LoadMessaging,
-        callback: @escaping ((_ id: API.custAPIV1.LoadMessaging) -> ())
+        callback: @escaping (API.custAPIV1.LoadMessaging) -> Void,
+        dismissCallback: @escaping (API.custAPIV1.LoadMessaging) -> Void
     ) {
         self.data = data
         self.callback = callback
+        self.dismissCallback = dismissCallback
         super.init()
     }
     
@@ -80,14 +84,17 @@ class ICMessageView: Div {
                 
                 img.load("/skyline/media/cross.png")
                 
-                guard let resp  else {
+                guard let resp else {
+                    showError(.comunicationError, .serverConextionError)
                     return
                 }
-                
-                if resp.status != .ok {
-                    self.remove()
+
+                guard resp.status == .ok else {
+                    showError(.generalError, resp.msg)
+                    return
                 }
-                
+
+                self.dismissCallback(self.data)
             }
             
             event.stopPropagation()
@@ -153,9 +160,10 @@ class ICMessageView: Div {
                 self.icon = "/skyline/media/mail.png"
             case .viewed:
                 self.icon = "/skyline/media/mail_open.png"
-            case .replied, .filed:
-                print("will try to remove")
-                self.remove()
+            case .replied:
+                self.icon = "/skyline/media/mail_open.png"
+            case .filed:
+                self.icon = "/skyline/media/mail_open.png"
             }
         }
         
@@ -196,38 +204,12 @@ class ICMessageView: Div {
         
         self.status = self.data.status
         
-        reCalculateTimeText()
+        refreshRelativeTime()
         
     }
     
-    func reCalculateTimeText() {
-        
+    func refreshRelativeTime() {
         self.lastMessageAtText = orderTimeMesure(uts: lastMessageAt, type: .createdAt).timeString
-        
-        let interval = getNow() - lastMessageAt
-        
-        var delay: Double = 0
-        
-        if interval <= 30 {
-            delay = 30
-        }
-        else if interval > 30 && interval <= 300 {
-            delay = 60
-        }
-        else if interval > 300 && interval <= 3600 {
-            delay = 600
-        }
-        else if interval > 3600 && interval <= 86400 {
-            delay = 3600
-        }
-        else if interval > 86400 {
-            delay = 86400
-        }
-        
-        Dispatch.asyncAfter( delay ) {
-            self.reCalculateTimeText()
-        }
-        
     }
     
 

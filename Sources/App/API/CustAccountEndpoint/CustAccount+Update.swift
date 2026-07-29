@@ -16,6 +16,8 @@ extension CustAccountComponents {
         custType: CustAcctTypes,
         thirdPartyService: Bool,
         isConcessionaire: Bool,
+        isolateWorkspace: Bool = false,
+        favorite: Bool = false,
         sendOrderCommunication: Bool,
         costType: CustAcctCostTypes,
         businessName: String,
@@ -76,6 +78,8 @@ extension CustAccountComponents {
                 custType: custType,
                 thirdPartyService: thirdPartyService,
                 isConcessionaire: isConcessionaire,
+                isolateWorkspace: isolateWorkspace,
+                favorite: favorite,
                 sendOrderCommunication: sendOrderCommunication,
                 costType: costType,
                 businessName: businessName,
@@ -144,5 +148,3 @@ extension CustAccountComponents {
         }
     }
 }
-
-

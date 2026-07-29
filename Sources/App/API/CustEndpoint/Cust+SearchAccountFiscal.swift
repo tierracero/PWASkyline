@@ -52,7 +52,10 @@ func searchAccountFiscal(
                 
                 callback(term,resp)
                 
-            } catch  {
+            } catch {
+
+                print("🔴  searchAccountFiscal")
+
                 print(error)
                 callback(term,[])
             }

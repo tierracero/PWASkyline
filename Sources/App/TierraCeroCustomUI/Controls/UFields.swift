@@ -57,6 +57,8 @@ public final class UDateField: InputDate {
 }
 
 public final class USelectField: Select {
+    public override class var name: String { "select" }
+
     public required init() {
         super.init()
         self.class(Class(TCTripBetaClass.uiControl))
@@ -64,6 +66,8 @@ public final class USelectField: Select {
 }
 
 public final class UTextArea: TextArea {
+    public override class var name: String { "textarea" }
+
     public required init() {
         super.init()
         self.class(Class(TCTripBetaClass.uiControl))

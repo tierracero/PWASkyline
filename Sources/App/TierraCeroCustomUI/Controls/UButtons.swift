@@ -6,6 +6,9 @@ import Foundation
 import Web
 
 public final class USmallButton: Button {
+
+    public override class var name: String { "button" }
+
     public required init() {
         super.init()
         self.class(Class(TCTripBetaClass.uiButton))
@@ -14,6 +17,9 @@ public final class USmallButton: Button {
 }
 
 public final class ULargeButton: Button {
+
+    public override class var name: String { "button" }
+
     public required init() {
         super.init()
         self.class(Class(TCTripBetaClass.uiButton))

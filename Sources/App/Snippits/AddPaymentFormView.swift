@@ -127,6 +127,7 @@ class AddPaymentFormView: Div {
     
     lazy var generalBankResults = Div()
         .hidden(self.$generalBankResultsIsHidden)
+        .class(Class(TCCrystalSurfaceClass.paymentBankResults))
         .backgroundColor(.white)
         .borderRadius(12.px)
         .position(.absolute)
@@ -483,12 +484,14 @@ class AddPaymentFormView: Div {
             
             Img()
                 .closeButton(.uiView2)
+                .class(Class(TCCrystalSurfaceClass.paymentClose))
                 .onClick{
                     self.remove()
                 }
             
             H2("Ingresar Pago")
                 .color(.lightBlueText)
+                .class(Class(TCCrystalSurfaceClass.paymentTitle))
             
             Div().class(.clear)
             
@@ -510,6 +513,7 @@ class AddPaymentFormView: Div {
                 .float(.left)
                 
             }
+            .class(Class(TCCrystalSurfaceClass.paymentMethodRow))
             
             
             Div().class(.clear).marginTop(7.px)
@@ -640,6 +644,7 @@ class AddPaymentFormView: Div {
                 
                 Div().class(.clear)
             }
+            .class(Class(TCCrystalSurfaceClass.paymentToggle))
             .hidden(self.$isDownPaymentDisabled)
             
             Div().class(.clear).height(12.px)
@@ -670,6 +675,7 @@ class AddPaymentFormView: Div {
                 
                 Div().class(.clear).marginTop(12.px)
             }
+            .class(Class(TCCrystalSurfaceClass.paymentDateRow))
             .hidden(self.$datePickerIsHidden)
             
             Div{
@@ -687,7 +693,10 @@ class AddPaymentFormView: Div {
                             //.fontSize(28.px)
                         
                     }
-                    .class(.uibtnLarge)
+                    .class(
+                        .uibtnLarge,
+                        Class(TCCrystalSurfaceClass.paymentSecondaryAction)
+                    )
                     .onClick(self.doPaymentWithPoints)
                     .margin(all: 0.px)
                     .float(.left)
@@ -704,15 +713,20 @@ class AddPaymentFormView: Div {
                     Strong(self.$isDownPayment.map{ $0 ? "Agragar Anticipo" : "Agregar Pago" })
                         
                 }
-                .class(.uibtnLargeOrange)
+                .class(
+                    .uibtnLargeOrange,
+                    Class(TCCrystalSurfaceClass.paymentPrimaryAction)
+                )
                 .onClick(self.doPayment)
                 .margin(all: 0.px)
                 
             }
+            .class(Class(TCCrystalSurfaceClass.paymentActions))
             .marginTop(12.px)
             .align(.right)
             
         }
+        .class(Class(TCCrystalSurfaceClass.paymentPanel))
         .backgroundColor(.backGroundGraySlate)
         .custom("top","calc(50% - 250px)")
         .borderRadius(all: 24.px)
@@ -725,6 +739,8 @@ class AddPaymentFormView: Div {
     
     override func buildUI() {
         super.buildUI()
+
+        TCCrystalSurfaceTheme.apply(to: self, variant: .addPayment)
         
         position(.absolute)
         height(100.percent)

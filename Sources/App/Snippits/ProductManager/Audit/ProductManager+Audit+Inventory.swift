@@ -110,6 +110,8 @@ extension ProductManagerView.AuditView {
         }
         .custom("height", "calc(100% - 85px)")
         .overflow(.auto)
+
+        private var inventoryRenderId = UUID()
         
         @State var parsablePOCs: [SearchPOCResponse] = []
         
@@ -641,7 +643,10 @@ extension ProductManagerView.AuditView {
                 showError(.unexpectedResult, "Lo sentimos el unico reporte soportado actualmente es: POR TIENDA")
                 return
             }
-            
+
+            let renderId = UUID()
+            inventoryRenderId = renderId
+
             loadingView(show: true)
             
             API.custPOCV1.audits(
@@ -654,6 +659,9 @@ extension ProductManagerView.AuditView {
                 to: endAtUTS,
                 ids: ids
             ) { resp in
+                guard renderId == self.inventoryRenderId else {
+                    return
+                }
                 
                 loadingView(show: false)
                 
@@ -679,7 +687,10 @@ extension ProductManagerView.AuditView {
                 switch type {
                 case .general:
                     
-                    self.renderGenral(payload: payload)
+                    self.renderGenral(
+                        payload: payload,
+                        renderId: renderId
+                    )
                     
                 case .lowInvetory:
                     break
@@ -2512,9 +2523,10 @@ extension ProductManagerView.AuditView {
 
         }
         
-        func renderGenral(payload: CustPOCComponents.AuditsResponse) {
-            
-            print("⚠️ renderGenral")
+        func renderGenral(
+            payload: CustPOCComponents.AuditsResponse,
+            renderId: UUID
+        ) {
 
             var active: [CustPOCQuick] = []
             
@@ -2594,43 +2606,11 @@ extension ProductManagerView.AuditView {
                     
                     resultDiv.appendChild(Div().clear(.both).height(7.px))
                     
-                    pocs.forEach { poc in
-                        
-                        let view = SearchItemPOCView(
-                            searchTerm: "",
-                            poc: .init(
-                                id: poc.id,
-                                upc: poc.upc,
-                                name: poc.name,
-                                brand: poc.brand,
-                                model: poc.model,
-                                price: poc.pricea,
-                                avatar: poc.avatar,
-                                units: nil,
-                                reqSeries: poc.reqSeries
-                            ),
-                            callback: { update, deleted in
-                                
-                                let view = ManagePOC(
-                                    leveltype: CustProductType.all,
-                                    levelid: nil,
-                                    levelName: "",
-                                    pocid: poc.id,
-                                    titleText: "",
-                                    quickView: false
-                                ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
-                                    //update( name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
-                                } deleted: {
-                                    //deleted()
-                                }
-                                
-                                addToDom(view)
-                                
-                            })
-                        
-                        innerView.appendChild(view)
-                        
-                    }
+                    asyncAddAuditProduct(
+                        renderId: renderId,
+                        products: pocs,
+                        container: innerView
+                    )
                     
                     resultDiv.appendChild(innerView)
                     
@@ -2686,51 +2666,79 @@ extension ProductManagerView.AuditView {
                 
                 resultDiv.appendChild(Div().clear(.both).height(7.px))
                 
-                suspended.forEach { poc in
-                    let view = SearchItemPOCView(
-                        searchTerm: "",
-                        poc: .init(
-                            id: poc.id,
-                            upc: poc.upc,
-                            name: poc.name,
-                            brand: poc.brand,
-                            model: poc.model,
-                            price: poc.pricea,
-                            avatar: poc.avatar,
-                            units: nil,
-                            reqSeries: poc.reqSeries
-                        ),
-                        callback: { update, deleted in
-                            
-                            let view = ManagePOC(
-                                leveltype: CustProductType.all,
-                                levelid: nil,
-                                levelName: "",
-                                pocid: poc.id,
-                                titleText: "",
-                                quickView: false
-                            ) {  pocid, upc, brand, model, name, cost, price, avatar, reqSeries in
-                                //update( name, "\(upc) \(brand) \(model)", price, avatar, reqSeries)
-                            } deleted: {
-                                //deleted()
-                            }
-                            
-                            addToDom(view)
-                            
-                        })
-                    innerView.appendChild(view)
-                }
+                asyncAddAuditProduct(
+                    renderId: renderId,
+                    products: suspended,
+                    container: innerView
+                )
                 
                 resultDiv.appendChild(innerView)
                 
             }
             
         }
+
+        private func asyncAddAuditProduct(
+            renderId: UUID,
+            products: [CustPOCQuick],
+            container: Div,
+            index: Int = 0
+        ) {
+            guard renderId == inventoryRenderId,
+                  products.indices.contains(index) else {
+                return
+            }
+
+            let product = products[index]
+            let view = SearchItemPOCView(
+                searchTerm: "",
+                poc: .init(
+                    id: product.id,
+                    upc: product.upc,
+                    name: product.name,
+                    brand: product.brand,
+                    model: product.model,
+                    price: product.pricea,
+                    avatar: product.avatar,
+                    units: nil,
+                    reqSeries: product.reqSeries
+                )
+            ) { _, _ in
+                addToDom(ManagePOC(
+                    leveltype: .all,
+                    levelid: nil,
+                    levelName: "",
+                    pocid: product.id,
+                    titleText: "",
+                    quickView: false
+                ) { _, _, _, _, _, _, _, _, _ in
+                } deleted: {
+                })
+            }
+
+            guard renderId == inventoryRenderId else {
+                view.remove()
+                return
+            }
+
+            container.appendChild(view)
+
+            Dispatch.asyncAfter(0.01) {
+                guard renderId == self.inventoryRenderId else {
+                    return
+                }
+
+                self.asyncAddAuditProduct(
+                    renderId: renderId,
+                    products: products,
+                    container: container,
+                    index: index + 1
+                )
+            }
+        }
         
         func renderByProduct(payload: CustPOCComponents.AuditsResponse, startAtUTS: Int64, endAtUTS: Int64) {
             
-            print("⚠️ renderByProduct")
-
             var storeCostTotal: Int64 = 0
             
             var storePriceTotal: Int64 = 0
@@ -3151,8 +3159,6 @@ extension ProductManagerView.AuditView {
         }
         
         func renderBySales(payload: CustPOCComponents.AuditsResponse, startAtUTS: Int64, endAtUTS: Int64) {
-            
-            print("⚠️ renderBySales")
             
             var itemRefrence: [UUID:[API.custPOCV1.AuditObject]] = [:]
             
@@ -3664,8 +3670,6 @@ extension ProductManagerView.AuditView {
         
         func renderBySalesConcession(payload: CustPOCComponents.AuditsResponse, startAtUTS: Int64, endAtUTS: Int64) {
             
-            print("⚠️ renderBySalesConcession")
-
             self.accountRefrecnce = Dictionary(uniqueKeysWithValues: payload.accounts.map{ value in (value.id, value) })
             
             var itemRefrence: [UUID:[API.custPOCV1.AuditObject]] = [:]
@@ -4498,6 +4502,7 @@ extension ProductManagerView.AuditView {
         
 
         override func didRemoveFromDOM() {
+            inventoryRenderId = UUID()
             super.didRemoveFromDOM()
             $reportType.removeAllListeners()
             $auditTypeListener.removeAllListeners()

@@ -31,6 +31,7 @@ Concise documentation and code style rules for PWASkyline.
 - Popup title bars use surface contrast and spacing for separation; do not add a persistent accent-colored divider beneath the title.
 - Single-item surfaces use neutral structural borders. Reserve orange for meaningful emphasis instead of outlining the entire content surface.
 - Shared single-item instructional copy and field labels use a minimum `15px` font size.
+- Define Swift Web UI colors with `.init(r:g:b:)` rather than hex literals inside `.color(...)` calls; centralize repeated palette values.
 - UI buttons communicate affordance through fill, typography, and interaction states rather than a persistent border. Preserve a visible keyboard-focus outline.
 - Content-sized popups should derive their height from their contents and remain capped by the viewport. Use fixed heights only when the interaction requires a stable canvas or internal scrolling region.
 

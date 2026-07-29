@@ -10,6 +10,25 @@ import TCFundamentals
 import Web
 
 extension CustFolioStatus {
+
+    public var crystalTintColor: Color {
+        switch self {
+        case .pending:
+            return .init(r: 255, g: 165, b: 16, a: 0.14)
+        case .active:
+            return .init(r: 0, g: 176, b: 236, a: 0.14)
+        case .pendingSpare:
+            return .init(r: 241, g: 90, b: 36, a: 0.14)
+        case .canceled, .archive:
+            return .init(r: 224, g: 224, b: 224, a: 0.12)
+        case .finalize:
+            return .init(r: 0, g: 178, b: 52, a: 0.14)
+        case .collection:
+            return .init(r: 255, g: 204, b: 204, a: 0.14)
+        case .sideStatus, .saleWait:
+            return .init(r: 83, g: 136, b: 150, a: 0.14)
+        }
+    }
     
     public var color: Color {
         switch self {

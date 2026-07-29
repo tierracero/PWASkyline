@@ -64,6 +64,7 @@ class SearchCustomerView: Div {
                         .marginTop(14.px)
 
                         ULargeButton("Buscar Cliente")
+                            .class(Class(TCCrystalSurfaceClass.goodButton))
                             .width(100.percent)
                             .marginTop(16.px)
                             .onClick(self.searchCustomer)
@@ -82,6 +83,8 @@ class SearchCustomerView: Div {
         position(.absolute)
         
         super.buildUI()
+
+        TCCrystalSurfaceTheme.apply(to: self, variant: .customerSearch)
         
     }
     

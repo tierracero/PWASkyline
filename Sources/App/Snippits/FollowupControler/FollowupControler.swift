@@ -100,10 +100,13 @@ class FollowupControler: Div {
         event.stopPropagation()
     }
 
-    lazy var addTripButton = Div("+ Viaje")
+    lazy var addTripButton = Div{
+        Span("+ Viaje")
+    }
         .class(.uibtnLargeOrange)
         .marginRight(7.px)
         .marginTop(0.px)
+        .fontSize(23.px)
         .float(.right)
         .onClick {
 
@@ -347,7 +350,7 @@ class FollowupControler: Div {
     ) -> Div {
         VBox(.interactive) {
             Div {
-                Div(String(item.id.uuidString.prefix(8)).uppercased())
+                Div(item.folio)
                     .fontSize(22.px)
                     .color(.white)
                     .class(.oneLineText)
