@@ -1013,6 +1013,7 @@ function(e, t, n) {
                   , i = this;
                 return n = n || i.options.animateEasingFunction || "swing",
                 t = t || i.options.animateFrames || 30,
+                i.cacheImageMetrics(),
                 (0,
                 d.default)(i.el, i.pos, e, function(e) {
                     return i.render(e.normalize())
@@ -1034,6 +1035,7 @@ function(e, t, n) {
                     var o = [i.offsetWidth, i.offsetHeight];
                     return e = o[0],
                     t = o[1],
+                    r.cacheImageMetrics(),
                     n = c.default.from(r.el),
                     r.el.focus(),
                     r.stage.activate(r),
@@ -1058,6 +1060,7 @@ function(e, t, n) {
                   , o = r[1];
                 e && (this.pos.x += e),
                 t && (this.pos.y += t),
+                this.cacheImageMetrics(),
                 this.render(this.pos.rebound(i, o)),
                 this.emit("crop.change")
             }
@@ -1077,6 +1080,7 @@ function(e, t, n) {
                           , i = r.offsetWidth
                           , o = r.offsetHeight;
                         return n = f.default.create(c.default.from(e.el), i, o, t),
+                        e.cacheImageMetrics(),
                         e.aspect && (n.aspect = e.aspect),
                         e.el.focus(),
                         e.emit("crop.active"),
@@ -1097,14 +1101,53 @@ function(e, t, n) {
             }
         },
               {
+            key: "cacheImageMetrics",
+            value: function() {
+                var e = this.options.imageId && document.getElementById(this.options.imageId);
+                if (!e)
+                    return this._imageRenderMetrics = null,
+                    this;
+                var t = e.offsetWidth
+                  , n = e.offsetHeight
+                  , r = this.el.offsetWidth;
+                return this._imageRenderMetrics = t && n ? {
+                    aspect: t / n,
+                    widthInset: Math.max(0, r - t)
+                } : null,
+                this
+            }
+        },
+              {
+            key: "renderPosition",
+            value: function(e) {
+                var t = Math.round(e.y) + "px"
+                  , n = Math.round(e.x) + "px";
+                return this.el.style.top !== t && (this.el.style.top = t),
+                this.el.style.left !== n && (this.el.style.left = n),
+                this
+            }
+        },
+              {
+            key: "renderSize",
+            value: function(e) {
+                var t = Math.round(e.w)
+                  , n = Math.round(e.h)
+                  , r = this._imageRenderMetrics;
+                r && (n = Math.round(Math.max(0, t - r.widthInset) / r.aspect));
+                var i = t + "px"
+                  , o = n + "px";
+                return this.el.style.width !== i && (this.el.style.width = i),
+                this.el.style.height !== o && (this.el.style.height = o),
+                this
+            }
+        },
+              {
             key: "render",
             value: function(e) {
                 
                 return e = e || this.pos,
-                this.el.style.top = Math.round(e.y) + "px",
-                this.el.style.left = Math.round(e.x) + "px",
-                this.el.style.width = Math.round(e.w) + "px",
-                this.el.style.height = _getImgeHeight(this.options.cropperId, Math.round(e.h)).toString() + "px", // edit height cropperId cropperId
+                this.renderPosition(e),
+                this.renderSize(e),
                 this.pos = e,
                 this.emit("crop.update"),
                 this
@@ -1863,14 +1906,3 @@ function(e, t, n) {
     t.default = r
 }
 ]);
-
-function _getImgeHeight( id, def){
-    if (document.getElementById(`${id}Img`) == null) {
-        return def
-    }
-    else{
-        return document.getElementById(`${id}Img`).offsetHeight
-    }
-        
-}
-
