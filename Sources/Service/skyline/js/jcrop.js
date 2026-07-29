@@ -396,29 +396,60 @@ function(e, t, n) {
         value: !0
     });
     t.default = function(e, t, n, r) {
-        var i, o;
+        var i, o, l, c, d = null, f = !1, h = !1, p = 0, v = 0;
+        function g() {
+            document.removeEventListener("mouseup", s),
+            window.removeEventListener("mousemove", u),
+            document.removeEventListener("touchmove", u),
+            document.removeEventListener("touchend", s)
+        }
+        function y() {
+            null !== d && (window.cancelAnimationFrame(d),
+            d = null)
+        }
+        function b() {
+            if (d = null,
+            f) {
+                var e = l
+                  , t = c;
+                f = !1,
+                h && e === p && t === v || (n(e, t),
+                p = e,
+                v = t,
+                h = !0)
+            }
+        }
+        function w(e, t) {
+            l = e,
+            c = t,
+            f = !0,
+            null === d && (d = window.requestAnimationFrame(b))
+        }
         function a(e) {
             var n = "touchstart" === e.type ? e.touches[0] : e;
             i = n.pageX,
             o = n.pageY,
+            y(),
+            f = !1,
+            h = !1,
             e.preventDefault(),
             e.stopPropagation(),
-            t(i, o, n) && ("mousedown" === e.type ? (window.addEventListener("mousemove", u),
+            t(i, o, n) && (g(),
+            "mousedown" === e.type ? (window.addEventListener("mousemove", u),
             document.addEventListener("mouseup", s)) : "touchstart" === e.type && (document.addEventListener("touchmove", u),
             document.addEventListener("touchend", s)))
         }
         function u(e) {
             var t = "touchmove" === e.type ? e.changedTouches[0] : e;
             e.stopPropagation(),
-            n(t.pageX - i, t.pageY - o)
+            w(t.pageX - i, t.pageY - o)
         }
         function s(e) {
             var t = "touchend" === e.type ? e.changedTouches[0] : e;
-            t.pageX && t.pageY && n(t.pageX - i, t.pageY - o),
-            document.removeEventListener("mouseup", s),
-            window.removeEventListener("mousemove", u),
-            document.removeEventListener("touchmove", u),
-            document.removeEventListener("touchend", s),
+            void 0 !== t.pageX && void 0 !== t.pageY && w(t.pageX - i, t.pageY - o),
+            y(),
+            b(),
+            g(),
             r()
         }
         return "string" == typeof e && (e = document.getElementById(e)),
@@ -426,6 +457,9 @@ function(e, t, n) {
         e.addEventListener("touchstart", a),
         {
             remove: function() {
+                y(),
+                f = !1,
+                g(),
                 e.removeEventListener("mousedown", a),
                 e.removeEventListener("touchstart", a)
             }
@@ -1839,5 +1873,4 @@ function _getImgeHeight( id, def){
     }
         
 }
-
 
