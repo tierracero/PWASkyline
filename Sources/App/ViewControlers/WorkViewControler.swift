@@ -894,7 +894,9 @@ class WorkViewControler: PageController {
         Script()
             .src("/skyline/js/main.js")
             .type("text/javascript")
-            .onLoad { }
+            .onLoad {
+                VisualPerformanceSettings.apply()
+            }
         
         Script()
             .src("/js/socialjs.js")
@@ -904,7 +906,9 @@ class WorkViewControler: PageController {
         Script()
             .src("/skyline/js/jcrop.js")
             .type("text/javascript")
-            .onLoad { }
+            .onLoad {
+                VisualPerformanceSettings.apply()
+            }
         
         Script()
             .src("/skyline/js/JsBarcode.all.min.js")
@@ -3481,11 +3485,11 @@ class WorkViewControler: PageController {
             return
         }
         
-        if term.count > 8 && term.contains("-") {
+        if term.count > 7 && term.contains("-") {
            
             let prefix = String(term.prefix(2))
             
-            if let type = CustFolioSequenceTableType(rawValue: prefix) {
+            if let type: CustFolioSequenceTableType = CustFolioSequenceTableType(rawValue: prefix) {
                 
                 switch type {
                 case .folio:

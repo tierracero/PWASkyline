@@ -234,7 +234,10 @@ public class LoginViewcontroler: PageController {
             .class(Class("tc-login-main-actions"))
         }
         .class(Class("tc-login-main-card"))
-        .custom("backdrop-filter", "blur(3px) !important")
+        .custom(
+            "backdrop-filter",
+            "var(--tc-login-card-backdrop-filter, blur(3px)) !important"
+        )
         .custom("border", "none !important")
     }
     .class(Class("tc-login-main-root"))
@@ -353,6 +356,7 @@ public class LoginViewcontroler: PageController {
             .src("skyline/js/login.js")
             .type("text/javascript")
             .onLoad {
+                VisualPerformanceSettings.apply()
                 self.startMeshBackground()
             }
         

@@ -100,6 +100,27 @@ function goToLogin(){
         instances.delete(elementId)
     }
 
+    function setLoginMeshEnabled(enabled) {
+        const isEnabled = enabled !== false
+        const settings = window.tcVisualPerformanceSettings || {}
+        const wasEnabled = settings.loginMeshEnabled !== false
+
+        settings.loginMeshEnabled = isEnabled
+        window.tcVisualPerformanceSettings = settings
+
+        if (!isEnabled) {
+            pendingStarts.clear()
+            Array.from(instances.keys()).forEach(stopLoginMeshEffect)
+        }
+        else if (!wasEnabled) {
+            document
+                .querySelectorAll(".tc-login-mesh-background[id]")
+                .forEach(element => startLoginMeshEffect(element.id))
+        }
+
+        return isEnabled
+    }
+
     function startAmbientMotion(effect) {
         const targetZoom = 1.452443967572723
         const initialZoom = targetZoom * 0.84
@@ -161,6 +182,10 @@ function goToLogin(){
         stopLoginMeshEffect(elementId)
         element.style.backgroundColor = "#1D2026"
 
+        if (window.tcVisualPerformanceSettings?.loginMeshEnabled === false) {
+            return
+        }
+
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
             return
         }
@@ -209,4 +234,9 @@ function goToLogin(){
 
     window.startLoginMeshEffect = startLoginMeshEffect
     window.stopLoginMeshEffect = stopLoginMeshEffect
+    window.setLoginMeshEnabled = setLoginMeshEnabled
+
+    setLoginMeshEnabled(
+        window.tcVisualPerformanceSettings?.loginMeshEnabled !== false
+    )
 })()

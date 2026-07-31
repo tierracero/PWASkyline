@@ -64,6 +64,14 @@ func jcrop(_ id: String, _ itemid: String, _ img: String,_ width: Int,_ height: 
     _ = JSObject.global.jcropWithImage!( id, itemid, img, width, height)
 }
 
+func destroyJcrop(_ id: String) {
+    _ = JSObject.global.destroyCropper!(id)
+}
+
+func destroyAllImageEditorCroppers() {
+    _ = JSObject.global.destroyAllImageEditorCroppers!()
+}
+
 func removeItem(_ id: String) {
     _ = JSObject.global.removeItem!(id)
 }

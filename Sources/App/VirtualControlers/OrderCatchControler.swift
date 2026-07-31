@@ -1108,6 +1108,8 @@ public class OrderCatchControler {
             
         case .pendingPickup(let isPendingPickup):
             break
+        case .warrantyCards(let warrantyCards):
+            orderCatch[orderId]?.warrantyCards = warrantyCards
         case .newOrder(let order):
             break
         case .files(let files):
@@ -3369,6 +3371,7 @@ extension OrderCatchControler {
         case alertStatus(Bool)
         case hightPriorityStatus(Bool)
         case pendingPickup(Bool)
+        case warrantyCards([String])
         case newOrder(CustOrderLoadFolios)
         case files([CustOrderLoadFolioFiles])
     }

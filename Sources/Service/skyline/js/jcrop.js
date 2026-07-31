@@ -396,7 +396,7 @@ function(e, t, n) {
         value: !0
     });
     t.default = function(e, t, n, r) {
-        var i, o, l, c, d = null, f = !1, h = !1, p = 0, v = 0;
+        var i, o, l, c, d = null, f = !1, h = !1, p = 0, v = 0, m = null;
         function g() {
             document.removeEventListener("mouseup", s),
             window.removeEventListener("mousemove", u),
@@ -406,6 +406,11 @@ function(e, t, n) {
         function y() {
             null !== d && (window.cancelAnimationFrame(d),
             d = null)
+        }
+        function x(t) {
+            t ? (m = e.closest ? e.closest(".jcrop-stage") : null,
+            m && m.classList.add("tc-jcrop-dragging")) : (m && m.classList.remove("tc-jcrop-dragging"),
+            m = null)
         }
         function b() {
             if (d = null,
@@ -435,6 +440,8 @@ function(e, t, n) {
             e.preventDefault(),
             e.stopPropagation(),
             t(i, o, n) && (g(),
+            x(!1),
+            x(!0),
             "mousedown" === e.type ? (window.addEventListener("mousemove", u),
             document.addEventListener("mouseup", s)) : "touchstart" === e.type && (document.addEventListener("touchmove", u),
             document.addEventListener("touchend", s)))
@@ -450,6 +457,7 @@ function(e, t, n) {
             y(),
             b(),
             g(),
+            x(!1),
             r()
         }
         return "string" == typeof e && (e = document.getElementById(e)),
@@ -460,6 +468,7 @@ function(e, t, n) {
                 y(),
                 f = !1,
                 g(),
+                x(!1),
                 e.removeEventListener("mousedown", a),
                 e.removeEventListener("touchstart", a)
             }
@@ -747,13 +756,14 @@ function(e, t, n) {
             key: "initStageDrag",
             value: function() {
                 var e, t, n, r, i, a = this;
-                (0,
+                this.stageDragHandle = (0,
                 u.default)(this.el, function(u, s, f) {
                     return !!a.canCreate() && (e = (a.options.widgetConstructor || o.default).create(a.options),
                     (t = e.pos).x = f.pageX - a.el.offsetParent.offsetLeft - a.el.offsetLeft,
                     t.y = f.pageY - a.el.offsetParent.offsetTop - a.el.offsetTop,
                     n = a.el.offsetWidth,
                     r = a.el.offsetHeight,
+                    a.shades.setDimensions(n, r),
                     a.addWidget(e),
                     i = c.default.create(t, n, r, "se"),
                     a.options.aspectRatio && (i.aspect = a.options.aspectRatio),
@@ -822,21 +832,22 @@ function(e, t, n) {
                 if (!this.canRemove())
                     return !1;
                 e.emit("crop.remove"),
-                e.el.remove(),
                 this.crops.delete(e),
+                this.active === e && (this.active = null),
+                e.destroy(),
                 this.activate()
             }
         }, {
             key: "refresh",
             value: function() {
-                this.options.shade && this.active && this.shades.adjust(this.active.pos)
+                this.options.shade && this.active && this.shades.measure().adjust(this.active.pos)
             }
         }, {
             key: "updateShades",
             value: function() {
                 if (this.shades)
                     return this.options.shade ? this.shades.enable() : this.shades.disable(),
-                    this.options.shade && this.active && this.shades.adjust(this.active.pos),
+                    this.options.shade && this.active && this.shades.measure().adjust(this.active.pos),
                     this
             }
         }, {
@@ -862,7 +873,19 @@ function(e, t, n) {
             }
         }, {
             key: "destroy",
-            value: function() {}
+            value: function() {
+                return this.stageDragHandle && (this.stageDragHandle.remove(),
+                this.stageDragHandle = null),
+                this.crops && (Array.from(this.crops).forEach(function(e) {
+                    return e.destroy()
+                }),
+                this.crops.clear()),
+                this.shades && (this.shades.destroy(),
+                this.shades = null),
+                this.active = null,
+                this.enabled = !1,
+                this
+            }
         }]),
         t
     }();
@@ -965,10 +988,11 @@ function(e, t, n) {
         i(t, [{
             key: "init",
             value: function() {
-                return this.createHandles(),
+                return this.handleDragHandles = [],
+                this.createHandles(),
                 this.createMover(),
                 this.attachFocus(),
-                h.default.attach(this),
+                this.keyboardController = h.default.attach(this),
                 this
             }
         },
@@ -1000,24 +1024,32 @@ function(e, t, n) {
             key: "attachFocus",
             value: function() {
                 var e = this;
-                this.el.addEventListener("focus", function(t) {
+                this.focusHandler = function(t) {
                     e.stage.activate(e),
                     e.emit("crop.update")
-                }, !1)
+                }
+                ,
+                this.el.addEventListener("focus", this.focusHandler, !1)
             }
         },
               {
             key: "animate",
             value: function(e, t, n) {
                 var r = this
-                  , i = this;
+                  , i = this
+                  , o;
                 return n = n || i.options.animateEasingFunction || "swing",
                 t = t || i.options.animateFrames || 30,
                 i.cacheImageMetrics(),
-                (0,
+                i.stage.shades.measure(),
+                i.animationHandle && i.animationHandle.cancel(),
+                o = (0,
                 d.default)(i.el, i.pos, e, function(e) {
                     return i.render(e.normalize())
-                }, t, n).then(function() {
+                }, t, n),
+                i.animationHandle = o,
+                o.then(function() {
+                    i.animationHandle === o && (i.animationHandle = null);
                     return r.emit("crop.change")
                 })
             }
@@ -1027,7 +1059,7 @@ function(e, t, n) {
             value: function() {
                 var e, t, n, r = this;
                 this.pos = c.default.from(this.el),
-                (0,
+                this.moverDragHandle = (0,
                 s.default)(this.el, function() {
                     var i = r.el.parentElement;
                     if (!r.stage.enabled)
@@ -1036,6 +1068,7 @@ function(e, t, n) {
                     return e = o[0],
                     t = o[1],
                     r.cacheImageMetrics(),
+                    r.stage.shades.setDimensions(e, t),
                     n = c.default.from(r.el),
                     r.el.focus(),
                     r.stage.activate(r),
@@ -1061,6 +1094,7 @@ function(e, t, n) {
                 e && (this.pos.x += e),
                 t && (this.pos.y += t),
                 this.cacheImageMetrics(),
+                this.stage.shades.setDimensions(i, o),
                 this.render(this.pos.rebound(i, o)),
                 this.emit("crop.change")
             }
@@ -1070,9 +1104,9 @@ function(e, t, n) {
             value: function() {
                 var e = this;
                 return this.options.handles.forEach(function(t) {
-                    var n, r = a.default.create("jcrop-handle " + t);
+                    var n, r = a.default.create("jcrop-handle " + t), i;
                     r.appendTo(e.el),
-                    (0,
+                    i = (0,
                     s.default)(r.el, function() {
                         if (!e.stage.enabled)
                             return !1;
@@ -1081,6 +1115,7 @@ function(e, t, n) {
                           , o = r.offsetHeight;
                         return n = f.default.create(c.default.from(e.el), i, o, t),
                         e.cacheImageMetrics(),
+                        e.stage.shades.setDimensions(i, o),
                         e.aspect && (n.aspect = e.aspect),
                         e.el.focus(),
                         e.emit("crop.active"),
@@ -1089,7 +1124,8 @@ function(e, t, n) {
                         return e.render(n.move(t, r))
                     }, function() {
                         e.emit("crop.change")
-                    })
+                    }),
+                    e.handleDragHandles.push(i)
                 }),
                 this
             }
@@ -1150,6 +1186,27 @@ function(e, t, n) {
                 this.renderSize(e),
                 this.pos = e,
                 this.emit("crop.update"),
+                this
+            }
+        },
+              {
+            key: "destroy",
+            value: function() {
+                return this.moverDragHandle && (this.moverDragHandle.remove(),
+                this.moverDragHandle = null),
+                this.handleDragHandles && (this.handleDragHandles.forEach(function(e) {
+                    return e.remove()
+                }),
+                this.handleDragHandles = []),
+                this.keyboardController && (this.keyboardController.destroy(),
+                this.keyboardController = null),
+                this.focusHandler && (this.el.removeEventListener("focus", this.focusHandler, !1),
+                this.focusHandler = null),
+                this.animationHandle && (this.animationHandle.cancel(),
+                this.animationHandle = null),
+                this.stage = null,
+                this._imageRenderMetrics = null,
+                this.el.remove(),
                 this
             }
         },
@@ -1474,7 +1531,6 @@ function(e, t, n) {
             t
         }
     }()
-      , i = a(n(2))
       , o = a(n(1));
     function a(e) {
         return e && e.__esModule ? e : {
@@ -1501,15 +1557,32 @@ function(e, t, n) {
                 this.keys().forEach(function(n) {
                     e.shades[n] = c.create(t, n)
                 }),
-                this.el.addEventListener("crop.update", function(t) {
+                this.cropUpdateHandler = function(t) {
                     t.cropTarget.isActive() && t.cropTarget.options.shade && e.adjust(t.cropTarget.pos)
-                }, !1),
-                this.enable()
+                }
+                ,
+                this.el.addEventListener("crop.update", this.cropUpdateHandler, !1),
+                this.enable(),
+                this.measure()
+            }
+        }, {
+            key: "measure",
+            value: function() {
+                return this.setDimensions(this.el.offsetWidth, this.el.offsetHeight)
+            }
+        }, {
+            key: "setDimensions",
+            value: function(e, t) {
+                return this.stageSize = {
+                    w: e,
+                    h: t
+                },
+                this
             }
         }, {
             key: "adjust",
             value: function(e) {
-                var t = i.default.from(this.el)
+                var t = this.stageSize || this.measure().stageSize
                   , n = this.shades;
                 n.t.h = e.y,
                 n.b.h = t.h - e.y2,
@@ -1538,6 +1611,17 @@ function(e, t, n) {
                 this.keys().forEach(function(t) {
                     return e[t].remove()
                 })
+            }
+        }, {
+            key: "destroy",
+            value: function() {
+                return this.cropUpdateHandler && (this.el.removeEventListener("crop.update", this.cropUpdateHandler, !1),
+                this.cropUpdateHandler = null),
+                this.disable(),
+                this.shades = {},
+                this.stageSize = null,
+                this.el = null,
+                this
             }
         }, {
             key: "setStyle",
@@ -1603,29 +1687,32 @@ function(e, t, n) {
         }, {
             key: "color",
             value: function(e) {
-                return e && (this.el.style.backgroundColor = e),
+                return e && this.el.style.backgroundColor !== e && (this.el.style.backgroundColor = e),
                 this
             }
         }, {
             key: "opacity",
             value: function(e) {
-                return e && (this.el.style.opacity = e),
+                return e && this.el.style.opacity !== e.toString() && (this.el.style.opacity = e),
                 this
             }
         }, {
             key: "w",
             set: function(e) {
-                this.el.style.width = e + "px"
+                var t = e + "px";
+                this.el.style.width !== t && (this.el.style.width = t)
             }
         }, {
             key: "h",
             set: function(e) {
-                this.el.style.height = e + "px"
+                var t = e + "px";
+                this.el.style.height !== t && (this.el.style.height = t)
             }
         }, {
             key: "x",
             set: function(e) {
-                this.el.style.left = e + "px"
+                var t = e + "px";
+                this.el.style.left !== t && (this.el.style.left = t)
             }
         }]),
         t
@@ -1732,7 +1819,7 @@ function(e, t, n) {
             key: "attach",
             value: function() {
                 var e = this.widget;
-                e.el.addEventListener("keydown", function(t) {
+                this.keydownHandler = function(t) {
                     var n = t.shiftKey ? 10 : 1;
                     switch (t.key) {
                     case "ArrowRight":
@@ -1755,7 +1842,17 @@ function(e, t, n) {
                         return
                     }
                     t.preventDefault()
-                })
+                }
+                ,
+                e.el.addEventListener("keydown", this.keydownHandler)
+            }
+        }, {
+            key: "destroy",
+            value: function() {
+                return this.widget && this.keydownHandler && this.widget.el.removeEventListener("keydown", this.keydownHandler),
+                this.keydownHandler = null,
+                this.widget = null,
+                this
             }
         }]),
         e
@@ -1782,19 +1879,28 @@ function(e, t, n) {
           , u = ["x", "y", "w", "h"]
           , s = t.normalize();
         a = "string" == typeof a ? r.default[a] : a;
-        var c = 0;
-        return new Promise(function(e, r) {
-            requestAnimationFrame(function r() {
-                c < o ? (u.forEach(function(e) {
+        var c = 0
+          , f = null
+          , l = !1
+          , h = new Promise(function(e, r) {
+            f = requestAnimationFrame(function r() {
+                l || (c < o ? (u.forEach(function(e) {
                     s[e] = Math.round(a(c, t[e], n[e] - t[e], o))
                 }),
                 i(s),
                 c++,
-                requestAnimationFrame(r)) : (i(n),
-                e())
+                f = requestAnimationFrame(r)) : (f = null,
+                i(n),
+                e()))
             })
+        });
+        return h.cancel = function() {
+            l = !0,
+            null !== f && (cancelAnimationFrame(f),
+            f = null)
         }
-        )
+        ,
+        h
     }
 }
 , function(e, t, n) {
@@ -1842,7 +1948,8 @@ function(e, t, n) {
                 return !t || "object" != typeof t && "function" != typeof t ? e : t
             }(this, (t.__proto__ || Object.getPrototypeOf(t)).call(this, r, n));
             return i.srcEl = e,
-            e.onload = i.resizeToImage.bind(i),
+            i.resizeToImageHandler = i.resizeToImage.bind(i),
+            e.onload = i.resizeToImageHandler,
             i.resizeToImage(),
             i
         }
@@ -1871,8 +1978,13 @@ function(e, t, n) {
         }, {
             key: "destroy",
             value: function() {
-                this.el.parentNode.insertBefore(this.srcEl, this.el),
-                this.el.remove()
+                return i.default.prototype.destroy.call(this),
+                this.srcEl && this.srcEl.onload === this.resizeToImageHandler && (this.srcEl.onload = null),
+                this.srcEl && this.srcEl.parentNode === this.el && (this.el.parentNode ? this.el.parentNode.insertBefore(this.srcEl, this.el) : this.el.removeChild(this.srcEl)),
+                this.el.remove(),
+                this.resizeToImageHandler = null,
+                this.srcEl = null,
+                this
             }
         }]),
         t

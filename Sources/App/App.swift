@@ -14,6 +14,8 @@ class App: WebApp {
 
     @AppBuilder override var app: Configuration {
         Lifecycle.didFinishLaunching { app in
+
+            VisualPerformanceSettings.apply()
             
             Navigator.shared.serviceWorker?.register("./service.js")
 

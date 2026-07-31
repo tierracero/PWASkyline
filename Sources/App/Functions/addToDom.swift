@@ -10,11 +10,17 @@ import JavaScriptKit
 import Web
 import DOM
 
+enum SuperViewPresentation {
+    case standard
+    case interactive
+}
+
 final class SuperView: Div {
 
     override class var name: String { "div" }
 
     private let content: DOMElement?
+    private let presentation: SuperViewPresentation
     private var cleanupScheduled = false
 
     #if arch(wasm32)
@@ -24,12 +30,17 @@ final class SuperView: Div {
 
     required init() {
         content = nil
+        presentation = .standard
         super.init()
         configure()
     }
 
-    init(content: DOMElement) {
+    init(
+        content: DOMElement,
+        presentation: SuperViewPresentation = .standard
+    ) {
         self.content = content
+        self.presentation = presentation
         super.init()
 
         configure()
@@ -54,9 +65,20 @@ final class SuperView: Div {
         left(0.px)
         top(0.px)
         opacity(0)
-        custom("backdrop-filter", "blur(3px)")
-        custom("-webkit-backdrop-filter", "blur(3px)")
         custom("transition", "opacity 340ms ease-out")
+
+        switch presentation {
+        case .standard:
+            attribute("data-super-view-presentation", "standard")
+            custom("backdrop-filter", "blur(3px)")
+            custom("-webkit-backdrop-filter", "blur(3px)")
+        case .interactive:
+            // Keep the established overlay darkening while avoiding a
+            // full-viewport blur during high-frequency pointer interaction.
+            attribute("data-super-view-presentation", "interactive")
+            custom("backdrop-filter", "none")
+            custom("-webkit-backdrop-filter", "none")
+        }
 
         onDidAddToDOM { [weak self] in
             Web.Dispatch.async { [weak self] in
@@ -183,14 +205,22 @@ final class SuperView: Div {
     }
 }
 
-func addToDom(_ view: DOMElement) {
+func addToDom(
+    _ view: DOMElement,
+    presentation: SuperViewPresentation = .standard
+) {
     if let content = view as? BaseElement,
        let superView = content.superview as? SuperView {
         superView.restoreContent()
         return
     }
 
-    WebApp.shared.document.body.appendChild(SuperView(content: view))
+    WebApp.shared.document.body.appendChild(
+        SuperView(
+            content: view,
+            presentation: presentation
+        )
+    )
     // WebApp.shared.window.document.body.appendChild(view)
     // WebApp.shared.window.document.appendChild(view)
 }

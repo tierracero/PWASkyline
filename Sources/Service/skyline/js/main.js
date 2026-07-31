@@ -1626,13 +1626,81 @@ function getElementTop(id){
     }
 }
 
+const jcropInstances = new Map()
+
+function cropperShadeIsEnabled() {
+    return window.tcVisualPerformanceSettings?.cropperShadeEnabled !== false
+}
+
+function setCropperShadeEnabled(enabled) {
+    const isEnabled = enabled !== false
+    const settings = window.tcVisualPerformanceSettings || {}
+
+    settings.cropperShadeEnabled = isEnabled
+    window.tcVisualPerformanceSettings = settings
+
+    jcropInstances.forEach(function(cropper) {
+        cropper.setOptions({ shade: isEnabled })
+    })
+
+    return isEnabled
+}
+
+window.setCropperShadeEnabled = setCropperShadeEnabled
+setCropperShadeEnabled(cropperShadeIsEnabled())
+
+let jcropWatermarkWidget
+
+function getJcropWatermarkWidget() {
+    if (!jcropWatermarkWidget) {
+        jcropWatermarkWidget = class extends Jcrop.Widget {
+            init() {
+                super.init()
+                const img = new Image()
+                img.src = this.options.imageURL
+                img.id = this.options.imageId
+                this.el.appendChild(img)
+            }
+        }
+    }
+
+    return jcropWatermarkWidget
+}
+
+function destroyCropper(id) {
+    const cropper = jcropInstances.get(id)
+
+    if (!cropper) {
+        return false
+    }
+
+    cropper.destroy()
+    jcropInstances.delete(id)
+    return true
+}
+
+function createOrReplaceCropper(id, options) {
+    destroyCropper(id)
+
+    const cropper = Jcrop.attach(id, options)
+    jcropInstances.set(id, cropper)
+    return cropper
+}
+
+function destroyAllImageEditorCroppers() {
+    destroyCropper("imageEditorThump")
+    destroyCropper("imageEditorWap")
+    destroyCropper("imageEditorWaterMark")
+}
+
 function jcrop(id, width, height) {
     
     try {
-        const jcrop = Jcrop.attach(id,{
+        const jcrop = createOrReplaceCropper(id, {
             aspectRatio: 1,
             handles: ["sw", "nw", "ne", "se"],
-            cropperId: `${id}Box`
+            cropperId: `${id}Box`,
+            shade: cropperShadeIsEnabled(),
         })
         
         const rect = Jcrop.Rect.fromPoints([50,50],[width,height]);
@@ -1644,74 +1712,58 @@ function jcrop(id, width, height) {
     
 }
 
-var _item
-
 function jcropWithImage(id, itemid, url, width, height) {
     
     let _width = width / 2
     let _height = height / 2
     
-    class SvgWidget extends Jcrop.Widget {
-      init () {
-        super.init();
-        const img = new Image();
-        img.src = url;
-        img.id = `${itemid}Img`;
-        this.el.appendChild(img);
-      }
+    let jcrop = jcropInstances.get(id)
+
+    if (!jcrop) {
+        jcrop = Jcrop.attach(id, {
+            handles: ["sw", "nw", "ne", "se"],
+            multi: true,
+            multiMin: 0,
+            widgetConstructor: getJcropWatermarkWidget(),
+            shadeOpacity: 0.001,
+            shade: cropperShadeIsEnabled(),
+        })
+        jcropInstances.set(id, jcrop)
     }
-    
-    const jcrop = Jcrop.attach( id, {
-        handles: ["sw", "nw", "ne", "se"],
-        aspectRatio: _width/_height,
+
+    const rect = Jcrop.Rect.fromPoints([50,50],[_width,_height]);
+
+    jcrop.newWidget(rect, {
+        aspectRatio: rect.aspect,
         cropperId: itemid,
         imageId: `${itemid}Img`,
-        widgetConstructor: SvgWidget,
-        shadeOpacity: 0.001,
+        imageURL: url,
     })
-    
-    _item = jcrop
-    
-    const rect = Jcrop.Rect.fromPoints([50,50],[_width,_height]);
-    
-    jcrop.newWidget(rect,{ aspectRatio: rect.aspect })
-    
-    console.log("⭐️  new id  ⭐️")
-    
-    console.log(_item.active.el.id)
-    
-    /*
-    const closeIcon = new Image();
-    closeIcon.src = `/skyline/media/cross.png`;
 
-    closeIcon.style.float = 'right'
+    const widget = document.getElementById(itemid)
+    const image = document.getElementById(`${itemid}Img`)
 
-    closeIcon.style.width = '32px'
-    closeIcon.style.padding = '7px'
-    closeIcon.style.cursor = 'pointer'
-    
-    //closeIcon.onclick = function(){document.getElementById(itemid).remove()};
-    
-    document.getElementById(itemid).append(closeIcon)
-    */
-    document.getElementById(itemid).style.height = document.getElementById(`${itemid}Img`).offsetHeight.toString() + "px"
-    
-    //return closeIcon
-    
-    return document.getElementById(itemid)
-    
+    if (widget && image) {
+        widget.style.height = image.offsetHeight.toString() + "px"
+        return widget
+    }
+
+    return null
 }
 
 function removeItem(itemid) {
-    /*
-     window.document.getElementById(`{itemid}Img`).parentNode.id
-     
-     document.getElementById(itemid)
-     */
-    console.log("id of chiled object")
-    console.log(`${itemid}Img`)
-    
-    window.document.getElementById(`${itemid}Img`).parentNode.remove()
+    for (const cropper of jcropInstances.values()) {
+        const widget = Array.from(cropper.crops).find(function(item) {
+            return item.el.id === itemid
+        })
+
+        if (widget) {
+            cropper.removeWidget(widget)
+            return true
+        }
+    }
+
+    return false
 }
 
 function getParentId(childid){

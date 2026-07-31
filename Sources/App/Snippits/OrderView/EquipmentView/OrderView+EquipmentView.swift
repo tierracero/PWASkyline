@@ -702,7 +702,7 @@ extension OrderView {
                     .float(.left)
                 }
                 .class(Class(TCOrderViewClass.equipmentOverview))
-                .custom("height", "calc(100% - 58px)")
+                .custom("height", "calc(100% - 68px) !important")
                 
                 Div{
                     
@@ -1564,7 +1564,7 @@ extension OrderView {
                 .borderRadius(12.px)
                 .padding(all: 3.px)
                 .marginLeft(7.px)
-                .height(45.px)
+                .custom("height", "55px !important")
                 
             }
             .class(Class(TCOrderViewClass.equipmentDetails))

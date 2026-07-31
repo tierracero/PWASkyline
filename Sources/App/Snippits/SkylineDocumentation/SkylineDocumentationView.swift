@@ -383,7 +383,7 @@ class SkylineDocumentationView: Div {
         Div {
             
             Img()
-                .src("/skyline/meidia/\(icon.icon)")
+                .src("/skyline/media/\(icon.icon)")
                 .width(22.px)
                 .height(22.px)
                 .marginRight(10.px)

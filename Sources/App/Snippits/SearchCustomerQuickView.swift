@@ -142,9 +142,11 @@ class SearchCustomerQuickView: Div {
                     Div {
                         self.noResultDiv
                             .hidden(self.$results.map { !$0.isEmpty })
+                            .display(self.$results.map { !$0.isEmpty ? .none : .block })
 
                         self.resultDiv
                             .hidden(self.$results.map { $0.isEmpty })
+                            .display(self.$results.map { $0.isEmpty ? .none : .block })
                     }
                     .class(Class(TCCrystalSurfaceClass.customerLookupResults))
                 }

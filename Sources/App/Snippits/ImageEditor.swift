@@ -18,6 +18,10 @@ import XMLHttpRequest
 class ImageEditor: Div {
     
     override class var name: String { "div" }
+
+    private static weak var activeWebSocketEditor: ImageEditor?
+
+    private static var didInstallWebSocketListener = false
     
     let eventid: UUID
     
@@ -87,6 +91,14 @@ class ImageEditor: Div {
     @State var imageIsLoaded: Bool = false
     
     var secondCropperIsActive = false
+
+    var wapImageIsPrepared = false
+
+    var wapImageIsLoading = false
+
+    var logoImageIsPrepared = false
+
+    var logoImageIsLoading = false
     
     var imgEditorIsActive = false
     
@@ -127,11 +139,9 @@ class ImageEditor: Div {
         .id(Id(stringLiteral: "imageEditorThump"))
     
     lazy var imageWap = Img()
-        .src("skyline/media/tierraceroRoundLogoWhite.svg")
         .id(Id(stringLiteral: "imageEditorWap"))
     
     lazy var imageLogo = Img()
-        .src("skyline/media/tierraceroRoundLogoWhite.svg")
         .id(Id(stringLiteral: "imageEditorWaterMark"))
         
     lazy var editThumpDiv = Div{
@@ -141,7 +151,7 @@ class ImageEditor: Div {
                 .height(self.$relativeHeight)
                 .width(self.$relativeWidth)
         }
-        .id(.init("imageThumpContainer"))
+        .id(.init("imageEditorSquareContainer"))
         .height(self.$relativeHeight)
         .width(self.$relativeWidth)
         .position(.relative)
@@ -163,7 +173,7 @@ class ImageEditor: Div {
                 .height(self.$relativeHeight)
                 .width(self.$relativeWidth)
         }
-        .id(.init("imageThumpContainer"))
+        .id(.init("imageEditorGeneralContainer"))
         .height(self.$relativeHeight)
         .width(self.$relativeWidth)
         .position(.relative)
@@ -340,45 +350,7 @@ class ImageEditor: Div {
                             self.thumpX = getElementX("imageEditorThumpBox")
                             self.thumpY = getElementY("imageEditorThumpBox")
                             
-                            self.editStep = .wap
-                            
-                            if !self.secondCropperIsActive {
-                                
-                                self.secondCropperIsActive = true
-                                
-                                //let gridWidth = Double(getElementWidth("imageEditorWapDiv"))
-                                
-                                //let gridHeight = Double(getElementHeight("imageEditorWapDiv"))
-                                
-                                let thumpWidth = self.wapWidthPre ?? 300
-                                
-                                let thumpHeight = self.wapHeightPre ?? 370
-                                
-                                var cropWidth: Int = 0
-                                
-                                var cropHeight: Int = 0
-                                
-                                let radio = Double(self.relativeHeight) / Double(thumpHeight)
-                                
-                                print(Double(self.relativeHeight) / Double(thumpHeight))
-                                
-                                print(Double(thumpHeight) / Double(self.relativeHeight))
-                                
-                                cropWidth = (Int(Double(thumpWidth) * radio) / 3) * 2
-                                
-                                cropHeight = (Int(Double(thumpHeight) * radio) / 3 ) * 2
-                                
-                                print("cropWidth \(cropWidth)")
-                                
-                                print("cropHeight \(cropHeight)")
-
-                                cropWidth = (cropWidth / 3) * 2
-                                
-                                cropHeight = (cropHeight / 3) * 2
-                                
-                                jcrop("imageEditorWap",cropWidth, cropHeight)
-                                
-                            }
+                            self.openWapStep()
                         case .wap:
                             
                             // Set Wap Data
@@ -388,9 +360,7 @@ class ImageEditor: Div {
                             self.wapX = getElementX("imageEditorWapBox")
                             self.wapY = getElementY("imageEditorWapBox")
                             
-                            self.editStep = .logo
-                            
-                            self.calcLogoIconWorkSpace()
+                            self.openLogoStep()
                             
                         case .logo:
                             self.finishEdition()
@@ -485,57 +455,15 @@ class ImageEditor: Div {
             }
         }
         
-        self.fileInput.$files.listen {
+        self.fileInput.$files.listen { [weak self] in
+            guard let self else { return }
             if let file = $0.first {
                 self.uploadIcon(file)
             }
             
         }
         
-        WebApp.current.wsevent.listen {
-            
-            if $0.isEmpty { return }
-            
-            let (event, _) = self.ws.recive($0)
-            
-            guard let event else {
-                return
-            }
-            
-            switch event {
-            case .asyncRemoveBackground:
-                
-                loadingView(show: false)
-                
-                if let payload = self.ws.asyncRemoveBackground($0) {
-                    
-                    print("🗳  \(payload.url)")
-                    
-                    print("🗳  \(payload.fileName)")
-                    
-                    self.watingBackgroundRemoval = false
-                    self.imageEditorProcessingViewText = "Cargando Nueva Imagen"
-                    self.imageLogo
-                        .load("\(payload.url)\(payload.fileName)")
-                        .onLoad {
-                            self.imageEditorProcessingViewText = ""
-                        }
-
-                    self.imgIsBeingReplaced = true
-                    
-                    self.originalImage = payload.fileName
-                    
-                    
-                }
-                else {
-                    showError(.generalError, .unexpenctedMissingPayload)
-                    return
-                }
-            default:
-                break
-            }
-            
-        }
+        registerForWebSocketEvents()
         
     }
     
@@ -573,7 +501,8 @@ class ImageEditor: Div {
         
         _ = Img()
             .src("\(self.path)og_\(self.originalImage)")
-            .onLoad {
+            .onLoad { [weak self] in
+                guard let self else { return }
                 
                 print("🟢  004 LOADED")
                 
@@ -630,16 +559,10 @@ class ImageEditor: Div {
                 }
                 
                 print("🟢  🟢  \(self.path)og_\(self.originalImage)")
-                
+
                 self.imageThump
                     .load("\(self.path)og_\(self.originalImage)")
                 
-                self.imageWap
-                    .load("\(self.path)og_\(self.originalImage)")
-                
-                self.imageLogo
-                    .load("\(self.path)og_\(self.originalImage)")
-
                 self.relativeWidth = w
                 
                 self.relativeHeight = h
@@ -669,6 +592,11 @@ class ImageEditor: Div {
     
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        if ImageEditor.activeWebSocketEditor === self {
+            ImageEditor.activeWebSocketEditor = nil
+        }
+        destroyAllImageEditorCroppers()
+        fileInput.$files.removeAllListeners()
         $imageIsLoaded.removeAllListeners()
         $relativeHeight.removeAllListeners()
         $relativeWidth.removeAllListeners()
@@ -680,6 +608,129 @@ class ImageEditor: Div {
         $logoLeft.removeAllListeners()
         $editStep.removeAllListeners()
         $imageEditorProcessingViewText.removeAllListeners()
+    }
+
+    private func registerForWebSocketEvents() {
+        ImageEditor.activeWebSocketEditor = self
+
+        guard !ImageEditor.didInstallWebSocketListener else { return }
+        ImageEditor.didInstallWebSocketListener = true
+
+        WebApp.current.wsevent.listen { value in
+            ImageEditor.activeWebSocketEditor?.processWebSocketEvent(value)
+        }
+    }
+
+    private func processWebSocketEvent(_ value: String) {
+        guard !value.isEmpty else { return }
+
+        let (event, _) = ws.recive(value)
+
+        guard let event else { return }
+
+        switch event {
+        case .asyncRemoveBackground:
+            loadingView(show: false)
+
+            guard let payload = ws.asyncRemoveBackground(value) else {
+                showError(.generalError, .unexpenctedMissingPayload)
+                return
+            }
+
+            print("🗳  \(payload.url)")
+            print("🗳  \(payload.fileName)")
+
+            watingBackgroundRemoval = false
+            imageEditorProcessingViewText = "Cargando Nueva Imagen"
+            imageLogo
+                .load("\(payload.url)\(payload.fileName)")
+                .onLoad { [weak self] in
+                    self?.imageEditorProcessingViewText = ""
+                }
+
+            imgIsBeingReplaced = true
+            originalImage = payload.fileName
+        default:
+            break
+        }
+    }
+
+    func openWapStep() {
+        if wapImageIsPrepared {
+            showWapStep()
+            return
+        }
+
+        guard !wapImageIsLoading else { return }
+        wapImageIsLoading = true
+
+        imageWap
+            .onLoad { [weak self] in
+                guard let self else { return }
+                self.wapImageIsLoading = false
+                self.wapImageIsPrepared = true
+                guard self.editStep == .thump else { return }
+                self.showWapStep()
+            }
+            .onError { [weak self] in
+                self?.wapImageIsLoading = false
+                showError(.generalError, "No se pudo cargar la imagen para la miniatura general.")
+            }
+            .load("\(path)og_\(originalImage)")
+    }
+
+    func showWapStep() {
+        editStep = .wap
+
+        guard !secondCropperIsActive else { return }
+        secondCropperIsActive = true
+
+        let thumpWidth = wapWidthPre ?? 300
+        let thumpHeight = wapHeightPre ?? 370
+        let radio = Double(relativeHeight) / Double(thumpHeight)
+
+        print(Double(relativeHeight) / Double(thumpHeight))
+        print(Double(thumpHeight) / Double(relativeHeight))
+
+        var cropWidth = (Int(Double(thumpWidth) * radio) / 3) * 2
+        var cropHeight = (Int(Double(thumpHeight) * radio) / 3) * 2
+
+        print("cropWidth \(cropWidth)")
+        print("cropHeight \(cropHeight)")
+
+        cropWidth = (cropWidth / 3) * 2
+        cropHeight = (cropHeight / 3) * 2
+
+        jcrop("imageEditorWap", cropWidth, cropHeight)
+    }
+
+    func openLogoStep() {
+        if logoImageIsPrepared {
+            showLogoStep()
+            return
+        }
+
+        guard !logoImageIsLoading else { return }
+        logoImageIsLoading = true
+
+        imageLogo
+            .onLoad { [weak self] in
+                guard let self else { return }
+                self.logoImageIsLoading = false
+                self.logoImageIsPrepared = true
+                guard self.editStep == .wap else { return }
+                self.showLogoStep()
+            }
+            .onError { [weak self] in
+                self?.logoImageIsLoading = false
+                showError(.generalError, "No se pudo cargar la imagen principal.")
+            }
+            .load("\(path)og_\(originalImage)")
+    }
+
+    func showLogoStep() {
+        editStep = .logo
+        calcLogoIconWorkSpace()
     }
 
     func calcLogoIconWorkSpace(){
@@ -897,8 +948,8 @@ class ImageEditor: Div {
             originalWidth: self.originalWidth,
             originalHeight: self.originalHeight,
             relativeWidth: self.relativeWidth,
-            relativeHieght: self.relativeWidth,
-            logoRelativeHeight: self.logoRelativeWidth,
+            relativeHieght: self.relativeHeight,
+            logoRelativeHeight: self.logoRelativeHeight,
             logoRelativeWidth: self.logoRelativeWidth,
             thumpWidth: self.thumpWidth,
             thumpHeight: self.thumpHeight,
