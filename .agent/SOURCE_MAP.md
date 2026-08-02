@@ -20,11 +20,11 @@ Repository file map for PWASkyline.
 | `Sources/App/API/` | Client API wrapper namespaces and endpoint files. |
 | `Sources/App/Websocket/` | WebSocket type and message/event handlers. |
 | `Sources/App/ViewControlers/` | Page controllers for app, login, work, hotline, splash, and unavailable-service flows. |
-| `Sources/App/VirtualControlers/` | Shared non-visual controllers/caches, including centralized error-report lifecycle and IndexedDB bridge ownership. |
+| `Sources/App/VirtualControlers/` | Shared non-visual controllers/caches, including centralized error-report lifecycle, IndexedDB bridge ownership, and browser speech-recognition callback/target routing. |
 | `Sources/App/Pages/` | Swift Web page definitions. |
 | `Sources/App/Snippits/` | Reusable UI snippets, forms, panels, print engines, and feature views. |
 | `Sources/App/Styles/` | Swift Web style declarations (`MainStyle`, `SKMainStyle`, `SKLogInStyle`). |
-| `Sources/App/TierraCeroCustomUI/` | Scoped Tierra Cero layout controls and feature themes, including the production OrderView presentation. |
+| `Sources/App/TierraCeroCustomUI/` | Scoped Tierra Cero layout controls and feature themes, including the production OrderView presentation and persistent speech-recognition control. |
 | `Sources/App/Functions/` | Free functions and browser helpers, including centralized POST transport and API response decoding instrumentation. |
 | `Sources/App/Extentions/` | Project extensions for Web elements and value types. |
 | `Sources/App/Enums/` | App enums. |
@@ -40,7 +40,7 @@ Repository file map for PWASkyline.
 | `Sources/Service/css/` | Copied CSS resources. |
 | `Sources/Service/js/` | Copied JavaScript resources. |
 | `Sources/Service/images/` | Copied image resources. |
-| `Sources/Service/skyline/` | Skyline static resource tree: CSS, JS, media, document icons, tutorial assets. |
+| `Sources/Service/skyline/` | Skyline static resource tree: CSS, JS, media, document icons, tutorial assets, and the `PWASkylineSpeech` browser bridge. |
 
 ## Web/WASI Bootstrap
 

@@ -9,14 +9,14 @@ import TCFireSignal
 extension CustOrderComponents {
 
     /// Requests a warranty card using the FireSignal route's legacy name.
-    static func requestWorkLoadDay(
+    static func requestWarrantyCard(
         id: RequstWarrantyCardType,
-        callback: @escaping ((_ resp: APIResponseGeneric<RequestWorkLoadDayResponse>?) -> ())
+        callback: @escaping ((_ resp: APIResponseGeneric<RequestWarrantyCardResponse>?) -> ())
     ) {
         sendPost(
             rout,
             version,
-            "requestWorkLoadDay",
+            "requestWarrantyCard",
             RequestWarrantyCardRequest(id: id)
         ) { data in
             guard let data else {
@@ -27,7 +27,7 @@ extension CustOrderComponents {
             do {
                 callback(
                     try decodeAPIResponse(
-                        APIResponseGeneric<RequestWorkLoadDayResponse>.self,
+                        APIResponseGeneric<RequestWarrantyCardResponse>.self,
                         from: data
                     )
                 )

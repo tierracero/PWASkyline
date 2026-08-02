@@ -11,7 +11,7 @@ import XMLHttpRequest
 import Foundation
 import Web
 
-class MessageGrid: Div {
+class MessageGrid: Div, SpeechRecognitionTarget {
     
     override class var name: String { "div" }
     
@@ -115,6 +115,10 @@ class MessageGrid: Div {
         .overflow(.auto)
     
     lazy var messageInput = InputText(self.$message)
+        .onFocus { [weak self] _ in
+            guard let self else { return }
+            SpeechRecognitionManager.shared.setActiveTarget(self)
+        }
     
     lazy var msgFileLoader = InputFile()
         .accept(["image/png", "image/gif", "image/jpeg", "application/pdf", "video/mp4", "video/x-m4v", "video/*", "video", "pages", "numbers", "key"]) //  ".heic",
@@ -929,11 +933,25 @@ class MessageGrid: Div {
     }
 
     override func didRemoveFromDOM() {
+        SpeechRecognitionManager.shared.clearActiveTarget(self)
         super.didRemoveFromDOM()
         $viewMessage.removeAllListeners()
         $message.removeAllListeners()
         $buttonTitle.removeAllListeners()
         $inputClass.removeAllListeners()
         $isPopup.removeAllListeners()
+    }
+
+    func speechRecognitionDidReceiveInterimText(_ text: String) {
+        // Interim text remains in the floating preview until the browser
+        // confirms a final transcript.
+    }
+
+    func speechRecognitionDidReceiveFinalText(_ text: String) {
+        let cleanText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleanText.isEmpty else { return }
+
+        let separator = message.isEmpty || message.last?.isWhitespace == true ? "" : " "
+        message += separator + cleanText
     }
 }

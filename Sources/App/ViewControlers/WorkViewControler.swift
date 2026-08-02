@@ -165,6 +165,8 @@ class WorkViewControler: PageController {
     ) { [weak self] message in
         self?.openCommunicationMessage(message)
     }
+
+    private lazy var speechRecognitionControl = TCSpeechRecognitionFloatingButton()
     
     /// this box will contain Intant Messages and Mails
 
@@ -897,6 +899,13 @@ class WorkViewControler: PageController {
             .onLoad {
                 VisualPerformanceSettings.apply()
             }
+
+        Script()
+            .src("/skyline/js/speechRecognition.js")
+            .type("text/javascript")
+            .onLoad { [weak self] in
+                self?.speechRecognitionControl.refreshAvailability()
+            }
         
         Script()
             .src("/js/socialjs.js")
@@ -1181,6 +1190,8 @@ class WorkViewControler: PageController {
         OrderCatchControler.shared.selectStoreMenuBackgroung
 
         OrderCatchControler.shared.loadOrderStatusBackgroung
+
+        self.speechRecognitionControl
         
         WebApp.current.loadingView
         
@@ -2407,6 +2418,7 @@ class WorkViewControler: PageController {
     override func didRemoveFromDOM() {
         communicationRefreshId = UUID()
         communicationController.shutdown()
+        speechRecognitionControl.shutdown()
         super.didRemoveFromDOM()
     }
     

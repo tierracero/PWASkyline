@@ -702,7 +702,7 @@ extension OrderView {
                     .float(.left)
                 }
                 .class(Class(TCOrderViewClass.equipmentOverview))
-                .custom("height", "calc(100% - 68px) !important")
+                .custom("height", "calc(100% - 60px) !important")
                 
                 Div{
                     
@@ -1558,6 +1558,34 @@ extension OrderView {
                     ].contains($0) })
                     .float(.right)
                     
+                    /// Payment
+                    Div{
+                        
+                        Div{
+                            Img()
+                                .src("/skyline/media/bar_qr_white.png")
+                                .marginLeft(7.px)
+                                .marginTop(9.px)
+                                .height(20.px)
+                        }
+                        .float(.left)
+                        Div{
+                            Div().height(5.px)
+                            Span("Tarjeta Servicio")
+                            
+                        }
+                        .float(.left)
+
+                        Div().clear(.both)
+                        
+                    }
+                    .height(38.px)
+                    .class(.uibtn)
+                    .float(.right)
+                    .onClick {
+                        self.addWarantyCard()
+                    }
+
                 }
                 .class(Class(TCOrderViewClass.equipmentWorkflow))
                 .backgroundColor(r: 35, g: 39, b: 47)
@@ -1730,6 +1758,15 @@ extension OrderView {
             
         }
         
+        func addWarantyCard() {
+
+            let view = AddWarrantyCard(orderId: self.orderView.order.id) { cardCode in
+                // 
+            }
+            
+            addToDom(view)
+            
+        }
 
         override func didRemoveFromDOM() {
             super.didRemoveFromDOM()
