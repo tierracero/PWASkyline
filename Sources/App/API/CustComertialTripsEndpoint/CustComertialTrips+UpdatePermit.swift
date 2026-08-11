@@ -10,6 +10,7 @@ extension CustCommercialTripsComponents {
         permitType: TipoPermiso,
         permitTypeName: String,
         permitNumber: String,
+        permitName: String,
         callback: @escaping ((_ resp: APIResponse?) -> ())
     ) {
         sendPost(
@@ -20,7 +21,8 @@ extension CustCommercialTripsComponents {
                 permitId: permitId,
                 permitType: permitType,
                 permitTypeName: permitTypeName,
-                permitNumber: permitNumber
+                permitNumber: permitNumber,
+                permitName: permitName
             )
         ) { data in
             

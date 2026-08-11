@@ -71,11 +71,9 @@ class InternalCommunicationView: Div {
 
     @DOM override var body: DOM.Content {
         VPopUp(.custome(w: 920, h: 760)) {
-            VTitle("Comunicaciones internas") {
+            VTitle("Comunicaciones internas", icon: "icon_add_message.png") {
                 USmallTitle(self.$messageCount.map { "\($0) pendientes" })
                     .class(Class(TCInternalCommunicationClass.countBadge))
-            } onClose: {
-                self.remove()
             }
 
             VBodyGrid {
@@ -112,6 +110,16 @@ class InternalCommunicationView: Div {
     private func addCommunication(
         _ communication: InternalCommunicationMessagesMin
     ) {
+
+        let understoodButton = ULargeButton("Entendido")
+            .attribute("aria-label", "Marcar comunicación como entendida")
+
+        understoodButton.onClick {
+            self.markAsRead(
+                communication,
+                button: understoodButton
+            )
+        }
 
         let messageView = VBox(.standard) {
             Div {
@@ -154,13 +162,14 @@ class InternalCommunicationView: Div {
             }
 
             Div().clear(.both)
-            /*
+
             Div {
                 UMinorTitle(Self.createdAtText(communication.createdAt))
                     .class(Class(TCInternalCommunicationClass.messageDate))
+
+                understoodButton
             }
             .class(Class(TCInternalCommunicationClass.messageFooter))
-            */
         }
         .class(Class(TCInternalCommunicationClass.messageCard))
         .attribute("data-priority", communication.priority.rawValue)
@@ -168,6 +177,46 @@ class InternalCommunicationView: Div {
 
         messageViews[communication.id] = messageView
         messagesView.appendChild(messageView)
+    }
+
+    private func markAsRead(
+        _ communication: InternalCommunicationMessagesMin,
+        button: ULargeButton
+    ) {
+        button.disabled(true)
+        button.opacity(0.55)
+        _ = button.innerText("Guardando…")
+
+        API.custAPIV1.internalCommunicationIsRead(
+            communicationId: communication.id
+        ) { resp in
+            guard let resp else {
+                self.restore(button)
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+
+            guard resp.status == .ok else {
+                self.restore(button)
+                showError(.generalError, resp.msg)
+                return
+            }
+
+            self.messageViews.removeValue(forKey: communication.id)?.remove()
+            self.internalCommunications.removeAll { $0.id == communication.id }
+            self.messageCount = self.internalCommunications.count
+            self.hasMessages = !self.internalCommunications.isEmpty
+
+            if self.internalCommunications.isEmpty {
+                self.remove()
+            }
+        }
+    }
+
+    private func restore(_ button: ULargeButton) {
+        button.disabled(false)
+        button.opacity(1)
+        _ = button.innerText("Entendido")
     }
 
     private static func priorityOrder(

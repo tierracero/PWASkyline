@@ -170,7 +170,7 @@ enum TCWorkDashboardTheme {
                 .custom("display", "grid")
                 .custom("grid-template-columns", "38px minmax(180px, 1fr) 38px")
                 .custom("align-items", "center")
-                .custom("width", "420px")
+                .custom("width", "350px")
                 .custom("height", "42px")
                 .custom("margin", "7px 6px 0 0")
                 .custom("box-sizing", "border-box")

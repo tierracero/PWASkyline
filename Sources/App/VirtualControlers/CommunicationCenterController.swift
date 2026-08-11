@@ -126,6 +126,21 @@ final class CommunicationCenterController {
             return
         }
 
+        // WebSocket retries can deliver the same note more than once. Keep the
+        // existing view when the visible state has not changed; removing and
+        // reinserting it only increases the chance of racing a DOM refresh.
+        if let previous = messagesById[id],
+           previous.id == message.id,
+           previous.status == message.status,
+           previous.lastMessageAt == message.lastMessageAt,
+           previous.activity == message.activity,
+           messageViewsById[id] != nil {
+            messagesById[id] = message
+            conversationIdByAlertId[message.id] = id
+            synchronizeUnreadCount()
+            return
+        }
+
         communicationMutationRevision &+= 1
 
         if let previous = messagesById[id] {
@@ -137,7 +152,7 @@ final class CommunicationCenterController {
         messagesById[id] = message
         conversationIdByAlertId[message.id] = id
 
-        appendMessageView(message, insertAtFront: true)
+        appendMessageView(message)
         synchronizeUnreadCount()
     }
 
@@ -247,7 +262,27 @@ final class CommunicationCenterController {
             return
         }
 
-        appendMessageView(message, insertAtFront: false)
+        let id = conversationId(for: message)
+
+        // A live event may update a conversation while the initial snapshot is
+        // still being rendered. Do not append the stale snapshot copy after the
+        // live message has already replaced it.
+        guard let currentMessage = messagesById[id], currentMessage.id == message.id else {
+            Dispatch.asyncAfter(0.01) {
+                guard renderId == self.communicationRenderId else {
+                    return
+                }
+
+                self.asyncAddCommunicationMessage(
+                    renderId: renderId,
+                    messages: messages,
+                    index: index + 1
+                )
+            }
+            return
+        }
+
+        appendMessageView(currentMessage)
 
         guard renderId == communicationRenderId else {
             return
@@ -266,13 +301,10 @@ final class CommunicationCenterController {
         }
     }
 
-    private func appendMessageView(
-        _ message: Message,
-        insertAtFront: Bool
-    ) {
+    private func appendMessageView(_ message: Message) {
         let id = conversationId(for: message)
 
-        guard messagesById[id] != nil else {
+        guard messagesById[id] != nil, messageViewsById[id] == nil else {
             return
         }
 
@@ -289,11 +321,11 @@ final class CommunicationCenterController {
             ? newMessagesView
             : historicalMessagesView
 
-        if insertAtFront {
-            container.insertChild(view, at: 0)
-        } else {
-            container.appendChild(view)
-        }
+        // `insertChild(at:)` uses the Swift Web package's cached child as the
+        // browser reference node. A concurrent state-driven refresh can detach
+        // that reference before this event runs, producing NotFoundError from
+        // JavaScript. Appending is safe for both fresh and live views.
+        container.appendChild(view)
     }
 
     private func startRelativeTimeRefresh() {

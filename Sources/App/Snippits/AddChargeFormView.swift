@@ -205,7 +205,7 @@ class AddChargeFormView: Div {
         
         VPopUp(.custome(w: 600, h: 330)) {
 
-            VTitle("Ingresar cargo") {
+            VTitle("Ingresar cargo", icon: "icon-money.png") {
 
             } onClose: {
                 self.remove()

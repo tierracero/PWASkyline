@@ -13,6 +13,7 @@ import DOM
 enum SuperViewPresentation {
     case standard
     case interactive
+    case glass
 }
 
 final class SuperView: Div {
@@ -78,6 +79,15 @@ final class SuperView: Div {
             attribute("data-super-view-presentation", "interactive")
             custom("backdrop-filter", "none")
             custom("-webkit-backdrop-filter", "none")
+        case .glass:
+            // Crystal modals own their translucent shell. Keep the workspace
+            // visible without inheriting the legacy 70%-black overlay.
+            removeClass(.transparantBlackBackGround)
+            attribute("data-super-view-presentation", "glass")
+            zIndex(999999991)
+            backgroundColor(.init(r: 1, g: 8, b: 17, a: 0.18))
+            custom("backdrop-filter", "blur(8px) saturate(120%)")
+            custom("-webkit-backdrop-filter", "blur(8px) saturate(120%)")
         }
 
         onDidAddToDOM { [weak self] in

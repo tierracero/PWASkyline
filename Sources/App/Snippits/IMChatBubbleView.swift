@@ -29,6 +29,8 @@ class IMChatBubbleView: Div {
     /// This will be used as a 3 second mark that will be trigered every time we recive new message and chat IMChatRoomView is not current room
     ///  this will be used in a while closeNewMessageBubbleTimmer > 0
     @State var closeNewMessageBubbleTimmer = 0
+
+    private var relativeTimeRefreshId = UUID()
     
     let data: CustChatRoomProfile
     
@@ -143,7 +145,8 @@ class IMChatBubbleView: Div {
                 return
             }
 
-            Dispatch.asyncAfter(1.0) {
+            Dispatch.asyncAfter(1.0) { [weak self] in
+                guard let self, self.isInDOM else { return }
                 self.closeNewMessageBubbleTimmer -= 1
             }
             
@@ -176,8 +179,11 @@ class IMChatBubbleView: Div {
             }
         }
         
+    }
+
+    override func didAddToDOM() {
+        super.didAddToDOM()
         recalculateTime()
-        
     }
     
     func updateLastMessage(msg: CustSocialMessage, showBubble: Bool) {
@@ -194,10 +200,15 @@ class IMChatBubbleView: Div {
     }
     
     func recalculateTime(){
-        
+        guard isInDOM else { return }
+
         self.lastMessageAtText = orderTimeMesure(uts: self.lastMessageAt, type: .createdAt).timeString
-        
-        Dispatch.asyncAfter(60) {
+
+        let refreshId = relativeTimeRefreshId
+        Dispatch.asyncAfter(60) { [weak self] in
+            guard let self,
+                  self.isInDOM,
+                  self.relativeTimeRefreshId == refreshId else { return }
             self.recalculateTime()
         }
         
@@ -205,6 +216,7 @@ class IMChatBubbleView: Div {
     
 
     override func didRemoveFromDOM() {
+        relativeTimeRefreshId = UUID()
         super.didRemoveFromDOM()
         $icon.removeAllListeners()
         $chatNick.removeAllListeners()
@@ -217,4 +229,3 @@ class IMChatBubbleView: Div {
         $closeNewMessageBubbleTimmer.removeAllListeners()
     }
 }
-

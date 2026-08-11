@@ -25,6 +25,10 @@ extension ToolsView.HistorySettings {
         var searchHistoricalPurchaseView: SearchHistoricalPurchaseView? =  nil
         
         @State var departmentSelectListener = ""
+
+        lazy var settingViewContainer = Div()
+
+        var settingViewIsLoaded = false 
         
         @DOM override var body: DOM.Content {
             
@@ -53,7 +57,7 @@ extension ToolsView.HistorySettings {
                             .cursor(.pointer)
                             .float(.right)
                             .onClick {
-                                self.currentView = .settingsView
+                                self.loadSincView()
                             }
                     }
                     
@@ -81,9 +85,7 @@ extension ToolsView.HistorySettings {
                 .marginTop(7.px)
                 .class(Class(TCCrystalSurfaceClass.historyTripProcessingBody))
                 
-                Div{
-                    
-                }
+                self.settingViewContainer
                 .hidden(self.$currentView.map{ $0 != .settingsView })
                 .custom("height","calc(100% - 35px)")
                 .borderRadius(12.px)
@@ -121,5 +123,53 @@ extension ToolsView.HistorySettings {
             $currentView.removeAllListeners()
             $departmentSelectListener.removeAllListeners()
         }
+
+        func loadSincView() {
+
+            if settingViewIsLoaded  {
+                currentView = .settingsView
+                return
+            }
+
+            loadingView(show: true)
+
+            API.custCommercialTrips.components { resp in
+
+                loadingView(show: false)
+
+                guard let resp = resp else {
+                    showError(.comunicationError, .serverConextionError)
+                    return
+                }
+
+                guard resp.status == .ok else {
+                    showError(.generalError, resp.msg)
+                    return
+                }
+
+                guard let payload = resp.data else {
+                    showError(.unexpectedResult, .payloadDecodError)
+                    return
+                }
+
+                let view = Settings(
+                    operadors: payload.operadors,
+                    insurances: payload.insurances,
+                    permits: payload.permits,
+                    vehicals: payload.vehicals,
+                    trailers: payload.trailers,
+                    merchendises: payload.merchendises,
+                    locations: payload.locations
+                )
+
+                self.settingViewIsLoaded = true
+
+                self.settingViewContainer.appendChild(view)
+
+                self.currentView = .settingsView
+
+            }
+        }
+
     }
 }

@@ -402,7 +402,7 @@ final class TripViewBeta: Div {
     @DOM override var body: DOM.Content {
         VPopUp(.full) {
 
-            VTitle("Detalle del Viaje · \(self.trip.folio)") {
+            VTitle("Detalle del Viaje · \(self.trip.folio)", icon: "icon_route.png") {
                 USmallButton("Carta Liberación")
                     .onClick {
                         self.printReleaseLetter()
@@ -751,6 +751,7 @@ final class TripViewBeta: Div {
             "Tipo de Transporte",
             "\(item.autotransporteCode) \(item.autotransporteName)"
         ))
+        vehicleBox.appendChild(detailRow("Propietario del Permiso", permit.permitName))
         vehicleBox.appendChild(detailRow("Tipo de Permiso", permit.permitTypeName))
         vehicleBox.appendChild(detailRow("Número de Permiso", permit.permitNumber))
         vehicleBox.appendChild(detailRow("Peso bruto", item.vehicalWeight.description))

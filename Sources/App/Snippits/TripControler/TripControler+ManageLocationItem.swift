@@ -258,9 +258,34 @@ class ManageLocationItem: Div {
             
             /// Header
             Div {
-                
+                Div {
+                    Img()
+                        .src(self.$isHomeItem.map {
+                            $0
+                                ? "/skyline/media/icon_origin.png"
+                                : "/skyline/media/icon_destination.png"
+                        })
+                        .class(.iconBlue)
+                        .height(24.px)
+
+                    H2(self.$isHomeItem.map { isHomeItem in
+                        if self.isEditing {
+                            return isHomeItem ? "Editar Ubicacion de SALIDA" : "Editar Ubicacion de ENTREGA"
+                        }
+
+                        return isHomeItem ? "Agregar Ubicacion de SALIDA" : "Agregar Ubicacion de ENTREGA"
+                    })
+                        .margin(all: 0.px)
+                        .class(Class(TCTripBetaClass.titleText))
+                }
+                .display(.flex)
+                .custom("align-items", "center")
+                .custom("gap", "8px")
+                .custom("min-width", "0")
+
                 Img()
                     .closeButton(.uiView1)
+                    .class(Class(TCTripBetaClass.close))
                     .onClick{
                         if self.hasDestination {
                             self.remove()
@@ -273,22 +298,8 @@ class ManageLocationItem: Div {
                             }))
                         }
                     }
-                
-                H2(self.$isHomeItem.map { isHomeItem in
-                    if self.isEditing {
-                        return isHomeItem ? "Editar Ubicacion de SALIDA" : "Editar Ubicacion de ENTREGA"
-                    }
-
-                    return isHomeItem ? "Agregar Ubicacion de SALIDA" : "Agregar Ubicacion de ENTREGA"
-                })
-                    .color(.lightBlueText)
-                    .float(.left)
-                    .marginLeft(7.px)
-                
-                Div().class(.clear)
-                
             }
-            .marginBottom(7.px)
+            .class(Class(TCTripBetaClass.title))
             
             Div{
                 Div("Nombre de la tienda")
@@ -476,17 +487,21 @@ class ManageLocationItem: Div {
                         self.addPlace()
                     }
             }
-            .align(.right)
+            .class(Class(TCTripBetaClass.titleActions))
+            .custom("margin-top", "12px")
             
         }
-        .backgroundColor(.backGroundGraySlate)
-        .borderRadius(all: 24.px)
-        .position(.absolute)
-        .padding(all: 7.px)
-        .width(80.percent)
-        .left(10.percent)
-        .top(25.percent)
+        .class(Class(TCTripBetaClass.box), Class(TCTripBetaClass.boxRaised))
+        .custom("display", "flex")
+        .custom("flex-direction", "column")
+        .custom("gap", "10px")
+        .custom("min-height", "0")
+        .custom("overflow", "auto")
+        .custom("box-sizing", "border-box")
+        .padding(all: 12.px)
+
     }
+    
     
     override func buildUI() {
         super.buildUI()
@@ -494,11 +509,11 @@ class ManageLocationItem: Div {
         TCTripBetaTheme.apply(to: self)
         TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
         
-        position(.absolute)
-        height(100.percent)
-        width(100.percent)
-        left(0.px)
-        top(0.px)
+        // self.class(Class(TCTripBetaClass.popUp))
+        self.class(Class(TCTripBetaClass.popUpPanel))
+        .custom("max-width", "960px !important")
+        .attribute("role", "dialog")
+        .attribute("aria-modal", "true")
         
         CountryStatesMexico.allCases.forEach { state in
             let opt = Option(state.description)

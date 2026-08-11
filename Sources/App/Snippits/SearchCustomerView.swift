@@ -47,7 +47,7 @@ class SearchCustomerView: Div {
         
         VPopUp(.fitContent(w: 560)) {
 
-            VTitle("Buscar Cliente") {
+            VTitle("Buscar Cliente", icon: "icon_user.png") {
             } onClose: {
                 self.remove()
             }

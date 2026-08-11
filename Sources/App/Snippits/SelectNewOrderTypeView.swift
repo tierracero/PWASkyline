@@ -29,7 +29,7 @@ class SelectNewOrderTypeView: Div {
     
     @DOM override var body: DOM.Content {
         VPopUp(.fitContent(w: 760)) {
-            VTitle("Seleccione tipo de orden") {
+            VTitle("Seleccione tipo de orden", icon: "icon_request.png") {
                 USmallTitle("Nueva operación")
             } onClose: {
                 self.callback(nil)

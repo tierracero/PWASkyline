@@ -14,8 +14,9 @@ extension CustCommercialTripsComponents {
         insuranceCivilId: UUID?,
         insuranceAmbientId: UUID?,
         insurancePayloadId: UUID?,
-        odometerInitial: Int64,
-        odometerFinal: Int64,
+        fiscalProfile: UUID? = nil,
+        odometerInitial: Int64?,
+        odometerFinal: Int64?,
         callback: @escaping ((_ resp: APIResponse?) -> ())
     ) {
         sendPost(
@@ -31,6 +32,7 @@ extension CustCommercialTripsComponents {
                 insuranceCivilId: insuranceCivilId,
                 insuranceAmbientId: insuranceAmbientId,
                 insurancePayloadId: insurancePayloadId,
+                fiscalProfile: fiscalProfile,
                 odometerInitial: odometerInitial,
                 odometerFinal: odometerFinal
             )

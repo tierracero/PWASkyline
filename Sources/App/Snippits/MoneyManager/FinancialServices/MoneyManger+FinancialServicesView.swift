@@ -20,7 +20,7 @@ extension MoneyManagerView {
         
         @DOM override var body: DOM.Content {
             VPopUp(.fitContent(w: 900)) {
-                VTitle("Servicios financieros") {
+                VTitle("Servicios financieros", icon: "icon-money.png") {
                     USmallTitle(self.$items.map { "\($0.count) movimientos" })
                         .class(Class(TCMoneyManagerClass.badge))
 
@@ -231,5 +231,4 @@ extension MoneyManagerView {
     }
     
 }
-
 

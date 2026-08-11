@@ -51,7 +51,7 @@ class CreateNewCusomerView: Div {
     
     @DOM override var body: DOM.Content {
         VPopUp(.fitContent(w: 820)) {
-            VTitle("Seleccione tipo de cliente") {
+            VTitle("Seleccione tipo de cliente", icon: "icon_add_user.png") {
                 USmallTitle("Nueva cuenta")
             } onClose: {
                 self.remove()

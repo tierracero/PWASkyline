@@ -95,7 +95,7 @@ class SearchCustomerQuickView: Div {
     
     @DOM override var body: DOM.Content {
         VPopUp(.custome(w: 820, h: 610)) {
-            VTitle("Buscar Cuenta de Cliente") {
+            VTitle("Buscar Cuenta de Cliente", icon: "icon_user.png") {
             } onClose: {
                 self.remove()
             }
@@ -291,4 +291,3 @@ class SearchCustomerQuickView: Div {
         $canCreateAccount.removeAllListeners()
     }
 }
-

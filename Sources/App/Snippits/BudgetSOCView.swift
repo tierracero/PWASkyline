@@ -136,7 +136,7 @@ class BudgetSOCView: Div {
     
     @DOM override var body: DOM.Content {
         VPopUp(.semiFull) {
-            VTitle("Ingresar presupuesto") {
+            VTitle("Ingresar presupuesto", icon: "icon-money.png") {
                 USmallTitle(self.soc.n)
             } onClose: {
                 self.remove()

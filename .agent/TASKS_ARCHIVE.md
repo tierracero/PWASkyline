@@ -4,6 +4,28 @@ Verified completed tasks live here.
 
 ---
 
+## UI-USER-CONFIG-001 — Dark-Crystal User Configuration View
+
+- **Status**: Implemented; build and browser verification not run without the required user confirmation
+- **Completed**: 2026-08-04
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `SEC-001`
+- **Goal**: Rebuild the user configuration detail view as a responsive dark-crystal surface populated exclusively from `CustComponents.GetUserResponse`.
+- **Implementation**:
+  - Replaced the incomplete two-column shell with a response-driven profile sidebar, live permissions, KPI summaries, editable personal/contact fields, credential controls, operational summaries, schedule/preferences, financial summaries, and inventory cards.
+  - Added a scoped crystal theme with layered translucent surfaces, cyan hierarchy rails, graphite section bars, responsive breakpoints at 1080, 760, and 420 pixels, and reduced-motion behavior.
+  - Kept password and PIN state empty, avoided secret/debug logging, retained group/supervisor/permission lookups, and rendered honest empty states instead of demo records.
+- **Validation evidence**:
+  - `swiftc -frontend -parse` passed for the updated view and new theme.
+  - Focused trailing-whitespace inspection passed for the task files.
+  - All referenced local media assets were verified under `Sources/Service/skyline/media`.
+  - Focused response-property, responsive-theme, and secret/debug-log searches passed.
+  - The scoped diff and repository status were reviewed; unrelated pre-existing warranty, communication, layout, and work-controller changes remain untouched.
+  - Build/test and browser validation were not run because the user did not grant the separately required confirmation.
+- **Documentation sync**: The new theme stays within the existing `TierraCeroCustomUI/Theme` source area, so source-map, module, and architecture ownership documents remain current.
+- **Commit**: Not created; commits require explicit user request.
+
+---
+
 ## DOC-001 — Agent Governance Bootstrap
 
 - **Status**: Completed

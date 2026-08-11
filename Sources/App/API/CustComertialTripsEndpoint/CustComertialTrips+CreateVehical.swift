@@ -14,6 +14,7 @@ extension CustCommercialTripsComponents {
         vehicalYearModel: String,
         vehicalWeight: Double,
         requierTrailer: Bool,
+        insurancePolicy: String? = nil,
         callback: @escaping ((_ resp: APIResponseGeneric<CreateVehicalResponse>?) -> ())
     ) {
         sendPost(
@@ -28,7 +29,8 @@ extension CustCommercialTripsComponents {
                 vehicalLicensePlate: vehicalLicensePlate,
                 vehicalYearModel: vehicalYearModel,
                 vehicalWeight: vehicalWeight,
-                requierTrailer: requierTrailer
+                requierTrailer: requierTrailer,
+                insurancePolicy: insurancePolicy
             )
         ) { data in
             

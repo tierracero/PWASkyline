@@ -114,6 +114,8 @@ extension OrderView {
         
         @State var equipmentStatus: CustFolioObjectsStatus = .unfixed
         
+        @State var warrantyCard: String? = nil
+
         var pendingSpareEvent: UUID? = nil
         
         lazy var idTag1 = InputText(self.$_idTag1)
@@ -1316,6 +1318,7 @@ extension OrderView {
                                                     pendingSpare: manager,
                                                     diagnostic: equipment.diagnostic,
                                                     resolution: equipment.resolution,
+                                                    warrantyCard: equipment.warrantyCard,
                                                     status: .pendingConsumable
                                                 ))
                                             }
@@ -1398,6 +1401,7 @@ extension OrderView {
                                                pendingSpare: equipment.pendingSpare,
                                                diagnostic: equipment.diagnostic,
                                                resolution: equipment.resolution,
+                                               warrantyCard: equipment.warrantyCard,
                                                status: .onwork
                                            ))
                                        }
@@ -1446,107 +1450,7 @@ extension OrderView {
                             .class(.uibtn)
                             .float(.right)
                             .onClick { _ in
-                                addToDom(ConfirmView(
-                                    type: .yesNo,
-                                    title: "Eliminar Compra",
-                                    message: "Confirme que no se comprara insumo/refaccion.",
-                                    requiersComment: true,
-                                    callback: { isConfirmed, comment in
-                                        
-                                        guard let managerId = self.pendingSpareEvent else {
-                                            showError(.unexpectedResult, "No se localizo id de la peticion, refresque. Si el error continua contacte a Soporte TC")
-                                            return
-                                        }
-                                        
-                                        loadingView(show: true)
-                                        
-                                        API.custOrderV1.pendingConsumableContinue(
-                                            hasPurchase: false,
-                                            orderId: self.orderView.order.id,
-                                            equipmentId: self.equipment.id,
-                                            managerId: managerId,
-                                            vendorId: nil,
-                                            documentId: nil,
-                                            documentFolio: "",
-                                            comment: comment,
-                                            sendComm: false,
-                                            lastCommunicationMethod: self.orderView.lastCommunicationMethod
-                                        ) { resp in
-                                            
-                                            loadingView(show: false)
-                                            
-                                            guard let resp else {
-                                                showError(.comunicationError, .unexpenctedMissingPayload)
-                                                return
-                                            }
-                                            
-                                            guard resp.status == .ok else {
-                                                showError(.generalError, resp.msg)
-                                                return
-                                            }
-                                            
-                                            guard let payload = resp.data else {
-                                                showError(.unexpectedResult, .unexpenctedMissingPayload)
-                                                return
-                                            }
-                                            
-                                            self.pendingSpareEvent = nil
-                                            
-                                            self.equipmentStatus = .onwork
-                                            
-                                            if self.status.wrappedValue != payload.orderStatus {
-                                               
-                                                self.status.wrappedValue = payload.orderStatus
-                                                
-                                                orderCatch[self.orderView.order.id]?.status = payload.orderStatus
-                                                
-                                                OrderCatchControler.shared.updateParameter(self.orderView.order.id, .orderStatus(payload.orderStatus))
-                                                
-                                            }
-                                            
-                                            var equipments: [CustOrderLoadFolioEquipments] = []
-                                           
-                                            equipmentsCatch[self.orderView.order.id]?.forEach { equipment in
-                                            
-                                               if equipment.id == self.equipment.id {
-                                                   equipments.append(.init(
-                                                       id: equipment.id,
-                                                       createdAt: equipment.createdAt,
-                                                       workedBy: equipment.workedBy,
-                                                       deliveredBy: equipment.deliveredBy,
-                                                       IDTag1: equipment.IDTag1,
-                                                       IDTag2: equipment.IDTag2,
-                                                       tag1: equipment.tag1,
-                                                       tag2: equipment.tag2,
-                                                       tag3: equipment.tag3,
-                                                       tag4: equipment.tag4,
-                                                       tag5: equipment.tag5,
-                                                       tag6: equipment.tag6,
-                                                       tagDescr: equipment.tagDescr,
-                                                       tagCheck1: equipment.tagCheck1,
-                                                       tagCheck2: equipment.tagCheck2,
-                                                       tagCheck3: equipment.tagCheck3,
-                                                       tagCheck4: equipment.tagCheck4,
-                                                       tagCheck5: equipment.tagCheck5,
-                                                       tagCheck6: equipment.tagCheck6,
-                                                       pendingSpareEvent: nil,
-                                                       pendingSpare: equipment.pendingSpare,
-                                                       diagnostic: equipment.diagnostic,
-                                                       resolution: equipment.resolution,
-                                                       status: .onwork
-                                                   ))
-                                               }
-                                               else {
-                                                   equipments.append(equipment)
-                                               }
-                                           }
-                                           
-                                            equipmentsCatch[self.orderView.order.id] = equipments
-                                           
-                                        }
-                                        
-                                    }
-                                ))
+                                self.deletePurchase()
                             }
                         }
                         .hidden(self.$editMode.map{$0})
@@ -1558,7 +1462,6 @@ extension OrderView {
                     ].contains($0) })
                     .float(.right)
                     
-                    /// Payment
                     Div{
                         
                         Div{
@@ -1571,7 +1474,7 @@ extension OrderView {
                         .float(.left)
                         Div{
                             Div().height(5.px)
-                            Span("Tarjeta Servicio")
+                            Span(self.$warrantyCard.map{ $0 ?? "Tarjeta Servicio" })
                             
                         }
                         .float(.left)
@@ -1582,9 +1485,19 @@ extension OrderView {
                     .height(38.px)
                     .class(.uibtn)
                     .float(.right)
+                    .hidden(self.$warrantyCard.map{ $0 != nil })
                     .onClick {
-                        self.addWarantyCard()
+                        self.addwarrantyCard()
                     }
+
+                    Div {
+                        Span(self.$warrantyCard.map{ $0 ?? "" })
+                    }
+                    .hidden(self.$warrantyCard.map{ $0 == nil })
+                    .height(38.px)
+                    .class(.uibtn)
+                    .float(.right)
+                    
 
                 }
                 .class(Class(TCOrderViewClass.equipmentWorkflow))
@@ -1701,6 +1614,8 @@ extension OrderView {
             diagnostic = equipment.diagnostic ?? ""
             
             resolution = equipment.resolution ?? ""
+
+            warrantyCard = equipment.warrantyCard
             
             equipmentStatus = equipment.status
             
@@ -1758,14 +1673,135 @@ extension OrderView {
             
         }
         
-        func addWarantyCard() {
+        func addwarrantyCard() {
 
-            let view = AddWarrantyCard(orderId: self.orderView.order.id) { cardCode in
-                // 
+            let view = AddWarrantyCard(
+                orderId: self.orderView.order.id,
+                equipmentId: self.equipment.id
+            ) { cardCode in
+            
+                self.warrantyCard = cardCode
+
+                var warrantyCards = self.orderView.order.warrantyCards
+                if !warrantyCards.contains(cardCode) {
+                    warrantyCards.append(cardCode)
+                }
+
+                self.orderView.order.warrantyCards = warrantyCards
+                OrderCatchControler.shared.updateParameter(
+                    self.orderView.order.id,
+                    .warrantyCards(warrantyCards)
+                )
             }
             
             addToDom(view)
             
+        }
+
+        func deletePurchase() {
+            
+                                addToDom(ConfirmView(
+                                    type: .yesNo,
+                                    title: "Eliminar Compra",
+                                    message: "Confirme que no se comprara insumo/refaccion.",
+                                    requiersComment: true,
+                                    callback: { isConfirmed, comment in
+                                        
+                                        guard let managerId = self.pendingSpareEvent else {
+                                            showError(.unexpectedResult, "No se localizo id de la peticion, refresque. Si el error continua contacte a Soporte TC")
+                                            return
+                                        }
+                                        
+                                        loadingView(show: true)
+                                        
+                                        API.custOrderV1.pendingConsumableContinue(
+                                            hasPurchase: false,
+                                            orderId: self.orderView.order.id,
+                                            equipmentId: self.equipment.id,
+                                            managerId: managerId,
+                                            vendorId: nil,
+                                            documentId: nil,
+                                            documentFolio: "",
+                                            comment: comment,
+                                            sendComm: false,
+                                            lastCommunicationMethod: self.orderView.lastCommunicationMethod
+                                        ) { resp in
+                                            
+                                            loadingView(show: false)
+                                            
+                                            guard let resp else {
+                                                showError(.comunicationError, .unexpenctedMissingPayload)
+                                                return
+                                            }
+                                            
+                                            guard resp.status == .ok else {
+                                                showError(.generalError, resp.msg)
+                                                return
+                                            }
+                                            
+                                            guard let payload = resp.data else {
+                                                showError(.unexpectedResult, .unexpenctedMissingPayload)
+                                                return
+                                            }
+                                            
+                                            self.pendingSpareEvent = nil
+                                            
+                                            self.equipmentStatus = .onwork
+                                            
+                                            if self.status.wrappedValue != payload.orderStatus {
+                                               
+                                                self.status.wrappedValue = payload.orderStatus
+                                                
+                                                orderCatch[self.orderView.order.id]?.status = payload.orderStatus
+                                                
+                                                OrderCatchControler.shared.updateParameter(self.orderView.order.id, .orderStatus(payload.orderStatus))
+                                                
+                                            }
+                                            
+                                            var equipments: [CustOrderLoadFolioEquipments] = []
+                                           
+                                            equipmentsCatch[self.orderView.order.id]?.forEach { equipment in
+                                            
+                                               if equipment.id == self.equipment.id {
+                                                   equipments.append(.init(
+                                                       id: equipment.id,
+                                                       createdAt: equipment.createdAt,
+                                                       workedBy: equipment.workedBy,
+                                                       deliveredBy: equipment.deliveredBy,
+                                                       IDTag1: equipment.IDTag1,
+                                                       IDTag2: equipment.IDTag2,
+                                                       tag1: equipment.tag1,
+                                                       tag2: equipment.tag2,
+                                                       tag3: equipment.tag3,
+                                                       tag4: equipment.tag4,
+                                                       tag5: equipment.tag5,
+                                                       tag6: equipment.tag6,
+                                                       tagDescr: equipment.tagDescr,
+                                                       tagCheck1: equipment.tagCheck1,
+                                                       tagCheck2: equipment.tagCheck2,
+                                                       tagCheck3: equipment.tagCheck3,
+                                                       tagCheck4: equipment.tagCheck4,
+                                                       tagCheck5: equipment.tagCheck5,
+                                                       tagCheck6: equipment.tagCheck6,
+                                                       pendingSpareEvent: nil,
+                                                       pendingSpare: equipment.pendingSpare,
+                                                       diagnostic: equipment.diagnostic,
+                                                       resolution: equipment.resolution,
+                                                       warrantyCard: equipment.warrantyCard,
+                                                       status: .onwork
+                                                   ))
+                                               }
+                                               else {
+                                                   equipments.append(equipment)
+                                               }
+                                           }
+                                           
+                                            equipmentsCatch[self.orderView.order.id] = equipments
+                                           
+                                        }
+                                        
+                                    }
+                                ))
         }
 
         override func didRemoveFromDOM() {

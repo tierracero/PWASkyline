@@ -31,6 +31,7 @@ public struct API {
 
     public typealias custRouteV1 = CustRouteComponents
     public typealias custAPIV1 = CustComponents
+    public typealias custUsernameV1 = CustUsernameComponents
     //public typealias customerV1 = CustomerComponents
     public typealias domainV1 = DomainComponents
     

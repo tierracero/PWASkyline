@@ -34,7 +34,7 @@ class ToolsView: Div {
     
     @DOM override var body: DOM.Content {
         VPopUp(.custome(w: 980, h: 620)) {
-            VTitle("Ajustes y Herramientas") {
+            VTitle("Ajustes y Herramientas", icon: "icon_settings.png") {
                 USmallTitle("Configuración del sistema")
             } onClose: {
                 self.remove()
@@ -91,7 +91,9 @@ class ToolsView: Div {
         subtitle: String,
         action: @escaping () -> Void
     ) -> VGrid {
+
         VGrid(.half) {
+
             VBox(.interactive) {
                 Img()
                     .src(icon)
@@ -121,8 +123,8 @@ class ToolsView: Div {
                 event.preventDefault()
                 action()
             }
+            
         }
-        .custom("min-height", "190px")
     }
     
     override func buildUI() {

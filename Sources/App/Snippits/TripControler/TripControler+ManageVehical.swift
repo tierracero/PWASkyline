@@ -42,6 +42,7 @@ class TripControlerManageVehical: Div {
         self.vehicalYearModel = item.vehicalYearModel
         self.vehicalWeight = item.vehicalWeight.toString
         self.requierTrailer = item.requierTrailer
+        self.insurancePolicy = item.insurancePolicy
         self.callback = callback
         super.init()
     }
@@ -77,6 +78,8 @@ class TripControlerManageVehical: Div {
     @State var vehicalWeight: String = ""
 
     @State var requierTrailer: Bool = false
+
+    var insurancePolicy: String? = nil
 
     lazy var autotransporteField = FiscAutotrasportTypeField(style: .dark, type: .product) { code in
         self.autotransporteCode = code.c
@@ -129,19 +132,32 @@ class TripControlerManageVehical: Div {
 
     @DOM override var body: DOM.Content {
         Div {
+            Div {
+                Div {
+                    Img()
+                        .src("/skyline/media/icon_vehical.png")
+                        .class(.iconBlue)
+                        .height(24.px)
 
-            Img()
-                .closeButton(.uiView2)
-                .onClick {
-                    self.remove()
+                    H2(self.$id.map{ ($0 == nil) ?  "Crear Vehiculo" : "Editar Vehiculo" })
+                        .margin(all: 0.px)
+                        .class(Class(TCTripBetaClass.titleText))
                 }
+                .display(.flex)
+                .custom("align-items", "center")
+                .custom("gap", "8px")
+                .custom("min-width", "0")
 
-            H2(self.$id.map{ ($0 == nil) ?  "Crear Vehiculo" : "Editar Vehiculo" })
-                .color(.lightBlueText)
-                .margin(all: 0.px)
+                Img()
+                    .closeButton(.uiView2)
+                    .class(Class(TCTripBetaClass.close))
+                    .onClick {
+                        self.remove()
+                    }
+            }
+            .class(Class(TCTripBetaClass.title))
 
-            Div().class(.clear)
-
+            Div {
             Div {
                 Div{
 
@@ -217,7 +233,10 @@ class TripControlerManageVehical: Div {
                 Div().class(.clear).height(7.px)
 
             }
-            .class(.roundBlue)
+            .class(
+                Class(TCTripBetaClass.box),
+                Class(TCTripBetaClass.boxRaised)
+            )
             .padding(all: 10.px)
             .marginTop(10.px)
             .marginBottom(10.px)
@@ -226,8 +245,6 @@ class TripControlerManageVehical: Div {
 
                 Div("Eliminar")
                     .class(.uibtn)
-                    .color(.coral)
-                    .float(.left)
                     .onClick {
                         self.deleteItem()
                     }
@@ -239,16 +256,23 @@ class TripControlerManageVehical: Div {
                         self.saveData()
                     }
             }
-            .align(.right)
+            .class(Class(TCTripBetaClass.titleActions))
+            .custom("margin-top", "12px")
 
+            }
+            .custom("display", "flex")
+            .custom("flex-direction", "column")
+            .custom("gap", "12px")
+            .custom("min-height", "0")
+            .custom("overflow", "auto")
+            .custom("box-sizing", "border-box")
+            .padding(all: 12.px)
         }
-        .backgroundColor(.backGroundGraySlate)
-        .borderRadius(all: 24.px)
-        .position(.absolute)
-        .padding(all: 12.px)
-        .width(46.percent)
-        .left(27.percent)
-        .top(12.percent)
+        .class(
+            Class(TCTripBetaClass.popUpPanel),
+            Class(TCTripBetaClass.popUpPanelFitContent)
+        )
+        .custom("max-width", "720px !important")
     }
 
     override func buildUI() {
@@ -257,11 +281,9 @@ class TripControlerManageVehical: Div {
         TCTripBetaTheme.apply(to: self)
         TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
 
-        position(.absolute)
-        height(100.percent)
-        width(100.percent)
-        top(0.px)
-        left(0.px)
+        self.class(Class(TCTripBetaClass.popUp))
+        self.attribute("role", "dialog")
+        self.attribute("aria-modal", "true")
 
         autotransporteField.fiscUnitField.height(31.px)
 
@@ -319,7 +341,8 @@ class TripControlerManageVehical: Div {
                 vehicalLicensePlate: vehicalLicensePlate,
                 vehicalYearModel: vehicalYearModel,
                 vehicalWeight: weight,
-                requierTrailer: requierTrailer
+                requierTrailer: requierTrailer,
+                insurancePolicy: insurancePolicy
             ) { resp in
                 loadingView(show: false)
 
@@ -345,6 +368,7 @@ class TripControlerManageVehical: Div {
                     vehicalYearModel: self.vehicalYearModel,
                     vehicalWeight: weight,
                     requierTrailer: self.requierTrailer,
+                    insurancePolicy: self.insurancePolicy,
                     status: self.status
                 )))
 
@@ -362,7 +386,8 @@ class TripControlerManageVehical: Div {
             vehicalLicensePlate: vehicalLicensePlate,
             vehicalYearModel: vehicalYearModel,
             vehicalWeight: weight,
-            requierTrailer: requierTrailer
+            requierTrailer: requierTrailer,
+            insurancePolicy: insurancePolicy
         ) { resp in
             loadingView(show: false)
 

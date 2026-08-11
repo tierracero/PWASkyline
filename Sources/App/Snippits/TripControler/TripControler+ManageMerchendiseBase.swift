@@ -162,21 +162,34 @@ class TripControlerManageMerchendiseBase: Div {
 
     @DOM override var body: DOM.Content {
         Div {
+            Div {
+                Div {
+                    Img()
+                        .src("/skyline/media/icon_merchandise.png")
+                        .class(.iconBlue)
+                        .height(24.px)
 
-            Img()
-                .closeButton(.uiView2)
-                .onClick {
-                    self.remove()
+                    H2(self.$id.map {
+                        $0 == nil ? "Crear Mercancia" : "Editar Mercancia"
+                    })
+                    .margin(all: 0.px)
+                    .class(Class(TCTripBetaClass.titleText))
                 }
+                .display(.flex)
+                .custom("align-items", "center")
+                .custom("gap", "8px")
+                .custom("min-width", "0")
 
-            H2(self.$id.map {
-                $0 == nil ? "Crear Mercancia" : "Editar Mercancia"
-            })
-            .color(.lightBlueText)
-            .margin(all: 0.px)
+                Img()
+                    .closeButton(.uiView2)
+                    .class(Class(TCTripBetaClass.close))
+                    .onClick {
+                        self.remove()
+                    }
+            }
+            .class(Class(TCTripBetaClass.title))
 
-            Div().class(.clear)
-
+            Div {
             Div {
                 Div {
                     Label("Descripcion").color(.gray)
@@ -254,7 +267,10 @@ class TripControlerManageMerchendiseBase: Div {
 
                 Div().class(.clear)
             }
-            .class(.roundBlue)
+            .class(
+                Class(TCTripBetaClass.box),
+                Class(TCTripBetaClass.boxRaised)
+            )
             .padding(all: 8.px)
             .marginTop(10.px)
             .marginBottom(10.px)
@@ -262,8 +278,6 @@ class TripControlerManageMerchendiseBase: Div {
             Div {
                 Div("Eliminar")
                     .class(.uibtn)
-                    .color(.coral)
-                    .float(.left)
                     .onClick {
                         self.deleteItem()
                     }
@@ -277,16 +291,23 @@ class TripControlerManageMerchendiseBase: Div {
                     self.saveData()
                 }
             }
-            .align(.right)
+            .class(Class(TCTripBetaClass.titleActions))
+            .custom("margin-top", "12px")
+
+            }
+            .custom("display", "flex")
+            .custom("flex-direction", "column")
+            .custom("gap", "12px")
+            .custom("min-height", "0")
+            .custom("overflow", "auto")
+            .custom("box-sizing", "border-box")
+            .padding(all: 12.px)
         }
-        .backgroundColor(.backGroundGraySlate)
-        .borderRadius(all: 24.px)
-        .position(.absolute)
-        .padding(all: 12.px)
-        .custom("box-sizing", "border-box")
-        .width(70.percent)
-        .left(15.percent)
-        .top(18.percent)
+        .class(
+            Class(TCTripBetaClass.popUpPanel),
+            Class(TCTripBetaClass.popUpPanelFitContent)
+        )
+        .custom("max-width", "760px !important")
     }
 
     override func buildUI() {
@@ -295,11 +316,9 @@ class TripControlerManageMerchendiseBase: Div {
         TCTripBetaTheme.apply(to: self)
         TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
 
-        position(.absolute)
-        height(100.percent)
-        width(100.percent)
-        top(0.px)
-        left(0.px)
+        self.class(Class(TCTripBetaClass.popUp))
+        self.attribute("role", "dialog")
+        self.attribute("aria-modal", "true")
 
         fiscCodeField.fiscCodeField.height(31.px)
         fiscUnitField.fiscUnitField.height(31.px)

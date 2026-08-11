@@ -12,6 +12,7 @@ extension CustOrderComponents {
     static func activateWarrantyCard(
         cardId: UUID,
         orderId: UUID,
+        equipmentId: UUID,
         callback: @escaping ((_ resp: APIResponse?) -> ())
     ) {
         sendPost(
@@ -20,7 +21,8 @@ extension CustOrderComponents {
             "activateWarrantyCard",
             ActivateWarrantyCardRequest(
                 cardId: cardId,
-                orderId: orderId
+                orderId: orderId,
+                equipmentId: equipmentId
             )
         ) { data in
             guard let data else {

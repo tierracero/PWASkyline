@@ -469,6 +469,7 @@ class TripView: Div {
             "Tipo de Transporte",
             "\(item.autotransporteCode) \(item.autotransporteName)"
         ))
+        vehicalPanel.appendChild(detailField("Propietario del Permiso", permit.permitName))
         vehicalPanel.appendChild(detailField("Tipo de Permiso", permit.permitTypeName))
         vehicalPanel.appendChild(detailField("Numero de Permiso", permit.permitNumber))
     }

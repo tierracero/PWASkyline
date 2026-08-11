@@ -38,6 +38,7 @@ class TripControlerManagePermit: Div {
         self.permitTypeListener = item.permitType.rawValue
         self.permitTypeName = item.permitTypeName
         self.permitNumber = item.permitNumber
+        self.permitName = item.permitName
         self.callback = callback
         super.init()
     }
@@ -60,6 +61,8 @@ class TripControlerManagePermit: Div {
 
     @State var permitNumber: String = ""
 
+    @State var permitName: String = ""
+
     lazy var permitTypeSelect = Select(self.$permitTypeListener)
         .custom("width", "calc(100% - 24px)")
         .class(.textFiledBlackDark)
@@ -72,26 +75,55 @@ class TripControlerManagePermit: Div {
         .placeholder("Numero de Permiso")
         .onFocus { $0.select() }
 
+    lazy var permitNameField = InputText(self.$permitName)
+        .custom("width", "calc(100% - 24px)")
+        .class(.textFiledBlackDark)
+        .height(31.px)
+        .placeholder("Propietario del Permiso")
+        .onFocus { $0.select() }
+
     @DOM override var body: DOM.Content {
         Div {
+            Div {
+                Div {
+                    Img()
+                        .src("/skyline/media/icon_permition.png")
+                        .class(.iconBlue)
+                        .height(24.px)
 
-            Img()
-                .closeButton(.uiView2)
-                .onClick {
-                    self.remove()
+                    H2(self.$id.map{ ($0 == nil) ?  "Crear Permiso" : "Editar Permiso" })
+                        .margin(all: 0.px)
+                        .class(Class(TCTripBetaClass.titleText))
                 }
+                .display(.flex)
+                .custom("align-items", "center")
+                .custom("gap", "8px")
+                .custom("min-width", "0")
 
-            H2(self.$id.map{ ($0 == nil) ?  "Crear Permiso" : "Editar Permiso" })
-                .color(.lightBlueText)
-                .margin(all: 0.px)
+                Img()
+                    .closeButton(.uiView2)
+                    .class(Class(TCTripBetaClass.close))
+                    .onClick {
+                        self.remove()
+                    }
+            }
+            .class(Class(TCTripBetaClass.title))
 
-            Div().class(.clear)
-
+            Div {
             Div {
                 Div {
                     Label("Tipo de Permiso / Transporte").color(.gray)
                     Div().class(.clear).height(3.px)
                     self.permitTypeSelect
+                }
+                .class(.section)
+
+                Div().class(.clear).height(7.px)
+
+                Div {
+                    Label("Propietario del Permiso").color(.gray)
+                    Div().class(.clear).height(3.px)
+                    self.permitNameField
                 }
                 .class(.section)
 
@@ -104,7 +136,10 @@ class TripControlerManagePermit: Div {
                 }
                 .class(.section)
             }
-            .class(.roundBlue)
+            .class(
+                Class(TCTripBetaClass.box),
+                Class(TCTripBetaClass.boxRaised)
+            )
             .padding(all: 10.px)
             .marginTop(10.px)
             .marginBottom(10.px)
@@ -113,8 +148,6 @@ class TripControlerManagePermit: Div {
 
                 Div("Eliminar")
                     .class(.uibtn)
-                    .color(.coral)
-                    .float(.left)
                     .onClick {
                         self.deleteItem()
                     }
@@ -126,16 +159,23 @@ class TripControlerManagePermit: Div {
                         self.saveData()
                     }
             }
-            .align(.right)
+            .class(Class(TCTripBetaClass.titleActions))
+            .custom("margin-top", "12px")
 
+            }
+            .custom("display", "flex")
+            .custom("flex-direction", "column")
+            .custom("gap", "12px")
+            .custom("min-height", "0")
+            .custom("overflow", "auto")
+            .custom("box-sizing", "border-box")
+            .padding(all: 12.px)
         }
-        .backgroundColor(.backGroundGraySlate)
-        .borderRadius(all: 24.px)
-        .position(.absolute)
-        .padding(all: 12.px)
-        .width(46.percent)
-        .left(27.percent)
-        .top(12.percent)
+        .class(
+            Class(TCTripBetaClass.popUpPanel),
+            Class(TCTripBetaClass.popUpPanelFitContent)
+        )
+        .custom("max-width", "620px !important")
     }
 
     override func buildUI() {
@@ -144,11 +184,9 @@ class TripControlerManagePermit: Div {
         TCTripBetaTheme.apply(to: self)
         TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
 
-        position(.absolute)
-        height(100.percent)
-        width(100.percent)
-        top(0.px)
-        left(0.px)
+        self.class(Class(TCTripBetaClass.popUp))
+        self.attribute("role", "dialog")
+        self.attribute("aria-modal", "true")
 
         permitTypeSelect.appendChild(
             Option("Seleccione")
@@ -180,7 +218,14 @@ class TripControlerManagePermit: Div {
             return
         }
 
+        guard !permitName.purgeSpaces.isEmpty else {
+            showError(.requiredField, "Ingrese propietario del permiso")
+            permitNameField.select()
+            return
+        }
+
         let permitTypeName = permitType.description
+        let permitName = self.permitName.pseudo.purgeSpaces.uppercased()
 
         loadingView(show: true)
 
@@ -189,7 +234,8 @@ class TripControlerManagePermit: Div {
                 permitId: id,
                 permitType: permitType,
                 permitTypeName: permitTypeName,
-                permitNumber: permitNumber
+                permitNumber: permitNumber,
+                permitName: permitName
             ) { resp in
                 loadingView(show: false)
 
@@ -210,6 +256,7 @@ class TripControlerManagePermit: Div {
                     permitType: permitType,
                     permitTypeName: permitTypeName,
                     permitNumber: self.permitNumber,
+                    permitName: permitName,
                     status: self.status
                 )))
 
@@ -222,7 +269,8 @@ class TripControlerManagePermit: Div {
         API.custCommercialTrips.createPermit(
             permitType: permitType,
             permitTypeName: permitTypeName,
-            permitNumber: permitNumber
+            permitNumber: permitNumber,
+            permitName: permitName
         ) { resp in
             loadingView(show: false)
 
@@ -285,6 +333,7 @@ class TripControlerManagePermit: Div {
         $permitTypeListener.removeAllListeners()
         $permitTypeName.removeAllListeners()
         $permitNumber.removeAllListeners()
+        $permitName.removeAllListeners()
     }
 }
 

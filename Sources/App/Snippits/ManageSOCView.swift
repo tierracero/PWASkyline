@@ -1604,15 +1604,18 @@ class ManageSOCView: Div {
                     .marginTop(0.px)
                     .float(.left)
                     .onClick {
-                        addToDom(ConfirmationView(
-                            type: .yesNo,
-                            title: "Eliminar Servicio",
-                            message: "¿Confirme que desea eliminar el codigo?",
-                            callback: { isConfirmed, comment in
-                                if isConfirmed {
-                                    self.deleteSOC()
+                        addToDom(
+                            ConfirmationView(
+                                type: .yesNo,
+                                title: "Eliminar Servicio",
+                                message: "¿Confirme que desea eliminar el codigo?",
+                                callback: { isConfirmed, comment in
+                                    if isConfirmed {
+                                        self.deleteSOC()
+                                    }
                                 }
-                            }))
+                            )
+                        )
                     }
                     
                     /// SAVE CHANGES

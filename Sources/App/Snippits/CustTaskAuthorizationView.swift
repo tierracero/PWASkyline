@@ -14,7 +14,7 @@ class CustTaskAuthorizationView: Div {
     
     override class var name: String { "div" }
     
-    var alerts: [CustTaskAuthorizationManagerQuick]
+    @State var alerts: [CustTaskAuthorizationManagerQuick]
     
     init(
         alerts: [CustTaskAuthorizationManagerQuick]
@@ -49,7 +49,7 @@ class CustTaskAuthorizationView: Div {
     
     @DOM override var body: DOM.Content {
         VPopUp(.custome(w: 900, h: 760)) {
-            VTitle("Tareas y notificaciones") {
+            VTitle("Tareas y notificaciones", icon: "icon_alert.png") {
                 USmallTitle("\(self.alerts.count) pendientes")
                     .class(Class(TCCustTaskAuthorizationClass.countBadge))
 
@@ -81,6 +81,7 @@ class CustTaskAuthorizationView: Div {
             }
 
             VBodyGrid {
+
                 VGrid(.full) {
                     VBox(.standard) {
                         Div {
@@ -111,13 +112,15 @@ class CustTaskAuthorizationView: Div {
 
                 VGrid(.full) {
                     self.alertsView
-                        .hidden(self.alerts.isEmpty)
+                        .hidden(self.$alerts.map{ $0.isEmpty })
+                        .display(self.$alerts.map{ $0.isEmpty ? .none : .block })
 
                     VBox(.standard) {
                         Table().noResult(label: "No hay alertas 🔔")
                     }
                     .class(Class(TCCustTaskAuthorizationClass.emptyState))
-                    .hidden(!self.alerts.isEmpty)
+                    .hidden(self.$alerts.map{ !$0.isEmpty })
+                    .display(self.$alerts.map{ !$0.isEmpty ? .none : .block })
                 }
             }
         }
@@ -126,7 +129,7 @@ class CustTaskAuthorizationView: Div {
 
 
         VPopUp(.fitContent(w: 560)) {
-            VTitle("Configurar alertas") {
+            VTitle("Configurar alertas", icon: "icon_settings.png") {
                 USmallTitle("Preferencias")
             } onClose: {
                 self.changeSettingViewIsHidden = true
@@ -585,7 +588,7 @@ class CustTaskAuthorizationView: Div {
         $levelSelectListener.removeAllListeners()
     }
 }
-
+// GOKU - Centralize this
 private enum TCCustTaskAuthorizationClass {
     static let root = "tc-task-authorization-theme"
     static let popup = "tc-task-authorization-popup"

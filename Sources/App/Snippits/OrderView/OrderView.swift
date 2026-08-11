@@ -2724,14 +2724,15 @@ class OrderView: Div {
         total = 0
         chas = 0
         pays = 0
-        
+
         charges.forEach { obj in
             
             let stotal = ((obj.price * obj.cuant) / 100)
             
             total += stotal
             chas += stotal
-            
+
+
             let tr = OldChargeTrRow( 
                 isCharge: true,
                 id: obj.id,
@@ -2777,6 +2778,8 @@ class OrderView: Div {
         pocsRefrence.forEach { pocId, priceRefrence in
         
             priceRefrence.forEach { price, items in
+            
+
             
                 let soldPrice = price * items.count.toInt64
                 

@@ -7,7 +7,7 @@ public class Service: ServiceWorker {
             .startURL("/")
             .display(.standalone)
             .backgroundColor("#1D2026") 
-            .themeColor("dark")
+            .themeColor("#1D2026")
             .icons(
                 .init(src: "images/192.png", sizes: .x192, type: .png),
                 .init(src: "images/512.png", sizes: .x512, type: .png)

@@ -79,6 +79,7 @@ class TripControlerAddElement<Item>: Div {
 
     override class var name: String { "div" }
 
+    let icon: String
     let title: String
     let items: [Item]
     let titleForItem: (Item) -> String
@@ -87,6 +88,7 @@ class TripControlerAddElement<Item>: Div {
     let create: () -> Void
 
     init(
+        icon: String,
         title: String,
         items: [Item],
         titleForItem: @escaping (Item) -> String,
@@ -94,6 +96,7 @@ class TripControlerAddElement<Item>: Div {
         callback: @escaping (Item) -> Void,
         create: @escaping () -> Void
     ) {
+        self.icon = icon
         self.title = title
         self.items = items
         self.titleForItem = titleForItem
@@ -113,11 +116,22 @@ class TripControlerAddElement<Item>: Div {
     @DOM override var body: DOM.Content {
         Div {
             Div {
-                H2(self.title)
-                    .class(
-                        Class(TCTripBetaClass.titleText),
-                        Class(TCCrystalSurfaceClass.tripPickerTitle)
-                    )
+                Div {
+                    Img()
+                        .src("/skyline/media/\(self.icon)")
+                        .class(.iconBlue)
+                        .height(24.px)
+
+                    H2(self.title)
+                        .class(
+                            Class(TCTripBetaClass.titleText),
+                            Class(TCCrystalSurfaceClass.tripPickerTitle)
+                        )
+                }
+                .display(.flex)
+                .custom("align-items", "center")
+                .custom("gap", "8px")
+                .custom("min-width", "0")
 
                 Div {
                     Div("+ Agregar")

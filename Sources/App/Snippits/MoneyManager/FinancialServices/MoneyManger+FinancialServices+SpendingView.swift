@@ -66,7 +66,6 @@ extension MoneyManagerView.FinancialServicesView {
             })
             .class(Class(TCTripBetaClass.uiControl))
             .width(100.percent)
-            .disabled(true)
             .height(42.px)
             .onChange({ _, select in
                 self.reciptType = FinacialServicesReciptType(rawValue: select.text)
@@ -117,7 +116,8 @@ extension MoneyManagerView.FinancialServicesView {
                 VTitle(
                     self.$user.map {
                         ($0?.id == custCatchID) ? "Reportar gasto / compra" : "Otorgar capital"
-                    }
+                    },
+                    icon: "icon-money.png"
                 ) {
                     USmallTitle(
                         self.$user.map {
@@ -283,57 +283,56 @@ extension MoneyManagerView.FinancialServicesView {
                             Div {
                                 Div {
                                     USubTitle("Proveedor y comprobante")
-                                    UMinorTitle("Seleccione el proveedor cuando la compra o pago ya fue realizado.")
-                                        .marginTop(4.px)
                                 }
                                 .custom("min-width", "0")
-
-                                USmallButton("Buscar proveedor")
-                                    .onClick {
-                                        addToDom(SearchVendorView(loadBy: nil) { account in
-                                            self.vendor = account
-                                        })
-                                    }
+    
                             }
                             .display(.grid)
                             .custom("grid-template-columns", "minmax(0, 1fr) auto")
                             .custom("align-items", "center")
                             .custom("gap", "12px")
 
-                            Div("Seleccione un proveedor para capturar el comprobante relacionado.")
-                                .class(Class(TCMoneyManagerClass.hint))
-                                .marginTop(14.px)
-                                .hidden(self.$vendor.map { $0 != nil })
+                            Div().clear(.both).height(7.px)
+
+                            ULargeButton("Buscar proveedor")
+                            .width(100.percent)
+                            .onClick {
+                                addToDom(SearchVendorView(loadBy: nil) { account in
+                                    self.vendor = account
+                                })
+                            }
+                            .hidden(self.$vendor.map { $0 != nil })
 
                             Div {
-                                Div {
-                                    USmallTitle("Proveedor seleccionado")
-                                    USubTitle(self.$vendor.map { $0?.razon ?? "" })
-                                        .marginTop(5.px)
-                                    UMinorTitle(self.$vendor.map { $0?.rfc ?? "" })
-                                        .marginTop(4.px)
-                                }
-
-                                Div {
-                                    UField("Tipo de comprobante", required: true) {
-                                        self.reciptTypeSelect
-                                    }
-
-                                    UField("UUID fiscal", required: true) {
-                                        self.fiscalUUIDField
-                                    }
-                                    .hidden(self.$reciptType.map { $0 != .fiscalDocument })
-
-                                    UField("Folio / serie", required: true) {
-                                        self.folioField
-                                    }
-                                }
-                                .class(Class(TCMoneyManagerClass.formGrid))
-                                .marginTop(14.px)
+                                USmallTitle("Proveedor seleccionado")
+                                USubTitle(self.$vendor.map { $0?.razon ?? "" })
+                                    .marginTop(5.px)
+                                UMinorTitle(self.$vendor.map { $0?.rfc ?? "" })
+                                    .marginTop(4.px)
                             }
                             .hidden(self.$vendor.map { $0 == nil })
+
+                            Div().clear(.both).height(7.px)
+
+                            Div {
+
+                                UField("Tipo de comprobante", required: true) {
+                                    self.reciptTypeSelect
+                                }
+
+                                UField("UUID fiscal", required: true) {
+                                    self.fiscalUUIDField
+                                }
+                                .hidden(self.$reciptType.map { $0 != .fiscalDocument })
+
+                                UField("Folio / serie", required: true) {
+                                    self.folioField
+                                }
+                            }
+                            .class(Class(TCMoneyManagerClass.formGrid))
+                            
                         }
-                        .class(Class(TCMoneyManagerClass.formCard))
+                        //.class(Class(TCMoneyManagerClass.formCard))
                     }
                     .hidden(self.$user.map { $0?.id != custCatchID })
 
@@ -448,11 +447,6 @@ extension MoneyManagerView.FinancialServicesView {
             /// if its the same user then it's a  REPORT PURCHASE/ EXPENSE
             if custCatchID == user.id {
                 
-                guard let vendor else {
-                    showError(.generalError, "Seleccione proveedor.")
-                    return
-                }
-                
                 guard let reciptType else {
                     showError(.generalError, "Seleccione tipo de recibo.")
                     return
@@ -472,6 +466,7 @@ extension MoneyManagerView.FinancialServicesView {
                 
                 if reciptFolio.isEmpty {
                     showError(.generalError, "Ingrese el Serie/Folio del Recibo/Factura.")
+                    folioField.select()
                     return
                 }
                 
@@ -482,8 +477,8 @@ extension MoneyManagerView.FinancialServicesView {
                     targetUser: user.id,
                     amount: amount,
                     description: financialTitle,
-                    vendorid: vendor.id,
-                    vendorName: vendor.razon,
+                    vendorid: vendor?.id,
+                    vendorName: vendor?.razon,
                     reciptType: reciptType,
                     reciptId: reciptUuid,
                     reciptFolio: (reciptFolio.isEmpty) ? nil : reciptFolio,
@@ -511,7 +506,7 @@ extension MoneyManagerView.FinancialServicesView {
                         item: payload,
                         createdBy: custCatchUser,
                         targetUser: user.username,
-                        vendor: vendor
+                        vendor: self.vendor
                     ).innerHTML
                     
                     _ = JSObject.global.renderGeneralPrint!(custCatchUrl, payload.folio, printBody)

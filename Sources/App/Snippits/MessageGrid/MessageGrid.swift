@@ -355,8 +355,7 @@ class MessageGrid: Div, SpeechRecognitionTarget {
         
         WebApp.current.wsevent.listen { [weak self] value in
 
-            guard let self else { return }
-            if value.isEmpty { return }
+            guard let self, self.isInDOM, !value.isEmpty else { return }
 
             let (event, _) = self.ws.recive(value)
             

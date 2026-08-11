@@ -750,4 +750,5 @@ extension ToolsView.HistorySettings.TripProcessing {
             super.didRemoveFromDOM()
         }
     }
+    
 }

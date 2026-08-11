@@ -99,7 +99,7 @@ class SearchCustomerFiscalView: Div {
     @DOM override var body: DOM.Content {
         
         VPopUp(.custome(w: 820, h: 610)) {
-            VTitle("Buscar Cuenta Fiscal") {
+            VTitle("Buscar Cuenta Fiscal", icon: "icon-fiscal.png") {
             } onClose: {
                 self.remove()
             }

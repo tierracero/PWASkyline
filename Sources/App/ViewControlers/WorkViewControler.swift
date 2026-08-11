@@ -1022,10 +1022,7 @@ class WorkViewControler: PageController {
                         self.openSalePoint()
                     }
                 }
-                   
-                   
-                   
-
+                
                 // Nuevo folio
                 // Punto de Venta
                 if linkedProfile.contains(.bizODS) {
@@ -1109,13 +1106,18 @@ class WorkViewControler: PageController {
                     InputText(self.$searchTerm)
                         .placeholder(self.$serchPlaceHolder)
                         .onKeyUp({ tf, event in
-                            var _term = tf.text
+                            var _term = tf.text.purgeSpaces
 
                             Dispatch.asyncAfter(0.37) {
                                 if _term == tf.text {
                                     _term = _term.replace(from: "'", to: "-").replace(from: "`", to: "-")
                                     if _term.count > 8 && _term.contains("-") {
+
                                         if ignoredKeys.contains(tf.text) {
+                                            return
+                                        }
+
+                                        if _term.hasPrefix("qr-") {
                                             return
                                         }
 
@@ -1288,6 +1290,7 @@ class WorkViewControler: PageController {
         }
         
         WebApp.current.wsevent.listen {
+            guard self.isInDOM else { return }
             if $0.isEmpty { return }
             
             let (event, _) = self.ws.recive($0)
@@ -1295,7 +1298,7 @@ class WorkViewControler: PageController {
             guard let event = event else {
                 return
             }
-
+            print("⚡️ EVENT \(event)")
             switch event {
             case .pong:
                 _ = self.ws.pong($0)
@@ -2013,29 +2016,27 @@ class WorkViewControler: PageController {
                 if let payload = self.ws.requestMobileScannerComplete($0) {
                     
                     guard self.viewid == payload.eventid else {
+                        print("🔴  requestMobileScannerComplete view missmatch")
+                        print(self.viewid.uuidString + " VS " + payload.eventid.uuidString)
                         return
                     }
                     
                     // searchFolio
                     let text = payload.text
                     print("🟢  sat.gob.")
+
                     if text.contains("/c/") {
                         
                         let parts = text.explode("/c/")
                         
-                        guard parts.count > 1 else {
-                            return
-                        }
+                        var code = parts.last ?? ""
                         
-                        let code = parts[1]
+                        if !code.hasPrefix("qr-") {
+                            code = "qr-\(code)"
+                        }
 
-                        if !code.containCaracter(what: "-", where: 4) {
-                            return
-                        }
-                        
-                        self.searchFolio( false, code)
-                        
-                        
+                        self.searchTerm = code
+
                     }
                     else if !text.contains("http") {
                         
@@ -2133,7 +2134,9 @@ class WorkViewControler: PageController {
                             showAlert(.alerta, "Formato no soportado, si cree que es un error, contacta a Soporte TC")
                         }
                     }
-                    
+                    else {
+                        self.searchTerm = text
+                    }
                 }
             
             case .requestMobileCamaraCancel:
@@ -3680,8 +3683,120 @@ class WorkViewControler: PageController {
                     showAlert(.alerta, "\(type.description) aun no es soportado")
                     
                 case .qrCode:
-                    showAlert(.alerta, "\(type.description) aun no es soportado")
+
+                    loadingView(show: true)
                     
+                    API.custOrderV1.getWarrantyCard(id: .code(term)) { resp in
+
+                        guard let resp = resp else {
+                            loadingView(show: false)
+                            showError(.comunicationError, .serverConextionError)
+                            return
+                        }
+
+                        guard resp.status == .ok else {
+                            loadingView(show: false)
+                            showError(.generalError, resp.msg)
+                            return
+                        }
+                        
+                        guard let payload = resp.data else {
+                            loadingView(show: false)
+                            showError(.unexpectedResult, .unexpenctedMissingPayload)
+                            return
+                        }
+
+
+                        guard let type = payload.card.type, let id = payload.card.orderId else {
+                            loadingView(show: false)
+                            showError(.unexpectedResult, "Esta tarejeta no esta activa")
+                            return
+                        }
+                            
+                        API.custOrderV1.loadOrder(identifier: .id(id), modifiedAt: nil) { resp in
+                            
+                            loadingView(show: false)
+                            
+                            guard let resp = resp else {
+                                showError(.comunicationError, .serverConextionError)
+                                return
+                            }
+
+                            guard resp.status == .ok else{
+                                showError(.generalError, resp.msg)
+                                return
+                            }
+                            
+                            guard let payload = resp.data else {
+                                showError(.unexpectedResult, .payloadDecodError)
+                                return
+                            }
+                            
+                            switch payload {
+                            case .isUpdated:
+                                break
+                            case .load(let loadOrderResponse):
+                                minimizeAccountViews()
+                                
+                                let id = loadOrderResponse.order.id
+                                
+                                /// Order Detail Catch
+                                acctMinCatch[id] = loadOrderResponse.account
+                                orderCatch[id] = loadOrderResponse.order
+                                notesCatch[id] = loadOrderResponse.notes
+                                paymentsCatch[id] = loadOrderResponse.payments
+                                chargesCatch[id] = loadOrderResponse.charges
+                                pocsCatch[id] = loadOrderResponse.pocs
+                                filesCatch[id] = loadOrderResponse.files
+                                contractsCatch[id] = loadOrderResponse.contracts
+                                equipmentsCatch[id] = loadOrderResponse.equipments
+                                rentalsCatch[id] = loadOrderResponse.rentals
+                                orderHighPriorityNoteCatch[id] = loadOrderResponse.orderHighPriorityNote
+                                tasksCatch[id] = loadOrderResponse.tasks
+                                accountHighPriorityNoteCatch[id] = loadOrderResponse.accountHighPriorityNote
+                                
+                                if let transferOrder = loadOrderResponse.transferOrder {
+                                    transferOrderCatch[id] = transferOrder
+                                }
+                                
+                                if let route = loadOrderResponse.route {
+                                    custOrderRouteCatch[id] = route
+                                }
+                                
+                                let accoutOverview = AccoutOverview (
+                                    id: .id(loadOrderResponse.order.custAcct)
+                                )
+                                
+                                accoutOverview.loadOrder(
+                                    account: loadOrderResponse.account,
+                                    order: loadOrderResponse.order,
+                                    notes: loadOrderResponse.notes,
+                                    payments: loadOrderResponse.payments,
+                                    charges: loadOrderResponse.charges,
+                                    pocs: loadOrderResponse.pocs,
+                                    files: loadOrderResponse.files,
+                                    contracts: loadOrderResponse.contracts,
+                                    equipments: loadOrderResponse.equipments,
+                                    rentals: loadOrderResponse.rentals,
+                                    transferOrder: loadOrderResponse.transferOrder,
+                                    orderHighPriorityNote: loadOrderResponse.orderHighPriorityNote,
+                                    accountHighPriorityNote: loadOrderResponse.accountHighPriorityNote,
+                                    tasks: loadOrderResponse.tasks,
+                                    orderRoute: loadOrderResponse.route,
+                                    loadFromCatch: false
+                                )
+                                
+                                addToDom(accoutOverview)
+                                
+                                minViewAcctRefrence[loadOrderResponse.order.custAcct] = accoutOverview
+                                
+                            }
+                        }
+                        
+
+
+                    }
+
                 case .fiscalCancelationRequest:
                     showAlert(.alerta, "\(type.description) aun no es soportado")
                 case .financialServices:

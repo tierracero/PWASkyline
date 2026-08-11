@@ -49,7 +49,7 @@ class SelectCustUsernameView: Div {
    
     @DOM override var body: DOM.Content {
         VPopUp(.fitContent(w: 560)) {
-            VTitle("Seleccionar usuario") {
+            VTitle("Seleccionar usuario", icon: "icon_user.png") {
                 USmallTitle("Asignación")
                     .class(Class(TCMoneyManagerClass.badge))
             } onClose: {

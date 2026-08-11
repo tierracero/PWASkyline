@@ -18,8 +18,9 @@ extension CustCommercialTripsComponents {
         locations: [TripLocation],
         merchandise: [TripMerchandise],
         balance: Int64,
-        odometerInitial: Int64?,
-        odometerFinal: Int64?,
+        fiscalProfile: UUID? = nil,
+        odometerInitial: Int64? = nil,
+        odometerFinal: Int64? = nil,
         callback: @escaping ((_ resp: APIResponseGeneric<GetTripResponse>?) -> ())
     ) {
         sendPost(
@@ -39,6 +40,7 @@ extension CustCommercialTripsComponents {
                 locations: locations,
                 merchandise: merchandise,
                 balance: balance,
+                fiscalProfile: fiscalProfile,
                 odometerInitial: odometerInitial,
                 odometerFinal: odometerFinal
             )

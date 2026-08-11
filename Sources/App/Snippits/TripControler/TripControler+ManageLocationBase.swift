@@ -266,9 +266,34 @@ class ManageLocationBase: Div {
             
             /// Header
             Div {
-                
+                Div {
+                    Img()
+                        .src(self.$isHomeItem.map {
+                            $0
+                                ? "/skyline/media/icon_origin.png"
+                                : "/skyline/media/icon_destination.png"
+                        })
+                        .class(.iconBlue)
+                        .height(24.px)
+
+                    H2(self.$isHomeItem.map { isHomeItem in
+                        if self.id != nil {
+                            return isHomeItem ? "Editar Ubicacion de SALIDA" : "Editar Ubicacion de ENTREGA"
+                        }
+
+                        return isHomeItem ? "Agregar Ubicacion de SALIDA" : "Agregar Ubicacion de ENTREGA"
+                    })
+                        .margin(all: 0.px)
+                        .class(Class(TCTripBetaClass.titleText))
+                }
+                .display(.flex)
+                .custom("align-items", "center")
+                .custom("gap", "8px")
+                .custom("min-width", "0")
+
                 Img()
                     .closeButton(.uiView1)
+                    .class(Class(TCTripBetaClass.close))
                     .onClick{
                         if self.hasDestination {
                             self.remove()
@@ -281,23 +306,10 @@ class ManageLocationBase: Div {
                             }))
                         }
                     }
-                
-                H2(self.$isHomeItem.map { isHomeItem in
-                    if self.id != nil {
-                        return isHomeItem ? "Editar Ubicacion de SALIDA" : "Editar Ubicacion de ENTREGA"
-                    }
-
-                    return isHomeItem ? "Agregar Ubicacion de SALIDA" : "Agregar Ubicacion de ENTREGA"
-                })
-                    .color(.lightBlueText)
-                    .float(.left)
-                    .marginLeft(7.px)
-                
-                Div().class(.clear)
-                
             }
-            .marginBottom(7.px)
-            
+            .class(Class(TCTripBetaClass.title))
+
+            Div {
             Div{
                 Div("Nombre de la tienda")
                     .color(.gray)
@@ -480,8 +492,6 @@ class ManageLocationBase: Div {
             Div{
                 Div("Eliminar")
                     .class(.uibtn)
-                    .color(.coral)
-                    .float(.left)
                     .onClick {
                         self.deleteItem()
                     }
@@ -499,16 +509,29 @@ class ManageLocationBase: Div {
                         self.addPlace()
                     }
             }
-            .align(.right)
-            
+            .class(Class(TCTripBetaClass.titleActions))
+            .custom("margin-top", "12px")
+            }
+            .class(
+                Class(TCTripBetaClass.box),
+                Class(TCTripBetaClass.boxRaised)
+            )
+            .custom("display", "flex")
+            .custom("flex-direction", "column")
+            .custom("gap", "10px")
+            .custom("min-height", "0")
+            .custom("overflow", "auto")
+            .custom("box-sizing", "border-box")
+            .padding(all: 12.px)
         }
-        .backgroundColor(.backGroundGraySlate)
-        .borderRadius(all: 24.px)
+        .class(
+            Class(TCTripBetaClass.popUpPanel),
+            Class(TCTripBetaClass.popUpPanelFitContent)
+        )
         .position(.absolute)
-        .padding(all: 7.px)
-        .width(80.percent)
-        .left(10.percent)
-        .top(25.percent)
+        .width(70.percent)
+        .left(15.percent)
+        .top(30.percent)
     }
     
     override func buildUI() {
@@ -516,12 +539,10 @@ class ManageLocationBase: Div {
 
         TCTripBetaTheme.apply(to: self)
         TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
-        
-        position(.absolute)
-        height(100.percent)
-        width(100.percent)
-        left(0.px)
-        top(0.px)
+
+        self.class(Class(TCTripBetaClass.popUp))
+        self.attribute("role", "dialog")
+        self.attribute("aria-modal", "true")
         
         if id != nil {
             isHomeItem = placementType == .origen

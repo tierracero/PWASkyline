@@ -64,193 +64,39 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 .objectFit(.cover)
 
         @DOM override var body: DOM.Content {
-            Div{
+            Div {
+                Div {
+                    self.avatar
+                }
+                    .class(Class(TCStoreUserConfigurationClass.userAvatar))
 
-                Div{
-                    
-                    Span(self.$role.map{ $0.description })
-                        .color(.white)
-                    
-                    Span(self.user.MID)
-                        .float(.right)
-                        .color(.white)
-                    
+                Div {
+                    Span(self.$nick.map { $0.isEmpty ? "-- Sin Nombre --" : $0 })
+                        .class(Class(TCStoreUserConfigurationClass.userName))
+                    Span(self.user.username)
+                        .class(Class(TCStoreUserConfigurationClass.userUsername))
                 }
-                
-                Div().clear(.both).height(3.px)
-                
-                Div{
-                    
-                    Div{
-                        
-                        Div().clear(.both).height(3.px)
-                        
-                        // Faltas / Retardos
-                        Div{
-                            
-                            Div("Faltas / Retardos")
-                                .class(.oneLineText)
-                                .width(70.percent)
-                                .color(.white)
-                                .float(.left)
-                            
-                            Div{
-                                Span(self.$assistance.map{ $0.toString })
-                                    .marginRight(3.px)
-                                    .color(.white)
-                            }
-                                .class(.oneLineText)
-                                .textAlign(.right)
-                                .width(30.percent)
-                                .float(.left)
-                            
-                            Div().clear(.both)
-                        }
-                        
-                        Div().clear(.both).height(3.px)
-                        
-                        // Incidencia
-                        Div{
-                            
-                            Div("Incidencias")
-                                .class(.oneLineText)
-                                .width(70.percent)
-                                .color(.white)
-                                .float(.left)
-                            Div{
-                                Span(self.$incidence.map{ $0.toString })
-                                    .marginRight(3.px)
-                                    .color(.white)
-                            }
-                                .class(.oneLineText)
-                                .textAlign(.right)
-                                .width(30.percent)
-                                .color(.white)
-                                .float(.left)
-                            
-                            Div().clear(.both)
-                        }
-                        
-                        Div().clear(.both).height(3.px)
-                        
-                        // Prodccion Points
-                        Div{
-                            
-                            Div("Puntos de productividad")
-                                .class(.oneLineText)
-                                .width(70.percent)
-                                .color(.white)
-                                .float(.left)
-                            Div{
-                                Span(self.$ppmanager.map{ $0.toString })
-                                    .marginRight(3.px)
-                                    .color(.white)
-                            }
-                                .class(.oneLineText)
-                                .textAlign(.right)
-                                .width(30.percent)
-                                .color(.white)
-                                .float(.left)
-                            
-                            Div().clear(.both)
-                        }
-                        
-                        Div().clear(.both).height(3.px)
-                        
-                        // Calidad
-                        Div{
-                            
-                            Div("Calidad")
-                                .class(.oneLineText)
-                                .width(70.percent)
-                                .color(.white)
-                                .float(.left)
-                            
-                            Div{
-                                Span(self.$qareport.map{ $0.toString })
-                                    .marginRight(3.px)
-                                    .color(.white)
-                            }
-                                .class(.oneLineText)
-                                .textAlign(.right)
-                                .width(30.percent)
-                                .color(.white)
-                                .float(.left)
-                            
-                            Div().clear(.both)
-                        }
-                        
-                        Div().clear(.both).height(3.px)
-                    }
-                    .height(100.percent)
-                    .width(70.percent)
-                    .float(.left)
-                    
-                    Div{
-                
-                        Div{
-                            self.avatar
-                        }
-                        .width(100.percent)
-                        .margin(all: 7.px)
-                    }
-                    .height(100.percent)
-                    .width(30.percent)
-                    .float(.left)
-                    
-                    Div().clear(.both)
-                    
-                }
-                .height(120.px)
-                
-                Div().height(7.px)
-                
-                Div{
-                    Span("username")
-                        .color(.gray)
-                    
-                    Div().height(3.px)
-                    
-                    Div(self.user.username)
-                        .class(.oneLineText)
-                        .width(293.px)
-                        .color(.white)
-                }
-                .width(50.percent)
-                .float(.left)
+                    .class(Class(TCStoreUserConfigurationClass.userIdentity))
 
-                Div{
-                    Span("nombre")
-                        .color(.gray)
-                    
-                    Div().height(3.px)
-                    
-                    Div(self.$nick.map{ $0.isEmpty ? "-- Sin Nombre --" : $0 })
-                        .color(.white)
+                Span(self.$role.map { $0.description })
+                    .class(Class(TCStoreUserConfigurationClass.rolePill))
+
+                Span(self.$status.map { $0.description })
+                    .class(Class(TCStoreUserConfigurationClass.statusPill))
+            }
+                .class(Class(TCStoreUserConfigurationClass.userRow))
+                .onClick {
+                    self.callback(self)
                 }
-                .width(50.percent)
-                .float(.left)
-                
-                Div().clear(.both).height(3.px)
-                
-            }
-            .backgroundColor(.grayBlackDark)
-            .borderRadius(7.px)
-            .padding(all: 3.px)
-            .cursor(.pointer)
-            .onClick {
-                self.callback(self)
-            }
         }
         
         override func buildUI() {
             super.buildUI()
             
-            custom("width", "calc(50% - 14px)")
-            maxWidth(400.px)
-            minWidth(300.px)
-            margin(all: 7.px)
-            float(.left)
+            width(100.percent)
+            maxWidth(100.percent)
+            minWidth(0.px)
+            margin(all: 0.px)
         
             role = user.role
             

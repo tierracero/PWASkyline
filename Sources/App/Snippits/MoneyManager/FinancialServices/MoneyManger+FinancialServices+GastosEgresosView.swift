@@ -180,7 +180,10 @@ extension MoneyManagerView.FinancialServicesView {
 
         @DOM override var body: DOM.Content {
             VPopUp(.fitContent(w: 900)) {
-                VTitle(self.isEditing ? "Editar gasto / egreso | \(self.ownerType.description)" : "Registrar gasto / egreso | \(self.ownerType.description)") {
+                VTitle(
+                    self.isEditing ? "Editar gasto / egreso | \(self.ownerType.description)" : "Registrar gasto / egreso | \(self.ownerType.description)",
+                    icon: "icon-money.png"
+                ) {
                     USmallTitle(self.isEditing ? "Edición" : "Nuevo")
                         .class(Class(TCMoneyManagerClass.badge))
                 } onClose: {

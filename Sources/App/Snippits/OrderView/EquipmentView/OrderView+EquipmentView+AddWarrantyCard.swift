@@ -16,6 +16,8 @@ extension OrderView.EquipmentView {
         override class var name: String { "div" }
         
         public var orderId: UUID
+
+        public var equipmentId: UUID
         
         private var callback: ((
             _ cardCode: String
@@ -23,11 +25,13 @@ extension OrderView.EquipmentView {
         
         init(
             orderId: UUID,
+            equipmentId: UUID,
             callback: @escaping (
                 _ cardCode: String
             ) -> Void
         ) {
             self.orderId = orderId
+            self.equipmentId = equipmentId
             self.callback = callback
         }
         
@@ -90,13 +94,13 @@ extension OrderView.EquipmentView {
                         .width(94.percent)
                         .opacity(0.3)
                         .cursor(.default)
-                        .hidden(self.$card.map{ $0 == nil })
+                        .hidden(self.$card.map{ $0 != nil })
 
                     Div("Agregar Tarjeta")
                         .class(.uibtnLargeOrange)
                         .textAlign(.center)
                         .width(94.percent)
-                        .hidden(self.$card.map{ $0 != nil })
+                        .hidden(self.$card.map{ $0 == nil })
                         .onClick {
                             self.addWarantyCard()
                         }
@@ -181,20 +185,19 @@ extension OrderView.EquipmentView {
 
                 guard let resp else {
                     self.cardCodeField.class(.isNok)
-                    showError(.comunicationError, .serverConextionError)
                     return
                 }
 
-                guard resp.status == .ok else{
+                guard resp.status == .ok else {
                     self.cardCodeField.class(.isNok)
-                    showError(.generalError , resp.msg)
                     return
                 }
 
-                guard let card = resp.data else {
-                    self.cardCodeField.class(.isNok)
+                guard let payload = resp.data else {
                     return
-                }              
+                }
+                
+                self.card = payload.card
 
                 self.cardCodeField.class(.isOk)
 
@@ -203,15 +206,20 @@ extension OrderView.EquipmentView {
 
         func addWarantyCard() {
 
-            guard let card else {
+            guard let card: CustShortLinkManager else {
                 showError(.unexpectedResult, "Seleccione una tarjeta valida")
                 return
             }
 
+            loadingView(show: true)
+
             API.custOrderV1.activateWarrantyCard(
                 cardId: card.id,
-                orderId: orderId
+                orderId: orderId,
+                equipmentId: equipmentId
             ) { resp in
+
+                loadingView(show: false)
             
                 guard let resp else {
                     self.cardCodeField.class(.isNok)
@@ -225,7 +233,11 @@ extension OrderView.EquipmentView {
                     return
                 }
 
+                showSuccess(.operacionExitosa, "Se agergo tarjeta")
+
                 self.callback(card.code)
+
+                self.remove()
 
                 
             }

@@ -36,7 +36,7 @@ class SideMenuView: Div {
 
     @DOM override var body: DOM.Content {
         Div {
-            VTitle("Herramientas") {
+            VTitle("Herramientas", icon: "icon-tools.png") {
                 USmallTitle("Tierra Cero Skyline")
             } onClose: {
                 self.callback("close")

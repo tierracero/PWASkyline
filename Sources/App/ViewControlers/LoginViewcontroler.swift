@@ -243,7 +243,7 @@ public class LoginViewcontroler: PageController {
     .class(Class("tc-login-main-root"))
 
     lazy var loginBox = VPopUp(.fitContent(w: 560)) {
-        VTitle("Recuperar clave") {
+        VTitle("Recuperar clave", icon: "icon_request.png") {
             USmallTitle("Paso 1 de 2")
         } onClose: {
             self.passwordRecoveryMode = nil
@@ -293,7 +293,7 @@ public class LoginViewcontroler: PageController {
     .hidden(self.$passwordRecoveryMode.map { $0 != .confirmUsername })
 
     lazy var passwordRecoveryBox = VPopUp(.fitContent(w: 560)) {
-        VTitle("Confirma tu celular") {
+        VTitle("Confirma tu celular", icon: "icon_mobile.png") {
             USmallTitle("Paso 2 de 2")
         } onClose: {
             self.passwordRecoveryMode = nil

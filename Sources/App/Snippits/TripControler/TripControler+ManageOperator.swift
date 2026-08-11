@@ -105,19 +105,32 @@ class TripControlerManageOperator: Div {
 
     @DOM override var body: DOM.Content {
         Div {
+            Div {
+                Div {
+                    Img()
+                        .src("/skyline/media/icon_operador.png")
+                        .class(.iconBlue)
+                        .height(24.px)
 
-            Img()
-                .closeButton(.uiView2)
-                .onClick {
-                    self.remove()
+                    H2(self.$id.map{ ($0 == nil) ?  "Crear Operador" : "Editar Operador" })
+                        .margin(all: 0.px)
+                        .class(Class(TCTripBetaClass.titleText))
                 }
+                .display(.flex)
+                .custom("align-items", "center")
+                .custom("gap", "8px")
+                .custom("min-width", "0")
 
-            H2(self.$id.map{ ($0 == nil) ?  "Crear Operador" : "Editar Operador" })
-                .color(.lightBlueText)
-                .margin(all: 0.px)
+                Img()
+                    .closeButton(.uiView2)
+                    .class(Class(TCTripBetaClass.close))
+                    .onClick {
+                        self.remove()
+                    }
+            }
+            .class(Class(TCTripBetaClass.title))
 
-            Div().class(.clear)
-
+            Div {
             Div {
 
                 Div{
@@ -171,7 +184,10 @@ class TripControlerManageOperator: Div {
                 Div().class(.clear).height(7.px)
 
             }
-            .class(.roundBlue)
+            .class(
+                Class(TCTripBetaClass.box),
+                Class(TCTripBetaClass.boxRaised)
+            )
             .padding(all: 3.px)
             .marginTop(10.px)
             .marginBottom(10.px)
@@ -180,8 +196,6 @@ class TripControlerManageOperator: Div {
 
                 Div("Eliminar")
                     .class(.uibtn)
-                    .color(.coral)
-                    .float(.left)
                     .onClick {
                         self.deleteItem()
                     }
@@ -193,16 +207,23 @@ class TripControlerManageOperator: Div {
                         self.saveData()
                     }
             }
-            .align(.right)
+            .class(Class(TCTripBetaClass.titleActions))
+            .custom("margin-top", "12px")
 
+            }
+            .custom("display", "flex")
+            .custom("flex-direction", "column")
+            .custom("gap", "12px")
+            .custom("min-height", "0")
+            .custom("overflow", "auto")
+            .custom("box-sizing", "border-box")
+            .padding(all: 12.px)
         }
-        .backgroundColor(.backGroundGraySlate)
-        .borderRadius(all: 24.px)
-        .position(.absolute)
-        .padding(all: 12.px)
-        .width(46.percent)
-        .left(27.percent)
-        .top(20.percent)
+        .class(
+            Class(TCTripBetaClass.popUpPanel),
+            Class(TCTripBetaClass.popUpPanelFitContent)
+        )
+        .custom("max-width", "620px !important")
     }
 
     override func buildUI() {
@@ -211,11 +232,9 @@ class TripControlerManageOperator: Div {
         TCTripBetaTheme.apply(to: self)
         TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
 
-        position(.absolute)
-        height(100.percent)
-        width(100.percent)
-        top(0.px)
-        left(0.px)
+        self.class(Class(TCTripBetaClass.popUp))
+        self.attribute("role", "dialog")
+        self.attribute("aria-modal", "true")
 
         TipoOperador.allCases.forEach { type in
             operadorTypeSelect.appendChild(

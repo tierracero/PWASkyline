@@ -73,15 +73,32 @@ class CreateTripView: Div {
     }
 
     @State var operador: CustCommercialTripOperador? = nil
+
     @State var permit: CustCommercialTripPermit? = nil
+
     @State var vehical: CustCommercialTripVehical? = nil
+
     @State var trailerOne: CustCommercialTripTrailer? = nil
+
     @State var trailerTwo: CustCommercialTripTrailer? = nil
+
     @State var civilInsurance: CustCommercialTripInsurance? = nil
+
     @State var ambientInsurance: CustCommercialTripInsurance? = nil
+
     @State var payloadInsurance: CustCommercialTripInsurance? = nil
+
     @State var merchendise: [FiscalMercanciaItem] = []
-    @State var locations: [FiscalLocationItem] = []
+
+    @State var profiles: [FiscalComponents.Profile] = fiscalProfiles
+
+    @State var profile: FiscalComponents.Profile? = fiscalProfiles.first
+
+    @State var fiscalProfileListener = fiscalProfiles.first?.id.uuidString ?? ""
+
+    @State var origin: FiscalLocationItem? = nil
+
+    @State var destination: FiscalLocationItem? = nil
 
     @State var balance: String = ""
 
@@ -96,7 +113,7 @@ class CreateTripView: Div {
     @DOM override var body: DOM.Content {
         VPopUp(.full) {
 
-            VTitle("Crear Nuevo Viaje") {
+            VTitle("Crear Nuevo Viaje", icon: "icon_route.png") {
 
                 USmallButton("Crear Viaje")
                     .custom("background", "var(--tc-beta-orange)")
@@ -124,6 +141,8 @@ class CreateTripView: Div {
                                 .color(.gray)
                         }
                         .overflow(.hidden)
+
+                        self.issuerView
 
                         UField("Costo del viaje") {
                             UTextField(self.$balance)
@@ -162,25 +181,20 @@ class CreateTripView: Div {
 
                 VGrid(.twoThirds) {
                     VBox {
-                        Div {
-                            UTitle("Ruta del viaje")
+                        self.componentTitle(
+                            "Ruta del viaje",
+                            icons: ["icon_destination.png"]
+                        )
 
-                            USmallButton("Agregar ubicación")
-                                .onClick {
-                                    self.addDestination()
-                                }
-                        }
-                        .display(.grid)
-                        .custom("grid-template-columns", "minmax(0, 1fr) auto")
-                        .custom("align-items", "center")
-                        .custom("gap", "10px")
-
-                        self.destinationGrid
+                        self.routeGrid
                     }
 
                     VBox {
                         Div {
-                            UTitle("Mercancía a trasladar")
+                            self.componentTitle(
+                                "Mercancía a trasladar",
+                                icons: ["icon_merchandise.png"]
+                            )
 
                             USmallButton("Agregar mercancía")
                                 .onClick {
@@ -227,6 +241,22 @@ class CreateTripView: Div {
         left(0.px)
         top(0.px)
 
+        fiscalProfileSelect.innerHTML = ""
+
+        profiles.forEach { profile in
+            fiscalProfileSelect.appendChild(
+                Option("\(profile.razon) · \(profile.rfc)")
+                    .value(profile.id.uuidString)
+                    .selected(profile.id == self.profile?.id)
+            )
+        }
+
+        $fiscalProfileListener.listen { profileId in
+            self.profile = self.profiles.first {
+                $0.id.uuidString == profileId
+            }
+        }
+
         $vehical.listen { item in
 
             self.requierTrailer = item?.requierTrailer ?? false
@@ -238,24 +268,24 @@ class CreateTripView: Div {
 
         }
 
-        $locations.listen { locations in
-            self.destinationGrid.innerHTML = ""
-
-            locations.enumerated().forEach { index, location in
-                self.destinationGrid.appendChild(
-                    CartaPorteUbicacion(
-                        placement: location,
-                        canRemove: index == locations.count - 1,
-                        edit: { item in
-                            self.manageLocationItem(item, isEditing: true)
-                        }
-                    ) { id in
-                        guard self.locations.last?.id == id else { return }
-                        self.locations.removeLast()
-                    }
-                )
-            }
+        $origin.listen { origin in
+            self.renderLocationSlot(
+                origin,
+                placementType: .origen,
+                container: self.originLocationSlot
+            )
         }
+
+        $destination.listen { destination in
+            self.renderLocationSlot(
+                destination,
+                placementType: .destino,
+                container: self.destinationLocationSlot
+            )
+        }
+
+        renderLocationSlot(origin, placementType: .origen, container: originLocationSlot)
+        renderLocationSlot(destination, placementType: .destino, container: destinationLocationSlot)
 
         $merchendise.listen { merchendise in
             self.mercaciaGrid.innerHTML = ""
@@ -283,15 +313,157 @@ class CreateTripView: Div {
         $ambientInsurance.removeAllListeners()
         $payloadInsurance.removeAllListeners()
         $merchendise.removeAllListeners()
-        $locations.removeAllListeners()
+        $profiles.removeAllListeners()
+        $profile.removeAllListeners()
+        $fiscalProfileListener.removeAllListeners()
+        $origin.removeAllListeners()
+        $destination.removeAllListeners()
         $balance.removeAllListeners()
         $odometerInitial.removeAllListeners()
         $odometerFinal.removeAllListeners()
         $requierTrailer.removeAllListeners()
     }
 
-    lazy var destinationGrid = Div()
-        .custom("min-height", "190px")
+    private func componentTitle(_ title: String, icons: [String]) -> Div {
+        Div {
+            ForEach(icons) { icon in
+                Img()
+                    .src("/skyline/media/\(icon)")
+                    .class(.iconBlue)
+                    .height(24.px)
+            }
+
+            UTitle(title)
+        }
+        .display(.flex)
+        .custom("align-items", "center")
+        .custom("gap", "7px")
+        .custom("min-width", "0")
+    }
+
+    lazy var fiscalProfileSelect = USelectField(self.$fiscalProfileListener)
+        .width(100.percent)
+        .custom("min-height", "38px")
+        .attribute("aria-label", "Seleccionar perfil fiscal")
+
+    lazy var issuerView = VBox(.standard) {
+        Div {
+            Img()
+                .src("/skyline/media/icon-fiscal.png")
+                .class(.iconBlue)
+                .height(28.px)
+                .custom("flex", "0 0 auto")
+
+            Div {
+                UMinorTitle("Perfil de Facturación")
+
+                Div(self.$profile.map { $0?.razon ?? "" })
+                    .class(.oneLineText)
+                    .fontSize(15.px)
+                    .color(.white)
+
+                Div(self.$profile.map { $0?.rfc ?? "" })
+                    .class(.oneLineText)
+                    .fontSize(12.px)
+                    .color(.gray)
+            }
+            .custom("min-width", "0")
+        }
+        .display(.flex)
+        .custom("align-items", "center")
+        .custom("gap", "9px")
+        .custom("min-width", "0")
+
+        UField("Cambiar perfil", required: false) {
+            self.fiscalProfileSelect
+        }
+    }
+    .hidden(self.$profiles.map { $0.count < 2 })
+    .custom("min-width", "0")
+
+    private var selectedLocations: [FiscalLocationItem] {
+        [origin, destination].compactMap { $0 }
+    }
+
+    private func renderLocationSlot(
+        _ item: FiscalLocationItem?,
+        placementType: TipoUbicacion,
+        container: Div
+    ) {
+        container.innerHTML = ""
+
+        guard let item else {
+            container.appendChild(locationPlaceholder(for: placementType))
+            return
+        }
+
+        container.appendChild(
+            CartaPorteUbicacion(
+                placement: item,
+                canRemove: true,
+                edit: { item in
+                    self.manageLocationItem(item, isEditing: true)
+                }
+            ) { id in
+                self.clearLocation(placementType, matching: id)
+            }
+        )
+    }
+
+    private func locationPlaceholder(for placementType: TipoUbicacion) -> Div {
+
+        let isOrigin = (placementType == .origen)
+
+        let title = isOrigin ? "Seleccionar Origen" : "Seleccionar Destino"
+
+        let icon = isOrigin ? "icon_origin.png" : "icon_destination.png"
+
+        return Div {
+            Img()
+                .src("/skyline/media/\(icon)")
+                .class(.iconBlue)
+                .height(34.px)
+
+            Div(title)
+                .fontSize(16.px)
+                .fontWeight(.bold)
+                .custom("color", "var(--tc-crystal-ink)")
+
+            Div("Elige una ubicación registrada o crea una nueva")
+                .fontSize(12.px)
+                .custom("color", "var(--tc-crystal-muted)")
+        }
+        .display(.flex)
+        .custom("flex-direction", "column")
+        .custom("align-items", "center")
+        .custom("justify-content", "center")
+        .custom("gap", "7px")
+        .custom("min-height", "136px")
+        .custom("box-sizing", "border-box")
+        .custom("background", "var(--tc-crystal-surface)")
+        .custom("border", "1px dashed var(--tc-crystal-blue)")
+        .borderRadius(all: 10.px)
+        .margin(all: 7.px)
+        .cursor(.pointer)
+        .onClick {
+            self.selectLocation(placementType)
+        }
+    }
+
+    lazy var originLocationSlot = Div()
+        .custom("min-width", "0")
+
+    lazy var destinationLocationSlot = Div()
+        .custom("min-width", "0")
+
+    lazy var routeGrid = Div {
+        self.originLocationSlot
+        self.destinationLocationSlot
+    }
+        .display(.grid)
+        .custom("grid-template-columns", "repeat(2, minmax(0, 1fr))")
+        .custom("gap", "10px")
+        .custom("min-height", "150px")
         .custom("max-height", "360px")
         .custom("margin-top", "12px")
         .custom("background", "var(--tc-beta-surface-deep)")
@@ -325,7 +497,10 @@ class CreateTripView: Div {
             }
             .float(.right)
 
-            UTitle("Operador")
+            self.componentTitle(
+                "Operador",
+                icons: ["icon_operador.png"]
+            )
                 .float(.left)
 
         }
@@ -359,7 +534,10 @@ class CreateTripView: Div {
             }
             .float(.right)
 
-            UTitle("Vehículo y permiso")
+            self.componentTitle(
+                "Vehículo y permiso",
+                icons: ["icon_vehical.png", "icon_permition.png"]
+            )
                 .float(.left)
 
         }
@@ -381,7 +559,10 @@ class CreateTripView: Div {
         
         Div {
 
-            UTitle("Pólizas de seguro")
+            self.componentTitle(
+                "Pólizas de seguro",
+                icons: ["icon_insurance.png"]
+            )
 
         }
         
@@ -455,7 +636,10 @@ class CreateTripView: Div {
 
     lazy var trailerPanel = VBox {
 
-        UTitle("Remolques")
+        self.componentTitle(
+            "Remolques",
+            icons: ["icon_trailer.png"]
+        )
         
         Div().clear(.both).height(3.px)
 
@@ -666,6 +850,24 @@ class CreateTripView: Div {
         Div().class(.clear).height(3.px)
 
         Div(self.$permit.map { $0?.permitTypeName ?? "Seleccione permiso" })
+            .class(.textFiledBlackDark, .oneLineText)
+            .custom("width", "calc(100% - 16px)")
+            .height(31.px)
+            .custom("padding-left", "8px")
+            .custom("padding-right", "8px")
+
+        Div().class(.clear).height(7.px)
+
+        Label("Propietario del Permiso")
+            .color(.white)
+
+        Div(self.$permit.map { permit in
+            guard let name = permit?.permitName, !name.isEmpty else {
+                return "Seleccione permiso"
+            }
+
+            return name
+        })
             .class(.textFiledBlackDark, .oneLineText)
             .custom("width", "calc(100% - 16px)")
             .height(31.px)
@@ -942,15 +1144,16 @@ class CreateTripView: Div {
     }
 
     /// origen, destino
-    func manageDestination() {
-        addToDom(ManageLocationBase(currentPlacementCount: locations.count) { result in
+    func manageDestination(_ placementType: TipoUbicacion) {
+        let currentPlacementCount = placementType == .origen ? 0 : 1
+
+        addToDom(ManageLocationBase(currentPlacementCount: currentPlacementCount) { result in
             self.handleDestination(result)
         })
     }
 
     func manageMerchendise(_ item: FiscalMercanciaBase? = nil) {
-        guard locations.contains(where: { $0.placementType == .origen }),
-              locations.contains(where: { $0.placementType == .destino }) else {
+        guard origin != nil, destination != nil else {
             showError(.requiredField, "Agregue Origen y Destino antes de agregar mercancia")
             return
         }
@@ -968,7 +1171,7 @@ class CreateTripView: Div {
 
     func configureMerchendise(_ item: FiscalMercanciaBase) {
         addToDom(AddCartaPorteMerchendise(
-            locations: locations,
+            locations: selectedLocations,
             merchandise: merchendiseItem(from: item),
             dismissAfterSave: true
         ) { result in
@@ -1000,7 +1203,55 @@ class CreateTripView: Div {
     }
 
     func addLocation(_ item: FiscalLocationBase) {
-        locations.append(locationItem(from: item))
+        setLocation(locationItem(from: item))
+    }
+
+    private func setLocation(_ item: FiscalLocationItem) {
+        switch item.placementType {
+        case .origen:
+            if destination?.id == item.id {
+                destination = nil
+            }
+            origin = item
+
+        case .destino:
+            if origin?.id == item.id {
+                origin = nil
+            }
+            destination = item
+        }
+
+        synchronizeMerchandiseRoute()
+    }
+
+    private func clearLocation(
+        _ placementType: TipoUbicacion,
+        matching id: UUID
+    ) {
+        switch placementType {
+        case .origen:
+            guard origin?.id == id else { return }
+            origin = nil
+
+        case .destino:
+            guard destination?.id == id else { return }
+            destination = nil
+        }
+    }
+
+    private func synchronizeMerchandiseRoute() {
+        guard let origin, let destination, !merchendise.isEmpty else { return }
+
+        var updatedMerchandise = merchendise
+
+        for index in updatedMerchandise.indices {
+            updatedMerchandise[index].from = origin.placementId
+            updatedMerchandise[index].fromStoreName = origin.storeName
+            updatedMerchandise[index].to = destination.placementId
+            updatedMerchandise[index].toStoreName = destination.storeName
+        }
+
+        merchendise = updatedMerchandise
     }
 
     func manageLocationItem(
@@ -1008,21 +1259,7 @@ class CreateTripView: Div {
         isEditing: Bool = false
     ) {
         addToDom(ManageLocationItem(item: item, isEditing: isEditing) { updatedItem in
-            if isEditing {
-
-                guard let index = self.locations.firstIndex(where: { $0.id == updatedItem.id }) else {
-                    return
-                }
-
-                self.locations[index] = updatedItem
-            } else {
-                self.locations.append(updatedItem)
-
-                if self.locations.count < 2 {
-                    self.addDestination()
-                }
-
-            }
+            self.setLocation(updatedItem)
         })
     }
 
@@ -1049,16 +1286,13 @@ class CreateTripView: Div {
             state: item.state,
             country: item.country,
             zipCode: item.zipCode,
-            position: existing?.position ?? locations.count,
+            position: existing?.position ?? (item.placementType == .origen ? 0 : 1),
             comertialTripControlId: nil,
             distance: existing?.distance
         )
     }
 
     func merchendiseItem(from item: FiscalMercanciaBase) -> FiscalMercanciaItem {
-        let origin = locations.first(where: { $0.placementType == .origen })
-        let destination = locations.last(where: { $0.placementType == .destino })
-
         return FiscalMercanciaItem(
             id: item.id,
             fiscCode: item.fiscCode,
@@ -1110,13 +1344,17 @@ class CreateTripView: Div {
         case .update(let item):
             upsertBaseLocation(item)
 
-            if let index = locations.firstIndex(where: { $0.id == item.id }) {
-                locations[index] = locationItem(from: item, existing: locations[index])
+            if let origin, origin.id == item.id {
+                setLocation(locationItem(from: item, existing: origin))
+            }
+            else if let destination, destination.id == item.id {
+                setLocation(locationItem(from: item, existing: destination))
             }
         case .delete(let id):
             baseLocationsOrigin.removeAll { $0.id == id }
             baseLocationsDestination.removeAll { $0.id == id }
-            locations.removeAll { $0.id == id }
+            clearLocation(.origen, matching: id)
+            clearLocation(.destino, matching: id)
         }
     }
 
@@ -1139,6 +1377,35 @@ class CreateTripView: Div {
         }
     }
 
+    func applyVehicalSelection(_ item: CustCommercialTripVehical) {
+        vehical = item
+        requierTrailer = item.requierTrailer
+
+        if !item.requierTrailer {
+            trailerOne = nil
+            trailerTwo = nil
+        }
+
+        guard
+            let policyNumber = item.insurancePolicy?.purgeSpaces,
+            !policyNumber.isEmpty,
+            let insurance = insurances.first(where: {
+                $0.policyNumber.purgeSpaces.lowercased() == policyNumber.lowercased()
+            })
+        else {
+            return
+        }
+
+        switch insurance.type {
+        case .civil:
+            civilInsurance = insurance
+        case .ambient:
+            ambientInsurance = insurance
+        case .payload:
+            payloadInsurance = insurance
+        }
+    }
+
     func handleVehical(_ result: TripControlerManageVehical.CallbackType) {
         switch result {
         case .create(let item), .update(let item):
@@ -1148,13 +1415,7 @@ class CreateTripView: Div {
                 vehicals.append(item)
             }
 
-            vehical = item
-            requierTrailer = item.requierTrailer
-
-            if !item.requierTrailer {
-                trailerOne = nil
-                trailerTwo = nil
-            }
+            applyVehicalSelection(item)
         case .delete(let id):
             vehicals.removeAll { $0.id == id }
 
@@ -1263,6 +1524,7 @@ class CreateTripView: Div {
 
     func selectOperador() {
         addToDom(TripControlerAddElement(
+            icon: "icon_operador.png",
             title: "Seleccione Operador",
             items: operadors, 
             titleForItem: { "\($0.operadorType.description): \($0.operadorName)" },
@@ -1285,19 +1547,14 @@ class CreateTripView: Div {
 
     func selectVehical() {
         addToDom(TripControlerAddElement(
+            icon: "icon_vehical.png",
             title: "Seleccione Vehiculo",
             items: vehicals,
             titleForItem: { "\($0.vehicalTypeName) \($0.vehicalType)" },
             subtitleForItem: { "Placas \($0.vehicalLicensePlate) | Modelo \($0.vehicalYearModel) | Peso \($0.vehicalWeight)" },
             callback: { item in
 
-                self.vehical = item
-                self.requierTrailer = item.requierTrailer
-
-                if !item.requierTrailer {
-                    self.trailerOne = nil
-                    self.trailerTwo = nil
-                }
+                self.applyVehicalSelection(item)
 
                 if self.permit == nil {
                     Dispatch.asyncAfter(0.2) {
@@ -1314,10 +1571,11 @@ class CreateTripView: Div {
 
     func selectPermit() {
         addToDom(TripControlerAddElement(
+            icon: "icon_permition.png",
             title: "Seleccione Permiso",
             items: permits,
-            titleForItem: { $0.permitTypeName },
-            subtitleForItem: { "Permiso \($0.permitTypeName) \($0.permitNumber)" },
+            titleForItem: { $0.permitName.isEmpty ? $0.permitTypeName : $0.permitName },
+            subtitleForItem: { "Tipo \($0.permitTypeName) | Permiso \($0.permitNumber)" },
             callback: { item in
 
                 self.permit = item
@@ -1340,6 +1598,7 @@ class CreateTripView: Div {
 
     func selectInsurance(_ type: ComertialTripInsuranceType) {
         addToDom(TripControlerAddElement(
+            icon: "icon_insurance.png",
             title: "Seleccione Polisa \(type.description)",
             items: insurances.filter { $0.type == type },
             titleForItem: { $0.provider },
@@ -1367,6 +1626,7 @@ class CreateTripView: Div {
 
     func selectTrailer(_ placement: TrailerPlacement) {
         addToDom(TripControlerAddElement(
+            icon: "icon_trailer.png",
             title: placement == .one ? "Seleccione Remolque 1" : "Seleccione Remolque 2",
             items: trailers,
             titleForItem: { $0.name },
@@ -1385,45 +1645,27 @@ class CreateTripView: Div {
         ))
     }
 
-    func addDestination() {
+    func selectLocation(_ placementType: TipoUbicacion) {
 
-        if locations.isEmpty {
-            addToDom(TripControlerAddElement(
-                title: "Agergar Origen",
-                items: baseLocationsOrigin, 
-                titleForItem: { "\($0.placementId) \($0.storeName)" },
-                subtitleForItem: { "\($0.colonie) \($0.state)" },
-                callback: { item in
-                    
-                    self.configureLocation(item)
+        let isOrigin = placementType == .origen
 
-
-                },
-                create: {
-                    self.manageDestination()
-                }
-            ))
-        }
-        else {
-            addToDom(TripControlerAddElement(
-                title: "Agergar Destino",
-                items: baseLocationsDestination, 
-                titleForItem: { "\($0.placementId) \($0.storeName)" },
-                subtitleForItem: { "\($0.colonie) \($0.state)" },
-                callback: { item in
-                    self.configureLocation(item)
-                },
-                create: {
-                    self.manageDestination()
-                }
-            )) 
-        }
-
+        addToDom(TripControlerAddElement(
+            icon: isOrigin ? "icon_origin.png" : "icon_destination.png",
+            title: isOrigin ? "Seleccionar Origen" : "Seleccionar Destino",
+            items: isOrigin ? baseLocationsOrigin : baseLocationsDestination,
+            titleForItem: { "\($0.placementId) \($0.storeName)" },
+            subtitleForItem: { "\($0.colonie) \($0.state)" },
+            callback: { item in
+                self.configureLocation(item)
+            },
+            create: {
+                self.manageDestination(placementType)
+            }
+        ))
     }
 
     func addMerchendise() {
-        guard locations.contains(where: { $0.placementType == .origen }),
-              locations.contains(where: { $0.placementType == .destino }) else {
+        guard origin != nil, destination != nil else {
             showError(.requiredField, "Agregue Origen y Destino antes de agregar mercancia")
             return
         }
@@ -1431,6 +1673,7 @@ class CreateTripView: Div {
         
 
         addToDom(TripControlerAddElement(
+            icon: "icon_merchandise.png",
             title: "Seleccione Mercancia",
             items: merchendises, 
             titleForItem: { "\($0.fiscCode) \($0.description)" },
@@ -1458,6 +1701,24 @@ class CreateTripView: Div {
 
         guard let permit else {
             showError(.requiredField, "Seleccione permiso")
+            return
+        }
+
+        let expiredInsurance = [
+            civilInsurance,
+            ambientInsurance,
+            payloadInsurance
+        ]
+        .compactMap { $0 }
+        .first {
+            $0.expiredAt > 0 && $0.expiredAt <= getNow()
+        }
+
+        if let expiredInsurance {
+            showError(
+                .invalidFormat,
+                "La póliza \(expiredInsurance.policyNumber) está vencida"
+            )
             return
         }
 
@@ -1502,8 +1763,7 @@ class CreateTripView: Div {
             return
         }
 
-        guard locations.contains(where: { $0.placementType == .origen }),
-              locations.contains(where: { $0.placementType == .destino }) else {
+        guard let origin, let destination else {
             showError(.requiredField, "Agregue Origen y Destino")
             return
         }
@@ -1524,7 +1784,7 @@ class CreateTripView: Div {
 
         let trailerIds = [trailerOne?.id, trailerTwo?.id].compactMap { $0 }
 
-        let tripLocations = locations.map {
+        let tripLocations = [origin, destination].map {
             CustCommercialTripsComponents.TripLocation(
                 locationId: $0.id,
                 distance: $0.distance
@@ -1556,6 +1816,7 @@ class CreateTripView: Div {
             locations: tripLocations,
             merchandise: tripMerchandise,
             balance: balance,
+            fiscalProfile: profile?.id,
             odometerInitial: odometerInitialValue,
             odometerFinal: odometerFinalValue
         ) { resp in

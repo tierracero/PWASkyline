@@ -59,7 +59,7 @@ class AddRentalProductConfirm: Div {
     
     @DOM override var body: DOM.Content {
         VPopUp(.semiFull) {
-            VTitle("Datos del producto") {
+            VTitle("Datos del producto", icon: "icon_merchandise.png") {
                 USmallTitle(self.poc.name)
             } onClose: {
                 self.remove()

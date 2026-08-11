@@ -82,7 +82,7 @@ public class ConfirmView: Div {
     
     @DOM public override var body: DOM.Content {
         VPopUp(.fitContent(w: 620)) {
-            VTitle(self.title) {
+            VTitle(self.title, icon: "icon_alert.png") {
                 USmallTitle("Confirmación")
             } onClose: {
                 self.remove()

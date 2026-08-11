@@ -82,7 +82,10 @@ public final class DateTimePicker: Div {
 
     @DOM public override var body: DOM.Content {
         VPopUp(.custome(w: self.setTime ? 900 : 690, h: 640)) {
-            VTitle(self.setTime ? "Seleccionar fecha y hora" : "Seleccionar fecha") {
+            VTitle(
+                self.setTime ? "Seleccionar fecha y hora" : "Seleccionar fecha",
+                icon: "icon_calendar.png"
+            ) {
                 USmallTitle("Hora local")
             } onClose: {
                 self.remove()

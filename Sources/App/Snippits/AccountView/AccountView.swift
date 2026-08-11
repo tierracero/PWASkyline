@@ -887,9 +887,9 @@ class AccountView: PageController {
     
     lazy var noteTypeSelect = Select(self.$noteTypeListener)
         .class(.textFiledBlackDarkLarge)
-        .fontSize(18.px)
+        .fontSize(16.px)
         .width(200.px)
-        .height(23.px)
+        .height(32.px)
         .float(.right)
         .body {
             Option("Todas")
@@ -1717,7 +1717,7 @@ class AccountView: PageController {
                 Div().clear(.both)
                 
                 self.notesDiv
-                    .custom("height", "calc(100% - 30px)")
+                    .custom("height", "calc(100% - 42px)")
                     .class(.roundGrayBlackDark)
                     .overflow(.auto)
                     .marginTop(7.px)

@@ -17,7 +17,7 @@ class MoneyManagerView: Div {
     @DOM override var body: DOM.Content {
         VPopUp(.fitContent(w: 980)) {
 
-            VTitle("Dinero y cortes") {
+            VTitle("Dinero y cortes", icon: "icon-money.png") {
                 if custCatchHerk > 1 {
                     USmallButton("Auditar")
                         .attribute("aria-label", "Auditar movimientos de dinero")

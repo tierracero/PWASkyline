@@ -115,6 +115,7 @@ class TripPrintEngine: Div {
                 self.detail("Autotransporte", "\(self.trip.vehicalId.autotransporteCode) \(self.trip.vehicalId.autotransporteName)")
                 self.detail("Vehiculo", self.trip.vehicalId.vehicalTypeName)
                 self.detail("Placas / Modelo", "\(self.trip.vehicalId.vehicalLicensePlate) / \(self.trip.vehicalId.vehicalYearModel)")
+                self.detail("Propietario del Permiso", self.trip.permitId.permitName)
                 self.detail("Permiso", "\(self.trip.permitId.permitTypeName) \(self.trip.permitId.permitNumber)")
             }
             .display(.grid)

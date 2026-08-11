@@ -35,123 +35,204 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         @State var sections: [CustStoreSeccionesQuick] = []
         
         @State var inventorie: [CustGeneralInventoryQuick] = []
+
+        @State var userCount: Int = 0
+
+        private var isLoadingConfiguration = false
         
         /// UserCard
         
         lazy var usersContainers = Div()
+            .class(Class(TCStoreUserConfigurationClass.userList))
         
         @DOM override var body: DOM.Content {
-            
-            Div{
+            Div {
                 Table().noResult(label: "🛍️ Cargando tienda \(self.store.name)")
             }
-            .custom("height", "calc(100% - 8px)")
-            .hidden(self.$isLoaded)
-            
-            Div{
-                
-                Div{
+                .class(Class(TCStoreUserConfigurationClass.storeLoading))
+                .hidden(self.$isLoaded)
+                .display(self.$isLoaded.map { $0 ? .none : .flex })
+
+            Div {
+                Div {
+                    Div {
+                        H2("Usuarios activos")
+                    }
+                        .class(Class(TCStoreUserConfigurationClass.cardHeader))
                     self.usersContainers
+                    Div("Gestionar usuarios")
+                        .class(Class(TCCrystalSurfaceClass.goodButton))
+                        .onClick {
+                            // Individual user cards remain the interaction surface.
+                        }
                 }
-                .custom("height", "calc(100% - 12px)")
-                .custom("width", "calc(66% - 16px)")
-                .class(.roundDarkBlue)
-                .marginRight(12.px)
-                .marginTop(7.px)
-                .overflow(.auto)
-                .float(.left)
-                
-                Div{
-                    // Activos y Herramientas
+                    .class(Class(TCStoreUserConfigurationClass.card))
+
+                Div {
                     Div {
-                        Div{
-
-                            H2("Activos y Herramientas")
-                                .color(.lightGray)
-                                .float(.left)
-                                
-                              Div{
-                                
-                                Img()
-                                    .src("/skyline/media/add.png")
-                                    .padding(all: 3.px)
-                                    .paddingRight(7.px)
-                                    .cursor(.pointer)
-                                    .height(18.px)
-                                
-                                Span("Agregar")
-                                .float(.right)
-                                
-                            }
-                            .class(.uibtnLarge)
-                            .marginRight(7.px)
-                            .fontSize(18.px)
-                            .height(22.px)
-                            .float(.right)
-                            .onClick {
-                                // ADD tool
-                            }
-                            
-                            Div().clear(.both)
-
-                        }
-                        
-                        
-                        Div().class(.clear)
-                        
-                        Div{
-                            
-                        }
-                        .custom("height", "calc(100% - 42px)")
-                        .class(.roundGrayBlackDark)
-                        .padding(all: 3.px)
-                        .marginTop(3.px)
-
+                        H2("Activos y herramientas")
                     }
-                    .custom("height", "calc(50% - 7px)")
-                    .marginBottom(7.px)
-                    
-                    /// Estadisticas
+                        .class(Class(TCStoreUserConfigurationClass.cardHeader))
+
                     Div {
-                        
-                        H2("Estadisticas")
-                            .color(.lightGray)
-                            .float(.left)
-                        
-                        Div().class(.clear)
-                        
-                        Div{
-                            
-                        }
-                        .custom("height", "calc(100% - 37px)")
-                        .class(.roundGrayBlackDark)
-                        .padding(all: 3.px)
-                        .marginTop(3.px)
+                        self.toolRow(
+                            title: "Inventario",
+                            detail: "Productos y existencias",
+                            count: self.$inventorie.map { $0.count.toString },
+                            icon: "/skyline/media/panel_service.png"
+                        )
+                        self.toolRow(
+                            title: "Bodegas",
+                            detail: "Bodegas y ubicaciones",
+                            count: self.$bodegas.map { $0.count.toString },
+                            icon: "/skyline/media/panel_service.png"
+                        )
+                        self.toolRow(
+                            title: "Secciones",
+                            detail: "Secciones y categorías",
+                            count: self.$sections.map { $0.count.toString },
+                            icon: "/skyline/media/panel_service.png"
+                        )
+                        self.toolRow(
+                            title: "Horarios",
+                            detail: "Configuración de operación",
+                            count: "—",
+                            icon: "/skyline/media/icon_history.png"
+                        )
                     }
-                    .custom("height", "calc(50% - 7px)")
-                    
+                        .class(Class(TCStoreUserConfigurationClass.toolsList))
+
+                    Div("Agregar")
+                        .class(Class(TCCrystalSurfaceClass.goodButton))
+                        .onClick {
+                            // Tool creation remains scoped to the existing advanced configuration flow.
+                        }
                 }
-                .custom("height", "calc(100% - 12px)")
-                //.custom("width", "calc(34% - 0px)")
-                .width(34.percent)
-                .marginTop(7.px)
-                .overflow(.auto)
-                .float(.left)
-                 
+                    .class(Class(TCStoreUserConfigurationClass.card))
             }
-            .custom("height", "calc(100% - 12px)")
-            .hidden(self.$isLoaded.map{ !$0 })
-            .marginTop(3.px)
-            
+                .class(Class(TCStoreUserConfigurationClass.cards))
+                .hidden(self.$isLoaded.map { !$0 })
+                .display(self.$isLoaded.map { !$0 ? .none : .grid })
+        }
+
+        private func metric(
+            label: String,
+            value: State<Int>,
+            icon: String
+        ) -> Div {
+            Div {
+                Div {
+                    Img().src(icon)
+                }
+                    .class(Class(TCStoreUserConfigurationClass.metricIcon))
+
+                Div {
+                    Span(label)
+                        .class(Class(TCStoreUserConfigurationClass.metricLabel))
+                    Span(value.map { $0.toString })
+                        .class(Class(TCStoreUserConfigurationClass.metricValue))
+                }
+                    .class(Class(TCStoreUserConfigurationClass.metricCopy))
+            }
+                .class(Class(TCStoreUserConfigurationClass.metric))
+        }
+
+        private func metric(
+            label: String,
+            value: State<String>,
+            icon: String
+        ) -> Div {
+            Div {
+                Div {
+                    Img().src(icon)
+                }
+                    .class(Class(TCStoreUserConfigurationClass.metricIcon))
+
+                Div {
+                    Span(label)
+                        .class(Class(TCStoreUserConfigurationClass.metricLabel))
+                    Span(value)
+                        .class(Class(TCStoreUserConfigurationClass.metricValue))
+                }
+                    .class(Class(TCStoreUserConfigurationClass.metricCopy))
+            }
+                .class(Class(TCStoreUserConfigurationClass.metric))
+        }
+
+        private func toolRow(
+            title: String,
+            detail: String,
+            count: State<String>,
+            icon: String
+        ) -> Div {
+            Div {
+                Div {
+                    Img().src(icon)
+                }
+                    .class(Class(TCStoreUserConfigurationClass.toolIcon))
+
+                Div {
+                    Strong(title)
+                        .class(Class(TCStoreUserConfigurationClass.toolName))
+                    Span(detail)
+                        .class(Class(TCStoreUserConfigurationClass.toolDetail))
+                }
+                    .class(Class(TCStoreUserConfigurationClass.toolCopy))
+
+                Span(count)
+                    .class(Class(TCStoreUserConfigurationClass.toolCount))
+            }
+                .class(Class(TCStoreUserConfigurationClass.toolRow))
+        }
+
+        private func toolRow(
+            title: String,
+            detail: String,
+            count: String,
+            icon: String
+        ) -> Div {
+            Div {
+                Div {
+                    Img().src(icon)
+                }
+                    .class(Class(TCStoreUserConfigurationClass.toolIcon))
+
+                Div {
+                    Strong(title)
+                        .class(Class(TCStoreUserConfigurationClass.toolName))
+                    Span(detail)
+                        .class(Class(TCStoreUserConfigurationClass.toolDetail))
+                }
+                    .class(Class(TCStoreUserConfigurationClass.toolCopy))
+
+                Span(count)
+                    .class(Class(TCStoreUserConfigurationClass.toolCount))
+            }
+                .class(Class(TCStoreUserConfigurationClass.toolRow))
         }
         
         override func buildUI() {
             super.buildUI()
+            TCStoreUserConfigurationTheme.applyStoreWorkspace(to: self)
             height(100.percent)
+            loadIfNeeded()
+        }
+
+        func loadIfNeeded() {
+            guard !isLoaded, !isLoadingConfiguration else {
+                return
+            }
+
+            isLoadingConfiguration = true
+
+            loadingView(show: true)
             
             API.custAPIV1.getStoreConfiguration(
                 storeId: store.id
             ) { resp in
+
+                loadingView(show: false)
+                self.isLoadingConfiguration = false
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -168,8 +249,6 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                     return
                 }
                 
-                self.isLoaded = true
-                
                 self.store = payload.store
                 
                 self.bodegas = payload.bodegas
@@ -177,6 +256,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 self.sections = payload.sections
                 
                 self.inventorie = payload.inventorie
+                self.userCount = payload.users.count
                 
                 let userSnippitRefrence = Dictionary(uniqueKeysWithValues: payload.usersPreformancenSippets.map{ ( $0.userId, $0) })
                 
@@ -214,7 +294,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                                 data: payload
                             )
                             
-                            addToDom(view)
+                            addToDom(view, presentation: .glass)
                             
                         }
                     }
@@ -222,7 +302,16 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                     self.usersContainers.appendChild(view)
                     
                 }
+
+                self.isLoaded = true
             }
+        }
+
+        func reloadUsers() {
+            guard !isLoadingConfiguration else { return }
+            usersContainers.innerHTML = ""
+            isLoaded = false
+            loadIfNeeded()
         }
 
         override func didRemoveFromDOM() {
@@ -232,6 +321,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             $bodegas.removeAllListeners()
             $sections.removeAllListeners()
             $inventorie.removeAllListeners()
+            $userCount.removeAllListeners()
         }
     }
 }
