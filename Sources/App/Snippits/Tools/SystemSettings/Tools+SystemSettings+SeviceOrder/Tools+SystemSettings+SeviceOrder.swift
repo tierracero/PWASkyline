@@ -4129,7 +4129,7 @@ extension ToolsView.SystemSettings {
                 sendNewBusinessAccountComunication: sendNewBusinessAccountComunication
             )
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.saveConfigs(
                 configStoreProcessing: configStoreProcessing,
@@ -4138,7 +4138,7 @@ extension ToolsView.SystemSettings {
                 configGeneral: nil
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)

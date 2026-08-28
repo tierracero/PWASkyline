@@ -72,6 +72,8 @@ enum TCTripBetaTheme {
                 .custom("--tc-beta-border", "#3a4248")
                 .custom("--tc-beta-blue", "#1887c7")
                 .custom("--tc-beta-blue-deep", "#172671")
+                
+                .custom("--tc-beta-orange-light", "#ffa500")
                 .custom("--tc-beta-orange", "#ff7704")
                 .custom("--tc-beta-orange-hot", "#f6530f")
                 .custom("--tc-beta-orange-soft", "#f9be70")
@@ -154,6 +156,11 @@ enum TCTripBetaTheme {
             Rule(Pointer("\(root) .\(TCTripBetaClass.close):hover"))
                 .custom("background", "rgba(246, 83, 15, 0.14)")
                 .custom("color", "var(--tc-beta-orange-blue)")
+
+            // Keep title-bar action controls visibly tied to the orange accent.
+            // The close icon remains borderless by design.
+            Rule(Pointer("\(root) .\(TCTripBetaClass.title) button:not(.\(TCTripBetaClass.close)), \(root) .\(TCTripBetaClass.title) select"))
+                .custom("border", "1px solid var(--tc-beta-orange-light) !important")
 
             Rule(Pointer("\(root) .\(TCTripBetaClass.bodyGrid)"))
                 .display(.grid)
@@ -321,7 +328,7 @@ enum TCTripBetaTheme {
                 .custom("font-size", "15px")
 
             Rule(Pointer("\(root) input:focus, \(root) select:focus, \(root) textarea:focus"))
-                .custom("border-color", "var(--tc-beta-blue)")
+                .custom("border-color", "#07202e")
                 .custom("outline", "2px solid rgba(255, 119, 4, 0.18)")
 
             Rule(Pointer("\(root) input::placeholder, \(root) textarea::placeholder"))
@@ -338,7 +345,7 @@ enum TCTripBetaTheme {
                 .custom("box-shadow", "none !important")
 
             Rule(Pointer("\(root) .uibtn:hover, \(root) .uibtnLarge:hover, \(root) .uibtnLargeOrange:hover"))
-                .custom("background", "var(--tc-beta-blue) !important")
+                .custom("background", "#07202e !important")
                 .custom("color", "#ffffff !important")
 
             Rule(Pointer("\(root) .textFiledBlackDark"))

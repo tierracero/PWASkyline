@@ -188,7 +188,7 @@ class AddCartaPorteUbicacion: Div {
                         }
                     }
                 
-                H2(self.$isHomeItem.map{ $0 ? "Agregar Ubicacion de SALIDA" : "Agregar Ubicacion de ENTREGA" })
+                H2(self.$isHomeItem.map{ $0 ? "1 Agregar Ubicacion de SALIDA" : "1 Agregar Ubicacion de ENTREGA" })
                     .color(.lightBlueText)
                     .float(.left)
                     .marginLeft(7.px)

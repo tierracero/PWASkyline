@@ -460,7 +460,7 @@ class EmailViewControler: Div {
                 
                 let view = EmailQuickView(item: item) {
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API().mailV1.open(
                         username: self.currentUser,
@@ -468,7 +468,7 @@ class EmailViewControler: Div {
                         uid: item.uid
                     ) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp else {
                             print("❌ 001")

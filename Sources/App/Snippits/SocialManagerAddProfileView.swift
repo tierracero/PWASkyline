@@ -388,7 +388,7 @@ class SocialManagerAddProfileView: Div {
             .replace(from: "+", to: "%2b")
             .replace(from: "=", to: "%3d")
         
-        loadingView(show: true)
+        loadingView.show()
         
         self.iframe = IFrame()
             .src(
@@ -408,7 +408,7 @@ class SocialManagerAddProfileView: Div {
             .width(100.percent)
             .onLoad {
                 Dispatch.asyncAfter(2.0) {
-                    loadingView(show: false)
+                    loadingView.hide()
                 }
             }
 
@@ -420,11 +420,11 @@ class SocialManagerAddProfileView: Div {
     
     func fbPageList() {
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.getFacebookPages  { pages in
          
-            loadingView(show: false)
+            loadingView.hide()
             
             self.secondView.innerHTML = ""
 
@@ -487,13 +487,13 @@ class SocialManagerAddProfileView: Div {
     
     func igPageList(name: String, fbpageid: String) {
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.getInstagramPages(fbpageid: fbpageid) { payload in
 
             guard let payload else {
                 showError(.comunicationError, .serverConextionError)
-                loadingView(show: false)
+                loadingView.hide()
                 return
             }
             
@@ -510,7 +510,7 @@ class SocialManagerAddProfileView: Div {
                      callback: { isConfirmed, comment in
                          
                      }))
-                loadingView(show: false)
+                loadingView.hide()
                  return
             }
             
@@ -519,7 +519,7 @@ class SocialManagerAddProfileView: Div {
                 igpageid: igpageid
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     return
@@ -820,7 +820,7 @@ class SocialManagerAddProfileView: Div {
             print("⭐️  ytAuthUrl.uriEncode  ⭐️")
             print(ytAuthUrl.uriEncode)
             
-            loadingView(show: true)
+            loadingView.show()
             
             
             /// DELETEME
@@ -845,7 +845,7 @@ class SocialManagerAddProfileView: Div {
                 .width(100.percent)
                 .onLoad {
                     Dispatch.asyncAfter(2.0) {
-                        loadingView(show: false)
+                        loadingView.hide()
                     }
                 }
             
@@ -860,11 +860,11 @@ class SocialManagerAddProfileView: Div {
     
     func ytPageList() {
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.getYoutubeChannels { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -954,7 +954,7 @@ class SocialManagerAddProfileView: Div {
             break
         case .facebook:
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.addFacebookPage(
                 userid: userid,
@@ -965,7 +965,7 @@ class SocialManagerAddProfileView: Div {
                 avatar: avatar
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -992,7 +992,7 @@ class SocialManagerAddProfileView: Div {
             
         case .instagram:
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.addInstagramPage(
                 userid: userid,
@@ -1003,7 +1003,7 @@ class SocialManagerAddProfileView: Div {
                 avatar: avatar
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -1030,7 +1030,7 @@ class SocialManagerAddProfileView: Div {
             
         case .youtube:
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.addYoutubePage(
                 name: name,
@@ -1039,7 +1039,7 @@ class SocialManagerAddProfileView: Div {
                 avatar: avatar
             )  { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -1146,7 +1146,7 @@ class SocialManagerAddProfileView: Div {
             .replace(from: "+", to: "%2b")
             .replace(from: "=", to: "%3d")
         
-        loadingView(show: true)
+        loadingView.show()
         
         self.iframe = IFrame()
             .src(
@@ -1165,7 +1165,7 @@ class SocialManagerAddProfileView: Div {
             .width(100.percent)
             .onLoad {
                 Dispatch.asyncAfter(2.0) {
-                    loadingView(show: false)
+                    loadingView.hide()
                 }
             }
         

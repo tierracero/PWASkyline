@@ -353,7 +353,7 @@ extension ToolsView.SystemSettings {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.saveConfigStoreProduct(
                 defaultCurrencie: defaultCurrencie,
@@ -365,7 +365,7 @@ extension ToolsView.SystemSettings {
                 inventorieZeroSale: inventorieZeroSale
             ) { resp in
         
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

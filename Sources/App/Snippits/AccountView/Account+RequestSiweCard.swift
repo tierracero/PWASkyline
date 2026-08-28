@@ -542,7 +542,7 @@ extension AccountView {
                         return
                     }
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custAPIV1.createCustAcct(
                         CardID: "",
@@ -593,7 +593,7 @@ extension AccountView {
                         billDate: nil
                     ) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp else {
                             showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -700,7 +700,7 @@ extension AccountView {
                 _cardId = "sw-\(_cardId)"
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAccountV1.requestSiweCard(
                 custAcct: accountId,
@@ -709,7 +709,7 @@ extension AccountView {
                 mobile: mobile
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else{
                     showError(.comunicationError, "Error de comunicación")

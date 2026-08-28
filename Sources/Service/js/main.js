@@ -156,9 +156,9 @@ function sendPostNew(channel,ie,inarr,success,error){
     }
     
     
-    var url = `https://intratc.co/api/${channel}/${ie}`
+    var url = `https://api.tierracero.co/${channel}/${ie}`
     if(channel == ""){
-        url = `https://intratc.co/api/${ie}`
+        url = `https://api.tierracero.co/${ie}`
     }
     if (channel.includes('http')){
         url = channel;

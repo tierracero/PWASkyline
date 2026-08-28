@@ -25,7 +25,7 @@ extension CustComponents {
             )
         ) { payload in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let data = payload else{
                 callback([])

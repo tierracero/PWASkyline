@@ -182,7 +182,7 @@ extension OrderView.EquipmentView {
         
         func sendToPending(){
             
-            loadingView(show: true)
+            loadingView.show()
             
             guard let days = Int(self.days) else {
                 showError(.generalError, "Incluya un numero de dias validos")
@@ -196,6 +196,8 @@ extension OrderView.EquipmentView {
                 return
             }
             
+            loadingView.show()
+            
             API.custOrderV1.pendingConsumable(
                 orderid: self.orderId,
                 equipmentid: self.equipmentId,
@@ -206,7 +208,7 @@ extension OrderView.EquipmentView {
                 lastCommunicationMethod: lastCommunicationMethod
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .unexpenctedMissingPayload)
@@ -219,7 +221,7 @@ extension OrderView.EquipmentView {
                 }
                 
                 guard let payload = resp.data else {
-                    showError(.unexpectedResult, .unexpenctedMissingPayload)
+                    showSuccess(.operacionExitosa, "Operacion Exitosa El mensaje va en camino")
                     return
                 }
                 

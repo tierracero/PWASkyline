@@ -125,12 +125,12 @@ class ToolReciveSendInventoryManualDispertionsView: Div {
                                     .float(.right)
                                     .onClick { _, event in
                                         
-                                        loadingView(show: true)
+                                        loadingView.show()
                                         
                                         downloadManualInventoryControlOrders(id: item.id, detailed: true)
                                         
                                         Dispatch.asyncAfter(3.0) {
-                                            loadingView(show: false)
+                                            loadingView.hide()
                                         }
                                         event.stopPropagation()
                                     }
@@ -440,11 +440,11 @@ class ToolReciveSendInventoryManualDispertionsView: Div {
         
         profile = fiscalProfiles.first
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPOCV1.getManualDispertions(type: .current) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -493,7 +493,7 @@ class ToolReciveSendInventoryManualDispertionsView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPOCV1.createManualDispertion(
             name: newDocumentName,
@@ -502,7 +502,7 @@ class ToolReciveSendInventoryManualDispertionsView: Div {
             vendor: vendor.id
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -528,13 +528,13 @@ class ToolReciveSendInventoryManualDispertionsView: Div {
     
     func loadDocument(id: UUID) {
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPOCV1.getManualDispertion(
             docId: .id(id)
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

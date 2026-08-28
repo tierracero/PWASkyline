@@ -803,7 +803,7 @@ extension SalePointView {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             if type == .byProduct {
                 
@@ -820,7 +820,7 @@ extension SalePointView {
                     
                     self.reportType = type
 
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -864,7 +864,7 @@ extension SalePointView {
 
                     
 
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -920,13 +920,13 @@ extension SalePointView {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPDVV1.requestGlobalFiscalDocument(
                 documentsIds: salesWithOutFiscalDocumets.map{ $0.id }
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -1735,11 +1735,11 @@ extension SalePointView {
         
         func openConcession(controlId: UUID) {
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPOCV1.getTransferInventory(identifier: .id(controlId)) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)

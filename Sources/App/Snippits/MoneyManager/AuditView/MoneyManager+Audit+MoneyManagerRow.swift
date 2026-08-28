@@ -97,14 +97,14 @@ extension MoneyManagerView.AuditView {
                             ){ auth, reason in
                                 if auth {
                                     
-                                    loadingView(show: true)
+                                    loadingView.show()
                                     
                                     API.custAPIV1.paymentRejection(
                                         id: self.item.id,
                                         reason: reason
                                     ) { resp in
                                         
-                                        loadingView(show: false)
+                                        loadingView.hide()
                                         
                                         guard let resp else {
                                             showError(.comunicationError, .serverConextionError)
@@ -136,13 +136,13 @@ extension MoneyManagerView.AuditView {
                         .height(18.px)
                         .onClick {
                             
-                            loadingView(show: true)
+                            loadingView.show()
                             
                             API.custAPIV1.paymentApproval(
                                 id: self.item.id
                             ) { resp in
                                 
-                                loadingView(show: false)
+                                loadingView.hide()
                                 
                                 guard let resp else {
                                     showError(.comunicationError, .serverConextionError)

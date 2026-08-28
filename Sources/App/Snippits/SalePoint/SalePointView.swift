@@ -1,4 +1,4 @@
-// bukA-5784
+//  
 //  SalePointView.swift
 //
 //
@@ -114,11 +114,11 @@ class SalePointView: Div {
         .width(100.percent)
     
     lazy var searchBox = InputText($searchTerm)
-        .custom("background", "url('images/barcode.png') no-repeat scroll 7px 7px rgb(29, 32, 38)")
+        .custom("background", "url('images/barcode.png') no-repeat scroll 7px 7px rgba(2, 16, 29, 0.76) !important")
         .placeholder("Ingrese UPC/SKU/POC o Referencia")
         .backgroundSize(h: 18.px, v: 18.px)
         .onKeyUp(searchTermAct)
-        .class(.textFiledLight)
+        .class(.textFiledBlackDark)
         .paddingLeft(30.px)
         .width(350.px)
         .height(32.px)
@@ -131,9 +131,9 @@ class SalePointView: Div {
     
     lazy var customerSearchBox = Span($selectedAccountName)
         .cursor( self.$custAcct.map{ ( $0 == nil ) ? .default : .pointer } )
-        .color( self.$custAcct.map{ ( $0 == nil ) ? .gray : .black } )
-        .class(.textFiledLight, .oneLineText)
-        .backgroundColor(.hex(0xeeeeee))
+        .color(.init(r: 237, g: 247, b: 255))
+        .class(.textFiledBlackDark, .oneLineText)
+        .backgroundColor(.init(r: 10, g: 39, b: 63, a: 0.84))
         .display(.inlineBlock)
         .marginRight(12.px)
         .padding(all: 7.px)
@@ -355,7 +355,7 @@ class SalePointView: Div {
                             .fontSize(21.px)
                         
                     }
-                    .class(.uibutton)
+                    .class(.uibutton, Class(TCTripBetaClass.uiButton))
                     .display(.inlineBlock)
                     .marginRight(18.px)
                     .onClick {
@@ -431,7 +431,7 @@ class SalePointView: Div {
                                 .fontSize(21.px)
                             
                         }
-                        .class(.uibutton)
+                        .class(.uibutton, Class(TCTripBetaClass.uiButton))
                         .display(.inlineBlock)
                         .marginRight(18.px)
                         .onClick {
@@ -497,7 +497,7 @@ class SalePointView: Div {
                     }
                     .onClick(self.getBudgets)
                     .marginRight(12.px)
-                    .class(.uibutton)
+                    .class(.uibutton, Class(TCTripBetaClass.uiButton))
 
 
                     Div{
@@ -512,7 +512,7 @@ class SalePointView: Div {
                     .hidden(self.$kart.map{ $0.isEmpty })
                     .onClick(self.createBudget)
                     .marginRight(12.px)
-                    .class(.uibutton)
+                    .class(.uibutton, Class(TCTripBetaClass.uiButton))
                 }
                 .hidden(self.$budgetid.map{ $0 != nil })
                 .float(.left)
@@ -557,7 +557,7 @@ class SalePointView: Div {
                                 self.sendBudgetDocument(type: .print, fiscalProfile: self.fiscalProfile)
                             }
                             .marginRight(12.px)
-                            .class(.uibutton)
+                            .class(.uibutton, Class(TCTripBetaClass.uiButton))
                             .float(.left)
                             
                             // Send
@@ -574,7 +574,7 @@ class SalePointView: Div {
                                 self.sendBudgetDocument(type: .send, fiscalProfile: self.fiscalProfile)
                             }
                             .marginRight(12.px)
-                            .class(.uibutton)
+                            .class(.uibutton, Class(TCTripBetaClass.uiButton))
                             .float(.left)
                             
                             Div().clear(.both)
@@ -621,7 +621,7 @@ class SalePointView: Div {
                 Div{
                     Div("Enviar a Credito")
                     .marginRight(12.px)
-                    .class(.uibutton)
+                    .class(.uibutton, Class(TCTripBetaClass.uiButton))
                     .onClick {
                         self.sendToCredit()
                     }
@@ -633,7 +633,7 @@ class SalePointView: Div {
                 Div{
                     Div("Enviar a Concesión")
                     .marginRight(12.px)
-                    .class(.uibutton)
+                    .class(.uibutton, Class(TCTripBetaClass.uiButton))
                     .onClick {
                         self.sendToConsetion()
                     }
@@ -659,7 +659,7 @@ class SalePointView: Div {
                     self.confirmSale()
                 }
                 .marginRight(12.px)
-                .class(.uibutton)
+                .class(.uibutton, Class(TCTripBetaClass.uiButton))
                 .float(.right)
                 
                 H2(self.$balanceString)
@@ -687,13 +687,20 @@ class SalePointView: Div {
         .left(isSubView ? 3.px : 40.px)
         .top(isSubView ? 3.px : 25.px)
         .borderRadius(all: 24.px)
-        .backgroundColor(.white)
+        .custom("background", "linear-gradient(145deg, rgba(12, 45, 72, 0.72), rgba(4, 17, 31, 0.64))")
+        .custom("border", "1px solid var(--tc-crystal-border)")
+        .custom("box-shadow", "0 24px 70px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.05)")
+        .custom("backdrop-filter", "blur(18px) saturate(125%)")
+        .custom("-webkit-backdrop-filter", "blur(18px) saturate(125%)")
         .position(.absolute)
         .padding(all: 12.px)
         
     }
     
     override func buildUI() {
+
+        TCTripBetaTheme.apply(to: self)
+        TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
 
         fiscalProfiles.forEach { profile in
             selectedFiscalProfileSelect.appendChild(
@@ -1028,7 +1035,7 @@ class SalePointView: Div {
                             customer: nil
                         ){ token in
                             
-                            loadingView(show: true)
+                            loadingView.show()
                             
                             API.custPDVV1.sendToConcession(
                                 token: token,
@@ -1037,7 +1044,7 @@ class SalePointView: Div {
                                 items: products
                             ) { resp in
                                 
-                                loadingView(show: false)
+                                loadingView.hide()
                                 
                                 guard let resp = resp else {
                                     showError(.comunicationError, "Error de comunicacion")
@@ -1348,7 +1355,7 @@ class SalePointView: Div {
             }
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPDVV1.closeSale(
             custAcct: custAcct?.id,
@@ -1373,7 +1380,7 @@ class SalePointView: Div {
             rewardsPoints: self.rewadsPoints?.toInt
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, "Error de comunicacion")
@@ -1568,6 +1575,7 @@ class SalePointView: Div {
                 .setRequestHeader("Content-Type", "application/json")
                 .setRequestHeader("AppName", applicationName)
                 .setRequestHeader("AppVersion", SkylineWeb().version.description)
+                .setRequestHeader("WSId", custCatchChatConnID)
 
             xhr.send()
             
@@ -2107,11 +2115,11 @@ class SalePointView: Div {
     
     func getBudgets() {
 
-        loadingView(show: true)
+        loadingView.show()
 
         API.custPDVV1.getBudgets { resp in
 
-            loadingView(show: false)
+            loadingView.hide()
                     
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -2141,14 +2149,14 @@ class SalePointView: Div {
 
     func getBudget(_ id: HybridIdentifier) {
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.loadBudgetObject(
             id: id,
             store: custCatchStore
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

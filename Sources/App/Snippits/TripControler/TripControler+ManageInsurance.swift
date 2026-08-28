@@ -342,7 +342,7 @@ class TripControlerManageInsurance: Div {
             return
         }
 
-        loadingView(show: true)
+        loadingView.show()
 
         if let id {
             API.custCommercialTrips.updateInsurance(
@@ -354,7 +354,7 @@ class TripControlerManageInsurance: Div {
                 providerPhone: providerPhone,
                 insuredAmount: amount
             ) { resp in
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -395,7 +395,7 @@ class TripControlerManageInsurance: Div {
             providerPhone: providerPhone,
             insuredAmount: amount
         ) { resp in
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -427,10 +427,10 @@ class TripControlerManageInsurance: Div {
         ) { isConfirmed, _ in
             guard isConfirmed else { return }
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custCommercialTrips.deleteInsurance(insuranceId: id) { resp in
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)

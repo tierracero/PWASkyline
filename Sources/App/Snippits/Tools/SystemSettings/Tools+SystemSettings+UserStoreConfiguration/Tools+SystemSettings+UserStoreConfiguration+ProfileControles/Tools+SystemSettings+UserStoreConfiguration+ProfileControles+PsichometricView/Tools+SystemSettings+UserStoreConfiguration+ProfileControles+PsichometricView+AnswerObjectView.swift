@@ -201,7 +201,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.Psich
 
             if let answerId {
 
-                loadingView(show: true)
+                loadingView.show()
 
                 API.custAPIV1.savePsychometricsTestAnswer(
                     answerId: answerId,
@@ -209,7 +209,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.Psich
                     answer: answer
                 ) { resp in
 
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -236,7 +236,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.Psich
 
             if let questionId {
 
-                loadingView(show: true)
+                loadingView.show()
 
                 API.custAPIV1.addPsychometricsTestAnswer(
                     questionId: questionId,
@@ -244,7 +244,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.Psich
                     answer: answer
                 ) { resp in
 
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)

@@ -70,7 +70,7 @@ const wasi = new WASI({
 overrideFS(wasmFs, undefined)
 
 try {
-    startWasiTask(wasi, env.target, true).catch(wasiErrorHandler)
+    startWasiTask(wasi, env.target, true, env.wasm).catch(wasiErrorHandler)
 } catch (e) {
     wasiErrorHandler(e)
 }

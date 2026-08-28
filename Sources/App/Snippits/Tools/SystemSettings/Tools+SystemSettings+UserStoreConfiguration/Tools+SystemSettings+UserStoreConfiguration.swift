@@ -343,13 +343,13 @@ extension ToolsView.SystemSettings {
 
         func loadStore(_ storeId: UUID) {
 
-            loadingView(show: true)
+            loadingView.show()
             
             getUsers(storeid: storeId, onlyActive: true) { users in
                 
                 API.custAPIV1.loadStore(storeId: storeId) { resp in
                 
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -501,10 +501,10 @@ extension ToolsView.SystemSettings {
                 return
             }
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custUsernameV1.preRequestUsername(store: selectedStore.id) { resp in
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)

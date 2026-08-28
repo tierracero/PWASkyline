@@ -454,12 +454,12 @@ extension OrderRouteView {
             
             if !mapInitiated {
                 
-                loadingView(show: true)
+                loadingView.show()
                 
                 API.v1.jwt { token in
                     
                     guard let token else {
-                        loadingView(show: false)
+                        loadingView.hide()
                         showError(.comunicationError, "No se pudo cargar token")
                         return
                     }
@@ -468,7 +468,7 @@ extension OrderRouteView {
                         
                     let _ = JSObject.global.initiatAppleMaps!("routeMap", token, JSOneshotClosure { _ in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         Dispatch.asyncAfter(0.3) {
                             
@@ -543,7 +543,7 @@ extension OrderRouteView {
                     /// loadAppleMap(mapId, locations, updateCoordinate)
                     let _ = JSObject.global.loadAppleMapRought!("routeMap", tragetJson, userJson, JSClosure { args in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         if let json = args.first?.string {
                             self.updateCoordanate(json)
@@ -733,7 +733,7 @@ extension OrderRouteView {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custRouteV1.update(
                 routeId: route.id,
@@ -750,7 +750,7 @@ extension OrderRouteView {
                 distance: distance
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

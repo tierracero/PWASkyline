@@ -20,7 +20,7 @@ extension CustComponents {
             return
         }
         
-        loadingView(show: true, message: "cargando")
+        loadingView.show(text: "cargando")
         
         sendPost(
             rout,
@@ -29,7 +29,7 @@ extension CustComponents {
             EmptyPayload()
         ) { payload in
             
-            loadingView(show: false, message: "")
+            loadingView.hide()
             
             guard let data = payload else{
                 callback(nil)

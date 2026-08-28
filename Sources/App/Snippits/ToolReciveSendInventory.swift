@@ -1306,7 +1306,7 @@ class ToolReciveSendInventory: Div {
                             multipleTakes: false
                         ) { resp in
                             
-                            loadingView(show: false)
+                            loadingView.hide()
                             
                             guard let resp else {
                                 showError(.comunicationError, .serverConextionError)
@@ -1575,11 +1575,11 @@ class ToolReciveSendInventory: Div {
                         
                         if profiles.contains(emisor) {
                             
-                            loadingView(show: true)
+                            loadingView.show()
 
                             API.fiscalV1.loadDocument(docid: id) { resp in
 
-                                loadingView(show: false)
+                                loadingView.hide()
 
                                 guard let resp else {
                                     showError(.comunicationError, .serverConextionError)
@@ -2741,7 +2741,7 @@ class ToolReciveSendInventory: Div {
                 
                 if isConfirmed {
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custPOCV1.updateManualDispertion(
                         docId: manualPurchaseManager.id,
@@ -2749,7 +2749,7 @@ class ToolReciveSendInventory: Div {
                         comment: comment
                     ) { resp in
                     
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -2804,7 +2804,7 @@ class ToolReciveSendInventory: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPOCV1.updateManualDispertion(
             docId: manualPurchaseManager.id,
@@ -2812,7 +2812,7 @@ class ToolReciveSendInventory: Div {
             comment: nil
         ) { resp in
         
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -2899,9 +2899,10 @@ class ToolReciveSendInventory: Div {
         
         formData.append("file", file, filename: file.name)
         
-        xhr.open(method: "POST", url: "https://intratc.co/api/fiscal/v1/uploadFiscaXMLIngreso")
+        xhr.open(method: "POST", url: "https://api.tierracero.co/fiscal/v1/uploadFiscaXMLIngreso")
         
         xhr.setRequestHeader("Accept", "application/json")
+        xhr.setRequestHeader("WSId", custCatchChatConnID)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,
@@ -3096,11 +3097,11 @@ class ToolReciveSendInventory: Div {
         
         recentXMLviewIsHidden = false
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.fiscalV1.getDocControlPendingCapture { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -3166,11 +3167,11 @@ class ToolReciveSendInventory: Div {
     
     func loadXMLDocument(_ id: UUID){
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.fiscalV1.getFiscaXMLIngreso(id: id) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             self.recentXMLviewIsHidden = true
             
@@ -3250,7 +3251,7 @@ class ToolReciveSendInventory: Div {
             
             if isConfirmed {
                 
-                loadingView(show: true)
+                loadingView.show()
                 
                 API.fiscalV1.fileDocument(
                     docid: docid,
@@ -3258,7 +3259,7 @@ class ToolReciveSendInventory: Div {
                     itemCount: (self.hasProduct ? 1 : 0)
                 ) { resp in
                     
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -3389,7 +3390,7 @@ class ToolReciveSendInventory: Div {
             
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPOCV1.createDispersionDocument(
             docid: docid,
@@ -3397,7 +3398,7 @@ class ToolReciveSendInventory: Div {
             items: _items
         ) { resp in
         
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -3514,12 +3515,12 @@ class ToolReciveSendInventory: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         downloadDocumentControlOrders(id: docid)
         
         Dispatch.asyncAfter(3.0) {
-            loadingView(show: false)
+            loadingView.hide()
         }
         
         
@@ -3613,11 +3614,11 @@ class ToolReciveSendInventory: Div {
             return
         }
         
-        loadingView(show: false)
+        loadingView.hide()
         
         API.custPOCV1.getPOCCost(id: pocid) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -3815,14 +3816,14 @@ class ToolReciveSendInventory: Div {
             
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPOCV1.createManualDispersionDocument(
             docId: manualPurchaseManager.id,
             items: _items
         ) { resp in
         
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -3913,22 +3914,22 @@ class ToolReciveSendInventory: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         downloadManualInventoryControlOrders(id: docid, detailed: withDetail)
         
         Dispatch.asyncAfter(3.0) {
-            loadingView(show: false)
+            loadingView.hide()
         }
     }
     
     func sincRecentXML() {
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.fiscalV1.sincRecentXML { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

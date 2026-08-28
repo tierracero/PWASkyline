@@ -263,6 +263,7 @@ private func sendPostInternal<T: Codable>(
         .setRequestHeader("Content-Type", "application/json")
         .setRequestHeader("AppName", applicationName)
         .setRequestHeader("AppVersion", SkylineWeb().version.description)
+        .setRequestHeader("WSId", custCatchChatConnID)
 
     if let authorization, !authorization.isEmpty {
         xhr.setRequestHeader("Authorization", authorization)

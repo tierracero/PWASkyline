@@ -171,11 +171,11 @@ class InventoryItemDetailView: Div {
                                 return
                             }
                             
-                            loadingView(show: true)
+                            loadingView.show()
                             
                             API.fiscalV1.getFiscaXMLIngreso(id: docid) { resp in
                                 
-                                loadingView(show: false)
+                                loadingView.hide()
                                 
                                 guard let resp = resp else {
                                     showError(.comunicationError, .serverConextionError)
@@ -463,11 +463,11 @@ class InventoryItemDetailView: Div {
         left(0.px)
         top(0.px)
             
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.pocInventoryDetails(id: itemid) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -598,11 +598,11 @@ class InventoryItemDetailView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPOCV1.addInventoryItemNote(itemid: itemid, note: note) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -637,7 +637,7 @@ class InventoryItemDetailView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPOCV1.changePriceInConcesion(
             itemId: self.itemid,
@@ -645,7 +645,7 @@ class InventoryItemDetailView: Div {
             reason: changeReason
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

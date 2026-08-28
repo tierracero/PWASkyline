@@ -11,6 +11,7 @@ extension CustCommercialTripsComponents {
         operadorRfc: String,
         operadorLicens: String,
         operadorMobile: String,
+        avatar: String? = nil,
         callback: @escaping ((_ resp: APIResponseGeneric<CreateOperadorResponse>?) -> ())
     ) {
         sendPost(
@@ -22,7 +23,8 @@ extension CustCommercialTripsComponents {
                 operadorName: operadorName,
                 operadorRfc: operadorRfc,
                 operadorLicens: operadorLicens,
-                operadorMobile: operadorMobile
+                operadorMobile: operadorMobile,
+                avatar: avatar
             )
         ) { data in
             

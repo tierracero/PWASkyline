@@ -3045,11 +3045,11 @@ class StartServiceOrder: Div {
             }
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         self.loadPinPattern { error in
             showError(.generalError, error)
-            loadingView(show: false)
+            loadingView.hide()
         } success: { fileName in
 
             var files: [String] = []
@@ -3096,7 +3096,7 @@ class StartServiceOrder: Div {
                 files: files
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -3214,9 +3214,10 @@ class StartServiceOrder: Div {
             
         }
 
-        xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/preUploadManager")
+        xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/preUploadManager")
         
         xhr.setRequestHeader("Accept", "application/json")
+        xhr.setRequestHeader("WSId", custCatchChatConnID)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,
@@ -3728,7 +3729,7 @@ class StartServiceOrder: Div {
             country: country
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -4124,12 +4125,12 @@ class StartServiceOrder: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.v1.jwt { token in
             
             guard let token else {
-                loadingView(show: false)
+                loadingView.hide()
                 showError(.comunicationError, "No se pudo cargar token")
                 return
             }
@@ -4141,7 +4142,7 @@ class StartServiceOrder: Div {
             // "Arroyo Carrizal, Luis Echeverria, 87060 Victoria, Tamps., México
             let _ = JSObject.global.initiateSingleMap!(self.mapId, token, "\(self._street), \(self._colony), \(self._zip) \(self._city), \(self._state), \(self._country)", JSOneshotClosure { args in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 if let payload = args.first?.string {
                     self.processMapResponse(payload)
@@ -4346,5 +4347,4 @@ class StartServiceOrder: Div {
 
 
 }
-
 

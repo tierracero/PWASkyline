@@ -369,11 +369,11 @@ class SearchHistoricalPurchaseDetailedView: Div {
                             .height(22.px)
                             .onClick {
                                 
-                                loadingView(show: true)
+                                loadingView.show()
                                 
                                 API.fiscalV1.getFiscaXMLIngreso(id: meta.uuid) { resp in
                                     
-                                    loadingView(show: false)
+                                    loadingView.hide()
                                     
                                     guard let resp = resp else {
                                         showError(.comunicationError, .serverConextionError)
@@ -540,7 +540,7 @@ class SearchHistoricalPurchaseDetailedView: Div {
 //            control
 //            relatePOCtoProductControlItem
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.fiscalV1.relatePOCtoProductControlItem(
                 productContolId: control.id,
@@ -553,7 +553,7 @@ class SearchHistoricalPurchaseDetailedView: Div {
                 upc: poc.upc
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)

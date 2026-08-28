@@ -182,7 +182,7 @@ extension AccountView {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAccountV1.activateSiweCard(
                 custAcct: custAcct,
@@ -193,7 +193,7 @@ extension AccountView {
                 mobile: mobile
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "Error de comunicación")

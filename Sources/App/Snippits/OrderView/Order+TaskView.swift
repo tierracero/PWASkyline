@@ -134,7 +134,7 @@ extension OrderView {
         
         func closeTask(){
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.CTAMResolve(
                 alertid: self.task.id,
@@ -142,7 +142,7 @@ extension OrderView {
                 responseMessage: self.reason
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
             
                 guard resp != nil else {
                     showError(.comunicationError, .serverConextionError)

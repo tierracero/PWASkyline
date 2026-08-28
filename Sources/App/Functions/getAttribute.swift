@@ -61,7 +61,30 @@ func jcrop(_ id: String,_ width: Int, _ height: Int) {
 }
 
 func jcrop(_ id: String, _ itemid: String, _ img: String,_ width: Int,_ height: Int) {
+    print("🟡 Swift jcropWithImage id=\(id) itemID=\(itemid) width=\(width) height=\(height) url=\(img)")
     _ = JSObject.global.jcropWithImage!( id, itemid, img, width, height)
+}
+
+func jcrop(
+    _ id: String,
+    _ itemid: String,
+    _ img: String,
+    _ width: Int,
+    _ height: Int,
+    onReady: @escaping (BaseContentElement) -> ()
+) {
+    print("🟡 Swift jcropWithImage async id=\(id) itemID=\(itemid) width=\(width) height=\(height) url=\(img)")
+
+    let callback = JSClosure { args in
+        guard let element = args.first else {
+            return .undefined
+        }
+
+        onReady(BaseContentElement(element))
+        return .undefined
+    }
+
+    _ = JSObject.global.jcropWithImage!(id, itemid, img, width, height, callback)
 }
 
 func destroyJcrop(_ id: String) {

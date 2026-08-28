@@ -101,9 +101,9 @@ function sendPostNew(channel,ie,inarr,success,error){
     var key = localStorage.custCatchKey;
     var mid = localStorage.custCatchMid;
         
-    var url = `https://intratc.co/api/${channel}/${ie}`
+    var url = `https://api.tierracero.co/${channel}/${ie}`
     if(channel == ""){
-        url = `https://intratc.co/api/${ie}`
+        url = `https://api.tierracero.co/${ie}`
     }
 
 //    if(tcdevmode){
@@ -1657,8 +1657,8 @@ function getJcropWatermarkWidget() {
             init() {
                 super.init()
                 const img = new Image()
-                img.src = this.options.imageURL
                 img.id = this.options.imageId
+                img.src = this.options.imageURL
                 this.el.appendChild(img)
             }
         }
@@ -1695,6 +1695,14 @@ function destroyAllImageEditorCroppers() {
 
 function jcrop(id, width, height) {
     
+    console.log("🟡 jcrop")
+
+    console.log(`id ${id}`)
+
+    console.log(`width ${width}`)
+
+    console.log(`height ${height}`)
+
     try {
         const jcrop = createOrReplaceCropper(id, {
             aspectRatio: 1,
@@ -1703,52 +1711,139 @@ function jcrop(id, width, height) {
             shade: cropperShadeIsEnabled(),
         })
         
+        console.log(typeof jcrop)
+
+        console.log(jcrop)
+
         const rect = Jcrop.Rect.fromPoints([50,50],[width,height]);
+
+        console.log(rect)
+
         jcrop.newWidget(rect,{ aspectRatio: rect.aspect })
+
+        console.log("🟢  jcrop  SUCCESS")
         
     } catch (error) {
-      //console.error(error);
+        console.log("🔴  jcrop FAIL")
+      console.error(error);
     }
     
 }
 
-function jcropWithImage(id, itemid, url, width, height) {
-    
-    let _width = width / 2
-    let _height = height / 2
-    
-    let jcrop = jcropInstances.get(id)
-
-    if (!jcrop) {
-        jcrop = Jcrop.attach(id, {
-            handles: ["sw", "nw", "ne", "se"],
-            multi: true,
-            multiMin: 0,
-            widgetConstructor: getJcropWatermarkWidget(),
-            shadeOpacity: 0.001,
-            shade: cropperShadeIsEnabled(),
-        })
-        jcropInstances.set(id, jcrop)
+function waitForImageLoad(image) {
+    if (image.complete) {
+        return image.naturalWidth > 0
+            ? Promise.resolve(image)
+            : Promise.reject(new Error("watermark image failed to load"))
     }
 
-    const rect = Jcrop.Rect.fromPoints([50,50],[_width,_height]);
+    return new Promise((resolve, reject) => {
+        const handleLoad = () => {
+            cleanup()
+            resolve(image)
+        }
 
-    jcrop.newWidget(rect, {
-        aspectRatio: rect.aspect,
-        cropperId: itemid,
-        imageId: `${itemid}Img`,
-        imageURL: url,
+        const handleError = () => {
+            cleanup()
+            reject(new Error("watermark image failed to load"))
+        }
+
+        const cleanup = () => {
+            image.removeEventListener("load", handleLoad)
+            image.removeEventListener("error", handleError)
+        }
+
+        image.addEventListener("load", handleLoad, { once: true })
+        image.addEventListener("error", handleError, { once: true })
     })
+}
 
-    const widget = document.getElementById(itemid)
-    const image = document.getElementById(`${itemid}Img`)
+async function jcropWithImage(id, itemid, url, width, height, onReady) {
+    console.log("🟡 jcropWithImage")
+    console.log(`id ${id}`)
+    console.log(`itemid ${itemid}`)
+    console.log(`url ${url}`)
+    console.log(`width ${width}`)
+    console.log(`height ${height}`)
 
-    if (widget && image) {
-        widget.style.height = image.offsetHeight.toString() + "px"
-        return widget
+    try {
+        let _width = width / 2
+        let _height = height / 2
+
+        let jcrop = jcropInstances.get(id)
+
+        if (jcrop && !jcrop.el?.isConnected) {
+            console.log("🟠 jcropWithImage removing disconnected watermark cropper")
+
+            try {
+                jcrop.destroy()
+            } catch (destroyError) {
+                console.warn("jcropWithImage could not destroy disconnected cropper", destroyError)
+            }
+
+            jcropInstances.delete(id)
+            jcrop = null
+        }
+
+        if (!jcrop) {
+            const sourceImage = document.getElementById(id)
+
+            if (!sourceImage?.isConnected) {
+                throw new Error(`watermark source image is not connected id=${id}`)
+            }
+
+            jcrop = Jcrop.attach(sourceImage, {
+                handles: ["sw", "nw", "ne", "se"],
+                multi: true,
+                multiMin: 0,
+                widgetConstructor: getJcropWatermarkWidget(),
+                shadeOpacity: 0.001,
+                shade: cropperShadeIsEnabled(),
+            })
+            jcropInstances.set(id, jcrop)
+            console.log(`🟢 jcropWithImage created watermark cropper connected=${jcrop.el?.isConnected}`)
+        }
+
+        const rect = Jcrop.Rect.fromPoints([50,50],[_width,_height]);
+
+        const widget = jcrop.newWidget(rect, {
+            aspectRatio: rect.aspect,
+            cropperId: itemid,
+            imageId: `${itemid}Img`,
+            imageURL: url,
+        })
+
+        console.log("🟢 jcropWithImage widget created")
+        const image = widget.el.querySelector("img")
+
+        if (!image) {
+            throw new Error(`watermark image element not found itemid=${itemid}`)
+        }
+
+        if (!widget.el.isConnected && jcrop.el?.isConnected) {
+            jcrop.el.appendChild(widget.el)
+        }
+
+        if (!widget.el.isConnected) {
+            throw new Error(`watermark widget is not connected itemid=${itemid}`)
+        }
+
+        await waitForImageLoad(image)
+
+        widget.el.style.height = image.offsetHeight.toString() + "px"
+        console.log(`🟢 jcropWithImage image loaded widget=${widget.el.id} connected=${widget.el.isConnected}`)
+
+        if (typeof onReady === "function") {
+            onReady(widget.el)
+        }
+
+        console.log("🟢 jcropWithImage SUCCESS")
+        return widget.el
+    } catch (error) {
+        console.log("🔴 jcropWithImage FAIL")
+        console.error(error)
+        return null
     }
-
-    return null
 }
 
 function removeItem(itemid) {
@@ -1983,11 +2078,11 @@ function initmap( url, lat, lon, storeName){
     mapkit.init({
         authorizationCallback: function(done) {
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", `https://intratc.co/api/jwt/${url}`);
+            xhr.open("GET", `https://api.tierracero.co/jwt/${url}`);
             xhr.addEventListener("load", function() {
                 
                 console.log("🗾  🗾  🗾  🗾  🗾  🗾  🗾  🗾  🗾  ")
-                console.log(`https://intratc.co/api/jwt/${url}`)
+                console.log(`https://api.tierracero.co/jwt/${url}`)
                 console.log(this.responseText)
                 
                 done(this.responseText);
@@ -2204,7 +2299,7 @@ function initiateSingleMap(mapId, token, serchString, callback, updateCoordinate
             done(token);
             /*
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", `https://intratc.co/api/jwt/${encodeURIComponent(window.location.hostname)}`);
+            xhr.open("GET", `https://api.tierracero.co/jwt/${encodeURIComponent(window.location.hostname)}`);
             xhr.addEventListener("load", function() {
                 console.log("🟢  initiateSingleMap")
                 console.log("🗺 ",this.responseText," 🗺")
@@ -3052,7 +3147,7 @@ function activateMap(mapId, geolocation, domian, stores, updateLocation) {
 
 			var xhr = new XMLHttpRequest();
 
-            xhr.open("GET", `https://intratc.co/api/jwt/${encodeURIComponent(domian)}`);
+            xhr.open("GET", `https://api.tierracero.co/jwt/${encodeURIComponent(domian)}`);
 
 			xhr.addEventListener("load", function() {
 				console.log("🗺 ",this.responseText,"🗺 ")
@@ -3188,7 +3283,7 @@ function searchMap(mapId, domian, street, city, state, zip, country, updateLocat
 
             var xhr = new XMLHttpRequest();
 
-            xhr.open("GET", `https://intratc.co/api/jwt/${encodeURIComponent(domian)}`);
+            xhr.open("GET", `https://api.tierracero.co/jwt/${encodeURIComponent(domian)}`);
 
             xhr.addEventListener("load", function() {
                 console.log("🗺 ",this.responseText,"🗺 ")

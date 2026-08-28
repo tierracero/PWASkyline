@@ -247,14 +247,14 @@ extension MessageGrid {
                 return
             }
 
-            loadingView(show: true)
+            loadingView.show()
             
             API.custOrderV1.downloadMessages(
                 orderId: self.orderId,
                 notes: notesToPrint
             ) { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)

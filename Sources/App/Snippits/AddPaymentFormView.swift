@@ -951,13 +951,13 @@ class AddPaymentFormView: Div {
            return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.rewardsV1.getPoints(
             cardId: cardId
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

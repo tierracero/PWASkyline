@@ -1633,7 +1633,7 @@ class AccountView: PageController {
                                         return
                                     }
                                     
-                                    loadingView(show: true)
+                                    loadingView.show()
                                     
                                     API.custAccountV1.addCharge(
                                         socid: id,
@@ -1641,7 +1641,7 @@ class AccountView: PageController {
                                         price: soc.price
                                     ) { resp in
                                         
-                                        loadingView(show: false)
+                                        loadingView.hide()
                                         
                                         guard let resp else {
                                             showError(.generalError, .serverConextionError)
@@ -1758,7 +1758,7 @@ class AccountView: PageController {
                 .float(.right)
                 .onClick{
 
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     print("🚧  A \(getNow())")
 
@@ -1766,7 +1766,7 @@ class AccountView: PageController {
                     
                         print("🚧  B \(getNow())")
 
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -1801,6 +1801,21 @@ class AccountView: PageController {
                     
                 }
                 
+                Div{
+                    
+                    Div("Activos Comerciales")
+                        .margin(all: 1.px)
+                        .float(.left)
+                    
+                    Div().class(.clear)
+                }
+                .hidden(self.$isConcessionaire.map{ !$0 })
+                .class(.uibtn)
+                .float(.right)
+                .onClick {
+                    self.loadAssets()
+                }
+
                 H3("Cargos y Finanzas")
                     .backgroundColor( self.$currentAccountTab.map{$0 == .finance ? .black : .transparent})
                     .color( self.$currentAccountTab.map{$0 == .finance ? .lightBlueText : .gray})
@@ -1834,6 +1849,8 @@ class AccountView: PageController {
 
             }
             .class(Class(TCAccountViewClass.financeToolbar))
+            
+            Div().clear(.both)
             
             Div{
                 Div{
@@ -2225,7 +2242,7 @@ class AccountView: PageController {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             guard let base64 = picture.explode(";base64,").last else {
                 showError(.generalError, "No se obtuvo data de la imagen.")
@@ -2234,7 +2251,7 @@ class AccountView: PageController {
             
             API.custAccountV1.saveAvatar(accountid: self.account.id, base64: base64) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else{
                     showError(.comunicationError, .serverConextionError)
@@ -2349,7 +2366,7 @@ class AccountView: PageController {
             currentBalance: _balance
         ) { code, description, amount, provider, lastFour, auth, uts in
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAccountV1.addPayment(
                 accountid: self.account.id,
@@ -2362,7 +2379,7 @@ class AccountView: PageController {
                 auth: auth
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else{
                     showError(.comunicationError, "No se pudieron cargar detalles de la cuenta.")
@@ -2402,6 +2419,34 @@ class AccountView: PageController {
         
     }
     
+    func loadAssets () { 
+
+        loadingView.show()
+
+        API.custAssetsV1.listDepartments(
+            accountId: account.id
+        ) { response in
+            
+            loadingView.hide()
+
+            guard let response else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+
+            guard response.status == .ok else {
+                showError(.generalError, response.msg)
+                return
+            }
+
+            guard let payload = response.data else {
+                showError(.unexpectedResult, .unexpenctedMissingPayload)
+                return
+            }
+
+            addToDom(CustAssetsView(accountId: self.account.id, items: payload.items))
+        }
+    }
     
 }
 /// finance, credit

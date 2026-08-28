@@ -8,6 +8,7 @@ Authoritative rules: `API-*`.
 - Endpoint files are grouped by domain and often named `Domain+Action.swift`.
 - The app depends on multiple Tierra Cero core packages that likely define shared payloads and contracts.
 - The three public `sendPost` overloads share one internal XMLHttpRequest transport that preserves response-body callback compatibility while recording transport failures.
+- First-party TierraCero and IntarTC `XMLHttpRequest` transports send the current `custCatchChatConnID` in the `WSId` header so backend work can correlate asynchronous WebSocket updates with the originating browser connection.
 - API wrapper decoding is routed through `decodeAPIResponse`, except the recursion-protected error-reporting endpoint response.
 - `API.v1.reportError` uses the shared `ReportErrorRequest` contract and a reporting-disabled transport policy.
 

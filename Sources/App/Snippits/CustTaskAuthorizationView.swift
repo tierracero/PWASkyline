@@ -544,13 +544,13 @@ class CustTaskAuthorizationView: Div {
             return
         }
 
-        loadingView(show: true)
+        loadingView.show()
 
         API.custAPIV1.notificationsSaveSettings(
             frequency: frequency,
             level: level
         ) { resp in
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

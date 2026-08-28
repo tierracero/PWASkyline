@@ -27,6 +27,8 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         @State var storeName: String
         
         var mainStore: Bool
+
+        var storeType: CustStoreType = .branch
         
         /// UUID
         var supervisorId: UUID?
@@ -1713,7 +1715,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 return
             }
 
-            loadingView(show: true)
+            loadingView.show()
             
             location = nil
 
@@ -1727,7 +1729,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 country,
                 JSClosure { jresp in
 
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard jresp.count == 2 else {
                     return .undefined
@@ -1942,7 +1944,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 end: Int(saturdayScheduleObjectView.end) ?? 0
             )
 
-            loadingView(show: true)
+            loadingView.show()
 
             switch sunday.validate()  {
             case .invalid(let error):
@@ -2002,7 +2004,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
             if let storeId = id {
 
-                loadingView(show: true)
+                loadingView.show()
 
                 API.custAPIV1.saveStore(
                     storeId: storeId,
@@ -2044,7 +2046,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                     lockedInventory: lockedInventory
                 ) { resp in
 
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -2066,6 +2068,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                                 modifiedAt: getNow(),
                                 name: self.storeName,
                                 mainStore: store.mainStore,
+                                storeType: store.storeType,
                                 custUsername: self.supervisorId ?? store.custUsername,
                                 telephone: self.telephone,
                                 mobile: self.mobile,
@@ -2129,12 +2132,13 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                     return
                 }
 
-                loadingView(show: false)
+                loadingView.hide()
 
                 API.custAPIV1.createStore(
                     supervisorId: supervisorId,
                     storePrefix: storePrefix,
                     name: storeName,
+                    storeType: storeType,
                     telephone: telephone,
                     mobile: mobile,
                     email: email,
@@ -2176,7 +2180,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                     seccion: seccion
                 ) { resp in 
 
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)

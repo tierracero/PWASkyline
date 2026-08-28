@@ -129,7 +129,12 @@ class CreateTripView: Div {
 
                 VGrid(.full) {
                     VBox(.raised) {
-                        Div {
+
+                        VGrid(.half){
+
+                            H1("Cliente")
+                            .color(.orange)
+
                             H2(self.account.businessName)
                                 .margin(all: 0.px)
                                 .fontSize(22.px)
@@ -139,43 +144,54 @@ class CreateTripView: Div {
                                 .marginTop(4.px)
                                 .class(.oneLineText)
                                 .color(.gray)
+                                
                         }
                         .overflow(.hidden)
 
                         self.issuerView
 
-                        UField("Costo del viaje") {
-                            UTextField(self.$balance)
-                                .placeholder("0.00")
-                                .onFocus { field in
-                                    field.select()
+
+                        VGrid(.oneForth){
+
+                            Div{
+
+                                    UField("Costo del viaje") {
+                                        UTextField(self.$balance)
+                                            .placeholder("0.00")
+                                            .onFocus { field in
+                                                field.select()
+                                            }
+                                    }
+                            }
+
+                            Div{
+                                UField("Odómetro inicial", required: false) {
+                                    UTextField(self.$odometerInitial)
+                                        .placeholder("Opcional")
+                                        .onFocus { field in
+                                            field.select()
+                                        }
                                 }
-                        }
 
-                        Div {
-                            UField("Odómetro inicial", required: false) {
-                                UTextField(self.$odometerInitial)
-                                    .placeholder("Opcional")
-                                    .onFocus { field in
-                                        field.select()
-                                    }
                             }
 
-                            UField("Odómetro final", required: false) {
-                                UTextField(self.$odometerFinal)
-                                    .placeholder("Opcional")
-                                    .onFocus { field in
-                                        field.select()
-                                    }
+                            Div{
+                                
+                                UField("Odómetro final", required: false) {
+                                    UTextField(self.$odometerFinal)
+                                        .placeholder("Opcional")
+                                        .onFocus { field in
+                                            field.select()
+                                        }
+                                }
                             }
+
                         }
-                        .display(.grid)
-                        .custom("grid-template-columns", "repeat(2, minmax(0, 1fr))")
-                        .custom("gap", "10px")
+
                     }
-                    .display(.grid)
-                    .custom("grid-template-columns", "minmax(240px, 1fr) minmax(190px, 280px)")
-                    .custom("align-items", "center")
+                    // Let the existing .half/.oneForth/.oneForth children
+                    // resolve against the shared 12-column VGrid system.
+                    .class(Class(TCTripBetaClass.grid))
                     .custom("gap", "24px")
                 }
 
@@ -346,40 +362,51 @@ class CreateTripView: Div {
         .custom("min-height", "38px")
         .attribute("aria-label", "Seleccionar perfil fiscal")
 
-    lazy var issuerView = VBox(.standard) {
+    lazy var issuerView = VGrid(.oneForth) {
         Div {
-            Img()
-                .src("/skyline/media/icon-fiscal.png")
-                .class(.iconBlue)
-                .height(28.px)
-                .custom("flex", "0 0 auto")
 
             Div {
-                UMinorTitle("Perfil de Facturación")
-
-                Div(self.$profile.map { $0?.razon ?? "" })
-                    .class(.oneLineText)
-                    .fontSize(15.px)
-                    .color(.white)
-
-                Div(self.$profile.map { $0?.rfc ?? "" })
-                    .class(.oneLineText)
-                    .fontSize(12.px)
-                    .color(.gray)
+                H1("Perfil Fiscal")
+                    .color(.orange)
             }
-            .custom("min-width", "0")
+
+            Div {
+
+                Img()
+                    .src("/skyline/media/fiscal_icon.png")
+                    .marginRight(7.px)
+                    .class(.iconBlue)
+                    .height(28.px)
+                    .float(.left)
+
+                Div {
+
+                    UMinorTitle("Perfil de Facturación")
+
+                    Div(self.$profile.map { $0?.razon ?? "" })
+                        .class(.oneLineText)
+                        .fontSize(15.px)
+                        .color(.white)
+
+                    Div(self.$profile.map { $0?.rfc ?? "" })
+                        .class(.oneLineText)
+                        .fontSize(12.px)
+                        .color(.gray)
+                }
+                .float(.left)
+
+                Div().clear(.both)
+
+            }
+
         }
-        .display(.flex)
-        .custom("align-items", "center")
-        .custom("gap", "9px")
-        .custom("min-width", "0")
 
         UField("Cambiar perfil", required: false) {
             self.fiscalProfileSelect
         }
+        .hidden(self.$profiles.map{ $0.count < 2 })
+        .display(self.$profiles.map{ ($0.count < 2) ? .none : .block })
     }
-    .hidden(self.$profiles.map { $0.count < 2 })
-    .custom("min-width", "0")
 
     private var selectedLocations: [FiscalLocationItem] {
         [origin, destination].compactMap { $0 }
@@ -695,6 +722,15 @@ class CreateTripView: Div {
 
     lazy var operadorSelectedView = Div {
 
+        Img()
+            .src(self.$operador.map { tripAvatarSource($0?.avatar) })
+            .width(64.px)
+            .height(64.px)
+            .borderRadius(all: 8.px)
+            .custom("object-fit", "contain")
+            .float(.left)
+            .marginRight(8.px)
+
         Div {
             Div("Editar")
             .class(.uibtn)
@@ -788,6 +824,15 @@ class CreateTripView: Div {
     
     lazy var vehicalSelectedView = Div {
 
+        Img()
+            .src(self.$vehical.map { tripAvatarSource($0?.avatar) })
+            .width(64.px)
+            .height(64.px)
+            .borderRadius(all: 8.px)
+            .custom("object-fit", "contain")
+            .float(.left)
+            .marginRight(8.px)
+
         Div("Editar")
             .class(.uibtn)
             .float(.right)
@@ -796,12 +841,12 @@ class CreateTripView: Div {
                 self.manageVehical(item)
             }
 
-        Label("Placas / Modelo de Vehiculo")
+        Label("Placas / Año / Modelo / Marca de Vehiculo")
             .color(.white)
 
         Div(self.$vehical.map { item in
             guard let item else { return "Seleccione vehiculo" }
-            return "\(item.vehicalLicensePlate) / \(item.vehicalYearModel)"
+            return "\(item.vehicalLicensePlate) / \(item.vehicalYear) / \(item.vehicalModel) / \(item.vehicalMake)"
         })
         .class(.textFiledBlackDark, .oneLineText)
         .custom("width", "calc(100% - 16px)")
@@ -1020,6 +1065,15 @@ class CreateTripView: Div {
         }
 
     lazy var trailerOneSelectedView = Div {
+        Img()
+            .src(self.$trailerOne.map { tripAvatarSource($0?.avatar) })
+            .width(48.px)
+            .height(48.px)
+            .borderRadius(all: 8.px)
+            .custom("object-fit", "contain")
+            .float(.left)
+            .marginRight(8.px)
+
         Div("Editar")
             .class(.uibtn)
             .float(.right)
@@ -1052,6 +1106,15 @@ class CreateTripView: Div {
         }
 
     lazy var trailerTwoSelectedView = Div {
+        Img()
+            .src(self.$trailerTwo.map { tripAvatarSource($0?.avatar) })
+            .width(48.px)
+            .height(48.px)
+            .borderRadius(all: 8.px)
+            .custom("object-fit", "contain")
+            .float(.left)
+            .marginRight(8.px)
+
         Div("Editar")
             .class(.uibtn)
             .float(.right)
@@ -1541,7 +1604,8 @@ class CreateTripView: Div {
             },
             create: {
                 self.manageOperador()
-            }
+            },
+            avatarForItem: { $0.avatar }
         ))
     }
 
@@ -1551,7 +1615,7 @@ class CreateTripView: Div {
             title: "Seleccione Vehiculo",
             items: vehicals,
             titleForItem: { "\($0.vehicalTypeName) \($0.vehicalType)" },
-            subtitleForItem: { "Placas \($0.vehicalLicensePlate) | Modelo \($0.vehicalYearModel) | Peso \($0.vehicalWeight)" },
+            subtitleForItem: { "Placas \($0.vehicalLicensePlate) | Año \($0.vehicalYear) | Modelo \($0.vehicalModel) | Marca \($0.vehicalMake) | Peso \($0.vehicalWeight)" },
             callback: { item in
 
                 self.applyVehicalSelection(item)
@@ -1565,7 +1629,8 @@ class CreateTripView: Div {
             },
             create: {
                 self.manageVehical()
-            }
+            },
+            avatarForItem: { $0.avatar }
         ))
     }
 
@@ -1641,7 +1706,8 @@ class CreateTripView: Div {
             },
             create: {
                 self.manageTrailer(placement: placement)
-            }
+            },
+            avatarForItem: { $0.avatar }
         ))
     }
 
@@ -1801,7 +1867,7 @@ class CreateTripView: Div {
             )
         }
 
-        loadingView(show: true)
+        loadingView.show()
 
         API.custCommercialTrips.createTrip(
             accountId: account.id,
@@ -1812,7 +1878,7 @@ class CreateTripView: Div {
             insuranceCivilId: civilInsurance?.id,
             insuranceAmbientId: ambientInsurance?.id,
             insurancePayloadId: payloadInsurance?.id,
-            remolques: trailerIds,
+            trailers: trailerIds,
             locations: tripLocations,
             merchandise: tripMerchandise,
             balance: balance,
@@ -1820,7 +1886,7 @@ class CreateTripView: Div {
             odometerInitial: odometerInitialValue,
             odometerFinal: odometerFinalValue
         ) { resp in
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

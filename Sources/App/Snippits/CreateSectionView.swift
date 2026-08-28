@@ -15,7 +15,7 @@ class CreateSectionView: Div {
     override class var name: String { "div" }
     
     let storeid: UUID
-    
+
     let storeName: String
     
     let bodid: UUID
@@ -243,7 +243,7 @@ class CreateSectionView: Div {
         
         let description = self.sectionDescription.purgeSpaces
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.createSection(
             storeId: storeid,
@@ -252,7 +252,7 @@ class CreateSectionView: Div {
             description: description
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

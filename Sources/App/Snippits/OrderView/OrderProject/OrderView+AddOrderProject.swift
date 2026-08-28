@@ -267,11 +267,11 @@ extension OrderView {
             left(0.px)
             top(0.px)
             
-            loadingView(show: true)
+            loadingView.show()
             
             getUsers(storeid: storeId, onlyActive: true) { users in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 users.forEach { user in
                     
@@ -303,7 +303,7 @@ extension OrderView {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custOrderV1.addOrderProject(
                 supervisedBy: supervisedBy,
@@ -317,19 +317,19 @@ extension OrderView {
             ) { resp in
                 
                 guard let resp else {
-                    loadingView(show: false)
+                    loadingView.hide()
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                     return
                 }
                 
                 guard resp.status == .ok else {
-                    loadingView(show: false)
+                    loadingView.hide()
                     showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let payload = resp.data else {
-                    loadingView(show: false)
+                    loadingView.hide()
                     showError(.unexpectedResult, .unexpenctedMissingPayload)
                     return
                 }
@@ -343,7 +343,7 @@ extension OrderView {
                     orderId: self.orderId
                 ) { resp in
                     
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

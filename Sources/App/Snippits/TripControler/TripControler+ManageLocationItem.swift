@@ -273,7 +273,7 @@ class ManageLocationItem: Div {
                             return isHomeItem ? "Editar Ubicacion de SALIDA" : "Editar Ubicacion de ENTREGA"
                         }
 
-                        return isHomeItem ? "Agregar Ubicacion de SALIDA" : "Agregar Ubicacion de ENTREGA"
+                        return isHomeItem ? "3 Agregar Ubicacion de SALIDA" : "3 Agregar Ubicacion de ENTREGA"
                     })
                         .margin(all: 0.px)
                         .class(Class(TCTripBetaClass.titleText))

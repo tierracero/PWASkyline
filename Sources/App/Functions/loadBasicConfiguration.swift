@@ -161,7 +161,7 @@ public func loadBasicConfiguration(
             }
         }
         if !firtsLoad {
-            loadingView(show: true)
+            loadingView.show()
         }
         
         API.custAPIV1.sincCustSettings { resp in
@@ -265,7 +265,7 @@ public func loadBasicConfiguration(
                 API.fiscalV1.getProfile(type: .general, relation: nil) { resp in
                     
                     if !firtsLoad {
-                        loadingView(show: false)
+                        loadingView.hide()
                     }
                     
                     guard let resp else {

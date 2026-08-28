@@ -72,11 +72,11 @@ func getUsers(storeid: UUID?, onlyActive: Bool, callback: @escaping ( (_ users: 
         return
     }
     
-    loadingView(show: true)
+    loadingView.show()
     
     API.custAPIV1.getUserRefrence(id: nil) { resp in
     
-        loadingView(show: false)
+        loadingView.hide()
         
         guard let resp else {
             showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

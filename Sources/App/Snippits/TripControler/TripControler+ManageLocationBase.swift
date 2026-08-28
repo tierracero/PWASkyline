@@ -12,7 +12,7 @@ import Web
 
 private func tripLocationDateInputValue(_ uts: Int64) -> String {
 
-    var uts = uts + (60 * 60 * 6)
+    let uts = uts + (60 * 60 * 6)
 
     let date = getDate(uts)
     let month = date.month < 10 ? "0\(date.month)" : date.month.toString
@@ -23,7 +23,7 @@ private func tripLocationDateInputValue(_ uts: Int64) -> String {
 
 private func tripLocationTimeInputValue(_ uts: Int64) -> String {
     
-    var uts = uts + (60 * 60 * 6)
+    let uts = uts + (60 * 60 * 6)
 
     let date = getDate(uts)
     let hour = date.hour < 10 ? "0\(date.hour)" : date.hour.toString
@@ -274,14 +274,14 @@ class ManageLocationBase: Div {
                                 : "/skyline/media/icon_destination.png"
                         })
                         .class(.iconBlue)
-                        .height(24.px)
+                        .height(34.px)
 
                     H2(self.$isHomeItem.map { isHomeItem in
                         if self.id != nil {
-                            return isHomeItem ? "Editar Ubicacion de SALIDA" : "Editar Ubicacion de ENTREGA"
+                            return isHomeItem ? "0Editar Ubicacion de SALIDA" : "0Editar Ubicacion de ENTREGA"
                         }
 
-                        return isHomeItem ? "Agregar Ubicacion de SALIDA" : "Agregar Ubicacion de ENTREGA"
+                        return isHomeItem ? "0 Agregar Ubicacion de SALIDA" : "0Agregar Ubicacion de ENTREGA"
                     })
                         .margin(all: 0.px)
                         .class(Class(TCTripBetaClass.titleText))
@@ -310,207 +310,209 @@ class ManageLocationBase: Div {
             .class(Class(TCTripBetaClass.title))
 
             Div {
-            Div{
-                Div("Nombre de la tienda")
-                    .color(.gray)
-                    .width(20.percent)
-                    .float(.left)
-                
+
                 Div{
-                    self.storeNameField
-                }
-                .color(.yellowTC)
-                .width(30.percent)
-                .float(.left)
+                    Div("Nombre de la tienda")
+                        .color(.gray)
+                        .width(20.percent)
+                        .float(.left)
+                    
+                    Div{
+                        self.storeNameField
+                    }
+                    .color(.yellowTC)
+                    .width(30.percent)
+                    .float(.left)
+                    
+                    Div("Id Tienda")
+                        .color(.gray)
+                        .width(20.percent)
+                        .align(.right)
+                        .float(.left)
                 
-                Div("Id Tienda")
-                    .color(.gray)
+                    Div(self.$placementId)
+                    .color(.yellowTC)
                     .width(20.percent)
                     .align(.right)
                     .float(.left)
-            
-                Div(self.$placementId)
-                .color(.yellowTC)
-                .width(20.percent)
-                .align(.right)
-                .float(.left)
+                    
+                    Div().class(.clear)
+                }
+                .marginBottom(3.px)
                 
-                Div().class(.clear)
-            }
-            .marginBottom(3.px)
-            
-            Div {
-                Div(self.$isHomeItem.map{ $0 ? "RFC del Emisor" : "RFC del Receptor" })
-                    .color(.yellowTC)
+                Div {
+                    Div(self.$isHomeItem.map{ $0 ? "RFC del Emisor" : "RFC del Receptor" })
+                        .color(.yellowTC)
+                        .width(25.percent)
+                        .float(.left)
+                    
+                    Div(self.$isHomeItem.map{ $0 ? "Nombre del Emisor" : "Nombre del Receptor" })
+                        .color(.yellowTC)
+                        .width(35.percent)
+                        .float(.left)
+                    
+                    Div("Fecha")
+                        .color(.yellowTC)
+                        .width(20.percent)
+                        .float(.left)
+                    
+                    Div("Hora (24h)")
+                        .color(.white)
+                        .width(20.percent)
+                        .float(.left)
+                    
+                    Div().class(.clear)
+                }
+                .marginBottom(3.px)
+                
+                Div {
+                    
+                    Div{
+                        self.rfcField
+                    }
+                    .color(.white)
                     .width(25.percent)
                     .float(.left)
-                
-                Div(self.$isHomeItem.map{ $0 ? "Nombre del Emisor" : "Nombre del Receptor" })
-                    .color(.yellowTC)
+                    
+                    Div{
+                        self.razonField
+                    }
+                    .color(.white)
                     .width(35.percent)
                     .float(.left)
-                
-                Div("Fecha")
-                    .color(.yellowTC)
+                    
+                    
+                    Div{
+                        self.dateField
+                    }
+                    .color(.white)
                     .width(20.percent)
                     .float(.left)
-                
-                Div("Hora (24h)")
+                    
+                    
+                    Div{
+                        self.timeField
+                    }
                     .color(.white)
                     .width(20.percent)
                     .float(.left)
-                
-                Div().class(.clear)
-            }
-            .marginBottom(3.px)
-            
-            Div {
-                
-                Div{
-                    self.rfcField
+                    
+                    Div().class(.clear)
+                    
                 }
-                .color(.white)
-                .width(25.percent)
-                .float(.left)
+                .marginBottom(7.px)
                 
-                Div{
-                    self.razonField
-                }
-                .color(.white)
-                .width(35.percent)
-                .float(.left)
-                
-                
-                Div{
-                    self.dateField
-                }
-                .color(.white)
-                .width(20.percent)
-                .float(.left)
-                
-                
-                Div{
-                    self.timeField
-                }
-                .color(.white)
-                .width(20.percent)
-                .float(.left)
-                
-                Div().class(.clear)
-                
-            }
-            .marginBottom(7.px)
-            
-            H2(self.$isHomeItem.map{ $0 ? "Direccion de Salida" : "Direccion de Recepcion" })
-                .color(.white)
-            
-            Div {
-                Div("Calle")
+                H2(self.$isHomeItem.map{ $0 ? "Direccion de Salida" : "Direccion de Recepcion" })
                     .color(.white)
-                    .width(self.$isHomeItem.map{ $0 ? 25.percent : 22.percent })
-                    .float(.left)
                 
-                Div("Numero")
-                    .color(.white)
-                    .width(self.$isHomeItem.map{ $0 ? 15.percent : 12.percent })
-                    .float(.left)
-                
-                Div("Refrence")
-                    .color(.white)
-                    .width(25.percent)
-                    .width(self.$isHomeItem.map{ $0 ? 25.percent : 22.percent })
-                    .float(.left)
-                
-                Div("State")
-                    .color(.white)
-                    .width(self.$isHomeItem.map{ $0 ? 20.percent : 17.percent })
-                    .float(.left)
-                
-                Div("Codigo Postal")
-                    .color(.yellowTC)
-                    .width(self.$isHomeItem.map{ $0 ? 15.percent : 12.percent })
-                    .float(.left)
-                
-                Div("Distancia")
-                    .hidden(self.$isHomeItem.map{ $0 })
-                    .color(.yellowTC)
-                    .width(12.5.percent)
-                    .float(.left)
-                
-                Div().class(.clear)
-            }
-            .marginBottom(3.px)
-            
-            Div {
-                
-                Div{
-                    self.streetField
+                Div {
+                    Div("Calle")
+                        .color(.white)
+                        .width(self.$isHomeItem.map{ $0 ? 25.percent : 22.percent })
+                        .float(.left)
+                    
+                    Div("Numero")
+                        .color(.white)
+                        .width(self.$isHomeItem.map{ $0 ? 15.percent : 12.percent })
+                        .float(.left)
+                    
+                    Div("Refrence")
+                        .color(.white)
+                        .width(25.percent)
+                        .width(self.$isHomeItem.map{ $0 ? 25.percent : 22.percent })
+                        .float(.left)
+                    
+                    Div("State")
+                        .color(.white)
+                        .width(self.$isHomeItem.map{ $0 ? 20.percent : 17.percent })
+                        .float(.left)
+                    
+                    Div("Codigo Postal")
+                        .color(.yellowTC)
+                        .width(self.$isHomeItem.map{ $0 ? 15.percent : 12.percent })
+                        .float(.left)
+                    
+                    Div("Distancia")
+                        .hidden(self.$isHomeItem.map{ $0 })
+                        .color(.yellowTC)
+                        .width(12.5.percent)
+                        .float(.left)
+                    
+                    Div().class(.clear)
                 }
-                    .color(.white)
-                    .width(self.$isHomeItem.map{ $0 ? 25.percent : 22.percent })
-                    .float(.left)
+                .marginBottom(3.px)
                 
-                Div{
-                    self.numberField
-                }
-                    .color(.white)
-                    .width(self.$isHomeItem.map{ $0 ? 15.percent : 12.percent })
-                    .float(.left)
-                
-                Div{
-                    self.refrenceField
-                }
-                    .color(.white)
-                    .width(self.$isHomeItem.map{ $0 ? 25.percent : 22.percent })
-                    .float(.left)
-                
-                Div{
-                    self.stateSelect
-                }
-                    .color(.white)
-                    .width(self.$isHomeItem.map{ $0 ? 20.percent : 17.percent })
-                    .float(.left)
-                
-                Div{
-                    self.zipCodeField
-                }
-                    .color(.white)
-                    .width(self.$isHomeItem.map{ $0 ? 15.percent : 12.percent })
-                    .float(.left)
-                
-                Div{
-                    self.disctaceField
-                }
-                    .hidden(self.$isHomeItem.map{ $0 })
-                    .width(12.5.percent)
-                    .float(.left)
-                
-                Div().class(.clear)
-            }
-            .marginBottom(7.px)
-            
-            Div{
-                Div("Eliminar")
-                    .class(.uibtn)
-                    .onClick {
-                        self.deleteItem()
+                Div {
+                    
+                    Div{
+                        self.streetField
                     }
-                    .hidden(self.$id.map{ ($0 == nil) })
+                        .color(.white)
+                        .width(self.$isHomeItem.map{ $0 ? 25.percent : 22.percent })
+                        .float(.left)
+                    
+                    Div{
+                        self.numberField
+                    }
+                        .color(.white)
+                        .width(self.$isHomeItem.map{ $0 ? 15.percent : 12.percent })
+                        .float(.left)
+                    
+                    Div{
+                        self.refrenceField
+                    }
+                        .color(.white)
+                        .width(self.$isHomeItem.map{ $0 ? 25.percent : 22.percent })
+                        .float(.left)
+                    
+                    Div{
+                        self.stateSelect
+                    }
+                        .color(.white)
+                        .width(self.$isHomeItem.map{ $0 ? 20.percent : 17.percent })
+                        .float(.left)
+                    
+                    Div{
+                        self.zipCodeField
+                    }
+                        .color(.white)
+                        .width(self.$isHomeItem.map{ $0 ? 15.percent : 12.percent })
+                        .float(.left)
+                    
+                    Div{
+                        self.disctaceField
+                    }
+                        .hidden(self.$isHomeItem.map{ $0 })
+                        .width(12.5.percent)
+                        .float(.left)
+                    
+                    Div().class(.clear)
+                }
+                .marginBottom(7.px)
+                
+                Div{
+                    Div("Eliminar")
+                        .class(.uibtn)
+                        .onClick {
+                            self.deleteItem()
+                        }
+                        .hidden(self.$id.map{ ($0 == nil) })
 
-                Div(self.$isHomeItem.map { isHomeItem in
-                    if self.id != nil {
-                        return "Guardar Cambios"
-                    }
+                    Div(self.$isHomeItem.map { isHomeItem in
+                        if self.id != nil {
+                            return "Guardar Cambios"
+                        }
 
-                    return isHomeItem ? "Agregar punto de Salida" : "Agregar punto de Recepcion"
-                })
-                    .class(.uibtnLargeOrange)
-                    .onClick {
-                        self.addPlace()
-                    }
-            }
-            .class(Class(TCTripBetaClass.titleActions))
-            .custom("margin-top", "12px")
+                        return isHomeItem ? "Agregar punto de Salida" : "Agregar punto de Recepcion"
+                    })
+                        .class(.uibtnLargeOrange)
+                        .onClick {
+                            self.addPlace()
+                        }
+                }
+                .class(Class(TCTripBetaClass.titleActions))
+                .custom("margin-top", "12px")
+
             }
             .class(
                 Class(TCTripBetaClass.box),
@@ -671,7 +673,7 @@ class ManageLocationBase: Div {
             status: status
         )
 
-        loadingView(show: true)
+        loadingView.show()
 
         if let id {
             API.custCommercialTrips.updateLocation(
@@ -690,7 +692,7 @@ class ManageLocationBase: Div {
                 country: item.country,
                 zipCode: item.zipCode
             ) { resp in
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -724,7 +726,7 @@ class ManageLocationBase: Div {
             country: item.country,
             zipCode: item.zipCode
         ) { resp in
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -756,10 +758,10 @@ class ManageLocationBase: Div {
         ) { isConfirmed, _ in
             guard isConfirmed else { return }
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custCommercialTrips.deleteLocation(locationId: id) { resp in
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)

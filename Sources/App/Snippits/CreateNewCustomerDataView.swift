@@ -1722,7 +1722,7 @@ class CreateNewCustomerDataView: Div {
         
         print("⭐️ phone is valid")
         
-        loadingView(show: true)
+        loadingView.show()
         
         mobileField
             .removeClass(.isNok)
@@ -1738,7 +1738,7 @@ class CreateNewCustomerDataView: Div {
             
             guard let resp else {
                 // TODO By pass bc no conn
-                loadingView(show: false)
+                loadingView.hide()
                 showAlert(.alerta, "Error de Comunicacion")
                 return
             }
@@ -1761,7 +1761,7 @@ class CreateNewCustomerDataView: Div {
                     
                     guard let resp = resp else {
                         // TODO By pass bc no conn
-                        loadingView(show: false)
+                        loadingView.hide()
                         showAlert(.alerta, "Error de Comunicacion")
                         return
                     }
@@ -1771,12 +1771,12 @@ class CreateNewCustomerDataView: Div {
                     
                     if resp.status != .ok {
                         // TODO By pass bc no conn
-                        loadingView(show: false)
+                        loadingView.hide()
                         showError(.generalError, resp.msg)
                         return
                     }
                     
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     // show enter pin view
                     
@@ -1790,7 +1790,7 @@ class CreateNewCustomerDataView: Div {
             }
             else{
                 self.mobileField.class(.isNok)
-                loadingView(show: false)
+                loadingView.hide()
                 showError(.generalError, "El telefono ya esta regustrado en otra cuenta ")
             }
         }
@@ -1803,11 +1803,11 @@ class CreateNewCustomerDataView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.v1.confirmMobileAuth(token: token, pin: pinCode) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else{
                 showError(.comunicationError, "No se pudo contactar con el servidor.")
@@ -1926,7 +1926,7 @@ class CreateNewCustomerDataView: Div {
             }
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.createCustAcct(
             CardID: "",
@@ -1980,7 +1980,7 @@ class CreateNewCustomerDataView: Div {
             billDate: Int(self.selectBillDate)
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "Error al conecatar al servidor")
@@ -2061,14 +2061,14 @@ class CreateNewCustomerDataView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.v1.searchZipCode(
             code: code,
             country: country
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

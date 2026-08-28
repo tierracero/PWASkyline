@@ -625,7 +625,7 @@ extension ToolsView.WebPage {
                 showError(.requiredField, .requierdValid("Texto Secundario"))
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.themeV1.saveWebService(
                 configLanguage: .Spanish,
@@ -637,7 +637,7 @@ extension ToolsView.WebPage {
                 subText: subText
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -833,12 +833,12 @@ extension ToolsView.WebPage {
         func addServiceRow(_ service: CustWebContent) {
             
             let view = ServiceRow(service: service) { view in
-                loadingView(show: true)
+                loadingView.show()
                 API.themeV1.getViewService(
                     id: service.id
                 ) { resp in
                     
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

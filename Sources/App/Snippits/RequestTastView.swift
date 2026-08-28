@@ -458,7 +458,7 @@ class RequestTastView: Div {
             }
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.requestTask(
             type: type,
@@ -468,7 +468,7 @@ class RequestTastView: Div {
             description: reason
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)

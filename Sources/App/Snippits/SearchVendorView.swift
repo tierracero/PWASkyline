@@ -656,11 +656,11 @@ class SearchVendorView: Div {
             
             createAccountViewIsHidden = false
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.getVendor(id: vendorid) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else{
                     showError(.comunicationError, .serverConextionError)
@@ -772,7 +772,7 @@ class SearchVendorView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         if let id {
             
@@ -789,7 +789,7 @@ class SearchVendorView: Div {
                 creditDays: creditDays
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -840,7 +840,7 @@ class SearchVendorView: Div {
                 creditDays: creditDays
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)

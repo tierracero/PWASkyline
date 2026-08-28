@@ -715,7 +715,7 @@ public class LoginViewcontroler: PageController {
         OS = String(parde[0])
         OSv = String(parde[1])
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.authV1.customerLogin(
             username: self.username,
@@ -726,7 +726,7 @@ public class LoginViewcontroler: PageController {
             brand: brand
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp   else {
                 showError(.comunicationError, "No se pudo comuicar con el servidor")
@@ -830,13 +830,13 @@ public class LoginViewcontroler: PageController {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.requestPasswordRecovery(
             username: self.username
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

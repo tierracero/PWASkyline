@@ -10,38 +10,6 @@ import TCFundamentals
 import TCFireSignal
 import Web
 
-/*
-id: UUID = .init(),
-createdAt: Int64 = getNow(),
-modifiedAt: Int64 = getNow(),
-name: String,
-smallDescription: String,
-description: String,
-icon: String,
-coverLandscape: String,
-coverPortrait: String
-*/
-
-/*
- public struct CustSOCQuick: Codable {
-     
-     public var id: UUID
-     
-     public var name: String
-     
-     public var pseudoName: String
-     
-     public var pricea: Int64
-     
-     public var priceb: Int64
-     
-     public var pricec: Int64
-     
-     public var avatar: String
-     /// unrequested, active, suspended, canceled, fraud, delicuent, hotline, collection
-     public var status: GeneralStatus
- */
-
 extension ToolsView {
     
     class ServiceManager: Div {
@@ -75,7 +43,7 @@ extension ToolsView {
         
         var sericesRefrences: [UUID:[CustSOCQuick]] = [:]
         
-        lazy var leftView = Div{
+        lazy var leftView = Div {
             Div {
                 Div{
                     ForEach(self.$deps) { dep in
@@ -141,7 +109,7 @@ extension ToolsView {
             
         lazy var serviceContiner = Div()
 
-        lazy var rightView = Div{
+        lazy var rightView = Div {
             
             Div{
                 
@@ -296,11 +264,11 @@ extension ToolsView {
             left(0.px)
             top(0.px)
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custSOCV1.getDepartments { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else{
                     showError(.comunicationError, "No se pudieron obtener los departamentso del servidor")
@@ -346,11 +314,11 @@ extension ToolsView {
                 }
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custSOCV1.getSOCs(depid: dep.id) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)

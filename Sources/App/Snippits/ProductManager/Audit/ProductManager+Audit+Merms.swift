@@ -315,7 +315,7 @@ extension ProductManagerView.AuditView {
             let renderId = UUID()
             mermRenderId = renderId
 
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPOCV1.getMerms(
                 store: store,
@@ -326,7 +326,7 @@ extension ProductManagerView.AuditView {
                     return
                 }
 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -398,7 +398,7 @@ extension ProductManagerView.AuditView {
         
         func downloadCardexReport(startAt: Int64, endAt: Int64, storeId: UUID, payload: CustPOCComponents.CardexResponse) {
             
-            loadingView(show: true)
+            loadingView.show()
             
             var name = ""
             
@@ -472,7 +472,7 @@ extension ProductManagerView.AuditView {
             "\(totalFinalUnits.toString)," +
             "\(totalFinalCost.formatMoney.replace(from: ",", to: ""))"
             
-            loadingView(show: false)
+            loadingView.hide()
             
             _ = JSObject.global.download!( "\(fileName).csv", contents)
             

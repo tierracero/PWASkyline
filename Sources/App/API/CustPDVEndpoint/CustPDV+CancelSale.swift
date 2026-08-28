@@ -17,7 +17,7 @@ extension CustPDVComponents {
         reason: String,
         refundTo: UUID?,
         callback: @escaping ((
-            _ resp: APIResponse?
+            _ resp: APIResponseGeneric<CancelSaleResponse>?
         ) -> ())
     ) {
         
@@ -39,7 +39,10 @@ extension CustPDVComponents {
                 }
             
                 do{
-                    let resp = try decodeAPIResponse(APIResponse.self, from: data)
+                    let resp = try decodeAPIResponse(
+                        APIResponseGeneric<CancelSaleResponse>.self,
+                        from: data
+                    )
                     callback(resp)
                 }
                 catch{

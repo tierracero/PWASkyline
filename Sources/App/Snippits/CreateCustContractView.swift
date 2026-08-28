@@ -444,7 +444,7 @@ class CreateCustContractView: Div {
             valueFifteen: valueFifteenField.payloadValue ?? ""
         )
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custOrderV1.requestContract(
             orderId: orderId,
@@ -452,7 +452,7 @@ class CreateCustContractView: Div {
             payload: payload
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

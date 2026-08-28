@@ -692,6 +692,7 @@ extension ToolsView.SystemSettings {
             xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
             
             xhr.setRequestHeader("Accept", "application/json")
+            xhr.setRequestHeader("WSId", custCatchChatConnID)
             
             if let jsonData = try? JSONEncoder().encode(APIHeader(
                 AppID: thisAppID,
@@ -825,6 +826,7 @@ extension ToolsView.SystemSettings {
             xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
             
             xhr.setRequestHeader("Accept", "application/json")
+            xhr.setRequestHeader("WSId", custCatchChatConnID)
             
             if let jsonData = try? JSONEncoder().encode(APIHeader(
                 AppID: thisAppID,
@@ -1016,7 +1018,7 @@ extension ToolsView.SystemSettings {
                 budgetCreditExpirationAlert = parsedValue
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.saveCommunicationProfile(
                 orderCommunicationProfile: orderCommunicationProfile,
@@ -1045,7 +1047,7 @@ extension ToolsView.SystemSettings {
                 followUpWelcomeDocument: optionalString(followUpWelcomeDocument)
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)

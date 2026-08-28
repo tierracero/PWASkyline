@@ -17,7 +17,7 @@ extension APIComponents {
         
         let xhr = XMLHttpRequest()
         
-        // let url = "https://intratc.co/api/jwt/control.\(custCatchUrl)"
+        // let url = "https://api.tierracero.co/jwt/control.\(custCatchUrl)"
         
         var url = "https://api.tierracero.co/jwt/\(WebApp.shared.window.location.hostname)"
 

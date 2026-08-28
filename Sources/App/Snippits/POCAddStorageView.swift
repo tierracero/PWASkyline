@@ -228,7 +228,7 @@ class POCAddStorageView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPOCV1.addStorage(
             pocid: pocid,
@@ -240,7 +240,7 @@ class POCAddStorageView: Div {
             sectionName: sectionName
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

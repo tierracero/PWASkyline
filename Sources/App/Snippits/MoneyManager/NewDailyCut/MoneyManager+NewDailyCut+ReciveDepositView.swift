@@ -328,7 +328,7 @@ extension MoneyManagerView.NewDailyCutView {
             
             let financialsIds = financials.map{ $0.id }
             
-            loadingView(show: true)
+            loadingView.show()
             
             isCreatingDaylyCut = true
             
@@ -349,7 +349,7 @@ extension MoneyManagerView.NewDailyCutView {
                 
                 self.isCreatingDaylyCut = false
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)

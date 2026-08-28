@@ -225,13 +225,13 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
             isLoadingConfiguration = true
 
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.getStoreConfiguration(
                 storeId: store.id
             ) { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
                 self.isLoadingConfiguration = false
                 
                 guard let resp else {
@@ -267,11 +267,11 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                         snippit: userSnippitRefrence[user.id]
                     ){ userCard in
                             
-                        loadingView(show: true)
+                        loadingView.show()
                         
                         API.custAPIV1.getUser(id: .id(user.id), full: true) { resp in
                             
-                            loadingView(show: false)
+                            loadingView.hide()
                             
                             guard let resp else {
                                 showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

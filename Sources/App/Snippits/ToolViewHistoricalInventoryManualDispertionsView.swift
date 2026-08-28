@@ -107,12 +107,12 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                                         .float(.right)
                                         .onClick { _, event in
                                             
-                                            loadingView(show: true)
+                                            loadingView.show()
                                             
                                             downloadManualInventoryControlOrders(id: item.id, detailed: true)
                                             
                                             Dispatch.asyncAfter(3.0) {
-                                                loadingView(show: false)
+                                                loadingView.hide()
                                             }
                                             event.stopPropagation()
                                         }
@@ -464,11 +464,11 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                 
             }
             
-            loadingView(show: true)
+            loadingView.show()
 
             API.custAPIV1.getVendors { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
 
                 print("🟢. 001")
 
@@ -656,7 +656,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                 return 
             }
             
-            loadingView(show: true)
+            loadingView.show()
 
             API.custPOCV1.getManualDispertions(type: .historic(.init(
                 type: type,
@@ -665,7 +665,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                    relId: relId
             ))){ resp in
 
-                loadingView(show: false)
+                loadingView.hide()
 
                 self.hasSearched = true
 
@@ -694,13 +694,13 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
 
         func loadDocument(id: UUID) {
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPOCV1.getManualDispertion(
                 docId: .id(id)
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -733,7 +733,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
         /*
         func download(name: String, item: [API.custPOCV1.AuditObject], type: InventoryAuditTypes, title: String) {
             
-            loadingView(show: true)
+            loadingView.show()
             
             var contents = ""
             
@@ -764,7 +764,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
             
             _ = JSObject.global.download!( name, contents)
             
-            loadingView(show: false)
+            loadingView.hide()
             
         }
         
@@ -2986,11 +2986,11 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
         
         func openConcession(controlId: UUID) {
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPOCV1.getTransferInventory(identifier: .id(controlId)) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)

@@ -361,7 +361,7 @@ class OrderView: Div {
                             currentBalance: self.total
                         ) { code, description, amount, provider, lastFour, auth, uts in
                             
-                            loadingView(show: true)
+                            loadingView.show()
                             
                             if code == .dineroElectronico {
                                 self.proccessPaymentWithPoints(amount.fromCents)
@@ -622,7 +622,7 @@ class OrderView: Div {
                                     
                                     if isConfirmed {
                                         
-                                        loadingView(show: true)
+                                        loadingView.show()
                                         
                                         API.custOrderV1.highPrioritize(
                                             orderId: self.order.id,
@@ -630,7 +630,7 @@ class OrderView: Div {
                                             state: !self.isHighPriority
                                         ) { resp in
                                             
-                                            loadingView(show: false)
+                                            loadingView.hide()
                                             
                                             guard let resp else {
                                                 showError(.comunicationError, .serverConextionError)
@@ -681,7 +681,7 @@ class OrderView: Div {
                                     
                                     if isConfirmed {
                                         
-                                        loadingView(show: true)
+                                        loadingView.show()
                                         
                                         API.custOrderV1.alerted(
                                             orderId: self.order.id,
@@ -689,7 +689,7 @@ class OrderView: Div {
                                             state: !self.inAlert
                                         ) { resp in
                                             
-                                            loadingView(show: false)
+                                            loadingView.hide()
                                             
                                             guard let resp else {
                                                 showError(.comunicationError, .serverConextionError)
@@ -802,7 +802,7 @@ class OrderView: Div {
                                 orderId: self.order.id
                             ) { resp in
                                 
-                                loadingView(show: false)
+                                loadingView.hide()
                                 
                                 guard let resp else {
                                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -1164,14 +1164,14 @@ class OrderView: Div {
                                         ignore: [],
                                         callback: { user in
                                             
-                                            loadingView(show: true)
+                                            loadingView.show()
                                             
                                             API.custOrderV1.reassign(
                                                 orderid: self.order.id,
                                                 userid: user.id
                                             ) { resp in
                                                 
-                                                loadingView(show: false)
+                                                loadingView.hide()
                                                 
                                                 guard let resp else {
                                                     showError(.comunicationError, .serverConextionError)
@@ -1923,11 +1923,11 @@ class OrderView: Div {
                             
                             if isConfirmed {
                                 
-                                loadingView(show: true)
+                                loadingView.show()
                                 
                                 API.custOrderV1.adopt(id: self.order.id) { resp in
                                     
-                                    loadingView(show: false)
+                                    loadingView.hide()
                                     
                                     guard let resp = resp else {
                                         showError(.comunicationError, .serverConextionError)
@@ -2546,7 +2546,7 @@ class OrderView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custOrderV1.equipmentPickedStatus(
             accountid: self.order.custAcct,
@@ -2557,7 +2557,7 @@ class OrderView: Div {
             pickedUp: true
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -2641,11 +2641,11 @@ class OrderView: Div {
             } sendDocument: {
 
 
-                loadingView(show: true)
+                loadingView.show()
 
                 API.custOrderV1.sendServiceOrder(orderId: self.order.id) { resp in
 
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -3298,11 +3298,11 @@ class OrderView: Div {
             .class(.uibtn)
             .onClick {
                 
-                loadingView(show: true)
+                loadingView.show()
 
                 API.fiscalV1.loadDocument(docid: fiscaldoc) { resp in
 
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -3470,7 +3470,7 @@ class OrderView: Div {
                     return
                 }
 
-                loadingView(show: true)
+                loadingView.show()
                                                 
                 API.custOrderV1.addCharge(
                     orderId: self.order.id,
@@ -3484,7 +3484,7 @@ class OrderView: Div {
                     ))
                 ) { resp in
                             
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -3605,14 +3605,14 @@ class OrderView: Div {
 
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custOrderV1.addCharge(
                     orderId: self.order.id,
                     item: type
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -3695,13 +3695,13 @@ class OrderView: Div {
         }
         addItem: { item, warenty in
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custAPIV1.pocInventoryDetails(
                 id: item.i
             ) { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -3718,7 +3718,7 @@ class OrderView: Div {
                     return
                 }
 
-                loadingView(show: true)
+                loadingView.show()
 
                 let view = ConfirmProductItemView(
                     poc: item,
@@ -3731,7 +3731,7 @@ class OrderView: Div {
                         item: .product(item)
                     ) { resp in
 
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp = resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -3772,7 +3772,7 @@ class OrderView: Div {
                 message: "Confirme eliminacion de:\n\(name) $\(amount.formatMoney)",
                 callback: { confirmed, _ in
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custOrderV1.removeCharge(
                         orderId: self.order.id,
@@ -3780,7 +3780,7 @@ class OrderView: Div {
                         chargeId: id
                     ) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -3919,7 +3919,7 @@ class OrderView: Div {
                 message: "Confirme eliminacion de:\n\(name) $\(amount.formatMoney)",
                 callback: { confirmed, _ in
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custOrderV1.removePoc(
                         orderId: self.order.id,
@@ -3927,7 +3927,7 @@ class OrderView: Div {
                         ids: ids
                     ) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp = resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -4039,7 +4039,7 @@ class OrderView: Div {
                 message: "Confirme eliminacion de:\n\(name) $\(amount.formatMoney)",
                 callback: { confirmed, _ in
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custOrderV1.removeRental(
                         orderId: self.order.id,
@@ -4047,7 +4047,7 @@ class OrderView: Div {
                         itemId: id
                     ) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp = resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -4170,7 +4170,7 @@ class OrderView: Div {
                 message: "Confirme eliminacion de:\n\(name) $\(amount.formatMoney)",
                 callback: { confirmed, _ in
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custOrderV1.removePayment(
                         orderId: self.order.id,
@@ -4178,7 +4178,7 @@ class OrderView: Div {
                         paymentId: id
                     ) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -4275,7 +4275,7 @@ class OrderView: Div {
                 currentSelectedDates: []
             ) { _, uts, _ in
                 
-                loadingView(show: true)
+                loadingView.show()
                 
                 API.custOrderV1.update(
                     orderid: self.order.id,
@@ -4283,7 +4283,7 @@ class OrderView: Div {
                     sendComm: true,
                     lastCommunicationMethod: nil) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp = resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -4344,7 +4344,7 @@ class OrderView: Div {
             }
         }
         
-        loadingView(show: false)
+        loadingView.hide()
         
         API.custOrderV1.saveOrderDetail(
             orderid: self.order.id,
@@ -4432,7 +4432,7 @@ class OrderView: Div {
             )
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custOrderV1.finalize(
             orderid: self.order.id,
@@ -4442,7 +4442,7 @@ class OrderView: Div {
             lastCommunicationMethod: lastCommunicationMethod
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -4498,11 +4498,11 @@ class OrderView: Div {
             )
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custOrderV1.cancel(orderid: self.order.id, equipments: equipments, rentals: rentals, sendComm: true, lastCommunicationMethod: lastCommunicationMethod) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -4812,7 +4812,7 @@ class OrderView: Div {
     
     func facturar(){
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAccountV1.load(id: .id(self.order.custAcct)) { resp in
             
@@ -4850,11 +4850,11 @@ class OrderView: Div {
                     .class(.uibtn)
                     .onClick {
                         
-                        loadingView(show: true)
+                        loadingView.show()
 
                         API.fiscalV1.loadDocument(docid: id) { resp in
 
-                            loadingView(show: false)
+                            loadingView.hide()
 
                             guard let resp else {
                                 showError(.comunicationError, .serverConextionError)
@@ -5013,11 +5013,11 @@ class OrderView: Div {
             break
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custOrderV1.reactivate(ids: objs, orderid: self.order.id, sendComm: true) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -5136,7 +5136,7 @@ class OrderView: Div {
             name: self.order.name
         ) { reason, dueDate in
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custOrderV1.changeStatus(
                 orderId: self.order.id,
@@ -5145,7 +5145,7 @@ class OrderView: Div {
                 dueDate: dueDate
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -5411,6 +5411,7 @@ class OrderView: Div {
         formData.append("remoteCamera", false.description)
         
         xhr.setRequestHeader("Accept", "application/json")
+        xhr.setRequestHeader("WSId", custCatchChatConnID)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,
@@ -5439,17 +5440,17 @@ class OrderView: Div {
 
             self.mapContainer.innerHTML = ""
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.v1.jwt { token in
                 
                 guard let token else {
-                    loadingView(show: false)
+                    loadingView.hide()
                     showError(.comunicationError, "No se pudo cargar token")
                     return
                 }
 
-                loadingView(show: false)
+                loadingView.hide()
 
                 // "Arroyo Carrizal, Luis Echeverria, 87060 Victoria, Tamps., México
                 let _ = JSObject.global.initiateSingleMapCord!(self.mapId, token, lat, lon,  JSClosure { args in
@@ -5547,7 +5548,7 @@ class OrderView: Div {
             
             print("🟢 API.custOrderV1.addPayment")
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -5625,7 +5626,7 @@ class OrderView: Div {
             showError(.generalError, "No se activado una tarjeta de recompensas.")
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.rewardsV1.payWithPoints(
             cardId: accountView.cardId,
@@ -5634,7 +5635,7 @@ class OrderView: Div {
             relationId: self.order.id
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -5741,17 +5742,17 @@ class OrderView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.v1.jwt { token in
             
             guard let token else {
-                loadingView(show: false)
+                loadingView.hide()
                 showError(.comunicationError, "No se pudo cargar token")
                 return
             }
 
-            loadingView(show: false)
+            loadingView.hide()
 
             self.mapContainer.innerHTML = ""
             

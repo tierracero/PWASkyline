@@ -730,6 +730,12 @@ final class TripViewBeta: Div {
     private func renderOperator(_ item: CustCommercialTripOperador) {
         operatorBox.innerHTML = ""
         operatorBox.appendChild(UTitle("Operador"))
+        operatorBox.appendChild(
+            tripAvatarImage(item.avatar)
+                .width(72.px)
+                .height(72.px)
+                .borderRadius(all: 8.px)
+        )
         operatorBox.appendChild(detailRow("Tipo", item.operadorType.description))
         operatorBox.appendChild(detailRow("Nombre", item.operadorName))
         operatorBox.appendChild(detailRow("RFC", item.operadorRfc))
@@ -743,9 +749,15 @@ final class TripViewBeta: Div {
     ) {
         vehicleBox.innerHTML = ""
         vehicleBox.appendChild(UTitle("Vehículo y permiso"))
+        vehicleBox.appendChild(
+            tripAvatarImage(item.avatar)
+                .width(72.px)
+                .height(72.px)
+                .borderRadius(all: 8.px)
+        )
         vehicleBox.appendChild(detailRow(
-            "Placas / Modelo",
-            "\(item.vehicalLicensePlate) / \(item.vehicalYearModel)"
+            "Placas / Año / Modelo / Marca",
+            "\(item.vehicalLicensePlate) / \(item.vehicalYear) / \(item.vehicalModel) / \(item.vehicalMake)"
         ))
         vehicleBox.appendChild(detailRow(
             "Tipo de Transporte",
@@ -772,7 +784,7 @@ final class TripViewBeta: Div {
         ))
         complianceBox.appendChild(sectionDivider("Remolques"))
 
-        if trip.remolques.isEmpty {
+        if trip.trailers.isEmpty {
             complianceBox.appendChild(
                 complianceRow(
                     title: "No requiere remolque",
@@ -782,11 +794,11 @@ final class TripViewBeta: Div {
                 )
             )
         } else {
-            trip.remolques.enumerated().forEach { index, item in
+            trip.trailers.enumerated().forEach { index, item in
                 complianceBox.appendChild(
                     complianceRow(
                         title: "Remolque \(index + 1)",
-                        detail: "\(item.type.description) · \(item.name) · \(item.licensPlates)",
+                        detail: "\(item.type.description) · \(item.name) · Serie \(item.series)",
                         status: "Asignado",
                         positive: true
                     )
@@ -889,14 +901,6 @@ final class TripViewBeta: Div {
         .custom("border-bottom", "1px solid rgba(58, 66, 72, 0.58)")
     }
 
-    private func emptyState(_ text: String) -> Div {
-        Div(text)
-            .custom("padding", "20px")
-            .custom("text-align", "center")
-            .fontSize(13.px)
-            .color(.gray)
-    }
-
     private func openFiscalTool() {
         let cartaPorte = CustFiscalCartaPorteItem(
             operadorType: trip.operadorId.operadorType,
@@ -906,7 +910,7 @@ final class TripViewBeta: Div {
             vehicalType: trip.vehicalId.vehicalType,
             vehicalTypeName: trip.vehicalId.vehicalTypeName,
             vehicalLicensePlate: trip.vehicalId.vehicalLicensePlate,
-            vehicalYearModel: trip.vehicalId.vehicalYearModel,
+            vehicalYearModel: trip.vehicalId.vehicalYear,
             vehicalWeight: trip.vehicalId.vehicalWeight,
             permitType: trip.permitId.permitType,
             permitTypeName: trip.permitId.permitTypeName,
@@ -919,7 +923,14 @@ final class TripViewBeta: Div {
             insurancePayloadProvider: trip.insurancePayloadId?.provider ?? "",
             insurancePayloadNumber: trip.insurancePayloadId?.policyNumber ?? "",
             insuranceAmount: trip.insurancePayloadId?.insuredAmount ?? 0,
-            remolques: trip.remolques,
+            remolques: trip.trailers.map {
+                FiscalRemolqueItem(
+                    id: $0.id,
+                    type: $0.type,
+                    name: $0.name,
+                    licensPlates: $0.series
+                )
+            },
             locations: trip.locations,
             merchandise: trip.merchandise,
             status: trip.status
@@ -945,7 +956,15 @@ final class TripViewBeta: Div {
         addToDom(fiscalView)
     }
 
+
     private func printReleaseLetter() {
+
+        /*
+        guard let trip = loadedTrip, let account = loadedAccount else {
+            showError(.unexpectedResult, .unexpenctedMissingPayload)
+            return
+        }
+
         let printBody = TripPrintEngine(
             trip: trip,
             account: account
@@ -956,7 +975,41 @@ final class TripViewBeta: Div {
             trip.folio,
             printBody
         )
+        
+            */
+
+            API.custExcel.tripLiberationLetter(
+                tripId: trip.id
+            ) { resp in
+
+                loadingView.hide()
+
+                guard let resp else {
+                    showError(.comunicationError, .serverConextionError)
+                    return
+                }
+                
+                guard resp.status == .ok else {
+                    showError(.generalError, resp.msg)
+                    return
+                }
+                
+                guard let payload = resp.data else {
+                    showError(.unexpectedResult, .unexpectedMissingPayload)
+                    return
+                }
+
+                let url = baseAPIUrl("https://api.tierracero.co/cust/v1/customePrintDownloader") +
+                "&file=" + payload.fileName
+                
+                print(url)
+
+                _ = JSObject.global.goToURL!(url)
+
+            }
+            
     }
+
 
     private func changeStatus(_ rawValue: String) {
         guard let newStatus = FiscalTripFollowupStatus(rawValue: rawValue) else {
@@ -970,13 +1023,13 @@ final class TripViewBeta: Div {
             return
         }
 
-        loadingView(show: true)
+        loadingView.show()
 
         API.custCommercialTrips.changeTripStatus(
             tripId: trip.id,
             status: newStatus
         ) { resp in
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp else {
                 self.status = currentStatus.rawValue
@@ -998,10 +1051,10 @@ final class TripViewBeta: Div {
     }
 
     private func viewFiscalDocument(_ id: UUID) {
-        loadingView(show: true)
+        loadingView.show()
 
         API.fiscalV1.loadDocument(docid: id) { resp in
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -1205,7 +1258,7 @@ final class TripViewBeta: Div {
                     warenty = internalWarenty ? .internal : .external
                 }
 
-                loadingView(show: true)
+                loadingView.show()
 
                 API.custCommercialTrips.addCharge(
                     tripId: self.trip.id,
@@ -1219,7 +1272,7 @@ final class TripViewBeta: Div {
                     ))
                 ) { resp in
 
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -1340,14 +1393,14 @@ final class TripViewBeta: Div {
 
             }
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custCommercialTrips.addCharge(
                 tripId: self.trip.id,
                 item: type
             ) { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -1426,13 +1479,13 @@ final class TripViewBeta: Div {
         }
         addItem: { item, warenty in
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custAPIV1.pocInventoryDetails(
                 id: item.i
             ) { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -1449,7 +1502,7 @@ final class TripViewBeta: Div {
                     return
                 }
 
-                loadingView(show: true)
+                loadingView.show()
 
                 let view = ConfirmProductItemView(
                     poc: item,
@@ -1462,7 +1515,7 @@ final class TripViewBeta: Div {
                         item: .product(item)
                     ) { resp in
 
-                        loadingView(show: false)
+                        loadingView.hide()
 
                         guard let resp = resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -1552,10 +1605,10 @@ extension TripViewBeta {
         tripId: UUID,
         statusChangedCallback: @escaping (UUID, FiscalTripFollowupStatus) -> Void = { _, _ in }
     ) {
-        loadingView(show: true)
+        loadingView.show()
 
         API.custCommercialTrips.getTrip(tripId: tripId) { resp in
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

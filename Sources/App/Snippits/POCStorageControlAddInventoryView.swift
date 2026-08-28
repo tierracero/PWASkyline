@@ -366,7 +366,7 @@ class POCStorageControlAddInventoryView: Div {
                     
                     if isConfirmed {
                         
-                        loadingView(show: true)
+                        loadingView.show()
 
                         API.custPOCV1.addManualInventory(
                             storeId: self.storeId,
@@ -388,7 +388,7 @@ class POCStorageControlAddInventoryView: Div {
                             alocatedTo: nil
                         ) { resp in
 
-                            loadingView(show: false)
+                            loadingView.hide()
                             
                             guard let resp else {
                                 showError(.comunicationError, .serverConextionError)
@@ -441,7 +441,7 @@ class POCStorageControlAddInventoryView: Div {
             
             if isConfirmed {
                 
-                loadingView(show: true)
+                loadingView.show()
 
                 API.custPOCV1.addManualInventory(
                     storeId: self.storeId,
@@ -464,7 +464,7 @@ class POCStorageControlAddInventoryView: Div {
                     alocatedTo: self.bodegaId
                 ) { resp in
 
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)

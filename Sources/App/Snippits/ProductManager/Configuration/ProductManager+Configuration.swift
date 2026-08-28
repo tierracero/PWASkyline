@@ -160,7 +160,7 @@ extension ProductManagerView {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPOCV1.getToDiscontinue(
                 limit: daysLimit
@@ -169,7 +169,7 @@ extension ProductManagerView {
                     return
                 }
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -403,14 +403,14 @@ extension ProductManagerView {
                 message: "¿Realmente desea eliminar el producto \(name.uppercased())?"
              ){ isConfirm, reason in
                   
-                 loadingView(show: true)
+                 loadingView.show()
                  
                  API.custPOCV1.deletePOC(
                      id: pocId,
                      pDir: pDir
                  ) { resp in
                  
-                     loadingView(show: false)
+                     loadingView.hide()
                      
                      guard let resp else {
                          showError(.comunicationError, .serverConextionError)
@@ -438,13 +438,13 @@ extension ProductManagerView {
             
             addToDom(ConfirmView(type: .yesNo, title: "Confirme Pausa", message: "¿Realmente desea pausar el producto \(name.uppercased())?"){ isConfirm, reason in
                  
-                loadingView(show: true)
+                loadingView.show()
                 
                 API.custPOCV1.pausePOC(
                     pocId: pocId
                 ) { resp in
                 
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)

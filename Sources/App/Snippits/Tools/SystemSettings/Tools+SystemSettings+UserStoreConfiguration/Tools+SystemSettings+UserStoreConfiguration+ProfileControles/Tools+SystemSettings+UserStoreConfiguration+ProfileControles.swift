@@ -230,11 +230,11 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 return
             }
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custAPIV1.getJobPosts { resp in
             
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     guard let resp else {
                         showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -269,13 +269,13 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 return
             }
 
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.getPsychometricsTests(
                 type: .customer(nil)
             ) { resp in
                     
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     guard let resp else {
                         showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -309,11 +309,11 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
 
             API.custAPIV1.getNominaProfiles { resp in
                     
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     guard let resp else {
                         showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -349,11 +349,11 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
 
             API.custAPIV1.getScheduleProfiles { resp in
                     
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     guard let resp else {
                         showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -389,11 +389,11 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.getDocumentationRules { resp in
 
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     guard let resp else {
                         showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

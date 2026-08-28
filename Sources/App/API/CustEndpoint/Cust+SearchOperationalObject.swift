@@ -49,7 +49,7 @@ extension CustComponents {
         
         let xhr = XMLHttpRequest()
         
-        let url = baseAPIUrl("https://intratc.co/api/cust/v1/searchActionItem") +
+        let url = baseAPIUrl("https://api.tierracero.co/cust/v1/searchActionItem") +
         "&currentIDs=\(_ids)" +
         "&term=\(_term)"
         
@@ -59,6 +59,7 @@ extension CustComponents {
             .setRequestHeader("Content-Type", "application/json")
             .setRequestHeader("AppName", applicationName)
             .setRequestHeader("AppVersion", SkylineWeb().version.description)
+            .setRequestHeader("WSId", custCatchChatConnID)
 
         xhr.send()
         
@@ -90,4 +91,3 @@ extension CustComponents {
             
     }
 }
-

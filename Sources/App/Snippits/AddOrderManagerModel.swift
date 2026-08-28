@@ -146,11 +146,11 @@ class AddOrderManagerModel: Div {
         
         if term.isEmpty { return }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custOrderV1.addOrderManagerModel(typeId: self.typeId, brandId: self.brandId, term: term) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)

@@ -577,7 +577,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             }
 
             isSubmitting = true
-            loadingView(show: true)
+            loadingView.show()
 
             API.custUsernameV1.chekeFreeCustUsername(username: fullUsername) { response in
                 guard let response else {
@@ -686,7 +686,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
         private func finishSubmitting() {
             isSubmitting = false
-            loadingView(show: false)
+            loadingView.hide()
         }
 
         override func didRemoveFromDOM() {

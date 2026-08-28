@@ -296,11 +296,11 @@ extension ToolsView.HistorySettings.TripProcessing {
             
             dateSelectListener = DateRangeSelection.thisWeek.rawValue
             
-            loadingView(show: true)
+            loadingView.show()
 
             API.custCommercialTrips.getReportComponensts { resp in
                     
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -509,7 +509,7 @@ extension ToolsView.HistorySettings.TripProcessing {
                 relationId = id
             }
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custCommercialTrips.getReport(
                 from: startAtUTS,
@@ -517,7 +517,7 @@ extension ToolsView.HistorySettings.TripProcessing {
                 type: reportType,
                 relationId: relationId
             ) { resp in
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)

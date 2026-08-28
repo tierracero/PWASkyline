@@ -84,6 +84,7 @@ class TripControlerAddElement<Item>: Div {
     let items: [Item]
     let titleForItem: (Item) -> String
     let subtitleForItem: (Item) -> String
+    let avatarForItem: ((Item) -> String?)?
     let callback: (Item) -> Void
     let create: () -> Void
 
@@ -94,13 +95,15 @@ class TripControlerAddElement<Item>: Div {
         titleForItem: @escaping (Item) -> String,
         subtitleForItem: @escaping (Item) -> String,
         callback: @escaping (Item) -> Void,
-        create: @escaping () -> Void
+        create: @escaping () -> Void,
+        avatarForItem: ((Item) -> String?)? = nil
     ) {
         self.icon = icon
         self.title = title
         self.items = items
         self.titleForItem = titleForItem
         self.subtitleForItem = subtitleForItem
+        self.avatarForItem = avatarForItem
         self.callback = callback
         self.create = create
         super.init()
@@ -211,23 +214,36 @@ class TripControlerAddElement<Item>: Div {
         items.forEach { item in
             itemsContainer.appendChild(
                 Div {
-                    Div(self.titleForItem(item))
-                        .class(
-                            .oneLineText,
-                            Class(TCCrystalSurfaceClass.tripPickerItemTitle)
-                        )
+                    if let avatarForItem = self.avatarForItem {
+                        tripAvatarImage(avatarForItem(item))
+                            .width(44.px)
+                            .height(44.px)
+                            .borderRadius(all: 8.px)
+                    }
 
-                    Div(self.subtitleForItem(item))
-                        .class(
-                            .oneLineText,
-                            Class(TCCrystalSurfaceClass.tripPickerItemSubtitle)
-                        )
+                    Div {
+                        Div(self.titleForItem(item))
+                            .class(
+                                .oneLineText,
+                                Class(TCCrystalSurfaceClass.tripPickerItemTitle)
+                            )
+
+                        Div(self.subtitleForItem(item))
+                            .class(
+                                .oneLineText,
+                                Class(TCCrystalSurfaceClass.tripPickerItemSubtitle)
+                            )
+                    }
+                    .custom("min-width", "0")
                 }
                 .class(
                     Class(TCTripBetaClass.box),
                     Class(TCTripBetaClass.boxInteractive),
                     Class(TCCrystalSurfaceClass.tripPickerItem)
                 )
+                .display(.flex)
+                .custom("align-items", "center")
+                .custom("gap", "10px")
                 .onClick {
                     self.callback(item)
                     self.remove()

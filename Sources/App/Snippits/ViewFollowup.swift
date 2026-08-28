@@ -457,7 +457,7 @@ class ViewFollowup: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custFollowup.update(
             followupId: followup.id,
@@ -468,7 +468,7 @@ class ViewFollowup: Div {
             interest: interest
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -618,14 +618,14 @@ class CloseFollowupView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custFollowup.close(
             followupId: followup.id,
             closeType: closeType
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

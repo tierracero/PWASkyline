@@ -11,7 +11,9 @@ import Web
 class LoaderView: Div {
 	
 	override class var name: String { "Div" }
-	
+
+	required init() {}
+
 	@DOM override var body: DOM.Content {
 		Table{
 			Tr{

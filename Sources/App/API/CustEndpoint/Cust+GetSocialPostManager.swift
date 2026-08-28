@@ -21,7 +21,7 @@ extension CustComponents {
         callback: @escaping ( (_ resp: APIResponseGeneric<GetSocialPostManagerResponse>?) -> () )
     ) {
         
-        loadingView(show: true)
+        loadingView.show()
         
         sendPost(
             rout,
@@ -37,7 +37,7 @@ extension CustComponents {
             )
         ) { payload in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let data = payload else{
                 callback( nil )

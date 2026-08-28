@@ -469,11 +469,11 @@ class FiscalDocumentRow: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
 
         API.fiscalV1.loadDocument(docid: self.doc.id) { resp in
 
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

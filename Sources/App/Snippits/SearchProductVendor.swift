@@ -114,14 +114,14 @@ public class SearchProductVendor: Div {
             
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPOCV1.searchPOCVendorRelation(
             poc: self.pocid,
             name: self.name
         ) { resp in
         
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)

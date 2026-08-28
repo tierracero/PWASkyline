@@ -90,6 +90,8 @@ public struct WS {
         
         case customerOrderStatusUpdate
 
+        case asyncMessageUpdate
+
     }
     
     public func recive(_ payload: String) -> (Events?, String?){

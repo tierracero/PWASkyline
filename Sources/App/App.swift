@@ -17,7 +17,7 @@ class App: WebApp {
 
             VisualPerformanceSettings.apply()
             
-            Navigator.shared.serviceWorker?.register("./service.js")
+            Navigator.shared.serviceWorker?.register("/service.js")
 
             if WebApp.shared.window.location.hostname == "localhost" || WebApp.shared.window.location.hostname == localTestIp {
                 developmentMode = .develpment

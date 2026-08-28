@@ -27,7 +27,7 @@ func getFiscalUnitPesos(
     
     let xhr = XMLHttpRequest()
     
-    let url = baseAPIUrl("https://intratc.co/api/v1/getFiscalUnitPesos") + "&term=\(_term)"
+    let url = baseAPIUrl("https://api.tierracero.co/v1/getFiscalUnitPesos") + "&term=\(_term)"
     
     xhr.open(method: "GET", url: url)
     
@@ -35,6 +35,7 @@ func getFiscalUnitPesos(
         .setRequestHeader("Content-Type", "application/json")
         .setRequestHeader("AppName", applicationName)
         .setRequestHeader("AppVersion", SkylineWeb().version.description)
+        .setRequestHeader("WSId", custCatchChatConnID)
 
     xhr.send("")
     
@@ -61,4 +62,3 @@ func getFiscalUnitPesos(
         }
     }
 }
-

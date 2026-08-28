@@ -296,11 +296,11 @@ extension ProductManagerView{
         
         func loadDepartment(_ depid: UUID,_ depname: String){
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.v1.storeCats(id: depid, curObjs: [], callback: { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -333,11 +333,11 @@ extension ProductManagerView{
         
         func loadCategorie(_ catid: UUID,_ catname: String) {
             
-            loadingView(show: true)
+            loadingView.show()
          
             API.v1.storeLines(id: catid, curObjs: []) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -375,7 +375,7 @@ extension ProductManagerView{
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPOCV1.productDepartmentTransfer(
                 originLevel: level,
@@ -391,7 +391,7 @@ extension ProductManagerView{
                 pocids: pocids
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)

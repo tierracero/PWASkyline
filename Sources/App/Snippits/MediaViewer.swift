@@ -253,7 +253,7 @@ class MediaViewer: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.rotateClockwise(
             relid: relid,
@@ -261,7 +261,7 @@ class MediaViewer: Div {
             type: type
         ) { resp in
                 
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -314,7 +314,7 @@ class MediaViewer: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.rotateCounterClockwise(
             relid: relid,
@@ -322,7 +322,7 @@ class MediaViewer: Div {
             type: type
         ) { resp in
                 
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -386,14 +386,14 @@ class MediaViewer: Div {
                 
                 if isConfirmed {
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custOrderV1.deleteFile(
                         orderId: orderId,
                         fileId: fileId
                     ) { resp in
                     
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp else {
                             showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

@@ -53,11 +53,11 @@ func getUserRefrence(id: HybridIdentifier, callback: @escaping ( (_ user: CustUs
         
     }
     
-    loadingView(show: true)
+    loadingView.show()
     
     API.custAPIV1.getUserRefrence(id: id) { resp in
     
-        loadingView(show: false)
+        loadingView.hide()
         
         guard let resp else {
             finishUserReferenceRequest(id: id, user: nil)

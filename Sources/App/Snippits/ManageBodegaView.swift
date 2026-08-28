@@ -442,7 +442,7 @@ class ManageBodegaView: Div {
         
         let description = self.bodegaDescription.purgeSpaces
         
-        loadingView(show: true)
+        loadingView.show()
         
         if let bodegaId {
            
@@ -451,7 +451,7 @@ class ManageBodegaView: Div {
                 name: name
             ) { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -485,7 +485,7 @@ class ManageBodegaView: Div {
                 relationType: relationType
             ) { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)

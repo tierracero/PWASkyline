@@ -56,11 +56,11 @@ class FiscalCurrentCancelationsView: Div {
         left(0.px)
         top(0.px)
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.fiscalV1.getCurrentCancelations { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -122,11 +122,11 @@ class FiscalCurrentCancelationsView: Div {
                         .float(.left)
                         .onClick {
                             
-                            loadingView(show: true)
+                            loadingView.show()
 
                             API.fiscalV1.loadDocument(docid: item.docid) { resp in
 
-                                loadingView(show: false)
+                                loadingView.hide()
 
                                 guard let resp else {
                                     showError(.comunicationError, .serverConextionError)

@@ -1471,14 +1471,14 @@ class ManageSOCView: Div {
                                                             return
                                                         }
                                                         
-                                                        loadingView(show: true)
+                                                        loadingView.show()
                                                         
                                                         API.custSOCV1.removeRelatedCode(
                                                             currentId: socId,
                                                             targetId: soc.id
                                                         ) { resp in
                                                             
-                                                            loadingView(show: false)
+                                                            loadingView.hide()
                                                             
                                                             guard let resp else {
                                                                 showError(.comunicationError, .serverConextionError)
@@ -2054,7 +2054,7 @@ class ManageSOCView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         var type: API.custSOCV1.AddRelatedCodeType = .asMaster
         
@@ -2072,7 +2072,7 @@ class ManageSOCView: Div {
             targetId: soc.id
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -2181,11 +2181,11 @@ class ManageSOCView: Div {
     
     func loadSOCData(socid: UUID) {
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custSOCV1.getSOC(socid: socid) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -2438,6 +2438,7 @@ class ManageSOCView: Div {
         xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
         
         xhr.setRequestHeader("Accept", "application/json")
+        xhr.setRequestHeader("WSId", custCatchChatConnID)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,
@@ -2658,7 +2659,7 @@ class ManageSOCView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         if let socid {
              
@@ -2696,7 +2697,7 @@ class ManageSOCView: Div {
                 efect: self.efect
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -2755,7 +2756,7 @@ class ManageSOCView: Div {
                 efect: self.efect
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -2794,7 +2795,7 @@ class ManageSOCView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.addNote(
             relType: .service,
@@ -2803,7 +2804,7 @@ class ManageSOCView: Div {
             activity: noteText
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -2889,7 +2890,7 @@ class ManageSOCView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         Console.clear()
 
@@ -2901,7 +2902,7 @@ class ManageSOCView: Div {
             
             print("x002")
 
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -2988,4 +2989,3 @@ extension ManageSOCView {
         case relatedCodes
     }
 }
-

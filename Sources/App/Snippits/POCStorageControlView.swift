@@ -316,7 +316,7 @@ class POCStorageControlView: Div {
                 
                 if isConfirmed {
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custPOCV1.mermProductsInventory(
                         storeId: self.storeId,
@@ -325,19 +325,19 @@ class POCStorageControlView: Div {
                     ) { resp in
                     
                         guard let resp else {
-                            loadingView(show: false)
+                            loadingView.hide()
                             showError(.comunicationError, .serverConextionError)
                             return
                         }
                         
                         guard resp.status == .ok else {
-                            loadingView(show: false)
+                            loadingView.hide()
                             showError(.comunicationError, resp.msg)
                             return
                         }
                         
                         guard let payload = resp.data else {
-                            loadingView(show: false)
+                            loadingView.hide()
                             showError(.unexpectedResult, "Obtuvo payload de data.")
                             return
                         }
@@ -348,7 +348,7 @@ class POCStorageControlView: Div {
                         
                         API.custPOCV1.getTransferInventory(identifier: .id(payload.id) ) { resp in
                             
-                            loadingView(show: false)
+                            loadingView.hide()
                             
                             guard let resp = resp else {
                                 showError(.comunicationError, .serverConextionError)

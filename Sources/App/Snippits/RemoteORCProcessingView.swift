@@ -311,7 +311,7 @@ class RemoteORCProcessingView: Div {
     
     func sendSignal(){
 
-        loadingView(show: true)
+        loadingView.show()
 
         API.custAPIV1.requestMobileCamara( 
             type: .useCamaraForOCR,
@@ -322,7 +322,7 @@ class RemoteORCProcessingView: Div {
             multipleTakes: false
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

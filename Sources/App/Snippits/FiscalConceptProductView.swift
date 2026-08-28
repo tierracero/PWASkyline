@@ -232,11 +232,11 @@ class FiscalConceptProductView: Div {
         top(0.px)
         left(0.px)
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPOCV1.getPOC(id: self.pocid, full: false) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

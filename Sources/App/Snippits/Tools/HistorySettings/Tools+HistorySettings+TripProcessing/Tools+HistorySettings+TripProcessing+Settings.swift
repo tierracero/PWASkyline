@@ -309,37 +309,46 @@ extension ToolsView.HistorySettings.TripProcessing {
         private func itemCard(
             title: String,
             subtitle: String,
+            avatar: String? = nil,
+            showAvatar: Bool = false,
             onClick: @escaping () -> Void
         ) -> Div {
             Div {
-                Div(title)
-                    .class(.oneLineText)
-                    .color(.white)
-                    .fontSize(15.px)
+                if showAvatar {
+                    tripAvatarImage(avatar)
+                        .width(44.px)
+                        .height(44.px)
+                        .borderRadius(all: 8.px)
+                        .custom("object-fit", "contain")
+                }
 
-                Div(subtitle)
-                    .class(.oneLineText)
-                    .color(.gray)
-                    .fontSize(12.px)
-                    .marginTop(3.px)
+                Div {
+                    Div(title)
+                        .class(.oneLineText)
+                        .color(.white)
+                        .fontSize(15.px)
+
+                    Div(subtitle)
+                        .class(.oneLineText)
+                        .color(.gray)
+                        .fontSize(12.px)
+                        .marginTop(3.px)
+                }
+                .custom("min-width", "0")
             }
             .class(
                 Class(TCTripBetaClass.box),
                 Class(TCTripBetaClass.boxStandard),
                 Class(TCTripBetaClass.boxInteractive)
             )
+            .display(.flex)
+            .custom("align-items", "center")
+            .custom("gap", "10px")
             .padding(top: 10.px, right: 11.px, bottom: 10.px, left: 11.px)
             .marginBottom(7.px)
             .onClick {
                 onClick()
             }
-        }
-
-        private func emptyState(_ title: String) -> Div {
-            Div(title)
-                .color(.gray)
-                .fontSize(13.px)
-                .padding(all: 10.px)
         }
 
         private func renderOperadors() {
@@ -354,7 +363,9 @@ extension ToolsView.HistorySettings.TripProcessing {
                 operadorItems.appendChild(
                     itemCard(
                         title: "\(item.operadorType.description): \(item.operadorName)",
-                        subtitle: "RFC \(item.operadorRfc) | Licencia \(item.operadorLicens) | Tel. \(item.operadorMobile)"
+                        subtitle: "RFC \(item.operadorRfc) | Licencia \(item.operadorLicens) | Tel. \(item.operadorMobile)",
+                        avatar: item.avatar,
+                        showAvatar: true
                     ) {
                         self.manageOperator(item)
                     }
@@ -414,7 +425,9 @@ extension ToolsView.HistorySettings.TripProcessing {
                 vehicalItems.appendChild(
                     itemCard(
                         title: "\(item.vehicalTypeName) \(item.vehicalType)",
-                        subtitle: "Placas \(item.vehicalLicensePlate) | Modelo \(item.vehicalYearModel) | Peso \(item.vehicalWeight)"
+                        subtitle: "Placas \(item.vehicalLicensePlate) | Año \(item.vehicalYear) | Modelo \(item.vehicalModel) | Marca \(item.vehicalMake) | Peso \(item.vehicalWeight)",
+                        avatar: item.avatar,
+                        showAvatar: true
                     ) {
                         self.manageVehical(item)
                     }
@@ -434,7 +447,9 @@ extension ToolsView.HistorySettings.TripProcessing {
                 trailerItems.appendChild(
                     itemCard(
                         title: item.name,
-                        subtitle: "\(item.type.description) | Serie \(item.series)"
+                        subtitle: "\(item.type.description) | Serie \(item.series)",
+                        avatar: item.avatar,
+                        showAvatar: true
                     ) {
                         self.manageTrailer(item)
                     }
@@ -526,10 +541,10 @@ extension ToolsView.HistorySettings.TripProcessing {
 
         private func manageOperator(_ item: CustCommercialTripOperador? = nil) {
             if let item {
-                loadingView(show: true)
+                loadingView.show()
 
                 API.custCommercialTrips.getOperador(operadorId: item.id) { resp in
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -563,10 +578,10 @@ extension ToolsView.HistorySettings.TripProcessing {
             item: CustCommercialTripInsurance? = nil
         ) {
             if let item {
-                loadingView(show: true)
+                loadingView.show()
 
                 API.custCommercialTrips.getInsurance(insuranceId: item.id) { resp in
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -597,10 +612,10 @@ extension ToolsView.HistorySettings.TripProcessing {
 
         private func managePermit(_ item: CustCommercialTripPermit? = nil) {
             if let item {
-                loadingView(show: true)
+                loadingView.show()
 
                 API.custCommercialTrips.getPermit(permitId: item.id) { resp in
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -631,10 +646,10 @@ extension ToolsView.HistorySettings.TripProcessing {
 
         private func manageVehical(_ item: CustCommercialTripVehical? = nil) {
             if let item {
-                loadingView(show: true)
+                loadingView.show()
 
                 API.custCommercialTrips.getVehical(vehicalId: item.id) { resp in
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -665,10 +680,10 @@ extension ToolsView.HistorySettings.TripProcessing {
 
         private func manageTrailer(_ item: CustCommercialTripTrailer? = nil) {
             if let item {
-                loadingView(show: true)
+                loadingView.show()
 
                 API.custCommercialTrips.getTrailer(trailerId: item.id) { resp in
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -699,10 +714,10 @@ extension ToolsView.HistorySettings.TripProcessing {
 
         private func manageMerchendise(_ item: FiscalMercanciaBase? = nil) {
             if let item {
-                loadingView(show: true)
+                loadingView.show()
 
                 API.custCommercialTrips.getMerchandise(merchandiseId: item.id) { resp in
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -749,10 +764,10 @@ extension ToolsView.HistorySettings.TripProcessing {
             }
 
             if let item {
-                loadingView(show: true)
+                loadingView.show()
 
                 API.custCommercialTrips.getLocation(locationId: item.id) { resp in
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)

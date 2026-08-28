@@ -372,7 +372,7 @@ extension ToolsView.SystemSettings {
             
             let tictokLink: String? = self.tictokLink.isEmpty ? nil : self.tictokLink
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.saveBasicProfile(
                 pageProfile: .init(
@@ -391,7 +391,7 @@ extension ToolsView.SystemSettings {
                 )
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

@@ -465,7 +465,7 @@ class ProductTransferReportView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPOCV1.getInventoryTransferReport(
             type: type,
@@ -475,19 +475,19 @@ class ProductTransferReportView: Div {
         ) { resp in
 
             guard let resp else {
-                loadingView(show: false)
+                loadingView.hide()
                 showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
                 return
             }
             
             guard resp.status == .ok else {
-                loadingView(show: false)
+                loadingView.hide()
                 showError(.generalError, resp.msg)
                 return
             }
             
             guard let payload = resp.data else {
-                loadingView(show: false)
+                loadingView.hide()
                 showError(.generalError, .unexpenctedMissingPayload)
                 return
             }
@@ -715,11 +715,11 @@ class ProductTransferReportView: Div {
                                 .class(.uibtn)
                                 .onClick {
 
-                                    loadingView(show: true)
+                                    loadingView.show()
                                     
                                     API.custPOCV1.getTransferInventory(identifier: .id(control.id)) { resp in
                                         
-                                        loadingView(show: false)
+                                        loadingView.hide()
                                         
                                         guard let resp = resp else {
                                             showError(.comunicationError, .serverConextionError)
@@ -848,14 +848,14 @@ class ProductTransferReportView: Div {
             
             self.resultDiv.appendChild(table)
             
-            loadingView(show: false)
+            loadingView.hide()
             
         }
     }
     
     func downloadReport(from: Int64, to: Int64, id: UUID, payload: CustPOCComponents.GetInventoryTransferReportResponse) {
         
-        loadingView(show: true)
+        loadingView.show()
         
         var totalCostSub: Int64 = 0
         
@@ -1076,7 +1076,7 @@ class ProductTransferReportView: Div {
         
         _ = JSObject.global.download!( "\(reportName)_\(name)_\(getDate(from).formatedLong)-\(getDate(to).formatedLong).csv".replace(from: " ", to: "-"), csv)
         
-        loadingView(show: false)
+        loadingView.hide()
         
     }
     

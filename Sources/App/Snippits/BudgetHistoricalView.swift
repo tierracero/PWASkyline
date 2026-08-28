@@ -88,11 +88,11 @@ class BudgetHistoricalView: Div {
         left(0.px)
         top(0.px)
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.getBudgets(id: accountid) { budgets in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             budgets.forEach { item in
                 

@@ -282,7 +282,7 @@ extension CustConcessionView {
 
                 if isConfirmed {
 
-                    loadingView(show: true)
+                    loadingView.show()
 
                     API.custPOCV1.moveConcessionInventory(
                         accountId: self.accountId,
@@ -290,7 +290,7 @@ extension CustConcessionView {
                         bodegaId: self.selectId
                     ) { resp in
 
-                        loadingView(show: false)
+                        loadingView.hide()
 
 
                         guard let resp else {

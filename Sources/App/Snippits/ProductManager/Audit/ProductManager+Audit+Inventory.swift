@@ -408,11 +408,11 @@ extension ProductManagerView.AuditView {
                 
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.v1.storeDeps(curObjs: []) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -647,7 +647,7 @@ extension ProductManagerView.AuditView {
             let renderId = UUID()
             inventoryRenderId = renderId
 
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPOCV1.audits(
                 type: type,
@@ -663,7 +663,7 @@ extension ProductManagerView.AuditView {
                     return
                 }
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -1826,7 +1826,7 @@ extension ProductManagerView.AuditView {
         
         func download(_ documentType: DocumentType, name: String, item: [API.custPOCV1.AuditObject], type: InventoryAuditTypes, title: String) {
             
-            loadingView(show: true)
+            loadingView.show()
             
             print("🟢  type: \(type.rawValue)") 
 
@@ -1853,7 +1853,7 @@ extension ProductManagerView.AuditView {
                 downloadByConcession(type: documentType, name: name, item: item, title: title)
             }
             
-            loadingView(show: false)
+            loadingView.hide()
             
         }
         
@@ -4459,11 +4459,11 @@ extension ProductManagerView.AuditView {
         
         func openConcession(controlId: UUID) {
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPOCV1.getTransferInventory(identifier: .id(controlId)) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)

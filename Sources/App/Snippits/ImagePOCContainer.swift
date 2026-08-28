@@ -163,7 +163,7 @@ class ImagePOCContainer: Div {
                                 return
                             }
                             
-                            loadingView(show: true)
+                            loadingView.show()
                             
                             API.custPOCV1.removeMedia(
                                 poc: pocid,
@@ -173,7 +173,7 @@ class ImagePOCContainer: Div {
                                 viewid: self.viewid
                             ) { resp in
                                 
-                                loadingView(show: false)
+                                loadingView.hide()
                                 
                                 guard let resp else {
                                     showError(.comunicationError, .serverConextionError)

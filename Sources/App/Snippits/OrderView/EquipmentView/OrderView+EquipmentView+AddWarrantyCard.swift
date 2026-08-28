@@ -14,6 +14,9 @@ extension OrderView.EquipmentView {
     class AddWarrantyCard: Div {
         
         override class var name: String { "div" }
+
+
+        var viewId: UUID { .init() }
         
         public var orderId: UUID
 
@@ -84,7 +87,30 @@ extension OrderView.EquipmentView {
                                             
                     Div().height(12.px)
 
-                    self.cardCodeField
+                    Div {
+                        Div {
+                            self.cardCodeField
+                        }
+                        .custom("width", "calc(100% - 42px)")
+                        .float(.left)
+
+                        Div().width(7.px).float(.left)
+
+                        Div {
+                            
+                            Img()
+                                .src("/skyline/media/mobileScannerWhite.png")
+                                .cursor(.pointer)
+                                .width(35.px)
+                                .onClick {
+                                    self.requestMobileScanner()
+                                }
+                                
+                        }
+                        .width(35.px)
+                        .float(.left)
+
+                    }
 
                     Div().height(12.px)
 
@@ -128,6 +154,55 @@ extension OrderView.EquipmentView {
             left(0.px)
             top(0.px)
             
+            WebApp.current.wsevent.listen {
+                guard self.isInDOM else { return }
+
+                if $0.isEmpty { return }
+                
+                let (event, _) = WS().recive($0)
+                
+                guard let event = event else {
+                    return
+                }
+                print("⚡️ EVENT \(event)")
+                switch event {
+                case .requestMobileScannerComplete:
+                    
+                    if let payload = WS().requestMobileScannerComplete($0) {
+                        
+                        guard self.viewId == payload.eventid else {
+                            return
+                        }
+
+                        print("🟢 FOUND VIEW 🟢 FOUND VIEW 🟢 FOUND VIEW 🟢 FOUND VIEW ")
+                        
+                        // searchFolio
+                        let text = payload.text
+
+                        print(text)
+
+                        if text.contains("/c/") {
+                            
+                            let parts = text.explode("/c/")
+                            
+                            var code = parts.last ?? ""
+                            
+                            if !code.hasPrefix("qr-") {
+                                code = "qr-\(code)"
+                            }
+
+                            self.cardCode = code
+
+                        }
+                        else {
+                            self.cardCode = text
+                        }
+                        
+                    }
+                default:
+                break
+                }
+            }
         }
         
         override func didAddToDOM() {
@@ -211,7 +286,7 @@ extension OrderView.EquipmentView {
                 return
             }
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custOrderV1.activateWarrantyCard(
                 cardId: card.id,
@@ -219,7 +294,7 @@ extension OrderView.EquipmentView {
                 equipmentId: equipmentId
             ) { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
             
                 guard let resp else {
                     self.cardCodeField.class(.isNok)
@@ -242,6 +317,33 @@ extension OrderView.EquipmentView {
                 
             }
         }
+
+        func requestMobileScanner() {
+            API.custAPIV1.requestMobileCamara(
+                type: .scanner,
+                connid: custCatchChatConnID,
+                eventid: viewId,
+                relatedid: nil,
+                relatedfolio: "",
+                multipleTakes: false
+            ) { resp in
+
+                loadingView.hide()
+
+                guard let resp else {
+                    showError(.comunicationError, .serverConextionError)
+                    return
+                }
+
+                guard resp.status == .ok else {
+                    showError(.generalError, resp.msg)
+                    return
+                }
+
+                showSuccess(.operacionExitosa, "Entre en la notificacion en su movil.")
+            }
+    }
+
 
     }
 }

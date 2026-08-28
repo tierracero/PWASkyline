@@ -131,11 +131,11 @@ extension ToolsView.HistorySettings {
                 return
             }
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custCommercialTrips.components { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)

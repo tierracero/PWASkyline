@@ -46,7 +46,7 @@ Static audit performed on **2026-07-16** against the current working tree.
   - Done when: every failure returns immediately and the completion is guaranteed to execute exactly once.
 
 - [ ] **Guarantee the loading overlay is dismissed on every configuration path.** **Confirmed.**
-  - Evidence: `loadBasicConfiguration.swift:155-193` enables the loader and has multiple early returns without disabling it; `loadBasicConfiguration.swift:250-253` returns for inactive accounts before the normal `loadingView(show: false)` at line 257.
+  - Evidence: `loadBasicConfiguration.swift:155-193` enables the loader and has multiple early returns without disabling it; `loadBasicConfiguration.swift:250-253` returns for inactive accounts before the normal `loadingView.hide()` at line 257.
   - Impact: communication errors or non-active account states can leave the UI permanently blocked.
   - Done when: loader ownership uses one cleanup/defer-style path and tests cover nil responses, non-OK responses, missing payloads, inactive accounts, and decode failures.
 

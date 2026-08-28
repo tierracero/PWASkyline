@@ -70,13 +70,13 @@ extension CustConcessionView {
             .float(.right)
             .onClick {
 
-                loadingView(show: true)
+                loadingView.show()
 
                 API.custAPIV1.getBodegaDetails(
                     bodegaId: self.bodega.id
                 ) { resp in
 
-                    loadingView(show: false)
+                    loadingView.hide()
         
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)

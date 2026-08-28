@@ -260,7 +260,7 @@ class MessageGrid: Div, SpeechRecognitionTarget {
                         multipleTakes: false
                     ) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -551,7 +551,7 @@ class MessageGrid: Div, SpeechRecognitionTarget {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custOrderV1.addNote (
             order: self.orderid,
@@ -560,7 +560,7 @@ class MessageGrid: Div, SpeechRecognitionTarget {
             lastCommunicationMethod: lastCommunicationMethod.wrappedValue
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -907,6 +907,7 @@ class MessageGrid: Div, SpeechRecognitionTarget {
         xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
         
         xhr.setRequestHeader("Accept", "application/json")
+        xhr.setRequestHeader("WSId", custCatchChatConnID)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,

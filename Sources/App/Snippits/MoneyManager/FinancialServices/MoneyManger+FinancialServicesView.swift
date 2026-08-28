@@ -139,11 +139,11 @@ extension MoneyManagerView {
             left(0.px)
             top(0.px)
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.getFianancialServices { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -180,11 +180,11 @@ extension MoneyManagerView {
         
         func openFinancialRecord(financial: CustUserFinacialServicesQuick){
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.getFianancialService(id: .id(financial.id)) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)

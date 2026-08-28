@@ -68,13 +68,13 @@ class CustTaskAuthRequestWaitView: Div {
                         
                         if let taskid = self.taskid {
                             
-                            loadingView(show: true)
+                            loadingView.show()
                             
                             API.custAPIV1.changePriceCancel(
                                 taskid: taskid
                             ) { resp in
                                 
-                                loadingView(show: false)
+                                loadingView.hide()
                                 
                                 self.remove()
                                 
@@ -136,7 +136,7 @@ class CustTaskAuthRequestWaitView: Div {
         top(0.px)
         left(0.px)
         
-        loadingView(show: true)
+        loadingView.show()
         
         WebApp.current.wsevent.listen {
             
@@ -207,7 +207,7 @@ class CustTaskAuthRequestWaitView: Div {
             reason: self.reason
         ) { resp in
         
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

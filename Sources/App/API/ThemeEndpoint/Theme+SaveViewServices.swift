@@ -15,8 +15,11 @@ extension ThemeComponents {
     public static func saveViewServices(
         id: UUID,
         name: String,
+        title_en: String,
         smallDescription: String,
+        descr_sm_en: String,
         description: String,
+        descr_en: String,
         cost: String,
         configLanguage: LanguageCode,
         inPromo: Bool,
@@ -30,8 +33,11 @@ extension ThemeComponents {
             SaveViewServicesRequest(
                 id: id,
                 name: name,
+                title_en: title_en,
                 smallDescription: smallDescription,
+                descr_sm_en: descr_sm_en,
                 description: description,
+                descr_en: descr_en,
                 cost: cost,
                 configLanguage: configLanguage,
                 inPromo: inPromo

@@ -122,11 +122,11 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
 
         func loadJob(_ jobPost: CustJobPostQuick) {
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custAPIV1.getJobPost(jobId: jobPost.id) { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError )

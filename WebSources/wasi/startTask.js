@@ -2,51 +2,106 @@ import { SwiftRuntime } from 'javascript-kit-swift'
 
 const swift = new SwiftRuntime()
 
-export const startWasiTask = async (wasi, target, isService) => {
-    const fetchPromise = fetch(`/${target}.wasm`)
+const positiveByteLength = value => {
+    const byteLength = Number.parseInt(value, 10)
+    return Number.isSafeInteger(byteLength) && byteLength > 0 ? byteLength : 0
+}
 
-    // Fetch our Wasm File
-    const response = await fetchPromise
+const findWasmMeta = name => {
+    if (typeof document === 'undefined') return undefined
+    return Array.from(document.head?.querySelectorAll('meta[name]') ?? [])
+        .find(meta => meta.getAttribute('name') === name)
+}
 
-    const reader = response.body.getReader()
+const setWasmMeta = (name, byteLength) => {
+    const bytes = positiveByteLength(byteLength)
+    if (bytes === 0 || typeof document === 'undefined' || !document.head) return
 
-    // Step 2: get total length
-    const headResponse = await fetch(`/${target}.wasm`, {
-        method: 'HEAD',
-        headers: { 'Accept-Encoding': 'identity' }
-    })
-    const contentLength = headResponse.headers.get('Content-Length')
+    const meta = findWasmMeta(name) ?? document.createElement('meta')
+    meta.setAttribute('name', name)
+    meta.setAttribute('content', String(bytes))
+    meta.setAttribute('data-bytes', String(bytes))
+    if (!meta.parentNode) document.head.appendChild(meta)
+}
+
+const getConfiguredWasmByteLength = (target, metadata) => {
+    const configuredBytes = positiveByteLength(metadata?.decodedBytes)
+    if (configuredBytes > 0) setWasmMeta(`${target}.wasm`, configuredBytes)
+
+    return positiveByteLength(
+        findWasmMeta(`${target}.wasm`)?.getAttribute('content')
+    )
+}
+
+const recordResponseMetadata = (target, response) => {
+    const transferredBytes = positiveByteLength(response.headers.get('Content-Length'))
+    const encoding = (response.headers.get('Content-Encoding') ?? 'identity').toLowerCase()
+
+    if (encoding.includes('br')) {
+        setWasmMeta(`${target}.wasm.br`, transferredBytes)
+    } else if (encoding.includes('gzip')) {
+        setWasmMeta(`${target}.wasm.gz`, transferredBytes)
+    } else {
+        setWasmMeta(`${target}.wasm`, transferredBytes)
+    }
+}
+
+export const startWasiTask = async (wasi, target, isService, metadata = {}) => {
+    // Fetch the WASM once. A second HEAD request can be queued behind this
+    // download and delay the loading UI for the full transfer duration.
+    const response = await fetch(`/${target}.wasm`)
+
+    if (!response.ok) {
+        if (!isService) document.dispatchEvent(new Event('WASMLoadingError'))
+        throw new Error(`Unable to load /${target}.wasm: HTTP ${response.status}`)
+    }
+
+    const reader = response.body?.getReader()
+    if (!reader) {
+        if (!isService) document.dispatchEvent(new Event('WASMLoadingError'))
+        throw new Error(`Unable to stream /${target}.wasm`)
+    }
+
+    recordResponseMetadata(target, response)
+
+    let decodedByteLength = getConfiguredWasmByteLength(target, metadata)
+    const contentEncoding = (response.headers.get('Content-Encoding') ?? '').toLowerCase()
+    if (decodedByteLength === 0 && (!contentEncoding || contentEncoding === 'identity')) {
+        decodedByteLength = positiveByteLength(response.headers.get('Content-Length'))
+    }
 
     if (!isService) {
-        if (response.status == 304) {
-            new Event('WASMLoadedFromCache')
-        } else if (response.status == 200) {
-            if (contentLength > 0) {
-                document.dispatchEvent(new Event('WASMLoadingStarted'))
-                document.dispatchEvent(new CustomEvent('WASMLoadingProgress', { detail: 0 }))
-            } else {
-                document.dispatchEvent(new Event('WASMLoadingStartedWithoutProgress'))
-            }
+        if (decodedByteLength > 0) {
+            document.dispatchEvent(new Event('WASMLoadingStarted'))
+            document.dispatchEvent(new CustomEvent('WASMLoadingProgress', { detail: 0 }))
         } else {
-            document.dispatchEvent(new Event('WASMLoadingError'))
+            document.dispatchEvent(new Event('WASMLoadingStartedWithoutProgress'))
         }
     }
-    // Step 3: read the data
+
+    // Read the decoded response body. Browsers transparently decompress Brotli
+    // and Gzip here, so progress must use the decoded .wasm byte length.
     let receivedLength = 0
     let chunks = []
+    let lastProgress = 0
     while(true) {
         const {done, value} = await reader.read()
         if (done) break
         chunks.push(value)
         receivedLength += value.length
-        if (!isService) {
-            if (contentLength > 0) {
-                document.dispatchEvent(new CustomEvent('WASMLoadingProgress', { detail: Math.trunc(receivedLength / (contentLength / 100)) }))
+        if (!isService && decodedByteLength > 0) {
+            const progress = Math.min(99, Math.floor(receivedLength / decodedByteLength * 100))
+            if (progress > lastProgress) {
+                lastProgress = progress
+                document.dispatchEvent(new CustomEvent('WASMLoadingProgress', { detail: progress }))
             }
         }
     }
+    if (!isService && decodedByteLength > 0) {
+        document.dispatchEvent(new CustomEvent('WASMLoadingProgress', { detail: 100 }))
+    }
 
-    // Step 4: concatenate chunks into single Uint8Array
+    // Concatenate chunks into a single Uint8Array.
     let chunksAll = new Uint8Array(receivedLength)
     let position = 0
     for (let chunk of chunks) {

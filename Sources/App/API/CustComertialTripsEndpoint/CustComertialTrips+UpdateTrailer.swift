@@ -10,6 +10,7 @@ extension CustCommercialTripsComponents {
         trailerType: String,
         trailerTypeName: String,
         trailerLicensePlate: String,
+        avatar: String? = nil,
         callback: @escaping ((_ resp: APIResponse?) -> ())
     ) {
         sendPost(
@@ -20,7 +21,8 @@ extension CustCommercialTripsComponents {
                 trailerId: trailerId,
                 trailerType: trailerType,
                 trailerTypeName: trailerTypeName,
-                trailerLicensePlate: trailerLicensePlate
+                trailerLicensePlate: trailerLicensePlate,
+                avatar: avatar
             )
         ) { data in
             

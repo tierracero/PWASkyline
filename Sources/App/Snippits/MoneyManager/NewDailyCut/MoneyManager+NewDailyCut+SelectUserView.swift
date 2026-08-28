@@ -99,11 +99,11 @@ extension MoneyManagerView.NewDailyCutView {
             left(0.px)
             top(0.px)
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.dailyCutSelectUser { resp in
             
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.generalError, .serverConextionError)

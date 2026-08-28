@@ -495,7 +495,7 @@ class StartRentalOrder: Div {
             
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custOrderV1.create(
             type: .rental,
@@ -534,7 +534,7 @@ class StartRentalOrder: Div {
             files: []
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
         
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)

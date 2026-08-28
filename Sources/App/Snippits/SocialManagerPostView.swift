@@ -271,7 +271,7 @@ class SocialManagerPostView: Div {
                         return
                     }
 
-                    loadingView(show: true)
+                    loadingView.show()
 
                     API.custAPIV1.getSocialPostManager(
                         managerid: manager.id,
@@ -282,7 +282,7 @@ class SocialManagerPostView: Div {
                         mediaid: manager.mediaid
                     ) { resp in
 
-                        loadingView(show: false)
+                        loadingView.hide()
 
                         guard let resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -388,11 +388,11 @@ class SocialManagerPostView: Div {
         
         comments = post.comments.toString
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.getSocialPost(mainid: self.post.id) { resp in
         
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

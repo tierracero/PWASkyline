@@ -387,6 +387,7 @@ class StartServiceOrderBulk: Div {
         xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
         
         xhr.setRequestHeader("Accept", "application/json")
+        xhr.setRequestHeader("WSId", custCatchChatConnID)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,
@@ -464,7 +465,7 @@ class StartServiceOrderBulk: Div {
                 extarct.append(payload)
             }
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custOrderV1.createBatch(
                 type: .folio,
@@ -474,7 +475,7 @@ class StartServiceOrderBulk: Div {
                 items: extarct
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     self.status = "No se pudieron crear las ordenes"

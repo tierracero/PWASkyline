@@ -470,7 +470,7 @@ extension MoneyManagerView.FinancialServicesView {
                     return
                 }
                 
-                loadingView(show: true)
+                loadingView.show()
                 
                 API.custAPIV1.createFinancialService(
                     type: .money,
@@ -485,7 +485,7 @@ extension MoneyManagerView.FinancialServicesView {
                     reciptImage: nil
                 ) { resp in
                 
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -519,7 +519,7 @@ extension MoneyManagerView.FinancialServicesView {
             /// if its the difrente user then it's a  MONEY TRANSFER
             else {
          
-                loadingView(show: true)
+                loadingView.show()
                 
                 API.custAPIV1.createFinancialService(
                     type: .money,
@@ -534,7 +534,7 @@ extension MoneyManagerView.FinancialServicesView {
                     reciptImage: nil
                 ) { resp in
                     
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)

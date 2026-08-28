@@ -108,12 +108,12 @@ extension OrderRouteView {
             
             if !mapInitiated {
                 
-                loadingView(show: true)
+                loadingView.show()
                 
                 API.v1.jwt { token in
                     
                     guard let token else {
-                        loadingView(show: false)
+                        loadingView.hide()
                         showError(.comunicationError, "No se pudo cargar token")
                         return
                     }
@@ -122,7 +122,7 @@ extension OrderRouteView {
                         
                     let _ = JSObject.global.initiatAppleMaps!("userMap", token, JSOneshotClosure { _ in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         self.mapInitiated = true
                         

@@ -137,7 +137,7 @@ class OrdersSuperView: Div {
         
         print("⭐️  storeid.uuidString \(storeid.uuidString)")
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custOrderV1.loadFolios(
             storeid: storeid,
@@ -146,7 +146,7 @@ class OrdersSuperView: Div {
             curTrans: []
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "No se pudo comunicar con el servidor")
@@ -250,96 +250,96 @@ class OrdersSuperView: Div {
         
         OrderRowView(data: data) {
 
-                    /// Search If their is a acctid refrence
-                    if let accountid = minViewOrderAccountRefrence[data.id] {
-                        
-                        /// Search if AccoutOverview is available
-                        if let accoutOverview = minViewAcctRefrence[accountid] {
-                            
-                            if accoutOverview.order?.id == data.id {
-                                
-                                /// The current order is lodad only show
-                                /// remove small button
-                                minViewDivRefrence[accountid]?.remove()
-                                ///  remove small button refrence
-                                minViewDivRefrence.removeValue(forKey: accountid)
-                                /// Show AccoutOverview
-                                accoutOverview.display(.block)
-                                
-                                accoutOverview.load = .order
-                                
-                                return
-                            }
-                            else{
-                                
-                                /// Load Order
-                                /// remove small button
-                                minViewDivRefrence[accountid]?.remove()
-                                
-                                ///  remove small button refrence
-                                minViewDivRefrence.removeValue(forKey: accountid)
-                                
-                                /// Show AccoutOverview
-                                accoutOverview.display(.block)
-                                
-                                accoutOverview.loadOrder(id: data.id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
-                                    
-                                    accoutOverview.loadOrder(
-                                        account: account,
-                                        order: order,
-                                        notes: notes,
-                                        payments: payments,
-                                        charges: charges,
-                                        pocs: pocs,
-                                        files: files,
-                                        contracts: contracts,
-                                        equipments: equipments,
-                                        rentals: rentals,
-                                        transferOrder: transferOrder,
-                                        orderHighPriorityNote: orderHighPriorityNote,
-                                        accountHighPriorityNote: accountHighPriorityNote,
-                                        tasks: tasks,
-                                        orderRoute: route,
-                                        loadFromCatch: loadFromCatch
-                                    )
-                                    
-                                    accoutOverview.load = .order
-                                    
-                                }
-                                return
-                            }
-                        }
-                    }
+            /// Search If their is a acctid refrence
+            if let accountid = minViewOrderAccountRefrence[data.id] {
+                
+                /// Search if AccoutOverview is available
+                if let accoutOverview = minViewAcctRefrence[accountid] {
                     
-                    self.loadFolio(orderid: data.id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
-                        let accoutOverview = AccoutOverview (
-                            id: .id(order.custAcct)
-                        )
+                    if accoutOverview.order?.id == data.id {
                         
-                        accoutOverview.loadOrder(
-                            account: account,
-                            order: order,
-                            notes: notes,
-                            payments: payments,
-                            charges: charges,
-                            pocs: pocs,
-                            files: files,
-                            contracts: contracts,
-                            equipments: equipments,
-                            rentals: rentals,
-                            transferOrder: transferOrder,
-                            orderHighPriorityNote: orderHighPriorityNote,
-                            accountHighPriorityNote: accountHighPriorityNote,
-                            tasks: tasks,
-                            orderRoute: route,
-                            loadFromCatch: loadFromCatch
-                        )
+                        /// The current order is lodad only show
+                        /// remove small button
+                        minViewDivRefrence[accountid]?.remove()
+                        ///  remove small button refrence
+                        minViewDivRefrence.removeValue(forKey: accountid)
+                        /// Show AccoutOverview
+                        accoutOverview.display(.block)
                         
-                        minViewAcctRefrence[order.custAcct] = accoutOverview
+                        accoutOverview.load = .order
                         
-                        addToDom(accoutOverview)
+                        return
                     }
-   
+                    else{
+                        
+                        /// Load Order
+                        /// remove small button
+                        minViewDivRefrence[accountid]?.remove()
+                        
+                        ///  remove small button refrence
+                        minViewDivRefrence.removeValue(forKey: accountid)
+                        
+                        /// Show AccoutOverview
+                        accoutOverview.display(.block)
+                        
+                        accoutOverview.loadOrder(id: data.id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                            
+                            accoutOverview.loadOrder(
+                                account: account,
+                                order: order,
+                                notes: notes,
+                                payments: payments,
+                                charges: charges,
+                                pocs: pocs,
+                                files: files,
+                                contracts: contracts,
+                                equipments: equipments,
+                                rentals: rentals,
+                                transferOrder: transferOrder,
+                                orderHighPriorityNote: orderHighPriorityNote,
+                                accountHighPriorityNote: accountHighPriorityNote,
+                                tasks: tasks,
+                                orderRoute: route,
+                                loadFromCatch: loadFromCatch
+                            )
+                            
+                            accoutOverview.load = .order
+                            
+                        }
+                        return
+                    }
+                }
+            }
+            
+            self.loadFolio(orderid: data.id) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
+                let accoutOverview = AccoutOverview (
+                    id: .id(order.custAcct)
+                )
+                
+                accoutOverview.loadOrder(
+                    account: account,
+                    order: order,
+                    notes: notes,
+                    payments: payments,
+                    charges: charges,
+                    pocs: pocs,
+                    files: files,
+                    contracts: contracts,
+                    equipments: equipments,
+                    rentals: rentals,
+                    transferOrder: transferOrder,
+                    orderHighPriorityNote: orderHighPriorityNote,
+                    accountHighPriorityNote: accountHighPriorityNote,
+                    tasks: tasks,
+                    orderRoute: route,
+                    loadFromCatch: loadFromCatch
+                )
+                
+                minViewAcctRefrence[order.custAcct] = accoutOverview
+                
+                addToDom(accoutOverview)
+            }
+
         }
     }
     
@@ -468,11 +468,11 @@ class OrdersSuperView: Div {
         }
         else{
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custOrderV1.loadOrder(identifier: .id(orderid), modifiedAt: nil) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)

@@ -159,7 +159,7 @@ class AddNoteView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.addNote(
             relType: relationType,
@@ -168,7 +168,7 @@ class AddNoteView: Div {
             activity: message
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let  resp = resp else {
                 showError(.comunicationError, .serverConextionError)

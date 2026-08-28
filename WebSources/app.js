@@ -21,7 +21,7 @@ const wasi = new WASI({
 overrideFS(wasmFs, devSocket)
 
 try {
-    startWasiTask(wasi, env.target, false).catch(wasiErrorHandler)
+    startWasiTask(wasi, env.target, false, env.wasm).catch(wasiErrorHandler)
 } catch (e) {
     wasiErrorHandler(e)
 }

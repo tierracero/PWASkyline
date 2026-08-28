@@ -290,13 +290,13 @@ class ToolProductAuditTrRow: Tr {
         ) { resp in
             
             guard let resp = resp else {
-                loadingView(show: false)
+                loadingView.hide()
                 showError(.comunicationError, .serverConextionError)
                 return
             }
             
             guard resp.status == .ok else {
-                loadingView(show: false)
+                loadingView.hide()
                 showError(.generalError, resp.msg)
                 return
             }

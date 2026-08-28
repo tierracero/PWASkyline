@@ -15,7 +15,7 @@ extension CustComponents {
         callback: @escaping ( (_ resp: [API.custAPIV1.GetPageList]) -> () )
     ) {
         
-        loadingView(show: true)
+        loadingView.show()
         
         print("🐼  getFacebookPages  🐼  ")
         
@@ -26,7 +26,7 @@ extension CustComponents {
             EmptyPayload()
         ) { payload in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let data = payload else {
                 callback([])

@@ -187,12 +187,12 @@ class ConcessionConfirmationView: Div {
     func printTicket(){
         
         // https://tierracero.com/dev/skyline/api.php?token=1706837090MTcOcCKAVoWSLm3Bk4GbHDbcwfXZx6gr5w3Yu6NBCcZcdfCY&user=vcantu01@tierracero.com&key=XBuHxkAYZHBUwnzysyXhu4pj8jY8cCVX3bwXqXv0dgg%3d&mid=%2boPlYEoYnKf8tbQ13pA8zQ%3d%3d&ie=downLoadInventoryControlOrders&docid=2CD304AE-2531-4D33-A39D-2A6EE22A561B&storeid=DCD5BD1B-789A-489D-B069-A3D781F520B6&detailed=true
-        loadingView(show: true)
+        loadingView.show()
         
         downLoadInventoryControlOrders(id: purchaseManager, detailed: true)
         
         Dispatch.asyncAfter(3.0) {
-            loadingView(show: false)
+            loadingView.hide()
         }
         
     }

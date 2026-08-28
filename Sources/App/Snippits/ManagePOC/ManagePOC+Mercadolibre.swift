@@ -213,7 +213,7 @@ extension ManagePOC {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPOCV1.categorizer(
                 store: .mercadoLibre,
@@ -224,7 +224,7 @@ extension ManagePOC {
                 name: self.name.wrappedValue
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)

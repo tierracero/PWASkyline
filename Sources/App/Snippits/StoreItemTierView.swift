@@ -94,11 +94,11 @@ class StoreItemTierView: Div {
                     switch self.type {
                     case .dep:
                         
-                        loadingView(show: true)
+                        loadingView.show()
                         
                         API.custAPIV1.getStoreDepartement(id: self.dep) { resp in
                             
-                            loadingView(show: false)
+                            loadingView.hide()
                             
                             guard let resp else{
                                 showError(.comunicationError, .serverConextionError)
@@ -138,11 +138,11 @@ class StoreItemTierView: Div {
                             return
                         }
                         
-                        loadingView(show: true)
+                        loadingView.show()
                         
                         API.custAPIV1.getStoreCategory(id: cat) { resp in
                             
-                            loadingView(show: false)
+                            loadingView.hide()
                             
                             guard let resp else{
                                 showError(.comunicationError, .serverConextionError)
@@ -188,11 +188,11 @@ class StoreItemTierView: Div {
                             return
                         }
                         
-                        loadingView(show: true)
+                        loadingView.show()
                         
                         API.custAPIV1.getStoreLine(id: lineid) { resp in
                             
-                            loadingView(show: false)
+                            loadingView.hide()
                             
                             guard let resp else{
                                 showError(.comunicationError, .serverConextionError)

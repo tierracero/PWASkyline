@@ -775,11 +775,11 @@ extension ToolsView {
             left(0.px)
             top(0.px)
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.themeV1.getWebButtons { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -955,7 +955,7 @@ extension ToolsView {
                         
                         API.themeV1.updateActiveButtons(buttons: newItems) { resp in
                             
-                            loadingView(show: false)
+                            loadingView.hide()
                             
                             guard let resp else {
                                 showError(.comunicationError, "No se pudo comunicar con el servir para completar operación")
@@ -1147,14 +1147,14 @@ extension ToolsView {
 
         func loadIndexView() {
             
-            loadingView(show: true)
+            loadingView.show()
            
             API.themeV1.getWebIndex(
                 theme: self.account.pwa.rawValue,
                 configLanguage: .Spanish
             ) { resp in
             
-               loadingView(show: false)
+               loadingView.hide()
                
                guard let resp else {
                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -1201,14 +1201,14 @@ extension ToolsView {
         
         func loadContactView() {
             
-            loadingView(show: true)
+            loadingView.show()
            
             API.themeV1.getWebContact(
                 theme: self.account.pwa.rawValue,
                 configLanguage: .Spanish
             ) { resp in
             
-               loadingView(show: false)
+               loadingView.hide()
                
                guard let resp else {
                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -1240,14 +1240,14 @@ extension ToolsView {
         
         func loadMeetusView() {
             
-            loadingView(show: true)
+            loadingView.show()
            
             API.themeV1.getWebMeetUs(
                 theme: self.account.pwa.rawValue,
                 configLanguage: .Spanish
             ) { resp in
             
-               loadingView(show: false)
+               loadingView.hide()
                
                guard let resp else {
                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -1282,14 +1282,14 @@ extension ToolsView {
         
         func loadServiceView() {
             
-            loadingView(show: true)
+            loadingView.show()
            
             API.themeV1.getWebService(
                 theme: self.account.pwa.rawValue,
                 configLanguage: .Spanish
             ) { resp in
             
-               loadingView(show: false)
+               loadingView.hide()
                
                guard let resp else {
                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -1322,14 +1322,14 @@ extension ToolsView {
         
         func loadBlogView() {
             
-            loadingView(show: true)
+            loadingView.show()
            
             API.themeV1.getWebBlog(
                 theme: self.account.pwa.rawValue,
                 configLanguage: .Spanish
             ) { resp in
             
-               loadingView(show: false)
+               loadingView.hide()
                
                guard let resp else {
                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -1365,11 +1365,11 @@ extension ToolsView {
         */
         func loadLogosView() {
             
-            loadingView(show: true)
+            loadingView.show()
 
             API.themeV1.getLogos { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
 
                guard let resp else {
                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -1671,9 +1671,10 @@ extension ToolsView.WebPage {
         
         formData.append("remoteCamera", false.description)
         
-        xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadManager")
+        xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
         
         xhr.setRequestHeader("Accept", "application/json")
+        xhr.setRequestHeader("WSId", custCatchChatConnID)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,

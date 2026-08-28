@@ -377,7 +377,7 @@ extension ProductManagerView.AuditView {
             let renderId = UUID()
             transferRenderId = renderId
 
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPOCV1.tranferReport(
                 fromStore: fromStore,
@@ -394,7 +394,7 @@ extension ProductManagerView.AuditView {
                         return
                     }
 
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -561,11 +561,11 @@ extension ProductManagerView.AuditView {
                                         .height(18.px)
                                         .onClick {
                                             
-                                            loadingView(show: true)
+                                            loadingView.show()
                                             
                                             API.custPOCV1.getTransferInventory(identifier: .id(doc.id)) { resp in
                                                 
-                                                loadingView(show: false)
+                                                loadingView.hide()
                                                 
                                                 guard let resp = resp else {
                                                     showError(.comunicationError, .serverConextionError)
@@ -665,11 +665,11 @@ extension ProductManagerView.AuditView {
                                         .height(18.px)
                                         .onClick {
                                             
-                                            loadingView(show: true)
+                                            loadingView.show()
                                             
                                             API.custPOCV1.getTransferInventory(identifier: .id(doc.id)) { resp in
                                                 
-                                                loadingView(show: false)
+                                                loadingView.hide()
                                                 
                                                 guard let resp = resp else {
                                                     showError(.comunicationError, .serverConextionError)
@@ -978,7 +978,7 @@ extension ProductManagerView.AuditView {
         
         func downloadCardexReport(startAt: Int64, endAt: Int64, storeId: UUID, payload: CustPOCComponents.CardexResponse) {
             
-            loadingView(show: true)
+            loadingView.show()
             
             var name = ""
             
@@ -1052,7 +1052,7 @@ extension ProductManagerView.AuditView {
             "\(totalFinalUnits.toString)," +
             "\(totalFinalCost.formatMoney.replace(from: ",", to: ""))"
             
-            loadingView(show: false)
+            loadingView.hide()
             
             _ = JSObject.global.download!( "\(fileName).csv", contents)
             

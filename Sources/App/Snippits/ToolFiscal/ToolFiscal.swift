@@ -59,6 +59,8 @@ class ToolFiscal: Div {
     
     override class var name: String { "div" }
     
+    var accountId: UUID?
+
     /// manual, order{id}, sale{id}, loadFiscalDoc{id}
     @State var loadType: LoadType
     
@@ -269,6 +271,7 @@ class ToolFiscal: Div {
     lazy var fiscalView = Div()
         .custom("height", "calc(100% - 50px)")
         .marginTop(3.px)
+        .class(Class(TCCrystalSurfaceClass.fiscalBody))
     
     /// View that contains tools and views
     lazy var oporationView = Div {
@@ -276,7 +279,7 @@ class ToolFiscal: Div {
     }
     
     /// Requiers ower to contract view
-    lazy var requestServiceNotAvailableView = Div{
+    lazy var requestServiceNotAvailableView = Div {
         Table {
             Tr{
                 Td{
@@ -892,8 +895,6 @@ class ToolFiscal: Div {
     
     /// `Historical View`
     
-    var hasFilter = false
-    
     @State var documentFilter = ""
     
     @State var fiscalProfileListener = ""
@@ -903,12 +904,13 @@ class ToolFiscal: Div {
     var pending: [ String : [FIAccountsServices] ] = [:]
     
     var historical: [ String : [FIAccountsServices] ] = [:]
+
+    private var historyLoadSession = UUID()
     
     lazy var documentFilterFilter = InputText(self.$documentFilter)
         .class(.textFiledBlackDarkLarge, .zoom)
         .placeholder("Buscar...")
         .marginRight(7.px)
-        .marginTop(-8.px)
         .fontSize(23.px)
         .width(230.px)
         .float(.right)
@@ -917,7 +919,7 @@ class ToolFiscal: Div {
             let term = tf.text.lowercased().purgeSpaces.purgeHtml.replace(from: ",", to: "")
             
             Dispatch.asyncAfter(0.33) {
-                if term == tf.text.lowercased().purgeSpaces.purgeHtml.replace(from: ",", to: ""){
+                if term == self.documentFilter.lowercased().purgeSpaces.purgeHtml.replace(from: ",", to: ""){
                     self.filterDocments()
                 }
             }
@@ -944,19 +946,23 @@ class ToolFiscal: Div {
         .height(100.percent)
         .overflow(.auto)
     
-    lazy var historicalView = Div{
+    lazy var historicalView = Div {
         Div{
             
             Div {
                 
                 Div{
+
                     Div{
+
                         Img()
-                            .src("/skyline/media/coin.png")
+                            .src("/skyline/media/add.png")
                             .marginTop(3.px)
                             .height(24.px)
+
                     }
                     .marginRight(3.px)
+                    .marginLeft(3.px)
                     .float(.left)
                     
                     Span("Complemento")
@@ -964,7 +970,6 @@ class ToolFiscal: Div {
                     Div().class(.clear)
                 }
                 .marginRight(12.px)
-                .marginTop(-3.px)
                 .float(.right)
                 .class(.uibtn)
                 .onClick {
@@ -972,18 +977,19 @@ class ToolFiscal: Div {
                 }
                 
                 H2("Facturas a Credito")
-                    .marginTop(7.px)
+                    .marginTop(7, .px, important: true)
                     .color(.white)
             }
             
             Div().class(.clear)
-            
+
             Div{
                 self.historicalLeftView
             }
             .custom("height", "calc(100% - 50px)")
             .padding(all: 3.px)
             .margin(all: 3.px)
+            .class(Class(TCCrystalSurfaceClass.fiscalHistoryList))
             
         }
         .height(100.percent)
@@ -994,10 +1000,23 @@ class ToolFiscal: Div {
             
             Div{
                 
-                Div("Buscar")
-                    .class(.uibtnLarge)
-                    .marginTop(-12.px)
+
+                Img()
+                    .src("/skyline/media/reload.png")
+                    .marginLeft(7.px)
+                    .height(32.px)
+                    .width(32.px)
+                    .float(.right)
+                    .onClick {
+                        self.loadHistory()
+                    }
+                
+                Div {
+                    Div("Busqueda Avanzada")
+                    .margin(all: 7.px)
+                }
                     .marginRight(7.px)
+                    .class(.uibtn)
                     .float(.right)
                     .onClick {
                         self.advancedSearch()
@@ -1008,28 +1027,35 @@ class ToolFiscal: Div {
                 H2("Historial")
                    .color(.white)
             }
-            .marginTop(7.px)
-            
-            Div().class(.clear)
-            
+            .marginTop(3.px)
+
+            Div().class(.clear).height(4.px)
+
             Div{
-                self.historicalRightView
-            }
-            .custom("height", "calc(100% - 95px)")
-            .padding(all: 3.px)
-            .margin(all: 3.px)
-            
-            Div{
-                Div("Cancelaciones")
+                Div{
+                    Span("Cancelaciones")
+                }
                     .class(.uibtnLargeOrange)
                     .marginRight(7.px)
                     .marginTop(0.px)
                     .onClick {
                         addToDom(FiscalCurrentCancelationsView())
                     }
+
+                Div().class(.clear)    
             }
             .align(.right)
-            
+
+
+            Div{
+                self.historicalRightView
+            }
+            .custom("height", "calc(100% - 95px)")
+            .padding(all: 3.px)
+            .margin(all: 3.px)
+            .class(Class(TCCrystalSurfaceClass.fiscalHistoryList))
+
+
         }
         .height(100.percent)
         .width(50.percent)
@@ -1037,16 +1063,19 @@ class ToolFiscal: Div {
         
     }
         .hidden(self.$currentView.map({ $0 != .history }))
+        .display(self.$currentView.map({ ($0 != .history) ? .none : .grid }))
         .height(100.percent)
         .width(100.percent)
+        .class(Class(TCCrystalSurfaceClass.fiscalHistory))
     
     lazy var toolsView = Div{
         
     }
         .hidden(self.$currentView.map({ $0 != .tools }))
-        .backgroundColor(.blue)
+        .display(self.$currentView.map({ ($0 != .tools) ? .none : .flex }))
         .height(100.percent)
         .width(100.percent)
+        .class(Class(TCCrystalSurfaceClass.fiscalTools))
     
     /// Global document (Publico en General)
     
@@ -1086,96 +1115,104 @@ class ToolFiscal: Div {
         
         Div{
             
-            /// Header
-            Div{
-                
-                Img()
-                    .closeButton(.view)
-                    .onClick{
-                        self.remove()
+/*
+
+            VTitle("Detalle del Viaje · \(self.trip.folio)", icon: "icon_route.png") {
+                USmallButton("Carta Liberación")
+                    .onClick {
+                        self.printReleaseLetter()
                     }
+
+                self.fiscalButton
+                self.statusSelect
+            } onClose: {
+                self.remove()
+            }
+            */
+
+            /// Header and grouped fiscal actions.
+            VTitle(
+                self.$hiringMode.map { ($0 == nil) ? "Facturacion" : $0!.description },
+                icon: "fiscal_icon.png"
+            ) {
+
+                USmallTitle(self.$hiringMode.map { ($0 == nil) ? "" : $0!.help })
+                    .class(Class(TCCrystalSurfaceClass.fiscalHelp))
                 
-                /// Tabs  for fiscal tool view
-                Div{
-                    if (custCatchHerk > 2 && linkedProfile.contains(.billing)) || self.loadType != .manual {
-                        
-                        H3("Nueva Factura")
-                            .borderBottom(width: .thin, style: .solid, color: self.$currentView.map{ ($0 == .mainView) ? .lightBlueText : .gray })
-                            .color(self.$currentView.map{ ($0 == .mainView) ? .white : .gray })
-                            .custom("width", "fit-content")
-                            .marginRight(12.px)
-                            .cursor(.pointer)
-                            .fontSize(24.px)
-                            .float(.left)
-                            .onClick {
-                                self.currentView = .mainView
-                            }
-                    }
-                    
-                    
-                    H3("Historial")
-                        .borderBottom(width: .thin, style: .solid, color: self.$currentView.map{ ($0 == .history) ? .lightBlueText : .gray })
-                        .color(self.$currentView.map{ ($0 == .history) ? .white : .gray })
-                        .custom("width", "fit-content")
-                        .hidden(self.$lockPrices)
-                        .marginRight(12.px)
-                        .cursor(.pointer)
-                        .fontSize(24.px)
-                        .float(.left)
-                        .onClick {
-                            self.currentView = .history
-                        }
-                    
-                    H3("Herraminetas")
-                        .borderBottom(width: .thin, style: .solid, color: self.$currentView.map{ ($0 == .tools) ? .lightBlueText : .gray })
-                        .color(self.$currentView.map{ ($0 == .tools) ? .white : .gray })
-                        .custom("width", "fit-content")
-                        .hidden(self.$lockPrices)
-                        .marginRight(24.px)
-                        .cursor(.pointer)
-                        .fontSize(24.px)
-                        .float(.left)
-                        .onClick {
-                            self.currentView = .tools
-                        }
-                    
-                }
-                .hidden(self.$profiles.map{ $0.isEmpty })
-                .float(.right)
-                
-                H2(self.$hiringMode.map{ ($0 == nil) ? "Facturacion" : $0!.description })
-                    .color(self.$hiringMode.map{ ($0 == nil) ? .lightBlueText : .darkOrange })
-                    .float(.left)
-                    .marginLeft(7.px)
-                
+
                 if self.profiles.count > 1 {
                     self.historicalRazonSelect
-                        .hidden(self.$currentView.map({ $0 != .history }))
+                        .hidden(self.$currentView.map { $0 != .history })
+                }
+
+
+                if (custCatchHerk > 2 && linkedProfile.contains(.billing)) || self.loadType != .manual {
+                    Div {
+                        Span("Nueva Factura")
+                        .fontSize(18.px)
+                    }
+                    .class(Class(TCWorkDashboardClass.toolbarPrimary))
+                    .class(self.$currentView.map { currentView in
+                        Class(currentView == .mainView
+                            ? TCWorkDashboardClass.toolbarPrimaryActive
+                            : TCWorkDashboardClass.toolbarPrimaryInactive)
+                    })
+                    .onClick {
+                        self.currentView = .mainView
+                    }
+                    .width(170.px)
                 }
                 
+                Div {
+                    Span("Historial")
+                    .fontSize(18.px)
+                }
+                .class(Class(TCWorkDashboardClass.toolbarPrimary))
+                .class(self.$currentView.map { currentView in
+                    Class(currentView == .history
+                        ? TCWorkDashboardClass.toolbarPrimaryActive
+                        : TCWorkDashboardClass.toolbarPrimaryInactive)
+                })
+                .hidden(self.$lockPrices)
+                .onClick {
+                    self.currentView = .history
+                }
+                .width(170.px)
+
+                Div {
+                    Span("Herramientas")
+                    .fontSize(18.px)
+                }
+                .class(Class(TCWorkDashboardClass.toolbarPrimary))
+                .class(self.$currentView.map { currentView in
+                    Class(currentView == .tools
+                        ? TCWorkDashboardClass.toolbarPrimaryActive
+                        : TCWorkDashboardClass.toolbarPrimaryInactive)
+                })
+                .hidden(self.$lockPrices)
+                .onClick {
+                    self.currentView = .tools
+                }
+                .width(170.px)
                 
-                H2(self.$hiringMode.map{ ($0 == nil) ? "" : $0!.help })
-                    .marginLeft(7.px)
-                    .float(.left)
-                    .color(.gray)
-                
-                Div().class(.clear)
-                
+            } onClose: {
+                self.remove()
             }
-            .marginBottom(7.px)
+            .class(Class(TCWorkDashboardClass.root))
+            // .class(Class(TCCrystalSurfaceClass.fiscalHeader))
             
             /// Body
             self.fiscalView
             
         }
         .custom("height","calc(100% - 45px)")
-        .backgroundColor(.backGroundGraySlate)
         .borderRadius(all: 24.px)
         .position(.absolute)
         .padding(all: 7.px)
         .width(90.percent)
         .left(5.percent)
         .top(25.px)
+        .class(Class(TCCrystalSurfaceClass.fiscalPanel))
         
         Div{
             Div{
@@ -1223,6 +1260,9 @@ class ToolFiscal: Div {
     override func buildUI() {
         
         super.buildUI()
+
+        TCTripBetaTheme.apply(to: self)
+        TCCrystalSurfaceTheme.apply(to: self, variant: .fiscal)
         
         position(.absolute)
         height(100.percent)
@@ -2107,7 +2147,7 @@ class ToolFiscal: Div {
             cartaPorte,
             globalInformation in
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.fiscalV1.create4(
                 eventid: self.eventid,
@@ -2135,7 +2175,7 @@ class ToolFiscal: Div {
                 globalInformation: globalInformation
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 do {
                     let data = try JSONEncoder().encode(resp)
@@ -2267,11 +2307,11 @@ class ToolFiscal: Div {
     
     func loadHistory() {
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.fiscalV1.loadDocuments(id: nil) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -2322,8 +2362,9 @@ class ToolFiscal: Div {
     }
     
     func loadHistoryView() {
-        
-        hasFilter = false
+
+        historyLoadSession = UUID()
+        let loadSession = historyLoadSession
         
         let rfc = fiscalProfileListener
         
@@ -2331,34 +2372,91 @@ class ToolFiscal: Div {
         
         historicalRightView.innerHTML = ""
         
-        /// [ RFC : FIAcct.Folio ]
-        var rfcFolioRefrence: [String:String] = [:]
-        
-        rfcFolioRefrence = [:]
-        
-        profiles.forEach { profile in
-            rfcFolioRefrence[profile.rfc] = profile.folio
-        }
-        
-        if let docs = due[rfc] {
-            docs.forEach { doc in
-                historicalLeftView.appendChild(loadFiscRow(folio: rfcFolioRefrence[doc.emisorRfc] ?? "", doc: doc))
-                
-            }
-        }
-        
-        if let docs = pending[rfc] {
-            docs.forEach { doc in
-                historicalLeftView.appendChild(loadFiscRow(folio: rfcFolioRefrence[doc.emisorRfc] ?? "", doc: doc))
-            }
-        }
-        
+        var pendingItems = due[rfc] ?? []
+
+        pendingItems.append(contentsOf: (pending[rfc] ?? []) )
+
+        asyncLoad(
+            view: historicalLeftView,
+            items: pendingItems,
+            loadSession: loadSession
+        )
+
         if let docs = historical[rfc] {
-            docs.forEach { doc in
-                historicalRightView.appendChild(loadFiscRow(folio: rfcFolioRefrence[doc.emisorRfc] ?? "", doc: doc))
-            }
+            asyncLoad(
+                view: historicalRightView,
+                items: docs,
+                loadSession: loadSession
+            )
         }
     }
+
+    func asyncLoad(view: Div, items: [FIAccountsServices], loadSession: UUID =  .init()) {
+
+        guard loadSession == historyLoadSession else {
+            return
+        }
+
+        asyncLoad(
+            view: view,
+            items: items,
+            loadSession: loadSession,
+            index: 0
+        )
+    }
+
+    private func asyncLoad(
+        view: Div,
+        items: [FIAccountsServices],
+        loadSession: UUID,
+        index: Int
+    ) {
+        guard loadSession == historyLoadSession,
+              items.indices.contains(index) else {
+            return
+        }
+
+        Dispatch.asyncAfter(index == 0 ? 0.01 : 0.03) { [weak self] in
+            guard let self,
+                  loadSession == self.historyLoadSession,
+                  items.indices.contains(index) else {
+                return
+            }
+
+            let doc = items[index]
+            let folio = self.profiles.first { profile in
+                profile.rfc == doc.emisorRfc
+            }?.folio ?? ""
+            let item = self.loadFiscRow(folio: folio, doc: doc)
+
+            guard loadSession == self.historyLoadSession else {
+                item.remove()
+                return
+            }
+
+            if items.count <= 35 {
+                item.filter(.opacity(0))
+            }
+
+            view.appendChild(item)
+
+            if items.count <= 35 {
+                item.fadeIn()
+            }
+
+            guard loadSession == self.historyLoadSession else {
+                return
+            }
+
+            self.asyncLoad(
+                view: view,
+                items: items,
+                loadSession: loadSession,
+                index: index + 1
+            )
+        }
+    }
+
     
     func filterDocments() {
         
@@ -2366,19 +2464,15 @@ class ToolFiscal: Div {
         
         let term = documentFilter.lowercased().purgeSpaces.purgeHtml.replace(from: ",", to: "")
         
-        if term.isEmpty && hasFilter {
+        if term.isEmpty {
             print("Load History")
             loadHistoryView()
             return
         }
         
-        if term.isEmpty {
-            return
-        }
-        
         print("Load Filter")
-        
-        hasFilter = true
+
+        historyLoadSession = UUID()
         
         let rfc = fiscalProfileListener
         
@@ -2419,8 +2513,6 @@ class ToolFiscal: Div {
                     currentIds.append(doc.id)
                     historicalLeftView.appendChild(loadFiscRow(folio: rfcFolioRefrence[doc.emisorRfc] ?? "", doc: doc))
                 }
-                
-                
                 
             }
         }
@@ -2604,6 +2696,7 @@ class ToolFiscal: Div {
             }
             
         }
+
     }
     
     func loadFiscRow(folio: String, doc: FIAccountsServices) -> FiscalDocumentRow {
@@ -2828,7 +2921,6 @@ class ToolFiscal: Div {
         
         $fiscalProfileListener
         
-        
         var prof: FiscalComponents.Profile? = nil
         
         profiles.forEach { _prof in
@@ -2847,14 +2939,14 @@ class ToolFiscal: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.fiscalV1.search(
             emisorRfc: emisorRfc,
             term: documentFilter
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -2906,6 +2998,7 @@ class ToolFiscal: Div {
     }
 
     override func didRemoveFromDOM() {
+        historyLoadSession = UUID()
         super.didRemoveFromDOM()
         $loadType.removeAllListeners()
         $cartaPorte.removeAllListeners()
@@ -3609,7 +3702,7 @@ extension ToolFiscal {
             
             API.custOrderV1.getCharges(orderid: id) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -3902,7 +3995,7 @@ extension ToolFiscal {
             
             API.custOrderV1.getCharges(orderid: id) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -4428,8 +4521,10 @@ extension ToolFiscal {
                 leftView
             }
                 .hidden(self.$currentView.map({ $0 != .mainView }))
+                .display(self.$currentView.map({ ($0 != .mainView) ? .none : .flex }))
                 .height(100.percent)
                 .width(100.percent)
+                .class(Class(TCCrystalSurfaceClass.fiscalMain))
             
             self.fiscalView.appendChild(mainViewDiv)
             
@@ -4880,7 +4975,7 @@ extension ToolFiscal {
         
         renderFiscalDocument(isPreDocument: true) { taxMode, comment, communicationMethod, type, accountid, orderid, folio, officialDate, profile, razon, rfc, zip, regimen, use, metodo, forma, items, provider, auth, lastFour, cartaPorte, globalInformation in
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.fiscalV1.saveManualDocument(
                 eventid: self.eventid,
@@ -4908,7 +5003,7 @@ extension ToolFiscal {
                 globalInformation: globalInformation
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -4989,11 +5084,11 @@ extension ToolFiscal {
     
     func getFiscalSOCs(){
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.getTCSOCAvailableServices(efect: [.fiscal]) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)

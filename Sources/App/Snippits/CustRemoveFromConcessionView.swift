@@ -1226,7 +1226,7 @@ class CustRemoveFromConcessionView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPDVV1.removeFromConcession(
             type: .return,
@@ -1237,7 +1237,7 @@ class CustRemoveFromConcessionView: Div {
             receptorRfc: profile?.rfc ?? ""
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -1403,7 +1403,7 @@ class CustRemoveFromConcessionView: Div {
             break
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPDVV1.removeFromConcession(
             type: .sale(.init(
@@ -1421,7 +1421,7 @@ class CustRemoveFromConcessionView: Div {
             receptorRfc: profile?.rfc ?? ""
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

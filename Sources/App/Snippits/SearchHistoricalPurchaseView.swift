@@ -211,13 +211,13 @@ class SearchHistoricalPurchaseView: Div {
                         .fontSize(14.px)
                         .onClick {
                             
-                            loadingView(show: true)
+                            loadingView.show()
                             
                             API.fiscalV1.getProductControl(
                                 id: item.i
                             ) { resp in
                                 
-                                loadingView(show: false)
+                                loadingView.hide()
                                 
                                 guard let resp else {
                                     showError(.comunicationError, .serverConextionError)
@@ -259,11 +259,11 @@ class SearchHistoricalPurchaseView: Div {
     
     func sincRecentXML(){
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.fiscalV1.sincRecentXML { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

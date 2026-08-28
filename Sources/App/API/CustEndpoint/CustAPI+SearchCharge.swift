@@ -52,7 +52,7 @@ func searchCharge(
     
     let xhr = XMLHttpRequest()
     
-    var url = baseAPIUrl("https://intratc.co/api/cust/v1/searchCharge") +
+    var url = baseAPIUrl("https://api.tierracero.co/cust/v1/searchCharge") +
     "&term=\(_term)" +
     "&costType=\(_costType)" +
     "&currentCodes=\(_ids)"
@@ -76,6 +76,7 @@ func searchCharge(
         .setRequestHeader("Content-Type", "application/json")
         .setRequestHeader("AppName", applicationName)
         .setRequestHeader("AppVersion", SkylineWeb().version.description)
+        .setRequestHeader("WSId", custCatchChatConnID)
 
     xhr.send()
     
@@ -104,4 +105,3 @@ func searchCharge(
     }
         
 }
-

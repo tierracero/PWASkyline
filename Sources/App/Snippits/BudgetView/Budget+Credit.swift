@@ -209,7 +209,7 @@ extension BudgetView {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custOrderV1.addCreditToBudget(
                 budgetId: budgetId,
@@ -217,7 +217,7 @@ extension BudgetView {
                 expireAt: expireAt
             ) { resp in
              
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -246,13 +246,13 @@ extension BudgetView {
                     
                     if isConfirmed {
                         
-                        loadingView(show: true)
+                        loadingView.show()
                         
                         API.custOrderV1.removeCreditFromBudget(
                             budgetId: self.budgetId
                         ){ resp in
                             
-                            loadingView(show: false)
+                            loadingView.hide()
                             
                             guard let resp else {
                                 showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

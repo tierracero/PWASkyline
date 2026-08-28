@@ -915,11 +915,11 @@ class ToolFiscalViewDocument: Div {
             }
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.fiscalV1.reSendFiscalDocument(fiscalId: doc.id, method: communicationMethod) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -958,7 +958,7 @@ class ToolFiscalViewDocument: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.fiscalV1.delete(
             id: doc.id,
@@ -966,7 +966,7 @@ class ToolFiscalViewDocument: Div {
             reason: deleteDocumentSelectReason
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

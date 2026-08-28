@@ -431,7 +431,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
             
             self.gridDiv.innerHTML = ""
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custOrderV1.reports(
                 type: reportType,
@@ -441,7 +441,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
                 to: endAtUTS
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -503,7 +503,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
             
             self.gridDiv.innerHTML = ""
             
-            loadingView(show: true)
+            loadingView.show()
             
             getUsers(storeid: nil, onlyActive: false) { users in
                 
@@ -638,7 +638,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
                     self.parseReportPaymentData(userref: userref, isHidden: $isHiddenC, data: payments)
                 }
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
             }
         }
@@ -1333,7 +1333,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
             
             _ = JSObject.global.download!( fileName, csvString)
             
-            loadingView(show: false)
+            loadingView.hide()
             
         }
         

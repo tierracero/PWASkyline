@@ -105,11 +105,11 @@ class CustTaskAuthorizationRow: Div {
                         return
                     }
                     
-                    loadingView(show: true)
+                    loadingView.show()
 
                     API.fiscalV1.loadDocument(docid: id) { resp in
 
-                        loadingView(show: false)
+                        loadingView.hide()
 
                         guard let resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -209,33 +209,33 @@ class CustTaskAuthorizationRow: Div {
                         return
                     }
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custOrderV1.getBudgetRelatedOrder(
                         budgetId: budgetId
                     ) { resp in
                         
                         guard let resp else {
-                            loadingView(show: false)
+                            loadingView.hide()
                             showError(.comunicationError, .serverConextionError)
                             return
                         }
 
                         guard resp.status == .ok else {
-                            loadingView(show: false)
+                            loadingView.hide()
                             showError(.generalError, resp.msg)
                             return
                         }
 
                         guard let payload = resp.data else {
-                            loadingView(show: false)
+                            loadingView.hide()
                             showError(.unexpectedResult, "No se obtuvo payload de data.")
                             return
                         }
 
                         OrderCatchControler.shared.loadFolio(orderid: payload.orderId) { account, order, notes, payments, charges, pocs, files, contracts, equipments, rentals, transferOrder, orderHighPriorityNote, accountHighPriorityNote, tasks, route, loadFromCatch in
                             
-                            loadingView(show: false)
+                            loadingView.hide()
                             
                             if let callback = self.callback {
                                 callback()

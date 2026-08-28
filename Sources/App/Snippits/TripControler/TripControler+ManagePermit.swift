@@ -227,7 +227,7 @@ class TripControlerManagePermit: Div {
         let permitTypeName = permitType.description
         let permitName = self.permitName.pseudo.purgeSpaces.uppercased()
 
-        loadingView(show: true)
+        loadingView.show()
 
         if let id {
             API.custCommercialTrips.updatePermit(
@@ -237,7 +237,7 @@ class TripControlerManagePermit: Div {
                 permitNumber: permitNumber,
                 permitName: permitName
             ) { resp in
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -272,7 +272,7 @@ class TripControlerManagePermit: Div {
             permitNumber: permitNumber,
             permitName: permitName
         ) { resp in
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -304,10 +304,10 @@ class TripControlerManagePermit: Div {
         ) { isConfirmed, _ in
             guard isConfirmed else { return }
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custCommercialTrips.deletePermit(permitId: id) { resp in
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)

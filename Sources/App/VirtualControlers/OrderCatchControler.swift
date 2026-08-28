@@ -881,7 +881,7 @@ public class OrderCatchControler {
         let searchId = UUID()
         orderSearchId = searchId
 
-        loadingView(show: true)
+        loadingView.show()
 
 
         
@@ -894,7 +894,7 @@ public class OrderCatchControler {
                 return
             }
 
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -935,7 +935,7 @@ public class OrderCatchControler {
         let searchId = UUID()
         orderSearchId = searchId
 
-        loadingView(show: true)
+        loadingView.show()
         
         API.custOrderV1.loadOrderByStatus(
             status: status,
@@ -946,7 +946,7 @@ public class OrderCatchControler {
                 return
             }
 
-            loadingView(show: false)
+            loadingView.hide()
             
             
             guard let resp else {
@@ -1010,7 +1010,7 @@ public class OrderCatchControler {
         }
         
         if !initialLoad {
-            loadingView(show: true)
+            loadingView.show()
         }
 
         API.custOrderV1.loadFolios(
@@ -1024,7 +1024,7 @@ public class OrderCatchControler {
             }
 
             if !initialLoad {
-                loadingView(show: false)
+                loadingView.hide()
             }
 
             guard let resp else {
@@ -1364,6 +1364,7 @@ public class OrderCatchControler {
             guard self.isCurrentRender(renderId, operation: operation) else {
                 return
             }
+            
             self.asyncAddOrder(
                 renderId: renderId,
                 operation: operation,
@@ -1546,7 +1547,7 @@ public class OrderCatchControler {
         ].reduce(0, +)
         
         if totalItems > 35 {
-            loadingView(show: true)
+            loadingView.show()
         }
         
         let orderCount = [
@@ -2253,7 +2254,7 @@ public class OrderCatchControler {
         }
         
         if totalItems > 35 {
-            loadingView(show: false)
+            loadingView.hide()
         }
         
     }
@@ -2414,11 +2415,11 @@ public class OrderCatchControler {
 
         let view = CustFollowUpRowView(data) {
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custFollowup.getItem(followupId: data.id) { resp in 
 
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .unexpenctedMissingPayload)
@@ -2693,12 +2694,12 @@ public class OrderCatchControler {
             let transferOrder: CustTranferManager? = transferOrderCatch[orderid]
             let route: CustOrderRoute? = custOrderRouteCatch[orderid]
             
-            loadingView(show: true)
+            loadingView.show()
 
             // A cache hit used to build the complete order view inside the click
             // event. Give the browser a frame to paint the loading state first.
             Dispatch.asyncAfter(0.05) {
-                loadingView(show: false)
+                loadingView.hide()
 
                 callback(
                     account,
@@ -2723,11 +2724,11 @@ public class OrderCatchControler {
         }
         else{
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custOrderV1.loadOrder(identifier: .id(orderid), modifiedAt: nil) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -3061,13 +3062,13 @@ public class OrderCatchControler {
             .class(.uibtnLarge)
             .onClick {
                 
-                loadingView(show: true)
+                loadingView.show()
                 
                 API.custRouteV1.load(
                     routeId: route.id
                 ) { resp in
                     
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -3130,7 +3131,7 @@ public class OrderCatchControler {
                 routeId: route.id
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -3213,7 +3214,7 @@ public class OrderCatchControler {
         favoriteAccountsRequestId = requestId
         favoriteAccountsIsLoading = true
 
-        loadingView(show: true)
+        loadingView.show()
 
         API.custAccountV1.favorite { resp in
             guard requestId == self.favoriteAccountsRequestId else {
@@ -3221,7 +3222,7 @@ public class OrderCatchControler {
             }
 
             self.favoriteAccountsIsLoading = false
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -3286,7 +3287,7 @@ public class OrderCatchControler {
         let requestId = UUID()
         followupRenderId = requestId
 
-        loadingView(show: true)
+        loadingView.show()
 
         API.custFollowup.getItems(
             storeId: custCatchStore,
@@ -3297,7 +3298,7 @@ public class OrderCatchControler {
                 return
             }
 
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

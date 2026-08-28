@@ -37,7 +37,7 @@ func searchSOCs(
         
     let xhr = XMLHttpRequest()
     
-    var url = baseAPIUrl("https://intratc.co/api/cust/v1/searchSOCs") +
+    var url = baseAPIUrl("https://api.tierracero.co/cust/v1/searchSOCs") +
     "&term=\(_term)" +
     "&costType=\(_costType)"
     
@@ -53,6 +53,7 @@ func searchSOCs(
         .setRequestHeader("Content-Type", "application/json")
         .setRequestHeader("AppName", applicationName)
         .setRequestHeader("AppVersion", SkylineWeb().version.description)
+        .setRequestHeader("WSId", custCatchChatConnID)
 
     xhr.send("")
     
@@ -82,5 +83,4 @@ func searchSOCs(
     }
         
 }
-
 

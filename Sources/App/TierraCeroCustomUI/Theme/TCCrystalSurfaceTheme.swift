@@ -8,7 +8,9 @@ import Web
 enum TCCrystalSurfaceVariant {
     case addCharge
     case addPayment
+    case assets
     case analytics
+    case fiscal
     case customerData
     case customerCreation
     case customerLookup
@@ -24,8 +26,12 @@ enum TCCrystalSurfaceVariant {
             return TCCrystalSurfaceClass.addCharge
         case .addPayment:
             return TCCrystalSurfaceClass.addPayment
+        case .assets:
+            return TCCrystalSurfaceClass.assets
         case .analytics:
             return TCCrystalSurfaceClass.analyticsPanel
+        case .fiscal:
+            return TCCrystalSurfaceClass.fiscal
         case .customerData:
             return TCCrystalSurfaceClass.customerData
         case .customerCreation:
@@ -50,6 +56,18 @@ enum TCCrystalSurfaceClass {
     static let root = "tc-crystal-surface"
     static let addCharge = "tc-crystal-add-charge"
     static let addPayment = "tc-crystal-add-payment"
+    static let assets = "tc-crystal-assets"
+    static let fiscal = "tc-crystal-fiscal"
+    static let fiscalPanel = "tc-crystal-fiscal-panel"
+    static let fiscalHeader = "tc-crystal-fiscal-header"
+    static let fiscalTabs = "tc-crystal-fiscal-tabs"
+    static let fiscalTitle = "tc-crystal-fiscal-title"
+    static let fiscalHelp = "tc-crystal-fiscal-help"
+    static let fiscalBody = "tc-crystal-fiscal-body"
+    static let fiscalMain = "tc-crystal-fiscal-main"
+    static let fiscalHistory = "tc-crystal-fiscal-history"
+    static let fiscalHistoryList = "tc-crystal-fiscal-history-list"
+    static let fiscalTools = "tc-crystal-fiscal-tools"
     static let paymentPanel = "tc-crystal-payment-panel"
     static let paymentHeader = "tc-crystal-payment-header"
     static let paymentTitle = "tc-crystal-payment-title"
@@ -148,6 +166,7 @@ enum TCCrystalSurfaceTheme {
 
         let root = ".\(TCCrystalSurfaceClass.root)"
         let analyticsPanel = "\(root) .\(TCCrystalSurfaceClass.analyticsPanel)"
+        let fiscalRoot = "\(root).\(TCCrystalSurfaceClass.fiscal)"
         let customerData = "\(root) .\(TCCrystalSurfaceClass.customerData)"
         let customerDataPanel = "\(customerData) .\(TCCrystalSurfaceClass.customerDataPanel)"
         let customerSearchRoot = "\(root).\(TCCrystalSurfaceClass.customerSearch)"
@@ -168,6 +187,12 @@ enum TCCrystalSurfaceTheme {
                 .custom("--tc-crystal-blue", "#49b9f5")
                 .custom("--tc-crystal-ink", "#edf7ff")
                 .custom("--tc-crystal-muted", "#a8bed0")
+
+            CSSRule(Pointer("\(root) select, \(root) select option"))
+                // Keep native option popups dark in Chrome on Windows as well.
+                .custom("color-scheme", "dark !important")
+                .custom("background-color", "rgb(3 21 38) !important")
+                .custom("color", "rgb(237 247 255) !important")
 
             CSSRule(Pointer("\(root) .\(TCTripBetaClass.popUp)"))
                 .custom("background", "rgba(1, 8, 17, 0.18) !important")
@@ -235,6 +260,216 @@ enum TCCrystalSurfaceTheme {
                 .custom("border-color", "#49b9f5 !important")
                 .custom("box-shadow", "0 12px 30px rgba(0, 0, 0, 0.32), 0 0 18px rgba(73, 185, 245, 0.16)")
                 .custom("transform", "translateY(-1px)")
+        }
+
+        WebApp.current.addStylesheet {
+            CSSRule(Pointer(fiscalRoot))
+                .custom("box-sizing", "border-box")
+                .custom("color", "var(--tc-crystal-ink) !important")
+                .custom("background", "rgba(1, 8, 17, 0.1) !important")
+                .custom("backdrop-filter", "blur(5px) saturate(112%)")
+                .custom("-webkit-backdrop-filter", "blur(5px) saturate(112%)")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalPanel)"))
+                .custom("display", "flex")
+                .custom("flex-direction", "column")
+                .custom("gap", "12px")
+                .custom("box-sizing", "border-box")
+                .custom("padding", "12px")
+                .custom("background", "rgba(7, 26, 44, 0.64) !important")
+                .custom("border", "1px solid var(--tc-crystal-border) !important")
+                .custom("border-radius", "20px !important")
+                .custom("box-shadow", "0 28px 80px rgba(0, 0, 0, 0.54), inset 0 1px 0 rgba(255, 255, 255, 0.055)")
+                .custom("backdrop-filter", "blur(22px) saturate(132%)")
+                .custom("-webkit-backdrop-filter", "blur(22px) saturate(132%)")
+                .custom("overflow", "hidden")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalHeader)"))
+                .custom("display", "flex")
+                .custom("align-items", "center")
+                .custom("gap", "12px")
+                .custom("min-height", "58px")
+                .custom("padding", "10px 14px")
+                .custom("box-sizing", "border-box")
+                .custom("background", "#252c3b !important")
+                .custom("border", "1px solid rgba(102, 184, 236, 0.24) !important")
+                .custom("border-left", "4px solid #49b9f5 !important")
+                .custom("border-radius", "12px !important")
+                .custom("box-shadow", "inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 20px rgba(0, 0, 0, 0.2)")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalHeader) > *"))
+                .custom("float", "none !important")
+                .custom("margin-top", "0 !important")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalHeader) > .clear"))
+                .custom("display", "none !important")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalHeader) > img:first-child"))
+                .custom("order", "10")
+                .custom("float", "none !important")
+                .custom("width", "34px !important")
+                .custom("height", "34px !important")
+                .custom("margin", "0 0 0 auto !important")
+                .custom("padding", "8px")
+                .custom("box-sizing", "border-box")
+                .custom("border", "1px solid rgba(255, 123, 79, 0.3) !important")
+                .custom("border-radius", "9px !important")
+                .custom("background", "rgba(75, 29, 25, 0.38) !important")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalTabs)"))
+                .custom("display", "flex")
+                .custom("align-items", "center")
+                .custom("gap", "10px")
+                .custom("margin-left", "auto !important")
+                .custom("order", "3")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalTabs) h3"))
+                .custom("margin", "0 !important")
+                .custom("padding", "5px 0")
+                .custom("font-size", "17px !important")
+                .custom("line-height", "1.2")
+                .custom("cursor", "pointer")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalTitle)"))
+                .custom("flex", "0 0 auto")
+                .custom("margin", "0 !important")
+                .custom("color", "var(--tc-crystal-ink) !important")
+                .custom("font-size", "22px !important")
+                .custom("font-weight", "700")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalHelp)"))
+                .custom("flex", "1 1 auto")
+                .custom("min-width", "0")
+                .custom("margin", "0 !important")
+                .custom("overflow", "hidden")
+                .custom("color", "var(--tc-crystal-muted) !important")
+                .custom("font-size", "13px !important")
+                .custom("line-height", "1.2")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalBody)"))
+                .custom("min-height", "0")
+                .custom("background", "transparent !important")
+                .custom("color", "var(--tc-crystal-ink) !important")
+                .custom("overflow", "hidden")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalMain)"))
+                .custom("display", "flex")
+                .custom("gap", "12px")
+                .custom("min-height", "0")
+                .custom("padding", "3px")
+                .custom("box-sizing", "border-box")
+                .custom("overflow", "hidden")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalMain) > div"))
+                .custom("box-sizing", "border-box")
+                .custom("min-width", "0")
+                .custom("min-height", "0")
+                .custom("float", "none !important")
+                .custom("margin-left", "0 !important")
+                .custom("padding", "10px")
+                .custom("background", "rgba(5, 24, 42, 0.56) !important")
+                .custom("border", "1px solid rgba(96, 164, 207, 0.2) !important")
+                .custom("border-radius", "16px !important")
+                .custom("box-shadow", "inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 12px 28px rgba(0, 0, 0, 0.22)")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalMain) > div:first-child"))
+                .custom("flex", "0 0 30%")
+                .custom("width", "auto !important")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalMain) > div:last-child"))
+                .custom("flex", "1 1 70%")
+                .custom("width", "auto !important")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalHistory)"))
+                .custom("display", "grid")
+                .custom("grid-template-columns", "repeat(2, minmax(0, 1fr))")
+                .custom("gap", "12px")
+                .custom("min-height", "0")
+                .custom("padding", "3px")
+                .custom("box-sizing", "border-box")
+                .custom("overflow", "hidden")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalHistory) > div"))
+                .custom("display", "flex")
+                .custom("flex-direction", "column")
+                .custom("width", "auto !important")
+                .custom("height", "auto !important")
+                .custom("min-width", "0")
+                .custom("min-height", "0")
+                .custom("float", "none !important")
+                .custom("padding", "8px")
+                .custom("box-sizing", "border-box")
+                .custom("background", "rgba(5, 24, 42, 0.56) !important")
+                .custom("border", "1px solid rgba(96, 164, 207, 0.2) !important")
+                .custom("border-radius", "16px !important")
+                .custom("box-shadow", "inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 12px 28px rgba(0, 0, 0, 0.22)")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalHistory) > div > div:first-child"))
+                .custom("flex", "0 0 auto")
+                .custom("min-height", "52px")
+                .custom("padding", "8px 10px")
+                .custom("box-sizing", "border-box")
+                .custom("background", "rgba(4, 25, 43, 0.96) !important")
+                .custom("border", "1px solid rgba(102, 184, 236, 0.24) !important")
+                .custom("border-radius", "10px !important")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalHistory) > div > div:first-child h2"))
+                .custom("margin", "0 !important")
+                .custom("font-size", "18px !important")
+                .custom("color", "var(--tc-crystal-ink) !important")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalHistory) > div > .clear"))
+                .custom("display", "none !important")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalHistoryList)"))
+                .custom("flex", "1 1 auto")
+                .custom("min-height", "0")
+                .custom("height", "auto !important")
+                .custom("margin", "8px 0 0 !important")
+                .custom("padding", "8px !important")
+                .custom("box-sizing", "border-box")
+                .custom("background", "rgba(6, 22, 37, 0.58) !important")
+                .custom("border", "1px solid rgba(102, 184, 236, 0.2) !important")
+                .custom("border-radius", "13px !important")
+                .custom("overflow", "hidden")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalHistoryList) > div"))
+                .custom("height", "100% !important")
+                .custom("min-height", "0")
+                .custom("overflow", "auto")
+
+            CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalTools)"))
+                .custom("box-sizing", "border-box")
+                .custom("min-height", "0")
+                .custom("padding", "14px")
+                .custom("background", "linear-gradient(145deg, rgba(9, 35, 57, 0.86), rgba(3, 16, 30, 0.76)) !important")
+                .custom("border", "1px solid var(--tc-crystal-border) !important")
+                .custom("border-radius", "16px !important")
+                .custom("box-shadow", "0 20px 55px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.045)")
+                .custom("overflow", "auto")
+
+            MediaRule(.screen.maxWidth(900.px)) {
+                CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalHeader)"))
+                    .custom("flex-wrap", "wrap")
+
+                CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalTabs)"))
+                    .custom("width", "100%")
+                    .custom("margin-left", "0 !important")
+                    .custom("order", "10")
+
+                CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalMain)"))
+                    .custom("flex-direction", "column")
+                    .custom("overflow", "auto")
+
+                CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalMain) > div"))
+                    .custom("flex", "1 1 50% !important")
+                    .custom("width", "100% !important")
+
+                CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalHistory)"))
+                    .custom("grid-template-columns", "minmax(0, 1fr)")
+                    .custom("grid-template-rows", "repeat(2, minmax(220px, 1fr))")
+                    .custom("overflow", "auto")
+            }
         }
 
         WebApp.current.addStylesheet {

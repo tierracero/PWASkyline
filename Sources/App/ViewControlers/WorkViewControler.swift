@@ -1228,11 +1228,11 @@ class WorkViewControler: PageController {
     .width(62.px)
     .onClick {
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custRouteV1.userLocations { resp in
         
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -2082,11 +2082,11 @@ class WorkViewControler: PageController {
                             
                             if profiles.contains(emisor) {
                                 
-                                loadingView(show: true)
+                                loadingView.show()
 
                                 API.fiscalV1.loadDocument(docid: id) { resp in
 
-                                    loadingView(show: false)
+                                    loadingView.hide()
 
                                     guard let resp else {
                                         showError(.comunicationError, .serverConextionError)
@@ -2306,7 +2306,7 @@ class WorkViewControler: PageController {
     override func didAddToDOM() {
         super.didAddToDOM()
 
-        loadingView(show: false)
+        loadingView.hide()
         startDashboardStartupSequence()
         
         WebApp.current.document.head.body {
@@ -2340,7 +2340,7 @@ class WorkViewControler: PageController {
                 _ = JSObject.global.goToURL!("login")
                 
                 Dispatch.asyncAfter(0.25) {
-                    loadingView(show: false)
+                    loadingView.hide()
                 }
                 
                 return
@@ -2511,8 +2511,7 @@ class WorkViewControler: PageController {
                 OrderCatchControler.shared.loadFollowups()
             }
         )
-
-
+        
         navigation.appendChild(
             workNavigationItem(
                 selection: .trips,
@@ -2610,7 +2609,7 @@ class WorkViewControler: PageController {
             
             API.custAPIV1.accountBalance { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else{
                     showError(.comunicationError, .serverConextionError)
@@ -3340,7 +3339,7 @@ class WorkViewControler: PageController {
         }
         else if caller == "logout"{
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.authV1.customerLogout { _ in
                 killSession()
@@ -3509,11 +3508,11 @@ class WorkViewControler: PageController {
                 switch type {
                 case .folio:
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custOrderV1.loadOrder(identifier: .folio(term), modifiedAt: nil) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp = resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -3640,11 +3639,11 @@ class WorkViewControler: PageController {
                     showAlert(.alerta, "\(type.description) aun no es soportado")
                 case .transferInventory:
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custPOCV1.getTransferInventory(identifier: .folio(term)) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp = resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -3684,38 +3683,39 @@ class WorkViewControler: PageController {
                     
                 case .qrCode:
 
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custOrderV1.getWarrantyCard(id: .code(term)) { resp in
 
                         guard let resp = resp else {
-                            loadingView(show: false)
+                            loadingView.hide()
                             showError(.comunicationError, .serverConextionError)
                             return
                         }
 
                         guard resp.status == .ok else {
-                            loadingView(show: false)
+                            loadingView.hide()
                             showError(.generalError, resp.msg)
                             return
                         }
                         
                         guard let payload = resp.data else {
-                            loadingView(show: false)
+                            loadingView.hide()
                             showError(.unexpectedResult, .unexpenctedMissingPayload)
                             return
                         }
+                        
+                        // let type = payload.card.type
 
-
-                        guard let type = payload.card.type, let id = payload.card.orderId else {
-                            loadingView(show: false)
+                        guard let id: UUID = payload.card.orderId else {
+                            loadingView.hide()
                             showError(.unexpectedResult, "Esta tarejeta no esta activa")
                             return
                         }
                             
                         API.custOrderV1.loadOrder(identifier: .id(id), modifiedAt: nil) { resp in
                             
-                            loadingView(show: false)
+                            loadingView.hide()
                             
                             guard let resp = resp else {
                                 showError(.comunicationError, .serverConextionError)
@@ -3738,7 +3738,7 @@ class WorkViewControler: PageController {
                             case .load(let loadOrderResponse):
                                 minimizeAccountViews()
                                 
-                                let id = loadOrderResponse.order.id
+                                let id: UUID = loadOrderResponse.order.id
                                 
                                 /// Order Detail Catch
                                 acctMinCatch[id] = loadOrderResponse.account
@@ -3829,7 +3829,7 @@ class WorkViewControler: PageController {
             
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custOrderV1.searchFolio(
             term: term,
@@ -3843,7 +3843,7 @@ class WorkViewControler: PageController {
             endAt: nil
         ){ resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -4026,7 +4026,7 @@ class WorkViewControler: PageController {
             relatedfolio: "",
             multipleTakes: false
         ) { resp in
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -4221,13 +4221,13 @@ class WorkViewControler: PageController {
     func processAlertManager(manualLoad: Bool){
         
         if manualLoad {
-            loadingView(show: true)
+            loadingView.show()
         }
         
         API.custAPIV1.notifications { resp in
             
             if manualLoad {
-                loadingView(show: false)
+                loadingView.hide()
             }
             
             guard let resp else {
@@ -4312,7 +4312,7 @@ class WorkViewControler: PageController {
 
         tripViewIsLoading = true
 
-        loadingView(show: true)
+        loadingView.show()
 
         let tripsRequestExecutedAt = Date().timeIntervalSince1970
 
@@ -4321,7 +4321,7 @@ class WorkViewControler: PageController {
             type: .current
         ) { resp in
             self.tripViewIsLoading = false
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)

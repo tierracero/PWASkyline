@@ -666,7 +666,7 @@ extension MoneyManagerView.FinancialServicesView {
                 message: "Confirme que recibira $\((self.financial.amount - _returned).formatMoney) en efectivo y actulizara el registro finiacero. Esto pasara/permanecera en su poseción."
             ){ isCompleted, _ in
                 
-                loadingView(show: true)
+                loadingView.show()
                 
                 API.custAPIV1.updateFianancialService(
                     id: self.financial.id,
@@ -678,7 +678,7 @@ extension MoneyManagerView.FinancialServicesView {
                     reciptImage: nil
                 ) { resp in
                     
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)

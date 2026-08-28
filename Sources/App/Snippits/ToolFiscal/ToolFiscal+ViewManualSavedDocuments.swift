@@ -75,13 +75,13 @@ extension ToolFiscal {
                                                 message: "Confirme la eliminacion del pre documento",
                                                 callback: { isConfirmed, reason in
                                                     
-                                                    loadingView(show: true)
+                                                    loadingView.show()
                                                     
                                                     API.fiscalV1.deleteSavedManualDocument(
                                                         id: item.id
                                                     ) { resp in
                                                         
-                                                        loadingView(show: false)
+                                                        loadingView.hide()
                                                         
                                                         guard let resp else {
                                                             showError(.comunicationError, .serverConextionError)
@@ -139,13 +139,13 @@ extension ToolFiscal {
                         .class(.uibtn)
                         .onClick { _, event in
                             
-                            loadingView(show: true)
+                            loadingView.show()
                             
                             API.fiscalV1.getSavedManualDocument(
                                 id: item.id
                             ) { resp in
                                 
-                                loadingView(show: false)
+                                loadingView.hide()
                                 
                                 guard let resp else {
                                     showError(.comunicationError, .serverConextionError)

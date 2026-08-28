@@ -170,13 +170,13 @@ class ImageWebView: Div {
                                 return
                             }
                             
-                            loadingView(show: true)
+                            loadingView.show()
                             
                             API.themeV1.deleteWebContentImage(
                                 id: mediaId
                             ) { resp in
                                 
-                                loadingView(show: false)
+                                loadingView.hide()
                                 
                                 guard let resp else {
                                     showError(.comunicationError, .serverConextionError)
@@ -503,6 +503,10 @@ class ImageWebView: Div {
     
     func loadImage(_ image: String) {
         
+        print("✅  ⬇️  loadImage  ")
+
+        print("\(self.path)thump_\(image)")
+
         let _ = Img()
             .src("\(self.path)thump_\(image)")
             .onLoad {

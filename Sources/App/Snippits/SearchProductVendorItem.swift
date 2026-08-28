@@ -158,7 +158,7 @@ class SearchProductVendorItem: Tr {
     /// Mark  wether this item is related to poc or unlink of poc
     func updateItemPOCRelation(){
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPOCV1.modifyPOCVendorRelation(
             add: !isActive,
@@ -166,7 +166,7 @@ class SearchProductVendorItem: Tr {
             itemid: self.item.id
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
          
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)

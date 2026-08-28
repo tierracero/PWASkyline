@@ -393,11 +393,11 @@ class ServiceAccionView: Div {
         
         if let id {
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.loadServiceActionItem(id: id) { resp in
             
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -624,7 +624,7 @@ class ServiceAccionView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.createSaleActionItem(
             type: type,
@@ -639,7 +639,7 @@ class ServiceAccionView: Div {
             objects: itemRefrence.map{ $1.element }
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

@@ -191,7 +191,7 @@ class CartaPorteOperator: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         if let id  {
             
@@ -203,7 +203,7 @@ class CartaPorteOperator: Div {
                 expire: nil
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -238,7 +238,7 @@ class CartaPorteOperator: Div {
             expire: nil
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

@@ -297,11 +297,11 @@ class CreateNewFollowup: Div {
             }
         }
 
-        loadingView(show: true)
+        loadingView.show()
 
         API.custFollowup.getCampaigns { resp in
 
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp else {
                 showError(.comunicationError, .unexpenctedMissingPayload)
@@ -427,7 +427,7 @@ class CreateNewFollowup: Div {
             return
         }
 
-        loadingView(show: true)
+        loadingView.show()
 
         API.custFollowup.create(
             nextDateAt: nextDateAt,
@@ -439,7 +439,7 @@ class CreateNewFollowup: Div {
             items: []
         ) { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

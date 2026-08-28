@@ -287,7 +287,7 @@ class CreateStoreLevelCategoria: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         if let id = self.cat?.id {
             API.custAPIV1.saveStoreLevel(
@@ -300,7 +300,7 @@ class CreateStoreLevelCategoria: Div {
                 isPublic: true
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -333,7 +333,7 @@ class CreateStoreLevelCategoria: Div {
                 isPublic: true
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -372,14 +372,14 @@ class CreateStoreLevelCategoria: Div {
                 
                 if isConfirmed {
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custAPIV1.deleteStoreLevel(
                         id: cat.id,
                         type: .cat
                     ) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp = resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -498,6 +498,7 @@ class CreateStoreLevelCategoria: Div {
         xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
         
         xhr.setRequestHeader("Accept", "application/json")
+        xhr.setRequestHeader("WSId", custCatchChatConnID)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,
@@ -531,4 +532,3 @@ class CreateStoreLevelCategoria: Div {
         $descr.removeAllListeners()
     }
 }
-

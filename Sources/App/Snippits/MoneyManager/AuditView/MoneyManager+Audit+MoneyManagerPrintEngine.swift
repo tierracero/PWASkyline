@@ -602,7 +602,7 @@ extension MoneyManagerView.AuditView {
             /*
             API.custAPIV1.getMoneyManager(id: .id(self.item.id)) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)

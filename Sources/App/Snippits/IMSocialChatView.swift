@@ -699,14 +699,14 @@ class IMSocialChatView: Div {
             
             if isConfirmed {
                 
-                loadingView(show: true)
+                loadingView.show()
                 
                 API.webSocketV1.archiveChat(
                     roomid: self.roomid,
                     pageid: ""
                 ) { resp in
                     
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -927,9 +927,10 @@ class IMSocialChatView: Div {
             // Optional
             // formData.append("replyTo", chatUserToken)
             
-            xhr.open(method: "POST", url: "https://intratc.co/api/v1/uploadMediaPublic")
+            xhr.open(method: "POST", url: "https://api.tierracero.co/v1/uploadMediaPublic")
             
             xhr.setRequestHeader("Accept", "application/json")
+            xhr.setRequestHeader("WSId", custCatchChatConnID)
             
             if let jsonData = try? JSONEncoder().encode(APIHeader(
                 AppID: thisAppID,

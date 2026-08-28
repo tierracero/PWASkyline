@@ -19,12 +19,20 @@ extension ToolsView.WebPage.BlogPage {
         @State var id: UUID?
         
         @State var name: String
+
+        @State var title_en: String
         
         @State var smallDescription: String
+
+        @State var descr_sm_en: String
         
         @State var descr: String
+
+        @State var descr_en: String
         
         @State var link: String
+
+        let allowsBilingual: Bool
 
         @State var inPromo: Bool
         
@@ -75,9 +83,15 @@ extension ToolsView.WebPage.BlogPage {
         ) {
             self.id = item?.id
             self.name = item?.name ?? ""
+            self.title_en = item?.title_en ?? ""
             self.smallDescription = item?.smallDescription ?? ""
+            self.descr_sm_en = item?.descr_sm_en ?? ""
             self.descr = item?.description ?? ""
+            self.descr_en = item?.descr_en ?? ""
             self.link = item?.cost ?? ""
+            self.allowsBilingual = customerServiceProfile?.profile.contains(where: {
+                $0.rawValue == BillingEfect.bilingual.rawValue
+            }) ?? false
             self.inPromo = item?.inPromo ?? false
             self.avatar = item?.avatar ?? "/skyline/media/tierraceroRoundLogoWhite.svg"
             self.files = files
@@ -107,8 +121,50 @@ extension ToolsView.WebPage.BlogPage {
         lazy var descrField = TextArea(self.$descr)
             .custom("width","calc(100% - 24px)")
             .class(.textFiledBlackDark)
-            .placeholder("Small Description")
+            .placeholder("Descripción Completa")
             .height(90.px)
+
+        lazy var titleEnField = InputText(self.$title_en)
+            .custom("width","calc(100% - 24px)")
+            .class(.textFiledBlackDark)
+            .placeholder("Name in English")
+            .height(31.px)
+
+        lazy var smallDescriptionEnField = TextArea(self.$descr_sm_en)
+            .custom("width","calc(100% - 24px)")
+            .class(.textFiledBlackDark)
+            .placeholder("Short Description in English")
+            .height(90.px)
+
+        lazy var descrEnField = TextArea(self.$descr_en)
+            .custom("width","calc(100% - 24px)")
+            .class(.textFiledBlackDark)
+            .placeholder("Full Description in English")
+            .height(90.px)
+
+        lazy var englishFields = Div {
+            Label("Contenido en Inglés")
+                .color(.lightBlueText)
+
+            Div().class(.clear).height(3.px)
+
+            Label("Nombre")
+                .color(.gray)
+            Div().class(.clear).height(3.px)
+            self.titleEnField
+            Div().class(.clear).height(7.px)
+
+            Label("Descripción Corta")
+                .color(.gray)
+            Div().class(.clear).height(3.px)
+            self.smallDescriptionEnField
+            Div().class(.clear).height(7.px)
+
+            Label("Descripción Completa")
+                .color(.gray)
+            Div().class(.clear).height(3.px)
+            self.descrEnField
+        }
 
         lazy var linkField = TextArea(self.$link)
             .custom("width","calc(100% - 24px)")
@@ -125,7 +181,7 @@ extension ToolsView.WebPage.BlogPage {
             .width(self.$selectedAvatar.map{ $0.isEmpty ? 250.px : 264.px})
         
         lazy var fileInput = InputFile()
-            .accept(["image/png", "image/gif", "image/jpeg", "image/jpg", "image/webp"]) //, "video/*", ".heic"
+            .accept(["image/png", "image/gif", "image/jpeg", "image/jpg", "image/webp", "video/*"])// "", ".heic"
             .multiple(false)
             .display(.none)
         
@@ -208,7 +264,7 @@ extension ToolsView.WebPage.BlogPage {
                                             
                                             showError(.generalError, "Habilitar esta funcion")
                                             /*
-                                            loadingView(show: true)
+                                            loadingView.show()
                                             
                                             let view = ImageWebView(
                                                 relation: CustWebFilesObjectType.general,
@@ -251,7 +307,7 @@ extension ToolsView.WebPage.BlogPage {
                                                 multipleTakes: !self.editImage
                                             ) { resp in
                                                 
-                                                loadingView(show: false)
+                                                loadingView.hide()
                                                 
                                                 guard let resp else {
                                                     showError(.comunicationError, .serverConextionError)
@@ -366,6 +422,11 @@ extension ToolsView.WebPage.BlogPage {
                             
                             Div().class(.clear).height(7.px)
 
+                            if self.allowsBilingual {
+                                self.englishFields
+                                Div().class(.clear).height(7.px)
+                            }
+
 
                             // MARK: Link
                             Label("Vinculo Externo")
@@ -379,6 +440,7 @@ extension ToolsView.WebPage.BlogPage {
 
                         }
                         .custom("height", "calc(100% - 50px)")
+                        .overflow(.auto)
                         
                         Div{
                             
@@ -483,7 +545,7 @@ extension ToolsView.WebPage.BlogPage {
         func renderInputFile() {
             
             fileInput = InputFile()
-                .accept(["image/png", "image/gif", "image/jpeg", "image/jpg", "image/webp"]) //, "video/*", ".heic"
+                .accept(["image/png", "image/gif", "image/jpeg", "image/jpg", "image/webp", "video/*"]) //, ".heic"
                 .multiple(false)
                 .display(.none)
             
@@ -515,6 +577,9 @@ extension ToolsView.WebPage.BlogPage {
                         isAvatar
                     )
                 } imAvatar: { viewId, fileName in
+
+                    
+
                     self.avatar = fileName
                     self.imageAvatar.load("https://\(custCatchUrl)\(skylineUrlPatch)/contenido/thump_\(fileName)")
                     self.updateAvatar(viewId, fileName)
@@ -555,21 +620,24 @@ extension ToolsView.WebPage.BlogPage {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             if let id {
                 
                 API.themeV1.saveViewBlog(
                     id: id,
                     name: name,
+                    title_en: title_en,
                     smallDescription: smallDescription,
+                    descr_sm_en: descr_sm_en,
                     description: descr,
+                    descr_en: descr_en,
                     link: link.isEmpty ? nil : link,
                     configLanguage: .Spanish,
                     inPromo: inPromo
                 ) { resp in
                     
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -607,15 +675,18 @@ extension ToolsView.WebPage.BlogPage {
             
             API.themeV1.addViewBlog(
                 name: name,
+                title_en: title_en,
                 smallDescription: smallDescription,
+                descr_sm_en: descr_sm_en,
                 description: descr,
+                descr_en: descr_en,
                 link:  link.isEmpty ? nil : link,
                 configLanguage: .Spanish,
                 inPromo: inPromo,
                 files: files
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -678,8 +749,11 @@ extension ToolsView.WebPage.BlogPage {
             super.didRemoveFromDOM()
             $id.removeAllListeners()
             $name.removeAllListeners()
+            $title_en.removeAllListeners()
             $smallDescription.removeAllListeners()
+            $descr_sm_en.removeAllListeners()
             $descr.removeAllListeners()
+            $descr_en.removeAllListeners()
             $link.removeAllListeners()
             $inPromo.removeAllListeners()
             $avatar.removeAllListeners()

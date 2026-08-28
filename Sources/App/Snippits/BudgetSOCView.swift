@@ -473,7 +473,7 @@ class BudgetSOCView: Div {
         self.name = soc.n
         self.price = soc.p.formatMoney
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.loadServiceActionItems(
             id: soc.i
@@ -488,7 +488,7 @@ class BudgetSOCView: Div {
                 
             } catch  {}
         
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)

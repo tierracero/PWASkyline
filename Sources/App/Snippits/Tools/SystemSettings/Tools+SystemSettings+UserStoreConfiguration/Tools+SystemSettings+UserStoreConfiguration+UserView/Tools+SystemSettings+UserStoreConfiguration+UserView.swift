@@ -1351,11 +1351,11 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
         private func beginUserAction() {
             isProcessingUserAction = true
-            loadingView(show: true)
+            loadingView.show()
         }
 
         private func finishUserAction() {
-            loadingView(show: false)
+            loadingView.hide()
             isProcessingUserAction = false
         }
 
@@ -1378,14 +1378,14 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 return
             }
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custUsernameV1.changeStatus(
                 id: data.userData.id,
                 status: isActive ? .suspended : .active
             ) { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servidor para obtener permisos")

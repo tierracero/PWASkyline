@@ -132,11 +132,11 @@ class StartNewChat: Div {
     
     func createNewChatRoom(id: UUID){
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.webSocketV1.createCustChatRoom(id: id) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)

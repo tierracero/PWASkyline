@@ -441,11 +441,11 @@ extension RewardsView {
             productName = ( !product.name.isEmpty ? product.name : product.carrierName )
             
             /*
-            loadingView(show: true)
+            loadingView.show()
              
             getProduct(taecelId: "") { resp in
             
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -518,7 +518,7 @@ extension RewardsView {
             
             purchaseProcessingText = "Iniciando proceso"
             
-            loadingView(show: true, message: "Iniciando proceso")
+            loadingView.show(text: "Iniciando proceso")
             
             API.rewardsV1.purchase(
                 cardId: cardId,
@@ -528,7 +528,7 @@ extension RewardsView {
                 price: price
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servidor")
@@ -571,7 +571,7 @@ extension RewardsView {
                     phase: phase
                 ) { resp in
                     
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, "No se pudo comunicar con el servir")

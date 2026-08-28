@@ -1047,7 +1047,7 @@ class ManagePOC: Div {
                             ignore: [custCatchID],
                             callback: { user in
                                 
-                                loadingView(show: true)
+                                loadingView.show()
                                 
                                 API.custAPIV1.sendToMobile(
                                     type: .product,
@@ -1057,7 +1057,7 @@ class ManagePOC: Div {
                                     description: ""
                                 ) { resp in
                                     
-                                    loadingView(show: false)
+                                    loadingView.hide()
                                     
                                     guard let resp else {
                                         showError(.comunicationError, .unexpenctedMissingPayload)
@@ -1203,7 +1203,7 @@ class ManagePOC: Div {
                                 .height(28.px)
                                 .onClick {
                                     
-                                    loadingView(show: true)
+                                    loadingView.show()
                                     
                                     let view: ImagePOCContainer = .init(
                                         type: .img,
@@ -1242,7 +1242,7 @@ class ManagePOC: Div {
                                         multipleTakes: !self.editImage
                                     ) { resp in
                                         
-                                        loadingView(show: false)
+                                        loadingView.hide()
                                         
                                         guard let resp else {
                                             showError(.comunicationError, .serverConextionError)
@@ -3170,14 +3170,14 @@ class ManagePOC: Div {
         
         if let pocid {
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPOCV1.getPOC(
                 id: pocid,
                 full: true
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError( .comunicationError, .serverConextionError)
@@ -3957,6 +3957,7 @@ class ManagePOC: Div {
         xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
         
         xhr.setRequestHeader("Accept", "application/json")
+        xhr.setRequestHeader("WSId", custCatchChatConnID)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,
@@ -4025,11 +4026,11 @@ class ManagePOC: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPOCV1.getBrands { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -4176,7 +4177,7 @@ class ManagePOC: Div {
             id: pocid
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             self.modelField
                 .removeClass(.isOk)
@@ -4225,7 +4226,7 @@ class ManagePOC: Div {
             id: pocid
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             self.upcField
                 .removeClass(.isOk)
@@ -4270,11 +4271,11 @@ class ManagePOC: Div {
             message: "Confirm creacion de:\n\"\(selectedBrand.capitalizingFirstLetters(true))\"") { isConfirmed, comment in
                 if isConfirmed {
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custPOCV1.addBrands(brand: self.selectedBrand.capitalizingFirstLetters(true)) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp = resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -4614,7 +4615,7 @@ class ManagePOC: Div {
                 ))
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPOCV1.updateProduct(
                 pocid: pocid,
@@ -4672,7 +4673,7 @@ class ManagePOC: Div {
                 mercadoLibre: mercadoLibre
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -4727,7 +4728,7 @@ class ManagePOC: Div {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPOCV1.createProduct(
                 productCreateType: leveltype,
@@ -4793,7 +4794,7 @@ class ManagePOC: Div {
                 mercadoLibre: mercadoLibre
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -4841,14 +4842,14 @@ class ManagePOC: Div {
         
         addToDom(ConfirmView(type: .yesNo, title: "Confirme eliminación", message: "¿Realmente desea eliminar el producto \(self.name.uppercased())?"){ isConfirm, reason in
              
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPOCV1.deletePOC(
                 id: pocid,
                 pDir: pDir
             ) { resp in
             
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -4882,13 +4883,13 @@ class ManagePOC: Div {
         
         addToDom(ConfirmView(type: .yesNo, title: "Confirme Pausa", message: "¿Realmente desea pausar el producto \(self.name.uppercased())?"){ isConfirm, reason in
              
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPOCV1.pausePOC(
                 pocId: pocid
             ) { resp in
             
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -4914,13 +4915,13 @@ class ManagePOC: Div {
             return
         }
         
-       loadingView(show: true)
+       loadingView.show()
        
        API.custPOCV1.activatePOC(
            pocId: pocid
        ) { resp in
        
-           loadingView(show: false)
+           loadingView.hide()
            
            guard let resp else {
                showError(.comunicationError, .serverConextionError)
@@ -5045,7 +5046,7 @@ class ManagePOC: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.addNote(
             relType: .product,
@@ -5054,7 +5055,7 @@ class ManagePOC: Div {
             activity: noteText
         ) { resp in
         
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

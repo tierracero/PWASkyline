@@ -126,7 +126,7 @@ class QuickOrderSearch: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custOrderV1.searchFolio(
             term: term,
@@ -140,7 +140,7 @@ class QuickOrderSearch: Div {
             endAt: nil
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)

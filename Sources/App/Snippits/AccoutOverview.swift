@@ -103,8 +103,8 @@ public class AccoutOverview: Div {
             Img()
                 .src("/skyline/media/sendToMobile.png")
                 .class(.iconWhite)
-                .height(30.px)
                 .marginLeft(12.px)
+                .height(30.px)
                 .onClick {
                     if let accountid = self.account?.id {
                         addToDom(SelectCustUsernameView(
@@ -112,7 +112,7 @@ public class AccoutOverview: Div {
                             ignore: [custCatchID],
                             callback: { user in
                                 
-                                loadingView(show: true)
+                                loadingView.show()
                                 
                                 API.custAPIV1.sendToMobile(
                                     type: .account,
@@ -122,7 +122,7 @@ public class AccoutOverview: Div {
                                     description: ""
                                 ) { resp in
                                     
-                                    loadingView(show: false)
+                                    loadingView.hide()
                                     
                                     guard let resp else {
                                         showError(.comunicationError, .serverConextionError)
@@ -195,7 +195,7 @@ public class AccoutOverview: Div {
                             ignore: [custCatchID],
                             callback: { user in
                                 
-                                loadingView(show: true)
+                                loadingView.show()
                                 
                                 API.custAPIV1.sendToMobile(
                                     type: .order,
@@ -205,7 +205,7 @@ public class AccoutOverview: Div {
                                     description: "Favor de revizar orden \(order.name)"
                                 ) { resp in
                                     
-                                    loadingView(show: false)
+                                    loadingView.hide()
                                     
                                     guard let resp else {
                                         showError(.comunicationError, .unexpenctedMissingPayload)
@@ -436,11 +436,11 @@ public class AccoutOverview: Div {
 
                         if let id = self.order?.id {
 
-                            loadingView(show: true)
+                            loadingView.show()
 
                                 API.custOrderV1.sendServiceOrder(orderId: id) { resp in
 
-                                    loadingView(show: false)
+                                    loadingView.hide()
 
                                     guard let resp else {
                                         showError(.comunicationError, .serverConextionError)
@@ -675,9 +675,9 @@ public class AccoutOverview: Div {
                     .src("/skyline/media/cross.png")
                     .class(Class(TCOrderViewClass.windowAction))
                     .class(Class(TCOrderViewClass.closeAction))
-                    .float(.right)
                     .marginRight(7.px)
                     .cursor(.pointer)
+                    .float(.right)
                     .width(24.px)
                     .onClick{
                         var accountid: UUID? = nil
@@ -819,11 +819,11 @@ public class AccoutOverview: Div {
         _ account: CustAcct
     ) -> ())? = nil) {
          
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAccountV1.load(id: self.id) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -983,12 +983,12 @@ public class AccoutOverview: Div {
             
             acctType = account.type
             
-            loadingView(show: true)
+            loadingView.show()
 
             // Keep cache hits asynchronous so constructing another order for an
             // existing account cannot monopolize the originating click event.
             Dispatch.asyncAfter(0.05) {
-                loadingView(show: false)
+                loadingView.hide()
 
                 callback(
                     account,
@@ -1013,11 +1013,11 @@ public class AccoutOverview: Div {
         }
         else{
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custOrderV1.loadOrder(identifier: .id(id), modifiedAt: nil){ resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -1092,7 +1092,7 @@ public class AccoutOverview: Div {
         self.orderViewIsLoaded = true
         self.load = .order
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custOrderV1.historicalSearch(
             accountid: id,
@@ -1105,7 +1105,7 @@ public class AccoutOverview: Div {
             timeInit: 0
         ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     return
@@ -1150,7 +1150,7 @@ public class AccoutOverview: Div {
         
         self.load = .order
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custOrderV1.loadFolios(
             storeid: nil,
@@ -1159,7 +1159,7 @@ public class AccoutOverview: Div {
             curTrans: []
         ){ resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 return

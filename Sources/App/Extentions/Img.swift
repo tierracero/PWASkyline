@@ -23,10 +23,11 @@ extension Img {
     public func closeButton(_ id: CrossButtonIdName) -> Img{
         self.src("/skyline/media/cross.png")
         self.float(.right)
-        //self.marginTop(5.px)
+        self.marginTop(5.px)
         self.marginRight(7.px)
         self.cursor(.pointer)
         self.width(24.px)
+        self.height(24.px)
         self.id(Id(stringLiteral: id.rawValue))
         
         return self

@@ -463,7 +463,7 @@ class PrintBarcodes: Div {
         
         if let printScript {
 
-            loadingView(show: true)
+            loadingView.show()
 
             var items: [CustomeProductTagPayload] = []
 
@@ -506,7 +506,7 @@ class PrintBarcodes: Div {
                 payload: .productTag(items)
             ) { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -531,7 +531,7 @@ class PrintBarcodes: Div {
                 _ = JSObject.global.goToURL!(url)
 
             }
-
+            
         }
     }
 

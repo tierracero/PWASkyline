@@ -143,7 +143,7 @@ extension BudgetView {
                                         return
                                     }
                                     
-                                    loadingView(show: true)
+                                    loadingView.show()
                                     
                                     API.custOrderV1.linkServiceOrderBudget(
                                         budgetId: manager.id,

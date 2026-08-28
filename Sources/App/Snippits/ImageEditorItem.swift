@@ -98,9 +98,13 @@ class ImageEditorItem: Div {
         width(73.px)
         float(.left)
         onClick {
-            if let url = self.url {
-                self.callback(url, self.width, self.height)
+            guard let url = self.url else {
+                print("🔴 ImageEditorItem click ignored: image URL is not loaded")
+                return
             }
+
+            print("🟡 ImageEditorItem callback url=\(url) width=\(self.width) height=\(self.height)")
+            self.callback(url, self.width, self.height)
         }
         
         if let url = url {
@@ -115,7 +119,7 @@ class ImageEditorItem: Div {
     
     func loadImage(_ url: String) {
      
-        let item = Img()
+        _ = Img()
             .src(url)
             .onLoad {
                 

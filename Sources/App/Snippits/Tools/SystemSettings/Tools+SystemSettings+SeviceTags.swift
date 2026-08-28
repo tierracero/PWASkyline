@@ -1295,7 +1295,7 @@ extension ToolsView.SystemSettings {
                 return
             }
 
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.saveConfigs(
                 configStoreProcessing: nil,
@@ -1350,7 +1350,7 @@ extension ToolsView.SystemSettings {
                 configGeneral: nil
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)

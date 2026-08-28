@@ -155,7 +155,7 @@ class CreateServiceLevelDepartement: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         if let id = self.dep?.id {
             
@@ -169,7 +169,7 @@ class CreateServiceLevelDepartement: Div {
                 coverPortrait: ""
             ){ resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -200,7 +200,7 @@ class CreateServiceLevelDepartement: Div {
                 coverPortrait: ""
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)

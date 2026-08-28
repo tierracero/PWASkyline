@@ -865,7 +865,7 @@ extension CustConcessionView {
                         return
                     }
 
-                    loadingView(show: true)
+                    loadingView.show()
 
                     API.custPOCV1.addManualInventory(
                         storeId: custCatchStore,
@@ -881,7 +881,7 @@ extension CustConcessionView {
                         alocatedTo: UUID(uuidString: self.bodegaListener)
                     ) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
 
                         guard let resp else {
                             showError(.comunicationError, "Error de comunicacion")

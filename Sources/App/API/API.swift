@@ -16,6 +16,7 @@ public struct API {
     public typealias authV1 = AuthComponents
     public typealias cloudUserV1 = CloudUserComponents
     public typealias custAccountV1 = CustAccountComponents
+    public typealias custAssetsV1 = CustAssetsComponents
     public typealias custPDVV1 = CustPDVComponents
 
     public typealias custCommercialTrips = CustCommercialTripsComponents

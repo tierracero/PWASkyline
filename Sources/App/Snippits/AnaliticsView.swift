@@ -540,7 +540,7 @@ class AnaliticsView: PageController {
                 
                 API.custAPIV1.accountBalance { resp in
                     
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else{
                         showError(.comunicationError, .serverConextionError)
@@ -576,7 +576,7 @@ class AnaliticsView: PageController {
             
             API.custAPIV1.accountBalance { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else{
                     showError(.comunicationError, .serverConextionError)
@@ -637,7 +637,7 @@ class AnaliticsView: PageController {
         else {
             API.custAPIV1.accountBalance { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else{
                     showError(.comunicationError, .serverConextionError)
@@ -704,14 +704,14 @@ class AnaliticsView: PageController {
             let file: String
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         sendPost(url, CreateOxxoCardRequest(
             code: self.oxxo,
             amount: self.dueBalance
         )) { data in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let data else {
                 showError(.generalError, .serverConextionError)
@@ -751,12 +751,12 @@ class AnaliticsView: PageController {
             "&amount=\(dueBalance.toString)"
         )
         
-        loadingView(show: true)
+        loadingView.show()
         
         oxxoTypeViewIsHidden = true
         
         Dispatch.asyncAfter( 1.5) {
-            loadingView(show: false)
+            loadingView.hide()
         }
         
     }
@@ -765,10 +765,10 @@ class AnaliticsView: PageController {
         
         _ = JSObject.global.goToURL!(baseSkylineAPIUrl(ie: "downBillDoc") + "&id=\(id.uuidString)")
         
-        loadingView(show: true)
+        loadingView.show()
         
         Dispatch.asyncAfter( 1.5) {
-            loadingView(show: false)
+            loadingView.hide()
         }
     }
     

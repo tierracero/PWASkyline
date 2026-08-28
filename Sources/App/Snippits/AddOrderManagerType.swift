@@ -129,7 +129,7 @@ class AddOrderManagerType: Div {
         
         if term.isEmpty { return }
         
-        loadingView(show: true)
+        loadingView.show()
         
         print("send to server: 💎")
         print(term)
@@ -140,7 +140,7 @@ class AddOrderManagerType: Div {
             term: term
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)

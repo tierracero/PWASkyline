@@ -37,7 +37,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.UserView {
                 .class(Class(TCUserPermissionManagerClass.categoryList))
 
             if self.cats.isEmpty {
-                list.appendChild(self.emptyState("No hay categorías de permisos disponibles"))
+                list.appendChild(emptyState("No hay categorías de permisos disponibles"))
             } else {
                 self.cats.forEach { category in
                     let button = self.categoryButton(category)
@@ -50,7 +50,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.UserView {
         }()
 
         private lazy var detailView = Div {
-            self.emptyState("Seleccione una categoría para consultar sus permisos")
+            emptyState("Seleccione una categoría para consultar sus permisos")
         }
             .class(Class(TCUserPermissionManagerClass.detail))
 
@@ -352,14 +352,14 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.UserView {
 
             isAddingPermission = true
             pendingPermissionButton = addPermissionButton
-            loadingView(show: true)
+            loadingView.show()
 
             API.custAPIV1.addUserPermition(
                 permitType,
                 permitId,
                 userId: userId
             ) { [weak self] resp in
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let self else {
                     return
@@ -506,14 +506,6 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.UserView {
                 }
         }
 
-        private func emptyState(_ message: String) -> Div {
-            Div {
-                Img()
-                    .src("/skyline/media/user_configuration_icon.png")
-                Span(message)
-            }
-                .class(Class(TCUserPermissionManagerClass.empty))
-        }
     }
 }
 
@@ -543,7 +535,6 @@ private enum TCUserPermissionManagerClass {
     static let optionText = "tc-user-permission-manager-option-text"
     static let optionArrow = "tc-user-permission-manager-option-arrow"
     static let back = "tc-user-permission-manager-back"
-    static let empty = "tc-user-permission-manager-empty"
     static let addIcon = "tc-user-permission-manager-add-icon"
 }
 
@@ -866,23 +857,6 @@ private enum TCUserPermissionManagerTheme {
                 .custom("font-size", "17px")
                 .custom("line-height", "1")
 
-            CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.empty)"))
-                .custom("display", "grid")
-                .custom("place-items", "center")
-                .custom("align-content", "center")
-                .custom("gap", "12px")
-                .custom("min-height", "220px")
-                .custom("padding", "24px")
-                .custom("box-sizing", "border-box")
-                .custom("color", "var(--tc-permission-muted)")
-                .custom("font-size", "13px")
-                .custom("text-align", "center")
-
-            CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.empty) img"))
-                .custom("width", "42px !important")
-                .custom("height", "42px !important")
-                .custom("object-fit", "contain")
-                .custom("opacity", "0.66")
         }
 
         WebApp.current.addStylesheet {

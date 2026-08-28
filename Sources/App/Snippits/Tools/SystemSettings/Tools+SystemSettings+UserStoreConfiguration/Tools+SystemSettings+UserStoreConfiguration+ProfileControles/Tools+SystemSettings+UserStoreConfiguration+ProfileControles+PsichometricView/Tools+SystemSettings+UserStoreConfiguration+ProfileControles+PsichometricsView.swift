@@ -124,11 +124,11 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
 
         func loadItem(_ item: PsychometricsTestQuick) {
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custAPIV1.getPsychometricsTest(testId: item.id) { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError )

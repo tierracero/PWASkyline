@@ -851,14 +851,14 @@ class ProductManagerView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.v1.storeDeps(curObjs: []) { resp in
             guard self.isActive else {
                 return
             }
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -929,14 +929,14 @@ class ProductManagerView: Div {
         let renderId = UUID()
         productRenderId = renderId
 
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.storeLoadDepartment(id: depid) { resp in
             guard renderId == self.productRenderId else {
                 return
             }
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -1010,14 +1010,14 @@ class ProductManagerView: Div {
         let renderId = UUID()
         productRenderId = renderId
 
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.storeLoadCategorie(id: catid) { resp in
             guard renderId == self.productRenderId else {
                 return
             }
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -1093,14 +1093,14 @@ class ProductManagerView: Div {
         let renderId = UUID()
         productRenderId = renderId
 
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.storeLoadLine(id: lineid) { resp in
             guard renderId == self.productRenderId else {
                 return
             }
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)

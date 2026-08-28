@@ -144,11 +144,11 @@ extension ManagePOC {
             top(0.px)
             left(0.px)
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPOCV1.getProductSubTypes(productType: productType) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -272,14 +272,14 @@ extension ManagePOC {
                 message: "Confirm creacion de:\n\"\(selectedBrand)\"") { isConfirmed, comment in
                     if isConfirmed {
                         
-                        loadingView(show: true)
+                        loadingView.show()
                         
                         API.custPOCV1.createProductSubType(
                             productType: self.productType,
                             productSubType: self.selectedBrand
                         ) { resp in
                             
-                            loadingView(show: false)
+                            loadingView.hide()
                             
                             guard let resp else {
                                 showError(.comunicationError, .serverConextionError)

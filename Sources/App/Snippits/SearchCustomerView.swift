@@ -108,10 +108,10 @@ class SearchCustomerView: Div {
                 return
             }
         }
-        loadingView(show: true)
+        loadingView.show()
 
         searchAccount(term: term) { term, resp in
-            loadingView(show: false)
+            loadingView.hide()
 
             self.callback(term, resp)
 

@@ -12,6 +12,7 @@ public enum ServerRouts: String {
     case api = ""
     case auth = "auth/"
     case cust = "cust/"
+    case custAssets = "custAssets/"
     case custUsername = "custUsername/"
     case custCommercialTrips = "custCommercialTrips/"
     case custExcel = "custExcel/"

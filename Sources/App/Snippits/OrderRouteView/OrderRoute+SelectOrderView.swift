@@ -558,7 +558,7 @@ extension OrderRouteView{
             
             searchOrderError = nil
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custOrderV1.search(
                 term: searchOrderString,
@@ -567,7 +567,7 @@ extension OrderRouteView{
                 
 
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -825,7 +825,7 @@ extension OrderRouteView{
                 country: country
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -991,12 +991,12 @@ extension OrderRouteView{
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.v1.jwt { token in
                 
                 guard let token else {
-                    loadingView(show: false)
+                    loadingView.hide()
                     showError(.comunicationError, "No se pudo cargar token")
                     return
                 }
@@ -1006,7 +1006,7 @@ extension OrderRouteView{
                 // "Arroyo Carrizal, Luis Echeverria, 87060 Victoria, Tamps., México
                 let _ = JSObject.global.initiateSingleMap!(self.mapId, token, "\(self.street), \(self.colony), \(self.zip) \(self.city), \(self.state), \(self.country)", JSOneshotClosure { args in
                     
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     if let payload = args.first?.string {
                         self.processMapResponse(payload)
@@ -1148,11 +1148,11 @@ extension OrderRouteView{
             
             print("🟡 reverse geocode coordinates")
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.v1.jwt { token in
                 
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let token else {
                     showError(.comunicationError, "No se pudo cargar token")
@@ -1226,7 +1226,7 @@ extension OrderRouteView{
                                 return
                             }
 
-                            loadingView(show: true)
+                            loadingView.show()
 
                             API.custOrderV1.saveOrderDetail(
                                 orderid: order.id,
@@ -1242,7 +1242,7 @@ extension OrderRouteView{
                                 zip: self.zip
                             ) { resp in
 
-                                loadingView(show: false)
+                                loadingView.hide()
 
                                 self.callback(.init(
                                     orderId: order.id,
@@ -1325,7 +1325,7 @@ extension OrderRouteView{
                     return
                 }
 
-                loadingView(show: true)
+                loadingView.show()
 
                 API.custOrderV1.saveOrderDetail(
                     orderid: order.id,
@@ -1341,7 +1341,7 @@ extension OrderRouteView{
                     zip: self.zip
                 ) { resp in
 
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     self.callback(.init(
                         orderId: order.id,

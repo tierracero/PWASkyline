@@ -215,11 +215,11 @@ extension MoneyManagerView {
             left(0.px)
             top(0.px)
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.viewDepositsConfirmation(id: nil) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.generalError, .serverConextionError)

@@ -420,7 +420,7 @@ class RewardsView: PageController {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.rewardsV1.getCategorie(
             categorie: categorie,
@@ -428,7 +428,7 @@ class RewardsView: PageController {
             rewards: rewards
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -462,7 +462,7 @@ class RewardsView: PageController {
             return
         }
     
-        loadingView(show: true)
+        loadingView.show()
         
         API.rewardsV1.getCategorie(
             categorie: categorie,
@@ -470,7 +470,7 @@ class RewardsView: PageController {
             rewards: categorie != .services
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -501,12 +501,12 @@ class RewardsView: PageController {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.rewardsV1.getProducts(
             carrierId: carrierId
         ) { resp in
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

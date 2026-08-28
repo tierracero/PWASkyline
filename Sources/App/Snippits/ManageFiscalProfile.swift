@@ -832,9 +832,10 @@ class ManageFiscalProfile: Div {
         
         formData.append("file", file, filename: file.name)
         
-        xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadMedia")
+        xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadMedia")
         
         xhr.setRequestHeader("Accept", "application/json")
+        xhr.setRequestHeader("WSId", custCatchChatConnID)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,

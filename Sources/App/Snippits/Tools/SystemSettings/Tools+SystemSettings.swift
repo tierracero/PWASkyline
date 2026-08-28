@@ -218,11 +218,11 @@ extension ToolsView {
             left(0.px)
             top(0.px)
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.getConfigs { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -322,7 +322,7 @@ extension ToolsView.SystemSettings {
 
     func downloadBackup() {
 
-        let url = baseAPIUrl( "https://intratc.co/api/cust/v1/downloadBackup")
+        let url = baseAPIUrl( "https://api.tierracero.co/cust/v1/downloadBackup")
         
         print(url)
 
@@ -383,6 +383,7 @@ extension ToolsView.SystemSettings {
         xhr.responseType = .blob
 
         xhr.setRequestHeader("Accept", "application/json")
+        xhr.setRequestHeader("WSId", custCatchChatConnID)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,
@@ -450,7 +451,7 @@ func _downloadBackup(
     
     let xhr = XMLHttpRequest()
     
-    let url = baseAPIUrl("https://intratc.co/api/v1/getFiscalUnitPesos") + "&term=\(_term)"
+    let url = baseAPIUrl("https://api.tierracero.co/v1/getFiscalUnitPesos") + "&term=\(_term)"
     
     xhr.open(method: "GET", url: url)
     
@@ -458,6 +459,7 @@ func _downloadBackup(
         .setRequestHeader("Content-Type", "application/json")
         .setRequestHeader("AppName", applicationName)
         .setRequestHeader("AppVersion", SkylineWeb().version.description)
+        .setRequestHeader("WSId", custCatchChatConnID)
 
     xhr.send("")
     

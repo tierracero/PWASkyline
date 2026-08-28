@@ -16,14 +16,14 @@ public struct SkylineWeb {
         mode: .beta,
         major: 0,
         minor: 90,
-        patch: 6
+        patch: 14
     )
 	
 	public init() {}
     
 }
 
-var applicationName = "PWASkyline"
+var applicationName = "PWASkyline"  // 
 
 var developmentMode: ApplicationAPIMode = .produccion
 
@@ -257,47 +257,10 @@ open class _SkyLine {
         mode: .beta,
         major: 0,
         minor: 90,
-        patch: 6
+        patch: 14
     )
 	
-	public lazy var loadingView = Div {
-        Table {
-            Tr {
-                Td {
-                    
-                    Img()
-                        .src("/skyline/media/cross.png")
-                        .position(.absolute)
-                        .cursor(.pointer)
-                        .width(18.px)
-                        .right(25.px)
-                        .top(25.px)
-                        .onClick({ _, event in
-                            faseOutLoadingView()
-                        })
-
-                        Img()
-                            .src("/skyline/media/tierraceroRoundLogoWhite.svg")
-                            .marginBottom(12.px)
-                            .width(100.px)
-                }
-                .align(.center)
-                .verticalAlign(.middle)
-            }
-        }
-        .width(100.percent)
-        .height(100.percent)
-    }
-    .backgroundColor(.transparentBlack)
-    .filter(.opacity(0))
-    .position(.absolute)
-    .height(100.percent)
-    .width(100.percent)
-    .id("loadingView")
-    .zIndex(999999998)
-    .display(.none)
-    .left(0.px)
-    .top(0.px)
+	lazy var loadingView: LoadingView = LoadingView ()
     
     public lazy var minimizedGrid = Div()
         .position(.absolute)
@@ -324,7 +287,7 @@ extension WebApp {
 
     public var skyline:  _SkyLine { _SkyLine.shared }
     
-    public var loadingView: Div { _SkyLine.shared.loadingView }
+    public var loadingView: LoadingView { _SkyLine.shared.loadingView }
     
     public var messageGrid: Div { _SkyLine.shared.messageGrid }
     

@@ -448,11 +448,11 @@ class SelectStoreDepartment: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.v1.storeDeps(curObjs: []) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -523,11 +523,11 @@ class SelectStoreDepartment: Div {
     
     func loadCatsInDep(_ depid: UUID,_ depname: String) {
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.v1.storeCats(id: depid, curObjs: []) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -588,11 +588,11 @@ class SelectStoreDepartment: Div {
     
     func loadLinesInCat(_ catid: UUID,_ catname: String) {
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.v1.storeLines(id: catid, curObjs: []) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

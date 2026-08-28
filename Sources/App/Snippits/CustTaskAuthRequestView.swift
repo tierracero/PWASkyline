@@ -41,7 +41,7 @@ class CustTaskAuthRequestView: Div {
                         
                         if self.task.alertType == .changePrice {
                             
-                            loadingView(show: true)
+                            loadingView.show()
                             
                             API.custAPIV1.CTAMResolve(
                                 alertid: self.task.id,
@@ -49,7 +49,7 @@ class CustTaskAuthRequestView: Div {
                                 responseMessage: ""
                             ) { resp in
                                 
-                                loadingView(show: false)
+                                loadingView.hide()
                             
                                 guard resp != nil else {
                                     showError(.comunicationError, .serverConextionError)

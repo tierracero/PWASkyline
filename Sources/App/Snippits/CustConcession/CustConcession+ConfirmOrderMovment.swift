@@ -311,7 +311,7 @@ extension CustConcessionView {
 
         func addToOrder() {
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custPOCV1.moveConcessionInventoryToOrder(
                 accountId: self.accountId,
@@ -320,7 +320,7 @@ extension CustConcessionView {
                 itemIds: self.selectedItems.map{ $0.id }
             ) { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)

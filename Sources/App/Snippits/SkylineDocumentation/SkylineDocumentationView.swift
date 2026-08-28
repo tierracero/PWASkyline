@@ -487,13 +487,13 @@ class SkylineDocumentationView: Div {
 
     func selectFamily(_ family: DocumentFamily) {
 
-        loadingView(show: true)
+        loadingView.show()
 
         API.v1.skylineDocuments(
             family: family
         ) { resp in
 
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -663,13 +663,13 @@ class SkylineDocumentationView: Div {
 
     func openDocument(_ documentId: UUID) {
 
-        loadingView(show: true)
+        loadingView.show()
 
         API.v1.skylineDocument(
             documentId: documentId
         ) { resp in
 
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

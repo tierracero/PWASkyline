@@ -7,6 +7,9 @@ Authoritative rules: `PWA-*`.
 - `Sources/Service/Service.swift` defines the service worker manifest and lifecycle callbacks.
 - `Package.swift` copies `favicon.ico`, `skyline`, `tutorial`, `images`, `js`, and `css` resources for the `Service` target.
 - `WebSources` contains JS/WASI/webpack bootstrap files.
+- The app WASI loader performs one GET per WASM target. Webpack embeds the decoded
+  WASM byte length from the build artifact so Brotli/Gzip response streams can
+  report accurate decoded-byte progress without a second HEAD request.
 - `DevPublic` and `DistPublic` contain app/service JS, WASM, compressed WASM, HTML, manifest, favicon, and service worker outputs.
 - `Sources/Service/skyline/js/speechRecognition.js` is the source-owned browser bridge exposed as `globalThis.PWASkylineSpeech`; it is copied through the existing `skyline` resource declaration and loaded only by the authenticated work shell.
 

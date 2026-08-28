@@ -51,6 +51,42 @@ class ToolsView: Div {
                 }
 
                 self.menuItem(
+                    icon: "/skyline/media/icon-tools.png",
+                    title: "Activos",
+                    subtitle: "Administra departamentos, categorías y activos"
+                ) {
+
+                    loadingView.show()
+
+                    API.custAssetsV1.listDepartments(
+                        accountId: nil
+                    ) { response in
+                        
+                        loadingView.hide()
+
+                        guard let response else {
+                            showError(.comunicationError, .serverConextionError)
+                            return
+                        }
+
+                        guard response.status == .ok else {
+                            showError(.generalError, response.msg)
+                            return
+                        }
+
+                        guard let payload = response.data else {
+                            showError(.unexpectedResult, .unexpenctedMissingPayload)
+                            return
+                        }
+
+                        addToDom(CustAssetsView(accountId: nil, items: payload.items))
+                        
+                    }
+
+                    self.remove()
+                }
+
+                self.menuItem(
                     icon: "/skyline/media/gear.png",
                     title: "Ajustes",
                     subtitle: "Configura las reglas generales del sistema"

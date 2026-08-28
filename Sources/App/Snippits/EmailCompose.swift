@@ -375,7 +375,7 @@ class EmailCompose: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API().mailV1.send(
             uid: uid,
@@ -385,7 +385,7 @@ class EmailCompose: Div {
             body: emailBody,
             attachments: filesRefrence.map {  $0.value.fileName }
         ) { resp in
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else{
                 showError(.comunicationError, .serverConextionError)
@@ -508,6 +508,7 @@ class EmailCompose: Div {
         xhr.open(method: "POST", url: "https://tierracero.co/api/uploader.php")
 
         xhr.setRequestHeader("Accept", "application/json")
+        xhr.setRequestHeader("WSId", custCatchChatConnID)
 
 //        if let jsonData = try? JSONEncoder().encode(APIHeader(
 //            AppID: thisAppID,

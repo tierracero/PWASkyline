@@ -445,7 +445,7 @@ extension ProductManagerView.AuditView {
             let renderId = UUID()
             cardexRenderId = renderId
 
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPOCV1.cardex(
                 relationId: relationId,
@@ -457,7 +457,7 @@ extension ProductManagerView.AuditView {
                     return
                 }
 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -767,7 +767,7 @@ extension ProductManagerView.AuditView {
         
         func downloadCardexReport(_ documentType:  DocumentType, startAt: Int64, endAt: Int64, storeId: UUID, payload: CustPOCComponents.CardexResponse) {
             
-            loadingView(show: true)
+            loadingView.show()
             
             var name = ""
             
@@ -938,7 +938,7 @@ extension ProductManagerView.AuditView {
             
             contents += row.map{ $0.replace(from: ",", to: "") }.joined(separator: ",") +  "\n"
             
-            loadingView(show: false)
+            loadingView.hide()
             
             switch documentType {
                 case .csv:

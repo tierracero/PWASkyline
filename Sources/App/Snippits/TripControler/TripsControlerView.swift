@@ -129,6 +129,7 @@ class TripsControlerView: Div {
     }
 
     lazy var addTripButton = Div("＋ Viaje")
+        .custom("border-color", "orange !important")
         .class(.uibtn)
         .padding(v: 8.px, h: 14.px)
         .fontSize(16.px)
@@ -380,7 +381,7 @@ class TripsControlerView: Div {
         recordTripsRequestExecution()
 
         if showLoadingView {
-            loadingView(show: true)
+            loadingView.show()
         }
 
         API.custCommercialTrips.getTrips(
@@ -390,7 +391,7 @@ class TripsControlerView: Div {
             self.tripsRequestIsInFlight = false
 
             if showLoadingView {
-                loadingView(show: false)
+                loadingView.hide()
             }
 
             guard let resp = resp else {
@@ -657,11 +658,11 @@ class TripsControlerView: Div {
     }
     func startTrip(_ account: CustAcctSearch) {
 
-        loadingView(show: true)
+        loadingView.show()
 
         API.custCommercialTrips.components { resp in
 
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)

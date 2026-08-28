@@ -37,8 +37,9 @@ extension MailComponents {
         
         xhr.setRequestHeader("Accept", "application/json")
             .setRequestHeader("Content-Type", "application/json")
-        .setRequestHeader("AppName", applicationName)
-        .setRequestHeader("AppVersion", SkylineWeb().version.description)
+            .setRequestHeader("AppName", applicationName)
+            .setRequestHeader("AppVersion", SkylineWeb().version.description)
+            .setRequestHeader("WSId", custCatchChatConnID)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,
@@ -97,4 +98,3 @@ extension MailComponents {
         
     }
 }
-

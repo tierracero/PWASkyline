@@ -411,7 +411,7 @@ class TripControlerManageMerchendiseBase: Div {
         let selectedPackagingName =
             isDangerousMaterial ? packagingName : ""
 
-        loadingView(show: true)
+        loadingView.show()
 
         if let id {
             API.custCommercialTrips.updateMerchandise(
@@ -429,7 +429,7 @@ class TripControlerManageMerchendiseBase: Div {
                 packagingType: selectedPackagingType,
                 packagingName: selectedPackagingName
             ) { resp in
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -478,7 +478,7 @@ class TripControlerManageMerchendiseBase: Div {
             packagingType: selectedPackagingType,
             packagingName: selectedPackagingName
         ) { resp in
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -511,12 +511,12 @@ class TripControlerManageMerchendiseBase: Div {
         ) { isConfirmed, _ in
             guard isConfirmed else { return }
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custCommercialTrips.deleteMerchandise(
                 merchandiseId: id
             ) { resp in
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)

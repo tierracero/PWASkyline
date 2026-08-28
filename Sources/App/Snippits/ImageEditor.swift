@@ -86,6 +86,10 @@ class ImageEditor: Div {
         self.callback = callback
     }
     
+    required init() {
+        fatalError("init() has not been implemented")
+    }
+    
     let ws = WS()
     
     @State var imageIsLoaded: Bool = false
@@ -129,10 +133,6 @@ class ImageEditor: Div {
     var watermarks: [String] = []
     
     var watermarksRefs: [ String : WatermarkItem ] = [:]
-    
-    required init() {
-        fatalError("init() has not been implemented")
-    }
     
     lazy var imageThump = Img()
         .src("skyline/media/tierraceroRoundLogoWhite.svg")
@@ -630,7 +630,7 @@ class ImageEditor: Div {
 
         switch event {
         case .asyncRemoveBackground:
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let payload = ws.asyncRemoveBackground(value) else {
                 showError(.generalError, .unexpenctedMissingPayload)
@@ -825,9 +825,19 @@ class ImageEditor: Div {
     
     func addIconToEditor(_ url: String, _ width: Int, _ height: Int) {
 
-        let itemID = callKey(12)
+        guard imageIsLoaded else {
+            print("🔴 addIconToEditor ignored: editor image is not loaded")
+            return
+        }
+
+        // CSS selectors cannot start with a number. Prefixing this generated
+        // id keeps it safe for querySelector and for the Jcrop widget ids.
+        let itemID = "watermark_\(callKey(12))"
+
+        print("🟡 addIconToEditor url=\(url) itemID=\(itemID) sourceWidth=\(width) sourceHeight=\(height)")
         
         var w = width
+
         var h = height
         
         if logoRelativeWidth < width {
@@ -840,14 +850,15 @@ class ImageEditor: Div {
             h = logoRelativeHeight
         }
         
-        if ( w < 50 || h < 50){
+        if ( w < 50 || h < 50) {
             w = w * 2
             h = h * 2
         }
         
-        jcrop("imageEditorWaterMark",itemID, url, w, h)
-        
+        print("🟡 addIconToEditor calling jcrop id=imageEditorWaterMark itemID=\(itemID) width=\(w) height=\(h)")
+
         guard let imageName = url.explode("/").last else {
+            print("🔴  imageName FAIL")
             return
         }
         
@@ -858,34 +869,30 @@ class ImageEditor: Div {
             originalWidth: width,
             originalHeight: height
         )
-        
-        
-        if let domElement = WebApp.shared.document.querySelector("#\(itemID)") {
-            
-            domElement.appendChild(
-                Img()
-                    .src("/skyline/media/cross.png")
-                    .margin(all: 7.px)
-                    .cursor(.pointer)
-                    .float(.right)
-                    .width(24.px)
-                    .onClick {
-                        
-                        var ni: [String] = []
-                        
-                        self.watermarks.forEach { item in
-                            if item != itemID {
-                                ni.append(item)
-                            }
-                        }
-                        
-                        self.watermarks = ni
-                        
-                        removeItem(itemID)
-                        
-                    }
-            )
-        }
+
+        jcrop("imageEditorWaterMark", itemID, url, w, h, onReady: { [weak self] domElement in
+            self?.attachWatermarkRemoveButton(itemID, in: domElement)
+        })
+    }
+
+    private func attachWatermarkRemoveButton(_ itemID: String, in domElement: BaseContentElement) {
+        print("🟢 addIconToEditor found Jcrop widget \(itemID)")
+
+        domElement.appendChild(
+            Img()
+                .src("/skyline/media/cross.png")
+                .margin(all: 7.px)
+                .cursor(.pointer)
+                .float(.right)
+                .width(24.px)
+                .onClick { [weak self] in
+                    guard let self else { return }
+
+                    self.watermarks.removeAll { $0 == itemID }
+                    self.watermarksRefs[itemID] = nil
+                    removeItem(itemID)
+                }
+        )
     }
     
     func finishEdition(){
@@ -933,7 +940,7 @@ class ImageEditor: Div {
             return
         }
 
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.saveCropImage(
             eventid: self.eventid,
@@ -967,7 +974,7 @@ class ImageEditor: Div {
             replyTo: nil
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -1098,9 +1105,10 @@ class ImageEditor: Div {
         
         formData.append("file", file, filename: file.name)
         
-        xhr.open(method: "POST", url: "https://intratc.co/api/custPOC/v1/uploadIconWaterMark")
+        xhr.open(method: "POST", url: "https://api.tierracero.co/custPOC/v1/uploadIconWaterMark")
         
         xhr.setRequestHeader("Accept", "application/json")
+        xhr.setRequestHeader("WSId", custCatchChatConnID)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,
@@ -1147,14 +1155,14 @@ class ImageEditor: Div {
             guard let resp else {
                 self.imageEditorProcessingViewText = ""
                 showError(.comunicationError, .serverConextionError)
-                loadingView(show: false)
+                loadingView.hide()
                 return
             }
             
             guard resp.status == .ok else {
                 self.imageEditorProcessingViewText = ""
                 showError(.generalError, resp.msg)
-                loadingView(show: false)
+                loadingView.hide()
                 return
             }
             

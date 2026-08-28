@@ -871,7 +871,7 @@ extension ToolsView.WebPage {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.themeV1.saveWebMeetUs(
                 configLanguage: .Spanish,
@@ -888,7 +888,7 @@ extension ToolsView.WebPage {
                 vision: vision
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -1083,12 +1083,12 @@ extension ToolsView.WebPage {
         func addProfileRow(_ item: CustWebContent) {
             
             let view = ProfileRow(item: item) { view in
-                loadingView(show: true)
+                loadingView.show()
                 API.themeV1.getViewProfile(
                     id: item.id
                 ) { resp in
                     
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -1143,12 +1143,12 @@ extension ToolsView.WebPage {
         func addDiplomaRow(_ item: CustWebContent) {
             
             let view = DiplomaRow(item: item) { view in
-                loadingView(show: true)
+                loadingView.show()
                 API.themeV1.getViewDiploma(
                     id: item.id
                 ) { resp in
                     
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

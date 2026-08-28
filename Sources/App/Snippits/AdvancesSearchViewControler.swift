@@ -1751,7 +1751,7 @@ class AdvancesSearchViewControler: Div {
         tag4 = tag4.purgeSpaces
         descr = descr.purgeSpaces
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.advancesSearch(
             businessTerm: bizData,
@@ -1770,7 +1770,7 @@ class AdvancesSearchViewControler: Div {
             endAt: endAtUTS
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

@@ -2230,7 +2230,7 @@ extension ToolsView.WebPage {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.themeV1.saveWebIndex(
                 configLanguage: .Spanish,
@@ -2257,7 +2257,7 @@ extension ToolsView.WebPage {
                 carouselThreeBtnLink: carouselThreeBtnLink
             )  { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

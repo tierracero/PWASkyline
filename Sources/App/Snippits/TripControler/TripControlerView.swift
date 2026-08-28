@@ -984,11 +984,11 @@ class TripControlerView: Div {
     
     func loadHistorical() {
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.fiscalV1.getCartaPorteHistory { resp in
         
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -1252,6 +1252,8 @@ class TripControlerView: Div {
         self.remove()
         
     }
+
+    
     
 }
 

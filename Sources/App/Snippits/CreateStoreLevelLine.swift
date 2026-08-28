@@ -289,7 +289,7 @@ class CreateStoreLevelLine: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         if let id = self.line?.id {
             API.custAPIV1.saveStoreLevel(
@@ -302,7 +302,7 @@ class CreateStoreLevelLine: Div {
                 isPublic: true
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -335,7 +335,7 @@ class CreateStoreLevelLine: Div {
                 isPublic: true
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -373,14 +373,14 @@ class CreateStoreLevelLine: Div {
                 
                 if isConfirmed {
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custAPIV1.deleteStoreLevel(
                         id: line.id,
                         type: .line
                     ) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp = resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -500,6 +500,7 @@ class CreateStoreLevelLine: Div {
         xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
         
         xhr.setRequestHeader("Accept", "application/json")
+        xhr.setRequestHeader("WSId", custCatchChatConnID)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,
@@ -533,5 +534,4 @@ class CreateStoreLevelLine: Div {
         $descr.removeAllListeners()
     }
 }
-
 

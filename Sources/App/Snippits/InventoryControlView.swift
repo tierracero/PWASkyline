@@ -613,13 +613,13 @@ class InventoryControlView: Div {
             callback: { isConfirmed, comment in
                 if isConfirmed {
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custPOCV1.reciveTransferInventory(
                         docid: self.control.id
                     ) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -715,7 +715,7 @@ class InventoryControlView: Div {
             callback: { isConfirmed, comment in
                 if isConfirmed {
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custPOCV1.saveTransferInventory(
                         docid: self.control.id,
@@ -723,7 +723,7 @@ class InventoryControlView: Div {
                         storeid: custCatchStore
                     ) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -772,7 +772,7 @@ class InventoryControlView: Div {
                         
                     }
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custPOCV1.authTransferInventory(
                         docid: self.control.id,
@@ -780,7 +780,7 @@ class InventoryControlView: Div {
                         place: .merm
                     ) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp = resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -822,14 +822,14 @@ class InventoryControlView: Div {
                 
                 if isConfirmed {
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custPOCV1.cancelTransferInventory(
                         docid: self.control.id,
                         reason: reason
                     ) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp = resp else {
                             showError(.comunicationError, .serverConextionError)

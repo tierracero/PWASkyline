@@ -27,7 +27,7 @@ func getFiscalCodes(
        
     let xhr = XMLHttpRequest()
     
-    let url = baseAPIUrl( "https://intratc.co/api/v1/getFiscalCodes") + "&term=\(_term)"
+    let url = baseAPIUrl( "https://api.tierracero.co/v1/getFiscalCodes") + "&term=\(_term)"
     
     print(url)
     
@@ -37,6 +37,7 @@ func getFiscalCodes(
         .setRequestHeader("Content-Type", "application/json")
         .setRequestHeader("AppName", applicationName)
         .setRequestHeader("AppVersion", SkylineWeb().version.description)
+        .setRequestHeader("WSId", custCatchChatConnID)
 
     xhr.send("")
     

@@ -950,7 +950,7 @@ class ProductTransferView: Div {
             callback: { isConfirmed, comment in
                 if isConfirmed {
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custPOCV1.createInventoryTransfer(
                         fromStore: custCatchStore,
@@ -958,7 +958,7 @@ class ProductTransferView: Div {
                         items: self.selectedInventoryIDs
                     ) { resp in
                     
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -1050,7 +1050,7 @@ class ProductTransferView: Div {
                 
                 if isConfirmed {
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custPOCV1.mermProductsInventory(
                         storeId: selectedStore.id,
@@ -1058,7 +1058,7 @@ class ProductTransferView: Div {
                         reason: comment
                     ) { resp in
                     
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -1145,13 +1145,13 @@ class ProductTransferView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPOCV1.getTransferOrders(
             type: type
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

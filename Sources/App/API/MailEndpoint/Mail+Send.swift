@@ -38,14 +38,15 @@ extension MailComponents {
         
         let xhr = XMLHttpRequest()
         
-        let url = baseAPIUrl( "https://intratc.co/api/cust/v1/sendEmail")
+        let url = baseAPIUrl( "https://api.tierracero.co/cust/v1/sendEmail")
         
         xhr.open(method: "POST", url: url)
         
         xhr.setRequestHeader("Accept", "application/json")
             .setRequestHeader("Content-Type", "application/json")
-        .setRequestHeader("AppName", applicationName)
-        .setRequestHeader("AppVersion", SkylineWeb().version.description)
+            .setRequestHeader("AppName", applicationName)
+            .setRequestHeader("AppVersion", SkylineWeb().version.description)
+            .setRequestHeader("WSId", custCatchChatConnID)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,
@@ -138,4 +139,3 @@ extension MailComponents {
             
     }
 }
-

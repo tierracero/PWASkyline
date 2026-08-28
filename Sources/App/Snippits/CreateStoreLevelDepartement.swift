@@ -431,7 +431,7 @@ class CreateStoreLevelDepartement: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         if let id = self.dep?.id {
             API.custAPIV1.saveStoreLevel(
@@ -444,7 +444,7 @@ class CreateStoreLevelDepartement: Div {
                 isPublic: isPublic
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -478,7 +478,7 @@ class CreateStoreLevelDepartement: Div {
                 isPublic: isPublic
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -549,14 +549,14 @@ class CreateStoreLevelDepartement: Div {
                 
                 if isConfirmed {
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custAPIV1.deleteStoreLevel(
                         id: dep.id,
                         type: .dep
                     ) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -691,6 +691,7 @@ class CreateStoreLevelDepartement: Div {
         xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
         
         xhr.setRequestHeader("Accept", "application/json")
+        xhr.setRequestHeader("WSId", custCatchChatConnID)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,

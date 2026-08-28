@@ -472,7 +472,7 @@ extension MoneyManagerView.FinancialServicesView {
                 receiptAmount: Int64
             )
         ) {
-            loadingView(show: true)
+            loadingView.show()
 
             API.custAPIV1.createGastosEgresos(
                 ownerType: ownerType,
@@ -486,7 +486,7 @@ extension MoneyManagerView.FinancialServicesView {
                 billedStatus: billedStatus
             ) { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let gasto = self.validateMutationResponse(resp) else {
                     return
@@ -507,7 +507,7 @@ extension MoneyManagerView.FinancialServicesView {
                 receiptAmount: Int64
             )
         ) {
-            loadingView(show: true)
+            loadingView.show()
 
             API.custAPIV1.updateGastosEgresos(
                 gastoId: gastoId,
@@ -520,7 +520,7 @@ extension MoneyManagerView.FinancialServicesView {
                 receiptAmount: payload.receiptAmount,
                 receiptAudited: receiptAudited
             ) { resp in
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard self.validateMutationResponse(resp) != nil else {
                     return
@@ -536,13 +536,13 @@ extension MoneyManagerView.FinancialServicesView {
                 return
             }
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custAPIV1.updateGastosEgresosStatus(
                 gastoId: gastoId,
                 status: status
             ) { resp in
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let gasto = self.validateMutationResponse(resp) else {
                     return
@@ -559,13 +559,13 @@ extension MoneyManagerView.FinancialServicesView {
                 return
             }
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custAPIV1.updateGastosEgresosBilledStatus(
                 gastoId: gastoId,
                 billedStatus: billedStatus
             ) { resp in
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let gasto = self.validateMutationResponse(resp) else {
                     return
@@ -601,10 +601,10 @@ extension MoneyManagerView.FinancialServicesView {
                 return
             }
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custAPIV1.deleteGastosEgresos(gastoId: gastoId) { resp in
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)

@@ -11,10 +11,13 @@ extension CustCommercialTripsComponents {
         vehicalType: String,
         vehicalTypeName: String,
         vehicalLicensePlate: String,
-        vehicalYearModel: String,
+        vehicalYear: String,
+        vehicalModel: String,
+        vehicalMake: String,
         vehicalWeight: Double,
         requierTrailer: Bool,
         insurancePolicy: String? = nil,
+        avatar: String? = nil,
         callback: @escaping ((_ resp: APIResponseGeneric<CreateVehicalResponse>?) -> ())
     ) {
         sendPost(
@@ -27,10 +30,13 @@ extension CustCommercialTripsComponents {
                 vehicalType: vehicalType,
                 vehicalTypeName: vehicalTypeName,
                 vehicalLicensePlate: vehicalLicensePlate,
-                vehicalYearModel: vehicalYearModel,
+                vehicalYear: vehicalYear,
+                vehicalModel: vehicalModel,
+                vehicalMake: vehicalMake,
                 vehicalWeight: vehicalWeight,
                 requierTrailer: requierTrailer,
-                insurancePolicy: insurancePolicy
+                insurancePolicy: insurancePolicy,
+                avatar: avatar
             )
         ) { data in
             

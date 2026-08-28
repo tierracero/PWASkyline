@@ -109,7 +109,7 @@ class SocialManagerPostCommentRow: Div {
                                 
                                 if isConfirmed {
                                     
-                                    loadingView(show: true)
+                                    loadingView.show()
                                     
                                     API.custAPIV1.deleteSocialComment(
                                         profileType: self.page.profileType,
@@ -117,7 +117,7 @@ class SocialManagerPostCommentRow: Div {
                                         commentid: self.comment.commentid
                                     ) { resp in
                                         
-                                        loadingView(show: false)
+                                        loadingView.hide()
                                         
                                         guard let resp else {
                                             showError(.comunicationError, .serverConextionError)
@@ -516,7 +516,7 @@ class SocialManagerPostCommentRow: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         var commentid = comment.commentid
         
@@ -534,7 +534,7 @@ class SocialManagerPostCommentRow: Div {
             message: newComment
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError )

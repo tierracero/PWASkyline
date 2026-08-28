@@ -741,11 +741,11 @@ class FiscalConceptDestinationView: Div {
         /// will load place since  it goes in the order
         else{
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPOCV1.getPOCBodSec(pocid: pocid, storeid: custCatchStore) { resp in
             
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -878,7 +878,7 @@ class FiscalConceptDestinationView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custOrderV1.searchFolio(
             term: term,
@@ -892,7 +892,7 @@ class FiscalConceptDestinationView: Div {
             endAt: nil
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)

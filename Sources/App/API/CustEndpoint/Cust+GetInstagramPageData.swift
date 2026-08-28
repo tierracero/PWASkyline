@@ -17,7 +17,7 @@ extension CustComponents {
         callback: @escaping ( (_ resp: APIResponseGeneric<GetInstagramPageDataResponse>?) -> () )
     ) {
         
-        loadingView(show: true)
+        loadingView.show()
         
         print("🐼  getInstagramPages  🐼  ")
         
@@ -31,7 +31,7 @@ extension CustComponents {
             )
         ) { payload in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let data = payload else{
                 callback(nil)

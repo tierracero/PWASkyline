@@ -256,7 +256,7 @@ class SocialManagerConfirmView: Div {
     
     func publicToSocial(){
         
-        loadingView(show: true)
+        loadingView.show()
         
         var _link: String? = nil
         
@@ -284,7 +284,7 @@ class SocialManagerConfirmView: Div {
             uts: uts
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)

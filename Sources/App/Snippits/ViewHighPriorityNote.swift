@@ -162,7 +162,7 @@ class ViewHighPriorityNote: Div {
                 API.custAPIV1.lowerNotePriority(
                     noteId:  noteId
                 ) { resp in
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

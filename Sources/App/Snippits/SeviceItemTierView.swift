@@ -91,11 +91,11 @@ class SeviceItemTierView: Div {
                     switch self.type {
                     case .dep:
                         
-                        loadingView(show: true)
+                        loadingView.show()
                         
                         API.custSOCV1.getDepartment(depid: self.dep) { resp in
                             
-                            loadingView(show: false)
+                            loadingView.hide()
                             
                             guard let resp else{
                                 showError(.comunicationError, .serverConextionError)

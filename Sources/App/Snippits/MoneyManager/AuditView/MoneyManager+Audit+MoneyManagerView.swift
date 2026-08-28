@@ -647,13 +647,13 @@ extension MoneyManagerView.AuditView {
                         .float(.right)
                         .onClick {
                             
-                            loadingView(show: true)
+                            loadingView.show()
                             
                             API.custAPIV1.paymentApproval(
                                 id: self.item.id
                             ) { resp in
                                 
-                                loadingView(show: false)
+                                loadingView.hide()
                                 
                                 guard let resp else {
                                     showError(.comunicationError, .serverConextionError)
@@ -725,11 +725,11 @@ extension MoneyManagerView.AuditView {
                 self.targetUser = user.username.explode("@").first ?? ""
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.getMoneyManager(id: .id(self.item.id)) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)

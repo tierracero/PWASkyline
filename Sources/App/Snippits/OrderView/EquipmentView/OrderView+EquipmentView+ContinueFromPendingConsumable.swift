@@ -148,9 +148,7 @@ extension OrderView.EquipmentView {
                         H2(self.maneger.comment)
                     }
                     
-                    
                     //maneger
-                    
                     
                     Div().height(7.px)
                     
@@ -287,7 +285,7 @@ extension OrderView.EquipmentView {
         
         func continueProcess(){
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custOrderV1.pendingConsumableContinue(
                 hasPurchase: true,
@@ -301,8 +299,6 @@ extension OrderView.EquipmentView {
                 sendComm: true,
                 lastCommunicationMethod: lastCommunicationMethod
             ) { resp in
-                
-                loadingView(show: false)
                 
                 guard let resp else {
                     showError(.comunicationError, .unexpenctedMissingPayload)
@@ -318,6 +314,8 @@ extension OrderView.EquipmentView {
                     showError(.unexpectedResult, .unexpenctedMissingPayload)
                     return
                 }
+                
+                loadingView.hide()
                 
                 self.callback(payload.orderStatus)
                 

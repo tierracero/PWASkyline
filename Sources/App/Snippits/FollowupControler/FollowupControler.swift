@@ -278,14 +278,14 @@ class FollowupControler: Div {
         self.tripTypeMenuViewIsHidden = true
         self.selectedTripsTypeLabel = label
 
-        loadingView(show: true)
+        loadingView.show()
 
         API.custCommercialTrips.getTrips(
             accountId: nil,
             type: type
         ) { resp in
 
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -480,11 +480,11 @@ class FollowupControler: Div {
     }
     func startTrip(_ account: CustAcctSearch) {
 
-        loadingView(show: true)
+        loadingView.show()
 
         API.custCommercialTrips.components { resp in
 
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)

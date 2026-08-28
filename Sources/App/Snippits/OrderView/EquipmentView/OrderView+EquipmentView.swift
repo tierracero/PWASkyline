@@ -560,13 +560,13 @@ extension OrderView {
                                         comments: .required,
                                         callback: { isConfirmed, comment in
                                             
-                                            loadingView(show: true)
+                                            loadingView.show()
                                             
                                             API.custOrderV1.addEquipmentDiagnostic(
                                                 equipmentId: self.equipment.id,
                                                 comment: comment
                                             ) { resp in
-                                                    loadingView(show: false)
+                                                    loadingView.hide()
                                                     
                                                     guard let resp else {
                                                         showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -625,12 +625,12 @@ extension OrderView {
                                         comments: .required,
                                         callback: { isConfirmed, comment in
                                             
-                                            loadingView(show: true)
+                                            loadingView.show()
                                             
                                             API.custOrderV1.addEquipmentResolution(
                                                 equipmentId: self.equipment.id,
                                                 comment: comment) { resp in
-                                                    loadingView(show: false)
+                                                    loadingView.hide()
                                                     
                                                     guard let resp else {
                                                         showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -723,7 +723,7 @@ extension OrderView {
                                     
                                     if custCatchHerk >= configStoreProcessing.restrictOrderClosing {
                                         
-                                        loadingView(show: true)
+                                        loadingView.show()
                                         
                                         API.custOrderV1.equipmentReadyStatus(
                                             accountid: self.orderView.order.custAcct,
@@ -734,7 +734,7 @@ extension OrderView {
                                             isReady: true
                                         ) { resp in
                                             
-                                            loadingView(show: false)
+                                            loadingView.hide()
                                             
                                             guard let resp else {
                                                 showError(.comunicationError, .serverConextionError)
@@ -770,7 +770,7 @@ extension OrderView {
                                         addToDom(
                                             ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: PREPARADO", callback: { confirmed,_ in
                                             if confirmed {
-                                                loadingView(show: true)
+                                                loadingView.show()
                                                 API.custOrderV1.equipmentReadyStatus(
                                                     accountid: self.orderView.order.custAcct,
                                                     orderid: self.orderView.order.id,
@@ -780,7 +780,7 @@ extension OrderView {
                                                     isReady: true
                                                 ){ resp in
                                                     
-                                                    loadingView(show: false)
+                                                    loadingView.hide()
                                                     
                                                     guard let resp = resp else {
                                                         showError(.comunicationError, .serverConextionError)
@@ -822,7 +822,7 @@ extension OrderView {
                                     if custCatchHerk >= configStoreProcessing.restrictOrderClosing {
                                         addToDom(ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: NO preparado", callback: { confirmed, _ in
                                             if confirmed {
-                                                loadingView(show: true)
+                                                loadingView.show()
                                                 API.custOrderV1.equipmentReadyStatus(
                                                     accountid: self.orderView.order.custAcct,
                                                     orderid: self.orderView.order.id,
@@ -831,7 +831,7 @@ extension OrderView {
                                                     name: self.name,
                                                     isReady: false
                                                 ){ resp in
-                                                    loadingView(show: false)
+                                                    loadingView.hide()
                                                     
                                                     guard let resp = resp else {
                                                         showError(.comunicationError, .serverConextionError)
@@ -894,7 +894,7 @@ extension OrderView {
                                     
                                     if custCatchHerk >= configStoreProcessing.restrictOrderClosing {
                                         
-                                        loadingView(show: true)
+                                        loadingView.show()
                                         
                                         API.custOrderV1.equipmentPickedStatus(
                                             accountid: self.orderView.order.custAcct,
@@ -905,7 +905,7 @@ extension OrderView {
                                             pickedUp: true
                                         ){ resp in
                                             
-                                            loadingView(show: false)
+                                            loadingView.hide()
                                             
                                             guard let resp = resp else {
                                                 showError(.comunicationError, .serverConextionError)
@@ -956,7 +956,7 @@ extension OrderView {
                                     else{
                                         addToDom(ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: ENTREGADO", callback: { confirmed, _ in
                                             if confirmed {
-                                                loadingView(show: true)
+                                                loadingView.show()
                                                 API.custOrderV1.equipmentPickedStatus(
                                                     accountid: self.orderView.order.custAcct,
                                                     orderid: self.orderView.order.id,
@@ -966,7 +966,7 @@ extension OrderView {
                                                     pickedUp: true
                                                 ) { resp in
                                                     
-                                                    loadingView(show: false)
+                                                    loadingView.hide()
                                                     
                                                     guard let resp = resp else {
                                                         showError(.comunicationError, .serverConextionError)
@@ -1022,7 +1022,7 @@ extension OrderView {
                                             
                                             if confirmed {
                                                 
-                                                loadingView(show: true)
+                                                loadingView.show()
                                                 
                                                 API.custOrderV1.equipmentPickedStatus(
                                                     accountid: self.orderView.order.custAcct,
@@ -1032,7 +1032,7 @@ extension OrderView {
                                                     name: self.name,
                                                     pickedUp: false
                                                 ) { resp in
-                                                    loadingView(show: false)
+                                                    loadingView.hide()
                                                     
                                                     guard let resp = resp else {
                                                         showError(.comunicationError, .serverConextionError)
@@ -1160,7 +1160,7 @@ extension OrderView {
                                     return
                                 }
                                 
-                                loadingView(show: true)
+                                loadingView.show()
                                 
                                 var _diagnostic: String? = nil
                                 
@@ -1195,7 +1195,7 @@ extension OrderView {
                                     tagDescr: self._descr
                                 ) { resp in
                                     
-                                    loadingView(show: false)
+                                    loadingView.hide()
                                     
                                     guard let resp else {
                                         showError(.comunicationError, .serverConextionError)
@@ -1712,7 +1712,7 @@ extension OrderView {
                                             return
                                         }
                                         
-                                        loadingView(show: true)
+                                        loadingView.show()
                                         
                                         API.custOrderV1.pendingConsumableContinue(
                                             hasPurchase: false,
@@ -1727,7 +1727,7 @@ extension OrderView {
                                             lastCommunicationMethod: self.orderView.lastCommunicationMethod
                                         ) { resp in
                                             
-                                            loadingView(show: false)
+                                            loadingView.hide()
                                             
                                             guard let resp else {
                                                 showError(.comunicationError, .unexpenctedMissingPayload)

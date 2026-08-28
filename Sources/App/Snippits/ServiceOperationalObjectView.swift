@@ -433,11 +433,11 @@ class ServiceOperationalObjectView: Div {
         
         if let id {
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.getOperationalObject(id: .id(id)) { resp in
             
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -537,7 +537,7 @@ class ServiceOperationalObjectView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.saveOperationalObject(
             id: id,
@@ -552,7 +552,7 @@ class ServiceOperationalObjectView: Div {
             description: descr
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

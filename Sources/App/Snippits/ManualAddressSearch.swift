@@ -387,13 +387,13 @@ class ManualAddressSearch: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.v1.getGEOCities(
             state: state
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -541,14 +541,14 @@ class ManualAddressSearch: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.v1.getGEOColonies(
             state: state,
             city: city
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -756,11 +756,11 @@ class ManualAddressSearch: Div {
         
         print("🟡 reverse geocode coordinates")
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.v1.jwt { token in
             
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let token else {
                 showError(.comunicationError, "No se pudo cargar token")

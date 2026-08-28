@@ -94,11 +94,11 @@ extension BudgetView {
             left(0.px)
             top(0.px)
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custOrderV1.loadServiceOrderBudgets(accountId: accountId) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let budgets = resp?.data else {
                     showError(.unexpectedResult, .unexpenctedMissingPayload)

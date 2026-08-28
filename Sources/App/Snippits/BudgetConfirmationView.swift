@@ -309,7 +309,7 @@ class BudgetConfirmationView: Div {
             return
         }
 
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPDVV1.createBudgetReport(
             fiscalProfile: UUID(uuidString: selectedFiscalProfileListener),
@@ -321,7 +321,7 @@ class BudgetConfirmationView: Div {
             saleObjects: kart.map{ $0.data }
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

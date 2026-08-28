@@ -641,14 +641,14 @@ class ConfirmProductView: Div {
             
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.storeProductSale(
             pocId: self.pocid,
             accountId: self.accountId
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.generalError, "No se pudo obtener respuesta del servidor intente de nuevo. Si el problema persiste contacte a Soporte TC")

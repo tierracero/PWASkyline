@@ -1390,7 +1390,7 @@ class AccountCreditActivationView: PageController {
         }
         */
 
-        loadingView(show: true)
+        loadingView.show()
         
         if let creditId {
             
@@ -1434,7 +1434,7 @@ class AccountCreditActivationView: PageController {
                 legalRepresentetive: legalRepresentetive
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.generalError, .serverConextionError)
@@ -1495,7 +1495,7 @@ class AccountCreditActivationView: PageController {
                 legalRepresentetive: legalRepresentetive
              ) { resp in
                  
-                 loadingView(show: false)
+                 loadingView.hide()
                  
                  guard let resp else {
                      showError(.generalError, .serverConextionError)

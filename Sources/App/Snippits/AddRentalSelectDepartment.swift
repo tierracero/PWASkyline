@@ -125,7 +125,7 @@ class AddRentalSelectDepartment: Div {
                             
 //                            return
                             
-                            loadingView(show: true)
+                            loadingView.show()
                             
                             API.custPOCV1.loadDepPOCInventory(
                                 depid: dep.id,
@@ -134,7 +134,7 @@ class AddRentalSelectDepartment: Div {
                                 highPriority: self.highPriority
                             ) { resp in
                                 
-                                loadingView(show: false)
+                                loadingView.hide()
                                 
                                 guard let resp = resp else {
                                     showError(.comunicationError, "No se pudo comuncar con del servidor")

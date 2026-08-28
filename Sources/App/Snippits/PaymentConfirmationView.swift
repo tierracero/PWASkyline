@@ -365,11 +365,11 @@ class PaymentConfirmationView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAccountV1.load(id: .id(accountid)) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -477,11 +477,11 @@ class PaymentConfirmationView: Div {
     
     func printTicket(){
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPDVV1.getSale(saleId: .id(self.saleId)) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "No se pudo comunicar con servidor para imprimir documento")
@@ -554,7 +554,7 @@ class PaymentConfirmationView: Div {
         let view = ConfirmMobilePhone(term: self.accountMobile ?? "" ){ mobile in
 
 
-            loadingView(show: true)
+            loadingView.show()
 
 
             let url = baseAPIUrl("https://tierracero.com/dev/skyline/api.php") +
@@ -571,6 +571,7 @@ class PaymentConfirmationView: Div {
                 .setRequestHeader("Content-Type", "application/json")
                 .setRequestHeader("AppName", applicationName)
                 .setRequestHeader("AppVersion", SkylineWeb().version.description)
+                .setRequestHeader("WSId", custCatchChatConnID)
             
             if let jsonData = try? JSONEncoder().encode(APIHeader(
                 AppID: thisAppID,
@@ -625,7 +626,7 @@ class PaymentConfirmationView: Div {
                 }
                 */
 
-                loadingView(show: false)
+                loadingView.hide()
 
                 showSuccess(.operacionExitosa, "Enviado")
                 //showSuccess(.operacionExitosa, "Elemento Enviado")

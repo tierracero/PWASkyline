@@ -194,10 +194,10 @@ class CameraView: Div {
     
     override func didAddToDOM() {
         super.didAddToDOM()
-        loadingView(show: true)
+        loadingView.show()
         
         Dispatch.asyncAfter(0.5) {
-            loadingView(show: false)
+            loadingView.hide()
         }
         
         startCamara()

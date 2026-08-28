@@ -300,7 +300,7 @@ class BudgetEditItemView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custOrderV1.editBudgetObject(
             orderid: orderid,
@@ -311,7 +311,7 @@ class BudgetEditItemView: Div {
             name: name
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -339,7 +339,7 @@ class BudgetEditItemView: Div {
             callback: { isConfirmed, comment in
                 if isConfirmed {
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custOrderV1.removeBudgetObject(
                         orderid: self.orderid,
@@ -350,7 +350,7 @@ class BudgetEditItemView: Div {
                         name: self.name
                     ) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp = resp else {
                             showError(.comunicationError, .serverConextionError)

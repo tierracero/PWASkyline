@@ -43,7 +43,7 @@ class TripPrintEngine: Div {
         Tr {
             Td("Tipo")
             Td("Nombre")
-            Td("Placas")
+            Td("Serie")
         }
     }
     .width(100.percent)
@@ -100,6 +100,11 @@ class TripPrintEngine: Div {
 
             self.sectionTitle("Operador")
             Div {
+                tripAvatarImage(self.trip.operadorId.avatar)
+                    .width(72.px)
+                    .height(72.px)
+                    .borderRadius(all: 8.px)
+
                 self.detail("Tipo", self.trip.operadorId.operadorType.description)
                 self.detail("Nombre", self.trip.operadorId.operadorName)
                 self.detail("RFC", self.trip.operadorId.operadorRfc)
@@ -112,9 +117,14 @@ class TripPrintEngine: Div {
 
             self.sectionTitle("Vehiculo y permiso")
             Div {
+                tripAvatarImage(self.trip.vehicalId.avatar)
+                    .width(72.px)
+                    .height(72.px)
+                    .borderRadius(all: 8.px)
+
                 self.detail("Autotransporte", "\(self.trip.vehicalId.autotransporteCode) \(self.trip.vehicalId.autotransporteName)")
                 self.detail("Vehiculo", self.trip.vehicalId.vehicalTypeName)
-                self.detail("Placas / Modelo", "\(self.trip.vehicalId.vehicalLicensePlate) / \(self.trip.vehicalId.vehicalYearModel)")
+                self.detail("Placas / Año / Modelo / Marca", "\(self.trip.vehicalId.vehicalLicensePlate) / \(self.trip.vehicalId.vehicalYear) / \(self.trip.vehicalId.vehicalModel) / \(self.trip.vehicalId.vehicalMake)")
                 self.detail("Propietario del Permiso", self.trip.permitId.permitName)
                 self.detail("Permiso", "\(self.trip.permitId.permitTypeName) \(self.trip.permitId.permitNumber)")
             }
@@ -250,7 +260,7 @@ class TripPrintEngine: Div {
     }
 
     private func appendTrailerRows() {
-        guard !trip.remolques.isEmpty else {
+        guard !trip.trailers.isEmpty else {
             trailersTable.appendChild(
                 Tr {
                     Td("Sin remolques").colSpan(3)
@@ -259,12 +269,12 @@ class TripPrintEngine: Div {
             return
         }
 
-        trip.remolques.forEach { item in
+        trip.trailers.forEach { item in
             trailersTable.appendChild(
                 Tr {
                     Td(item.type.description)
                     Td(item.name)
-                    Td(item.licensPlates)
+                    Td(item.series)
                 }
             )
         }

@@ -609,11 +609,11 @@ class SocialManagerView: Div {
                     
                     self.choseSocialLiveInner.appendChild(Div("Seleccione Paquete Basico").color(.white).fontSize(32.px))
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custAPIV1.getTCSOCAvailableServices(efect: [efect]) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp = resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -687,11 +687,11 @@ class SocialManagerView: Div {
                     
                     self.choseSocialLivePremiumInner.appendChild(Div("Seleccione Paquete Premium").color(.white).fontSize(32.px))
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custAPIV1.getTCSOCAvailableServices(efect: [efect]) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp = resp else {
                             showError(.comunicationError, .serverConextionError)
@@ -901,13 +901,13 @@ class SocialManagerView: Div {
         print("🗂  \(file.type)")
         
         xhr.onLoadStart {
-            loadingView(show: true)
+            loadingView.show()
 //            self.pocImageContainer.appendChild(view)
 //            _ = JSObject.global.scrollToBottom!("pocImageContainer")
         }
         
         xhr.onError { jsValue in
-            loadingView(show: false)
+            loadingView.hide()
             showError(.comunicationError, .serverConextionError)
             self.uploadPercent = ""
             //view.remove()
@@ -918,13 +918,13 @@ class SocialManagerView: Div {
             self.uploadPercent = ""
             
             guard let responseText = xhr.responseText else {
-                loadingView(show: false)
+                loadingView.hide()
                 showError(.generalError, .serverConextionError + " 001")
                 return
             }
             
             guard let data = responseText.data(using: .utf8) else {
-                loadingView(show: false)
+                loadingView.hide()
                 showError(.generalError, .serverConextionError + " 002")
                 return
             }
@@ -934,13 +934,13 @@ class SocialManagerView: Div {
                 let resp = try JSONDecoder().decode(APIResponseGeneric<API.custAPIV1.UploadMediaResponse>.self, from: data)
                 
                 guard resp.status == .ok else {
-                    loadingView(show: false)
+                    loadingView.hide()
                     showError(.generalError, resp.msg)
                     return
                 }
                 
                 guard let data = resp.data else {
-                    loadingView(show: false)
+                    loadingView.hide()
                     showError(.generalError, "No se pudo cargar datos")
                     return
                 }
@@ -959,7 +959,7 @@ class SocialManagerView: Div {
                 self.originalHeight = data.height
                 
                 guard let fileType = FileExtention(rawValue: data.file.explode(".").last ?? "") else {
-                    loadingView(show: false)
+                    loadingView.hide()
                     showError(.generalError, "Archivo invalido, no se reconocio el archivo.")
                     return
                 }
@@ -978,7 +978,7 @@ class SocialManagerView: Div {
                         .src("\(data.url)og_\(data.avatar)")
                         .onLoad {
                             
-                            loadingView(show: false)
+                            loadingView.hide()
                             
                             var w = 0
                             var h = 0
@@ -1067,7 +1067,7 @@ class SocialManagerView: Div {
                         .src("\(data.url)\(data.avatar)")
                         .onLoad {
                             
-                            loadingView(show: false)
+                            loadingView.hide()
                             
                             var w = 0
                             var h = 0
@@ -1171,9 +1171,10 @@ class SocialManagerView: Div {
 
         formData.append("file", file, filename: file.name)
         
-        xhr.open(method: "POST", url: "https://intratc.co/api/cust/v1/uploadManager")
+        xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
         
         xhr.setRequestHeader("Accept", "application/json")
+        xhr.setRequestHeader("WSId", custCatchChatConnID)
         
         if let jsonData = try? JSONEncoder().encode(APIHeader(
             AppID: thisAppID,
@@ -1513,11 +1514,11 @@ class SocialManagerView: Div {
     
     func loadPosts(type: CustComponents.GetFromDate){
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.getSocialPosts(getFrom: type, profile: nil) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -1570,4 +1571,3 @@ extension SocialManagerView {
     }
     
 }
-

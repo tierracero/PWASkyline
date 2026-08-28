@@ -29,13 +29,13 @@ func getUsedFiscCodes(type: ChargeType, callback: @escaping (_ success: Bool) ->
         }
     }
     
-    loadingView(show: true)
+    loadingView.show()
     
     API.custAPIV1.getUsedFiscCode(type: type) { codes in
         
         API.custAPIV1.getUsedFiscUnit(type: type) { units in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let codes = codes else {
                 showError(.comunicationError, "Error al obtener codigos de productos fiscales")

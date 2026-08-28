@@ -6,7 +6,9 @@
 //
 
 import TCFundamentals
+import TCFireSignal
 import Foundation
+import JavaScriptKit
 import Web
 import XMLHttpRequest
 
@@ -451,11 +453,11 @@ extension SalePointView {
                                                 return
                                             }
                                             
-                                            loadingView(show: true)
+                                            loadingView.show()
 
                                             API.fiscalV1.loadDocument(docid: id) { resp in
 
-                                                loadingView(show: false)
+                                                loadingView.hide()
 
                                                 guard let resp else {
                                                     showError(.comunicationError, .serverConextionError)
@@ -588,11 +590,11 @@ extension SalePointView {
             left(0.px)
             top(0.px)
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custPDVV1.getSale(saleId: self.saleId) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -861,7 +863,7 @@ extension SalePointView {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             guard let saleId = custSale?.id else {
                 return
@@ -869,7 +871,7 @@ extension SalePointView {
             
             API.custPOCV1.addSaleNote(saleid: saleId, note: note) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -962,7 +964,7 @@ extension SalePointView {
                 createdBy: createdBy,
                 callback: { type, reason, targetUser in
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custPDVV1.cancelSale(
                         type: type,
@@ -971,7 +973,7 @@ extension SalePointView {
                         refundTo: targetUser
                     ) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp else {
                             showError(.comunicationError, "Error de comunicacion")
@@ -986,6 +988,20 @@ extension SalePointView {
                         showSuccess(.operacionExitosa, "Venta cancelada")
                         
                         self.status = .canceled
+
+                        if let payload = resp.data {
+                            let hasAcknowledgment = !(payload.fiscalCancellationAcknowledgment ?? "").isEmpty
+                            let hasFiscalResponse = payload.fiscalCancellationType != nil
+                                || hasAcknowledgment
+                                || payload.creditNoteDocument != nil
+
+                            if hasFiscalResponse {
+                                addToDom(CancelSaleFiscalPreviewView(
+                                    sale: sale,
+                                    response: payload
+                                ))
+                            }
+                        }
                         
                     }
                 }
@@ -998,11 +1014,11 @@ extension SalePointView {
                 
                 let view = SearchCustomerQuickView { account in
                     
-                    loadingView(show: true)
+                    loadingView.show()
                     
                     API.custAccountV1.load(id: .id(account.id)) { resp in
                         
-                        loadingView(show: false)
+                        loadingView.hide()
                         
                         guard let resp else {
                             showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -1041,11 +1057,11 @@ extension SalePointView {
                                 searchTerm: searchTerm
                             ) { account in
                                 
-                                loadingView(show: true)
+                                loadingView.show()
                                 
                                 API.custAccountV1.load(id: .id(account.id)) { resp in
                                     
-                                    loadingView(show: false)
+                                    loadingView.hide()
                                     
                                     guard let resp else {
                                         showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -1085,7 +1101,7 @@ extension SalePointView {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             let view = ToolFiscal(
                 loadType: .sale(id: sale.id),
@@ -1184,7 +1200,7 @@ extension SalePointView {
             let view = ConfirmMobilePhone(term: self.custAcct?.mobile ?? "" ){ mobile in
 
 
-                loadingView(show: true)
+                loadingView.show()
 
                 guard let custSale = self.custSale  else {
                     showError(.generalError, "No se localizo venta")
@@ -1205,6 +1221,7 @@ extension SalePointView {
                     .setRequestHeader("Content-Type", "application/json")
                     .setRequestHeader("AppName", applicationName)
                     .setRequestHeader("AppVersion", SkylineWeb().version.description)
+                    .setRequestHeader("WSId", custCatchChatConnID)
                 
                 if let jsonData = try? JSONEncoder().encode(APIHeader(
                     AppID: thisAppID,
@@ -1259,7 +1276,7 @@ extension SalePointView {
                     }
                     */
 
-                    loadingView(show: false)
+                    loadingView.hide()
 
                     showSuccess(.operacionExitosa, "Enviado")
                     //showSuccess(.operacionExitosa, "Elemento Enviado")
@@ -1294,6 +1311,280 @@ extension SalePointView {
             $fiscalDocumentStatus.removeAllListeners()
             $fiscalDocumentID.removeAllListeners()
             $status.removeAllListeners()
+        }
+    }
+}
+
+extension SalePointView {
+
+    final class CancelSaleFiscalPreviewView: Div {
+
+        let sale: CustSale
+
+        let response: CustPDVComponents.CancelSaleResponse
+
+        init(
+            sale: CustSale,
+            response: CustPDVComponents.CancelSaleResponse
+        ) {
+            self.sale = sale
+            self.response = response
+            super.init()
+        }
+
+        required init() {
+            fatalError("init() has not been implemented")
+        }
+
+        @DOM override var body: DOM.Content {
+            Div {
+                Img()
+                    .closeButton(.uiView2)
+                    .onClick {
+                        self.remove()
+                    }
+
+                H2("Resultado de cancelación")
+                    .color(.lightBlueText)
+
+                Div().class(.clear)
+
+                Div {
+                    Img()
+                        .src("/skyline/media/checkmark.png")
+                        .width(80.px)
+
+                    H2(self.sale.total.formatMoney)
+                        .color(.white)
+                        .marginTop(7.px)
+
+                    Div(self.sale.folio)
+                        .color(.lightBlueText)
+                        .fontSize(22.px)
+
+                    Div(getDate(self.sale.createdAt).formatedLong)
+                        .color(.white)
+                        .marginTop(7.px)
+                }
+                .align(.center)
+
+                Div().class(.clear).height(12.px)
+
+                self.infoRow("Venta", self.sale.folio)
+
+                if let cancellationType = self.response.fiscalCancellationType {
+                    self.infoRow(
+                        "Estado fiscal",
+                        self.cancellationDescription(cancellationType)
+                    )
+                }
+
+                if let acknowledgment = self.response.fiscalCancellationAcknowledgment,
+                   !acknowledgment.isEmpty {
+                    self.infoRow("Acuse SAT/PAC", acknowledgment)
+                }
+
+                if let document = self.response.creditNoteDocument {
+                    Div().class(.clear).height(8.px)
+
+                    H3("Documento fiscal relacionado")
+                        .color(.yellowTC)
+
+                    self.infoRow("Documento ID", document.id.uuidString)
+                    self.infoRow("Tipo", document.tipoDeComprobante.description)
+                    self.infoRow("Folio", self.documentFolio(document))
+
+                    if let uuid = document.uuid {
+                        self.infoRow("UUID", uuid.uuidString)
+                    }
+
+                    self.moneyRow("Total", document.total)
+                    self.infoRow("Estatus", document.status.description)
+
+                    if !document.pdf.isEmpty {
+                        self.infoRow("PDF", document.pdf)
+                    }
+
+                    if !document.xml.isEmpty {
+                        self.infoRow("XML", document.xml)
+                    }
+
+                    if !document.pdf.isEmpty || !document.xml.isEmpty {
+                        self.documentLinks(document)
+                    }
+                }
+
+                Div {
+                    Div {
+                        Img()
+                            .src("/skyline/media/icon_print.png")
+                            .class(.iconWhite)
+                            .marginRight(7.px)
+                            .width(18.px)
+
+                        Strong("Imprimir")
+                    }
+                    .class(.uibtnLargeOrange)
+                    .marginTop(18.px)
+                    .onClick {
+                        self.printPreview()
+                    }
+                }
+                .align(.right)
+
+                Div().class(.clear)
+            }
+            .backgroundColor(.backGroundGraySlate)
+            .custom("top", "calc(50% - 250px)")
+            .borderRadius(all: 24.px)
+            .position(.absolute)
+            .padding(all: 18.px)
+            .custom("max-height", "calc(100% - 48px)")
+            .custom("overflow-y", "auto")
+            .width(42.percent)
+            .left(29.percent)
+        }
+
+        override func buildUI() {
+            super.buildUI()
+
+            position(.absolute)
+            height(100.percent)
+            width(100.percent)
+            left(0.px)
+            top(0.px)
+            zIndex(999999992)
+        }
+
+        func infoRow(_ title: String, _ value: String) -> Div {
+            Div {
+                Strong(title)
+                    .float(.left)
+                    .color(.white)
+
+                Span(value)
+                    .color(.white)
+                    .custom("overflow-wrap", "anywhere")
+            }
+            .fontSize(19.px)
+            .margin(all: 9.px)
+            .align(.right)
+        }
+
+        func moneyRow(_ title: String, _ value: Int64) -> Div {
+            Div {
+                Strong(title)
+                    .float(.left)
+                    .color(.white)
+
+                Span(value.formatMoney)
+                    .color(.white)
+            }
+            .fontSize(19.px)
+            .margin(all: 9.px)
+            .align(.right)
+        }
+
+        func cancellationDescription(
+            _ type: FiscalComponents.DeleteTypeOfCancelation
+        ) -> String {
+            switch type {
+            case .invalid:
+                return "No procesada"
+            case .required:
+                return "Solicitud enviada"
+            case .canceled:
+                return "Cancelado"
+            }
+        }
+
+        func documentFolio(_ document: FIAccountsServices) -> String {
+            if document.serie.isEmpty {
+                return document.folio
+            }
+
+            return document.serie + " / " + document.folio
+        }
+
+        func documentLinks(_ document: FIAccountsServices) -> Div {
+            let folio = encoded(documentFolio(document))
+            let pdf = encoded(document.pdf)
+            let xml = encoded(document.xml)
+
+            return Div {
+                if !document.pdf.isEmpty {
+                    A {
+                        Img()
+                            .src("/skyline/media/pdf_icon.png")
+                            .height(42.px)
+                    }
+                    .href(pdfLinkString(folio: folio, pdf: pdf))
+                    .margin(all: 5.px)
+                    .onClick { _, event in
+                        event.stopPropagation()
+                    }
+                }
+
+                if !document.xml.isEmpty {
+                    A {
+                        Img()
+                            .src("/skyline/media/xml_icon.png")
+                            .height(42.px)
+                    }
+                    .href(xmlLinkString(folio: folio, xml: xml))
+                    .margin(all: 5.px)
+                    .onClick { _, event in
+                        event.stopPropagation()
+                    }
+                }
+            }
+            .align(.right)
+        }
+
+        func encoded(_ value: String) -> String {
+            (value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")
+                .replace(from: "/", to: "%2f")
+                .replace(from: "+", to: "%2b")
+                .replace(from: "=", to: "%3d")
+        }
+
+        func printPreview() {
+            let printBody = Div {
+                H2("Resultado de cancelación")
+                H3("Venta: \(self.sale.folio)")
+                Div("Total: \(self.sale.total.formatMoney)")
+
+                if let cancellationType = self.response.fiscalCancellationType {
+                    Div("Estado fiscal: \(self.cancellationDescription(cancellationType))")
+                }
+
+                if let acknowledgment = self.response.fiscalCancellationAcknowledgment,
+                   !acknowledgment.isEmpty {
+                    Div("Acuse SAT/PAC: \(acknowledgment)")
+                }
+
+                if let document = self.response.creditNoteDocument {
+                    Div("Documento ID: \(document.id.uuidString)")
+                    Div("Documento: \(self.documentFolio(document))")
+                    Div("Tipo: \(document.tipoDeComprobante.description)")
+                    Div("Estatus: \(document.status.description)")
+                    Div("Total documento: \(document.total.formatMoney)")
+
+                    if !document.pdf.isEmpty {
+                        Div("PDF: \(document.pdf)")
+                    }
+
+                    if !document.xml.isEmpty {
+                        Div("XML: \(document.xml)")
+                    }
+                }
+            }
+
+            _ = JSObject.global.renderGeneralPrint!(
+                custCatchUrl,
+                self.sale.folio,
+                printBody.innerHTML
+            )
         }
     }
 }

@@ -228,7 +228,7 @@ extension ToolFiscal {
                 return
             }
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.fiscalV1.creditNote(
                 id: doc.id,
@@ -238,7 +238,7 @@ extension ToolFiscal {
                 storeId: custCatchStore
             ){ resp in
 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)

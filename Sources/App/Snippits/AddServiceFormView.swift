@@ -597,7 +597,7 @@ class AddServiceFormView: Div {
         
         self.addInternalCostIsHidden = true
         
-        loadingView(show: true)
+        loadingView.show()
         
         self.chargeType = .service
         self.chargeId = soc.i
@@ -616,7 +616,7 @@ class AddServiceFormView: Div {
                 
             } catch  {}
         
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)

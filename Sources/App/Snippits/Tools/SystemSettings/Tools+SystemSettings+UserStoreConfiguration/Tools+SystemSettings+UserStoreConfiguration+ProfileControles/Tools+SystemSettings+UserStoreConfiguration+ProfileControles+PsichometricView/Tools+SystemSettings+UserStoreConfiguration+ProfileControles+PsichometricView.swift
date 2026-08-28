@@ -261,7 +261,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
                     self.jobRoleIdResultContainer
 
                 }
-                //.height(100.percent) https://intratc.co/api/cust/v1/searchJobRols?token=17530180141W4nwZxDtRvV7u7XmsaCIRcJOHISmuNUN4fy63rLtJJoFONL&user=vcantu01@tierracero.com&key=XBuHxkAYZHBUwnzysyXhu4pj8jY8cCVX3bwXqXv0dgg%3d&mid=%2boPlYEoYnKf8tbQ13pA8zQ%3d%3d&term=ventas
+                //.height(100.percent) https://api.tierracero.co/cust/v1/searchJobRols?token=17530180141W4nwZxDtRvV7u7XmsaCIRcJOHISmuNUN4fy63rLtJJoFONL&user=vcantu01@tierracero.com&key=XBuHxkAYZHBUwnzysyXhu4pj8jY8cCVX3bwXqXv0dgg%3d&mid=%2boPlYEoYnKf8tbQ13pA8zQ%3d%3d&term=ventas
                 .width(50.percent)
                 .overflow(.auto)
                 .float(.left)
@@ -379,13 +379,13 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
 
                             if let questionId = item.questionId {
 
-                                loadingView(show: true)
+                                loadingView.show()
 
                                 API.custAPIV1.removePsychometricsTestQuestion(
                                     questionId: questionId
                                 ) { resp in
 
-                                    loadingView(show: false)
+                                    loadingView.hide()
 
                                     guard let resp else {
                                         showError(.comunicationError, .serverConextionError)
@@ -619,7 +619,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
 
             }
             
-            loadingView(show: true)
+            loadingView.show()
 
             API.custAPIV1.savePsychometricsTest(
                 id: testId,
@@ -632,7 +632,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
                  jobrolid: jobRole?.id
             ) { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -729,7 +729,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
                 ))
             }
 
-            loadingView(show: true)
+            loadingView.show()
 
             API.custAPIV1.createPsychometricsTest(
                 tcaccount: nil,
@@ -743,7 +743,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
                 questions: questions
             ) { resp in
 
-                loadingView(show: false)
+                loadingView.hide()
 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)

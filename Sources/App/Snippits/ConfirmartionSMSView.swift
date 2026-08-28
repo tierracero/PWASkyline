@@ -170,7 +170,7 @@ class ConfirmartionSMSView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.confirmConfirmartionSMS(
             tokens: tokens,
@@ -179,7 +179,7 @@ class ConfirmartionSMSView: Div {
             customer: customer
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, "Error de conexion al servidor")

@@ -563,7 +563,7 @@ extension ToolsView.WebPage {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.themeV1.saveWebContact(
                 configLanguage: .Spanish,
@@ -575,7 +575,7 @@ extension ToolsView.WebPage {
                 subText: subText
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")

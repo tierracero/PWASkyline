@@ -7,6 +7,13 @@
 
 import Foundation
 import Web
+
+var loadingView: LoadingView = WebApp.current.loadingView
+
+/*
+
+import Foundation
+import Web
 public func loadingView (show: Bool, message: String = "") {
 	
 	if show {
@@ -22,6 +29,7 @@ public func loadingView (show: Bool, message: String = "") {
 //        .display(.none)
 //        .filter(.opacity(0))
 }
+*/
 
 public func faseOutLoadingView () {
 	WebApp.current.loadingView.fadeOut( end: .hidden)

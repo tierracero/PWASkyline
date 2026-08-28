@@ -1511,11 +1511,11 @@ class CustConcessionView: Div {
     
     func openConcession(controlId: UUID) {
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custPOCV1.getTransferInventory(identifier: .id(controlId)) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp = resp else {
                 showError(.comunicationError, .serverConextionError)

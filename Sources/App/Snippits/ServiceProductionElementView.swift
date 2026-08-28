@@ -240,11 +240,11 @@ class ServiceProductionElementView: Div {
         
         if let id {
             
-            loadingView(show: true)
+            loadingView.show()
             
             API.custAPIV1.getProductionElement(id: .id(id)) { resp in
             
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -308,7 +308,7 @@ class ServiceProductionElementView: Div {
             return
         }
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAPIV1.saveProductionElement(
             id: id,
@@ -319,7 +319,7 @@ class ServiceProductionElementView: Div {
             isFavorite: isFavorite
         ) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)

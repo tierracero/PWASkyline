@@ -19,10 +19,18 @@ extension ToolsView.WebPage.MeetUsPage {
         @State var id: UUID?
         
         @State var name: String
+
+        @State var title_en: String
         
         @State var smallDescription: String
+
+        @State var descr_sm_en: String
         
         @State var descr: String
+
+        @State var descr_en: String
+
+        let allowsBilingual: Bool
         
         @State var inPromo: Bool
         
@@ -73,8 +81,14 @@ extension ToolsView.WebPage.MeetUsPage {
         ) {
             self.id = item?.id
             self.name = item?.name ?? ""
+            self.title_en = item?.title_en ?? ""
             self.smallDescription = item?.smallDescription ?? ""
+            self.descr_sm_en = item?.descr_sm_en ?? ""
             self.descr = item?.description ?? ""
+            self.descr_en = item?.descr_en ?? ""
+            self.allowsBilingual = customerServiceProfile?.profile.contains(where: {
+                $0.rawValue == BillingEfect.bilingual.rawValue
+            }) ?? false
             self.inPromo = item?.inPromo ?? false
             self.avatar = item?.avatar ?? "/skyline/media/tierraceroRoundLogoWhite.svg"
             self.files = files
@@ -104,8 +118,50 @@ extension ToolsView.WebPage.MeetUsPage {
         lazy var descrField = TextArea(self.$descr)
             .custom("width","calc(100% - 24px)")
             .class(.textFiledBlackDark)
-            .placeholder("Small Description")
+            .placeholder("Descripción Completa")
             .height(90.px)
+
+        lazy var titleEnField = InputText(self.$title_en)
+            .custom("width","calc(100% - 24px)")
+            .class(.textFiledBlackDark)
+            .placeholder("Name in English")
+            .height(31.px)
+
+        lazy var smallDescriptionEnField = TextArea(self.$descr_sm_en)
+            .custom("width","calc(100% - 24px)")
+            .class(.textFiledBlackDark)
+            .placeholder("Short Description in English")
+            .height(90.px)
+
+        lazy var descrEnField = TextArea(self.$descr_en)
+            .custom("width","calc(100% - 24px)")
+            .class(.textFiledBlackDark)
+            .placeholder("Full Description in English")
+            .height(90.px)
+
+        lazy var englishFields = Div {
+            Label("Contenido en Inglés")
+                .color(.lightBlueText)
+
+            Div().class(.clear).height(3.px)
+
+            Label("Nombre")
+                .color(.gray)
+            Div().class(.clear).height(3.px)
+            self.titleEnField
+            Div().class(.clear).height(7.px)
+
+            Label("Descripción Corta")
+                .color(.gray)
+            Div().class(.clear).height(3.px)
+            self.smallDescriptionEnField
+            Div().class(.clear).height(7.px)
+
+            Label("Descripción Completa")
+                .color(.gray)
+            Div().class(.clear).height(3.px)
+            self.descrEnField
+        }
         
         lazy var inPromoCheckbox = InputCheckbox().toggle(self.$inPromo)
         
@@ -199,7 +255,7 @@ extension ToolsView.WebPage.MeetUsPage {
                                             
                                             showError(.generalError, "Habilitar esta funcion")
                                             /*
-                                            loadingView(show: true)
+                                            loadingView.show()
                                             
                                             let view = ImageWebView(
                                                 relation: CustWebFilesObjectType.general,
@@ -242,7 +298,7 @@ extension ToolsView.WebPage.MeetUsPage {
                                                 multipleTakes: !self.editImage
                                             ) { resp in
                                                 
-                                                loadingView(show: false)
+                                                loadingView.hide()
                                                 
                                                 guard let resp else {
                                                     showError(.comunicationError, .serverConextionError)
@@ -357,8 +413,14 @@ extension ToolsView.WebPage.MeetUsPage {
                             
                             Div().class(.clear).height(7.px)
 
+                            if self.allowsBilingual {
+                                self.englishFields
+                                Div().class(.clear).height(7.px)
+                            }
+
                         }
                         .custom("height", "calc(100% - 50px)")
+                        .overflow(.auto)
                         
                         Div{
                             
@@ -535,20 +597,23 @@ extension ToolsView.WebPage.MeetUsPage {
                 return
             }
             
-            loadingView(show: true)
+            loadingView.show()
             
             if let id {
                 
                 API.themeV1.saveViewDiploma(
                     id: id,
                     name: name,
+                    title_en: title_en,
                     smallDescription: smallDescription,
+                    descr_sm_en: descr_sm_en,
                     description: descr,
+                    descr_en: descr_en,
                     configLanguage: .Spanish,
                     inPromo: inPromo
                 ) { resp in
                     
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -586,14 +651,17 @@ extension ToolsView.WebPage.MeetUsPage {
             
             API.themeV1.addViewDiploma(
                 name: name,
+                title_en: title_en,
                 smallDescription: smallDescription,
+                descr_sm_en: descr_sm_en,
                 description: descr,
+                descr_en: descr_en,
                 configLanguage: .Spanish,
                 inPromo: inPromo,
                 files: files
             ) { resp in
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp else {
                     showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
@@ -656,8 +724,11 @@ extension ToolsView.WebPage.MeetUsPage {
             super.didRemoveFromDOM()
             $id.removeAllListeners()
             $name.removeAllListeners()
+            $title_en.removeAllListeners()
             $smallDescription.removeAllListeners()
+            $descr_sm_en.removeAllListeners()
             $descr.removeAllListeners()
+            $descr_en.removeAllListeners()
             $inPromo.removeAllListeners()
             $avatar.removeAllListeners()
             $editImage.removeAllListeners()

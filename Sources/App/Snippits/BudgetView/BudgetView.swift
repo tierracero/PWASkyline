@@ -226,7 +226,7 @@ class BudgetView: Div {
                     
                     addToDom(BudgetManualChargeView { units, description, price, cost in
                         
-                        loadingView(show: true)
+                        loadingView.show()
                         
                         let obj = SaleProductPDVObject(
                             type: .manual,
@@ -266,7 +266,7 @@ class BudgetView: Div {
                             )]
                         ) { resp in
                             
-                            loadingView(show: false)
+                            loadingView.hide()
                             
                             print("🟡  001")
                             
@@ -454,9 +454,9 @@ class BudgetView: Div {
                                 .class(.uibtn)
                                 .onClick { _, event in
                                     self.sendMenuViewIsHidden = true
-                                    loadingView(show: true)
+                                    loadingView.show()
                                     self.sendBudget(false) { note in
-                                        loadingView(show: false)
+                                        loadingView.hide()
                                         showSuccess(.operacionExitosa, "Enviado")
                                         if let note {
                                             self.addNote(note)
@@ -474,9 +474,9 @@ class BudgetView: Div {
                                 .class(.uibtn)
                                 .onClick { _, event in
                                     self.sendMenuViewIsHidden = true
-                                    loadingView(show: true)
+                                    loadingView.show()
                                     self.sendBudget(true) { note in
-                                        loadingView(show: false)
+                                        loadingView.hide()
                                         showSuccess(.operacionExitosa, "Enviado")
                                     }
                                     event.stopPropagation()
@@ -559,14 +559,14 @@ class BudgetView: Div {
                                         return
                                     }
                                     
-                                    loadingView(show: true)
+                                    loadingView.show()
                                     
                                     API.custOrderV1.cancelBudget(
                                         orderId: self.orderid,
                                         budgetId: budgetId
                                     ) { resp in
                                         
-                                        loadingView(show: false)
+                                        loadingView.hide()
                                         
                                         guard let resp else {
                                             showError(.comunicationError, .serverConextionError)
@@ -644,14 +644,14 @@ class BudgetView: Div {
                                 return
                             }
                             
-                            loadingView(show: true)
+                            loadingView.show()
                             
                             API.custOrderV1.confirmBudget(
                                 orderId: self.orderid,
                                 budgetId: budgetId
                             ) { resp in
                                 
-                                loadingView(show: false)
+                                loadingView.hide()
                                 
                                 guard let resp else {
                                     showError(.comunicationError, .serverConextionError)
@@ -750,7 +750,7 @@ class BudgetView: Div {
                             requiersComment: true
                         ){ isConfirmed, comment in
                             
-                            loadingView(show: true)
+                            loadingView.show()
                             
                             API.custOrderV1.requestBudget(
                                 orderId: self.orderid,
@@ -758,7 +758,7 @@ class BudgetView: Div {
                                 comment: comment
                             ) { resp in
                                 
-                                loadingView(show: false)
+                                loadingView.hide()
                                 
                                 guard let resp = resp else {
                                     showError(.comunicationError, .serverConextionError)
@@ -852,7 +852,7 @@ class BudgetView: Div {
         left(0.px)
         top(0.px)
         
-        loadingView(show: true)
+        loadingView.show()
         
         $itemRefrence.listen {
             self.calcBalance()
@@ -978,7 +978,7 @@ class BudgetView: Div {
             selectedInventoryIDs: []
         ) { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
             
-            loadingView(show: true)
+            loadingView.show()
             
             let obj = SaleProductPDVObject(
                 type: .product,
@@ -1023,7 +1023,7 @@ class BudgetView: Div {
                 
                 print("🟡  002")
                 
-                loadingView(show: false)
+                loadingView.hide()
                 
                 guard let resp = resp else {
                     showError(.comunicationError, .serverConextionError)
@@ -1287,6 +1287,7 @@ class BudgetView: Div {
         xhr.open(method: "POST", url: url)
         
         xhr.setRequestHeader("Accept", "application/json")
+        xhr.setRequestHeader("WSId", custCatchChatConnID)
             //.setRequestHeader("Content-Type", "multipart/form-data")
             //xhr.setRequestHeader("Accept", "application/json")
         
@@ -1340,13 +1341,13 @@ class BudgetView: Div {
         addToDom(ConfirmView(type: .aproveDeny, title: "Aprobar Presupuesto", message: "Confirme la aprobacion del presupuesto ", callback: { isConfirmed, comment in
             if isConfirmed {
                 
-                loadingView(show: true)
+                loadingView.show()
                 
                 API.custOrderV1.approveBudget(
                     id: self.orderid
                 ) { resp in
                     
-                    loadingView(show: false)
+                    loadingView.hide()
                     
                     guard let resp else {
                         showError(.comunicationError, .serverConextionError)
@@ -1384,7 +1385,7 @@ class BudgetView: Div {
         
         API.custOrderV1.loadServiceOrderBudgetObject(orderid: self.orderid) { resp in
             
-            loadingView(show: false)
+            loadingView.hide()
             
             guard let resp else {
                 showError(.comunicationError, .serverConextionError)
@@ -1569,4 +1570,3 @@ class BudgetView: Div {
         $itemRefrence.removeAllListeners()
     }
 }
-

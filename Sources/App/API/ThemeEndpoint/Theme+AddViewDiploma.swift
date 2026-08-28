@@ -14,8 +14,11 @@ extension ThemeComponents {
     
     public static func addViewDiploma(
         name: String,
+        title_en: String,
         smallDescription: String,
+        descr_sm_en: String,
         description: String,
+        descr_en: String,
         configLanguage: LanguageCode,
         inPromo: Bool,
         files: [FileObject],
@@ -28,8 +31,11 @@ extension ThemeComponents {
             "addViewDiploma",
             AddViewDiplomaRequest(
                 name: name,
+                title_en: title_en,
                 smallDescription: smallDescription,
+                descr_sm_en: descr_sm_en,
                 description: description,
+                descr_en: descr_en,
                 configLanguage: configLanguage,
                 inPromo: inPromo,
                 files: files

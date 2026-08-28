@@ -318,7 +318,7 @@ class ToolFiscalQuickAccountEdit: Div {
         }
         
         
-        loadingView(show: true)
+        loadingView.show()
         
         API.custAccountV1.updateFiscal(
             accountid: accountid,
@@ -330,7 +330,7 @@ class ToolFiscalQuickAccountEdit: Div {
             fiscalPOCMobile: mobile
         ){ resp in
             
-            loadingView(show: false)
+            loadingView.hide()
 
             guard let resp else {
                showError(.generalError, .serverConextionError)

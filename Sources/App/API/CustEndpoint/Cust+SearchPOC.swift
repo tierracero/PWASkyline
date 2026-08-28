@@ -36,7 +36,7 @@ func searchPOC(
         
     let xhr = XMLHttpRequest()
     
-    let url = baseAPIUrl("https://intratc.co/api/cust/v1/searchPOC") +
+    let url = baseAPIUrl("https://api.tierracero.co/cust/v1/searchPOC") +
     "&term=\(_term)" +
     "&costType=\(_costType)" +
     "&getCount=\(getCount)"
@@ -47,6 +47,7 @@ func searchPOC(
         .setRequestHeader("Content-Type", "application/json")
         .setRequestHeader("AppName", applicationName)
         .setRequestHeader("AppVersion", SkylineWeb().version.description)
+        .setRequestHeader("WSId", custCatchChatConnID)
 
     if let jsonData = try? JSONEncoder().encode(APIHeader(
         AppID: thisAppID,
