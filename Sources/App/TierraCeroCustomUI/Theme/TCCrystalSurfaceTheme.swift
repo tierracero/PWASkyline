@@ -17,6 +17,7 @@ enum TCCrystalSurfaceVariant {
     case customerSearch
     case highPriorityNote
     case historyTripProcessing
+    case productAudit
     case trip
     case taskRequest
 
@@ -44,6 +45,8 @@ enum TCCrystalSurfaceVariant {
             return TCCrystalSurfaceClass.highPriorityNote
         case .historyTripProcessing:
             return TCCrystalSurfaceClass.historyTripProcessing
+        case .productAudit:
+            return TCCrystalSurfaceClass.productAudit
         case .trip:
             return TCCrystalSurfaceClass.trip
         case .taskRequest:
@@ -121,6 +124,35 @@ enum TCCrystalSurfaceClass {
     static let historyTripProcessingPanel = "tc-crystal-history-trip-processing-panel"
     static let historyTripProcessingHeader = "tc-crystal-history-trip-processing-header"
     static let historyTripProcessingBody = "tc-crystal-history-trip-processing-body"
+    static let productAudit = "tc-crystal-product-audit"
+    static let auditWorkspace = "tc-audit-workspace"
+    static let auditShell = "tc-audit-shell"
+    static let auditPopup = "tc-audit-popup"
+    static let auditHeader = "tc-audit-header"
+    static let auditHeaderTitle = "tc-audit-header-title"
+    static let auditBody = "tc-audit-body"
+    static let auditNavigation = "tc-audit-navigation"
+    static let auditTabs = "tc-audit-tabs"
+    static let auditTab = "tc-audit-tab"
+    static let auditAction = "tc-audit-action"
+    static let auditPanel = "tc-audit-panel"
+    static let auditPanelHost = "tc-audit-panel-host"
+    static let auditToolbar = "tc-audit-toolbar"
+    static let auditReportActions = "tc-audit-report-actions"
+    static let auditReportAction = "tc-audit-report-action"
+    static let auditResults = "tc-audit-results"
+    static let auditMetricGrid = "tc-audit-metric-grid"
+    static let auditMetric = "tc-audit-metric"
+    static let auditReportHeader = "tc-audit-report-header"
+    static let auditSection = "tc-audit-section"
+    static let auditChart = "tc-audit-chart"
+    static let auditChartRow = "tc-audit-chart-row"
+    static let auditChartLabel = "tc-audit-chart-label"
+    static let auditChartTrack = "tc-audit-chart-track"
+    static let auditChartBar = "tc-audit-chart-bar"
+    static let auditChartValue = "tc-audit-chart-value"
+    static let auditModalPanel = "tc-audit-modal-panel"
+    static let auditProductRow = "tc-audit-product-row"
     static let goodButton = "tc-good-button"
     static let trip = "tc-crystal-trip"
     static let tripPicker = "tc-crystal-trip-picker"

@@ -1676,8 +1676,10 @@ extension OrderView {
         func addwarrantyCard() {
 
             let view = AddWarrantyCard(
-                orderId: self.orderView.order.id,
-                equipmentId: self.equipment.id
+                loadType: .order(
+                    orderId: self.orderView.order.id,
+                    equipmentId: self.equipment.id
+                )
             ) { cardCode in
             
                 self.warrantyCard = cardCode
@@ -1699,109 +1701,109 @@ extension OrderView {
         }
 
         func deletePurchase() {
-            
-                                addToDom(ConfirmView(
-                                    type: .yesNo,
-                                    title: "Eliminar Compra",
-                                    message: "Confirme que no se comprara insumo/refaccion.",
-                                    requiersComment: true,
-                                    callback: { isConfirmed, comment in
-                                        
-                                        guard let managerId = self.pendingSpareEvent else {
-                                            showError(.unexpectedResult, "No se localizo id de la peticion, refresque. Si el error continua contacte a Soporte TC")
-                                            return
-                                        }
-                                        
-                                        loadingView.show()
-                                        
-                                        API.custOrderV1.pendingConsumableContinue(
-                                            hasPurchase: false,
-                                            orderId: self.orderView.order.id,
-                                            equipmentId: self.equipment.id,
-                                            managerId: managerId,
-                                            vendorId: nil,
-                                            documentId: nil,
-                                            documentFolio: "",
-                                            comment: comment,
-                                            sendComm: false,
-                                            lastCommunicationMethod: self.orderView.lastCommunicationMethod
-                                        ) { resp in
-                                            
-                                            loadingView.hide()
-                                            
-                                            guard let resp else {
-                                                showError(.comunicationError, .unexpenctedMissingPayload)
-                                                return
-                                            }
-                                            
-                                            guard resp.status == .ok else {
-                                                showError(.generalError, resp.msg)
-                                                return
-                                            }
-                                            
-                                            guard let payload = resp.data else {
-                                                showError(.unexpectedResult, .unexpenctedMissingPayload)
-                                                return
-                                            }
-                                            
-                                            self.pendingSpareEvent = nil
-                                            
-                                            self.equipmentStatus = .onwork
-                                            
-                                            if self.status.wrappedValue != payload.orderStatus {
-                                               
-                                                self.status.wrappedValue = payload.orderStatus
-                                                
-                                                orderCatch[self.orderView.order.id]?.status = payload.orderStatus
-                                                
-                                                OrderCatchControler.shared.updateParameter(self.orderView.order.id, .orderStatus(payload.orderStatus))
-                                                
-                                            }
-                                            
-                                            var equipments: [CustOrderLoadFolioEquipments] = []
-                                           
-                                            equipmentsCatch[self.orderView.order.id]?.forEach { equipment in
-                                            
-                                               if equipment.id == self.equipment.id {
-                                                   equipments.append(.init(
-                                                       id: equipment.id,
-                                                       createdAt: equipment.createdAt,
-                                                       workedBy: equipment.workedBy,
-                                                       deliveredBy: equipment.deliveredBy,
-                                                       IDTag1: equipment.IDTag1,
-                                                       IDTag2: equipment.IDTag2,
-                                                       tag1: equipment.tag1,
-                                                       tag2: equipment.tag2,
-                                                       tag3: equipment.tag3,
-                                                       tag4: equipment.tag4,
-                                                       tag5: equipment.tag5,
-                                                       tag6: equipment.tag6,
-                                                       tagDescr: equipment.tagDescr,
-                                                       tagCheck1: equipment.tagCheck1,
-                                                       tagCheck2: equipment.tagCheck2,
-                                                       tagCheck3: equipment.tagCheck3,
-                                                       tagCheck4: equipment.tagCheck4,
-                                                       tagCheck5: equipment.tagCheck5,
-                                                       tagCheck6: equipment.tagCheck6,
-                                                       pendingSpareEvent: nil,
-                                                       pendingSpare: equipment.pendingSpare,
-                                                       diagnostic: equipment.diagnostic,
-                                                       resolution: equipment.resolution,
-                                                       warrantyCard: equipment.warrantyCard,
-                                                       status: .onwork
-                                                   ))
-                                               }
-                                               else {
-                                                   equipments.append(equipment)
-                                               }
-                                           }
-                                           
-                                            equipmentsCatch[self.orderView.order.id] = equipments
-                                           
-                                        }
-                                        
-                                    }
+
+            addToDom(ConfirmView(
+                type: .yesNo,
+                title: "Eliminar Compra",
+                message: "Confirme que no se comprara insumo/refaccion.",
+                requiersComment: true,
+                callback: { isConfirmed, comment in
+                    
+                    guard let managerId = self.pendingSpareEvent else {
+                        showError(.unexpectedResult, "No se localizo id de la peticion, refresque. Si el error continua contacte a Soporte TC")
+                        return
+                    }
+                    
+                    loadingView.show()
+                    
+                    API.custOrderV1.pendingConsumableContinue(
+                        hasPurchase: false,
+                        orderId: self.orderView.order.id,
+                        equipmentId: self.equipment.id,
+                        managerId: managerId,
+                        vendorId: nil,
+                        documentId: nil,
+                        documentFolio: "",
+                        comment: comment,
+                        sendComm: false,
+                        lastCommunicationMethod: self.orderView.lastCommunicationMethod
+                    ) { resp in
+                        
+                        loadingView.hide()
+                        
+                        guard let resp else {
+                            showError(.comunicationError, .unexpenctedMissingPayload)
+                            return
+                        }
+                        
+                        guard resp.status == .ok else {
+                            showError(.generalError, resp.msg)
+                            return
+                        }
+                        
+                        guard let payload = resp.data else {
+                            showError(.unexpectedResult, .unexpenctedMissingPayload)
+                            return
+                        }
+                        
+                        self.pendingSpareEvent = nil
+                        
+                        self.equipmentStatus = .onwork
+                        
+                        if self.status.wrappedValue != payload.orderStatus {
+                            
+                            self.status.wrappedValue = payload.orderStatus
+                            
+                            orderCatch[self.orderView.order.id]?.status = payload.orderStatus
+                            
+                            OrderCatchControler.shared.updateParameter(self.orderView.order.id, .orderStatus(payload.orderStatus))
+                            
+                        }
+                        
+                        var equipments: [CustOrderLoadFolioEquipments] = []
+                        
+                        equipmentsCatch[self.orderView.order.id]?.forEach { equipment in
+                        
+                            if equipment.id == self.equipment.id {
+                                equipments.append(.init(
+                                    id: equipment.id,
+                                    createdAt: equipment.createdAt,
+                                    workedBy: equipment.workedBy,
+                                    deliveredBy: equipment.deliveredBy,
+                                    IDTag1: equipment.IDTag1,
+                                    IDTag2: equipment.IDTag2,
+                                    tag1: equipment.tag1,
+                                    tag2: equipment.tag2,
+                                    tag3: equipment.tag3,
+                                    tag4: equipment.tag4,
+                                    tag5: equipment.tag5,
+                                    tag6: equipment.tag6,
+                                    tagDescr: equipment.tagDescr,
+                                    tagCheck1: equipment.tagCheck1,
+                                    tagCheck2: equipment.tagCheck2,
+                                    tagCheck3: equipment.tagCheck3,
+                                    tagCheck4: equipment.tagCheck4,
+                                    tagCheck5: equipment.tagCheck5,
+                                    tagCheck6: equipment.tagCheck6,
+                                    pendingSpareEvent: nil,
+                                    pendingSpare: equipment.pendingSpare,
+                                    diagnostic: equipment.diagnostic,
+                                    resolution: equipment.resolution,
+                                    warrantyCard: equipment.warrantyCard,
+                                    status: .onwork
                                 ))
+                            }
+                            else {
+                                equipments.append(equipment)
+                            }
+                        }
+                        
+                        equipmentsCatch[self.orderView.order.id] = equipments
+                        
+                    }
+                    
+                }
+            ))
         }
 
         override func didRemoveFromDOM() {

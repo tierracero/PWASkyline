@@ -1,5 +1,5 @@
 //
-//  WebsocketEventManager.swift
+//  WS.swift
 //  
 //
 //  Created by Victor Cantu on 8/7/22.

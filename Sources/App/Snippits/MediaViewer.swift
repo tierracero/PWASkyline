@@ -16,7 +16,7 @@ class MediaViewer: Div {
     
     let relid: UUID?
     
-    /// orderChat, orderFile, product
+    /// orderChat, orderFile, product, content
     let type: MediaDownloadType
     
     let url: String
@@ -299,7 +299,6 @@ class MediaViewer: Div {
             }
             
         }
-        
     }
     
     func rotateCounterClockwise(){
@@ -417,14 +416,16 @@ class MediaViewer: Div {
             }.zIndex(999999999))
         case .product:
             break
+        case .content:
+            break
         }
     }
     
-
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
         $currentType.removeAllListeners()
     }
+
 }
 
 extension MediaViewer {
@@ -451,4 +452,5 @@ extension MediaViewer {
             self.type = type
         }
     }
+
 }

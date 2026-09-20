@@ -695,7 +695,7 @@ extension ToolsView.WebPage.MeetUsPage {
                 
                 loadingView.show()
 
-                API.themeV1.deleteViewBlog(id: id) { resp in
+                API.themeV1.deleteViewProfile(id: id) { resp in
 
                     loadingView.hide()
                                         

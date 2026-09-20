@@ -45,8 +45,6 @@ extension ToolsView.SystemSettings {
         
         @State var tictokLink: String
 
-        @State var performanceModeEnabled: Bool
-        
         public init(
             pageProfile: GeneralPageProfile,
             socialProfile: CustSocialConfiguration
@@ -61,7 +59,6 @@ extension ToolsView.SystemSettings {
             self.youtubeLink = socialProfile.youtubeLink ?? ""
             self.pinterestLink = socialProfile.pinterestLink ?? ""
             self.tictokLink = socialProfile.tictokLink ?? ""
-            self.performanceModeEnabled = VisualPerformanceSettings.persistedPerformanceModeEnabled()
         }
 
         required init() {
@@ -130,8 +127,6 @@ extension ToolsView.SystemSettings {
             .class(.textFiledBlackDark)
             .width(95.percent)
 
-        lazy var performanceModeToggle = InputCheckbox()
-            .toggle(self.$performanceModeEnabled)
         
         @DOM override var body: DOM.Content {
             
@@ -199,23 +194,6 @@ extension ToolsView.SystemSettings {
                         
                         Div{
                             self.commercialNameField
-                        }
-                        .class(.oneHalf)
-                    }
-                     
-                    Div().clear(.both).height(7.px)
-
-                    H3("Rendimiento").color(.lightBlueText)
-
-                    Div{
-                        Div{
-                            Label("Modo de rendimiento")
-                                .color(.lightGray)
-                        }
-                        .class(.oneHalf)
-
-                        Div{
-                            self.performanceModeToggle
                         }
                         .class(.oneHalf)
                     }
@@ -337,10 +315,6 @@ extension ToolsView.SystemSettings {
             
             institutionalColorListener = color
 
-            $performanceModeEnabled.listen { enabled in
-                VisualPerformanceSettings.performanceModeEnabled = enabled
-            }
-            
         }
         
         
@@ -418,7 +392,6 @@ extension ToolsView.SystemSettings {
             $youtubeLink.removeAllListeners()
             $pinterestLink.removeAllListeners()
             $tictokLink.removeAllListeners()
-            $performanceModeEnabled.removeAllListeners()
         }
     }
 }

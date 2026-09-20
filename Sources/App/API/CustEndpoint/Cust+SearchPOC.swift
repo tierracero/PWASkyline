@@ -56,7 +56,7 @@ func searchPOC(
         user: custCatchUser,
         mid: custCatchMid,
         key: custCatchKey,
-        token: thisAppToken,
+        token: custCatchToken,
         tcon: .web, 
         applicationType: custCatchAccountType.sessionType
     )){

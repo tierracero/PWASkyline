@@ -22,7 +22,7 @@ extension ProductManagerView.AuditView {
             .class(.textFiledBlackDark)
             .fontSize(22.px)
             .width(200.px)
-            .height(34.px)
+            .height(42.px)
             .onChange { _, select in
                 
                 if let type = CardexRequestType(rawValue: select.text) {
@@ -40,7 +40,7 @@ extension ProductManagerView.AuditView {
             .class(.textFiledBlackDark)
             .placeholder("Buscar...")
             .fontSize(22.px)
-            .height(34.px)
+            .height(42.px)
         
         @State var storeSelectListener = custCatchStore.uuidString
         
@@ -48,7 +48,7 @@ extension ProductManagerView.AuditView {
             .class(.textFiledBlackDark)
             .fontSize(22.px)
             .width(230.px)
-            .height(34.px)
+            .height(42.px)
         
         @State var dateSelectListener = ""
         
@@ -56,7 +56,7 @@ extension ProductManagerView.AuditView {
             .class(.textFiledBlackDark)
             .fontSize(22.px)
             .width(230.px)
-            .height(34.px)
+            .height(42.px)
         
         @State var startAt = ""
         
@@ -67,7 +67,7 @@ extension ProductManagerView.AuditView {
             .placeholder("DD/MM/AAAA")
             .fontSize(22.px)
             .width(130.px)
-            .height(34.px)
+            .height(42.px)
         
         @State var endAt = ""
         
@@ -76,15 +76,21 @@ extension ProductManagerView.AuditView {
             .placeholder("DD/MM/AAAA")
             .fontSize(22.px)
             .width(130.px)
-            .height(34.px)
+            .height(42.px)
         
         @State var startAtLabel = ""
+
+        private let resultElementId = "cardexResultDiv_\(callKey(7))"
         
         lazy var resultDiv = Div{
             Table().noResult(label: "📈 Seleccione una tienda para iniciar")
         }
+        .id(.init(resultElementId))
+        .class(Class(TCCrystalSurfaceClass.auditResults))
         .custom("height", "calc(100% - 85px)")
         .overflow(.auto)
+
+        lazy var reportActions = ReportActions(resultElementId: resultElementId)
 
         private var cardexRenderId = UUID()
         
@@ -216,15 +222,18 @@ extension ProductManagerView.AuditView {
                     .onClick {
                         self.createReport()
                     }
-                
+
                 Div().clear(.both)
                 
             }
+            .class(Class(TCCrystalSurfaceClass.auditToolbar))
             .borderRadius(7.px)
             .backgroundColor(.grayBlack)
             .height(85.px)
             
-            Div().clear(.both)
+            Div()
+            .clear(.both)
+            .height(7.px)
             
             self.resultDiv
             
@@ -444,6 +453,7 @@ extension ProductManagerView.AuditView {
             
             let renderId = UUID()
             cardexRenderId = renderId
+            reportActions.reset()
 
             loadingView.show()
             
@@ -473,13 +483,14 @@ extension ProductManagerView.AuditView {
                     showError(.unexpectedResult, .unexpenctedMissingPayload)
                     return
                 }
-             
+
                 let tableBody = TBody()
                 
                 let table = Table{
                     THead{
                         Tr{
                             Td("")
+                            ProductManagerView.AuditView.productManagerHeaderCell()
                             Td("SKU/UPC/POC")
                             Td("Nombre / Marca / Modelo")
                             Td("Costo")
@@ -492,6 +503,9 @@ extension ProductManagerView.AuditView {
                                 .width(50.px)
                             Td("Final")
                             Td("Saldo Fini")
+                            Td("Vendido")
+                            Td("Prom. / día")
+                            Td("Gráfica")
                         }
                     }
                     .custom("inset-block-start", "0")
@@ -514,8 +528,14 @@ extension ProductManagerView.AuditView {
                 var totalInitialCost: Int64 = 0
                 
                 var totalFinalCost: Int64 = 0
+
+                let groupedCardexObjects = payload.objects.sorted { lhs, rhs in
+                    let leftProduct = "\(lhs.poc.upc) \(lhs.poc.name)".purgeSpaces
+                    let rightProduct = "\(rhs.poc.upc) \(rhs.poc.name)".purgeSpaces
+                    return leftProduct.localizedCaseInsensitiveCompare(rightProduct) == .orderedAscending
+                }
                 
-                payload.objects.forEach { item in
+                groupedCardexObjects.forEach { item in
                     
                     totalInitialUnits += item.initalInventory
                     
@@ -579,6 +599,7 @@ extension ProductManagerView.AuditView {
                             Td(" ")
                             Td(" ")
                             Td(" ")
+                            Td(" ")
                             Td("SUB T.")
                             Td(_costSubTotalSI.formatMoney)
                                 .align(.right)
@@ -592,10 +613,14 @@ extension ProductManagerView.AuditView {
                                 .align(.right)
                             Td(_costSubTotalSF.formatMoney)
                                 .align(.right)
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
                         }
                         
                         // MARK: TAXES
                         Tr{
+                            Td(" ")
                             Td(" ")
                             Td(" ")
                             Td(" ")
@@ -613,10 +638,14 @@ extension ProductManagerView.AuditView {
                                 .align(.right)
                             Td(_costTaxTrasladadosSF.formatMoney)
                                 .align(.right)
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
                         }
                         
                         // MARK: TOTAL
                         Tr{
+                            Td(" ")
                             Td(" ")
                             Td(" ")
                             Td(" ")
@@ -634,6 +663,9 @@ extension ProductManagerView.AuditView {
                                 .align(.right)
                             Td(totalFinalCost.formatMoney)
                                 .align(.right)
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
                         }
                     }
                         .custom("inset-block-end", "0")
@@ -641,51 +673,51 @@ extension ProductManagerView.AuditView {
                         .position(.sticky)
                 )
                 
+                let totalSoldUnits = groupedCardexObjects.map { $0.soldInventory ?? 0 }.reduce(0, +)
+                let reportDays = max(1, Int(ceil(Double(max(endAtUTS - startAtUTS, 1)) / 86_400.0)))
+                let averageSoldPerDay = Double(totalSoldUnits) / Double(reportDays)
+
                 self.resultDiv.innerHTML = ""
+
+                self.reportActions.present(
+                    title: "Reporte de Cardex",
+                    fileName: "cardex-\(getNow())",
+                    aiResponse: resp.airesponse,
+                    in: self.resultDiv
+                )
+
+                self.resultDiv.appendChild(ProductManagerView.AuditView.reportHeader(
+                    title: "📊 Resumen de Cardex",
+                    subtitle: "Movimientos e inventario agrupados por producto",
+                    context: "Alcance: \(stores[relationId]?.name ?? "Tienda") • Periodo: \(getDate(startAtUTS).formatedLong) al \(getDate(endAtUTS).formatedLong) • Generado: \(getDate(getNow()).formatedLong)"
+                ))
+
+                self.resultDiv.appendChild(Div {
+                    ProductManagerView.AuditView.reportMetric(title: "Productos", value: groupedCardexObjects.count.toString, detail: "Con movimientos")
+                    ProductManagerView.AuditView.reportMetric(title: "Unidades iniciales", value: totalInitialUnits.toString, detail: "Inicio del periodo")
+                    ProductManagerView.AuditView.reportMetric(title: "Entradas", value: totalAddedUnits.toString, detail: "Unidades agregadas")
+                    ProductManagerView.AuditView.reportMetric(title: "Salidas", value: totalRemovedUnits.toString, detail: "Unidades removidas")
+                    ProductManagerView.AuditView.reportMetric(title: "Vendidas", value: totalSoldUnits.toString, detail: "Canales de venta")
+                    ProductManagerView.AuditView.reportMetric(title: "Promedio / día", value: String(format: "%.2f", averageSoldPerDay), detail: "Ventas del periodo")
+                    ProductManagerView.AuditView.reportMetric(title: "Inventario final", value: totalFinalUnits.toString, detail: "Unidades al cierre")
+                    ProductManagerView.AuditView.reportMetric(title: "Valor final", value: totalFinalCost.formatMoney, detail: "Saldo de inventario")
+                }
+                .class(Class(TCCrystalSurfaceClass.auditMetricGrid)))
+
+                self.resultDiv.appendChild(ProductManagerView.AuditView.reportBarChart(
+                    title: "Movimiento de unidades",
+                    items: [
+                        ("Inicial", Double(totalInitialUnits), totalInitialUnits.toString),
+                        ("Entradas", Double(totalAddedUnits), totalAddedUnits.toString),
+                        ("Salidas", Double(totalRemovedUnits), totalRemovedUnits.toString),
+                        ("Vendidas", Double(totalSoldUnits), totalSoldUnits.toString),
+                        ("Final", Double(totalFinalUnits), totalFinalUnits.toString)
+                    ]
+                ))
                 
                 self.resultDiv.appendChild(
                     Div{
-                        
-                        Div{
-                            
-                            Img()
-                                .src("/skyline/media/excel.png")
-                                .marginLeft(12.px)
-                                .height(18.px)
-
-                         }
-                        .float(.right)
-                        .onClick {
-                            self.downloadCardexReport(
-                                .csv,
-                                startAt: startAtUTS,
-                                endAt: endAtUTS,
-                                storeId: relationId,
-                                payload: payload
-                            )
-                        }
-                        
-                        Div{
-
-                            Img()
-                                .src("/skyline/media/pdf.png")
-                                .marginLeft(12.px)
-                                .height(18.px)
-                             
-                         }
-                        .float(.right)
-                        .onClick {
-                            self.downloadCardexReport(
-                                .pdf,
-                                startAt: startAtUTS,
-                                endAt: endAtUTS,
-                                storeId: relationId,
-                                payload: payload
-                            )
-                        }
-                        
-
-                        H1("Resultados")
+                        H1("Resultados agrupados por producto")
                             .color(.darkGoldenRod)
                     }
                         .borderBottom(width: .thin, style: .solid, color: .darkGoldenRod)
@@ -697,8 +729,11 @@ extension ProductManagerView.AuditView {
 
                 self.asyncAddCardexRow(
                     renderId: renderId,
-                    items: payload.objects,
-                    tableBody: tableBody
+                    items: groupedCardexObjects,
+                    tableBody: tableBody,
+                    storeId: relationId,
+                    startAt: startAtUTS,
+                    endAt: endAtUTS
                 )
                 
             }
@@ -708,6 +743,9 @@ extension ProductManagerView.AuditView {
             renderId: UUID,
             items: [CustPOCComponents.CardexObject],
             tableBody: TBody,
+            storeId: UUID,
+            startAt: Int64,
+            endAt: Int64,
             index: Int = 0
         ) {
             guard renderId == cardexRenderId,
@@ -716,6 +754,9 @@ extension ProductManagerView.AuditView {
             }
 
             let item = items[index]
+            let reportDays = max(1, Int(ceil(Double(max(endAt - startAt, 1)) / 86_400.0)))
+            let soldUnits = item.soldInventory ?? 0
+            let soldDailyAverage = Double(soldUnits) / Double(reportDays)
             let avatar = Img()
                 .src("/skyline/media/512.png")
                 .borderRadius(all: 12.px)
@@ -727,8 +768,11 @@ extension ProductManagerView.AuditView {
 
             let row = Tr{
                 Td{ avatar }
+                ProductManagerView.AuditView.productManagerCell(pocId: item.poc.id)
                 Td(item.poc.upc)
-                Td("\(item.poc.name) \(item.poc.brand) \(item.poc.model)".purgeSpaces)
+                ProductManagerView.AuditView.productDescriptionCell(
+                    "\(item.poc.name) \(item.poc.brand) \(item.poc.model)".purgeSpaces
+                )
                 Td(item.poc.cost.formatMoney).align(.right)
                 Td(item.poc.pricea.formatMoney).align(.right)
                 Td(item.initalBalance.formatMoney).align(.right)
@@ -737,6 +781,21 @@ extension ProductManagerView.AuditView {
                 Td(item.removeInventory.toString).align(.right)
                 Td(item.finalInventory.toString).align(.right)
                 Td(item.finalBalance.formatMoney).align(.right)
+                Td(soldUnits.toString).align(.right)
+                Td(String(format: "%.2f", soldDailyAverage))
+                    .color(.yellowTC)
+                    .fontWeight(.bold)
+                    .align(.right)
+                Td {
+                    CardexGraphView.graphButton {
+                        addToDom(CardexGraphView(
+                            item: item,
+                            storeName: stores[storeId]?.name ?? "Tienda",
+                            startAt: startAt,
+                            endAt: endAt
+                        ))
+                    }
+                }
             }.class(.hoverFocusBlack)
 
             guard renderId == cardexRenderId else {
@@ -760,6 +819,9 @@ extension ProductManagerView.AuditView {
                     renderId: renderId,
                     items: items,
                     tableBody: tableBody,
+                    storeId: storeId,
+                    startAt: startAt,
+                    endAt: endAt,
                     index: index + 1
                 )
             }

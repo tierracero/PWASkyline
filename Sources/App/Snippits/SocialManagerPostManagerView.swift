@@ -8,6 +8,7 @@ import TCFundamentals
 import Foundation
 import TCSocialCore
 import Web
+import FacebookCore
 
 class SocialManagerPostManagerView: Div {
     
@@ -84,6 +85,9 @@ class SocialManagerPostManagerView: Div {
     
     @DOM override var body: DOM.Content {
         
+        Span("⚠️ re implenet")
+
+        /*
         Div {
             
             /// Header
@@ -322,6 +326,7 @@ class SocialManagerPostManagerView: Div {
         .height(80.percent)
         .top(10.percent)
         .width(500.px)
+        */
         
     }
     
@@ -379,7 +384,8 @@ class SocialManagerPostManagerView: Div {
         var _angry = 0
         var _other = 0
         let comments = comments.count.toString
-        
+
+        /*
         reactions.forEach { reaction in
             switch reaction.type {
             case .none:
@@ -402,15 +408,24 @@ class SocialManagerPostManagerView: Div {
                 _angry += 1
             }
         }
-        
+        */
+
         like = _like.toString
+
         dislike = _dislike.toString
+        
         love = _love.toString
+        
         care = _care.toString
+        
         wow = _wow.toString
+        
         haha = _haha.toString
+        
         sorry = _sorry.toString
+        
         angry = _angry.toString
+        
         other = _other.toString
         
         pageName = page.name

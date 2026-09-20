@@ -1395,8 +1395,3 @@ function dragElement(elmnt) {
   }
 }
 
-
-///
-function goToLogin(){
-    window.location = `login`
-}

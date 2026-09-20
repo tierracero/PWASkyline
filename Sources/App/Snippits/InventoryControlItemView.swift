@@ -83,6 +83,17 @@ class InventoryControlItemView: Tr {
             self.secSelect
             self.secView
         }
+        Td {
+           Img()
+                .src("skyline/media/maximizeWindow.png")
+                .class(.iconWhite)
+                .cursor(.pointer)
+                .width(18.px)
+                .onClick {
+                    self.viewSoldItems()
+                }
+
+        }
     }
     
     override func buildUI() {
@@ -222,6 +233,22 @@ class InventoryControlItemView: Tr {
         super.didRemoveFromDOM()
         $bodidstr.removeAllListeners()
         $secidstr.removeAllListeners()
+        
+    }
+
+    func viewSoldItems(){
+        
+        if items.count == 1 {
+            addToDom(InventoryItemDetailView(itemid: items.first!){ price in
+                
+            })
+        }
+        else {
+
+            //addToDom(SalePointView.SelectItemView(items: items) )
+            // TODO: Implement porper load
+            
+        }
         
     }
 }

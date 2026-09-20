@@ -10,6 +10,8 @@ import TCFundamentals
 import TCSocialCore
 import TCFireSignal
 
+import FacebookCore
+
 extension CustComponents {
     
     static func addSocialComment(

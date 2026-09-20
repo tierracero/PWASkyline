@@ -55,6 +55,13 @@ class PDVPrintEngine: Div {
     var cardexRefrence: [UUID:CustPOCCardex] = [:]
     
     lazy var orderImg = Img()
+
+    /// The printable CSS width used by the existing 80 mm thermal-printer flow.
+    /// For a 58 mm roll, use approximately 220 px instead.
+    /// Keep the outer canvas constrained; a 400 px canvas is wider than the
+    /// paper and causes the browser print frame to clip both sides of the
+    /// receipt.
+    private let miniPrinterWidth = 300.px
     
     lazy var chargesData = Table{
         Tr{
@@ -63,7 +70,11 @@ class PDVPrintEngine: Div {
             Td("CUni").width(70.px)
             Td("STotal").width(70.px)
         }
-    }.width(100.percent)
+    }
+        .width(100.percent)
+        .tableLayout(.fixed)
+        .overflowWrap(.anywhere)
+        .wordBreak(.breakWord)
     
     var logo = "/skyline/media/logoTierraCeroLongBlack.svg"
     
@@ -76,14 +87,28 @@ class PDVPrintEngine: Div {
     var fontSizeBody = 16.px
     
     lazy var storeData = Div{
-        
+        Strong(custCatchUrl)
+            .fontSize(16.px)
+            Div().clear(.both)
+
         Strong("Orden de Venta \(self.custSale.folio)")
-            .fontSize(18.px)
-        
+            .fontSize(16.px)
+            Div().clear(.both)
+
         Div(getDate(self.custSale.createdAt).formatedLong)
-        
-        Br()
+
+        Div().clear(.both)
+
+        if let profile = fiscalProfiles.first {
+
+            Span("\(profile.rfc) \(profile.razon)")
+            .fontSize(14.px)
+
+            Div().clear(.both)
+
+        }
     }
+
     
     lazy var purchaseOrdersDiv = Div()
     
@@ -153,6 +178,8 @@ class PDVPrintEngine: Div {
                 Div{
                     Svg()
                         .id(Id(stringLiteral: "barcode"))
+                        .maxWidth(100.percent)
+                        .custom("height", "auto")
                 }
                 .align(.center)
                 Div{
@@ -169,7 +196,12 @@ class PDVPrintEngine: Div {
                 
                 self.transferOrdersDiv
                 
-            }.width(400.px)
+            }
+            .width(self.miniPrinterWidth)
+            .maxWidth(100.percent)
+            .custom("box-sizing", "border-box")
+            .custom("overflow-wrap", "anywhere")
+            .wordBreak(.breakWord)
         case .pdf:
             H1("Documento no soportado")
         }
@@ -179,9 +211,9 @@ class PDVPrintEngine: Div {
     override func buildUI() {
         super.buildUI()
         
-        if let _logo = custWebFilesLogos?.logoIndexWhite.avatar {
+        if let _logo = custWebFilesLogos?.logoIndexMain.avatar {
             if !_logo.isEmpty {
-                logo = "\(skylineUrlPatch)/contenido/\(_logo)"
+                logo = "https://\(custCatchUrl)\(skylineUrlPatch)/contenido/\(_logo)"
             }
         }
         
@@ -251,7 +283,7 @@ class PDVPrintEngine: Div {
             
             var units = items.count
             
-            var total:Int64 = 0
+            var total: Int64 = 0
             
             items.forEach { item in
                 total += (item.soldPrice ?? 0)
@@ -293,7 +325,7 @@ class PDVPrintEngine: Div {
                 return
             }
             
-            var units = items.count
+            let units = items.count
             
             var soldPrice: Int64 = 0
             
@@ -333,12 +365,32 @@ class PDVPrintEngine: Div {
            )
         }
         
+        
+        let costTax = calcSubTotal(
+            substractedTaxCalculation: true,
+            units: 100 * 10000,
+            cost: granTotal * 10000,
+            discount: 0,
+            retenidos: [],
+            trasladados: [
+                .init(
+                    type: .iva,
+                    factor: .tasa,
+                    taza: "0.160000"
+                )
+            ]
+        )
+        
         chargesData.appendChild(Tr{
-            Td()
-            Td()
-            Td("Total")
-            Td(granTotal.formatMoney)
+            Td("IVA").colSpan(2)
+            Td((costTax.subTotal / 10000).formatMoney).colSpan(2)
         })
+        
+        chargesData.appendChild(Tr{
+            Td("Total").colSpan(2)
+            Td(granTotal.formatMoney).colSpan(2)
+        })
+        
         
         custPurchesOrder.forEach { order in
             
@@ -394,7 +446,11 @@ class PDVPrintEngine: Div {
                     Td("Unis").width(50.px)
                     Td("Description")
                 }
-            }.width(100.percent)
+            }
+                .width(100.percent)
+                .tableLayout(.fixed)
+                .overflowWrap(.anywhere)
+                .wordBreak(.breakWord)
             
             if let data = order.items.replace(from: " ", to: "").data(using: .utf8) {
                 

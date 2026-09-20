@@ -6,25 +6,11 @@ extension CustAssetsComponents {
 
     static func updateAssettem(
         assetItemId: UUID,
-        purchasFiscalDocumentFolio: String,
-        purchasFiscalDocumentId: UUID?,
-        commercialAssetsId: UUID,
-        linkType: CustCommercialAssetsLinkedType,
-        linkedTo: UUID,
-        department: UUID?,
-        categorie: UUID?,
-        subcategorie: UUID?,
-        acquisitionAt: Int64,
-        acquisitionCost: Int64,
+        section: UUID? = nil,
+        subSection: UUID? = nil,
         currentCost: Int64,
         serial: String?,
         name: String,
-        latitude: Double?,
-        longitude: Double?,
-        serviceCard: String?,
-        disposedAt: Int64?,
-        disposedReason: String?,
-        status: CustCommercialAssetsItemStatus,
         callback: @escaping ((_ resp: APIResponse?) -> ())
     ) {
         sendPost(
@@ -33,25 +19,11 @@ extension CustAssetsComponents {
             "updateAssettem",
             UpdateAssettemRequest(
                 assetItemId: assetItemId,
-                purchasFiscalDocumentFolio: purchasFiscalDocumentFolio,
-                purchasFiscalDocumentId: purchasFiscalDocumentId,
-                commercialAssetsId: commercialAssetsId,
-                linkType: linkType,
-                linkedTo: linkedTo,
-                department: department,
-                categorie: categorie,
-                subcategorie: subcategorie,
-                acquisitionAt: acquisitionAt,
-                acquisitionCost: acquisitionCost,
+                section: section,
+                subSection: subSection,
                 currentCost: currentCost,
                 serial: serial,
-                name: name,
-                latitude: latitude,
-                longitude: longitude,
-                serviceCard: serviceCard,
-                disposedAt: disposedAt,
-                disposedReason: disposedReason,
-                status: status
+                name: name
             )
         ) { data in
             guard let data else {

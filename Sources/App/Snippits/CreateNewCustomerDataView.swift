@@ -1017,7 +1017,7 @@ class CreateNewCustomerDataView: Div {
                         .marginTop(3.px)
                     
                     /// Nombre del Negocio
-                    Span("Nomre del empresa")
+                    Span("Nombre del empresa")
                         .color(.red)
                     
                     self.bizNameField

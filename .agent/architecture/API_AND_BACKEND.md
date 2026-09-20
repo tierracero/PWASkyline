@@ -5,6 +5,7 @@ Authoritative rules: `API-*`.
 ## Verified Facts
 
 - Client API wrappers live under `Sources/App/API/**`.
+- Asset architecture uses `listStoreArchitecture(relationId:)` and department creation requires a nonoptional `relationId`. Location links use `CustCommercialAssetsLocationLinkedType`; asset-item links retain `CustCommercialAssetsLinkedType`. Asset `custAcct` fields remain customer-account identifiers, not store or warehouse identifiers.
 - Endpoint files are grouped by domain and often named `Domain+Action.swift`.
 - The app depends on multiple Tierra Cero core packages that likely define shared payloads and contracts.
 - The three public `sendPost` overloads share one internal XMLHttpRequest transport that preserves response-body callback compatibility while recording transport failures.

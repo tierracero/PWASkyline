@@ -70,6 +70,7 @@ extension ProductManagerView.AuditView {
         
         lazy var productResultDiv = Div()
             .class(.roundDarkBlue, .transparantBlackBackGround)
+            .class(Class(TCCrystalSurfaceClass.auditResults))
             .custom("height", "calc(100% - 35px)")
             .overflow(.auto)
         
@@ -128,6 +129,7 @@ extension ProductManagerView.AuditView {
                     .float(.left)
                 
             }
+            .class(Class(TCCrystalSurfaceClass.auditModalPanel))
             .position(.absolute)
             .padding(all: 7.px)
             .height(90.percent)
@@ -145,6 +147,8 @@ extension ProductManagerView.AuditView {
             width(100.percent)
             left(0.px)
             top(0.px)
+            self.class(Class(TCCrystalSurfaceClass.auditWorkspace))
+            CrystalTheme.apply(to: self)
             
             parsablePOCs.listen {
                 guard self.isActive else {

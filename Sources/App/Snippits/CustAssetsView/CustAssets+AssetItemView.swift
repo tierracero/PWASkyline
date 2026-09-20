@@ -189,12 +189,15 @@ extension CustAssetsView {
 
                 Div {
                     self.detail("Nombre", item.name)
-                    self.detail("Estado", item.status.rawValue.capitalized)
+                    self.detail("Estado", item.status.desccription)
                     self.detail("Serie", item.serial ?? "—")
                     self.detail("Folio de compra", item.purchasFiscalDocumentFolio)
-                    self.detail("Tarjeta de servicio", item.serviceCard ?? "—")
-                    self.detail("Tipo de ubicación", item.linkType.rawValue.capitalized)
-                    self.detail("ID de ubicación", item.linkedTo?.uuidString.lowercased() ?? "—")
+                    self.detail(
+                        "Tarjeta de servicio",
+                        item.serviceCard.isEmpty ? "—" : item.serviceCard.joined(separator: ", ")
+                    )
+                    self.detail("Tipo de ubicación", item.currentLocation.description)
+                    self.detail("ID de ubicación", item.currentLocationId?.uuidString.lowercased() ?? "—")
                     self.detail("Costo de adquisición", item.acquisitionCost.formatMoney)
                     self.detail("Costo actual", item.currentCost.formatMoney)
                     self.detail("Latitud", item.latitude.map { String($0) } ?? "—")

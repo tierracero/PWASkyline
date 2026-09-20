@@ -20,6 +20,7 @@ extension CustPOCComponents {
         from: Int64?,
         to: Int64?,
         ids: [UUID]?,
+        eventId: UUID,
         callback: @escaping ( (_ resp: APIResponseGeneric<AuditsResponse>?) -> () )
     ) {
         
@@ -35,7 +36,8 @@ extension CustPOCComponents {
                 accountId: accountId,
                 from: from,
                 to: to, 
-                ids: ids
+                ids: ids,
+                eventId: eventId
             )
         ) { payload in
             guard let data = payload else{

@@ -330,6 +330,8 @@ func connWebsocket(interval: Double){
                 break
             case .customerOrderStatusUpdate:
                 break
+            case .asyncMessageUpdate:
+                break
             }
             
         case .unknown(let jsValue):

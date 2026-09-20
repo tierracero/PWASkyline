@@ -9,6 +9,7 @@ import TCFundamentals
 import Foundation
 import TCSocialCore
 import Web
+import FacebookCore
 
 class SocialManagerPostCommentRow: Div {
     
@@ -101,6 +102,7 @@ class SocialManagerPostCommentRow: Div {
                     .height(24.px)
                     .onClick { img, event in
                         
+                        /*
                         addToDom(ConfirmView(
                             type: .yesNo,
                             title: "¿Desea eliminar comentatio?",
@@ -119,7 +121,6 @@ class SocialManagerPostCommentRow: Div {
                                         
                                         loadingView.hide()
                                         
-                                        guard let resp else {
                                             showError(.comunicationError, .serverConextionError)
                                             return
                                         }
@@ -136,7 +137,8 @@ class SocialManagerPostCommentRow: Div {
                                 }
                             }
                         ))
-                        
+                        */
+
                         event.stopPropagation()
                         
                     }
@@ -145,8 +147,11 @@ class SocialManagerPostCommentRow: Div {
                     .paddingRight(7.px)
                     .float(.right)
                 
+                /*
                 Span(self.comment.from.name)
                     .color(.yellowTC)
+                */
+
             }
             .fontSize(16.px)
             .color(.gray)
@@ -351,7 +356,8 @@ class SocialManagerPostCommentRow: Div {
             .marginBottom(7.px)
             
             Div().class(.clear)
-            
+
+            /*
             ForEach(self.$comments){ subcomment in
                 SocialManagerPostCommentRow(
                     mainid: self.mainid,
@@ -380,7 +386,7 @@ class SocialManagerPostCommentRow: Div {
                 .marginBottom(7.px)
             }
             .marginBottom(7.px)
-            
+            */
             
             Div().class(.clear)
             
@@ -419,6 +425,7 @@ class SocialManagerPostCommentRow: Div {
         var _angry = 0
         var _other = 0
         
+        /*
         let uts = getDate(comment.createdAt)
         
         date = "\(uts.formatedLong) \(uts.time)"
@@ -494,7 +501,7 @@ class SocialManagerPostCommentRow: Div {
             }
             
         }
-        
+        */
         like = _like.toString
         dislike = _dislike.toString
         love = _love.toString
@@ -517,7 +524,7 @@ class SocialManagerPostCommentRow: Div {
         }
         
         loadingView.show()
-        
+        /*
         var commentid = comment.commentid
         
         if let _commentid = self.parentCommentId {
@@ -554,7 +561,7 @@ class SocialManagerPostCommentRow: Div {
             self.comments.append(newmsg)
             
         }
-        
+        */
     }
     
 

@@ -11,7 +11,7 @@ import TCFireSignal
 
 extension WS {
 
-    func asyncFileUpload(_ payload: String) -> API.webSocketV1.AsyncMessageUpdate? {
+    func asyncMessageUpdate(_ payload: String) -> API.webSocketV1.AsyncMessageUpdate? {
         
         guard let data = payload.data(using: .utf8) else {
             return nil

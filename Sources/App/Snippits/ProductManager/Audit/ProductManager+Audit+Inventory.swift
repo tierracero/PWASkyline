@@ -45,7 +45,7 @@ extension ProductManagerView.AuditView {
             .class(.textFiledBlackDark)
             .fontSize(22.px)
             .width(230.px)
-            .height(34.px)
+            .height(42.px)
         
         @State var storeSelectListener = ""
         
@@ -53,7 +53,7 @@ extension ProductManagerView.AuditView {
             .class(.textFiledBlackDark)
             .fontSize(22.px)
             .width(230.px)
-            .height(34.px)
+            .height(42.px)
         
         @State var userSelectListener = ""
         
@@ -65,7 +65,7 @@ extension ProductManagerView.AuditView {
             .class(.textFiledBlackDark)
             .fontSize(22.px)
             .width(230.px)
-            .height(34.px)
+            .height(42.px)
         
         @State var departmentSelectListener = ""
         
@@ -73,7 +73,7 @@ extension ProductManagerView.AuditView {
             .class(.textFiledBlackDark)
             .fontSize(22.px)
             .width(230.px)
-            .height(34.px)
+            .height(42.px)
         
         @State var dateSelectListener = ""
         
@@ -81,7 +81,7 @@ extension ProductManagerView.AuditView {
             .class(.textFiledBlackDark)
             .fontSize(22.px)
             .width(230.px)
-            .height(34.px)
+            .height(42.px)
         
         @State var startAt = ""
         
@@ -90,7 +90,7 @@ extension ProductManagerView.AuditView {
             .placeholder("DD/MM/AAAA")
             .fontSize(22.px)
             .width(130.px)
-            .height(34.px)
+            .height(42.px)
         
         @State var endAt = ""
         
@@ -99,19 +99,31 @@ extension ProductManagerView.AuditView {
             .placeholder("DD/MM/AAAA")
             .fontSize(22.px)
             .width(130.px)
-            .height(34.px)
+            .height(42.px)
         
         @State var startAtLabel = ""
         
         @State var endAtLabel = ""
+
+        private let resultElementId = "resultDiv_\(callKey(7))"
         
-        lazy var resultDiv = Div{
+        lazy var resultDiv = Div {
             Table().noResult(label: "📈 Seleccione una tienda para iniciar")
         }
-        .custom("height", "calc(100% - 85px)")
-        .overflow(.auto)
+        .id(.init(resultElementId))
+        .class(Class(TCCrystalSurfaceClass.auditResults))
+        // Keep the dynamic report inside one predictable scrolling viewport.
+        .custom("height", "calc(100% - 130px)")
+        .custom("overflow", "auto !important")
+        .custom("position", "relative")
+        .custom("box-sizing", "border-box")
+        .custom("min-height", "0")
+
+        lazy var reportActions = ReportActions(resultElementId: resultElementId)
 
         private var inventoryRenderId = UUID()
+
+        private var cardexGraphRequestId = UUID()
         
         @State var parsablePOCs: [SearchPOCResponse] = []
         
@@ -302,8 +314,11 @@ extension ProductManagerView.AuditView {
                     .onClick {
                         self.requestReport()
                     }
-                
-                Div().clear(.both)
+
+                Div()
+                .width(100.percent)
+                .height(3.px)
+                .clear(.both)
                 
                 Div(self.$reportType.map{ $0?.helpText ??  "" })
                     .paddingBottom(7.px)
@@ -314,18 +329,29 @@ extension ProductManagerView.AuditView {
                     .color(.white)
                     
             }
+            .class(Class(TCCrystalSurfaceClass.auditToolbar))
             .borderRadius(7.px)
             .backgroundColor(.grayBlack)
             .height(85.px)
-            
+
+            Div()
+            .width(100.percent)
+            .height(3.px)
+            .clear(.both)
+
             /// Results View
             self.resultDiv
-            
+
         }
         
         override func buildUI() {
             
             height(100.percent)
+            // display(.grid)
+            custom("grid-template-rows", "85px 3px minmax(0, 1fr)")
+            custom("min-height", "0")
+            custom("box-sizing", "border-box")
+            custom("overflow", "hidden")
             
             auditTypeSelect.appendChild(
                 Option("Seleccione")
@@ -387,6 +413,8 @@ extension ProductManagerView.AuditView {
                     self.userSelectListener = ""
                 case .byConcession:
                     break
+                case .fastAndFurios:
+                    self.storeSelectListener = ""
                 }
             }
             
@@ -482,17 +510,17 @@ extension ProductManagerView.AuditView {
                 return
             }
             
-            var storeid: UUID? = UUID(uuidString: storeSelectListener)
+            let storeid: UUID? = UUID(uuidString: storeSelectListener)
             
-            var depid: UUID? = UUID(uuidString: departmentSelectListener)
+            let depid: UUID? = UUID(uuidString: departmentSelectListener)
             
-            var userId: UUID? = UUID(uuidString: userSelectListener)
+            let userId: UUID? = UUID(uuidString: userSelectListener)
             
             var startAtUTS: Int64? = nil
             
             var endAtUTS: Int64? = nil
             
-            var ids = parsablePOCs.map{ $0.id }
+            let ids = parsablePOCs.map{ $0.id }
             
             if type.dateRangable {
                 
@@ -610,44 +638,63 @@ extension ProductManagerView.AuditView {
                 
             }
             
-            switch type {
-            case .general:
-                break
-            case .lowInvetory:
-                break
-            case .byDepartement:
-                guard depid != nil else {
-                    showError(.requiredField, "Seleccione departamento")
-                    return
-                }
-            case .byStore:
-                break
-            case .byProduct:
-                if ids.isEmpty {
-                    showError(.requiredField, "Seleccione pordutos a auditar.")
-                    return
-                }
-            case .bySales:
-                break
-            case .bySalesConcession:
-                break
-            case .byCustomerSales:
-                break
-            case .byUserSales:
-                break
-            case .byConcession:
-                break
-            }
-            
-            if type != .general && type != .byStore && type != .bySales && type != .bySalesConcession && type != .byCustomerSales && type != .byConcession && type != .byUserSales && type != .byProduct {
-                showError(.unexpectedResult, "Lo sentimos el unico reporte soportado actualmente es: POR TIENDA")
-                return
-            }
-
             let renderId = UUID()
             inventoryRenderId = renderId
+            reportActions.reset()
 
-            loadingView.show()
+            let eventId: UUID = .init()
+
+            loadingView.show(eventId)
+
+            if type == .fastAndFurios {
+                guard let startAtUTS, let endAtUTS else {
+                    loadingView.hide()
+                    showError(.requiredField, "Ingrese el periodo del reporte")
+                    return
+                }
+
+                API.custPOCV1.auditsVT(
+                    type: type,
+                    storeid: storeid,
+                    from: startAtUTS,
+                    to: endAtUTS,
+                    eventId: eventId
+                ) { resp in
+                    guard renderId == self.inventoryRenderId else {
+                        return
+                    }
+
+                    loadingView.hide()
+
+                    guard let resp else {
+                        showError(.comunicationError, .serverConextionError)
+                        return
+                    }
+
+                    guard resp.status == .ok else {
+                        showError(.generalError, resp.msg)
+                        return
+                    }
+
+                    guard let payload = resp.data else {
+                        showError(.generalError, resp.msg)
+                        return
+                    }
+
+                    self.resultDiv.innerHTML = ""
+
+                    self.reportActions.present(
+                        title: "Reporte de \(type.description)",
+                        fileName: "inventario-\(type.rawValue)-\(getNow())",
+                        aiResponse: resp.airesponse,
+                        in: self.resultDiv
+                    )
+
+                    self.renderFastAndFurios(payload: payload)
+                }
+
+                return
+            }
             
             API.custPOCV1.audits(
                 type: type,
@@ -657,7 +704,8 @@ extension ProductManagerView.AuditView {
                 accountId: accountId,
                 from: startAtUTS,
                 to: endAtUTS,
-                ids: ids
+                ids: ids,
+                eventId: eventId
             ) { resp in
                 guard renderId == self.inventoryRenderId else {
                     return
@@ -679,10 +727,30 @@ extension ProductManagerView.AuditView {
                     showError(.generalError, resp.msg)
                     return
                 }
-                
+
                 self.resultDiv.innerHTML = ""
+
+                self.reportActions.present(
+                    title: "Reporte de \(type.description)",
+                    fileName: "inventario-\(type.rawValue)-\(getNow())",
+                    aiResponse: resp.airesponse,
+                    in: self.resultDiv
+                )
                 
                 self.pocRefrence = Dictionary(uniqueKeysWithValues: payload.pocs.map{ poc in (poc.id, poc) })
+
+                switch type {
+                case .general, .lowInvetory, .fastAndFurios:
+                    break
+                case .byStore, .byDepartement, .byProduct, .bySales,
+                     .bySalesConcession, .byCustomerSales, .byUserSales, .byConcession:
+                    self.renderInventoryReportIntroduction(
+                        type: type,
+                        payload: payload,
+                        requestedStartAt: startAtUTS,
+                        requestedEndAt: endAtUTS
+                    )
+                }
                 
                 switch type {
                 case .general:
@@ -693,7 +761,10 @@ extension ProductManagerView.AuditView {
                     )
                     
                 case .lowInvetory:
-                    break
+                    self.renderLowInventory(
+                        payload: payload,
+                        renderId: renderId
+                    )
                 case .byDepartement:
                     break
                 case .byProduct:
@@ -824,6 +895,7 @@ extension ProductManagerView.AuditView {
                             
                             let table = Table {
                                 THead{
+                                    ProductManagerView.AuditView.productManagerHeaderCell()
                                     Td("POC/SKU/UPC")
                                     Td("Nombre")
                                     Td("Marca")
@@ -898,8 +970,9 @@ extension ProductManagerView.AuditView {
                                 }
                                 
                                 tableBody.appendChild(Tr{
+                                    ProductManagerView.AuditView.productManagerCell(pocId: item.id)
                                     Td(poc?.upc ?? "N/D")
-                                    Td(poc?.name ?? "N/D")
+                                    ProductManagerView.AuditView.productDescriptionCell(poc?.name ?? "N/D")
                                     Td(poc?.brand ?? "N/D")
                                     Td(poc?.model ?? "N/D")
                                     Td(item.zeroDay?.toString ?? "---")
@@ -921,6 +994,7 @@ extension ProductManagerView.AuditView {
                             
                             table.appendChild(TFoot{
                                 Tr{
+                                    Td("")
                                     Td("")
                                     Td("")
                                     Td("")
@@ -978,6 +1052,7 @@ extension ProductManagerView.AuditView {
                             
                             let table = Table {
                                 Tr{
+                                    ProductManagerView.AuditView.productManagerHeaderCell()
                                     Td("POC/SKU/UPC")
                                     Td("Nombre")
                                     Td("Marca")
@@ -996,8 +1071,9 @@ extension ProductManagerView.AuditView {
                                 let poc = self.pocRefrence[item.id]
                                 
                                 table.appendChild(Tr{
+                                    ProductManagerView.AuditView.productManagerCell(pocId: item.id)
                                     Td(poc?.upc ?? "N/D")
-                                    Td(poc?.name ?? "N/D")
+                                    ProductManagerView.AuditView.productDescriptionCell(poc?.name ?? "N/D")
                                     Td(poc?.brand ?? "N/v")
                                     Td(poc?.model ?? "N/D")
                                 }.backgroundColor({ conterRow ? .backGroundRow : .transparent }()))
@@ -1147,6 +1223,7 @@ extension ProductManagerView.AuditView {
                             
                             let table = Table {
                                 Tr{
+                                    ProductManagerView.AuditView.productManagerHeaderCell()
                                     Td("POC/SKU/UPC")
                                     Td("Nombre")
                                     Td("Marca")
@@ -1221,8 +1298,9 @@ extension ProductManagerView.AuditView {
                                 }
                                 
                                 table.appendChild(Tr{
+                                    ProductManagerView.AuditView.productManagerCell(pocId: item.id)
                                     Td(poc?.upc ?? "N/D")
-                                    Td(poc?.name ?? "N/D")
+                                    ProductManagerView.AuditView.productDescriptionCell(poc?.name ?? "N/D")
                                     Td(poc?.brand ?? "N/D")
                                     Td(poc?.model ?? "N/D")
                                     Td(item.zeroDay?.toString ?? "---")
@@ -1243,6 +1321,7 @@ extension ProductManagerView.AuditView {
                             conterRow = !conterRow
                             
                             table.appendChild(Tr{
+                                Td("")
                                 Td("")
                                 Td("")
                                 Td("")
@@ -1297,6 +1376,7 @@ extension ProductManagerView.AuditView {
                             
                             let table = Table {
                                 Tr{
+                                    ProductManagerView.AuditView.productManagerHeaderCell()
                                     Td("POC/SKU/UPC")
                                     Td("Nombre")
                                     Td("Marca")
@@ -1315,8 +1395,9 @@ extension ProductManagerView.AuditView {
                                 let poc = self.pocRefrence[item.id]
                                 
                                 table.appendChild(Tr{
+                                    ProductManagerView.AuditView.productManagerCell(pocId: item.id)
                                     Td(poc?.upc ?? "N/D")
-                                    Td(poc?.name ?? "N/D")
+                                    ProductManagerView.AuditView.productDescriptionCell(poc?.name ?? "N/D")
                                     Td(poc?.brand ?? "N/D")
                                     Td(poc?.model ?? "N/D")
                                 }.backgroundColor({ conterRow ? .backGroundRow : .transparent }()))
@@ -1440,6 +1521,7 @@ extension ProductManagerView.AuditView {
                             
                             let table = Table {
                                 Tr{
+                                    ProductManagerView.AuditView.productManagerHeaderCell()
                                     Td("POC/SKU/UPC")
                                     Td("Nombre")
                                     Td("Marca")
@@ -1513,8 +1595,9 @@ extension ProductManagerView.AuditView {
                                 }
                                 
                                 table.appendChild(Tr{
+                                    ProductManagerView.AuditView.productManagerCell(pocId: item.id)
                                     Td(poc?.upc ?? "N/D")
-                                    Td(poc?.name ?? "N/D")
+                                    ProductManagerView.AuditView.productDescriptionCell(poc?.name ?? "N/D")
                                     Td(poc?.brand ?? "N/D")
                                     Td(poc?.model ?? "N/D")
                                     Td(oldestItem)
@@ -1536,6 +1619,7 @@ extension ProductManagerView.AuditView {
                             conterRow = !conterRow
                             
                             table.appendChild(Tr{
+                                Td("")
                                 Td("")
                                 Td("")
                                 Td("")
@@ -1699,6 +1783,7 @@ extension ProductManagerView.AuditView {
                             
                             let table = Table {
                                 Tr{
+                                    ProductManagerView.AuditView.productManagerHeaderCell()
                                     Td("POC/SKU/UPC")
                                     Td("Nombre")
                                     Td("Marca")
@@ -1773,8 +1858,9 @@ extension ProductManagerView.AuditView {
                                 }
                                 
                                 table.appendChild(Tr{
+                                    ProductManagerView.AuditView.productManagerCell(pocId: item.id)
                                     Td(poc?.upc ?? "N/D")
-                                    Td(poc?.name ?? "N/D")
+                                    ProductManagerView.AuditView.productDescriptionCell(poc?.name ?? "N/D")
                                     Td(poc?.brand ?? "N/D")
                                     Td(poc?.model ?? "N/D")
                                     Td(item.zeroDay?.toString ?? "---")
@@ -1804,6 +1890,7 @@ extension ProductManagerView.AuditView {
                                 Td("")
                                 Td("")
                                 Td("")
+                                Td("")
                                 Td(storeUnitsTotal.toString)
                                     .color(.yellowTC)
                                 Td(storeCostTotal.formatMoney)
@@ -1820,7 +1907,17 @@ extension ProductManagerView.AuditView {
                             
                         }
                     }
+
+                case .fastAndFurios:
+                    break
                 }
+
+                self.renderProductDailySalesAverage(
+                    payload: payload,
+                    requestedStartAt: startAtUTS,
+                    requestedEndAt: endAtUTS,
+                    renderId: renderId
+                )
             }
         }
         
@@ -1851,6 +1948,8 @@ extension ProductManagerView.AuditView {
                 downloadBySales(type: documentType, name: name, item: item, title: title)
             case .byConcession:
                 downloadByConcession(type: documentType, name: name, item: item, title: title)
+            case .fastAndFurios:
+                break
             }
             
             loadingView.hide()
@@ -2523,7 +2622,1666 @@ extension ProductManagerView.AuditView {
 
         }
         
-        func renderGenral(
+        fileprivate func renderProductDailySalesAverage(
+            payload: CustPOCComponents.AuditsResponse,
+            requestedStartAt: Int64?,
+            requestedEndAt: Int64?,
+            renderId: UUID
+        ) {
+            guard renderId == inventoryRenderId else {
+                return
+            }
+
+            var soldUnitsByProduct: [UUID: Int64] = [:]
+            var saleTimestamps: [Int64] = []
+            var sourceDescription = ""
+
+            if let summaries = payload.salesSummaries, !summaries.isEmpty {
+                summaries.forEach { summary in
+                    soldUnitsByProduct[summary.productId, default: 0] += summary.units
+                    saleTimestamps.append(summary.firstSoldAt)
+                    saleTimestamps.append(summary.lastSoldAt)
+                }
+                sourceDescription = "ventas agregadas"
+            }
+            else if let summaries = payload.productMovementSummaries, !summaries.isEmpty {
+                summaries.forEach { summary in
+                    soldUnitsByProduct[summary.productId, default: 0] += summary.soldUnits
+                    if let firstMovementAt = summary.firstMovementAt {
+                        saleTimestamps.append(firstMovementAt)
+                    }
+                    if let lastMovementAt = summary.lastMovementAt {
+                        saleTimestamps.append(lastMovementAt)
+                    }
+                }
+                sourceDescription = "movimientos agregados"
+            }
+            else if !payload.cardex.isEmpty {
+                payload.cardex.forEach { movement in
+                    guard movement.mode == .remove else {
+                        return
+                    }
+
+                    switch movement.channel {
+                    case .pdv, .order, .eSale:
+                        soldUnitsByProduct[movement.pocId, default: 0] += Int64(movement.processedUnits)
+                        saleTimestamps.append(movement.createdAt)
+                    case .default:
+                        break
+                    }
+                }
+                sourceDescription = "Cardex"
+            }
+            else {
+                payload.items.forEach { product in
+                    product.items.forEach { item in
+                        guard let soldAt = item.soldAt else {
+                            return
+                        }
+                        soldUnitsByProduct[product.id, default: 0] += 1
+                        saleTimestamps.append(soldAt)
+                    }
+                }
+
+                if !soldUnitsByProduct.isEmpty {
+                    sourceDescription = "detalle de ventas"
+                }
+            }
+
+            let cardexByProduct = Dictionary(grouping: payload.cardex) { $0.pocId }
+            let displayedProductIds = Set(soldUnitsByProduct.keys).union(cardexByProduct.keys)
+
+            resultDiv.appendChild(
+                H2("Promedio vendido por día y producto")
+                    .color(.yellowTC)
+                    .marginTop(18.px)
+            )
+
+            guard !displayedProductIds.isEmpty else {
+                resultDiv.appendChild(Div {
+                    Span("No se recibieron ventas o movimientos de Cardex para calcular el promedio diario en este reporte.")
+                }
+                .color(.gray)
+                .padding(all: 12.px)
+                .marginBottom(16.px)
+                .borderRadius(7.px)
+                .backgroundColor(.grayBlackDark))
+                return
+            }
+
+            let fallbackStartAt = saleTimestamps.min() ?? (getNow() - (90 * 24 * 60 * 60))
+            let fallbackEndAt = saleTimestamps.max() ?? getNow()
+            let startAt = payload.activityFrom
+                ?? ((requestedStartAt ?? 0) > 0 ? requestedStartAt : nil)
+                ?? fallbackStartAt
+            let endAt = payload.activityTo
+                ?? ((requestedEndAt ?? 0) > startAt ? requestedEndAt : nil)
+                ?? fallbackEndAt
+            let reportSeconds = max(endAt - startAt, 1)
+            let reportDays = max(1, Int(ceil(Double(reportSeconds) / 86_400.0)))
+            let includesCardexGraph = !cardexByProduct.isEmpty
+
+            resultDiv.appendChild(Div {
+                Span("Periodo: ")
+                    .color(.gray)
+                Span("\(getDate(startAt).formatedLong) al \(getDate(endAt).formatedLong)")
+                    .color(.white)
+                Span("  •  Días: ")
+                    .color(.gray)
+                Span(reportDays.toString)
+                    .color(.white)
+                if !sourceDescription.isEmpty {
+                    Span("  •  Fuente: ")
+                        .color(.gray)
+                    Span(sourceDescription)
+                        .color(.white)
+                }
+            }
+            .fontSize(13.px)
+            .marginBottom(7.px))
+
+            let tableBody = TBody()
+
+            let table = Table {
+                THead {
+                    Tr {
+                        ProductManagerView.AuditView.productManagerHeaderCell()
+                        Td("POC/SKU/UPC")
+                        Td("Producto")
+                        Td("Vendido")
+                        Td("Días")
+                        Td("Prom. vendido / día")
+                        if includesCardexGraph {
+                            Td("Cardex")
+                        }
+                    }
+                }
+                tableBody
+            }
+            .width(100.percent)
+            .marginBottom(18.px)
+            .color(.white)
+
+            let products = displayedProductIds.compactMap { productId -> CustPOCQuick? in
+                pocRefrence[productId] ?? payload.pocs.first(where: { $0.id == productId })
+            }.sorted { lhs, rhs in
+                let left = "\(lhs.upc) \(lhs.name)".purgeSpaces
+                let right = "\(rhs.upc) \(rhs.name)".purgeSpaces
+                return left.localizedCaseInsensitiveCompare(right) == .orderedAscending
+            }
+
+            let totalSoldUnits = products.map { soldUnitsByProduct[$0.id] ?? 0 }.reduce(0, +)
+            let totalDailyAverage = Double(totalSoldUnits) / Double(reportDays)
+
+            table.appendChild(TFoot {
+                Tr {
+                    Td("")
+                    Td("Totales")
+                    Td("\(products.count) productos")
+                    Td(totalSoldUnits.toString)
+                    Td(reportDays.toString)
+                    Td(String(format: "%.2f", totalDailyAverage))
+                    if includesCardexGraph {
+                        Td("")
+                    }
+                }
+            })
+
+            resultDiv.appendChild(table)
+
+            asyncAddProductDailySalesRows(
+                renderId: renderId,
+                products: products,
+                soldUnitsByProduct: soldUnitsByProduct,
+                cardexByProduct: cardexByProduct,
+                reportDays: reportDays,
+                includesCardexGraph: includesCardexGraph,
+                tableBody: tableBody,
+                startAt: startAt,
+                endAt: endAt
+            )
+        }
+
+        private func asyncAddProductDailySalesRows(
+            renderId: UUID,
+            products: [CustPOCQuick],
+            soldUnitsByProduct: [UUID: Int64],
+            cardexByProduct: [UUID: [CustPOCCardex]],
+            reportDays: Int,
+            includesCardexGraph: Bool,
+            tableBody: TBody,
+            startAt: Int64,
+            endAt: Int64,
+            index: Int = 0
+        ) {
+            guard renderId == inventoryRenderId,
+                  products.indices.contains(index) else {
+                return
+            }
+
+            Dispatch.asyncAfter(index == 0 ? 0.01 : 0.015) {
+                guard renderId == self.inventoryRenderId,
+                      products.indices.contains(index) else {
+                    return
+                }
+
+                let product = products[index]
+                let soldUnits = soldUnitsByProduct[product.id] ?? 0
+                let dailyAverage = Double(soldUnits) / Double(reportDays)
+                let productCardex = cardexByProduct[product.id] ?? []
+
+                tableBody.appendChild(Tr {
+                    ProductManagerView.AuditView.productManagerCell(pocId: product.id)
+                    Td(product.upc.isEmpty ? "N/D" : product.upc)
+                    ProductManagerView.AuditView.productDescriptionCell(
+                        "\(product.name) \(product.brand) \(product.model)".purgeSpaces
+                    )
+                    Td(soldUnits.toString)
+                    Td(reportDays.toString)
+                    Td(String(format: "%.2f", dailyAverage))
+                        .color(.yellowTC)
+                        .fontWeight(.bold)
+                    if includesCardexGraph {
+                        Td {
+                            if let graphItem = self.groupedCardexGraphItem(
+                                product: product,
+                                movements: productCardex
+                            ) {
+                                CardexGraphView.graphButton {
+                                    addToDom(CardexGraphView(
+                                        item: graphItem,
+                                        storeName: self.cardexScopeName(movements: productCardex),
+                                        startAt: startAt,
+                                        endAt: endAt
+                                    ))
+                                }
+                            }
+                            else {
+                                Span("N/D")
+                                    .color(.gray)
+                            }
+                        }
+                    }
+                }
+                .backgroundColor(index.isEven ? .backGroundRow : .transparent))
+
+                self.asyncAddProductDailySalesRows(
+                    renderId: renderId,
+                    products: products,
+                    soldUnitsByProduct: soldUnitsByProduct,
+                    cardexByProduct: cardexByProduct,
+                    reportDays: reportDays,
+                    includesCardexGraph: includesCardexGraph,
+                    tableBody: tableBody,
+                    startAt: startAt,
+                    endAt: endAt,
+                    index: index + 1
+                )
+            }
+        }
+
+        fileprivate func groupedCardexGraphItem(
+            product: CustPOCQuick,
+            movements: [CustPOCCardex]
+        ) -> CustPOCComponents.CardexObject? {
+
+            let orderedMovements = movements.sorted { $0.createdAt < $1.createdAt }
+
+            guard let first = orderedMovements.first, let last = orderedMovements.last else {
+                return nil
+            }
+
+            let added = orderedMovements.filter { $0.mode == .add }
+
+            let removed = orderedMovements.filter { $0.mode == .remove }
+
+            let sold = removed.filter { movement in
+                switch movement.channel {
+                case .pdv, .order, .eSale:
+                    return true
+                case .default:
+                    return false
+                }
+            }
+
+            let initialUnits = first.initialUnits
+            let addedInventory: Int = added.map { $0.processedUnits }.reduce(0, +)
+            let removeInventory: Int = removed.map { $0.processedUnits }.reduce(0, +)
+            let finalInventory: Int = last.finalUnits
+            let soldInventory: Int = sold.map { $0.processedUnits }.reduce(0, +)
+            let initalBalance: Int64 = first.initialBalance
+            let addedBalance: Int64 = added.map { $0.processedBalance }.reduce(0, +)
+            let removeBalance: Int64 = removed.map { $0.processedBalance }.reduce(0, +)
+            let finalBalance: Int64 = last.finalBalance
+
+            return .init(
+                initalInventory: initialUnits,
+                addedInventory: addedInventory,
+                removeInventory: removeInventory,
+                finalInventory: finalInventory,
+                soldInventory: soldInventory,
+                initalBalance: initalBalance,
+                addedBalance: addedBalance,
+                removeBalance: removeBalance,
+                finalBalance: finalBalance,
+                poc: product
+            )
+        }
+
+        fileprivate func cardexScopeName(movements: [CustPOCCardex]) -> String {
+            let relationIds = Set(movements.map { $0.relationId })
+
+            guard relationIds.count == 1, let relationId = relationIds.first else {
+                return "Todas las ubicaciones del reporte"
+            }
+
+            return stores[relationId]?.name ?? "Ubicación del reporte"
+        }
+
+        fileprivate func renderLowInventory(
+            payload: CustPOCComponents.AuditsResponse,
+            renderId: UUID
+        ) {
+            guard renderId == inventoryRenderId else {
+                return
+            }
+
+            let inventorySummaries = (payload.inventorySummaries ?? []).filter {
+                $0.isLowInventory || $0.isZeroInventory
+            }
+
+            guard !inventorySummaries.isEmpty else {
+                resultDiv.appendChild(
+                    Table().noResult(
+                        label: "✅ No se encontraron productos con inventario bajo o agotado y actividad reciente."
+                    )
+                )
+                return
+            }
+
+            var departmentReference: [UUID: String] = [:]
+            payload.departments?.forEach { department in
+                departmentReference[department.id] = department.name
+            }
+
+            var storeReference: [UUID: String] = [:]
+            payload.stores?.forEach { store in
+                storeReference[store.id] = store.name
+            }
+            stores.forEach { id, store in
+                storeReference[id] = store.name
+            }
+
+            var lastActivityByProduct: [UUID: Int64] = [:]
+            var lastActivityByProductAndStore: [String: Int64] = [:]
+            var movementCountByProductAndStore: [String: Int] = [:]
+
+            payload.cardex.forEach { movement in
+                if movement.createdAt > (lastActivityByProduct[movement.pocId] ?? 0) {
+                    lastActivityByProduct[movement.pocId] = movement.createdAt
+                }
+
+                let key = inventoryActivityKey(
+                    productId: movement.pocId,
+                    storeId: movement.relationId
+                )
+                movementCountByProductAndStore[key, default: 0] += 1
+
+                if movement.createdAt > (lastActivityByProductAndStore[key] ?? 0) {
+                    lastActivityByProductAndStore[key] = movement.createdAt
+                }
+            }
+
+            let zeroInventoryCount = inventorySummaries.filter { $0.isZeroInventory }.count
+            let lowInventoryCount = inventorySummaries.filter {
+                $0.isLowInventory && !$0.isZeroInventory
+            }.count
+            let currentUnits = inventorySummaries.map { $0.currentStock }.reduce(0, +)
+            let shortageUnits = inventorySummaries.compactMap { $0.shortageUnits }.reduce(0, +)
+            let currentCostValue = inventorySummaries.map { $0.currentCostValue }.reduce(0, +)
+            let currentRetailValue = inventorySummaries.map { $0.currentRetailValue }.reduce(0, +)
+
+            resultDiv.appendChild(Div {
+                H1("⚠️ Inventario bajo y agotado")
+                    .color(.yellowTC)
+                    .marginBottom(3.px)
+
+                Div("Productos con actividad durante los últimos 90 días")
+                    .color(.gray)
+                    .fontSize(13.px)
+
+                Div {
+                    Span("Alcance: ")
+                        .color(.gray)
+                    Span(self.inventoryReportScope(payload: payload))
+                        .color(.white)
+
+                    Span("  •  Periodo: ")
+                        .color(.gray)
+                    Span(self.inventoryActivityRange(payload: payload))
+                        .color(.white)
+
+                    Span("  •  Generado: ")
+                        .color(.gray)
+                    Span(self.inventoryDateTime(payload.generatedAt))
+                        .color(.white)
+                }
+                .fontSize(13.px)
+                .marginTop(5.px)
+            }
+            .padding(all: 12.px)
+            .marginBottom(10.px)
+            .borderRadius(7.px)
+            .backgroundColor(.grayBlack)
+            .class(Class(TCCrystalSurfaceClass.auditReportHeader)))
+
+            resultDiv.appendChild(Div {
+                self.inventoryMetric(
+                    title: "Productos afectados",
+                    value: inventorySummaries.count.toString,
+                    detail: "Bajo o agotado"
+                )
+                self.inventoryMetric(
+                    title: "Inventario bajo",
+                    value: lowInventoryCount.toString,
+                    detail: "Existencia mayor a cero"
+                )
+                self.inventoryMetric(
+                    title: "Agotados",
+                    value: zeroInventoryCount.toString,
+                    detail: "Con actividad reciente"
+                )
+                self.inventoryMetric(
+                    title: "Unidades actuales",
+                    value: currentUnits.toString,
+                    detail: "Existencia combinada"
+                )
+                self.inventoryMetric(
+                    title: "Faltante",
+                    value: shortageUnits.toString,
+                    detail: "Contra inventario mínimo"
+                )
+                self.inventoryMetric(
+                    title: "Movimientos",
+                    value: payload.cardex.count.toString,
+                    detail: "Dentro del periodo"
+                )
+                self.inventoryMetric(
+                    title: "Valor costo",
+                    value: currentCostValue.formatMoney,
+                    detail: "Existencia actual"
+                )
+                self.inventoryMetric(
+                    title: "Valor venta",
+                    value: currentRetailValue.formatMoney,
+                    detail: "Existencia actual"
+                )
+            }
+            .display(.flex)
+            .custom("flex-wrap", "wrap")
+            .custom("gap", "8px")
+            .class(Class(TCCrystalSurfaceClass.auditMetricGrid))
+            .marginBottom(10.px))
+
+            resultDiv.appendChild(ProductManagerView.AuditView.reportBarChart(
+                title: "Estado de inventario",
+                items: [
+                    ("Inventario bajo", Double(lowInventoryCount), lowInventoryCount.toString),
+                    ("Agotados", Double(zeroInventoryCount), zeroInventoryCount.toString),
+                    ("Faltante", Double(shortageUnits), shortageUnits.toString)
+                ]
+            ))
+
+            if inventorySummaries.allSatisfy({ ($0.minInventory ?? 0) == 0 }) {
+                resultDiv.appendChild(Div {
+                    Span("ℹ️ ")
+                    Span("Todos los productos del resultado tienen inventario mínimo en cero. ")
+                        .fontWeight(.bold)
+                    Span("Por eso el faltante y el conteo de inventario bajo son cero; los productos mostrados se incluyen porque están agotados y tuvieron actividad reciente.")
+                }
+                .color(.white)
+                .padding(all: 10.px)
+                .marginBottom(10.px)
+                .borderRadius(7.px)
+                .backgroundColor(.grayBlackDark))
+            }
+
+            resultDiv.appendChild(
+                H2("Detalle de productos")
+                    .color(.yellowTC)
+                    .marginTop(16.px)
+            )
+
+            let lowInventorySummaries = inventorySummaries.filter {
+                $0.isLowInventory && !$0.isZeroInventory
+            }
+            let zeroInventorySummaries = inventorySummaries.filter { $0.isZeroInventory }
+
+            if !lowInventorySummaries.isEmpty {
+                renderInventoryDepartment(
+                    renderId: renderId,
+                    departmentId: nil,
+                    summaries: lowInventorySummaries,
+                    departmentReference: departmentReference,
+                    storeReference: storeReference,
+                    lastActivityByProduct: lastActivityByProduct,
+                    lastActivityByProductAndStore: lastActivityByProductAndStore,
+                    movementCountByProductAndStore: movementCountByProductAndStore,
+                    showDepartmentHeader: false,
+                    sectionTitle: "Inventario bajo",
+                    showStore: false,
+                    usePOCPrices: true
+                )
+            }
+
+            if !zeroInventorySummaries.isEmpty {
+                renderInventoryDepartment(
+                    renderId: renderId,
+                    departmentId: nil,
+                    summaries: zeroInventorySummaries,
+                    departmentReference: departmentReference,
+                    storeReference: storeReference,
+                    lastActivityByProduct: lastActivityByProduct,
+                    lastActivityByProductAndStore: lastActivityByProductAndStore,
+                    movementCountByProductAndStore: movementCountByProductAndStore,
+                    showDepartmentHeader: false,
+                    sectionTitle: "Agotados",
+                    showStore: false,
+                    usePOCPrices: true
+                )
+            }
+        }
+
+        fileprivate func renderInventoryStoreSummary(
+            payload: CustPOCComponents.AuditsResponse,
+            storeReference: [UUID: String]
+        ) {
+            guard let summaries = payload.inventoryGroupSummaries, !summaries.isEmpty else {
+                return
+            }
+
+            resultDiv.appendChild(
+                H2("Resumen por tienda")
+                    .color(.yellowTC)
+            )
+
+            let table = Table {
+                THead {
+                    Tr {
+                        Td("Tienda")
+                        Td("Productos")
+                        Td("Con inventario")
+                        Td("Bajo")
+                        Td("Agotados")
+                        Td("Unidades")
+                        Td("Costo")
+                        Td("Venta")
+                    }
+                }
+            }
+            .marginBottom(12.px)
+            .width(100.percent)
+            .color(.white)
+
+            let sortedSummaries = summaries.sorted { lhs, rhs in
+                let leftStore = inventoryStoreName(
+                    id: lhs.storeId,
+                    reference: storeReference
+                )
+                let rightStore = inventoryStoreName(
+                    id: rhs.storeId,
+                    reference: storeReference
+                )
+                return leftStore.localizedCaseInsensitiveCompare(rightStore) == .orderedAscending
+            }
+
+            var alternateRow = true
+            sortedSummaries.forEach { summary in
+                table.appendChild(Tr {
+                    Td(self.inventoryStoreName(id: summary.storeId, reference: storeReference))
+                    Td(summary.productCount.toString)
+                    Td((summary.productCount - summary.zeroProductCount).toString)
+                    Td(summary.lowProductCount.toString)
+                    Td(summary.zeroProductCount.toString)
+                    Td(summary.currentStock.toString)
+                    Td(summary.currentCostValue.formatMoney)
+                    Td(summary.currentRetailValue.formatMoney)
+                }
+                .backgroundColor(alternateRow ? .backGroundRow : .transparent))
+
+                alternateRow = !alternateRow
+            }
+
+            table.appendChild(TFoot {
+                Tr {
+                    Td("Totales")
+                    Td(sortedSummaries.map { $0.productCount }.reduce(0, +).toString)
+                    Td(sortedSummaries.map { $0.productCount - $0.zeroProductCount }.reduce(0, +).toString)
+                    Td(sortedSummaries.map { $0.lowProductCount }.reduce(0, +).toString)
+                    Td(sortedSummaries.map { $0.zeroProductCount }.reduce(0, +).toString)
+                    Td(sortedSummaries.map { $0.currentStock }.reduce(0, +).toString)
+                    Td(sortedSummaries.map { $0.currentCostValue }.reduce(0, +).formatMoney)
+                    Td(sortedSummaries.map { $0.currentRetailValue }.reduce(0, +).formatMoney)
+                }
+            })
+
+            resultDiv.appendChild(table)
+        }
+
+        fileprivate func renderInventoryDepartment(
+            renderId: UUID,
+            departmentId: UUID?,
+            summaries: [CustPOCComponents.AuditInventorySummary],
+            departmentReference: [UUID: String],
+            storeReference: [UUID: String],
+            lastActivityByProduct: [UUID: Int64],
+            lastActivityByProductAndStore: [String: Int64],
+            movementCountByProductAndStore: [String: Int],
+            showDepartmentHeader: Bool = true,
+            sectionTitle: String? = nil,
+            sectionStartsCollapsed: Bool = false,
+            showStore: Bool = true,
+            usePOCPrices: Bool = false,
+            showActivity: Bool = true,
+            showShortage: Bool = true,
+            showLastSoldAt: Bool = false,
+            cardexRange: (startAt: Int64, endAt: Int64)? = nil
+        ) {
+            guard renderId == inventoryRenderId else {
+                return
+            }
+
+            let hasSectionHeader = showDepartmentHeader || sectionTitle != nil
+            @State var sectionIsHidden = hasSectionHeader && sectionStartsCollapsed
+            let sectionContainer = Div()
+                .class(Class(TCCrystalSurfaceClass.auditSection))
+
+            if hasSectionHeader {
+                let departmentName = inventoryDepartmentName(
+                    id: departmentId,
+                    reference: departmentReference
+                )
+                let zeroCount = summaries.filter { $0.isZeroInventory }.count
+                let lowCount = summaries.filter { $0.isLowInventory && !$0.isZeroInventory }.count
+                let withStockCount = summaries.filter { $0.currentStock > 0 }.count
+                let heading = sectionTitle.map {
+                    "\($0)  •  \(summaries.count) productos"
+                } ?? "\(departmentName)  •  \(summaries.count) productos  •  \(withStockCount) con inventario  •  \(lowCount) bajos  •  \(zeroCount) agotados"
+
+                sectionContainer.appendChild(Div {
+                    H2(heading)
+                        .color(.yellowTC)
+                        .float(.left)
+
+                    Img()
+                        .src($sectionIsHidden.map {
+                            $0 ? "/skyline/media/dropDown.png" : "/skyline/media/dropDownClose.png"
+                        })
+                        .marginRight(24.px)
+                        .class(.iconWhite)
+                        .paddingTop(7.px)
+                        .float(.right)
+                        .opacity(0.5)
+                        .width(36.px)
+
+                    Div().clear(.both)
+                }
+                .cursor(.pointer)
+                .onClick {
+                    sectionIsHidden = !sectionIsHidden
+                })
+            }
+
+            let tableBody = TBody()
+
+            let table = Table {
+                THead {
+                    Tr {
+                        if showStore {
+                            Td("Tienda")
+                        }
+                        ProductManagerView.AuditView.productManagerHeaderCell()
+                        Td("POC/SKU/UPC")
+                        Td("Producto")
+                        Td("Marca / Modelo")
+                        Td("Estado")
+                        Td("Actual")
+                        Td("Mínimo")
+                        if showShortage {
+                            Td("Faltante")
+                        }
+                        if showLastSoldAt {
+                            Td("Última venta")
+                        }
+                        if showActivity {
+                            Td("Movs.")
+                            Td("Última actividad")
+                        }
+                        Td("Costo")
+                        Td("Venta")
+                        if cardexRange != nil {
+                            Td("Cardex")
+                        }
+                    }
+                }
+                tableBody
+            }
+            .hidden($sectionIsHidden)
+            .marginBottom(18.px)
+            .width(100.percent)
+            .color(.white)
+
+            let sortedSummaries = summaries.sorted { lhs, rhs in
+                if cardexRange != nil {
+                    let leftPOC = pocRefrence[lhs.productId]
+                    let rightPOC = pocRefrence[rhs.productId]
+                    let leftProduct = leftPOC?.upc.isEmpty == false ? leftPOC?.upc : leftPOC?.name
+                    let rightProduct = rightPOC?.upc.isEmpty == false ? rightPOC?.upc : rightPOC?.name
+                    let productComparison = (leftProduct ?? "").localizedCaseInsensitiveCompare(rightProduct ?? "")
+
+                    if productComparison != .orderedSame {
+                        return productComparison == .orderedAscending
+                    }
+                }
+
+                let leftStore = inventoryStoreName(id: lhs.storeId, reference: storeReference)
+                let rightStore = inventoryStoreName(id: rhs.storeId, reference: storeReference)
+                let storeComparison = leftStore.localizedCaseInsensitiveCompare(rightStore)
+                if storeComparison != .orderedSame {
+                    return storeComparison == .orderedAscending
+                }
+
+                let leftPOC = pocRefrence[lhs.productId]
+                let rightPOC = pocRefrence[rhs.productId]
+                let leftValue = leftPOC?.upc.isEmpty == false ? leftPOC?.upc : leftPOC?.name
+                let rightValue = rightPOC?.upc.isEmpty == false ? rightPOC?.upc : rightPOC?.name
+                return (leftValue ?? "").localizedCaseInsensitiveCompare(rightValue ?? "") == .orderedAscending
+            }
+
+            let latestSoldAt = sortedSummaries.map { $0.lastSoldAt }.max() ?? 0
+            let totalCost = usePOCPrices
+                ? sortedSummaries.compactMap { self.pocRefrence[$0.productId]?.cost }.reduce(0, +)
+                : sortedSummaries.map { $0.currentCostValue }.reduce(0, +)
+            let totalRetail = usePOCPrices
+                ? sortedSummaries.compactMap { self.pocRefrence[$0.productId]?.pricea }.reduce(0, +)
+                : sortedSummaries.map { $0.currentRetailValue }.reduce(0, +)
+
+            table.appendChild(TFoot {
+                Tr {
+                    if showStore {
+                        Td("Totales")
+                    }
+                    Td("")
+                    Td(showStore ? "" : "Totales")
+                    Td("\(sortedSummaries.count) registros")
+                    Td("")
+                    Td("")
+                    Td(sortedSummaries.map { $0.currentStock }.reduce(0, +).toString)
+                    Td(sortedSummaries.compactMap { $0.minInventory }.reduce(0, +).toString)
+                    if showShortage {
+                        Td(sortedSummaries.compactMap { $0.shortageUnits }.reduce(0, +).toString)
+                    }
+                    if showLastSoldAt {
+                        Td(latestSoldAt > 0
+                            ? self.inventoryDateTime(latestSoldAt)
+                            : "Sin ventas")
+                    }
+                    if showActivity {
+                        Td(sortedSummaries.map { summary in
+                            let key = self.inventoryActivityKey(
+                                productId: summary.productId,
+                                storeId: summary.storeId
+                            )
+                            return movementCountByProductAndStore[key] ?? 0
+                        }.reduce(0, +).toString)
+                        Td("")
+                    }
+                    Td(totalCost.formatMoney)
+                    Td(totalRetail.formatMoney)
+                    if cardexRange != nil {
+                        Td("")
+                    }
+                }
+            })
+
+            if hasSectionHeader {
+                sectionContainer.appendChild(table)
+                resultDiv.appendChild(sectionContainer)
+            }
+            else {
+                resultDiv.appendChild(table)
+            }
+
+            asyncAddInventorySummaryRows(
+                renderId: renderId,
+                summaries: sortedSummaries,
+                tableBody: tableBody,
+                storeReference: storeReference,
+                lastActivityByProduct: lastActivityByProduct,
+                lastActivityByProductAndStore: lastActivityByProductAndStore,
+                movementCountByProductAndStore: movementCountByProductAndStore,
+                showStore: showStore,
+                usePOCPrices: usePOCPrices,
+                showActivity: showActivity,
+                showShortage: showShortage,
+                showLastSoldAt: showLastSoldAt,
+                cardexRange: cardexRange
+            )
+        }
+
+        private func asyncAddInventorySummaryRows(
+            renderId: UUID,
+            summaries: [CustPOCComponents.AuditInventorySummary],
+            tableBody: TBody,
+            storeReference: [UUID: String],
+            lastActivityByProduct: [UUID: Int64],
+            lastActivityByProductAndStore: [String: Int64],
+            movementCountByProductAndStore: [String: Int],
+            showStore: Bool,
+            usePOCPrices: Bool,
+            showActivity: Bool,
+            showShortage: Bool,
+            showLastSoldAt: Bool,
+            cardexRange: (startAt: Int64, endAt: Int64)?,
+            index: Int = 0
+        ) {
+            guard renderId == inventoryRenderId,
+                  summaries.indices.contains(index) else {
+                return
+            }
+
+            Dispatch.asyncAfter(index == 0 ? 0.01 : 0.015) {
+                guard renderId == self.inventoryRenderId,
+                      summaries.indices.contains(index) else {
+                    return
+                }
+
+                let summary = summaries[index]
+                let poc = self.pocRefrence[summary.productId]
+                let key = self.inventoryActivityKey(
+                    productId: summary.productId,
+                    storeId: summary.storeId
+                )
+                let lastActivity = lastActivityByProductAndStore[key]
+                    ?? lastActivityByProduct[summary.productId]
+                let status: String
+                if summary.isZeroInventory {
+                    status = "Agotado"
+                }
+                else if summary.isLowInventory {
+                    status = "Bajo"
+                }
+                else {
+                    status = "Disponible"
+                }
+                let brandAndModel = "\(poc?.brand ?? "") \(poc?.model ?? "")".purgeSpaces
+                let cost: Int64? = usePOCPrices ? poc?.cost : summary.currentCostValue
+                let retail: Int64? = usePOCPrices ? poc?.pricea : summary.currentRetailValue
+
+                tableBody.appendChild(Tr {
+                    if showStore {
+                        Td(self.inventoryStoreName(id: summary.storeId, reference: storeReference))
+                    }
+                    ProductManagerView.AuditView.productManagerCell(pocId: summary.productId)
+                    Td(poc?.upc.isEmpty == false ? poc?.upc ?? "N/D" : "N/D")
+                    ProductManagerView.AuditView.productDescriptionCell(poc?.name ?? "N/D")
+                    Td(brandAndModel.isEmpty ? "N/D" : brandAndModel)
+                    Td(status)
+                        .color(summary.isLowInventory || summary.isZeroInventory ? .yellowTC : .white)
+                    Td(summary.currentStock.toString)
+                    Td(summary.minInventory?.toString ?? "N/D")
+                    if showShortage {
+                        Td(summary.shortageUnits?.toString ?? "N/D")
+                    }
+                    if showLastSoldAt {
+                        Td(summary.lastSoldAt > 0
+                            ? self.inventoryDateTime(summary.lastSoldAt)
+                            : "Sin ventas")
+                    }
+                    if showActivity {
+                        Td((movementCountByProductAndStore[key] ?? 0).toString)
+                        Td(self.inventoryDateTime(lastActivity))
+                    }
+                    Td(cost?.formatMoney ?? "N/D")
+                    Td(retail?.formatMoney ?? "N/D")
+                    if let cardexRange {
+                        Td {
+                            if let poc, let storeId = summary.storeId {
+                                CardexGraphView.graphButton {
+                                    self.loadCardexGraph(
+                                        poc: poc,
+                                        storeId: storeId,
+                                        storeName: self.inventoryStoreName(
+                                            id: storeId,
+                                            reference: storeReference
+                                        ),
+                                        startAt: cardexRange.startAt,
+                                        endAt: cardexRange.endAt
+                                    )
+                                }
+                            }
+                            else {
+                                Span("N/D")
+                                    .color(.gray)
+                            }
+                        }
+                    }
+                }
+                .backgroundColor(index.isEven ? .backGroundRow : .transparent))
+
+                self.asyncAddInventorySummaryRows(
+                    renderId: renderId,
+                    summaries: summaries,
+                    tableBody: tableBody,
+                    storeReference: storeReference,
+                    lastActivityByProduct: lastActivityByProduct,
+                    lastActivityByProductAndStore: lastActivityByProductAndStore,
+                    movementCountByProductAndStore: movementCountByProductAndStore,
+                    showStore: showStore,
+                    usePOCPrices: usePOCPrices,
+                    showActivity: showActivity,
+                    showShortage: showShortage,
+                    showLastSoldAt: showLastSoldAt,
+                    cardexRange: cardexRange,
+                    index: index + 1
+                )
+            }
+        }
+
+        func loadCardexGraph(
+            poc: CustPOCQuick,
+            storeId: UUID,
+            storeName: String,
+            startAt: Int64,
+            endAt: Int64
+        ) {
+            let requestId = UUID()
+            cardexGraphRequestId = requestId
+
+            loadingView.show()
+
+            API.custPOCV1.cardexDetail(
+                relationId: storeId,
+                pocId: poc.id,
+                startAt: startAt,
+                endAt: endAt
+            ) { response in
+                guard requestId == self.cardexGraphRequestId else {
+                    return
+                }
+
+                loadingView.hide()
+
+                guard let response else {
+                    showError(.comunicationError, "No se pudo obtener el Cardex del producto.")
+                    return
+                }
+
+                guard response.status == .ok else {
+                    showError(.generalError, response.msg)
+                    return
+                }
+
+                guard let movements = response.data?.cardexs, !movements.isEmpty else {
+                    showError(.generalError, "No se encontraron movimientos de Cardex para este producto en el periodo seleccionado.")
+                    return
+                }
+
+                addToDom(CardexGraphView(
+                    poc: poc,
+                    movements: movements,
+                    storeName: storeName,
+                    startAt: startAt,
+                    endAt: endAt
+                ))
+            }
+        }
+
+        fileprivate func inventoryMetric(
+            title: String,
+            value: String,
+            detail: String
+        ) -> Div {
+            Div {
+                Div(title)
+                    .color(.gray)
+                    .fontSize(12.px)
+                Div(value)
+                    .color(.yellowTC)
+                    .fontSize(18.px)
+                    .fontWeight(.bold)
+                Div(detail)
+                    .color(.white)
+                    .fontSize(11.px)
+            }
+            .class(Class(TCCrystalSurfaceClass.auditMetric))
+            .custom("flex", "1 1 150px")
+            .padding(all: 10.px)
+            .borderRadius(7.px)
+            .backgroundColor(.grayBlackDark)
+        }
+
+        fileprivate func renderInventoryReportIntroduction(
+            type: InventoryAuditTypes,
+            payload: CustPOCComponents.AuditsResponse,
+            requestedStartAt: Int64?,
+            requestedEndAt: Int64?
+        ) {
+            let inventorySummaries = payload.inventorySummaries ?? []
+            let salesSummaries = payload.salesSummaries ?? []
+            let detailObjects = payload.items + payload.subItems
+            let soldItems = detailObjects.flatMap { $0.items }.filter { $0.soldAt != nil }
+
+            let productIds = Set(
+                payload.pocs.map { $0.id }
+                + detailObjects.map { $0.id }
+                + payload.zeroItems.map { $0.id }
+                + payload.cardex.map { $0.pocId }
+            )
+            let inventoryRecordCount = inventorySummaries.isEmpty
+                ? payload.items.count
+                : inventorySummaries.count
+            let currentUnits = inventorySummaries.isEmpty
+                ? payload.items.map { $0.currentStock ?? Int64($0.items.count) }.reduce(0, +)
+                : inventorySummaries.map { $0.currentStock }.reduce(0, +)
+            let lowCount = inventorySummaries.isEmpty
+                ? payload.lowinventory.count
+                : inventorySummaries.filter { $0.isLowInventory && !$0.isZeroInventory }.count
+            let zeroCount = inventorySummaries.isEmpty
+                ? payload.zeroItems.count
+                : inventorySummaries.filter { $0.isZeroInventory }.count
+            let currentCost = inventorySummaries.map { $0.currentCostValue }.reduce(0, +)
+            let currentRetail = inventorySummaries.map { $0.currentRetailValue }.reduce(0, +)
+
+            let soldUnits = salesSummaries.isEmpty
+                ? Int64(soldItems.count)
+                : salesSummaries.map { $0.units }.reduce(0, +)
+            let transactionCount = salesSummaries.isEmpty
+                ? Int64(soldItems.count)
+                : salesSummaries.map { $0.transactionCount }.reduce(0, +)
+            let grossSales = salesSummaries.isEmpty
+                ? soldItems.map { $0.price }.reduce(0, +)
+                : salesSummaries.map { $0.grossSales }.reduce(0, +)
+            let costOfGoods = salesSummaries.isEmpty
+                ? soldItems.map { $0.cost }.reduce(0, +)
+                : salesSummaries.map { $0.costOfGoods }.reduce(0, +)
+
+            var storeIds = Set((payload.stores ?? []).map { $0.id })
+            payload.items.compactMap { $0.storeid }.forEach { storeIds.insert($0) }
+            payload.subItems.compactMap { $0.storeid }.forEach { storeIds.insert($0) }
+            payload.zeroItems.compactMap { $0.storeid }.forEach { storeIds.insert($0) }
+
+            let requestedFrom: Int64? = (requestedStartAt ?? 0) > 0 ? requestedStartAt : nil
+            let requestedTo: Int64? = (requestedEndAt ?? 0) > 0 ? requestedEndAt : nil
+            let activityFrom = payload.activityFrom ?? requestedFrom ?? salesSummaries.map { $0.firstSoldAt }.min()
+            let activityTo = payload.activityTo ?? requestedTo ?? salesSummaries.map { $0.lastSoldAt }.max()
+            let reportDays: Int = {
+                guard let activityFrom, let activityTo else { return 1 }
+                return max(1, Int(ceil(Double(max(activityTo - activityFrom, 1)) / 86_400.0)))
+            }()
+            let soldPerDay = Double(soldUnits) / Double(reportDays)
+            let soldPerProductPerDay = soldPerDay / Double(max(productIds.count, 1))
+
+            let title: String
+            switch type {
+            case .byStore:
+                title = "🏬 Inventario por tienda"
+            case .byDepartement:
+                title = "🗂️ Inventario por departamento"
+            case .byProduct:
+                title = "📦 Movimientos por producto"
+            case .bySales:
+                title = "📈 Ventas por tienda"
+            case .bySalesConcession:
+                title = "🤝 Ventas por tienda y concesión"
+            case .byCustomerSales:
+                title = "👥 Ventas por cliente"
+            case .byUserSales:
+                title = "🧑‍💼 Ventas por usuario"
+            case .byConcession:
+                title = "🏷️ Inventario en concesión"
+            case .general, .lowInvetory, .fastAndFurios:
+                title = "📊 \(type.description)"
+            }
+
+            let period: String
+            if let activityFrom, let activityTo {
+                period = "\(inventoryDateTime(activityFrom)) — \(inventoryDateTime(activityTo))"
+            }
+            else {
+                period = "No especificado"
+            }
+
+            resultDiv.appendChild(ProductManagerView.AuditView.reportHeader(
+                title: title,
+                subtitle: type.helpText,
+                context: "Alcance: \(inventoryReportScope(payload: payload)) • Periodo: \(period) • Generado: \(inventoryDateTime(payload.generatedAt))"
+            ))
+
+            let metrics = Div()
+                .class(Class(TCCrystalSurfaceClass.auditMetricGrid))
+
+            switch type {
+            case .bySales, .bySalesConcession, .byCustomerSales, .byUserSales:
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(
+                    title: "Productos vendidos",
+                    value: productIds.count.toString,
+                    detail: "Con datos en el reporte"
+                ))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(
+                    title: "Unidades vendidas",
+                    value: soldUnits.toString,
+                    detail: "Durante el periodo"
+                ))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(
+                    title: "Operaciones",
+                    value: transactionCount.toString,
+                    detail: "Transacciones recibidas"
+                ))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(
+                    title: "Vendido / día",
+                    value: String(format: "%.2f", soldPerProductPerDay),
+                    detail: "Promedio por producto"
+                ))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(
+                    title: "Venta bruta",
+                    value: grossSales.formatMoney,
+                    detail: "Importe vendido"
+                ))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(
+                    title: "Costo de venta",
+                    value: costOfGoods.formatMoney,
+                    detail: "Costo de lo vendido"
+                ))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(
+                    title: "Margen bruto",
+                    value: (grossSales - costOfGoods).formatMoney,
+                    detail: "Venta menos costo"
+                ))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(
+                    title: type == .byCustomerSales ? "Clientes" : (type == .byUserSales ? "Usuarios" : "Tiendas"),
+                    value: type == .byCustomerSales ? payload.accounts.count.toString : (type == .byUserSales ? (payload.users?.count ?? 0).toString : storeIds.count.toString),
+                    detail: "Incluidos en el reporte"
+                ))
+
+            case .byProduct:
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(title: "Productos", value: productIds.count.toString, detail: "Con datos recibidos"))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(title: "Movimientos", value: payload.cardex.count.toString, detail: "Registros de Cardex"))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(title: "Unidades actuales", value: currentUnits.toString, detail: "Existencia combinada"))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(title: "Unidades vendidas", value: soldUnits.toString, detail: "Durante el periodo"))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(title: "Vendido / día", value: String(format: "%.2f", soldPerProductPerDay), detail: "Promedio por producto"))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(title: "Tiendas", value: storeIds.count.toString, detail: "Incluidas en el reporte"))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(title: "Valor costo", value: currentCost.formatMoney, detail: "Existencia actual"))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(title: "Valor venta", value: currentRetail.formatMoney, detail: "Existencia actual"))
+
+            case .byStore, .byDepartement, .byConcession:
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(title: "Productos", value: productIds.count.toString, detail: "Con datos recibidos"))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(title: "Registros", value: inventoryRecordCount.toString, detail: "Inventario agrupado"))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(title: "Unidades actuales", value: currentUnits.toString, detail: "Existencia combinada"))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(title: "Inventario bajo", value: lowCount.toString, detail: "Sobre cero y bajo mínimo"))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(title: "Agotados", value: zeroCount.toString, detail: "Sin existencia"))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(
+                    title: type == .byDepartement ? "Departamentos" : (type == .byConcession ? "Cuentas" : "Tiendas"),
+                    value: type == .byDepartement ? (payload.departments?.count ?? 0).toString : (type == .byConcession ? payload.accounts.count.toString : storeIds.count.toString),
+                    detail: "Incluidos en el reporte"
+                ))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(title: "Valor costo", value: currentCost.formatMoney, detail: "Existencia actual"))
+                metrics.appendChild(ProductManagerView.AuditView.reportMetric(title: "Valor venta", value: currentRetail.formatMoney, detail: "Existencia actual"))
+
+            case .general, .lowInvetory, .fastAndFurios:
+                break
+            }
+
+            resultDiv.appendChild(metrics)
+        }
+
+        fileprivate func inventoryReportScope(
+            payload: CustPOCComponents.AuditsResponse
+        ) -> String {
+            let storeNames = (payload.stores ?? []).map { $0.name }.sorted()
+
+            if storeNames.count == 1 {
+                return storeNames[0]
+            }
+            if storeNames.count > 1 {
+                return "\(storeNames.count) tiendas: \(storeNames.joined(separator: ", "))"
+            }
+
+            switch payload.reportMode {
+            case .selectedStore:
+                return "Tienda seleccionada"
+            case .autoSelectedStore:
+                return "Tienda asignada"
+            case .multiStore:
+                return "Varias tiendas"
+            case .general:
+                return "General"
+            case .concessionAccount:
+                return "Cuenta en concesión"
+            case .allConcessionAccounts:
+                return "Todas las cuentas en concesión"
+            case nil:
+                return "No disponible"
+            }
+        }
+
+        fileprivate func inventoryActivityRange(
+            payload: CustPOCComponents.AuditsResponse
+        ) -> String {
+            guard let from = payload.activityFrom, let to = payload.activityTo else {
+                return "Últimos 90 días"
+            }
+            return "\(inventoryDateTime(from)) — \(inventoryDateTime(to))"
+        }
+
+        fileprivate func inventoryDateTime(_ timestamp: Int64?) -> String {
+            guard let timestamp else {
+                return "N/D"
+            }
+
+            let date = getDate(timestamp)
+            return "\(date.formatedShort) \(date.time)"
+        }
+
+        fileprivate func inventoryDepartmentName(
+            id: UUID?,
+            reference: [UUID: String]
+        ) -> String {
+            guard let id else {
+                return "Sin departamento"
+            }
+            return reference[id] ?? "Departamento no disponible"
+        }
+
+        fileprivate func inventoryStoreName(
+            id: UUID?,
+            reference: [UUID: String]
+        ) -> String {
+            guard let id else {
+                return "Todas"
+            }
+            return reference[id] ?? "Tienda no disponible"
+        }
+
+        fileprivate func inventoryActivityKey(
+            productId: UUID,
+            storeId: UUID?
+        ) -> String {
+            "\(productId.uuidString)|\(storeId?.uuidString ?? "")"
+        }
+
+        fileprivate func renderGenral(
+            payload: CustPOCComponents.AuditsResponse,
+            renderId: UUID
+        ) {
+            guard renderId == inventoryRenderId else {
+                return
+            }
+
+            guard let inventorySummaries = payload.inventorySummaries else {
+                renderGeneralCatalogSummary(payload: payload)
+                return
+            }
+
+            guard !inventorySummaries.isEmpty else {
+                resultDiv.appendChild(
+                    Table().noResult(
+                        label: "No se encontraron existencias ni ventas durante los últimos 90 días."
+                    )
+                )
+                return
+            }
+
+            var storeReference: [UUID: String] = [:]
+            payload.stores?.forEach { store in
+                storeReference[store.id] = store.name
+            }
+            stores.forEach { id, store in
+                storeReference[id] = store.name
+            }
+
+            var lastActivityByProduct: [UUID: Int64] = [:]
+            var lastActivityByProductAndStore: [String: Int64] = [:]
+            var movementCountByProductAndStore: [String: Int] = [:]
+
+            payload.cardex.forEach { movement in
+                if movement.createdAt > (lastActivityByProduct[movement.pocId] ?? 0) {
+                    lastActivityByProduct[movement.pocId] = movement.createdAt
+                }
+
+                let key = inventoryActivityKey(
+                    productId: movement.pocId,
+                    storeId: movement.relationId
+                )
+                movementCountByProductAndStore[key, default: 0] += 1
+
+                if movement.createdAt > (lastActivityByProductAndStore[key] ?? 0) {
+                    lastActivityByProductAndStore[key] = movement.createdAt
+                }
+            }
+
+            let inventoryRecordCount = inventorySummaries.count
+            let productsWithStock = inventorySummaries.filter { $0.currentStock > 0 }.count
+            let zeroInventoryCount = inventorySummaries.filter { $0.isZeroInventory }.count
+            let lowInventoryCount = inventorySummaries.filter {
+                $0.isLowInventory && !$0.isZeroInventory
+            }.count
+            let currentUnits = inventorySummaries.map { $0.currentStock }.reduce(0, +)
+            let currentCostValue = inventorySummaries.map { $0.currentCostValue }.reduce(0, +)
+            let currentRetailValue = inventorySummaries.map { $0.currentRetailValue }.reduce(0, +)
+            let activeProductCount = payload.pocs.filter { $0.status == .active }.count
+            let suspendedProductCount = payload.pocs.count - activeProductCount
+
+            resultDiv.appendChild(Div {
+                H1("📊 Estado general del inventario")
+                    .color(.yellowTC)
+                    .marginBottom(3.px)
+
+                Div("Existencias actuales y productos con actividad durante los últimos 90 días")
+                    .color(.gray)
+                    .fontSize(13.px)
+
+                Div {
+                    Span("Alcance: ")
+                        .color(.gray)
+                    Span(self.inventoryReportScope(payload: payload))
+                        .color(.white)
+
+                    Span("  •  Periodo de actividad: ")
+                        .color(.gray)
+                    Span(self.inventoryActivityRange(payload: payload))
+                        .color(.white)
+
+                    Span("  •  Generado: ")
+                        .color(.gray)
+                    Span(self.inventoryDateTime(payload.generatedAt))
+                        .color(.white)
+                }
+                .fontSize(13.px)
+                .marginTop(5.px)
+            }
+            .padding(all: 12.px)
+            .marginBottom(10.px)
+            .borderRadius(7.px)
+            .backgroundColor(.grayBlack)
+            .class(Class(TCCrystalSurfaceClass.auditReportHeader)))
+
+            resultDiv.appendChild(Div {
+                self.inventoryMetric(
+                    title: "Productos reportados",
+                    value: payload.pocs.count.toString,
+                    detail: "\(activeProductCount) activos • \(suspendedProductCount) suspendidos"
+                )
+                self.inventoryMetric(
+                    title: "Registros con inventario",
+                    value: productsWithStock.toString,
+                    detail: "Producto / tienda"
+                )
+                self.inventoryMetric(
+                    title: "Unidades actuales",
+                    value: currentUnits.toString,
+                    detail: "Existencia combinada"
+                )
+                self.inventoryMetric(
+                    title: "Registros bajos",
+                    value: lowInventoryCount.toString,
+                    detail: "Producto / tienda"
+                )
+                self.inventoryMetric(
+                    title: "Registros agotados",
+                    value: zeroInventoryCount.toString,
+                    detail: "Producto / tienda"
+                )
+                self.inventoryMetric(
+                    title: "Tiendas incluidas",
+                    value: (payload.stores?.count ?? storeReference.count).toString,
+                    detail: "Alcance del reporte"
+                )
+                self.inventoryMetric(
+                    title: "Valor costo",
+                    value: currentCostValue.formatMoney,
+                    detail: "Existencia actual"
+                )
+                self.inventoryMetric(
+                    title: "Valor venta",
+                    value: currentRetailValue.formatMoney,
+                    detail: "Existencia actual"
+                )
+            }
+            .display(.flex)
+            .custom("flex-wrap", "wrap")
+            .custom("gap", "8px")
+            .class(Class(TCCrystalSurfaceClass.auditMetricGrid))
+            .marginBottom(10.px))
+
+            if productsWithStock == 0 {
+                resultDiv.appendChild(Div {
+                    Span("⚠️ ")
+                    Span("No hay existencias registradas en \(self.inventoryReportScope(payload: payload)). ")
+                        .fontWeight(.bold)
+                    Span("Los \(inventoryRecordCount) registros aparecen porque tuvieron ventas durante los últimos 90 días.")
+                }
+                .color(.white)
+                .padding(all: 10.px)
+                .marginBottom(10.px)
+                .borderRadius(7.px)
+                .backgroundColor(.grayBlackDark))
+            }
+
+            if inventorySummaries.allSatisfy({ ($0.minInventory ?? 0) == 0 }) {
+                resultDiv.appendChild(Div {
+                    Span("ℹ️ ")
+                    Span("Todos los productos tienen inventario mínimo en cero. ")
+                        .fontWeight(.bold)
+                    Span("Configure un mínimo mayor a cero para que el reporte pueda identificar inventario bajo antes de que el producto se agote.")
+                }
+                .color(.white)
+                .padding(all: 10.px)
+                .marginBottom(10.px)
+                .borderRadius(7.px)
+                .backgroundColor(.grayBlackDark))
+            }
+
+            let hasInventoryAging = inventorySummaries.contains {
+                $0.age0To30 != nil ||
+                $0.age31To60 != nil ||
+                $0.age61To90 != nil ||
+                $0.ageOver90 != nil
+            }
+
+            if currentUnits > 0 && hasInventoryAging {
+                let age0To30 = inventorySummaries.compactMap { $0.age0To30 }.reduce(0, +)
+                let age31To60 = inventorySummaries.compactMap { $0.age31To60 }.reduce(0, +)
+                let age61To90 = inventorySummaries.compactMap { $0.age61To90 }.reduce(0, +)
+                let ageOver90 = inventorySummaries.compactMap { $0.ageOver90 }.reduce(0, +)
+
+                resultDiv.appendChild(
+                    H2("Antigüedad de las unidades")
+                        .color(.yellowTC)
+                )
+
+                resultDiv.appendChild(Div {
+                    self.inventoryMetric(
+                        title: "0–30 días",
+                        value: age0To30.toString,
+                        detail: "Unidades recientes"
+                    )
+                    self.inventoryMetric(
+                        title: "31–60 días",
+                        value: age31To60.toString,
+                        detail: "Unidades en inventario"
+                    )
+                    self.inventoryMetric(
+                        title: "61–90 días",
+                        value: age61To90.toString,
+                        detail: "Unidades en inventario"
+                    )
+                    self.inventoryMetric(
+                        title: "Más de 90 días",
+                        value: ageOver90.toString,
+                        detail: "Revisar rotación"
+                    )
+                }
+                .display(.flex)
+                .custom("flex-wrap", "wrap")
+                .custom("gap", "8px")
+                .marginBottom(10.px))
+            }
+
+            renderInventoryStoreSummary(
+                payload: payload,
+                storeReference: storeReference
+            )
+
+            resultDiv.appendChild(
+                H2("Detalle agrupado por producto y tienda")
+                    .color(.yellowTC)
+                    .marginTop(16.px)
+            )
+
+            let cardexStartAt = payload.activityFrom ?? (getNow() - (90 * 24 * 60 * 60))
+            let cardexEndAt = payload.activityTo ?? getNow()
+
+            renderInventoryDepartment(
+                renderId: renderId,
+                departmentId: nil,
+                summaries: inventorySummaries,
+                departmentReference: [:],
+                storeReference: storeReference,
+                lastActivityByProduct: lastActivityByProduct,
+                lastActivityByProductAndStore: lastActivityByProductAndStore,
+                movementCountByProductAndStore: movementCountByProductAndStore,
+                showDepartmentHeader: false,
+                showActivity: false,
+                showShortage: false,
+                showLastSoldAt: true,
+                cardexRange: (cardexStartAt, cardexEndAt)
+            )
+        }
+
+        fileprivate func renderGeneralCatalogSummary(
+            payload: CustPOCComponents.AuditsResponse
+        ) {
+            let products = payload.pocs
+
+            guard !products.isEmpty else {
+                resultDiv.appendChild(
+                    Table().noResult(
+                        label: "No se encontraron productos ni datos de inventario para este reporte."
+                    )
+                )
+                return
+            }
+
+            let activeProducts = products.filter { $0.status == .active }
+            let suspendedProducts = products.filter { $0.status == .suspended }
+            let productsWithUPC = products.filter { !$0.upc.isEmpty }
+            let productsWithImage = products.filter { !$0.avatar.isEmpty }
+            let productsWithPrice = products.filter { $0.pricea > 0 }
+            let productsByBrand = Dictionary(grouping: products) { product in
+                product.brand.isEmpty ? "Sin marca" : product.brand
+            }
+            let sortedBrands = productsByBrand.keys.sorted { lhs, rhs in
+                let leftCount = productsByBrand[lhs]?.count ?? 0
+                let rightCount = productsByBrand[rhs]?.count ?? 0
+
+                if leftCount == rightCount {
+                    return lhs.localizedCaseInsensitiveCompare(rhs) == .orderedAscending
+                }
+                return leftCount > rightCount
+            }
+
+            resultDiv.appendChild(Div {
+                H1("Catálogo general de productos")
+                    .color(.yellowTC)
+                    .marginBottom(3.px)
+
+                Div("El servicio no incluyó existencias ni actividad de inventario. Se muestran los datos disponibles del catálogo.")
+                    .color(.gray)
+                    .fontSize(13.px)
+            }
+            .padding(all: 12.px)
+            .marginBottom(10.px)
+            .borderRadius(7.px)
+            .backgroundColor(.grayBlack)
+            .class(Class(TCCrystalSurfaceClass.auditReportHeader)))
+
+            resultDiv.appendChild(Div {
+                self.inventoryMetric(
+                    title: "Productos",
+                    value: products.count.toString,
+                    detail: "Total del catálogo"
+                )
+                self.inventoryMetric(
+                    title: "Activos",
+                    value: activeProducts.count.toString,
+                    detail: "Disponibles para operar"
+                )
+                self.inventoryMetric(
+                    title: "Suspendidos",
+                    value: suspendedProducts.count.toString,
+                    detail: "Fuera de operación"
+                )
+                self.inventoryMetric(
+                    title: "Marcas",
+                    value: productsByBrand.count.toString,
+                    detail: "Incluye Sin marca"
+                )
+                self.inventoryMetric(
+                    title: "Con POC/SKU/UPC",
+                    value: productsWithUPC.count.toString,
+                    detail: "Código configurado"
+                )
+                self.inventoryMetric(
+                    title: "Con imagen",
+                    value: productsWithImage.count.toString,
+                    detail: "Avatar configurado"
+                )
+                self.inventoryMetric(
+                    title: "Con precio A",
+                    value: productsWithPrice.count.toString,
+                    detail: "Precio configurado"
+                )
+            }
+            .display(.flex)
+            .custom("flex-wrap", "wrap")
+            .custom("gap", "8px")
+            .class(Class(TCCrystalSurfaceClass.auditMetricGrid))
+            .marginBottom(10.px))
+
+            resultDiv.appendChild(Div {
+                Span("Información no disponible: ")
+                    .fontWeight(.bold)
+                Span("existencias, mínimos, agotados y valor actual del inventario.")
+            }
+            .color(.white)
+            .padding(all: 10.px)
+            .marginBottom(10.px)
+            .borderRadius(7.px)
+            .backgroundColor(.grayBlackDark))
+
+            resultDiv.appendChild(
+                H2("Resumen del catálogo por marca")
+                    .color(.yellowTC)
+            )
+
+            let table = Table {
+                THead {
+                    Tr {
+                        Td("Marca")
+                        Td("Productos")
+                        Td("Activos")
+                        Td("Suspendidos")
+                        Td("Costo promedio")
+                        Td("Precio A promedio")
+                    }
+                }
+            }
+            .width(100.percent)
+            .color(.white)
+
+            var alternateRow = true
+            sortedBrands.forEach { brand in
+                guard let brandProducts = productsByBrand[brand], !brandProducts.isEmpty else {
+                    return
+                }
+
+                let activeCount = brandProducts.filter { $0.status == .active }.count
+                let suspendedCount = brandProducts.filter { $0.status == .suspended }.count
+                let averageCost = brandProducts.map { $0.cost }.reduce(0, +) / Int64(brandProducts.count)
+                let averagePrice = brandProducts.map { $0.pricea }.reduce(0, +) / Int64(brandProducts.count)
+
+                table.appendChild(Tr {
+                    Td(brand)
+                    Td(brandProducts.count.toString)
+                    Td(activeCount.toString)
+                    Td(suspendedCount.toString)
+                    Td(averageCost.formatMoney)
+                    Td(averagePrice.formatMoney)
+                }
+                .backgroundColor(alternateRow ? .backGroundRow : .transparent))
+
+                alternateRow = !alternateRow
+            }
+
+            let averageCatalogCost = products.map { $0.cost }.reduce(0, +) / Int64(products.count)
+            let averageCatalogPrice = products.map { $0.pricea }.reduce(0, +) / Int64(products.count)
+
+            table.appendChild(TFoot {
+                Tr {
+                    Td("Total / promedio")
+                    Td(products.count.toString)
+                    Td(activeProducts.count.toString)
+                    Td(suspendedProducts.count.toString)
+                    Td(averageCatalogCost.formatMoney)
+                    Td(averageCatalogPrice.formatMoney)
+                }
+            })
+
+            resultDiv.appendChild(table)
+        }
+
+        fileprivate func renderLegacyGeneralCatalog(
             payload: CustPOCComponents.AuditsResponse,
             renderId: UUID
         ) {
@@ -2904,7 +4662,6 @@ extension ProductManagerView.AuditView {
                                             minViewAcctRefrence[order.custAcct] = accoutOverview
                                             
                                         }
-                
 
                                     case .eSale:
                                         return
@@ -2952,6 +4709,7 @@ extension ProductManagerView.AuditView {
                 let timeTable = Table {
                     THead{
                         Tr{
+                            ProductManagerView.AuditView.productManagerHeaderCell()
                             Td("POC/SKU/UPC")
                                 .width(150)
                             Td("Nombre")
@@ -2967,8 +4725,9 @@ extension ProductManagerView.AuditView {
                                 .width(150)
                         }
                         Tr{
+                            ProductManagerView.AuditView.productManagerCell(pocId: poc.id)
                             Td(poc.upc)
-                            Td(poc.name)
+                            ProductManagerView.AuditView.productDescriptionCell(poc.name)
                             Td(poc.brand)
                             Td(poc.model)
                             Td(units.toString)
@@ -3068,6 +4827,7 @@ extension ProductManagerView.AuditView {
             let table = Table {
                 THead{
                     Tr{
+                        ProductManagerView.AuditView.productManagerHeaderCell()
                         Td("POC/SKU/UPC")
                         Td("Nombre")
                         Td("Marca")
@@ -3115,8 +4875,9 @@ extension ProductManagerView.AuditView {
                 }
                 
                 table.appendChild(Tr{
+                    ProductManagerView.AuditView.productManagerCell(pocId: item.id)
                     Td(poc?.upc ?? "N/D")
-                    Td(poc?.name ?? "N/D")
+                    ProductManagerView.AuditView.productDescriptionCell(poc?.name ?? "N/D")
                     Td(poc?.brand ?? "N/D")
                     Td(poc?.model ?? "N/D")
                     Td(oldestItem)
@@ -3312,6 +5073,7 @@ extension ProductManagerView.AuditView {
                     THead{
                         Tr{
                             Td("Date")
+                            ProductManagerView.AuditView.productManagerHeaderCell()
                             Td("POC/SKU/UPC")
                             Td("Nombre")
                             Td("Marca")
@@ -3363,8 +5125,9 @@ extension ProductManagerView.AuditView {
                                             tableBody.appendChild(
                                                 Tr{
                                                     Td("\(day)/\(month)/\(year)")
+                                                    ProductManagerView.AuditView.productManagerCell(pocId: poc.id)
                                                     Td(poc.upc)
-                                                    Td(poc.name)
+                                                    ProductManagerView.AuditView.productDescriptionCell(poc.name)
                                                     Td(poc.brand)
                                                     Td(poc.model)
                                                     Td(items.count.toString)
@@ -3504,6 +5267,7 @@ extension ProductManagerView.AuditView {
                     let table = Table {
                         THead {
                             Tr{
+                                ProductManagerView.AuditView.productManagerHeaderCell()
                                 Td("POC/SKU/UPC")
                                 Td("Nombre")
                                 Td("Marca")
@@ -3530,8 +5294,9 @@ extension ProductManagerView.AuditView {
                         let poc = self.pocRefrence[item.id]
                         
                         tableBody.appendChild(Tr{
+                            ProductManagerView.AuditView.productManagerCell(pocId: item.id)
                             Td(poc?.upc ?? "N/D")
-                            Td(poc?.name ?? "N/D")
+                            ProductManagerView.AuditView.productDescriptionCell(poc?.name ?? "N/D")
                             Td(poc?.brand ?? "N/D")
                             Td(poc?.model ?? "N/D")
                             Td(item.zeroDay?.toString ?? "---")
@@ -3633,6 +5398,7 @@ extension ProductManagerView.AuditView {
                     
                     let table = Table {
                         Tr{
+                            ProductManagerView.AuditView.productManagerHeaderCell()
                             Td("POC/SKU/UPC")
                             Td("Nombre")
                             Td("Marca")
@@ -3651,8 +5417,9 @@ extension ProductManagerView.AuditView {
                         let poc = self.pocRefrence[item.id]
                         
                         table.appendChild(Tr{
+                            ProductManagerView.AuditView.productManagerCell(pocId: item.id)
                             Td(poc?.upc ?? "N/D")
-                            Td(poc?.name ?? "N/D")
+                            ProductManagerView.AuditView.productDescriptionCell(poc?.name ?? "N/D")
                             Td(poc?.brand ?? "N/v")
                             Td(poc?.model ?? "N/D")
                         }.backgroundColor({ conterRow ? .backGroundRow : .transparent }()))
@@ -3891,6 +5658,7 @@ extension ProductManagerView.AuditView {
                     THead{
                         Tr{
                             Td("Date")
+                            ProductManagerView.AuditView.productManagerHeaderCell()
                             Td("POC/SKU/UPC")
                             Td("Nombre")
                             Td("Marca")
@@ -3942,8 +5710,9 @@ extension ProductManagerView.AuditView {
                                             tableBody.appendChild(
                                                 Tr{
                                                     Td("\(day)/\(month)/\(year)")
+                                                    ProductManagerView.AuditView.productManagerCell(pocId: poc.id)
                                                     Td(poc.upc)
-                                                    Td(poc.name)
+                                                    ProductManagerView.AuditView.productDescriptionCell(poc.name)
                                                     Td(poc.brand)
                                                     Td(poc.model)
                                                     Td(items.count.toString)
@@ -4081,6 +5850,7 @@ extension ProductManagerView.AuditView {
                     let table = Table {
                         THead {
                             Tr{
+                                ProductManagerView.AuditView.productManagerHeaderCell()
                                 Td("POC/SKU/UPC")
                                 Td("Nombre")
                                 Td("Marca")
@@ -4107,8 +5877,9 @@ extension ProductManagerView.AuditView {
                         let poc = self.pocRefrence[item.id]
                         
                         tableBody.appendChild(Tr{
+                            ProductManagerView.AuditView.productManagerCell(pocId: item.id)
                             Td(poc?.upc ?? "N/D")
-                            Td(poc?.name ?? "N/D")
+                            ProductManagerView.AuditView.productDescriptionCell(poc?.name ?? "N/D")
                             Td(poc?.brand ?? "N/D")
                             Td(poc?.model ?? "N/D")
                             Td(item.zeroDay?.toString ?? "---")
@@ -4292,6 +6063,7 @@ extension ProductManagerView.AuditView {
                     let table = Table {
                         THead {
                             Tr{
+                                ProductManagerView.AuditView.productManagerHeaderCell()
                                 Td("POC/SKU/UPC")
                                 Td("Nombre")
                                 Td("Marca")
@@ -4318,8 +6090,9 @@ extension ProductManagerView.AuditView {
                         let poc = self.pocRefrence[item.id]
                         
                         tableBody.appendChild(Tr{
+                            ProductManagerView.AuditView.productManagerCell(pocId: item.id)
                             Td(poc?.upc ?? "N/D")
-                            Td(poc?.name ?? "N/D")
+                            ProductManagerView.AuditView.productDescriptionCell(poc?.name ?? "N/D")
                             Td(poc?.brand ?? "N/D")
                             Td(poc?.model ?? "N/D")
                             Td(item.zeroDay?.toString ?? "---")
@@ -4422,6 +6195,7 @@ extension ProductManagerView.AuditView {
                     
                     let table = Table {
                         Tr{
+                            ProductManagerView.AuditView.productManagerHeaderCell()
                             Td("POC/SKU/UPC")
                             Td("Nombre")
                             Td("Marca")
@@ -4440,8 +6214,9 @@ extension ProductManagerView.AuditView {
                         let poc = self.pocRefrence[item.id]
                         
                         table.appendChild(Tr{
+                            ProductManagerView.AuditView.productManagerCell(pocId: item.id)
                             Td(poc?.upc ?? "N/D")
-                            Td(poc?.name ?? "N/D")
+                            ProductManagerView.AuditView.productDescriptionCell(poc?.name ?? "N/D")
                             Td(poc?.brand ?? "N/v")
                             Td(poc?.model ?? "N/D")
                         }.backgroundColor({ conterRow ? .backGroundRow : .transparent }()))

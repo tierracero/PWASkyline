@@ -7,7 +7,7 @@ extension CustAssetsComponents {
     static func listAssets(
         assetDepartmentId: UUID? = nil,
         assetSeccionId: UUID? = nil,
-        custAcct: UUID? = nil,
+        relationId: UUID? = nil,
         status: CustCommercialAssetsStatus? = nil,
         callback: @escaping ((_ resp: APIResponseGeneric<ListAssetsResponse>?) -> ())
     ) {
@@ -18,7 +18,7 @@ extension CustAssetsComponents {
             ListAssetsRequest(
                 assetDepartmentId: assetDepartmentId,
                 assetSeccionId: assetSeccionId,
-                custAcct: custAcct,
+                relationId: relationId,
                 status: status
             )
         ) { data in

@@ -35,164 +35,154 @@ extension ProductManagerView {
         @State var departmentSelectListener = ""
         
         @DOM override var body: DOM.Content {
-            
-            Div{
-                
-                /// Header
-                Div{
-                    
-                    Img()
-                        .closeButton(.uiView2)
-                        .onClick {
-                            self.remove()
-                        }
-                    
-                    Div{
-                        Div{
-                            Img()
-                                .src("/skyline/media/zoom.png")
-                                .padding(all: 3.px)
-                                .paddingRight(0.px)
-                                .height(18.px)
-                        }
-                        .marginRight(12.px)
-                        .paddingTop(3.px)
-                        .float(.left)
-                        
-                        Label("Compras")
-                            .marginRight(7.px)
-                    }
-                    .padding(all: 3.px)
-                    .class(.uibtnLarge)
-                    .marginRight(12.px)
-                    .marginTop(-7.px)
-                    .cursor(.pointer)
-                    .fontSize(22.px)
-                    .float(.right)
-                    .onClick {
-                        
-                        let view = SearchHistoricalPurchaseView(close: {
-                            self.searchHistoricalPurchaseView?.remove()
-                            self.searchHistoricalPurchaseView = nil
-                        }, minimize: {
-                            
-                        })
-                        
-                        view.minimizeButton.hidden(true)
-                        
-                        self.searchHistoricalPurchaseView = view
-                        
-                        addToDom(view)
-                    }
-                    
-                    H2("Sistema de auditoria")
-                        .color(.lightBlueText)
-                        .marginRight(12.px)
-                        .float(.left)
-                    
+            VPopUp(.full) {
+
+                VTitle("Sistema de auditoría", icon: "icon_report.png") {
+
+                    Div()
+                    .marginRight(7.px)
+                    .float(.left)
+                    .width(7.px)
+
                     switch self.auditType {
                     case .general:
-                        
                         if custCatchHerk > 2 {
-                            
-                            H2("Inventarios")
-                                .borderBottom(width: .thin, style: self.$currentView.map{($0 == .inventoryView) ? .solid : .none }, color: .lightBlue)
-                                .color(self.$currentView.map{ ($0 == .inventoryView) ? .lightBlue : .gray })
-                                .marginRight(12.px)
-                                .cursor(.pointer)
-                                .float(.left)
-                                .onClick {
-                                    self.currentView = .inventoryView
-                                }
+                            self.auditTab("Inventarios", view: .inventoryView)
+                        }
+                        self.auditTab("Cardex", view: .productView)
+                        self.auditTab("Transferencias", view: .tranfers)
+                        self.auditTab("Mermas", view: .memrs)
+                        self.auditTab("Actividad", view: .activity)
+
+                    case .concessionaire(_):
+                        USmallTitle("Inventario en concesión")
+                    }
+
+                    switch self.auditType {
+                    case .general:
+                        USmallTitle("Inventario y operaciones")
+                    case .concessionaire(let custAcct):
+                        USmallTitle("\(custAcct.folio) · \("\(custAcct.businessName) \(custAcct.firstName) \(custAcct.lastName)".purgeSpaces)")
+                    }
+
+                    Div {
+
+                        Img()
+                            .attribute("aria-hidden", "true")
+                            .src("/skyline/media/zoom.png")
+                            .custom("flex", "0 0 auto")
+                            .class(.iconBlue)
+                            .height(24.px)
+
+                        Span("Compras")
+
+                    }
+                        .class(.uibtnLargeOrange)
+                        .marginRight(7.px)
+                        .marginTop(0.px)
+                        .fontSize(23.px)
+                        .float(.right)
+                        .onClick {
+                            self.openPurchaseHistory()
+                        }
+
+                } onClose: {
+                    self.remove()
+                }
+
+                VBodyGrid {
+
+                    VGrid(.full) {
+
+                        Div {
+                            Inventory(auditType: self.auditType)
+                        }
+                        // .class(Class(TCCrystalSurfaceClass.auditPanel))
+                        .custom("height", "100%")
+                        .custom("min-height", "0")
+                        .custom("overflow", "visible")
+                        .hidden(self.$currentView.map{ $0 != .inventoryView })
+
+                        switch self.auditType {
+                        case .general:
+                            Div {
+                                Products()
+                            }
+                            // .class(Class(TCCrystalSurfaceClass.auditPanel))
+                            .hidden(self.$currentView.map{ $0 != .productView })
+
+                            Div {
+                                Transfers()
+                            }
+                            // .class(Class(TCCrystalSurfaceClass.auditPanel))
+                            .hidden(self.$currentView.map{ $0 != .tranfers })
+
+                            Div {
+                                Merms()
+                            }
+                            // .class(Class(TCCrystalSurfaceClass.auditPanel))
+                            .hidden(self.$currentView.map{ $0 != .memrs })
+
+                            Div {
+                                Activity()
+                            }
+                            .custom("height", "100%")
+                            .custom("min-height", "0")
+                            .custom("overflow", "hidden")
+                            // .class(Class(TCCrystalSurfaceClass.auditPanel))
+                            .hidden(self.$currentView.map{ $0 != .activity })
+
+                        case .concessionaire(_):
+                            Div()
                         }
                         
-                        H2("Cardex")
-                            .borderBottom(width: .thin, style: self.$currentView.map{($0 == .productView) ? .solid : .none }, color: .lightBlue)
-                            .color(self.$currentView.map{ ($0 == .productView) ? .lightBlue : .gray })
-                            .marginRight(12.px)
-                            .cursor(.pointer)
-                            .float(.left)
-                            .onClick {
-                                self.currentView = .productView
-                            }
-                        
-                        H2("Tranfersencias")
-                            .borderBottom(width: .thin, style: self.$currentView.map{($0 == .tranfers) ? .solid : .none }, color: .lightBlue)
-                            .color(self.$currentView.map{ ($0 == .tranfers) ? .lightBlue : .gray })
-                            .marginRight(12.px)
-                            .cursor(.pointer)
-                            .float(.left)
-                            .onClick {
-                                self.currentView = .tranfers
-                            }
-
-                        H2("Mermas")
-                            .borderBottom(width: .thin, style: self.$currentView.map{($0 == .memrs) ? .solid : .none }, color: .lightBlue)
-                            .color(self.$currentView.map{ ($0 == .memrs) ? .lightBlue : .gray })
-                            .marginRight(12.px)
-                            .cursor(.pointer)
-                            .float(.left)
-                            .onClick {
-                                self.currentView = .memrs
-                            }
-                        
-                    case .concessionaire(let custAcct):
-                        H2("\(custAcct.folio) \(custAcct.businessName) \(custAcct.firstName) \(custAcct.lastName)")
-                            .color(.white)
                     }
-                    
-                    Div().class(.clear)
-
+                    .class(Class(TCCrystalSurfaceClass.auditPanelHost))
                 }
-                
-                Div{
-                    Inventory(auditType: self.auditType)
-                }
-                .hidden(self.$currentView.map{ $0 != .inventoryView })
-                .custom("height","calc(100% - 35px)")
-                .borderRadius(12.px)
-                .marginTop(7.px)
-                
-                switch self.auditType {
-                case .general:
-                    
-                    Div{
-                        Products()
-                    }
-                    .hidden(self.$currentView.map{ $0 != .productView })
-                    .custom("height","calc(100% - 35px)")
-                    .borderRadius(12.px)
-                    .marginTop(7.px)
-                    
-                    Div{
-                        Transfers()
-                    }
-                    .hidden(self.$currentView.map{ $0 != .tranfers })
-                    .custom("height","calc(100% - 35px)")
-                    .borderRadius(12.px)
-                    .marginTop(7.px)
-                    
-                    Div{
-                        Merms()
-                    }
-                    .hidden(self.$currentView.map{ $0 != .memrs })
-                    .custom("height","calc(100% - 35px)")
-                    .borderRadius(12.px)
-                    .marginTop(7.px)
-                    
-                case .concessionaire(let _):
-                    Div()
-                }
-                
+                .class(Class(TCCrystalSurfaceClass.auditBody))
+                .id(.init("bodyGrid"))
+                .display(.block)
             }
-            .custom("height", "calc(100% - 124px)")
-            .custom("width", "calc(100% - 124px)")
-            .backgroundColor(.backGroundGraySlate)
-            .borderRadius(all: 24.px)
-            .position(.absolute)
-            .padding(all: 12.px)
-            .left(50.px)
-            .top(60.px)
+            .class(Class(TCCrystalSurfaceClass.auditPopup))
+        }
+
+        fileprivate func auditTab(_ title: String, view: CuttentView) -> H2 {
+            /*
+            USmallButton(title)
+                .class(Class(TCCrystalSurfaceClass.auditTab))
+                .borderBottom(
+                    width: .medium,
+                    style: self.$currentView.map { $0 == view ? .solid : .none },
+                    color: .lightBlue
+                )
+                .color(self.$currentView.map { $0 == view ? .lightBlue : .gray })
+                .attribute("aria-label", "Mostrar \(title.lowercased())")
+                .onClick {
+                    self.currentView = view
+                }
+            */
+
+            H2(title)
+                .borderBottom(width: .thin, style: self.$currentView.map{($0 == view) ? .solid : .none }, color: .lightBlue)
+                .color(self.$currentView.map{ ($0 == view) ? .lightBlue : .gray })
+                .marginRight(12.px)
+                .cursor(.pointer)
+                .float(.left)
+                .onClick {
+                    self.currentView = view
+                }
+        }
+
+        fileprivate func openPurchaseHistory() {
+            let view = SearchHistoricalPurchaseView(close: {
+                self.searchHistoricalPurchaseView?.remove()
+                self.searchHistoricalPurchaseView = nil
+            }, minimize: {
+            })
+
+            view.minimizeButton.hidden(true)
+            searchHistoricalPurchaseView = view
+            addToDom(view)
         }
         
         override func buildUI() {
@@ -203,8 +193,15 @@ extension ProductManagerView {
             width(100.percent)
             left(0.px)
             top(0.px)
+            self.class(Class(TCCrystalSurfaceClass.auditWorkspace))
+            CrystalTheme.apply(to: self)
             
-            if custCatchHerk > 2 {
+            switch auditType {
+            case .general:
+                if custCatchHerk > 2 {
+                    currentView = .inventoryView
+                }
+            case .concessionaire(_):
                 currentView = .inventoryView
             }
             
@@ -224,6 +221,7 @@ extension ProductManagerView.AuditView {
         case inventoryView
         case tranfers
         case memrs
+        case activity
     }
     
     enum AuditType {

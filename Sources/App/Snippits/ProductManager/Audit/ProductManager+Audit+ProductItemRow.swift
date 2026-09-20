@@ -117,6 +117,7 @@ extension ProductManagerView.AuditView {
         override func buildUI() {
             super.buildUI()
             self.class(.rowItem)
+            self.class(Class(TCCrystalSurfaceClass.auditProductRow))
             margin(all: 3.px)
             float(.left)
             

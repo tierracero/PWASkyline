@@ -4,15 +4,17 @@ import Foundation
 
 extension CustAssetsComponents {
 
-    static func listDepartments(
-        accountId: UUID?,
-        callback: @escaping ((_ resp: APIResponseGeneric<ListDepartmentsResponse>?) -> ())
+    static func listStoreArchitecture(
+        relationId: UUID,
+        callback: @escaping ((_ resp: APIResponseGeneric<ListStoreArchitectureResponse>?) -> ())
     ) {
         sendPost(
             rout,
             version,
-            "listDepartments",
-            ListDepartmentsRequest(accountId: accountId)
+            "listStoreArchitecture",
+            ListStoreArchitectureRequest(
+                relationId: relationId
+            )
         ) { data in
             guard let data else {
                 callback(nil)
@@ -21,7 +23,7 @@ extension CustAssetsComponents {
 
             do {
                 callback(try decodeAPIResponse(
-                    APIResponseGeneric<ListDepartmentsResponse>.self,
+                    APIResponseGeneric<ListStoreArchitectureResponse>.self,
                     from: data
                 ))
             }

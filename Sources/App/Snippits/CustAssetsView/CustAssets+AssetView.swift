@@ -16,8 +16,44 @@ extension CustAssetsView {
             case notes
         }
 
+        /// store, warehose, account, subAccount
+        let viewType: InitiateAssetItemViewType
+
         let assetId: UUID
+
+        var locations: [CustCommercialAssetsLocation]
+
+        var subLocations: [CustCommercialAssetsSubLocation]
+
         let onLoaded: ((CustCommercialAssets) -> Void)?
+        let onLocationCreated: ((CustCommercialAssetsLocation) -> Void)?
+        let onSubLocationCreated: ((CustCommercialAssetsSubLocation) -> Void)?
+
+        private lazy var statusSelect = USelectField(self.$status)
+            .width(100.percent)
+
+        init(
+            viewType: InitiateAssetItemViewType,
+            assetId: UUID,
+            locations: [CustCommercialAssetsLocation],
+            subLocations: [CustCommercialAssetsSubLocation],
+            onLoaded: ((CustCommercialAssets) -> Void)? = nil,
+            onLocationCreated: ((CustCommercialAssetsLocation) -> Void)? = nil,
+            onSubLocationCreated: ((CustCommercialAssetsSubLocation) -> Void)? = nil
+        ) {
+            self.viewType = viewType
+            self.assetId = assetId
+            self.locations = locations
+            self.subLocations = subLocations
+            self.onLoaded = onLoaded
+            self.onLocationCreated = onLocationCreated
+            self.onSubLocationCreated = onSubLocationCreated
+            super.init()
+        }
+
+        required init() {
+            fatalError("init() has not been implemented")
+        }
 
         @State private var title = "Cargando activo…"
 
@@ -49,22 +85,6 @@ extension CustAssetsView {
         .id(.init("contentView_\(callKey(7))"))
         .height(100.percent)
 
-        private lazy var statusSelect = USelectField(self.$status)
-            .width(100.percent)
-
-        init(
-            assetId: UUID,
-            onLoaded: ((CustCommercialAssets) -> Void)? = nil
-        ) {
-            self.assetId = assetId
-            self.onLoaded = onLoaded
-            super.init()
-        }
-
-        required init() {
-            fatalError("init() has not been implemented")
-        }
-
         private lazy var addAssetButton = USmallButton("+ Ingresar Inventario")
             .marginTop(-9.px)
             .float(.right)
@@ -84,11 +104,15 @@ extension CustAssetsView {
                 }
 
                 VBodyGrid {
+                    /*
                     VGrid(.full) {
                         self.contentView
                     }
                     .height(100.percent)
                     .display(.block)
+                    */
+
+                    self.contentView
                 }
                 .display(.block)
             }
@@ -110,6 +134,7 @@ extension CustAssetsView {
         }
 
         private func load() {
+
             loadingView.show()
 
             API.custAssetsV1.getAsset(assetId: assetId) { response in
@@ -200,7 +225,7 @@ extension CustAssetsView {
                     .marginTop(10.px)
 
                 }
-                .custom("height","calc(100% - 533px)")
+                .custom("height","calc(100% - 505px)")
                 .marginRight(1.percent)
                 .width(33.percent)
                 .float(.left)
@@ -223,7 +248,7 @@ extension CustAssetsView {
                         .marginTop(3.px)
                         .custom("height","calc(100% - 35px)")
                 }
-                .custom("height","calc(100% - 533px)")
+                .custom("height","calc(100% - 505px)")
                 .width(66.percent)
                 .float(.left)
 
@@ -236,12 +261,12 @@ extension CustAssetsView {
                 Div {
                     editor
                 }
-                .custom("max-height", "calc(100vh - 110px)")
+                .custom("max-height", "calc(100vh - 105px)")
                 .custom("box-sizing", "border-box")
                 .custom("overflow", "auto")
                 .custom("width", "100%")
                 .height(100.percent)
-                .padding(all: 2.px)
+
             )
         }
 
@@ -264,17 +289,24 @@ extension CustAssetsView {
                     UTitle("Estado General")
 
                     Div {
-                        UField("Estado") {
-                            self.statusSelect
+                        Div {
+
+                            UField("Estado") {
+                                self.statusSelect
+                            }
                         }
+                        .margin(all: 3.px)
                     }
                     .width(50.percent)
                     .float(.left)
 
                     Div {
-                        UField("Tipo de activo") {
-                            USubTitle(item.assetType.description)
+                        Div {
+                            UField("Tipo de activo") {
+                                USubTitle(item.assetType.description)
+                            }
                         }
+                        .margin(all: 3.px)
                     }
                     .width(50.percent)
                     .float(.left)
@@ -283,12 +315,44 @@ extension CustAssetsView {
 
                     Div {
 
-                        UField("Costo inicial") {
-                            UTextField(self.$initialCost)
-                                .placeholder("0.00")
-                                .onFocus { field in field.select() }
+                        Div {
+                            UField("Costo inicial") {
+                                UTextField(self.$initialCost)
+                                    .placeholder("0.00")
+                                    .onFocus { field in field.select() }
+                            }
                         }
+                        .margin(all: 3.px)
 
+                    }
+                    .width(50.percent)
+                    .float(.left)
+
+                    Div {
+
+                        Div {
+                            UField("Depreciación") {
+                                UTextField(self.$depreciationRate)
+                                    .placeholder("0")
+                                    .onFocus { field in field.select() }
+                            }
+                        }
+                        .margin(all: 3.px)
+
+                    }
+                    .width(50.percent)
+                    .float(.left)
+
+                    Div().clear(.both)
+
+                    Div {
+                        
+                        Div {
+                            UField("Tipo de producto") {
+                                UTextField(self.$productType)
+                            }                            
+                        }
+                        .margin(all: 3.px)
 
                     }
                     .width(50.percent)
@@ -296,28 +360,18 @@ extension CustAssetsView {
 
                     Div {
                         
-                        UField("Depreciación") {
-                            UTextField(self.$depreciationRate)
-                                .placeholder("0")
-                                .onFocus { field in field.select() }
+                        Div {
+                            UField("Subtipo", required: false) {
+                                UTextField(self.$productSubType)
+                            }   
                         }
-                        
+                        .margin(all: 3.px)
+
                     }
                     .width(50.percent)
                     .float(.left)
 
-
                     Div().clear(.both)
-
-                    UField("Tipo de producto") {
-                        UTextField(self.$productType)
-                    }
-
-                    UField("Subtipo", required: false) {
-                        UTextField(self.$productSubType)
-                    }
-
-
 
                 }
                 .marginTop(12.px)
@@ -361,7 +415,7 @@ extension CustAssetsView {
                         .custom("grid-column", "1 / -1")
                     }
                     .display(.grid)
-                    .custom("grid-template-columns", "repeat(2, minmax(0, 1fr))")
+                    .custom("grid-template-columns", "repeat(4, minmax(0, 1fr))")
                     .custom("gap", "8px 12px")
                     .marginTop(8.px)
 
@@ -574,6 +628,38 @@ extension CustAssetsView {
         }
 
         func createAsset() {
+
+            switch viewType {
+                case .account(_, let store):
+                
+                guard let lat: String = store.lat, let lon: String = store.lon, let _ = Double(lat), let _ = Double(lon) else {
+                    showError(.unexpectedResult, "Tu tienda base \(store.name.capitalized), requeire cargar mapa")
+                    return
+                }
+
+                case .subAccount(_, let store):
+                
+                guard let lat: String = store.lat, let lon: String = store.lon, let _ = Double(lat), let _ = Double(lon) else {
+                    showError(.unexpectedResult, "Tu tienda base \(store.name.capitalized), requeire cargar mapa")
+                    return
+                }
+
+                case .store(let store):
+                
+                guard let lat: String = store.lat, let lon: String = store.lon, let _ = Double(lat), let _ = Double(lon) else {
+                    showError(.unexpectedResult, "La tienda \(store.name.capitalized), requeire cargar mapa")
+                    return
+                }
+                
+                case .warehose(let store):
+                
+                guard let lat: String = store.lat, let lon: String = store.lon, let _ = Double(lat), let _ = Double(lon) else {
+                    showError(.unexpectedResult, "La tienda \(store.name.capitalized), requeire cargar mapa")
+                    return
+                }
+                
+            }
+
             guard let currentAsset else {
                 showError(.unexpectedResult, "El activo aún no está disponible.")
                 return
@@ -584,16 +670,59 @@ extension CustAssetsView {
                 return
             }
 
-            addToDom(
-                CreateAssetItemView(
-                    asset: currentAsset,
-                    department: department,
-                    categorie: categorie
-                ) { _ in
-                    self.load()
+            addToDom(InitiateAssetItemView(
+                viewType: viewType
+            ){ folio, units in
+
+                if units == 1 {
+                    addToDom(
+                        CreateAssetItemView(
+                            viewType: self.viewType,
+                            purchasFiscalDocumentFolio: folio,
+                            asset: currentAsset,
+                            department: department,
+                            categorie: self.categorie,
+                            locations: self.locations,
+                            subLocations: self.subLocations,
+                            onLocationCreated: { location in
+                                self.locations = self.upserting(location, into: self.locations)
+                                self.onLocationCreated?(location)
+                            },
+                            onSubLocationCreated: { subLocation in
+                                self.subLocations = self.upserting(subLocation, into: self.subLocations)
+                                self.onSubLocationCreated?(subLocation)
+                            }
+                        ) { _ in
+                            self.load()
+                        }
+                    )
                 }
-            )
+                else {
+
+                }
+
+            })
+            
         }
+
+        private func upserting(
+            _ location: CustCommercialAssetsLocation,
+            into values: [CustCommercialAssetsLocation]
+        ) -> [CustCommercialAssetsLocation] {
+            var result = values.filter { $0.id != location.id }
+            result.append(location)
+            return result.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+        }
+
+        private func upserting(
+            _ subLocation: CustCommercialAssetsSubLocation,
+            into values: [CustCommercialAssetsSubLocation]
+        ) -> [CustCommercialAssetsSubLocation] {
+            var result = values.filter { $0.id != subLocation.id }
+            result.append(subLocation)
+            return result.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+        }
+
     }
 
 }

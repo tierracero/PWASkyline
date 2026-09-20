@@ -167,7 +167,7 @@ extension ToolsView.SystemSettings {
                                 .fontSize(18.px)
                                 .float(.right)
                                 .onClick {
-                                    self.addStore()
+                                    self.selectStoreType()
                                 }
 
                                 H4("Tiendas")
@@ -187,7 +187,19 @@ extension ToolsView.SystemSettings {
 
                                         Div {
                                             Img()
-                                                .src("/skyline/media/icon_store.png")
+                                                .src({
+                                                    // 
+                                                    switch store.storeType {
+                                                    case .warehouse:
+                                                    return "/skyline/media/icon_warehouse.png"
+                                                    case .quiosk:
+                                                    return "/skyline/media/icon_kiosk.png"
+                                                    case .main:
+                                                    return "/skyline/media/icon_store.png"
+                                                    case .branch:
+                                                    return "/skyline/media/icon_store.png"
+                                                    }
+                                                }())
                                                 .class(.iconBlue)
                                         }
                                             .class(Class(TCStoreUserConfigurationClass.storeIcon))
@@ -233,6 +245,7 @@ extension ToolsView.SystemSettings {
                             .class(Class(TCStoreUserConfigurationClass.storesPanel))
 
                         Div {
+                            
                             H3("Resumen")
                             Span(self.$selectedStore.map { $0?.name ?? "Seleccione tienda" })
                                 .class(Class(TCStoreUserConfigurationClass.summaryName))
@@ -367,7 +380,7 @@ extension ToolsView.SystemSettings {
                     }
 
                     let view = StoreDetailView(
-                        store: payload.store,
+                        type: .open(payload.store),
                         inventory: payload.inventory,
                         stores: payload.stores,
                         config: payload.config,
@@ -421,7 +434,17 @@ extension ToolsView.SystemSettings {
             }
         }
 
-        func addStore() {
+        func selectStoreType () {
+
+            let view = NewStoreType { type in 
+                self.addStore(type)
+            }
+
+            addToDom(view)
+
+        }
+
+        func addStore(_ storeType: CustStoreType) {
 
             let stores: [CustStoreRef] = self.storeList.map{ .init(
                 id: $0.id,
@@ -437,7 +460,7 @@ extension ToolsView.SystemSettings {
             )}
 
             let view = StoreDetailView(
-                store: nil,
+                type: .create(storeType),
                 inventory: [],
                 stores: stores,
                 config: .init(),

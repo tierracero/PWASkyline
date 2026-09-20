@@ -2934,8 +2934,8 @@ class ToolFiscal: Div {
             return
         }
         
-        if documentFilter.count < 5 {
-            showError(.generalError, "El terminos de busqueda debe de ser de minimo 5 caracteres.")
+        if documentFilter.count < 4 {
+            showError(.generalError, "El terminos de busqueda debe de ser de minimo 4 caracteres.")
             return
         }
         
@@ -2982,6 +2982,7 @@ class ToolFiscal: Div {
             }
             
             payload.current.forEach { doc in
+            
                 if let _ = self.historical[doc.emisorRfc]  {
                     self.historical[doc.emisorRfc]?.append(doc)
                 }

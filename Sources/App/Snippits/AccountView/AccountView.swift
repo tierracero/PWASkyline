@@ -2423,8 +2423,8 @@ class AccountView: PageController {
 
         loadingView.show()
 
-        API.custAssetsV1.listDepartments(
-            accountId: account.id
+        API.custAssetsV1.listStoreArchitecture(
+            relationId: account.id
         ) { response in
             
             loadingView.hide()
@@ -2444,11 +2444,23 @@ class AccountView: PageController {
                 return
             }
 
-            addToDom(CustAssetsView(accountId: self.account.id, items: payload.items))
+            guard let store: CustStore = stores[custCatchStore] else {
+                showError(.unexpectedResult, "No se localizo tienda propia")
+                return
+            }
+            
+            addToDom(CustAssetsView(
+                viewType: .account(account: self.account, store: store),
+                departments: payload.departments,
+                locations: payload.locations,
+                subLocations: payload.subLocations
+            ))
+
         }
     }
     
 }
+
 /// finance, credit
 extension AccountView {
     enum CurrentAccountTab {

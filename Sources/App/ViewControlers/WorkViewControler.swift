@@ -2265,6 +2265,8 @@ class WorkViewControler: PageController {
                 break
             case .customerOrderStatusUpdate:
                 break
+            case .asyncMessageUpdate:
+                break
             }
             
             WebApp.current.wsevent.wrappedValue = ""

@@ -18,11 +18,14 @@ Repository file map for PWASkyline.
 | `Sources/App/App.swift` | `@main` Swift Web app lifecycle, service-worker registration, route table, and theme switching. |
 | `Sources/App/SkylineWeb.swift` | Project version, environment flags, global app/session/cache variables. |
 | `Sources/App/API/` | Client API wrapper namespaces and endpoint files. |
+| `Sources/App/API/CustPOCEndpoint/CustPOC+AuditProductActivity.swift` | Typed client wrapper for the product creation, edit, image, and duplicate audit report. |
+| `Sources/App/API/CustPOCEndpoint/CustPOC+AuditsVT.swift` | Typed client wrapper for the Fast and Furious product velocity report. |
 | `Sources/App/Websocket/` | WebSocket type and message/event handlers. |
 | `Sources/App/ViewControlers/` | Page controllers for app, login, work, hotline, splash, and unavailable-service flows. |
 | `Sources/App/VirtualControlers/` | Shared non-visual controllers/caches, including centralized error-report lifecycle, IndexedDB bridge ownership, and browser speech-recognition callback/target routing. |
 | `Sources/App/Pages/` | Swift Web page definitions. |
 | `Sources/App/Snippits/` | Reusable UI snippets, forms, panels, print engines, and feature views. |
+| `Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+FastAndFurios.swift` | Ranked product revenue velocity, sales velocity, volume, and weighted score report presentation. |
 | `Sources/App/Styles/` | Swift Web style declarations (`MainStyle`, `SKMainStyle`, `SKLogInStyle`). |
 | `Sources/App/TierraCeroCustomUI/` | Scoped Tierra Cero layout controls and feature themes, including the production OrderView presentation and persistent speech-recognition control. |
 | `Sources/App/Functions/` | Free functions and browser helpers, including centralized POST transport and API response decoding instrumentation. |

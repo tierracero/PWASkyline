@@ -84,7 +84,7 @@ public class LoadingView: Div {
             case .asyncMessageUpdate:
             
                 guard let payload = self.ws.asyncMessageUpdate($0),
-                payload.eventid == self.currentViewId else {
+                payload.eventId == self.currentViewId else {
                     return
                 }
 

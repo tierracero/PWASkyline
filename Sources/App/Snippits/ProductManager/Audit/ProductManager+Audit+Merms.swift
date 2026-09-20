@@ -55,13 +55,20 @@ extension ProductManagerView.AuditView {
             .height(34.px)
         
         @State var startAtLabel = ""
+
+        private let resultElementId = "mermResultDiv_\(callKey(7))"
         
         lazy var resultDiv = Div{
             Table().noResult(label: "📈 Seleccione una tienda para iniciar")
         }
+        .id(.init(resultElementId))
+        .class(Class(TCCrystalSurfaceClass.auditResults))
         .custom("height", "calc(100% - 85px)")
         .overflow(.auto)
+
         
+        lazy var reportActions = ReportActions(resultElementId: resultElementId) 
+
         @DOM override var body: DOM.Content {
             /// Filter View
             Div{
@@ -129,10 +136,11 @@ extension ProductManagerView.AuditView {
                     .onClick {
                         self.createReport()
                     }
-                
+
                 Div().clear(.both)
                 
             }
+            .class(Class(TCCrystalSurfaceClass.auditToolbar))
             .borderRadius(7.px)
             .backgroundColor(.grayBlack)
             .height(85.px)
@@ -314,6 +322,7 @@ extension ProductManagerView.AuditView {
             
             let renderId = UUID()
             mermRenderId = renderId
+            reportActions.reset()
 
             loadingView.show()
             
@@ -322,6 +331,7 @@ extension ProductManagerView.AuditView {
                 startAt: startAtUTS,
                  endAt: endAtUTS
             ) { resp in
+
                 guard renderId == self.mermRenderId else {
                     return
                 }
@@ -345,12 +355,48 @@ extension ProductManagerView.AuditView {
 
                 self.resultDiv.innerHTML = ""
 
+                self.reportActions.present(
+                    title: "Reporte de mermas",
+                    fileName: "mermas-\(getNow())",
+                    aiResponse: resp.airesponse,
+                    in: self.resultDiv
+                ) {
+                    showAlert(.alerta, "El reporte de PDF estare dispobible pronto si lo ocupa antes haganos lo saber ")
+                } excelCallback: {
+                    self.downloadMermReport(startAt: startAtUTS, endAt: endAtUTS, storeId: store, merms: payload.merms)
+                }
+
+                let totalUnits = payload.merms.map { $0.items.count }.reduce(0, +)
+                let averageUnits = Double(totalUnits) / Double(max(payload.merms.count, 1))
+                let largestDocuments = Array(payload.merms.sorted { $0.items.count > $1.items.count }.prefix(8))
+
+                self.resultDiv.appendChild(ProductManagerView.AuditView.reportHeader(
+                    title: "📉 Resumen de mermas",
+                    subtitle: "Unidades retiradas del inventario durante el periodo",
+                    context: "Alcance: \(stores[store]?.name ?? "Tienda") • Periodo: \(getDate(startAtUTS).formatedLong) al \(getDate(endAtUTS).formatedLong) • Generado: \(getDate(getNow()).formatedLong)"
+                ))
+
+                self.resultDiv.appendChild(Div {
+                    ProductManagerView.AuditView.reportMetric(title: "Documentos", value: payload.merms.count.toString, detail: "Registros de merma")
+                    ProductManagerView.AuditView.reportMetric(title: "Unidades", value: totalUnits.toString, detail: "Unidades afectadas")
+                    ProductManagerView.AuditView.reportMetric(title: "Promedio / documento", value: String(format: "%.1f", averageUnits), detail: "Unidades por registro")
+                    ProductManagerView.AuditView.reportMetric(title: "Mayor documento", value: (largestDocuments.first?.items.count ?? 0).toString, detail: "Máximo de unidades")
+                }
+                .class(Class(TCCrystalSurfaceClass.auditMetricGrid)))
+
                 if payload.merms.isEmpty {
                     self.resultDiv.appendChild(
                         Table().noResult(label: "Sin mermas para el periodo seleccionado")
                     )
                     return
                 }
+
+                self.resultDiv.appendChild(ProductManagerView.AuditView.reportBarChart(
+                    title: "Documentos con mayor merma",
+                    items: largestDocuments.map {
+                        ($0.folio, Double($0.items.count), $0.items.count.toString)
+                    }
+                ))
 
                 self.asyncAddMerm(
                     renderId: renderId,
@@ -396,87 +442,147 @@ extension ProductManagerView.AuditView {
             }
         }
         
-        func downloadCardexReport(startAt: Int64, endAt: Int64, storeId: UUID, payload: CustPOCComponents.CardexResponse) {
+        func downloadMermReport(startAt: Int64, endAt: Int64, storeId: UUID, merms: [CustFiscalInventoryControl]) {
             
             loadingView.show()
+
+            prepareMermReport(merms: merms, items: []) { items in
+
+                    var name = ""
+                    
+                    func csvField(_ value: String) -> String {
+                        let normalizedValue = value
+                            .replacingOccurrences(of: "\r", with: " ")
+                            .replacingOccurrences(of: "\n", with: " ")
+                            .replacingOccurrences(of: "\"", with: "\"\"")
+                        return "\"\(normalizedValue)\""
+                    }
+
+                    var contents = [
+                        "Fecha",
+                        "Folio",
+                        "Tienda",
+                        "Descripción",
+                        "UPC",
+                        "Producto",
+                        "Marca",
+                        "Modelo",
+                        "Costo",
+                        "Bodega",
+                        "Sección",
+                        "Estatus",
+                        "ID Inventario"
+                    ]
+                    .map(csvField)
+                    .joined(separator: ",") + "\n"
+
+                    items.forEach { report in
+                        var pocReference: [UUID: CustPOCQuick] = [:]
+                        report.pocs.forEach { poc in
+                            pocReference[poc.id] = poc
+                        }
+
+                        var placeReference: [UUID: CustPOCStoragePlace] = [:]
+                        report.places.forEach { place in
+                            placeReference[place.poc] = place
+                        }
+
+                        report.items.forEach { inventory in
+                            let poc = pocReference[inventory.POC]
+                            let place = placeReference[inventory.POC]
+                            let productName = poc.map {
+                                "\($0.name) \($0.brand) \($0.model)".purgeSpaces
+                            } ?? ""
+                            let cost = poc.map {
+                                $0.cost.formatMoney.replace(from: ",", to: "")
+                            } ?? ""
+
+                            let row = [
+                                getDate(report.control.createdAt).formatedLong,
+                                report.control.folio,
+                                report.fromStore.name,
+                                report.control.description,
+                                poc?.upc ?? "",
+                                productName,
+                                poc?.brand ?? "",
+                                poc?.model ?? "",
+                                cost,
+                                place?.bod ?? "",
+                                place?.sec ?? "",
+                                inventory.status.description,
+                                inventory.id.uuidString
+                            ]
+
+                            contents += row.map(csvField).joined(separator: ",") + "\n"
+                        }
+                    }
+                    
+                    stores.forEach { id, store in
+                        if storeId == id {
+                            name = store.name
+                        }
+                    }
+                    
+                    name += " \(getDate(startAt).formatedLong) al \(getDate(endAt).formatedLong)"
+                    
+                    let fileName = safeFileName(name: name, to: .none, folio: nil)
+                    
+                    _ = JSObject.global.download!( "\(fileName).csv", contents)
+                    
+                    loadingView.hide()
+            }
             
-            var name = ""
-            
-            var contents =
-            "SKU/UPC/POC," +
-            "Nombre x Marca / Modelo," +
-            "Costo," +
-            "Precio," +
-            "Saldo Ini," +
-            "Inicial," +
-            "+ Agr," +
-            "- Rem," +
-            "Final," +
-            "Saldo Fini\n"
-            
-            var totalInitialUnits: Int = 0
-            
-            var totalAddedUnits: Int = 0
-            
-            var totalRemovedUnits: Int = 0
-            
-            var totalFinalUnits: Int = 0
-            
-            var totalInitialCost: Int64 = 0
-            
-            var totalFinalCost: Int64 = 0
-            
-            stores.forEach { id, store in
-                if storeId == id {
-                    name = store.name
+        }
+
+        func prepareMermReport(merms: [CustFiscalInventoryControl], items: [CustPOCComponents.GetTransferInventoryResponse], callback: @escaping (_ items: [CustPOCComponents.GetTransferInventoryResponse])->Void) {
+
+            if merms.isEmpty {
+                callback(items)
+                return
+            }
+
+            var merms = merms
+
+            var items = items
+
+            guard let merm = merms.popLast() else {
+                prepareMermReport(
+                    merms: merms,
+                    items: items,
+                    callback: callback
+                )
+                return
+            }
+
+            API.custPOCV1.getTransferInventory(identifier: .id(merm.id)) { resp in
+
+                guard let resp = resp else {
+                    loadingView.hide()
+                    showError(.comunicationError, .serverConextionError)
+                    return
                 }
-            }
-            
-            name += " \(getDate(startAt).formatedLong) al \(getDate(endAt).formatedLong)"
-            
-            let fileName = safeFileName(name: name, to: .none, folio: nil)
-            
-            payload.objects.forEach { item in
+
+                guard resp.status == .ok else{
+                    loadingView.hide()
+                    showError(.generalError, resp.msg)
+                    return
+                }
                 
-                totalInitialUnits += item.initalInventory
-                
-                totalAddedUnits += item.addedInventory
-                
-                totalRemovedUnits += item.removeInventory
-                
-                totalFinalUnits += item.finalInventory
-                
-                totalInitialCost += item.initalBalance
-                
-                totalFinalCost += item.finalBalance
-                
-                contents +=
-                "\(item.poc.upc)," +
-                "\("\(item.poc.name) \(item.poc.brand) \(item.poc.model)".purgeSpaces)," +
-                "\(item.poc.cost.formatMoney.replace(from: ",", to: ""))," +
-                "\(item.poc.pricea.formatMoney.replace(from: ",", to: ""))," +
-                "\(item.initalBalance.formatMoney.replace(from: ",", to: ""))," +
-                "\(item.initalInventory.toString)," +
-                "\(item.addedInventory.toString)," +
-                "\(item.removeInventory.toString)," +
-                "\(item.finalInventory.toString)," +
-                "\(item.finalBalance.formatMoney.replace(from: ",", to: ""))\n"
+                guard let payload = resp.data else {
+                    loadingView.hide()
+                    showError(.unexpectedResult, "No se pudo obtener documento")
+                    return
+                }
+
+                items.append(payload)
+
+                self.prepareMermReport(
+                    merms: merms,
+                    items: items,
+                    callback: callback
+                )
                 
             }
-            
-            contents += ",,,," +
-            "\(totalInitialCost.formatMoney.replace(from: ",", to: ""))," +
-            "\(totalInitialUnits.toString)," +
-            "\(totalAddedUnits.toString)," +
-            "\(totalRemovedUnits.toString)," +
-            "\(totalFinalUnits.toString)," +
-            "\(totalFinalCost.formatMoney.replace(from: ",", to: ""))"
-            
-            loadingView.hide()
-            
-            _ = JSObject.global.download!( "\(fileName).csv", contents)
-            
-            
         }
         
 

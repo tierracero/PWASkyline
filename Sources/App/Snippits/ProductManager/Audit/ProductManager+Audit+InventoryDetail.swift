@@ -54,9 +54,11 @@ extension ProductManagerView.AuditView {
                     Div().class(.clear)
 
                 }
+                .class(Class(TCCrystalSurfaceClass.auditHeader))
                 Table {
                     THead {
                         Tr{
+                            ProductManagerView.AuditView.productManagerHeaderCell()
                             Td("POC/SKU/UPC")
                             Td("Nombre")
                             Td("Marca")
@@ -75,6 +77,7 @@ extension ProductManagerView.AuditView {
                 .color(.white)
                 
             }
+            .class(Class(TCCrystalSurfaceClass.auditModalPanel))
             .custom("height", "calc(100% - 224px)")
             .custom("width", "calc(100% - 224px)")
             .backgroundColor(.backGroundGraySlate)
@@ -94,14 +97,17 @@ extension ProductManagerView.AuditView {
             width(100.percent)
             left(0.px)
             top(0.px)
+            self.class(Class(TCCrystalSurfaceClass.auditWorkspace))
+            CrystalTheme.apply(to: self)
             
             let itemCostTotal: Int64 = item.items.map{ $0.cost }.reduce(0, +)
             
             let itemPriceTotal: Int64 = item.items.map{ $0.price }.reduce(0, +)
             
             tableBody.appendChild(Tr{
+                ProductManagerView.AuditView.productManagerCell(pocId: self.poc.id)
                 Td(self.poc.upc ?? "N/D")
-                Td(self.poc.name ?? "N/D")
+                ProductManagerView.AuditView.productDescriptionCell(self.poc.name ?? "N/D")
                 Td(self.poc.brand ?? "N/D")
                 Td(self.poc.model ?? "N/D")
                 Td(self.item.zeroDay?.toString ?? "---")
@@ -114,6 +120,7 @@ extension ProductManagerView.AuditView {
             self.item.items.forEach { item in
                 
                 tableBody.appendChild(Tr{
+                    Td("")
                     Td("Serie")
                     Td("\(item.id.suffix) \(item.series)".purgeSpaces)
                         .colSpan(6)

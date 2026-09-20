@@ -28,7 +28,8 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         
         var mainStore: Bool
 
-        var storeType: CustStoreType = .branch
+        /// main, branch, quiosk, warehouse
+        var storeType: CustStoreType
         
         /// UUID
         var supervisorId: UUID?
@@ -149,16 +150,13 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
         var userRefrence: [UUID:CustUsername] = [:]
 
-
-
-        
         private var callback: (
             _ payload: Callbacktype
         ) ->  Void
 
         /* INITILIZER */
         init(
-            store: CustStore?,
+            type viewType: ViewType,
             inventory: [API.custAPIV1.GetUserInventoryObject],
             stores: [CustStoreRef],
             config: ConfigStore,
@@ -168,6 +166,15 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 _ payload: Callbacktype
             ) ->  Void
         ) {
+
+            var store: CustStore? = nil
+
+            switch viewType {
+            case .open(let data):
+                store = data
+            case .create(let type):
+                self.storeType = type
+            }
 
             self.id = store?.id
             
@@ -179,6 +186,8 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             
             self.mainStore = store?.mainStore ?? false
             
+            self.storeType = viewType.type
+
             /// CustUsername.id
             self.supervisorId = store?.custUsername
 
@@ -294,7 +303,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             super.init()
 
         }
-
+        
         required init() {
           fatalError("init() has not been implemented")
         }
@@ -619,347 +628,1008 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         .class(.textFiledBlackDark)
         .height(31.px)
         
+        @State var currentView: CurrentView = .storeDetail
+
         @DOM override var body: DOM.Content {
             
-            Div{
-                
-                /* MARK: HEADER*/
-                Div{
-                    
-                    Img()
-                        .closeButton(.subView)
-                        .onClick {
-                            self.remove()
-                        }
+            VPopUp(.full) {
 
-                    H2(self.$storeName.map{ $0.isEmpty ? "Crear Tienda" : $0 })
-                        .color(.lightBlueText)
-                        .marginLeft(7.px)
-                        .float(.left)
-                    
-                    Div().class(.clear)
-                    
+                VTitle(
+                    self.$storeName.map {
+                        if self.id != nil {
+                            return $0.isEmpty ? "Manejar \(self.storeType.description)" : "Manejar \(self.storeType.description) | \($0)"
+                        } else {
+                            return $0.isEmpty ? "Crear \(self.storeType.description)" : "Crear \(self.storeType.description) | \($0)"
+                        }
+                    },
+                    icon: "icon_store.png"
+                ) {
+                    USmallTitle("Configuración de tienda")
+                } onClose: {
+                    self.remove()
                 }
-                .marginBottom(3.px)
-                
-                Div{
-                    /*  Info basica  y mapa  */
-                    Div{
 
-                        Div{
-                            Div{
+                VBodyGrid {
 
-                                H2("Información de la empresa")
-                                .color(.darkGoldenRod)
+                    VGrid(.full) {
 
-                                Div().clear(.both).height(3.px)
+                        Div {
 
-                                // Nombre de la tienda // mainStoreToggle
-                                Div{
-                                    
-                                    Div {
+                            Div().clear(.both).height(7.px)
 
-                                        Div("Nombre de la tienda")
-                                        .class(.oneLineText)
-                                        
-                                        Div().clear(.both).height(3.px)
-
-                                        self.storeNameField
-
-                                    }
-                                    .custom("width", "calc(100% - 70px)")
-                                    .float(.left)
-
-                                    Div{
-
-                                        Div("Matriz")
-                                        .class(.oneLineText)
-                                        
-                                        Div().clear(.both).height(3.px)
-
-                                        self.mainStoreToggle
-                                        .float(.none)
-                                    }
-                                    .width(70.px)
-                                    .align(.right)
-                                    .float(.left)
-                                    
-                                    Div().clear(.both)
-                                }
-                                .marginBottom(7.px)
-
-                                // telephone / mobile
-                                Div{
-
-                                    Div{
-
-                                        Div("Telefono")
-                                        .class(.oneLineText)
-                                        
-                                        Div().clear(.both).height(3.px)
-
-                                        self.telephoneField
-
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
-
-                                    Div{
-
-                                        Div("Movil")
-                                        .class(.oneLineText)
-                                        
-                                        Div().clear(.both).height(3.px)
-
-                                        self.mobileField
-                                        
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
-
-                                    Div().clear(.both)
-
-                                }
-                                .marginBottom(7.px)
-
-                                // correo / Supervisor
-                                Div{
-
-                                    Div{
-
-                                        Div("Correo Electronico")
-                                        .class(.oneLineText)
-                                        
-                                        Div().clear(.both).height(3.px)
-
-                                        self.emailField
-
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
-
-                                    Div{
-
-                                        Div("Supervisor")
-                                        .class(.oneLineText)
-                                        
-                                        Div().clear(.both).height(3.px)
-
-                                        self.supervisorField
-
-                                        self.supervisorSelect
-                                        
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
-
-                                    Div().clear(.both)
-
-                                }
-                                .marginBottom(7.px)
-
-                                H2("Direccion Fisica")
-                                .color(.darkGoldenRod)
-
-                                Div().clear(.both).height(3.px)
-
-                                // Calle y nuemro
-
-                                Div("Calle y numero")
-                                .class(.oneLineText)
-                                
-                                Div().clear(.both).height(3.px)
-
-                                self.streetField
-
-                                Div().clear(.both).height(7.px)
-
-                                // colonia  / cuidad
-                                Div{
-
-                                    Div{
-
-                                        Div("Colonia")
-                                        .class(.oneLineText)
-                                        
-                                        Div().clear(.both).height(3.px)
-
-                                        self.colonyField
-
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
-
-                                    Div{
-
-                                        Div("Cuidad")
-                                        .class(.oneLineText)
-                                        
-                                        Div().clear(.both).height(3.px)
-
-                                        self.cityField
-                                        
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
-
-                                    Div().clear(.both)
-
-                                }
-                                .marginBottom(7.px)
-
-                                // colonia  / cuidad
-                                Div{
-
-                                    Div{
-
-                                        Div("Estado")
-                                        .class(.oneLineText)
-                                        
-                                        Div().clear(.both).height(3.px)
-
-                                        self.stateField
-
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
-
-                                    Div{
-
-                                        Div("Codigo Postal")
-                                        .class(.oneLineText)
-                                        
-                                        Div().clear(.both).height(3.px)
-
-                                        self.zipField
-                                        
-                                    }
-                                    .width(50.percent)
-                                    .float(.left)
-
-                                    Div().clear(.both)
-
-                                }
-                                .marginBottom(7.px)
-
-                                // Pais
-
-                                Div("Pais")
-                                .class(.oneLineText)
-                                
-                                Div().clear(.both).height(3.px)
-
-                                self.countryField
-
-                                Div().clear(.both).height(7.px)
-
+                            // MARK: "Información de la empresa" button
+                            Div {
+                                Span("Información General")
+                                .fontSize(18.px)
+                                .marginTop(7.px)
                             }
-                            .margin(all: 3.px)
-                        }
-                        .width(25.percent)
-                        .float(.left)
-
-                        Div{
-
-                            Div{
-
-                                Div {
-                                    Div("🗺️ Cargar Map")
-                                    .class(.uibtn)
-                                    .float(.right)
-                                    .onClick {
-                                        self.searchMap()
-                                    }
-                                    H2("Mapa")
-                                }
-
-                                Div().clear(.both).height(3.px)
-
-                                Div{
-                                    
-                                    Table().noResult(label: #"🗺️ Agregue direccion y  "Cargue mapa" para ver el mapa y ajustar la ubicación"#)
-                                    .hidden( self.$location.map{ $0 != nil})
-
-                                    Div()
-                                    .id(.init("mapkitjs"))
-                                    .hidden( self.$location.map{ $0 == nil})
-                                    .height(100.percent)
-                                }
-                                .custom("height", "calc(100% - 32px)")
-
+                            .class(Class(TCWorkDashboardClass.toolbarPrimary))
+                            .class(self.$currentView.map { currentView in
+                                Class(currentView == .storeDetail
+                                    ? TCWorkDashboardClass.toolbarPrimaryActive
+                                    : TCWorkDashboardClass.toolbarPrimaryInactive)
+                            })
+                            .onClick {
+                                self.currentView = .storeDetail
                             }
-                            .custom("height", "calc(100% - 6px)")
-                            .margin(all: 3.px)
-                            
-                        }
-                        .width(75.percent)
-                        .height(500.px)
-                        .float(.left)
+                            .marginLeft(7.px)
+                            .width(190.px)
 
-                    }
+                            // MARK: "Activos Mobiliarios" button
+                            Div {
+                                Span("Activos Mobiliarios")
+                                .fontSize(18.px)
+                                .marginTop(7.px)
+                            }
+                            .class(Class(TCWorkDashboardClass.toolbarPrimary))
+                            .class(self.$currentView.map { currentView in
+                                Class(currentView == .commercialFurniture
+                                    ? TCWorkDashboardClass.toolbarPrimaryActive
+                                    : TCWorkDashboardClass.toolbarPrimaryInactive)
+                            })
+                            .onClick {
+                                self.currentView = .commercialFurniture
+                            }
+                            .marginLeft(7.px)
+                            .width(190.px)
+                            .hidden(self.$id.map{ $0 == nil })
+                            //.display(self.$id.map{ $0 == nil ? .none : .block })
 
-                    Div().clear(.both).height(3.px)
-
-                    Div{
-                        // Información adicional
-                        Div{
-
-                            H2("Información adicional")
-                            .color(.darkGoldenRod)
+                            // MARK: "Activos Comerciales" button
+                            Div {
+                                Span("Activos Comerciales")
+                                .fontSize(18.px)
+                                .marginTop(7.px)
+                            }
+                            .class(Class(TCWorkDashboardClass.toolbarPrimary))
+                            .class(self.$currentView.map { currentView in
+                                Class(currentView == .commercialAssets
+                                    ? TCWorkDashboardClass.toolbarPrimaryActive
+                                    : TCWorkDashboardClass.toolbarPrimaryInactive)
+                            })
+                            .onClick {
+                                self.currentView = .commercialAssets
+                            }
+                            .marginLeft(7.px)
+                            .width(190.px)
+                            .hidden(self.$id.map{ $0 == nil })
+                            //.display(self.$id.map{ $0 == nil ? .none : .block })
 
                             Div().clear(.both).height(3.px)
 
-                            // creado  / modificado
+                        }
+                        .class(Class(TCWorkDashboardClass.root))
+                        // .backgroundColor(.clear)
+                        .custom("background", "none")
+
+                        Div{
+                            /*  Info basica  y mapa  */
                             Div{
 
                                 Div{
+                                    Div{
 
-                                    Div("Fecha de creacion")
-                                    .class(.oneLineText)
-                                    
-                                    Div().clear(.both).height(3.px)
 
-                                    self.createdAtField
+                                        // Nombre de la tienda // mainStoreToggle
+                                        Div{
+                                            
+                                            Div {
 
+                                                Div({
+                                                    switch self.storeType {
+                                                    case .branch:
+                                                    return "Nombre de sucursal"
+                                                    case .main:
+                                                    return "Nombre de tineda principal"
+                                                    case .quiosk:
+                                                    return "Nombre de kiosco"
+                                                    case .warehouse:
+                                                    return "Nombre de bodega"
+                                                    }
+                                                    
+                                                }()) 
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.storeNameField
+
+                                            }
+                                            .custom("width", "calc(100% - 70px)")
+                                            .float(.left)
+
+                                            Div{
+
+                                                if self.storeType == .branch || self.storeType == .main {
+
+                                                    Div("Matriz")
+                                                    .class(.oneLineText)
+                                                    
+                                                    Div().clear(.both).height(3.px)
+
+                                                    self.mainStoreToggle
+                                                    .float(.none)
+
+                                                }
+
+                                            }
+                                            .width(70.px)
+                                            .align(.right)
+                                            .float(.left)
+                                            
+                                            Div().clear(.both)
+                                        }
+                                        .marginBottom(7.px)
+
+                                        // telephone / mobile
+                                        Div{
+
+                                            Div{
+
+                                                Div("Telefono")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.telephoneField
+
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div{
+
+                                                Div("Movil")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.mobileField
+                                                
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div().clear(.both)
+
+                                        }
+                                        .marginBottom(7.px)
+
+                                        // correo / Supervisor
+                                        Div{
+
+                                            Div{
+
+                                                Div("Correo Electronico")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.emailField
+
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div{
+
+                                                Div("Supervisor")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.supervisorField
+
+                                                self.supervisorSelect
+                                                
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div().clear(.both)
+
+                                        }
+                                        .marginBottom(7.px)
+
+                                        H2("Direccion Fisica")
+                                        .color(.darkGoldenRod)
+
+                                        Div().clear(.both).height(3.px)
+
+                                        // Calle y nuemro
+
+                                        Div("Calle y numero")
+                                        .class(.oneLineText)
+                                        
+                                        Div().clear(.both).height(3.px)
+
+                                        self.streetField
+
+                                        Div().clear(.both).height(7.px)
+
+                                        // colonia  / cuidad
+                                        Div{
+
+                                            Div{
+
+                                                Div("Colonia")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.colonyField
+
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div{
+
+                                                Div("Cuidad")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.cityField
+                                                
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div().clear(.both)
+
+                                        }
+                                        .marginBottom(7.px)
+
+                                        // colonia  / cuidad
+                                        Div{
+
+                                            Div{
+
+                                                Div("Estado")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.stateField
+
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div{
+
+                                                Div("Codigo Postal")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.zipField
+                                                
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div().clear(.both)
+
+                                        }
+                                        .marginBottom(7.px)
+
+                                        // Pais
+
+                                        Div("Pais")
+                                        .class(.oneLineText)
+                                        
+                                        Div().clear(.both).height(3.px)
+
+                                        self.countryField
+
+                                        Div().clear(.both).height(7.px)
+
+                                    }
+                                    .margin(all: 3.px)
                                 }
-                                .width(50.percent)
+                                .width(25.percent)
                                 .float(.left)
 
                                 Div{
 
-                                    Div("Ultima Modificacion")
-                                    .class(.oneLineText)
-                                    
-                                    Div().clear(.both).height(3.px)
+                                    Div{
 
-                                    self.modifiedAtField
+                                        Div {
+
+                                            Div("🗺️ Cargar Map")
+                                            .class(.uibtn)
+                                            .float(.right)
+                                            .onClick {
+                                                self.searchMap()
+                                            }
+
+                                            H2("Mapa")
+                                        }
+
+                                        Div().clear(.both).height(3.px)
+
+                                        Div{
+                                            
+                                            Table().noResult(label: #"🗺️ Agregue direccion y  "Cargue mapa" para ver el mapa y ajustar la ubicación"#)
+                                            .hidden( self.$location.map{ $0 != nil})
+
+                                            Div()
+                                            .id(.init("mapkitjs"))
+                                            .hidden( self.$location.map{ $0 == nil})
+                                            .height(100.percent)
+                                        }
+                                        .custom("height", "calc(100% - 32px)")
+                                        .class(.roundDarkBlue)
+                                        .overflow(.hidden)
+
+                                    }
+                                    .custom("height", "calc(100% - 6px)")
+                                    .margin(all: 3.px)
                                     
                                 }
-                                .width(50.percent)
+                                .width(75.percent)
+                                .height(500.px)
                                 .float(.left)
-
-                                Div().clear(.both)
 
                             }
-                            .marginBottom(7.px)
 
-                            // balance / puede facturar
-                            Div{
+                            Div().clear(.both).height(3.px)
+
+                            if self.storeType == .main || self.storeType == .branch {
 
                                 Div{
+                                    // Información adicional
+                                    Div{
 
-                                    Div("Balance")
-                                    .class(.oneLineText)
-                                    
+                                        H2("Información adicional")
+                                        .color(.darkGoldenRod)
+
+                                        Div().clear(.both).height(3.px)
+
+                                        // creado  / modificado
+                                        Div{
+
+                                            Div{
+
+                                                Div("Fecha de creacion")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.createdAtField
+
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div{
+
+                                                Div("Ultima Modificacion")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.modifiedAtField
+                                                
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div().clear(.both)
+
+                                        }
+                                        .marginBottom(7.px)
+
+                                        // balance / puede facturar
+                                        Div{
+
+                                            Div{
+
+                                                Div("Balance")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+                                                
+                                                self.balanceField
+
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div{
+
+                                                Div("Prefijo")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.storePrefixField
+                                                
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div().clear(.both)
+
+                                        }
+                                        .marginBottom(7.px)
+
+                                        Div{
+
+                                            Div("Tienda Publica")
+                                            .custom("width", "calc(100% - 75px)")
+                                            .marginRight(7.px)
+                                            .fontSize(26.px)
+                                            .float(.left)
+                                            
+                                            self.isPublicToggle
+                                            .marginRight(7.px)
+                                            .float(.right)
+
+                                            Div().clear(.both)
+                                        }
+                                        .marginBottom(7.px)
+
+                                        Div{
+
+                                            Div("Puede Facturar")
+                                            .custom("width", "calc(100% - 75px)")
+                                            .class(.oneLineText)
+                                            .marginRight(7.px)
+                                            .fontSize(26.px)
+                                            .float(.left)
+                                            
+                                            self.isFiscalableToggle
+                                            .marginRight(7.px)
+                                            .float(.right)
+
+                                            Div().clear(.both)
+                                            
+                                        }
+                                        .marginBottom(7.px)
+
+                                        Div{
+
+                                            Div("Inventario Bloqueado")
+                                            .custom("width", "calc(100% - 75px)")
+                                            .class(.oneLineText)
+                                            .marginRight(7.px)
+                                            .fontSize(26.px)
+                                            .float(.left)
+                                            
+                                            self.lockedInventoryToggle
+                                            .marginRight(7.px)
+                                            .float(.right)
+
+                                            Div().clear(.both)
+                                            
+                                        }
+                                        .marginBottom(7.px)
+
+                                        Div{
+
+                                            Div("Perfil fiscal por defecto")
+                                            .class(.oneLineText)
+                                            
+                                            Div().clear(.both).height(3.px)
+
+                                            self.fiscalProfileSelect
+
+                                        }
+                                        .marginBottom(7.px)
+
+                                        // status
+                                        Div{
+
+                                            Div{
+
+                                                Div("Status")
+                                                .class(.oneLineText)
+                                                .fontSize(26.px)
+                                                .float(.left)
+
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div{
+
+                                                self.statusSelect
+                                                
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div().clear(.both)
+
+                                        }
+                                        .marginBottom(7.px)
+
+                                    }
+                                    .width(25.percent)
+                                    .float(.left)
+
+                                    // Impresiones 
+                                    Div{
+
+                                        Div().height(30.px)
+                                        
+                                        // Tipo de  Operacion
+                                        Div{
+
+                                            Div{
+
+                                                Div("Tipo de Operacion")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.operationTypeSelect
+
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div{
+
+                                                Div("Tienda de Operaciones")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.oporationStoreSelect
+                                                .disabled(self.$operationTypeListener.map{ $0 == StoreOperationType.internal.rawValue})
+                                                
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div().clear(.both)
+
+                                        }
+                                        .marginBottom(7.px)
+
+                                        H2("Impresion de Ordenes")
+                                        .color(.darkGoldenRod)
+
+                                        Div().clear(.both).height(3.px)
+
+                                        Div{
+
+                                            Div{
+
+                                                Div("Boton de Impresion")
+                                                .class(.oneLineText)
+                                                .marginRight(7.px)
+                                                
+                                                self.orderButtonSelect
+
+                                            }
+                                            .width(50.percent)
+                                            .align(.left)
+                                            .float(.left)
+
+                                            Div{
+
+                                                Div("Opcion de Impresion")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.orderDocumentSelect
+                                                
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div().clear(.both)
+
+                                        }
+                                        .marginBottom(7.px)
+
+                                        Div{
+
+                                            Div{
+
+                                                Div("Salto de impresion")
+                                                .class(.oneLineText)
+                                                .marginRight(7.px)
+                                                
+                                                self.orderLineBreakField
+
+                                            }
+                                            .width(50.percent)
+                                            .align(.left)
+                                            .float(.left)
+
+                                            Div{
+
+                                                Div("Opcion de Impresion")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.orderImageSelect
+                                                
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div().clear(.both)
+
+                                        }
+                                        .marginBottom(7.px)
+
+                                        H2("Impresion de PDV")
+                                        .color(.darkGoldenRod)
+
+                                        Div().clear(.both).height(3.px)
+
+                                        Div{
+
+                                            Div{
+
+                                                Div("Boton de Impresion")
+                                                .class(.oneLineText)
+                                                .marginRight(7.px)
+                                                
+                                                self.posButtonSelect
+
+                                            }
+                                            .width(50.percent)
+                                            .align(.left)
+                                            .float(.left)
+
+                                            Div{
+
+                                                Div("Opcion de Impresion")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.posDocumentSelect
+                                                
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div().clear(.both)
+
+                                        }
+                                        .marginBottom(7.px)
+
+                                        Div{
+
+                                            Div{
+
+                                                Div("Salto de impresion")
+                                                .class(.oneLineText)
+                                                .marginRight(7.px)
+                                                
+                                                self.posLineBreakField
+                                                
+                                            }
+                                            .width(50.percent)
+                                            .align(.left)
+                                            .float(.left)
+
+                                            Div{
+
+                                                Div("Opcion de Impresion")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.posImageSelect
+                                                
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div().clear(.both)
+
+                                        }
+                                        .marginBottom(7.px)
+
+                                    }
+                                    .width(25.percent)
+                                    .float(.left)
+
+                                    /// mas config y bodegas 
+                                    Div{
+                                        Div{
+                                            H2("Modificadores de Precios")
+                                            .color(.darkGoldenRod)
+                                        }.class(.oneLineText)
+                                        
+                                        Div().clear(.both).height(3.px)
+
+                                        Div{
+
+                                            Div{
+
+                                                Div("Precio en Orden")
+                                                .class(.oneLineText)
+                                                .marginRight(7.px)
+                                                
+                                                self.priceModifierOrderField
+
+                                            }
+                                            .width(50.percent)
+                                            .align(.left)
+                                            .float(.left)
+
+                                            Div{
+
+                                                Div("Precio en Mostrador")
+                                                .class(.oneLineText)
+                                                
+                                                Div().clear(.both).height(3.px)
+
+                                                self.priceModifierPdvField
+                                                
+                                            }
+                                            .width(50.percent)
+                                            .float(.left)
+
+                                            Div().clear(.both)
+
+                                        }
+                                        .marginBottom(7.px)
+
+                                        H2("Bodegas")
+                                        .color(.darkGoldenRod)
+
+                                        Div().clear(.both).height(3.px)
+
+                                        Div{
+                                            Div{
+                                                Table().noResult(label: "🪑 No hay bodegas")
+                                                .hidden(self.$bodegasRefrence.map{ !$0.isEmpty })
+
+                                                ForEach(self.$bodegasRefrence) { item in
+                                                    Div(item.name)
+                                                    .custom("width", "calc(100% - 14px)")
+                                                    .class(.uibtnLargeOrange)
+                                                    .onClick {
+
+                                                    }
+                                                }
+                                                .hidden(self.$bodegasRefrence.map{ $0.isEmpty })
+
+                                            }
+                                            .custom("height", "calc(100% - 6px)")
+                                            .overflow(.auto)
+                                            .padding(all: 3.px)
+                                        }
+                                        .class(.roundDarkBlue)
+                                        .height(210.px)
+                                        .hidden(self.$id.map{ $0  == nil })
+
+                                        Div("+ Agregar Bodega")
+                                        .custom("width", "calc(100% - 14px)")
+                                        .class(.uibtnLargeOrange)
+                                        .align(.center)
+                                        .hidden(self.$id.map{ $0  == nil })
+
+                                        Div{
+
+                                            Div{
+
+                                                Div("Nombre del Equipo (Grupo)")
+                                                    .class(.oneLineText)
+
+                                                Div().clear(.both).height(3.px)
+
+                                                self.groopNameField
+
+                                            }
+                                            .marginBottom(7.px)
+
+                                            Div{
+
+                                                Div("Nombre de la Bodega")
+                                                    .class(.oneLineText)
+
+                                                Div().clear(.both).height(3.px)
+
+                                                self.bodegaField
+
+
+                                            }
+                                            .marginBottom(7.px)
+
+                                            Div{
+
+                                                Div("Descripción de la bodega")
+                                                    .class(.oneLineText)
+
+                                                Div().clear(.both).height(3.px)
+
+                                                self.bodegaDescrField
+
+                                            }
+                                            .marginBottom(7.px)
+
+                                            Div{
+
+                                                Div("Nombre de la sección")
+                                                    .class(.oneLineText)
+
+                                                Div().clear(.both).height(3.px)
+
+                                                self.seccionField
+
+                                            }
+                                            .marginBottom(7.px)
+                                        }
+                                        .hidden(self.$id.map{ $0 != nil })
+                                        
+                                    }
+                                    .width(25.percent)
+                                    .float(.left)
+
+                                    // Activos de la tienda
+                                    Div{
+                                        Div{
+
+                                            H2("Activos de la tienda")
+                                            .color(.darkGoldenRod)
+
+                                            Div().clear(.both).height(3.px)
+
+                                            Div{
+                                                Div{
+
+                                                    Table().noResult(label: "🪑 No hay activos")
+                                                    .hidden(self.$inventory.map{ !$0.isEmpty })
+
+                                                    ForEach(self.$inventory) { item in
+                                                        H2("hola")
+                                                    }
+                                                    .hidden(self.$inventory.map{ $0.isEmpty })
+
+                                                }
+                                                .custom("height", "calc(100% - 6px)")
+                                                .overflow(.auto)
+                                                .padding(all: 3.px)
+                                            }
+                                            .class(.roundDarkBlue)
+                                            .height(300.px)
+
+                                            Div("+ Agregar Activo")
+                                            .custom("width", "calc(100% - 14px)")
+                                            .class(.uibtnLargeOrange)
+                                            .align(.center)
+
+                                        }
+                                        .margin(all: 3.px)
+                                    }
+                                    .hidden(self.$id.map{ $0  == nil })
+                                    .width(25.percent)
+                                    .float(.left)
+
+                                }
+
+                                Div().clear(.both).height(3.px)
+
+                                Div {
+
+                                    H2("Horario")
+                                    .color(.darkGoldenRod)
+
                                     Div().clear(.both).height(3.px)
                                     
-                                    self.balanceField
+                                    Div{
 
+                                        self.sundayScheduleObjectView
+
+                                        Div().clear(.both).height(3.px)
+
+                                        self.mondayScheduleObjectView
+
+                                        Div().clear(.both).height(3.px)
+
+                                        self.tuesdayScheduleObjectView
+
+                                        Div().clear(.both).height(3.px)
+
+                                        self.wednesdayScheduleObjectView
+
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div{
+
+                                        self.thursdayScheduleObjectView
+
+                                        Div().clear(.both).height(3.px)
+
+                                        self.fridayScheduleObjectView
+
+                                        Div().clear(.both).height(3.px)
+
+                                        self.saturdayScheduleObjectView
+
+
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+                                        
                                 }
                                 .width(50.percent)
                                 .float(.left)
+                            }
+                            else {
 
-                                Div{
+                                Div {
+
+                                    H2("Control de Operaciones")
+                                    .color(.darkGoldenRod)
+                                    
+                                    // Tipo de  Operacion
+                                    Div{
+
+                                        Div {
+
+                                            Div("Tipo de Operacion")
+                                            .class(.oneLineText)
+                                            
+                                            Div().clear(.both).height(3.px)
+
+                                            self.operationTypeSelect
+
+                                        }
+                                        .width(50.percent)
+                                        .float(.left)
+
+                                        Div {
+
+                                            Div("Tienda de Operaciones")
+                                            .class(.oneLineText)
+                                            
+                                            Div().clear(.both).height(3.px)
+
+                                            self.oporationStoreSelect
+                                            .disabled(self.$operationTypeListener.map{ $0 == StoreOperationType.internal.rawValue})
+                                            
+                                        }
+                                        .width(50.percent)
+                                        .float(.left)
+
+                                        Div().clear(.both)
+
+                                    }
+                                    
+                                    Div().height(7.px)
+
+                                    H2("Configuraciónes")
+                                    .color(.darkGoldenRod)
+                                    
+                                    Div().clear(.both).height(3.px)
 
                                     Div("Prefijo")
                                     .class(.oneLineText)
@@ -967,550 +1637,254 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                                     Div().clear(.both).height(3.px)
 
                                     self.storePrefixField
-                                    
-                                }
-                                .width(50.percent)
-                                .float(.left)
 
-                                Div().clear(.both)
+                                    Div().height(7.px)
 
-                            }
-                            .marginBottom(7.px)
+                                    H2("Bodegas")
+                                    .color(.darkGoldenRod)
 
-                            Div{
-
-                                Div("Tienda Publica")
-                                .custom("width", "calc(100% - 75px)")
-                                .marginRight(7.px)
-                                .fontSize(26.px)
-                                .float(.left)
-                                
-                                self.isPublicToggle
-                                .marginRight(7.px)
-                                .float(.right)
-
-                                Div().clear(.both)
-                            }
-                            .marginBottom(7.px)
-
-                            Div{
-
-                                Div("Puede Facturar")
-                                .custom("width", "calc(100% - 75px)")
-                                .class(.oneLineText)
-                                .marginRight(7.px)
-                                .fontSize(26.px)
-                                .float(.left)
-                                
-                                self.isFiscalableToggle
-                                .marginRight(7.px)
-                                .float(.right)
-
-                                Div().clear(.both)
-                                
-                            }
-                            .marginBottom(7.px)
-
-                            Div{
-
-                                Div("Inventario Bloqueado")
-                                .custom("width", "calc(100% - 75px)")
-                                .class(.oneLineText)
-                                .marginRight(7.px)
-                                .fontSize(26.px)
-                                .float(.left)
-                                
-                                self.lockedInventoryToggle
-                                .marginRight(7.px)
-                                .float(.right)
-
-                                Div().clear(.both)
-                                
-                            }
-                            .marginBottom(7.px)
-
-                            Div{
-
-                                Div("Perfil fiscal por defecto")
-                                .class(.oneLineText)
-                                
-                                Div().clear(.both).height(3.px)
-
-                                self.fiscalProfileSelect
-
-                            }
-                            .marginBottom(7.px)
-
-                            // status
-                            Div{
-
-                                Div{
-
-                                    Div("Status")
-                                    .class(.oneLineText)
-                                    .fontSize(26.px)
-                                    .float(.left)
-
-                                }
-                                .width(50.percent)
-                                .float(.left)
-
-                                Div{
-
-                                    self.statusSelect
-                                    
-                                }
-                                .width(50.percent)
-                                .float(.left)
-
-                                Div().clear(.both)
-
-                            }
-                            .marginBottom(7.px)
-
-                        }
-                        .width(25.percent)
-                        .float(.left)
-
-                        // Impresiones 
-                        Div{
-
-                            Div().height(30.px)
-                            
-                            // Tipo de  Operacion
-                            Div{
-
-                                Div{
-
-                                    Div("Tipo de Operacion")
-                                    .class(.oneLineText)
-                                    
                                     Div().clear(.both).height(3.px)
 
-                                    self.operationTypeSelect
+                                    Div{
+                                        Div{
+                                            Table().noResult(label: "🪑 No hay bodegas")
+                                            .hidden(self.$bodegasRefrence.map{ !$0.isEmpty })
 
-                                }
-                                .width(50.percent)
-                                .float(.left)
+                                            ForEach(self.$bodegasRefrence) { item in
+                                                Div(item.name)
+                                                .custom("width", "calc(100% - 14px)")
+                                                .class(.uibtnLargeOrange)
+                                                .onClick {
 
-                                Div{
-
-                                    Div("Tienda de Operaciones")
-                                    .class(.oneLineText)
-                                    
-                                    Div().clear(.both).height(3.px)
-
-                                    self.oporationStoreSelect
-                                    
-                                }
-                                .width(50.percent)
-                                .float(.left)
-
-                                Div().clear(.both)
-
-                            }
-                            .marginBottom(7.px)
-
-                            H2("Impresion de Ordenes")
-                            .color(.darkGoldenRod)
-
-                            Div().clear(.both).height(3.px)
-
-                            Div{
-
-                                Div{
-
-                                    Div("Boton de Impresion")
-                                    .class(.oneLineText)
-                                    .marginRight(7.px)
-                                    
-                                    self.orderButtonSelect
-
-                                }
-                                .width(50.percent)
-                                .align(.left)
-                                .float(.left)
-
-                                Div{
-
-                                    Div("Opcion de Impresion")
-                                    .class(.oneLineText)
-                                    
-                                    Div().clear(.both).height(3.px)
-
-                                    self.orderDocumentSelect
-                                    
-                                }
-                                .width(50.percent)
-                                .float(.left)
-
-                                Div().clear(.both)
-
-                            }
-                            .marginBottom(7.px)
-
-                            Div{
-
-                                Div{
-
-                                    Div("Salto de impresion")
-                                    .class(.oneLineText)
-                                    .marginRight(7.px)
-                                    
-                                    self.orderLineBreakField
-
-                                }
-                                .width(50.percent)
-                                .align(.left)
-                                .float(.left)
-
-                                Div{
-
-                                    Div("Opcion de Impresion")
-                                    .class(.oneLineText)
-                                    
-                                    Div().clear(.both).height(3.px)
-
-                                    self.orderImageSelect
-                                    
-                                }
-                                .width(50.percent)
-                                .float(.left)
-
-                                Div().clear(.both)
-
-                            }
-                            .marginBottom(7.px)
-
-                            H2("Impresion de PDV")
-                            .color(.darkGoldenRod)
-
-                            Div().clear(.both).height(3.px)
-
-                            Div{
-
-                                Div{
-
-                                    Div("Boton de Impresion")
-                                    .class(.oneLineText)
-                                    .marginRight(7.px)
-                                    
-                                    self.posButtonSelect
-
-                                }
-                                .width(50.percent)
-                                .align(.left)
-                                .float(.left)
-
-                                Div{
-
-                                    Div("Opcion de Impresion")
-                                    .class(.oneLineText)
-                                    
-                                    Div().clear(.both).height(3.px)
-
-                                    self.posDocumentSelect
-                                    
-                                }
-                                .width(50.percent)
-                                .float(.left)
-
-                                Div().clear(.both)
-
-                            }
-                            .marginBottom(7.px)
-
-                            Div{
-
-                                Div{
-
-                                    Div("Salto de impresion")
-                                    .class(.oneLineText)
-                                    .marginRight(7.px)
-                                    
-                                    self.posLineBreakField
-                                    
-                                }
-                                .width(50.percent)
-                                .align(.left)
-                                .float(.left)
-
-                                Div{
-
-                                    Div("Opcion de Impresion")
-                                    .class(.oneLineText)
-                                    
-                                    Div().clear(.both).height(3.px)
-
-                                    self.posImageSelect
-                                    
-                                }
-                                .width(50.percent)
-                                .float(.left)
-
-                                Div().clear(.both)
-
-                            }
-                            .marginBottom(7.px)
-
-                        }
-                        .width(25.percent)
-                        .float(.left)
-                        /// mas config y bodegas 
-                        Div{
-                            Div{
-                                H2("Modificadores de Precios")
-                                .color(.darkGoldenRod)
-                            }.class(.oneLineText)
-                            
-                            Div().clear(.both).height(3.px)
-
-                            Div{
-
-                                Div{
-
-                                    Div("Precio en Orden")
-                                    .class(.oneLineText)
-                                    .marginRight(7.px)
-                                    
-                                    self.priceModifierOrderField
-
-                                }
-                                .width(50.percent)
-                                .align(.left)
-                                .float(.left)
-
-                                Div{
-
-                                    Div("Precio en Mostrador")
-                                    .class(.oneLineText)
-                                    
-                                    Div().clear(.both).height(3.px)
-
-                                    self.priceModifierPdvField
-                                    
-                                }
-                                .width(50.percent)
-                                .float(.left)
-
-                                Div().clear(.both)
-
-                            }
-                            .marginBottom(7.px)
-
-                            H2("Bodegas")
-                            .color(.darkGoldenRod)
-
-                            Div().clear(.both).height(3.px)
-
-                            Div{
-                                Div{
-                                    Table().noResult(label: "🪑 No hay bodegas")
-                                    .hidden(self.$bodegasRefrence.map{ !$0.isEmpty })
-
-                                    ForEach(self.$bodegasRefrence) { item in
-                                        Div(item.name)
-                                        .custom("width", "calc(100% - 14px)")
-                                        .class(.uibtnLargeOrange)
-                                        .onClick {
+                                                }
+                                            }
+                                            .hidden(self.$bodegasRefrence.map{ $0.isEmpty })
 
                                         }
+                                        .custom("height", "calc(100% - 6px)")
+                                        .overflow(.auto)
+                                        .padding(all: 3.px)
                                     }
-                                    .hidden(self.$bodegasRefrence.map{ $0.isEmpty })
+                                    .class(.roundDarkBlue)
+                                    .height(210.px)
+                                    .hidden(self.$id.map{ $0  == nil })
+
+                                    Div("+ Agregar Bodega")
+                                    .custom("width", "calc(100% - 14px)")
+                                    .class(.uibtnLargeOrange)
+                                    .align(.center)
+                                    .hidden(self.$id.map{ $0  == nil })
+
+                                    Div{
+
+                                        Div{
+
+                                            Div("Nombre del Equipo (Grupo)")
+                                                .class(.oneLineText)
+
+                                            Div().clear(.both).height(3.px)
+
+                                            self.groopNameField
+
+                                        }
+                                        .marginBottom(7.px)
+
+                                        Div{
+
+                                            Div("Nombre de la Bodega")
+                                                .class(.oneLineText)
+
+                                            Div().clear(.both).height(3.px)
+
+                                            self.bodegaField
+
+
+                                        }
+                                        .marginBottom(7.px)
+
+                                        Div{
+
+                                            Div("Descripción de la bodega")
+                                                .class(.oneLineText)
+
+                                            Div().clear(.both).height(3.px)
+
+                                            self.bodegaDescrField
+
+                                        }
+                                        .marginBottom(7.px)
+
+                                        Div{
+
+                                            Div("Nombre de la seccion")
+                                                .class(.oneLineText)
+
+                                            Div().clear(.both).height(3.px)
+
+                                            self.seccionField
+
+                                        }
+                                        .marginBottom(7.px)
+                                    }
+                                    .hidden(self.$id.map{ $0 != nil })
+                                    
 
                                 }
-                                .custom("height", "calc(100% - 6px)")
-                                .overflow(.auto)
-                                .padding(all: 3.px)
-                            }
-                            .class(.roundDarkBlue)
-                            .height(210.px)
-                            .hidden(self.$id.map{ $0  == nil })
+                                .width(25.percent)
+                                .float(.left)
 
-                            Div("+ Agregar Bodega")
-                            .custom("width", "calc(100% - 14px)")
-                            .class(.uibtnLargeOrange)
-                            .align(.center)
-                            .hidden(self.$id.map{ $0  == nil })
 
-                            Div{
+                                Div {
 
-                                Div{
-
-                                    Div("Nombre del Equipo (Grupo)")
-                                        .class(.oneLineText)
+                                    H2("Horario")
+                                    .color(.darkGoldenRod)
 
                                     Div().clear(.both).height(3.px)
+                                    
+                                    Div{
 
-                                    self.groopNameField
+                                        self.sundayScheduleObjectView
 
+                                        Div().clear(.both).height(3.px)
+
+                                        self.mondayScheduleObjectView
+
+                                        Div().clear(.both).height(3.px)
+
+                                        self.tuesdayScheduleObjectView
+
+                                        Div().clear(.both).height(3.px)
+
+                                        self.wednesdayScheduleObjectView
+
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+
+                                    Div{
+
+                                        self.thursdayScheduleObjectView
+
+                                        Div().clear(.both).height(3.px)
+
+                                        self.fridayScheduleObjectView
+
+                                        Div().clear(.both).height(3.px)
+
+                                        self.saturdayScheduleObjectView
+
+
+                                    }
+                                    .width(50.percent)
+                                    .float(.left)
+                                        
                                 }
-                                .marginBottom(7.px)
+                                .width(50.percent)
+                                .float(.left)
 
-                                Div{
-
-                                    Div("Nombre de la Bodega")
-                                        .class(.oneLineText)
-
-                                    Div().clear(.both).height(3.px)
-
-                                    self.bodegaField
-
-
-                                }
-                                .marginBottom(7.px)
-
-                                Div{
-
-                                    Div("Descripción de la bodega")
-                                        .class(.oneLineText)
-
-                                    Div().clear(.both).height(3.px)
-
-                                    self.bodegaDescrField
-
-                                }
-                                .marginBottom(7.px)
-
-                                Div{
-
-                                    Div("Nombre de la seccion")
-                                        .class(.oneLineText)
-
-                                    Div().clear(.both).height(3.px)
-
-                                    self.seccionField
-
-                                }
-                                .marginBottom(7.px)
-                            }
-                            .hidden(self.$id.map{ $0 != nil })
-
-
-                        }
-                        .width(25.percent)
-                        .float(.left)
-
-                        // Activos de la tienda
-                        Div{
-                            Div{
-
-                                H2("Activos de la tienda")
-                                .color(.darkGoldenRod)
-
-                                Div().clear(.both).height(3.px)
-
+                                // Activos de la tienda
                                 Div{
                                     Div{
 
-                                        Table().noResult(label: "🪑 No hay activos")
-                                        .hidden(self.$inventory.map{ !$0.isEmpty })
+                                        H2("Activos de la tienda")
+                                        .color(.darkGoldenRod)
 
-                                        ForEach(self.$inventory) { item in
-                                            H2("hola")
+                                        Div().clear(.both).height(3.px)
+
+                                        Div{
+                                            Div{
+
+                                                Table().noResult(label: "🪑 No hay activos")
+                                                .hidden(self.$inventory.map{ !$0.isEmpty })
+
+                                                ForEach(self.$inventory) { item in
+                                                    H2("hola")
+                                                }
+                                                .hidden(self.$inventory.map{ $0.isEmpty })
+
+                                            }
+                                            .custom("height", "calc(100% - 6px)")
+                                            .overflow(.auto)
+                                            .padding(all: 3.px)
                                         }
-                                        .hidden(self.$inventory.map{ $0.isEmpty })
+                                        .class(.roundDarkBlue)
+                                        .height(300.px)
+
+                                        Div("+ Agregar Activo")
+                                        .custom("width", "calc(100% - 14px)")
+                                        .class(.uibtnLargeOrange)
+                                        .align(.center)
 
                                     }
-                                    .custom("height", "calc(100% - 6px)")
-                                    .overflow(.auto)
-                                    .padding(all: 3.px)
+                                    .margin(all: 3.px)
                                 }
-                                .class(.roundDarkBlue)
-                                .height(300.px)
-
-                                Div("+ Agregar Activo")
-                                .custom("width", "calc(100% - 14px)")
-                                .class(.uibtnLargeOrange)
-                                .align(.center)
-
+                                .hidden(self.$id.map{ $0  == nil })
+                                .width(25.percent)
+                                .float(.left)
                             }
-                            .margin(all: 3.px)
+
+
                         }
-                        .hidden(self.$id.map{ $0  == nil })
-                        .width(25.percent)
-                        .float(.left)
-
-                    }
-
-                    Div().clear(.both).height(3.px)
-
-                    Div {
-
-                        H2("Horario")
-                        .color(.darkGoldenRod)
-
-                        Div().clear(.both).height(3.px)
+                        .display(self.$currentView.map{  ($0 == .storeDetail) ? .init("flow-root"): .none })
+                        .class(.roundDarkBlue)
                         
                         Div{
-
-                            self.sundayScheduleObjectView
-
-                            Div().clear(.both).height(3.px)
-
-                            self.mondayScheduleObjectView
-
-                            Div().clear(.both).height(3.px)
-
-                            self.tuesdayScheduleObjectView
-
-                            Div().clear(.both).height(3.px)
-
-                            self.wednesdayScheduleObjectView
-
+                            Div(self.$id.map{ $0 != nil ? "Guardar Cambios" : "Crear Tienda" })
+                            .class(.uibtnLargeOrange)
+                            .onClick {
+                                self.saveStore()
+                            }
                         }
-                        .width(50.percent)
-                        .float(.left)
+                        .align(.right)
+                        .display(self.$currentView.map{  ($0 == .storeDetail) ? .block : .none })
 
-                        Div{
-
-                            self.thursdayScheduleObjectView
-
-                            Div().clear(.both).height(3.px)
-
-                            self.fridayScheduleObjectView
-
-                            Div().clear(.both).height(3.px)
-
-                            self.saturdayScheduleObjectView
-
-
+                        // Commercial Furniture DIV
+                        Div {
+                            Table().noResult(label: "🤪  muy pronto ")
                         }
-                        .width(50.percent)
-                        .float(.left)
-                            
-                    }
-                    .width(50.percent)
-                    .float(.left)
+                        .display(self.$currentView.map { currentView in
+                            currentView == .commercialFurniture ? .flex : .none
+                        })
+                        .class(.roundDarkBlue)
+                        .custom("min-height", "calc(100vh - 170px)")
+                        .custom("justify-content", "center")
+                        .custom("box-sizing", "border-box")
+                        .custom("flex-direction", "column")
+                        .custom("align-items", "stretch")
+                        .custom("grid-column", "1 / -1")
+                        .custom("height", "100%")
+                        .custom("width", "100%")
+                        .overflow(.auto)
 
-                }
-                .custom("height", "calc(100% - 82px)")
-                .overflow(.auto)
-                
-                Div{
-                    Div(self.$id.map{ $0 != nil ? "Guardar Cambios" : "Crear Tienda" })
-                    .class(.uibtnLargeOrange)
-                    .onClick {
-                        self.saveStore()
+                        // Commercial Assets DIV
+                        Div {
+                            Table().noResult(label: "🤪  ando en eso")
+                        }
+                        .display(self.$currentView.map { currentView in
+                            currentView == .commercialAssets ? .flex : .none
+                        })
+                        .class(.roundDarkBlue)
+                        .custom("min-height", "calc(100vh - 170px)")
+                        .custom("justify-content", "center")
+                        .custom("box-sizing", "border-box")
+                        .custom("flex-direction", "column")
+                        .custom("align-items", "stretch")
+                        .custom("grid-column", "1 / -1")
+                        .custom("height", "100%")
+                        .custom("width", "100%")
+                        .overflow(.auto)
+
                     }
                 }
-                .align(.right)
-
             }
-            .backgroundColor(.backGroundGraySlate)
-            .borderRadius(all: 24.px)
-            .position(.absolute)
-            .height(90.percent)
-            .width(90.percent)
-            .padding(all: 7.px)
-            .color(.white)
-            .custom("left", "calc(5% - 14px)")
-            .custom("top", "calc(5% - 14px)")
-            
         }
         
         override func buildUI() {
             super.buildUI()
+
+            TCWorkDashboardTheme.install()
+            TCCrystalSurfaceTheme.apply(to: self, variant: .customerData)
+            TCCrystalSurfaceTheme.applyModalHost(to: self)
 
             position(.absolute)
             height(100.percent)
@@ -1646,6 +2020,12 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
                 self.supervisor =  selectedUser
 
+            }
+
+            $operationTypeListener.listen {
+                if $0 == StoreOperationType.internal.rawValue {
+                    self.oporationStoreListener = ""
+                }
             }
 
         }
@@ -1817,66 +2197,108 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                 return
             }
 
-            guard let button = CustStorePrintButtonType(rawValue: orderButtonListener) else {
-                showError(.requiredField, "Tipo de boton (orden)")
-                return
-            }
+            //// START
+            
+            /// direct, multiple
+            var button: CustStorePrintButtonType = .direct
+            
+            /// letter, halfLetter, miniprinter, pdf
+            var document: CustStorePrintButtonOptions = .letter
 
-            guard let document = CustStorePrintButtonOptions(rawValue: orderDocumentListener) else {
-                showError(.requiredField, "Tipo de impresion (orden)")
-                return
-            }
+            /// none, pinpattern, location
+            var image: CustStorePrintDocumentImage = .none
+            
+            var lineBreak: Int = 0 
 
-            guard let image = CustStorePrintDocumentImage(rawValue: orderImageListener) else {
-                showError(.requiredField, "Image de impresion (orden)")
-                return
-            }
+            /// direct, multiple
+            var buttonPdv: CustStorePrintButtonType = .direct
 
-            guard let lineBreak = Int(orderLineBreak) else {
-                showError(.requiredField, "Salto de impresion (orden)")
-                return
-            }
+            /// letter, halfLetter, miniprinter, pdf
+            var documentPdv: CustStorePrintButtonOptions = .letter
 
-            guard let buttonPdv = CustStorePrintButtonType(rawValue: posButtonListener) else {
-                showError(.requiredField, "")
-                return
-            }
+            /// none, pinpattern, location
+            var imagePdv: CustStorePrintDocumentImage = .none
+            
+            var lineBreakPdv: Int = 0
 
-            guard let documentPdv = CustStorePrintButtonOptions(rawValue: posDocumentListener) else {
-                showError(.requiredField, "")
-                return
-            }
+            var priceModifierPdv: Double = 0.0
 
-            guard let imagePdv = CustStorePrintDocumentImage(rawValue: posImageListener) else {
-                showError(.requiredField, "")
-                return
-            }
+            var priceModifierOrder: Double = 0.0
+            
+            if storeType == .main || storeType == .branch {
 
-            guard let lineBreakPdv = Int(posLineBreak) else {
-                showError(.requiredField, "")
-                return
-            }
+                guard let orderButton = CustStorePrintButtonType(rawValue: orderButtonListener) else {
+                    showError(.requiredField, "Tipo de boton (orden)")
+                    return
+                }
+                button = orderButton
 
-            guard let priceModifierPdv = Double(priceModifierPdv) else {
-                showError(.requiredField, "")
-                return
-            }
+                guard let orderDocument = CustStorePrintButtonOptions(rawValue: orderDocumentListener) else {
+                    showError(.requiredField, "Tipo de impresion (orden)")
+                    return
+                }
+                document = orderDocument
 
-            guard let priceModifierOrder = Double(priceModifierOrder) else {
-                showError(.requiredField, "")
-                return
-            }
+                guard let orderImage = CustStorePrintDocumentImage(rawValue: orderImageListener) else {
+                    showError(.requiredField, "Image de impresion (orden)")
+                    return
+                }
+                image = orderImage
 
+                guard let orderLineBreakValue = Int(orderLineBreak) else {
+                    showError(.requiredField, "Salto de impresion (orden)")
+                    return
+                }
+                lineBreak = orderLineBreakValue
+
+                guard let posButton = CustStorePrintButtonType(rawValue: posButtonListener) else {
+                    showError(.requiredField, "")
+                    return
+                }
+                buttonPdv = posButton
+
+                guard let posDocument = CustStorePrintButtonOptions(rawValue: posDocumentListener) else {
+                    showError(.requiredField, "")
+                    return
+                }
+                documentPdv = posDocument
+
+                guard let posImage = CustStorePrintDocumentImage(rawValue: posImageListener) else {
+                    showError(.requiredField, "")
+                    return
+                }
+                imagePdv = posImage
+
+                guard let posLineBreakValue = Int(posLineBreak) else {
+                    showError(.requiredField, "")
+                    return
+                }
+                lineBreakPdv = posLineBreakValue
+
+                guard let priceModifierPdvValue = Double(self.priceModifierPdv) else {
+                    showError(.requiredField, "")
+                    return
+                }
+                priceModifierPdv = priceModifierPdvValue
+
+                guard let priceModifierOrderValue = Double(self.priceModifierOrder) else {
+                    showError(.requiredField, "")
+                    return
+                }
+                priceModifierOrder = priceModifierOrderValue
+             
+            }
+            
             guard let operationType = StoreOperationType(rawValue: operationTypeListener) else {
-                showError(.requiredField, "")
+                showError(.requiredField, "Selecicone tipo de operaciones")
                 return
             }
-
+            
             let operationStore = UUID(uuidString: oporationStoreListener)
             
             if operationType == .external {
                 if operationStore == nil {
-                    showError(.requiredField, "")
+                    showError(.requiredField, "Para operaciones externas, selecicone tienda operativa")
                     return
                 }
             }
@@ -2217,6 +2639,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
                     )
 
                 }
+
             }
         }
 
@@ -2265,9 +2688,51 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
             $bodegasRefrence.removeAllListeners()
         }
     }
+
 }
 
 extension ToolsView.SystemSettings.UserStoreConfiguration.StoreDetailView {
+
+    enum ViewType {
+
+        enum CodingKeys: String, CodingKey {
+            case open
+            case create
+        }
+
+
+        case open(CustStore)
+
+        case create(CustStoreType)
+
+        var store: CustStore? {
+            switch self {
+            case .open(let store):
+            return store
+            case .create:
+            return nil
+            }
+        }
+
+        var type: CustStoreType {
+            switch self {
+            case .open(let store):
+            return store.storeType
+            case .create(let storeType):
+            return storeType
+            }
+        }
+
+        public static func == (lhs: Self, rhs: CodingKeys) -> Bool {
+            switch lhs {
+            case .open:
+            return rhs == .open
+            case .create:
+            return rhs == .create
+            }
+        }
+
+    }
 
     struct CallbackUpdate {
 
@@ -2279,9 +2744,19 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.StoreDetailView {
 
     enum Callbacktype {
 
-        case  create(CustStore)
+        case create(CustStore)
 
         case update(CallbackUpdate)
+
+    }
+
+    enum CurrentView {
+
+        case storeDetail
+
+        case commercialFurniture
+
+        case commercialAssets
 
     }
 

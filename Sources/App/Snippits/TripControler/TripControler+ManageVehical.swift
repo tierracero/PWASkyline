@@ -17,7 +17,7 @@ class TripControlerManageVehical: Div {
     ) -> Void
 
     let viewId: UUID = .init()
-    let ws = WS()
+    let ws: WS = WS()
 
     init(
         callback: @escaping (
@@ -99,13 +99,16 @@ class TripControlerManageVehical: Div {
     @State var uploadPercent: String? = nil
 
     lazy var autotransporteField = FiscAutotrasportTypeField(style: .dark, type: .product) { code in
+
+        print("🟢  autotransporteField")
+
         self.autotransporteCode = code.c
+
         self.autotransporteName = code.v
+
         self.requierTrailer = code.t ?? false
 
-        if self.vehicalType.isEmpty {
-            self.vehicalType = code.c
-        }
+        self.vehicalType = code.c
 
     }
 
@@ -158,7 +161,7 @@ class TripControlerManageVehical: Div {
         .placeholder("Peso Bruto Vehicular")
         .onFocus { $0.select() }
 
-    lazy var requierTrailerToggle = InputCheckbox().toggle(self.$requierTrailer)
+    lazy var requierTrailerToggle = InputCheckbox().toggle(self.$requierTrailer, true)
     .float(.right)
 
     lazy var fileLoader: InputFile = InputFile()
@@ -252,7 +255,7 @@ class TripControlerManageVehical: Div {
                     Div{
 
                         Div {
-                            Label("Autotransporte").color(.gray)
+                            Label("Tipo de Autotransporte").color(.gray)
                             Div().class(.clear).height(3.px)
                             self.autotransporteField
                         }

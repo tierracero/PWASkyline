@@ -10,6 +10,7 @@ extension CustOrderComponents {
 
     /// Requests a warranty card using the FireSignal route's legacy name.
     static func requestWarrantyCard(
+        type: CustShortLinkManagerType,
         id: RequstWarrantyCardType,
         callback: @escaping ((_ resp: APIResponseGeneric<RequestWarrantyCardResponse>?) -> ())
     ) {
@@ -17,7 +18,7 @@ extension CustOrderComponents {
             rout,
             version,
             "requestWarrantyCard",
-            RequestWarrantyCardRequest(id: id)
+            RequestWarrantyCardRequest(type: type, id: id)
         ) { data in
             guard let data else {
                 callback(nil)

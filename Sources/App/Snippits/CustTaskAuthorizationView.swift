@@ -49,7 +49,9 @@ class CustTaskAuthorizationView: Div {
     
     @DOM override var body: DOM.Content {
         VPopUp(.custome(w: 900, h: 760)) {
+            
             VTitle("Tareas y notificaciones", icon: "icon_alert.png") {
+
                 USmallTitle("\(self.alerts.count) pendientes")
                     .class(Class(TCCustTaskAuthorizationClass.countBadge))
 

@@ -5,6 +5,7 @@
 import Foundation
 import Web
 
+/// compact, semiFull, full, fitContent, custome
 public enum VPopUpSize {
     case compact
     case semiFull
@@ -15,9 +16,12 @@ public enum VPopUpSize {
 
 /// Scoped popup overlay and panel used by the TripController beta UI.
 public final class VPopUp: Div {
+    
     public override class var name: String { "div" }
 
+    /// compact, semiFull, full, fitContent, custome
     public let size: VPopUpSize
+    
     private let panel = Div()
 
     public init(

@@ -53,20 +53,20 @@ public final class VTitle: Div {
 
             titleContentView.appendChild(
                 Img()
-                    .src(source)
+                    .attribute("aria-hidden", "true")
+                    .custom("flex", "0 0 auto")
                     .class(.iconBlue)
                     .height(24.px)
-                    .custom("flex", "0 0 auto")
-                    .attribute("aria-hidden", "true")
+                    .src(source)
             )
         }
 
         titleContentView.appendChild(titleView)
         titleContentView
-            .display(.flex)
             .custom("align-items", "center")
-            .custom("gap", "8px")
             .custom("min-width", "0")
+            .custom("gap", "8px")
+            .display(.flex)
 
         titleView.class(Class(TCTripBetaClass.titleText))
         actionsView.class(Class(TCTripBetaClass.titleActions))

@@ -2064,7 +2064,6 @@ function hCaptchaTokenFailed(object){
     document.dispatchEvent(event);
 }
 
-
 function initmap( url, lat, lon, storeName){
     
     marker = null
@@ -2110,9 +2109,7 @@ function initmap( url, lat, lon, storeName){
     map.addAnnotation(marker);
 }
 
-
 //// load map with location
-
 
 function initiateSingleMapCord(mapId, token, lat, lon, updateCoordinate) {
     

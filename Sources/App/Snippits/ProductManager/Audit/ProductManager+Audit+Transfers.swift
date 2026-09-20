@@ -64,12 +64,18 @@ extension ProductManagerView.AuditView {
             .height(34.px)
         
         @State var startAtLabel = ""
+
+        private let resultElementId = "transferResultDiv_\(callKey(7))"
         
         lazy var resultDiv = Div{
             Table().noResult(label: "📈 Seleccione una tienda para iniciar")
         }
+        .id(.init(resultElementId))
+        .class(Class(TCCrystalSurfaceClass.auditResults))
         .custom("height", "calc(100% - 85px)")
         .overflow(.auto)
+
+        lazy var reportActions = ReportActions(resultElementId: resultElementId)
 
         private var transferRenderId = UUID()
         
@@ -154,10 +160,11 @@ extension ProductManagerView.AuditView {
                     .onClick {
                         self.createReport()
                     }
-                
+
                 Div().clear(.both)
                 
             }
+            .class(Class(TCCrystalSurfaceClass.auditToolbar))
             .borderRadius(7.px)
             .backgroundColor(.grayBlack)
             .height(85.px)
@@ -376,6 +383,7 @@ extension ProductManagerView.AuditView {
             
             let renderId = UUID()
             transferRenderId = renderId
+            reportActions.reset()
 
             loadingView.show()
             
@@ -410,7 +418,7 @@ extension ProductManagerView.AuditView {
                         showError(.unexpectedResult, .unexpenctedMissingPayload)
                         return
                     }
-                 
+
                     // MARK: Refrences
                     
                     let userRefrence: [UUID:CustUsername] = Dictionary.init(uniqueKeysWithValues: users.map{ ($0.id, $0) })
@@ -726,40 +734,43 @@ extension ProductManagerView.AuditView {
                         ]
                     )
                     
-                    outgoingBody.appendChild(Tr{
-                        Td(" ")
-                        Td(" ")
-                        Td(" ")
-                        Td(" ")
-                        Td(" ")
-                        Td("Sub Total")
-                        Td("")
-                        Td((costTax.subTotal / 10000).formatMoney)
-                            .color(.gray)
-                    }.class(.hoverFocusBlack))
-                    
-                    outgoingBody.appendChild(Tr{
-                        Td(" ")
-                        Td(" ")
-                        Td(" ")
-                        Td(" ")
-                        Td(" ")
-                        Td("IVA")
-                        Td("")
-                        Td((costTax.trasladado / 10000).formatMoney)
-                            .color(.gray)
-                    }.class(.hoverFocusBlack))
-                    
-                    outgoingBody.appendChild(Tr{
-                        Td(" ")
-                        Td(" ")
-                        Td(" ")
-                        Td(" ")
-                        Td(" ")
-                        Td("Total")
-                        Td(totalOutgoingUnits.toString)
-                        Td(totalOutgoingCost.formatMoney)
-                    }.class(.hoverFocusBlack))
+                    outgoingTable.appendChild(TFoot {
+                        Tr{
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
+                            Td("Sub Total")
+                            Td("")
+                            Td((costTax.subTotal / 10000).formatMoney)
+                                .color(.gray)
+                            Td("")
+                        }
+                        Tr{
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
+                            Td("IVA")
+                            Td("")
+                            Td((costTax.trasladado / 10000).formatMoney)
+                                .color(.gray)
+                            Td("")
+                        }
+                        Tr{
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
+                            Td("Total")
+                            Td(totalOutgoingUnits.toString)
+                            Td(totalOutgoingCost.formatMoney)
+                            Td("")
+                        }
+                    })
                     
                     
                     costTax = calcSubTotal(
@@ -777,41 +788,43 @@ extension ProductManagerView.AuditView {
                         ]
                     )
                     
-                    incommingBody.appendChild(Tr{
-                        Td(" ")
-                        Td(" ")
-                        Td(" ")
-                        Td(" ")
-                        Td(" ")
-                        Td("Sub Total")
-                        Td("")
-                        Td((costTax.subTotal / 10000).formatMoney)
-                            .color(.gray)
-                    }.class(.hoverFocusBlack))
-                    
-                    incommingBody.appendChild(Tr{
-                        Td(" ")
-                        Td(" ")
-                        Td(" ")
-                        Td(" ")
-                        Td(" ")
-                        Td("IVA")
-                        Td("")
-                        Td((costTax.trasladado / 10000).formatMoney)
-                            .color(.gray)
-                    }.class(.hoverFocusBlack))
-                    
-                    
-                    incommingBody.appendChild(Tr{
-                        Td(" ")
-                        Td(" ")
-                        Td(" ")
-                        Td(" ")
-                        Td(" ")
-                        Td("Total")
-                        Td(totalIncomingUnits.toString)
-                        Td(totalIncomingCost.formatMoney)
-                    }.class(.hoverFocusBlack))
+                    incomingTable.appendChild(TFoot {
+                        Tr{
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
+                            Td("Sub Total")
+                            Td("")
+                            Td((costTax.subTotal / 10000).formatMoney)
+                                .color(.gray)
+                            Td("")
+                        }
+                        Tr{
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
+                            Td("IVA")
+                            Td("")
+                            Td((costTax.trasladado / 10000).formatMoney)
+                                .color(.gray)
+                            Td("")
+                        }
+                        Tr{
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
+                            Td(" ")
+                            Td("Total")
+                            Td(totalIncomingUnits.toString)
+                            Td(totalIncomingCost.formatMoney)
+                            Td("")
+                        }
+                    })
                     
                     // MARK: Process Items
                     
@@ -851,10 +864,11 @@ extension ProductManagerView.AuditView {
                                     }
                                         .borderBottom(width: .thin, style: .solid, color: .darkGoldenRod)
                                 }
-                                .colSpan(10)
+                                .colSpan(11)
                             }
                             Tr{
                                 Td("")
+                                ProductManagerView.AuditView.productManagerHeaderCell()
                                 Td("SKU/UPC/POC")
                                 Td("Nombre / Marca / Modelo")
                                 Td("Costo")
@@ -878,83 +892,70 @@ extension ProductManagerView.AuditView {
                     .width(100.percent)
                     .color(.white)
                     
-                    var totalInitialUnits: Int = 0
+                    let totalInitialUnits = payload.objects.map { $0.initialInventory }.reduce(0, +)
+                    let totalAddedUnits = payload.objects.map { $0.addedInventory }.reduce(0, +)
+                    let totalRemovedUnits = payload.objects.map { $0.removeInventory }.reduce(0, +)
+                    let totalFinalUnits = payload.objects.map {
+                        $0.initialInventory + $0.addedInventory - $0.removeInventory
+                    }.reduce(0, +)
+                    let totalFinalCost = payload.objects.map { item in
+                        let finalUnits = item.initialInventory + item.addedInventory - item.removeInventory
+                        return finalUnits.toInt64 * item.poc.cost
+                    }.reduce(0, +)
                     
-                    var totalAddedUnits: Int = 0
-                    
-                    var totalRemovedUnits: Int = 0
-                    
-                    var totalFinalUnits: Int = 0
-                    
-                    var totalFinalCost: Int64 = 0
-                    
-                    payload.objects.forEach { item in
-                        
-                        let initialUnits: Int = item.initialInventory
-                        
-                        let finalUnits = (initialUnits + item.addedInventory - item.removeInventory)
-                        
-                        totalInitialUnits += initialUnits
-                        
-                        totalAddedUnits += item.addedInventory
-                        
-                        totalRemovedUnits += item.removeInventory
-                        
-                        totalFinalUnits += finalUnits
-                        
-                        totalFinalCost += (finalUnits.toInt64 * item.poc.cost)
-                        
-                        let avatar = Img()
-                            .src("/skyline/media/512.png")
-                            .borderRadius(all: 12.px)
-                            .marginRight(7.px)
-                            .objectFit(.cover)
-                            .height(75.px)
-                            .width(75.px)
-                            .float(.left)
-                        
-                        tableBody.appendChild(Tr{
-                            Td{
-                                avatar
-                            }
-                            Td(item.poc.upc)
-                            Td("\(item.poc.name) \(item.poc.brand) \(item.poc.model)".purgeSpaces)
-                            Td(item.poc.cost.formatMoney)
-                            Td(item.poc.pricea.formatMoney)
-                                .align(.right)
-                            Td(initialUnits.toString)
-                                .align(.center)
-                            Td(item.addedInventory.toString)
-                                .align(.center)
-                            Td(item.removeInventory.toString)
-                                .align(.center)
-                            Td(finalUnits.toString)
-                                .align(.center)
-                            Td((finalUnits.toInt64 * item.poc.cost).formatMoney)
-                                .align(.right)
-                        }.class(.hoverFocusBlack))
-                        
-                        if let pDir = customerServiceProfile?.account.pDir, !item.poc.avatar.isEmpty {
-                            avatar.load("https://intratc.co/cdn/\(pDir)/thump_\(item.poc.avatar)")
+                    table.appendChild(TFoot {
+                        Tr{
+                            Td("Totales")
+                            Td("")
+                            Td("")
+                            Td("\(payload.objects.count) productos")
+                            Td("")
+                            Td("")
+                            Td(totalInitialUnits.toString)
+                            Td(totalAddedUnits.toString)
+                            Td(totalRemovedUnits.toString)
+                            Td(totalFinalUnits.toString)
+                            Td(totalFinalCost.formatMoney)
                         }
-                    }
-                    
-                    tableBody.appendChild(Tr{
-                        Td()
-                        Td()
-                        Td()
-                        Td()
-                        Td()
-                        Td(totalInitialUnits.toString)
-                        Td(totalAddedUnits.formatMoney)
-                        Td(totalRemovedUnits.toString)
-                        Td(totalFinalUnits.formatMoney)
-                        Td(totalFinalCost.formatMoney)
                     })
                     
                     // MARK: Clear current table
                     
                     self.resultDiv.innerHTML = ""
+
+                    self.reportActions.present(
+                        title: "Reporte de transferencias",
+                        fileName: "transferencias-\(getNow())",
+                        aiResponse: resp.airesponse,
+                        in: self.resultDiv
+                    )
+
+                    let unitBalance = totalIncomingUnits - totalOutgoingUnits
+                    self.resultDiv.appendChild(ProductManagerView.AuditView.reportHeader(
+                        title: "🔁 Resumen de transferencias",
+                        subtitle: "Entradas y salidas de inventario entre tiendas",
+                        context: "Alcance: \(stores[fromStore]?.name ?? "Origen") → \(stores[toStore]?.name ?? "Destino") • Periodo: \(getDate(startAtUTS).formatedLong) al \(getDate(endAtUTS).formatedLong) • Generado: \(getDate(getNow()).formatedLong)"
+                    ))
+
+                    self.resultDiv.appendChild(Div {
+                        ProductManagerView.AuditView.reportMetric(title: "Documentos salida", value: payload.outgoing.count.toString, detail: "Transferencias enviadas")
+                        ProductManagerView.AuditView.reportMetric(title: "Documentos entrada", value: payload.incoming.count.toString, detail: "Transferencias recibidas")
+                        ProductManagerView.AuditView.reportMetric(title: "Unidades salida", value: totalOutgoingUnits.toString, detail: "Movimiento saliente")
+                        ProductManagerView.AuditView.reportMetric(title: "Unidades entrada", value: totalIncomingUnits.toString, detail: "Movimiento entrante")
+                        ProductManagerView.AuditView.reportMetric(title: "Costo salida", value: totalOutgoingCost.formatMoney, detail: "Valor transferido")
+                        ProductManagerView.AuditView.reportMetric(title: "Costo entrada", value: totalIncomingCost.formatMoney, detail: "Valor recibido")
+                        ProductManagerView.AuditView.reportMetric(title: "Balance unidades", value: unitBalance.toString, detail: "Entradas menos salidas")
+                        ProductManagerView.AuditView.reportMetric(title: "Productos Cardex", value: payload.objects.count.toString, detail: "Productos con movimiento")
+                    }
+                    .class(Class(TCCrystalSurfaceClass.auditMetricGrid)))
+
+                    self.resultDiv.appendChild(ProductManagerView.AuditView.reportBarChart(
+                        title: "Flujo de unidades",
+                        items: [
+                            ("Salidas", Double(totalOutgoingUnits), totalOutgoingUnits.toString),
+                            ("Entradas", Double(totalIncomingUnits), totalIncomingUnits.toString)
+                        ]
+                    ))
                     
                     // MARK: Output Table
                     
@@ -971,8 +972,81 @@ extension ProductManagerView.AuditView {
                     // MARK: Items Table
                     
                     self.resultDiv.appendChild(table)
+
+                    self.asyncAddTransferProductRows(
+                        renderId: renderId,
+                        items: payload.objects,
+                        tableBody: tableBody
+                    )
                     
                 }
+            }
+        }
+
+        private func asyncAddTransferProductRows(
+            renderId: UUID,
+            items: [CustPOCComponents.TranferReportObject],
+            tableBody: TBody,
+            index: Int = 0
+        ) {
+            guard renderId == transferRenderId,
+                  items.indices.contains(index) else {
+                return
+            }
+
+            Dispatch.asyncAfter(index == 0 ? 0.01 : 0.015) {
+                guard renderId == self.transferRenderId,
+                      items.indices.contains(index) else {
+                    return
+                }
+
+                let item = items[index]
+                let initialUnits = item.initialInventory
+                let finalUnits = initialUnits + item.addedInventory - item.removeInventory
+                let avatar = Img()
+                    .src("/skyline/media/512.png")
+                    .borderRadius(all: 12.px)
+                    .marginRight(7.px)
+                    .objectFit(.cover)
+                    .height(75.px)
+                    .width(75.px)
+                    .float(.left)
+
+                tableBody.appendChild(Tr {
+                    Td { avatar }
+                    ProductManagerView.AuditView.productManagerCell(pocId: item.poc.id)
+                    Td(item.poc.upc)
+                    ProductManagerView.AuditView.productDescriptionCell(
+                        "\(item.poc.name) \(item.poc.brand) \(item.poc.model)".purgeSpaces
+                    )
+                    Td(item.poc.cost.formatMoney)
+                    Td(item.poc.pricea.formatMoney)
+                        .align(.right)
+                    Td(initialUnits.toString)
+                        .align(.center)
+                    Td(item.addedInventory.toString)
+                        .align(.center)
+                    Td(item.removeInventory.toString)
+                        .align(.center)
+                    Td(finalUnits.toString)
+                        .align(.center)
+                    Td((finalUnits.toInt64 * item.poc.cost).formatMoney)
+                        .align(.right)
+                }
+                .class(.hoverFocusBlack)
+                .backgroundColor(index.isEven ? .backGroundRow : .transparent))
+
+                if let pDir = customerServiceProfile?.account.pDir,
+                   !item.poc.avatar.isEmpty {
+                    avatar.load("https://intratc.co/cdn/\(pDir)/thump_\(item.poc.avatar)")
+                }
+
+                self.asyncAddTransferProductRows(
+                    renderId: renderId,
+                    items: items,
+                    tableBody: tableBody,
+                    index: index + 1
+                )
             }
         }
         

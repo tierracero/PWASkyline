@@ -34,6 +34,7 @@ class ToolsView: Div {
     
     @DOM override var body: DOM.Content {
         VPopUp(.custome(w: 980, h: 620)) {
+
             VTitle("Ajustes y Herramientas", icon: "icon_settings.png") {
                 USmallTitle("Configuración del sistema")
             } onClose: {
@@ -55,35 +56,9 @@ class ToolsView: Div {
                     title: "Activos",
                     subtitle: "Administra departamentos, categorías y activos"
                 ) {
+                    
+                    // TODO: re apply CustAssetsView
 
-                    loadingView.show()
-
-                    API.custAssetsV1.listDepartments(
-                        accountId: nil
-                    ) { response in
-                        
-                        loadingView.hide()
-
-                        guard let response else {
-                            showError(.comunicationError, .serverConextionError)
-                            return
-                        }
-
-                        guard response.status == .ok else {
-                            showError(.generalError, response.msg)
-                            return
-                        }
-
-                        guard let payload = response.data else {
-                            showError(.unexpectedResult, .unexpenctedMissingPayload)
-                            return
-                        }
-
-                        addToDom(CustAssetsView(accountId: nil, items: payload.items))
-                        
-                    }
-
-                    self.remove()
                 }
 
                 self.menuItem(

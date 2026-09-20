@@ -11,15 +11,15 @@ import Web
 
 class OrderPrintEngine: Div {
     
-    var order: CustOrderLoadFolioDetails
-    var notes: [CustOrderLoadFolioNotes]
-    var payments: [CustOrderLoadFolioPayments]
-    var charges: [CustOrderLoadFolioCharges]
-    var pocs: [CustPOCInventoryOrderView]
-    var files: [CustOrderLoadFolioFiles]
-    var equipments: [CustOrderLoadFolioEquipments]
-    var rentals: [CustPOCRentalsMin]
-    var transferOrder: CustTranferManager?
+    let order: CustOrderLoadFolioDetails
+    let notes: [CustOrderLoadFolioNotes]
+    let payments: [CustOrderLoadFolioPayments]
+    let charges: [CustOrderLoadFolioCharges]
+    let pocs: [CustPOCInventoryOrderView]
+    let files: [CustOrderLoadFolioFiles]
+    let equipments: [CustOrderLoadFolioEquipments]
+    let rentals: [CustPOCRentalsMin]
+    let transferOrder: CustTranferManager?
     
     init(
         order: CustOrderLoadFolioDetails,
@@ -73,23 +73,40 @@ class OrderPrintEngine: Div {
             Td("CUni").width(70.px)
             Td("STotal").width(70.px)
         }
-    }.width(100.percent)
+    }
+    .width(90.percent)
+    .fontSize(12.px)
     
     lazy var chargesTwo = Table{
-        Tr{
+        Tr {
             Td("Unis").width(50.px)
             Td("Description")
             Td("CUni").width(70.px)
             Td("STotal").width(70.px)
         }
-    }.width(100.percent)
+    }
+    .width(90.percent)
+    .fontSize(12.px)
     
     lazy var equipmetsDataOne: Div = .init()
     lazy var equipmetsDataTwo: Div = .init()
     
     lazy var storeData = Div{
+        Strong(custCatchUrl)
+            .fontSize(16.px)
+            Div().clear(.both)
         Strong("Orden de Trabajo")
             .fontSize(16.px)
+            Div().clear(.both)
+
+        if let profile = fiscalProfiles.first {
+
+            Span("\(profile.rfc) \(profile.razon)")
+            .fontSize(14.px)
+
+            Div().clear(.both)
+
+        }
     }
     
     var logo = "/skyline/media/logoTierraCeroLongBlack.svg"

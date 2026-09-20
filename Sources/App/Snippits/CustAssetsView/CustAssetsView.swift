@@ -7,11 +7,33 @@ final class CustAssetsView: Div {
 
     override class var name: String { "div" }
 
-    let accountId: UUID?
+    let viewType: InitiateAssetItemViewType
 
     @State private var departments: [CustAssetDeps]
 
+    @State private var locations: [CustCommercialAssetsLocation]
+
+    @State private var subLocations: [CustCommercialAssetsSubLocation]
+
     @State private var selectedDepartment: CustAssetDeps?
+
+    init(
+        viewType: InitiateAssetItemViewType,
+        departments: [CustAssetDeps],
+        locations: [CustCommercialAssetsLocation],
+        subLocations: [CustCommercialAssetsSubLocation]
+    ) {
+
+        self.viewType = viewType
+        self.departments = departments
+        self.locations = locations
+        self.subLocations = subLocations
+        super.init()
+    }
+
+    required init() {
+        fatalError("init() has not been implemented")
+    }
 
     @State var isLoading: Bool = false
 
@@ -152,29 +174,12 @@ final class CustAssetsView: Div {
             self.createAsset()
         }
 
-    init(
-        accountId: UUID?,
-        items: [CustAssetDeps]
-    ) {
-        self.accountId = accountId
-        self.departments = items
-        super.init()
-    }
-
-    required init() {
-        fatalError("init() has not been implemented")
-    }
-
     @DOM override var body: DOM.Content {
 
         VPopUp(.semiFull) {
 
             VTitle("Control de Activos", icon: "commertial_assets_icon.png") {
-                USmallTitle(
-                    self.accountId == nil
-                        ? "Activos de la cuenta"
-                        : "Activos del cliente"
-                )
+                USmallTitle("Activos \(self.viewType.relationType.description)")
             } onClose: {
                 self.remove()
             }
@@ -387,7 +392,7 @@ final class CustAssetsView: Div {
         API.custAssetsV1.listAssets(
             assetDepartmentId: department.id,
             assetSeccionId: category?.id,
-            custAcct: accountId,
+            relationId: viewType.relationId,
             status: nil
         ) { response in
             if tracksDepartmentLoad {
@@ -545,20 +550,32 @@ final class CustAssetsView: Div {
             .display(.flex)
             .onClick {
                 addToDom(
-                    CustAssetsView.AssetView(assetId: asset.id) { updated in
-                        guard self.selectedDepartment?.id == updated.assetDepartmentId,
-                              self.selectedCategory?.id == updated.assetSeccionId else {
-                            return
-                        }
+                    CustAssetsView.AssetView(
+                        viewType: self.viewType,
+                        assetId: asset.id,
+                        locations: self.locations,
+                        subLocations: self.subLocations,
+                        onLoaded: { updated in
+                            guard self.selectedDepartment?.id == updated.assetDepartmentId,
+                                  self.selectedCategory?.id == updated.assetSeccionId else {
+                                return
+                            }
 
-                        if let index = self.assets.firstIndex(where: { $0.id == updated.id }) {
-                            self.assets[index] = updated
-                        } else {
-                            self.assets.append(updated)
-                        }
+                            if let index = self.assets.firstIndex(where: { $0.id == updated.id }) {
+                                self.assets[index] = updated
+                            } else {
+                                self.assets.append(updated)
+                            }
 
-                        self.renderAssets()
-                    }
+                            self.renderAssets()
+                        },
+                        onLocationCreated: { location in
+                            self.locations = self.upserting(location, into: self.locations)
+                        },
+                        onSubLocationCreated: { subLocation in
+                            self.subLocations = self.upserting(subLocation, into: self.subLocations)
+                        }
+                    )
                 )
             }
 
@@ -570,7 +587,10 @@ final class CustAssetsView: Div {
 
     private func createDepartment() {
         addToDom(
-            DepartmentEditor(accountId: accountId) { department in
+            DepartmentEditor(
+                relationType: viewType.relationType,
+                relationId: viewType.relationId
+            ) { department in
                 self.departments.append(department)
                 self.loadDepartment(department)
             }
@@ -581,7 +601,11 @@ final class CustAssetsView: Div {
         guard let department = selectedDepartment else { return }
 
         addToDom(
-            DepartmentEditor(accountId: accountId, department: department) { updated in
+            DepartmentEditor(
+                relationType: viewType.relationType,
+                relationId: viewType.relationId, 
+                department: department
+            ) { updated in
                 self.departments = self.departments.map { $0.id == updated.id ? updated : $0 }
                 self.selectedDepartment = updated
             }
@@ -613,10 +637,11 @@ final class CustAssetsView: Div {
 
         addToDom(
             CreateAssetView(
-                accountId: accountId,
+                viewType: viewType,
                 department: department,
                 category: selectedCategory
             ) { asset in
+
                 guard self.selectedDepartment?.id == asset.assetDepartmentId,
                       self.selectedCategory?.id == asset.assetSeccionId else {
                     return
@@ -627,9 +652,123 @@ final class CustAssetsView: Div {
                 } else {
                     self.assets.append(asset)
                 }
+
                 self.renderAssets()
+
+                addToDom(CustAssetsView.AssetView(
+                    viewType: self.viewType,
+                    assetId: asset.id,
+                    locations: self.locations,
+                    subLocations:  self.subLocations,
+                    onLocationCreated: { location in
+                        self.locations = self.upserting(location, into: self.locations)
+                    },
+                    onSubLocationCreated: { subLocation in
+                        self.subLocations = self.upserting(subLocation, into: self.subLocations)
+                    }
+                ))
+
+
             }
         )
     }
 
+    private func upserting(
+        _ location: CustCommercialAssetsLocation,
+        into values: [CustCommercialAssetsLocation]
+    ) -> [CustCommercialAssetsLocation] {
+        var result = values.filter { $0.id != location.id }
+        result.append(location)
+        return result.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    }
+
+    private func upserting(
+        _ subLocation: CustCommercialAssetsSubLocation,
+        into values: [CustCommercialAssetsSubLocation]
+    ) -> [CustCommercialAssetsSubLocation] {
+        var result = values.filter { $0.id != subLocation.id }
+        result.append(subLocation)
+        return result.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    }
+
+}
+
+extension CustAssetsView {
+
+    /// store, warehose, account, subAccount
+    enum InitiateAssetItemViewType {
+
+        case store(CustStore)
+
+        case warehose(CustStore)
+        
+        case account(account: CustAcct, store: CustStore)
+
+        case subAccount(subAccount: CustSubAcct, store: CustStore )
+
+        var description: String {
+            switch self {    
+            case .store:
+            return "Tienda"
+            case .warehose:
+            return "Bodega"
+            case .account:
+            return "Cuenta"
+            case .subAccount:
+            return "Sub Cliente"
+            }
+        }
+
+        var relationName: String {
+
+            switch self {    
+            case .store(let item):
+            return item.name
+            case .warehose(let item):
+            return item.name
+            case .account(let item, let store):
+                if item.type == .personal {
+                    return "\(item.folio) \(item.firstName) \(item.lastName)"
+                }
+                else {
+                    return "\(item.folio) \(item.businessName) \(item.fiscalRfc) \(item.fiscalRazon)"
+                }
+            case .subAccount(let item, let store):
+            if item.type == .personal {
+                    return "\(item.folio) \(item.firstName) \(item.lastName)"
+                }
+                else {
+                    return "\(item.folio) \(item.businessName)"
+                }
+            }
+        }
+
+        var relationId: UUID {
+
+            switch self {    
+            case .store(let item):
+            return item.id
+            case .warehose(let item):
+            return item.id
+            case .account(let item, _):
+            return item.id
+            case .subAccount(let item, _):
+            return item.custAcct
+            }
+
+        }
+
+        var relationType: CustCommercialAssetsLocationLinkedType {
+            switch self {    
+            case .store:
+            return .store
+            case .warehose:
+            return .warehose
+            case .account, .subAccount:
+            return .customer
+            }
+        }
+        
+    }
+    
 }

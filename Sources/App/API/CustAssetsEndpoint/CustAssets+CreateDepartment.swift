@@ -5,7 +5,7 @@ import TCFireSignal
 extension CustAssetsComponents {
 
     static func createDepartment(
-        accountId: UUID?,
+        relationId: UUID,
         assetType: CustCommercialAssetsType,
         name: String,
         smallDescription: String,
@@ -20,7 +20,7 @@ extension CustAssetsComponents {
             version,
             "createDepartment",
             CreateDepartmentRequest(
-                accountId: accountId,
+                relationId: relationId,
                 assetType: assetType,
                 name: name,
                 smallDescription: smallDescription,

@@ -21,10 +21,10 @@ Current verified module and source structure for PWASkyline.
 
 ### Feature Areas
 
-- `API/` — typed client wrappers for auth, customer, order, account, fiscal, POC, route, mail, social/theme, rewards, and WebSocket API endpoints.
+- `API/` — typed client wrappers for auth, customer, order, account, fiscal, POC, including product-activity and Fast and Furious audit reports, route, mail, social/theme, rewards, and WebSocket API endpoints.
 - `Websocket/` — real-time message handlers for chat, auth requests, mobile camera/scanner/OCR, async file/image jobs, social notifications, order/status updates, and connection lifecycle.
 - `ViewControlers/` — page controllers and top-level page flows.
-- `Snippits/` — reusable UI components and feature views.
+- `Snippits/` — reusable UI components and feature views, including Product Manager audit report presentations and velocity scoring.
 - `Styles/` — Swift Web CSS style declarations.
 - `Functions/`, `Extentions/`, `Enums/`, `Structurs/`, `VirtualControlers/` — shared app helpers and runtime support. Error diagnostics are owned by `ErrorReportingControler`, its record/context types, the centralized POST transport, and the API decoding helper.
 

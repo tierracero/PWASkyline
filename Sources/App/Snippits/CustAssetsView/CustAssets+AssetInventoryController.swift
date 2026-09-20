@@ -77,9 +77,12 @@ extension CustAssetsView {
 
                         Div {
                             self.detail("Folio de compra", item.purchasFiscalDocumentFolio)
-                            self.detail("Tarjeta de servicio", item.serviceCard ?? "—")
+                            self.detail(
+                                "Tarjeta de servicio",
+                                item.serviceCard.isEmpty ? "—" : item.serviceCard.joined(separator: ", ")
+                            )
                             self.detail("Costo de adquisición", item.acquisitionCost.formatMoney)
-                            self.detail("Ubicación", item.linkType.rawValue.capitalized)
+                            self.detail("Ubicación", item.currentLocation.description)
                         }
                         .display(.grid)
                         .custom("grid-template-columns", "repeat(auto-fit, minmax(170px, 1fr))")

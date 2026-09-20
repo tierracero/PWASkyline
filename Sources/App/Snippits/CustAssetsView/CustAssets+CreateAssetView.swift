@@ -9,7 +9,7 @@ extension CustAssetsView {
 
         override class var name: String { "div" }
 
-        let accountId: UUID?
+        let viewType: InitiateAssetItemViewType
 
         let department: CustAssetDeps
 
@@ -46,12 +46,12 @@ extension CustAssetsView {
         @State private var avatar = ""
 
         init(
-            accountId: UUID?,
+            viewType: InitiateAssetItemViewType,
             department: CustAssetDeps,
             category: CustAssetCats?,
             callback: @escaping (CustCommercialAssets) -> Void
         ) {
-            self.accountId = accountId
+            self.viewType = viewType
             self.department = department
             self.category = category
             self.callback = callback
@@ -63,7 +63,9 @@ extension CustAssetsView {
         }
 
         @DOM override var body: DOM.Content {
+            
             VPopUp(.fitContent(w: 900)) {
+                
                 VTitle("Crear Activo", icon: "commertial_assets_icon.png") {
                     USmallTitle(
                         self.category.map { "\(self.department.name) · \($0.name)" } ?? self.department.name
@@ -253,7 +255,7 @@ extension CustAssetsView {
                 assetType: department.assetType,
                 assetDepartmentId: department.id,
                 assetSeccionId: category?.id,
-                custAcct: accountId,
+                custAcct: viewType.relationId,
                 productType: productType,
                 productSubType: productSubType,
                 upc: upc.isEmpty ? nil : upc,
@@ -292,7 +294,7 @@ extension CustAssetsView {
                     assetType: self.department.assetType,
                     assetDepartmentId: self.department.id,
                     assetSeccionId: self.category?.id,
-                    custAcct: self.accountId,
+                    custAcct: self.viewType.relationId,
                     productType: self.productType,
                     productSubType: self.productSubType,
                     upc: self.upc.isEmpty ? nil : self.upc,
@@ -313,7 +315,6 @@ extension CustAssetsView {
 
                 showSuccess(.operacionExitosa, "Activo creado")
 
-                addToDom(AssetView(assetId: assetId))
                 self.remove()
             }
         }

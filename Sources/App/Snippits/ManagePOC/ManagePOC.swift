@@ -2981,7 +2981,7 @@ class ManagePOC: Div {
                 
                 if let payload = self.ws.asyncFileUpload($0) {
                     
-                    if let view = self.imageRefrence[payload.eventid] {
+                    if let view: ImagePOCContainer = self.imageRefrence[payload.eventid] {
 
                         view.isLoaded = true
                         

@@ -19,7 +19,10 @@ extension CustAssetsView {
         
         let viewId: UUID = .init()
 
-        let accountId: UUID?
+        /// store, customer, warehose
+        let relationType: CustCommercialAssetsLocationLinkedType
+
+        let relationId: UUID
 
         let department: CustAssetDeps?
 
@@ -35,11 +38,13 @@ extension CustAssetsView {
         private let coverPortrait: String
 
         init(
-            accountId: UUID?,
+            relationType: CustCommercialAssetsLocationLinkedType,
+            relationId: UUID,
             department: CustAssetDeps? = nil,
             callback: @escaping (CustAssetDeps) -> Void
         ) {
-            self.accountId = accountId
+            self.relationType = relationType
+            self.relationId = relationId
             self.department = department
             self.callback = callback
             self.name = department?.name ?? ""
@@ -193,7 +198,7 @@ extension CustAssetsView {
                         createdAt: department.createdAt,
                         modifiedAt: getNow(),
                         assetType: department.assetType,
-                        accountId: department.accountId,
+                        relationId: department.relationId,
                         name: self.name,
                         smallDescription: self.smallDescription,
                         description: self.descriptionText,
@@ -209,7 +214,7 @@ extension CustAssetsView {
             }
             else {
                 API.custAssetsV1.createDepartment(
-                    accountId: accountId,
+                    relationId: relationId,
                     assetType: selectedAssetType,
                     name: name,
                     smallDescription: smallDescription,

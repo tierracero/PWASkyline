@@ -112,6 +112,7 @@ class SalePointView: Div {
         }
     }
         .width(100.percent)
+        .color(.white)
     
     lazy var searchBox = InputText($searchTerm)
         .custom("background", "url('images/barcode.png') no-repeat scroll 7px 7px rgba(2, 16, 29, 0.76) !important")
@@ -163,7 +164,6 @@ class SalePointView: Div {
         .class(.textFiledBlackDark)
         .height(31.px)
     
-
     @DOM override var body: DOM.Content {
         
         Div {
@@ -283,6 +283,7 @@ class SalePointView: Div {
                             self.calcBalance()
                             
                         }
+                        .color(.white)
                         
                         self.kart.append(
                             .init(
@@ -311,7 +312,7 @@ class SalePointView: Div {
                             )
                         )
                         
-                        self.itemGrid.appendChild(row)
+                        self.itemGrid.appendChild(row.color(.white))
                         
                         self.searchBox.select()
                         
@@ -361,9 +362,7 @@ class SalePointView: Div {
                     .onClick {
                         
                         let view = SearchCustomerQuickView { account in
-                            
                             self.custAcct = account
-                            
                         } create: { term in
                             // No customer, create customer.
                             addToDom(CreateNewCusomerView(
@@ -1684,6 +1683,7 @@ class SalePointView: Div {
                         } editManualCharge: { id, units, description, price, cost in
                             print("⭐️  editManualCharge  ⭐️  editManualCharge 004")
                         }
+                        .color(.white)
                         
                         let ids = items.map{$0.id}
                         
@@ -1805,7 +1805,7 @@ class SalePointView: Div {
                         
                         self.selectedInventoryIDs.append(contentsOf: ids)
                         
-                        self.itemGrid.appendChild(row)
+                        self.itemGrid.appendChild(row.color(.white))
                         
                         self.searchBox.select()
                         
@@ -1905,7 +1905,7 @@ class SalePointView: Div {
                     
                     self.selectedInventoryIDs.append(contentsOf: ids)
                     
-                    self.itemGrid.appendChild(row)
+                    self.itemGrid.appendChild(row.color(.white))
                     
                     self.searchBox.select()
                     
@@ -1992,7 +1992,7 @@ class SalePointView: Div {
                )
            )
            
-           self.itemGrid.appendChild(row)
+           self.itemGrid.appendChild(row.color(.white))
            
            self.searchBox.select()
            
@@ -2270,7 +2270,7 @@ class SalePointView: Div {
                 
                 self.selectedInventoryIDs.append(contentsOf: ids)
                 
-                self.itemGrid.appendChild(row)
+                self.itemGrid.appendChild(row.color(.white))
                 
             }
             
@@ -2384,7 +2384,7 @@ class SalePointView: Div {
                     )
                 )
                 
-                self.itemGrid.appendChild(row)
+                self.itemGrid.appendChild(row.color(.white))
                 
             }
             
@@ -2499,7 +2499,7 @@ class SalePointView: Div {
                     )
                 )
                 
-                self.itemGrid.appendChild(row)
+                self.itemGrid.appendChild(row.color(.white))
                 
             }
             
