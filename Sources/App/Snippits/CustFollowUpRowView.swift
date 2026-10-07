@@ -73,7 +73,8 @@ class CustFollowUpRowView: Div {
                     .borderRadius(all: 9.px)
                     .backgroundColor(self.statusColor)
                     .color(.white)
-                    .fontSize(10.px)
+                    .fontSize(12.px)
+                    .attribute("title", self.statusLabel)
                     .fontWeight(.bold)
                     .custom("max-width", "84px")
                     .custom("box-sizing", "border-box")
@@ -82,7 +83,7 @@ class CustFollowUpRowView: Div {
                 if !self.closedAtLabel.isEmpty {
                     Div(self.closedAtLabel)
                         .class(.oneLineText)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                 }
             }

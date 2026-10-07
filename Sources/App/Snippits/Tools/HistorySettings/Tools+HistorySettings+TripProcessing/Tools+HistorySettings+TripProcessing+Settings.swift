@@ -331,7 +331,7 @@ extension ToolsView.HistorySettings.TripProcessing {
                     Div(subtitle)
                         .class(.oneLineText)
                         .color(.gray)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .marginTop(3.px)
                 }
                 .custom("min-width", "0")

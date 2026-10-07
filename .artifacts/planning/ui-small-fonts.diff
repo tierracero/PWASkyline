@@ -1,0 +1,3624 @@
+--- before/Sources/App/Snippits/AddServiceFormView.swift
++++ after/Sources/App/Snippits/AddServiceFormView.swift
+@@ -173,7 +173,7 @@
+                 /// Modelo / SKU / SOC / POC
+                 Div{
+                     Label("SKU / UPC")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                     Div {
+                         self.searchTermInput
+                     }
+@@ -189,7 +189,7 @@
+                 /// Amount
+                 Div{
+                     Label("Cantidad")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                     Div {
+                         self.amountInput
+                     }
+@@ -200,7 +200,7 @@
+                 /// Description
+                 Div{
+                     Label("Description")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                     Div {
+                         self.nameInput
+                     }
+@@ -211,7 +211,7 @@
+                 /// Sale Price
+                 Div{
+                     Label("Precio")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                     Div {
+                         
+                         Span{
+@@ -272,7 +272,7 @@
+                 /// `My Cost`
+                 Div{
+                     Label("Costo Interno")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                     Div {
+                         
+                         Img()
+--- before/Sources/App/Snippits/AdvancesSearchViewControler.swift
++++ after/Sources/App/Snippits/AdvancesSearchViewControler.swift
+@@ -441,7 +441,7 @@
+                     /// Date Select Type
+                     Div{
+                         Label("Seleccione Fecha")
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                             .color(.gray)
+                         
+                         Div().clear(.both)
+@@ -455,7 +455,7 @@
+                     Div{
+                         Label("Fecha Inicio")
+                             .marginBottom(3.px)
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                             .color(.gray)
+                         
+                         Div().clear(.both)
+@@ -477,7 +477,7 @@
+                     Div{
+                         Label("Fecha Final")
+                             .marginBottom(3.px)
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                             .color(.gray)
+                         
+                         Div().clear(.both)
+--- before/Sources/App/Snippits/CartaPorteMerchendise.swift
++++ after/Sources/App/Snippits/CartaPorteMerchendise.swift
+@@ -78,7 +78,7 @@
+                 
+             }
+             .marginBottom(7.px)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+             .color(.gray)
+             
+             Div{
+@@ -147,7 +147,7 @@
+                 Div().class(.clear)
+             }
+             .marginBottom(7.px)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+             .color(.gray)
+             
+             Div{
+--- before/Sources/App/Snippits/CustAssetsView/CustAssetsView.swift
++++ after/Sources/App/Snippits/CustAssetsView/CustAssetsView.swift
+@@ -556,7 +556,7 @@
+ 
+                 Div {
+                     Div(asset.assetType.description)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.lightBlue)
+ 
+                     Div(asset.initialCost.formatMoney)
+--- before/Sources/App/Snippits/CustConcession/CustConcession+AddManualInventorieView.swift
++++ after/Sources/App/Snippits/CustConcession/CustConcession+AddManualInventorieView.swift
+@@ -552,7 +552,7 @@
+                             Div(self.$docuuid.map{ $0.purgeSpaces.isEmpty ? "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" : $0 })
+                                 .color(self.$docuuid.map{ $0.purgeSpaces.isEmpty ? .grayContrast : .white })
+                                 .class(.textFiledBlackDarkReadMode, .oneLineText)
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                             
+                         }
+                         
+--- before/Sources/App/Snippits/CustConcession/CustConcession+BodegaView.swift
++++ after/Sources/App/Snippits/CustConcession/CustConcession+BodegaView.swift
+@@ -113,7 +113,7 @@
+             Div{
+                 Div("Unidades")
+                 .marginBottom(7.px)
+-                .fontSize(12.px)
++                .fontSize(14.px)
+                 .color(.gray)
+ 
+                 Div(self.$items.map{ $0.count.toString })
+--- before/Sources/App/Snippits/CustConcession/CustConcessionView.swift
++++ after/Sources/App/Snippits/CustConcession/CustConcessionView.swift
+@@ -1935,7 +1935,7 @@
+                             Div("Tipo de adquisición:")
+                             .marginBottom(3.px)
+                             .class(.oneLineText)
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                             .color(.gray)
+ 
+                             Div(manager.type.description)
+@@ -1951,7 +1951,7 @@
+                             Div("Folio de adquisición:")
+                             .marginBottom(3.px)
+                             .class(.oneLineText)
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                             .color(.gray)
+ 
+                             Div(manager.folio)
+@@ -1984,7 +1984,7 @@
+                         Div("Folio de Control:")
+                         .marginBottom(3.px)
+                         .class(.oneLineText)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+ 
+                         Div(control.folio)
+@@ -2000,7 +2000,7 @@
+                         Div("Fecha:")
+                         .marginBottom(3.px)
+                         .class(.oneLineText)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+ 
+                         Div(getDate(control.createdAt).formatedShort)
+@@ -2015,7 +2015,7 @@
+                         
+                         Div("Unis:")
+                         .marginBottom(3.px)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .align(.right)
+                         .color(.gray)
+ 
+@@ -2035,7 +2035,7 @@
+ 
+                         Div("Nombre:")
+                         .marginBottom(3.px)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+ 
+                         Div(control.description)
+@@ -2052,7 +2052,7 @@
+                         Div("Serie Externa:")
+                         .marginBottom(3.px)
+                         .class(.oneLineText)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+ 
+                         Div(control.vendorSerie ?? "N/A")
+@@ -2068,7 +2068,7 @@
+                         Div("Folio Externa:")
+                         .marginBottom(3.px)
+                         .class(.oneLineText)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+ 
+                         Div(control.vendorFolio ?? "N/A")
+@@ -2106,7 +2106,7 @@
+                         Div("Folio de Control:")
+                         .marginBottom(3.px)
+                         .class(.oneLineText)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+ 
+                         Div(control.folio)
+@@ -2122,7 +2122,7 @@
+                         Div("Fecha:")
+                         .marginBottom(3.px)
+                         .class(.oneLineText)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+ 
+                         Div(getDate(control.createdAt).formatedShort)
+@@ -2137,7 +2137,7 @@
+                         
+                         Div("Unis:")
+                         .marginBottom(3.px)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .align(.right)
+                         .color(.gray)
+ 
+@@ -2157,7 +2157,7 @@
+ 
+                         Div("Nombre:")
+                         .marginBottom(3.px)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+ 
+                         Div(control.description)
+@@ -2174,7 +2174,7 @@
+                         Div("Serie Externa:")
+                         .marginBottom(3.px)
+                         .class(.oneLineText)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+ 
+                         Div(control.vendorSerie ?? "N/A")
+@@ -2190,7 +2190,7 @@
+                         Div("Folio Externa:")
+                         .marginBottom(3.px)
+                         .class(.oneLineText)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+ 
+                         Div(control.vendorFolio ?? "N/A")
+--- before/Sources/App/Snippits/CustFollowUpRowView.swift
++++ after/Sources/App/Snippits/CustFollowUpRowView.swift
+@@ -73,7 +73,8 @@
+                     .borderRadius(all: 9.px)
+                     .backgroundColor(self.statusColor)
+                     .color(.white)
+-                    .fontSize(10.px)
++                    .fontSize(12.px)
++                    .attribute("title", self.statusLabel)
+                     .fontWeight(.bold)
+                     .custom("max-width", "84px")
+                     .custom("box-sizing", "border-box")
+@@ -82,7 +83,7 @@
+                 if !self.closedAtLabel.isEmpty {
+                     Div(self.closedAtLabel)
+                         .class(.oneLineText)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                 }
+             }
+--- before/Sources/App/Snippits/CustRemoveFromConcessionView.swift
++++ after/Sources/App/Snippits/CustRemoveFromConcessionView.swift
+@@ -235,7 +235,7 @@
+         
+         Label("Proveedor")
+             .color(.lightGray)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+         
+         Div().class(.clear)
+         
+@@ -251,7 +251,7 @@
+         
+         Label("Ultimos Cuatro")
+             .color(.lightGray)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+         
+         Div().class(.clear)
+         
+@@ -261,7 +261,7 @@
+         
+         Label("Folio de Autorizacion")
+             .color(.lightGray)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+         
+         Div().class(.clear)
+         
+@@ -308,7 +308,7 @@
+             .color(.lightBlueText)
+         
+         Label("Motivo del Ajuste")
+-            .fontSize(12.px)
++            .fontSize(14.px)
+         
+         TextArea(self.$auth)
+             .placeholder("Ingrese la razon del ajuste")
+@@ -332,7 +332,7 @@
+             .color(.lightBlueText)
+         
+         Label("Proveedor")
+-            .fontSize(12.px)
++            .fontSize(14.px)
+             .color(.lightGray)
+         
+         Div().class(.clear)
+@@ -347,7 +347,7 @@
+             
+         Label("Numero de Cheque")
+             .color(.lightGray)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+         
+         Div().class(.clear)
+         
+@@ -393,7 +393,7 @@
+         
+         Label("Banco ¿Donde Recibiste El Deposito?")
+             .color(.lightGray)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+         
+         Div().class(.clear)
+         
+@@ -409,7 +409,7 @@
+         
+         Label("Folio De Tranferencia")
+             .color(.lightGray)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+         
+         Div().class(.clear)
+         
+@@ -443,7 +443,7 @@
+                 .float(.left)
+                 
+                 Label("Cambiar Perfil")
+-                    .fontSize(12.px)
++                    .fontSize(14.px)
+             }
+             .hidden(self.$profiles.map{ $0.count < 2 })
+             .marginTop(-7.px)
+--- before/Sources/App/Snippits/FollowupControler/FollowupControler.swift
++++ after/Sources/App/Snippits/FollowupControler/FollowupControler.swift
+@@ -356,7 +356,7 @@
+                     .class(.oneLineText)
+ 
+                 Div(item.status.description)
+-                    .fontSize(13.px)
++                    .fontSize(14.px)
+                     .color(.white)
+                     .class(.oneLineText)
+             }
+--- before/Sources/App/Snippits/IMChatBubbleView.swift
++++ after/Sources/App/Snippits/IMChatBubbleView.swift
+@@ -100,7 +100,7 @@
+             }
+             
+             Div(self.$chatNick)
+-                .fontSize(12.px)
++                .fontSize(14.px)
+                 .color(.gray)
+                 .class(.oneLineText)
+             
+--- before/Sources/App/Snippits/ManagePOC/ManagePOC.swift
++++ after/Sources/App/Snippits/ManagePOC/ManagePOC.swift
+@@ -1112,7 +1112,7 @@
+                 Div{
+                     Div("Departamento")
+                         .color(.lightGray)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                     
+                     H4(self.$depname.map{ "\($0)" })
+                         .color(.goldenRod)
+@@ -1124,7 +1124,7 @@
+                 Div{
+                     Div("Categoria")
+                         .color(.lightGray)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                     
+                     H4( self.$catname.map{ "\($0)" })
+                         .color(.goldenRod)
+@@ -1136,7 +1136,7 @@
+                 Div{
+                     Div("Linea")
+                         .color(.lightGray)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                     
+                     H4( self.$linename.map{ "\($0)" })
+                         .color(.goldenRod)
+@@ -1397,8 +1397,8 @@
+                     Div{
+                         Div("Que costo el producto")
+                             .class(.oneLineText)
+-                            .fontSize(12.px)
+-                            .height(18.px)
++                            .fontSize(14.px)
++                            .minHeight(20.px)
+                             .color(.white)
+                         
+                         Div().class(.clear)
+@@ -1427,8 +1427,8 @@
+                         
+                         Div("Costo al Publico")
+                         .class(.oneLineText)
+-                        .fontSize(12.px)
+-                        .height(18.px)
++                        .fontSize(14.px)
++                        .minHeight(20.px)
+                         .color(.white)
+                         
+                         Div().class(.clear)
+@@ -1456,8 +1456,8 @@
+                     Div{
+                         Div("Medio Mayoreo")
+                             .class(.oneLineText)
+-                            .fontSize(12.px)
+-                            .height(18.px)
++                            .fontSize(14.px)
++                            .minHeight(20.px)
+                             .color(.white)
+                         
+                         Div().class(.clear)
+@@ -1486,8 +1486,8 @@
+                         
+                         Div("Costo Mayoreo")
+                             .class(.oneLineText)
+-                            .fontSize(12.px)
+-                            .height(18.px)
++                            .fontSize(14.px)
++                            .minHeight(20.px)
+                             .color(.white)
+                         
+                         Div().class(.clear)
+@@ -1515,8 +1515,8 @@
+                         
+                         Div("Costo Promocional")
+                             .class(.oneLineText)
+-                            .fontSize(12.px)
+-                            .height(18.px)
++                            .fontSize(14.px)
++                            .minHeight(20.px)
+                             .color(.white)
+                      
+                         Div().class(.clear)
+@@ -1548,8 +1548,8 @@
+                     
+                     Div("Sub Total + IVA")
+                         .class(.oneLineText)
+-                        .fontSize(12.px)
+-                        .height(12.px)
++                        .fontSize(14.px)
++                        .minHeight(20.px)
+                         .color(.white)
+                     
+                     self.costTaxDiv
+@@ -1558,8 +1558,8 @@
+                     
+                     Div("Ganacia")
+                         .class(.oneLineText)
+-                        .fontSize(12.px)
+-                        .height(12.px)
++                        .fontSize(14.px)
++                        .minHeight(20.px)
+                         .color(.white)
+                  
+                     self.priceaTaxDiv
+@@ -1568,8 +1568,8 @@
+                     
+                     Div("Ganacia")
+                         .class(.oneLineText)
+-                        .fontSize(12.px)
+-                        .height(12.px)
++                        .fontSize(14.px)
++                        .minHeight(20.px)
+                         .color(.white)
+                     
+                     self.pricebTaxDiv
+@@ -1578,8 +1578,8 @@
+                     
+                     Div("Ganacia")
+                         .class(.oneLineText)
+-                        .fontSize(12.px)
+-                        .height(12.px)
++                        .fontSize(14.px)
++                        .minHeight(20.px)
+                         .color(.white)
+                     
+                     self.pricecTaxDiv
+@@ -1588,8 +1588,8 @@
+                     
+                     Div("Ganacia")
+                         .class(.oneLineText)
+-                        .fontSize(12.px)
+-                        .height(12.px)
++                        .fontSize(14.px)
++                        .minHeight(20.px)
+                         .color(.white)
+                     
+                     self.priceprTaxDiv
+@@ -1631,7 +1631,7 @@
+                             Div().class(.clear)
+                             Div("Que precio a credito")
+                                 .class(.oneLineText)
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.gray)
+                         }
+                     }
+@@ -1655,7 +1655,7 @@
+                             Div().class(.clear)
+                             Div("% de anticipo")
+                                 .class(.oneLineText)
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.gray)
+                         }
+                     }
+@@ -1679,7 +1679,7 @@
+                             Div().class(.clear)
+                             Div("Cuantas mensualidades")
+                                 .class(.oneLineText)
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.gray)
+                         }
+                     }
+@@ -2361,7 +2361,7 @@
+                             Div().class(.clear)
+                             
+                             Div("Agregar Comentarios")
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.white)
+                             
+                             Div()
+--- before/Sources/App/Snippits/ManageSOCView.swift
++++ after/Sources/App/Snippits/ManageSOCView.swift
+@@ -640,7 +640,7 @@
+                             Div().class(.clear)
+                             Div("Que costo el producto")
+                                 .class(.oneLineText)
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.gray)
+                         }
+                     }
+@@ -664,7 +664,7 @@
+                             Div().class(.clear)
+                             Div("Costo al Publico")
+                                 .class(.oneLineText)
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.gray)
+                         }
+                     }
+@@ -688,7 +688,7 @@
+                             Div().class(.clear)
+                             Div("Medio Mayoreo")
+                                 .class(.oneLineText)
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.gray)
+                         }
+                     }
+@@ -712,7 +712,7 @@
+                             Div().class(.clear)
+                             Div("Costo Mayoreo")
+                                 .class(.oneLineText)
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.gray)
+                         }
+                     }
+@@ -736,7 +736,7 @@
+                             Div().class(.clear)
+                             Div("Costo Promocional")
+                                 .class(.oneLineText)
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.gray)
+                         }
+                     }
+@@ -1379,7 +1379,7 @@
+                         Div().class(.clear)
+                         
+                         Div("Agregar Comentarios")
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                             .color(.white)
+                         
+                         Div()
+--- before/Sources/App/Snippits/MessageObject.swift
++++ after/Sources/App/Snippits/MessageObject.swift
+@@ -234,7 +234,7 @@
+             .color(self.$titleColor)
+             .marginRight(12.px)
+             .marginLeft(12.px)
+-            .fontSize(13.px)
++            .fontSize(14.px)
+             .align(.left)
+             
+             Div().class(.clear).marginTop(3.px)
+@@ -285,7 +285,7 @@
+                         .class(.oneLineText)
+                         .color(.lightGray)
+                         .textAlign(.right)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .width(100.px)
+                 }
+                 .class(Class(TCMessageObjectClass.bubble))
+@@ -414,7 +414,7 @@
+             .color(self.titleColor)
+             .marginRight(12.px)
+             .marginLeft(12.px)
+-            .fontSize(13.px)
++            .fontSize(14.px)
+             .align(.right)
+             
+             Div().class(.clear).marginTop(3.px)
+@@ -615,7 +615,7 @@
+             }
+                 .class(Class(TCMessageObjectClass.meta))
+                 .align(.left)
+-                .fontSize(13.px)
++                .fontSize(14.px)
+                 .marginLeft(12.px)
+                 .marginRight(12.px)
+                 .color(self.$titleColor)
+--- before/Sources/App/Snippits/MoneyManager/FinancialServices/MoneyManger+FinancialServices+DetailView.swift
++++ after/Sources/App/Snippits/MoneyManager/FinancialServices/MoneyManger+FinancialServices+DetailView.swift
+@@ -182,7 +182,7 @@
+                             Label("Creado Por")
+                                 .color(.lightGray)
+                                 .marginBottom(3.px)
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                             Div(self.$createdBy)
+                                 .class(.oneLineText)
+                                 .marginBottom(7.px)
+@@ -197,7 +197,7 @@
+                             Label("Portado Por")
+                                 .color(.lightGray)
+                                 .marginBottom(3.px)
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                             Div(self.$createdBy)
+                                 .class(.oneLineText)
+                                 .marginBottom(7.px)
+@@ -221,7 +221,7 @@
+                                 Label("Creado en")
+                                     .color(.lightGray)
+                                     .marginBottom(3.px)
+-                                    .fontSize(12.px)
++                                    .fontSize(14.px)
+                                 Div(getDate(self.financial.createdAt).formatedLong)
+                                     .class(.oneLineText)
+                                     .marginBottom(7.px)
+@@ -236,7 +236,7 @@
+                                 Label("Tipo Documento")
+                                     .color(.lightGray)
+                                     .marginBottom(3.px)
+-                                    .fontSize(12.px)
++                                    .fontSize(14.px)
+                                 Div(self.financial.type.description)
+                                     .class(.oneLineText)
+                                     .marginBottom(7.px)
+@@ -251,7 +251,7 @@
+                             Label("Comentarios")
+                                 .color(.lightGray)
+                                 .marginBottom(3.px)
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                             Div(self.financial.comments)
+                                 .class(.oneLineText)
+                                 .marginBottom(7.px)
+@@ -480,7 +480,7 @@
+                             Div().class(.clear)
+                             
+                             Div("Agregar Comentarios")
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.white)
+                             
+                             Div()
+--- before/Sources/App/Snippits/MoneyManager/MoneyManagerView.swift
++++ after/Sources/App/Snippits/MoneyManager/MoneyManagerView.swift
+@@ -331,7 +331,7 @@
+                 .custom("border-radius", "999px")
+                 .custom("background", "rgba(18, 78, 118, 0.45)")
+                 .custom("color", "#9cd9ff")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "700")
+         }
+ 
+@@ -356,7 +356,7 @@
+                 .custom("border-radius", "10px")
+                 .custom("background", "rgba(112, 65, 8, 0.18)")
+                 .custom("color", "#f7c978")
+-                .custom("font-size", "13px")
++                .custom("font-size", "14px")
+                 .custom("line-height", "1.4")
+ 
+             CSSRule(Pointer("\(root) input, \(root) select, \(root) textarea"))
+--- before/Sources/App/Snippits/OldChargeTrRow.swift
++++ after/Sources/App/Snippits/OldChargeTrRow.swift
+@@ -107,17 +107,17 @@
+         }.width(20.px)
+         
+         Td(self.$cuantString)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+         
+         Td(self.$name)
+             .class(.oneLineText)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+         
+         Td(self.$priceString)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+         
+         Td(self.$total)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+         
+     }
+     
+--- before/Sources/App/Snippits/OrderCalendarView.swift
++++ after/Sources/App/Snippits/OrderCalendarView.swift
+@@ -329,13 +329,13 @@
+                             .width(30.px)
+                             .align(.center)
+                             .float(.right)
+-                            .fontSize(8.px)
++                            .fontSize(13.px)
+                         
+                         Span("ORD")
+                             .float(.right)
+                             .color(.white)
+                             .margin(all: 3.px)
+-                            .fontSize(8.px)
++                            .fontSize(13.px)
+                         
+                         Div().class(.clear)
+                         
+--- before/Sources/App/Snippits/OrderView/EquipmentView/OrderView+EquipmentView.swift
++++ after/Sources/App/Snippits/OrderView/EquipmentView/OrderView+EquipmentView.swift
+@@ -298,7 +298,7 @@
+                     
+                     Label(configServiceTags.idTagName)
+                         .color(.gray)
+-                        .fontSize(10.px)
++                        .fontSize(13.px)
+                     
+                     Div(self.$_idTag1.map{ $0.isEmpty ? configServiceTags.idTagPlaceholder : $0 })
+                         .class(.textFiledBlackDarkReadMode, .oneLineText)
+@@ -314,7 +314,7 @@
+                 Div {
+                     Label(configServiceTags.secondIDTagName).color(.gray)
+                         .color(.gray)
+-                        .fontSize(10.px)
++                        .fontSize(13.px)
+                       
+                     Div(self.$_idTag2.map{ $0.isEmpty ? configServiceTags.secondIDTagPlaceholder : $0 })
+                         .class(.textFiledBlackDarkReadMode, .oneLineText)
+@@ -331,7 +331,7 @@
+                 Div {
+                     Label(configServiceTags.tag1Name).color(.gray)
+                         .color(.gray)
+-                        .fontSize(10.px)
++                        .fontSize(13.px)
+                       
+                     Div(self.$_tag1.map{ $0.isEmpty ? configServiceTags.tag1Placeholder : $0 })
+                         .class(.textFiledBlackDarkReadMode, .oneLineText)
+@@ -348,7 +348,7 @@
+                 Div {
+                     Label(configServiceTags.tag2Name).color(.gray)
+                         .color(.gray)
+-                        .fontSize(10.px)
++                        .fontSize(13.px)
+                       
+                     Div(self.$_tag2.map{ $0.isEmpty ? configServiceTags.tag2Placeholder : $0 })
+                         .class(.textFiledBlackDarkReadMode, .oneLineText)
+@@ -365,7 +365,7 @@
+                 Div {
+                     Label(configServiceTags.tag3Name).color(.gray)
+                         .color(.gray)
+-                        .fontSize(10.px)
++                        .fontSize(13.px)
+                       
+                     Div(self.$_tag3.map{ $0.isEmpty ? configServiceTags.tag3Placeholder : $0 })
+                         .class(.textFiledBlackDarkReadMode, .oneLineText)
+@@ -382,7 +382,7 @@
+                 Div {
+                     Label(configServiceTags.tag4Name).color(.gray)
+                         .color(.gray)
+-                        .fontSize(10.px)
++                        .fontSize(13.px)
+                       
+                     Div(self.$_tag4.map{ $0.isEmpty ? configServiceTags.tag4Placeholder : $0 })
+                         .class(.textFiledBlackDarkReadMode, .oneLineText)
+@@ -399,7 +399,7 @@
+                 Div {
+                     Label(configServiceTags.tag5Name).color(.gray)
+                         .color(.gray)
+-                        .fontSize(10.px)
++                        .fontSize(13.px)
+                       
+                     Div(self.$_tag5.map{ $0.isEmpty ? configServiceTags.tag5Placeholder : $0 })
+                         .class(.textFiledBlackDarkReadMode, .oneLineText)
+@@ -416,7 +416,7 @@
+                 Div {
+                     Label(configServiceTags.tag6Name).color(.gray)
+                         .color(.gray)
+-                        .fontSize(10.px)
++                        .fontSize(13.px)
+                       
+                     Div(self.$_tag6.map{ $0.isEmpty ? configServiceTags.tag6Placeholder : $0 })
+                         .class(.textFiledBlackDarkReadMode, .oneLineText)
+--- before/Sources/App/Snippits/OrderView/OrderView.swift
++++ after/Sources/App/Snippits/OrderView/OrderView.swift
+@@ -480,18 +480,18 @@
+                 Div{
+                     Div{
+                         Span("T. Cargos")
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                             .color(.white)
+                         Div().class(.clear).marginTop(7.px)
+                         
+                         
+                         Span("T. Pagos")
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                             .color(.white)
+                         Div().class(.clear).marginTop(7.px)
+                         
+                         Span("Balance")
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                             .fontWeight(.bolder)
+                             .color(.white)
+                         Div().class(.clear).marginTop(7.px)
+--- before/Sources/App/Snippits/POCStorageControlItemView.swift
++++ after/Sources/App/Snippits/POCStorageControlItemView.swift
+@@ -62,7 +62,7 @@
+         
+         marginBottom(7.px)
+         padding(all: 3.px)
+-        fontSize(12.px)
++        fontSize(14.px)
+         self.class(.uibtn)
+         width(95.percent)
+         onClick {
+@@ -83,7 +83,7 @@
+             str += seccions[secid]?.name ?? "S.N/D"
+         }
+      
+-        locationView.appendChild(Span(str).fontSize(12.px))
++        locationView.appendChild(Span(str).fontSize(14.px))
+     }
+     
+     override func didAddToDOM() {
+--- before/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Activity.swift
++++ after/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Activity.swift
+@@ -71,7 +71,7 @@
+                 
+                 Div{
+                     Label("Seleccione Fecha")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.dateSelect
+@@ -82,7 +82,7 @@
+                 
+                 Div{
+                     Label("Fecha Inicio")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.startAtField
+@@ -97,7 +97,7 @@
+                 
+                 Div{
+                     Label("Fecha Final")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.endAtField
+@@ -569,10 +569,10 @@
+                         .fontWeight(.bold)
+                     Div("\(self.activityDateTime(event.occurredAt)) • \(self.activityUserName(event.userId, usersById: usersById))")
+                         .color(.gray)
+-                        .fontSize(11.px)
++                        .fontSize(13.px)
+                     if !detail.isEmpty {
+                         Div(detail)
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                             .marginTop(2.px)
+                             .custom("white-space", "pre-wrap")
+                     }
+@@ -596,7 +596,7 @@
+                     .marginBottom(3.px)
+                 Div("El análisis considera el catálogo completo y solo muestra coincidencias estrictas.")
+                     .color(.gray)
+-                    .fontSize(12.px)
++                    .fontSize(14.px)
+                     .marginBottom(7.px)
+             }
+ 
+--- before/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+CardexGraph.swift
++++ after/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+CardexGraph.swift
+@@ -78,7 +78,7 @@
+ 
+                     Div("\(self.storeName)  •  \(getDate(self.startAt).formatedLong) al \(getDate(self.endAt).formatedLong)")
+                         .color(.gray)
+-                        .fontSize(13.px)
++                        .fontSize(14.px)
+                         .marginTop(3.px)
+ 
+                     Div().clear(.both)
+@@ -179,9 +179,9 @@
+         private func lineChart() -> Div {
+             let chartWidth = 920.0
+             let chartHeight = 330.0
+-            let leftInset = 58.0
+-            let rightInset = 24.0
+-            let topInset = 22.0
++            let leftInset = 76.0
++            let rightInset = 44.0
++            let topInset = 26.0
+             let bottomInset = 62.0
+             let plotWidth = chartWidth - leftInset - rightInset
+             let plotHeight = chartHeight - topInset - bottomInset
+@@ -228,7 +228,7 @@
+                     .custom("x", self.coordinate(leftInset - 9))
+                     .custom("y", self.coordinate(y + 4))
+                     .custom("fill", "#9fb5c5")
+-                    .custom("font-size", "12")
++                    .custom("font-size", "14")
+                     .custom("text-anchor", "end"))
+             }
+ 
+@@ -276,14 +276,14 @@
+                         .custom("x", self.coordinate(point.x))
+                         .custom("y", self.coordinate(chartHeight - 28))
+                         .custom("fill", "#a8bed0")
+-                        .custom("font-size", "11")
++                        .custom("font-size", "13")
+                         .custom("text-anchor", "middle"))
+ 
+                     svg.appendChild(SVGText(point.units.toString)
+                         .custom("x", self.coordinate(point.x))
+-                        .custom("y", self.coordinate(max(point.y - 11, 12)))
++                        .custom("y", self.coordinate(max(point.y - 13, 16)))
+                         .custom("fill", "#edf7ff")
+-                        .custom("font-size", "11")
++                        .custom("font-size", "13")
+                         .custom("font-weight", "700")
+                         .custom("text-anchor", "middle"))
+                 }
+@@ -301,7 +301,7 @@
+                     Span("Existencia después de cada actividad")
+                         .color(.gray)
+                 }
+-                .fontSize(12.px)
++                .fontSize(14.px)
+                 .padding(top: 0.px, right: 12.px, bottom: 0.px, left: 12.px)
+             }
+             .padding(top: 8.px, right: 10.px, bottom: 8.px, left: 10.px)
+@@ -530,7 +530,7 @@
+ 
+                 Div(title)
+                     .color(.white)
+-                    .fontSize(13.px)
++                    .fontSize(14.px)
+                     .marginTop(7.px)
+             }
+             .display(.flex)
+@@ -546,7 +546,7 @@
+             Div {
+                 Div(title)
+                     .color(.gray)
+-                    .fontSize(12.px)
++                    .fontSize(14.px)
+                 Div(value.formatMoney)
+                     .color(.white)
+                     .fontSize(17.px)
+@@ -576,7 +576,7 @@
+             .borderRadius(all: 7.px)
+             .backgroundColor(.grayBlackDark)
+             .color(.white)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+             .fontWeight(.bold)
+             .cursor(.pointer)
+             .onClick {
+--- before/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+FastAndFurios.swift
++++ after/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+FastAndFurios.swift
+@@ -92,7 +92,7 @@
+                     .fontWeight(.bold)
+                 Div("Ingreso por día 50% • Velocidad de unidades 25% • Total de unidades 25%. Cada componente se compara contra el producto líder del reporte.")
+                     .color(.white)
+-                    .fontSize(12.px)
++                    .fontSize(14.px)
+                     .marginTop(4.px)
+             }
+             .class(Class(TCCrystalSurfaceClass.auditMetric))
+--- before/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift
++++ after/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift
+@@ -191,7 +191,7 @@
+                 /* Tipo de reporte*/
+                 Div{
+                     Label("Tipo de reporte")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     
+                     Div().clear(.both)
+@@ -213,7 +213,7 @@
+                 /// Seleccione Tienda
+                 Div{
+                     Label("Seleccione Tienda")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.storeSelect
+@@ -226,7 +226,7 @@
+                 /// Seleccione Departament
+                 Div{
+                     Label("Seleccione Departament")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.departmentSelect
+@@ -239,7 +239,7 @@
+                 /// Seleccione Usuario
+                 Div{
+                     Label("Seleccione Usuario")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.usertSelect
+@@ -252,7 +252,7 @@
+                 /// Product Search
+                 Div{
+                     Label("Seleccione Productos")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.parceblePOCDiv
+@@ -264,7 +264,7 @@
+                 
+                 Div{
+                     Label("Seleccione Fecha")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.dateSelect
+@@ -276,7 +276,7 @@
+                 
+                 Div{
+                     Label("Fecha Inicio")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.startAtField
+@@ -292,7 +292,7 @@
+                 
+                 Div{
+                     Label("Fecha Final")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.endAtField
+@@ -323,9 +323,9 @@
+                 Div(self.$reportType.map{ $0?.helpText ??  "" })
+                     .paddingBottom(7.px)
+                     .marginLeft(12.px)
+-                    .fontSize(12.px)
++                            .fontSize(14.px)
+                     .marginTop(3.px)
+-                    .height(15.px)
++                    .minHeight(20.px)
+                     .color(.white)
+                     
+             }
+@@ -2737,7 +2737,7 @@
+                         .color(.white)
+                 }
+             }
+-            .fontSize(13.px)
++            .fontSize(14.px)
+             .marginBottom(7.px))
+ 
+             let tableBody = TBody()
+@@ -3008,7 +3008,7 @@
+ 
+                 Div("Productos con actividad durante los últimos 90 días")
+                     .color(.gray)
+-                    .fontSize(13.px)
++                    .fontSize(14.px)
+ 
+                 Div {
+                     Span("Alcance: ")
+@@ -3026,7 +3026,7 @@
+                     Span(self.inventoryDateTime(payload.generatedAt))
+                         .color(.white)
+                 }
+-                .fontSize(13.px)
++                .fontSize(14.px)
+                 .marginTop(5.px)
+             }
+             .padding(all: 12.px)
+@@ -3605,14 +3605,14 @@
+             Div {
+                 Div(title)
+                     .color(.gray)
+-                    .fontSize(12.px)
++                    .fontSize(14.px)
+                 Div(value)
+                     .color(.yellowTC)
+                     .fontSize(18.px)
+                     .fontWeight(.bold)
+                 Div(detail)
+                     .color(.white)
+-                    .fontSize(11.px)
++                    .fontSize(13.px)
+             }
+             .class(Class(TCCrystalSurfaceClass.auditMetric))
+             .custom("flex", "1 1 150px")
+@@ -3939,7 +3939,7 @@
+ 
+                 Div("Existencias actuales y productos con actividad durante los últimos 90 días")
+                     .color(.gray)
+-                    .fontSize(13.px)
++                    .fontSize(14.px)
+ 
+                 Div {
+                     Span("Alcance: ")
+@@ -3957,7 +3957,7 @@
+                     Span(self.inventoryDateTime(payload.generatedAt))
+                         .color(.white)
+                 }
+-                .fontSize(13.px)
++                .fontSize(14.px)
+                 .marginTop(5.px)
+             }
+             .padding(all: 12.px)
+@@ -4158,7 +4158,7 @@
+ 
+                 Div("El servicio no incluyó existencias ni actividad de inventario. Se muestran los datos disponibles del catálogo.")
+                     .color(.gray)
+-                    .fontSize(13.px)
++                    .fontSize(14.px)
+             }
+             .padding(all: 12.px)
+             .marginBottom(10.px)
+--- before/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift
++++ after/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift
+@@ -76,7 +76,7 @@
+                 // MARK: Selected store
+                 Div{
+                     Label("Tenda Origen")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     
+                     Div().clear(.both)
+@@ -89,7 +89,7 @@
+                 
+                 Div{
+                     Label("Seleccione Fecha")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.dateSelect
+@@ -100,7 +100,7 @@
+                 
+                 Div{
+                     Label("Fecha Inicio")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.startAtField
+@@ -115,7 +115,7 @@
+                 
+                 Div{
+                     Label("Fecha Final")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.endAtField
+--- before/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift
++++ after/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift
+@@ -101,7 +101,7 @@
+                 /// Seleccione Tienda
+                 Div{
+                     Label("Tipo de Reporte")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.typeSelect
+@@ -113,7 +113,7 @@
+                 /// Seleccione Tienda
+                 Div{
+                     Label("Seleccione Tienda")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.storeSelect
+@@ -126,7 +126,7 @@
+                 Div{
+                     
+                     Label("Seleccione Concesionario")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     
+                     Div().clear(.both)
+@@ -175,7 +175,7 @@
+                 
+                 Div{
+                     Label("Seleccione Fecha")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.dateSelect
+@@ -186,7 +186,7 @@
+                 
+                 Div{
+                     Label("Fecha Inicio")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.startAtField
+@@ -201,7 +201,7 @@
+                 
+                 Div{
+                     Label("Fecha Final")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.endAtField
+--- before/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Theme.swift
++++ after/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Theme.swift
+@@ -149,7 +149,7 @@
+                     .custom("display", "block")
+                     .custom("margin-bottom", "4px")
+                     .custom("color", "#a8bed0 !important")
+-                    .custom("font-size", "11px !important")
++                    .custom("font-size", "13px !important")
+                     .custom("font-weight", "700")
+                     .custom("letter-spacing", "0.45px")
+                     .custom("text-transform", "uppercase")
+@@ -210,7 +210,7 @@
+                     .custom("border-radius", "999px")
+                     .custom("background", "#ff9f0a")
+                     .custom("color", "#07111d")
+-                    .custom("font-size", "11px")
++                    .custom("font-size", "13px")
+                     .custom("padding-left", "1px")
+ 
+                 CSSRule(Pointer("\(root) .\(TCCrystalSurfaceClass.auditResults)"))
+@@ -272,7 +272,7 @@
+                     .custom("text-overflow", "ellipsis")
+                     .custom("white-space", "nowrap")
+                     .custom("color", "#d8e9f6")
+-                    .custom("font-size", "12px")
++                    .custom("font-size", "14px")
+ 
+                 CSSRule(Pointer("\(root) .\(TCCrystalSurfaceClass.auditChartTrack)"))
+                     .custom("height", "10px")
+@@ -290,7 +290,7 @@
+ 
+                 CSSRule(Pointer("\(root) .\(TCCrystalSurfaceClass.auditChartValue)"))
+                     .custom("color", "#edf7ff")
+-                    .custom("font-size", "12px")
++                    .custom("font-size", "14px")
+                     .custom("font-weight", "800")
+                     .custom("text-align", "right")
+ 
+@@ -421,10 +421,10 @@
+                 .marginBottom(3.px)
+             Div(subtitle)
+                 .color(.gray)
+-                .fontSize(13.px)
++                .fontSize(14.px)
+             Div(context)
+                 .color(.white)
+-                .fontSize(13.px)
++                .fontSize(14.px)
+                 .marginTop(5.px)
+         }
+         .class(Class(TCCrystalSurfaceClass.auditReportHeader))
+@@ -434,14 +434,14 @@
+         Div {
+             Div(title)
+                 .color(.gray)
+-                .fontSize(11.px)
++                .fontSize(13.px)
+             Div(value)
+                 .color(.lightBlueText)
+                 .fontSize(23.px)
+                 .fontWeight(.bold)
+             Div(detail)
+                 .color(.white)
+-                .fontSize(11.px)
++                .fontSize(13.px)
+         }
+         .class(Class(TCCrystalSurfaceClass.auditMetric))
+     }
+--- before/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift
++++ after/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift
+@@ -86,7 +86,7 @@
+                 // MARK: Form store
+                 Div{
+                     Label("Tenda Origen")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     
+                     Div().clear(.both)
+@@ -100,7 +100,7 @@
+                 // MARK: To store
+                 Div{
+                     Label("Tienda Destino")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     
+                     Div().clear(.both)
+@@ -113,7 +113,7 @@
+                 
+                 Div{
+                     Label("Seleccione Fecha")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.dateSelect
+@@ -124,7 +124,7 @@
+                 
+                 Div{
+                     Label("Fecha Inicio")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.startAtField
+@@ -139,7 +139,7 @@
+                 
+                 Div{
+                     Label("Fecha Final")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.endAtField
+--- before/Sources/App/Snippits/ProductManager/ProductManagerView.swift
++++ after/Sources/App/Snippits/ProductManager/ProductManagerView.swift
+@@ -665,7 +665,7 @@
+                     .class(.oneLineText)
+                     .textAlign(.center)
+                     .color(.lightGray)
+-                    .fontSize(13.px)
++                    .fontSize(14.px)
+                 }
+                 .boxShadow(h: 0.px, v: 0.px, blur: 24.px, color: .black)
+                 .hidden(self.$productTranferMode.map{ !$0 })
+@@ -694,7 +694,7 @@
+                     .class(.oneLineText)
+                     .textAlign(.center)
+                     .color(.lightGray)
+-                    .fontSize(13.px)
++                    .fontSize(14.px)
+                 }
+                     .boxShadow(h: 0.px, v: 0.px, blur: 24.px, color: .black)
+                     .hidden(self.$productTranferMode.map{ $0 })
+--- before/Sources/App/Snippits/ProductTransferReportView.swift
++++ after/Sources/App/Snippits/ProductTransferReportView.swift
+@@ -118,7 +118,7 @@
+                 /// Seleccione Tienda
+                 Div{
+                     Label("Seleccione Tienda")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.storeSelect
+@@ -138,7 +138,7 @@
+                 /// Seleccione Tienda
+                 Div{
+                     Label("Cliente")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     Div(self.$customerName)
+@@ -159,7 +159,7 @@
+                 
+                 Div{
+                     Label("Seleccione Fecha")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.dateSelect
+@@ -170,7 +170,7 @@
+                 
+                 Div{
+                     Label("Fecha Inicio")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.startAtField
+@@ -185,7 +185,7 @@
+                 
+                 Div{
+                     Label("Fecha Final")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.endAtField
+--- before/Sources/App/Snippits/SalePoint/SalePoint+HistoryView.swift
++++ after/Sources/App/Snippits/SalePoint/SalePoint+HistoryView.swift
+@@ -311,7 +311,7 @@
+                         /// Tipo de reporte
+                         Div{
+                             Label("Tipo de reporte")
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.gray)
+                             
+                             Div().clear(.both)
+@@ -325,7 +325,7 @@
+                         /// Seleccione Tienda
+                         Div{
+                             Label("Seleccione Tienda")
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.gray)
+                             Div().clear(.both)
+                             
+@@ -339,7 +339,7 @@
+                         /// Seleccione Ususario
+                         Div{
+                             Label("Seleccione Usuario")
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.gray)
+                             Div().clear(.both)
+                             
+@@ -353,7 +353,7 @@
+                         /// Product Search
+                         Div{
+                             Label("Seleccione Productos")
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.gray)
+                             Div().clear(.both)
+                             self.parceblePOCDiv
+@@ -366,7 +366,7 @@
+                         /// Product Search
+                         Div{
+                             Label("Seleccione Servicio")
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.gray)
+                             Div().clear(.both)
+                             self.parcebleSOCDiv
+@@ -379,7 +379,7 @@
+                         /// Date Select Type
+                         Div{
+                             Label("Seleccione Fecha")
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.gray)
+                             Div().clear(.both)
+                             self.dateSelect
+@@ -392,7 +392,7 @@
+                         /// Star At
+                         Div{
+                             Label("Fecha Inicio")
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.gray)
+                             Div().clear(.both)
+                             self.startAtField
+@@ -409,7 +409,7 @@
+                         /// End At
+                         Div{
+                             Label("Fecha Final")
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.gray)
+                             Div().clear(.both)
+                             self.endAtField
+@@ -437,9 +437,9 @@
+                         Div(self.$reportType.map{ $0?.helpText ??  "" })
+                             .paddingBottom(7.px)
+                             .marginLeft(12.px)
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                             .marginTop(3.px)
+-                            .height(15.px)
++                            .minHeight(20.px)
+                             .color(.white)
+                             
+                     }
+--- before/Sources/App/Snippits/SideMenuRightView.swift
++++ after/Sources/App/Snippits/SideMenuRightView.swift
+@@ -133,7 +133,7 @@
+                         .height(48.px)
+                         .custom("box-sizing", "border-box")
+                         .custom("color", "var(--tc-beta-muted)")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .padding(v: 15.px, h: 12.px)
+                         .textAlign(.right)
+             
+--- before/Sources/App/Snippits/SkylineDocumentation/SkylineDocumentation+DocumentView.swift
++++ after/Sources/App/Snippits/SkylineDocumentation/SkylineDocumentation+DocumentView.swift
+@@ -93,7 +93,7 @@
+                             
+                             Span("Version \(self.item.version)")
+                                 .color(.white)
+-                                .fontSize(13.px)
++                                .fontSize(14.px)
+                                 .backgroundColor(.slateHeader)
+                                 .borderRadius(all: 7.px)
+                                 .padding(v: 5.px, h: 9.px)
+@@ -101,7 +101,7 @@
+                             
+                             Span(self.item.status.rawValue)
+                                 .color(.white)
+-                                .fontSize(13.px)
++                                .fontSize(14.px)
+                                 .backgroundColor(.darkOrange)
+                                 .borderRadius(all: 7.px)
+                                 .padding(v: 5.px, h: 9.px)
+@@ -110,7 +110,7 @@
+                             if !self.item.keywords.isEmpty {
+                                 Span(self.item.keywords.joined(separator: ", "))
+                                     .color(.lightBlueText)
+-                                    .fontSize(13.px)
++                                    .fontSize(14.px)
+                             }
+                         }
+                     }
+@@ -307,7 +307,7 @@
+                 
+                 Div(payload)
+                     .color(.gray)
+-                    .fontSize(13.px)
++                    .fontSize(14.px)
+                     .marginTop(7.px)
+             }
+             .backgroundColor(.grayBlackDark)
+--- before/Sources/App/Snippits/SkylineDocumentation/SkylineDocumentationView.swift
++++ after/Sources/App/Snippits/SkylineDocumentation/SkylineDocumentationView.swift
+@@ -114,7 +114,7 @@
+                         
+                         Div("Skyline > Documentacion")
+                             .color(.lightGray)
+-                            .fontSize(13.px)
++                            .fontSize(14.px)
+                             .float(.right)
+                             .paddingTop(7.px)
+                         
+@@ -246,7 +246,7 @@
+                         
+                         Div("Skyline > Errores")
+                             .color(.lightGray)
+-                            .fontSize(13.px)
++                            .fontSize(14.px)
+                             .float(.right)
+                             .paddingTop(7.px)
+                         
+@@ -427,7 +427,7 @@
+             
+             P(family.documentableDescription)
+                 .color(.lightGray)
+-                .fontSize(13.px)
++                .fontSize(14.px)
+                 .lineHeight(19.px)
+                 .textAlign(.center)
+         }
+@@ -553,7 +553,7 @@
+ 
+                 Span(record.reported ? "Completado" : "Pendiente")
+                     .color(record.reported ? .green : .darkOrange)
+-                    .fontSize(13.px)
++                    .fontSize(14.px)
+                     .textAlign(.right)
+                     .custom("width", "100px")
+                     .float(.right)
+@@ -566,39 +566,39 @@
+                 "Ocurrencias: \(record.occurrenceCount) • Reintentos: \(record.retries)"
+             )
+             .color(.lightGray)
+-            .fontSize(13.px)
++            .fontSize(14.px)
+             .marginTop(6.px)
+ 
+             Div("Generado: \(self.errorReportDate(record.createdAt)) • Último evento: \(self.errorReportDate(record.lastOccurredAt))")
+                 .color(.gray)
+-                .fontSize(13.px)
++                .fontSize(14.px)
+                 .marginTop(5.px)
+ 
+             if let reportedAt = record.reportedAt {
+                 Div("Completado: \(self.errorReportDate(reportedAt))")
+                     .color(.gray)
+-                    .fontSize(13.px)
++                    .fontSize(14.px)
+                     .marginTop(5.px)
+             }
+ 
+             if !record.endpoint.isEmpty {
+                 Div("Solicitud: \(record.method) \(record.endpoint)")
+                     .color(.lightBlueText)
+-                    .fontSize(13.px)
++                    .fontSize(14.px)
+                     .marginTop(7.px)
+             }
+ 
+             if let status = record.httpStatus {
+                 Div("HTTP: \(status) \(record.httpStatusText ?? "")")
+                     .color(.lightGray)
+-                    .fontSize(13.px)
++                    .fontSize(14.px)
+                     .marginTop(5.px)
+             }
+ 
+             if !record.sourceFile.isEmpty {
+                 Div("Origen: \(self.errorReportSource(record))")
+                     .color(.gray)
+-                    .fontSize(13.px)
++                    .fontSize(14.px)
+                     .marginTop(5.px)
+             }
+ 
+@@ -613,7 +613,7 @@
+             if let reportingError = record.lastReportingError, !reportingError.isEmpty {
+                 Div("Último error de envío: \(self.errorReportSummary(reportingError, limit: 300))")
+                     .color(.red)
+-                    .fontSize(13.px)
++                    .fontSize(14.px)
+                     .marginTop(7.px)
+             }
+         }
+--- before/Sources/App/Snippits/SocialManagerItem.swift
++++ after/Sources/App/Snippits/SocialManagerItem.swift
+@@ -52,7 +52,7 @@
+                     .height(12.px)
+                     
+                 Span(self.page.profileType.description).color(.gray)
+-                    .fontSize(12.px)
++                    .fontSize(14.px)
+                 
+                 Div().class(.clear)
+             }
+--- before/Sources/App/Snippits/StartManualInventory.swift
++++ after/Sources/App/Snippits/StartManualInventory.swift
+@@ -177,7 +177,7 @@
+                         .float(.left)
+                         
+                         Label("Cambiar Perfil")
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                     }
+                     .hidden(self.$profiles.map{ $0.count < 2 })
+                     .marginTop(-7.px)
+--- before/Sources/App/Snippits/ToolFiscal/ToolFiscal.swift
++++ after/Sources/App/Snippits/ToolFiscal/ToolFiscal.swift
+@@ -372,7 +372,7 @@
+             .color(.lightBlueText)
+         
+         Label("Motivo del Ajuste")
+-            .fontSize(12.px)
++            .fontSize(14.px)
+         
+         TextArea(self.$auth)
+             .placeholder("Ingrese la razon del ajuste")
+@@ -449,7 +449,7 @@
+         
+         Label("Proveedor")
+             .color(.lightGray)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+         
+         Div().class(.clear)
+         
+@@ -465,7 +465,7 @@
+         
+         Label("Ultimos Cuatro")
+             .color(.lightGray)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+         
+         Div().class(.clear)
+         
+@@ -475,7 +475,7 @@
+         
+         Label("Folio de Autorizacion")
+             .color(.lightGray)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+         
+         Div().class(.clear)
+         
+@@ -523,7 +523,7 @@
+             .color(.lightBlueText)
+         
+         Label("Proveedor")
+-            .fontSize(12.px)
++            .fontSize(14.px)
+             .color(.lightGray)
+         
+         Div().class(.clear)
+@@ -538,7 +538,7 @@
+             
+         Label("Numero de Cheque")
+             .color(.lightGray)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+         
+         Div().class(.clear)
+         
+@@ -584,7 +584,7 @@
+         
+         Label("Banco ¿Donde Recibiste El Deposito?")
+             .color(.lightGray)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+         
+         Div().class(.clear)
+         
+@@ -600,7 +600,7 @@
+         
+         Label("Folio De Tranferencia")
+             .color(.lightGray)
+-            .fontSize(12.px)
++            .fontSize(14.px)
+         
+         Div().class(.clear)
+         
+@@ -633,7 +633,7 @@
+                 .float(.left)
+                 
+                 Label("Cambiar Perfil")
+-                    .fontSize(12.px)
++                    .fontSize(14.px)
+             }
+             .hidden(self.$profiles.map{ $0.count < 2 })
+             .marginTop(-7.px)
+--- before/Sources/App/Snippits/ToolFiscal/ToolFiscalItemView.swift
++++ after/Sources/App/Snippits/ToolFiscal/ToolFiscalItemView.swift
+@@ -83,7 +83,7 @@
+             .marginRight(7.px)
+         
+     }
+-        .fontSize(12.px)
++        .fontSize(14.px)
+         .color(.gray)
+     
+     @DOM override var body: DOM.Content {
+--- before/Sources/App/Snippits/ToolFiscal/ToolFiscalViewDocument.swift
++++ after/Sources/App/Snippits/ToolFiscal/ToolFiscalViewDocument.swift
+@@ -554,7 +554,7 @@
+                         }
+                     }
+                         .width(100.percent)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                     
+                     var retenidos: Int64 = 0
+                     var trasladados: Int64 = 0
+@@ -657,7 +657,7 @@
+                         }
+                     }
+                         .width(100.percent)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                     
+                     var retenidos: Int64 = 0
+                     var trasladados: Int64 = 0
+--- before/Sources/App/Snippits/ToolProductAuditTrRow.swift
++++ after/Sources/App/Snippits/ToolProductAuditTrRow.swift
+@@ -73,14 +73,14 @@
+         .width(83.px)
+     
+     lazy var link1Input = TextArea(self.$link1)
+-        .fontSize(10.px)
++        .fontSize(13.px)
+         .disabled(true)
+         .class(.textFiledLight)
+         .height(45.px)
+         .width(175.px)
+     
+     lazy var link2Input = TextArea(self.$link2)
+-        .fontSize(10.px)
++        .fontSize(13.px)
+         .class(.textFiledLight)
+         .height(45.px)
+         .width(175.px)
+--- before/Sources/App/Snippits/ToolReciveSendInventory.swift
++++ after/Sources/App/Snippits/ToolReciveSendInventory.swift
+@@ -536,7 +536,7 @@
+                         Div(self.$docuuid.map{ $0.isEmpty ? "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" : $0 })
+                             .color(self.$docuuid.map{ $0.isEmpty ? .grayContrast : .white })
+                             .class(.textFiledBlackDarkReadMode, .oneLineText)
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                         
+                     }
+                     
+--- before/Sources/App/Snippits/ToolReciveSendInventoryManualDispertionsView.swift
++++ after/Sources/App/Snippits/ToolReciveSendInventoryManualDispertionsView.swift
+@@ -322,7 +322,7 @@
+                             .float(.left)
+                             
+                             Label("Cambiar Perfil")
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                         }
+                         .hidden(self.$profiles.map{ $0.count < 2 })
+                         .marginTop(-7.px)
+--- before/Sources/App/Snippits/ToolViewFiscalXMLDocument.swift
++++ after/Sources/App/Snippits/ToolViewFiscalXMLDocument.swift
+@@ -285,7 +285,7 @@
+                         Div(self.$docuuid.map{ $0.isEmpty ? "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" : $0 })
+                             .color(self.$docuuid.map{ $0.isEmpty ? .grayContrast : .white })
+                             .class(.textFiledBlackDarkReadMode, .oneLineText)
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                         
+                     }
+                     
+--- before/Sources/App/Snippits/ToolViewHistoricalInventoryManualDispertionsView.swift
++++ after/Sources/App/Snippits/ToolViewHistoricalInventoryManualDispertionsView.swift
+@@ -277,7 +277,7 @@
+                     /* Tipo de reporte*/
+                     Div{
+                         Label("Tipo de reporte")
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                             .color(.gray)
+                         
+                         Div().clear(.both)
+@@ -291,7 +291,7 @@
+                     
+                     Div{
+                         Label("Seleccione Fecha")
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                             .color(.gray)
+                         Div().clear(.both)
+                         self.dateSelect
+@@ -303,7 +303,7 @@
+                     
+                     Div{
+                         Label("Fecha Inicio")
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                             .color(.gray)
+                         Div().clear(.both)
+                         self.startAtField
+@@ -319,7 +319,7 @@
+                     
+                     Div{
+                         Label("Fecha Final")
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                             .color(.gray)
+                         Div().clear(.both)
+                         self.endAtField
+@@ -336,7 +336,7 @@
+                     /// Seleccione Tienda
+                     Div{
+                         Label("Seleccione Tienda")
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                             .color(.gray)
+                         Div().clear(.both)
+                         self.storeSelect
+@@ -349,7 +349,7 @@
+                     /// Seleccione Usuario
+                     Div{
+                         Label("Seleccione Vendor")
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                             .color(.gray)
+                         Div().clear(.both)
+                         self.vendorSelect
+@@ -373,9 +373,9 @@
+                     Div(self.$reportType.map{ $0?.helpText ??  "" })
+                         .paddingBottom(7.px)
+                         .marginLeft(12.px)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .marginTop(3.px)
+-                        .height(15.px)
++                        .minHeight(20.px)
+                         .color(.white)
+                         
+                 }
+--- before/Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+OrderProcessing/Tools+HistorySettings+OrderProcessing+Reports.swift
++++ after/Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+OrderProcessing/Tools+HistorySettings+OrderProcessing+Reports.swift
+@@ -99,7 +99,7 @@
+                 /// Tipo de reporte
+                 Div{
+                     Label("Tipo de reporte")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.reportTypeSelect
+@@ -111,7 +111,7 @@
+                 /// Seleccione Tienda
+                 Div{
+                     Label("Seleccione Tienda")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.storeSelect
+@@ -124,7 +124,7 @@
+                 /// Seleccione Usuario
+                 Div{
+                     Label("Seleccione Usuario")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.userSelect
+@@ -136,7 +136,7 @@
+                 
+                 Div{
+                     Label("Seleccione Fecha")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.dateSelect
+@@ -148,7 +148,7 @@
+                 
+                 Div{
+                     Label("Fecha Inicio")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.startAtField
+@@ -164,7 +164,7 @@
+                 
+                 Div{
+                     Label("Fecha Final")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.endAtField
+--- before/Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+TripProcessing/Tools+HistorySettings+TripProcessing+Reports.swift
++++ after/Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+TripProcessing/Tools+HistorySettings+TripProcessing+Reports.swift
+@@ -117,7 +117,7 @@
+                 /// Tipo de reporte
+                 Div{
+                     Label("Tipo de reporte")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.reportTypeSelect
+@@ -128,7 +128,7 @@
+                 /// Seleccione Cliente
+                 Div{
+                     Label("Cliente")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.customerSelect
+@@ -141,7 +141,7 @@
+                 /// Seleccione Operador
+                 Div{
+                     Label("Operador")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.operadorSelect
+@@ -154,7 +154,7 @@
+                 /// Seleccione Vehículo
+                 Div{
+                     Label("Vehículo")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.vehicalSelect
+@@ -165,7 +165,7 @@
+                 .float(.left)
+                 Div{
+                     Label("Seleccione Fecha")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.dateSelect
+@@ -177,7 +177,7 @@
+                 
+                 Div{
+                     Label("Fecha Inicio")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.startAtField
+@@ -193,7 +193,7 @@
+                 
+                 Div{
+                     Label("Fecha Final")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                     Div().clear(.both)
+                     self.endAtField
+@@ -628,7 +628,7 @@
+                         // TODO: Replace this inline accent with the shared crystal palette token.
+                         .color(.init(r: 49, g: 185, b: 245))
+                     Span("\(getDate(from).formatedShort) — \(getDate(to).formatedShort) · \(relation)")
+-                        .fontSize(13.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                 }
+                     .custom("display", "flex")
+@@ -666,7 +666,7 @@
+                 kpis.appendChild(
+                     Div {
+                         Span(label)
+-                            .fontSize(12.px)
++                            .fontSize(14.px)
+                             .color(.gray)
+                         Strong(value)
+                             .fontSize(16.px)
+@@ -694,7 +694,7 @@
+                     ["Creado", "Folio", "Estado", "Cliente", "Operador", "Vehículo", "Origen", "Destino", "Kg", "Odómetro", "Ingresos", "Inversion / Gasto", "Utilidad", "Saldo"]
+                         .map { title in
+                             Td(title)
+-                                .fontSize(12.px)
++                                .fontSize(14.px)
+                                 .color(.gray)
+                                 .padding(all: 7.px)
+                         }
+--- before/Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+TripProcessing/Tools+HistorySettings+TripProcessing+Settings.swift
++++ after/Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+TripProcessing/Tools+HistorySettings+TripProcessing+Settings.swift
+@@ -331,7 +331,7 @@
+                     Div(subtitle)
+                         .class(.oneLineText)
+                         .color(.gray)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .marginTop(3.px)
+                 }
+                 .custom("min-width", "0")
+--- before/Sources/App/Snippits/Tools/SystemSettings/Tools+SystemSettings+UserStoreConfiguration/Tools+SystemSettings+UserStoreConfiguration+UserView/Tools+SystemSettings+UserStoreConfiguration+PermitionManager.swift
++++ after/Sources/App/Snippits/Tools/SystemSettings/Tools+SystemSettings+UserStoreConfiguration/Tools+SystemSettings+UserStoreConfiguration+UserView/Tools+SystemSettings+UserStoreConfiguration+PermitionManager.swift
+@@ -631,7 +631,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.panelHeader) span"))
+                 .custom("color", "var(--tc-permission-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.categoryList)"))
+                 .custom("display", "grid")
+@@ -684,7 +684,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.itemMeta)"))
+                 .custom("color", "var(--tc-permission-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("white-space", "nowrap")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.detailHeader)"))
+@@ -708,7 +708,7 @@
+                 .custom("display", "block")
+                 .custom("margin-bottom", "3px")
+                 .custom("color", "rgb(242, 166, 90)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "800")
+                 .custom("letter-spacing", "0.12em")
+                 .custom("text-transform", "uppercase")
+@@ -731,14 +731,14 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.descriptionLabel)"))
+                 .custom("color", "var(--tc-permission-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "800")
+                 .custom("letter-spacing", "0.1em")
+                 .custom("text-transform", "uppercase")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.description)"))
+                 .custom("color", "rgb(215, 232, 245)")
+-                .custom("font-size", "13px")
++                .custom("font-size", "14px")
+                 .custom("line-height", "1.55")
+                 .custom("white-space", "pre-wrap")
+ 
+@@ -757,7 +757,7 @@
+                 .custom("border-radius", "999px")
+                 .custom("background", "rgba(73, 185, 245, 0.18)")
+                 .custom("color", "var(--tc-permission-blue)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("text-align", "center")
+         }
+ 
+@@ -795,13 +795,13 @@
+             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.optionText) strong"))
+                 .custom("overflow", "hidden")
+                 .custom("color", "rgb(237, 247, 255)")
+-                .custom("font-size", "13px")
++                .custom("font-size", "14px")
+                 .custom("text-overflow", "ellipsis")
+                 .custom("white-space", "nowrap")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.optionText) span"))
+                 .custom("color", "var(--tc-permission-muted)")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.optionArrow)"))
+                 .custom("color", "var(--tc-permission-blue)")
+@@ -812,7 +812,7 @@
+                 .custom("display", "inline-block")
+                 .custom("margin-bottom", "12px")
+                 .custom("color", "var(--tc-permission-blue)")
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+                 .custom("cursor", "pointer")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.back):hover, \(root) .\(TCUserPermissionManagerClass.back):focus-visible"))
+--- before/Sources/App/Snippits/Tools/Tools+ServiceManager.swift
++++ after/Sources/App/Snippits/Tools/Tools+ServiceManager.swift
+@@ -181,7 +181,7 @@
+                         .class(.oneLineText)
+                         .textAlign(.center)
+                         .color(.lightGray)
+-                        .fontSize(13.px)
++                        .fontSize(14.px)
+                     }
+                         .boxShadow(h: 0.px, v: 0.px, blur: 24.px, color: .black)
+                         .hidden(self.$selectedDepatment.map{ $0 == nil })
+--- before/Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift
++++ after/Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift
+@@ -402,7 +402,7 @@
+ 
+                     Div(self.$profile.map { $0?.rfc ?? "" })
+                         .class(.oneLineText)
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+                 }
+                 .float(.left)
+@@ -469,7 +469,7 @@
+                 .custom("color", "var(--tc-crystal-ink)")
+ 
+             Div("Elige una ubicación registrada o crea una nueva")
+-                .fontSize(12.px)
++                .fontSize(14.px)
+                 .custom("color", "var(--tc-crystal-muted)")
+         }
+         .display(.flex)
+--- before/Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift
++++ after/Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift
+@@ -260,18 +260,18 @@
+             Div{
+                 Div{
+                     Span("T. Cargos")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.white)
+                     Div().class(.clear).marginTop(7.px)
+ 
+ 
+                     Span("T. Pagos")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.white)
+                     Div().class(.clear).marginTop(7.px)
+ 
+                     Span("Balance")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .fontWeight(.bolder)
+                         .color(.white)
+                     Div().class(.clear).marginTop(7.px)
+@@ -508,7 +508,7 @@
+ 
+                 Div {
+                     Div("Balance")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.gray)
+ 
+                     Div("$\(self.balance.formatMoney)")
+@@ -533,7 +533,7 @@
+     private func summaryMetric(_ label: String, _ value: String) -> Div {
+         Div {
+             Div(label)
+-                .fontSize(12.px)
++                .fontSize(14.px)
+                 .color(.gray)
+ 
+             Div(value)
+@@ -605,7 +605,7 @@
+                         .custom("padding", "5px 8px")
+                         .custom("border", "1px solid var(--tc-beta-border)")
+                         .custom("border-radius", "8px")
+-                        .fontSize(12.px)
++                        .fontSize(14.px)
+                         .color(.lightBlueText)
+                 }
+             }
+@@ -614,7 +614,7 @@
+ 
+             Div(location.rfc)
+                 .marginTop(12.px)
+-                .fontSize(13.px)
++                .fontSize(14.px)
+                 .color(.gray)
+ 
+             Div(location.razon)
+@@ -624,7 +624,7 @@
+ 
+             Div(address.isEmpty ? "Sin dirección registrada" : address)
+                 .marginTop(3.px)
+-                .fontSize(13.px)
++                .fontSize(14.px)
+                 .color(.gray)
+ 
+             Div {
+@@ -646,12 +646,12 @@
+     private func inlineMetadata(_ label: String, _ value: String) -> Div {
+         Div {
+             Div(label)
+-                .fontSize(11.px)
++                .fontSize(13.px)
+                 .color(.gray)
+ 
+             Div(value)
+                 .marginTop(2.px)
+-                .fontSize(13.px)
++                .fontSize(14.px)
+                 .color(.white)
+         }
+     }
+@@ -718,7 +718,7 @@
+         values.forEach { value in
+             row.appendChild(
+                 Div(value.isEmpty ? "—" : value)
+-                    .fontSize(header ? 11.px : 13.px)
++                    .fontSize(header ? 13.px : 14.px)
+                     .fontWeight(header ? .bold : .normal)
+                     .color(header ? .gray : .white)
+             )
+@@ -843,7 +843,7 @@
+                 if !detail.isEmpty {
+                     Div(detail)
+                         .marginTop(3.px)
+-                        .fontSize(11.px)
++                        .fontSize(13.px)
+                         .color(.gray)
+                 }
+             }
+@@ -856,7 +856,7 @@
+                     positive ? "rgba(87, 154, 75, 0.22)" : "rgba(214, 82, 61, 0.22)"
+                 )
+                 .custom("color", positive ? "#8bd17f" : "#ff7866")
+-                .fontSize(11.px)
++                .fontSize(13.px)
+                 .fontWeight(.bold)
+         }
+         .display(.grid)
+@@ -885,11 +885,11 @@
+     private func detailRow(_ label: String, _ value: String) -> Div {
+         Div {
+             Div(label)
+-                .fontSize(12.px)
++                .fontSize(14.px)
+                 .color(.gray)
+ 
+             Div(value.isEmpty ? "Sin información" : value)
+-                .fontSize(13.px)
++                .fontSize(14.px)
+                 .color(.white)
+                 .custom("text-align", "right")
+         }
+--- before/Sources/App/Snippits/TripControler/TripsControlerView.swift
++++ after/Sources/App/Snippits/TripControler/TripsControlerView.swift
+@@ -172,7 +172,7 @@
+                         .fontSize(18.px)
+                         .fontWeight(.bold)
+                     Div("Gestión comercial y Carta Porte")
+-                        .fontSize(11.px)
++                        .fontSize(13.px)
+                         .color(.gray)
+                 }
+                 */
+@@ -531,7 +531,7 @@
+                     .class(.oneLineText)
+ 
+                 Div(item.status.description)
+-                    .fontSize(12.px)
++                    .fontSize(14.px)
+                     .custom("color", accent)
+                     .class(.oneLineText)
+             }
+@@ -539,7 +539,7 @@
+ 
+             Div {
+                 Div(getDate(item.createdAt).formatedShort)
+-                    .fontSize(12.px)
++                    .fontSize(14.px)
+                     .color(.gray)
+                     .class(.oneLineText)
+ 
+@@ -550,7 +550,7 @@
+                     .custom("font-weight", "700")
+ 
+                 Div(item.fiscalId == nil ? "Sin fiscal" : "Fiscal \(String(item.fiscalId!.uuidString.prefix(8)).uppercased())")
+-                    .fontSize(12.px)
++                    .fontSize(14.px)
+                     .color(.lightBlueText)
+                     .class(.oneLineText)
+             }
+--- before/Sources/App/Styles/SKLogInStyle.swift
++++ after/Sources/App/Styles/SKLogInStyle.swift
+@@ -242,7 +242,7 @@
+             .custom("border-radius", "999px")
+             .custom("background", "rgba(35, 93, 146, 0.28)")
+             .custom("color", "#8fc7ff !important")
+-            .custom("font-size", "11px")
++            .custom("font-size", "13px")
+ 
+         Rule(Pointer(".tc-login-recovery-popup .tc-v-title-close"))
+             .custom("color", "#ff9f0a !important")
+--- before/Sources/App/Styles/SKMainStyle.swift
++++ after/Sources/App/Styles/SKMainStyle.swift
+@@ -157,7 +157,7 @@
+             .textShadow(TextShadowType.none)
+             .border(width: .thin, style: .solid, color: .hex(0xaaaaaa))
+             .fontWeight(.bold)
+-            .fontSize(11.px)
++            .fontSize(13.px)
+             .backgroundSize(h:  100.percent, v: 100.percent)
+             .custom("background-image", "-webkit-gradient(linear, 0 0, 0 100%, from(#f4f4f4), to(#f4f4f4))")
+             .custom("box-shadow", "0 1px 0 rgb(0 0 0 / 10%), inset 0 1px 0 #f2f2f2")
+--- before/Sources/App/TierraCeroCustomUI/Components/TCSpeechRecognitionFloatingButton.swift
++++ after/Sources/App/TierraCeroCustomUI/Components/TCSpeechRecognitionFloatingButton.swift
+@@ -484,7 +484,7 @@
+                 .custom("display", "block")
+                 .custom("padding-right", "24px")
+                 .custom("color", "rgba(99, 203, 255, 1)")
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+                 .custom("font-weight", "700")
+                 .custom("letter-spacing", "0.04em")
+ 
+@@ -498,7 +498,7 @@
+             CSSRule(Pointer("\(root) .\(TCSpeechRecognitionFloatingClass.interimText)"))
+                 .custom("margin-top", "5px")
+                 .custom("color", "rgba(171, 191, 208, 1)")
+-                .custom("font-size", "13px")
++                .custom("font-size", "14px")
+                 .custom("font-style", "italic")
+                 .custom("line-height", "1.35")
+                 .custom("overflow-wrap", "anywhere")
+--- before/Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift
++++ after/Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift
+@@ -110,7 +110,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.eyebrow)"))
+                 .custom("color", "var(--tc-create-orange)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "800")
+                 .custom("letter-spacing", "0.13em")
+                 .custom("text-transform", "uppercase")
+@@ -123,7 +123,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.headerCopy) > span:last-child"))
+                 .custom("color", "var(--tc-create-muted)")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.headerAvailability)"))
+                 .custom("display", "flex")
+@@ -137,7 +137,7 @@
+                 .custom("border-radius", "999px")
+                 .custom("background", "rgba(242, 166, 90, 0.08)")
+                 .custom("color", "var(--tc-create-orange)")
+-                .custom("font-size", "9px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "800")
+                 .custom("letter-spacing", "0.07em")
+ 
+@@ -226,7 +226,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.sectionHeader) > div > span"))
+                 .custom("color", "var(--tc-create-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.formGrid)"))
+                 .custom("display", "grid")
+@@ -247,14 +247,14 @@
+                 .custom("justify-content", "space-between")
+                 .custom("gap", "7px")
+                 .custom("color", "var(--tc-create-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "700")
+                 .custom("letter-spacing", "0.04em")
+                 .custom("text-transform", "uppercase")
+ 
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.field) sup"))
+                 .custom("color", "var(--tc-create-orange)")
+-                .custom("font-size", "7px")
++                .custom("font-size", "10px")
+                 .custom("letter-spacing", "0.08em")
+ 
+             CSSRule(Pointer("\(root) input:not([type='checkbox']), \(root) select"))
+@@ -268,7 +268,7 @@
+                 .custom("border-radius", "9px !important")
+                 .custom("background", "rgba(2, 16, 29, 0.82) !important")
+                 .custom("color", "var(--tc-create-ink) !important")
+-                .custom("font-size", "13px !important")
++                .custom("font-size", "14px !important")
+                 .custom("box-shadow", "inset 0 1px 0 rgba(255, 255, 255, 0.025)")
+ 
+             CSSRule(Pointer("\(root) input:not([type='checkbox']):focus, \(root) select:focus"))
+@@ -296,7 +296,7 @@
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.usernameField) > span"))
+                 .custom("padding", "0 10px")
+                 .custom("color", "var(--tc-create-blue)")
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+                 .custom("white-space", "nowrap")
+ 
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.readOnlyValue)"))
+@@ -309,7 +309,7 @@
+                 .custom("border-radius", "9px")
+                 .custom("background", "rgba(37, 44, 59, 0.58)")
+                 .custom("color", "var(--tc-create-ink)")
+-                .custom("font-size", "13px")
++                .custom("font-size", "14px")
+ 
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.toggleRow)"))
+                 .custom("display", "flex")
+@@ -329,11 +329,11 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.toggleRow) strong"))
+                 .custom("color", "var(--tc-create-ink)")
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+ 
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.toggleRow) span"))
+                 .custom("color", "var(--tc-create-muted)")
+-                .custom("font-size", "9px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .switch"))
+                 .custom("float", "none !important")
+@@ -356,7 +356,7 @@
+                 .custom("border-radius", "8px")
+                 .custom("background", "rgba(2, 16, 29, 0.64)")
+                 .custom("color", "var(--tc-create-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.day) .switch"))
+                 .custom("transform", "scale(0.72)")
+@@ -370,7 +370,7 @@
+                 .custom("border-left", "2px solid #f2a65a")
+                 .custom("background", "rgba(242, 166, 90, 0.06)")
+                 .custom("color", "var(--tc-create-muted)")
+-                .custom("font-size", "9px")
++                .custom("font-size", "13px")
+                 .custom("line-height", "1.4")
+ 
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.avatarCard)"))
+@@ -405,14 +405,14 @@
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.avatarCard) > span"))
+                 .custom("max-width", "230px")
+                 .custom("color", "var(--tc-create-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("line-height", "1.4")
+ 
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.summary) > span"))
+                 .custom("display", "block")
+                 .custom("margin-bottom", "8px")
+                 .custom("color", "var(--tc-create-orange)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "800")
+                 .custom("letter-spacing", "0.1em")
+                 .custom("text-transform", "uppercase")
+@@ -427,12 +427,12 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.summaryRow) span"))
+                 .custom("color", "var(--tc-create-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.summaryRow) strong"))
+                 .custom("max-width", "170px")
+                 .custom("color", "var(--tc-create-ink)")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+                 .custom("text-align", "right")
+                 .custom("overflow-wrap", "anywhere")
+ 
+@@ -454,11 +454,11 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.footer) strong"))
+                 .custom("color", "var(--tc-create-ink)")
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+ 
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.footer) span"))
+                 .custom("color", "var(--tc-create-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCCreateUserClass.footerActions)"))
+                 .custom("display", "flex")
+@@ -476,7 +476,7 @@
+                 .custom("border-radius", "11px")
+                 .custom("background", "rgba(2, 16, 29, 0.72)")
+                 .custom("color", "var(--tc-create-muted)")
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+                 .custom("font-weight", "700")
+                 .custom("cursor", "pointer")
+ 
+--- before/Sources/App/TierraCeroCustomUI/Theme/TCCrystalSurfaceTheme.swift
++++ after/Sources/App/TierraCeroCustomUI/Theme/TCCrystalSurfaceTheme.swift
+@@ -389,7 +389,7 @@
+                 .custom("margin", "0 !important")
+                 .custom("overflow", "hidden")
+                 .custom("color", "var(--tc-crystal-muted) !important")
+-                .custom("font-size", "13px !important")
++                .custom("font-size", "14px !important")
+                 .custom("line-height", "1.2")
+ 
+             CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalBody)"))
+@@ -676,7 +676,7 @@
+ 
+             CSSRule(Pointer("\(customerLookupRoot) .\(TCCrystalSurfaceClass.customerLookupBusiness)"))
+                 .custom("color", "#8fb4ca !important")
+-                .custom("font-size", "13px !important")
++                .custom("font-size", "14px !important")
+                 .custom("font-weight", "600")
+ 
+             CSSRule(Pointer("\(customerLookupRoot) .\(TCCrystalSurfaceClass.customerLookupName)"))
+@@ -701,7 +701,7 @@
+                 .custom("border-radius", "999px")
+                 .custom("background", "rgba(83, 48, 18, 0.32)")
+                 .custom("color", "#f5a040 !important")
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+                 .custom("font-weight", "700")
+ 
+             CSSRule(Pointer("\(customerLookupRoot) .\(TCCrystalSurfaceClass.customerLookupReward)"))
+@@ -899,7 +899,7 @@
+                 .custom("padding", "13px 16px 0")
+                 .custom("box-sizing", "border-box")
+                 .custom("color", "var(--tc-crystal-muted) !important")
+-                .custom("font-size", "13px !important")
++                .custom("font-size", "14px !important")
+ 
+             CSSRule(Pointer("\(highPriorityRoot) .\(TCCrystalSurfaceClass.highPriorityBody)"))
+                 .custom("margin", "0 !important")
+@@ -1001,7 +1001,7 @@
+ 
+             CSSRule(Pointer("\(tripRoot) .\(TCTripBetaClass.uiFieldLabel)"))
+                 .custom("color", "#edf7ff !important")
+-                .custom("font-size", "13px !important")
++                .custom("font-size", "14px !important")
+                 .custom("font-weight", "700")
+                 .custom("line-height", "1.2")
+ 
+@@ -1013,7 +1013,7 @@
+                 .custom("background", "rgba(3, 21, 38, 0.9) !important")
+                 .custom("color", "#edf7ff !important")
+                 .custom("padding", "5px 8px !important")
+-                .custom("font-size", "13px !important")
++                .custom("font-size", "14px !important")
+ 
+             CSSRule(Pointer("\(tripRoot) input:focus, \(tripRoot) select:focus, \(tripRoot) textarea:focus"))
+                 .custom("border-color", "#49b9f5 !important")
+@@ -1030,7 +1030,7 @@
+                 .custom("height", "30px !important")
+                 .custom("box-sizing", "border-box")
+                 .custom("padding", "5px 8px !important")
+-                .custom("font-size", "13px !important")
++                .custom("font-size", "14px !important")
+         }
+ 
+         WebApp.current.addStylesheet {
+@@ -1161,7 +1161,7 @@
+                 .custom("box-sizing", "border-box")
+                 .custom("padding", "10px")
+                 .custom("text-align", "left")
+-                .custom("font-size", "13px")
++                .custom("font-size", "14px")
+                 .custom("background", "transparent")
+                 .custom("color", "var(--tc-crystal-ink)")
+                 .custom("border", "0 !important")
+@@ -1209,7 +1209,7 @@
+ 
+             CSSRule(Pointer("\(tripPicker) .\(TCCrystalSurfaceClass.tripPickerItemSubtitle)"))
+                 .custom("color", "#9fb8cb !important")
+-                .custom("font-size", "13px !important")
++                .custom("font-size", "14px !important")
+ 
+             CSSRule(Pointer("\(tripPicker) .\(TCCrystalSurfaceClass.tripPickerEmpty)"))
+                 .custom("display", "flex")
+--- before/Sources/App/TierraCeroCustomUI/Theme/TCMessageObjectTheme.swift
++++ after/Sources/App/TierraCeroCustomUI/Theme/TCMessageObjectTheme.swift
+@@ -51,7 +51,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCMessageObjectClass.meta)"))
+                 .custom("color", "var(--tc-message-muted) !important")
+-                .custom("font-size", "12px !important")
++                .custom("font-size", "14px !important")
+                 .custom("line-height", "1.25")
+ 
+             CSSRule(Pointer("\(root) .\(TCMessageObjectClass.meta) strong"))
+@@ -118,7 +118,7 @@
+                 .custom("border-radius", "8px !important")
+                 .custom("background", "rgba(83, 48, 18, 0.38) !important")
+                 .custom("color", "#f5b05b !important")
+-                .custom("font-size", "13px")
++                .custom("font-size", "14px")
+                 .custom("box-shadow", "none !important")
+ 
+             CSSRule(Pointer("\(root) audio"))
+--- before/Sources/App/TierraCeroCustomUI/Theme/TCOrderViewTheme.swift
++++ after/Sources/App/TierraCeroCustomUI/Theme/TCOrderViewTheme.swift
+@@ -375,7 +375,7 @@
+ 
+             OrderRule(Pointer("\(root) .\(TCOrderViewClass.chargesCard) table"))
+                 .custom("border-collapse", "collapse")
+-                .custom("font-size", "13px !important")
++                .custom("font-size", "14px !important")
+ 
+             OrderRule(Pointer("\(root) .\(TCOrderViewClass.chargesCard) td"))
+                 .custom("padding", "4px 6px")
+@@ -424,7 +424,7 @@
+                 .custom("background", "rgba(11, 29, 46, 0.72) !important")
+                 .custom("background-image", "none !important")
+                 .custom("box-shadow", "none !important")
+-                .custom("font-size", "13px")
++                .custom("font-size", "14px")
+ 
+             OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryIdentity)"))
+                 .custom("padding", "8px 0 10px")
+@@ -505,7 +505,7 @@
+                 .custom("background", "rgba(8, 30, 48, 0.62) !important")
+                 .custom("background-image", "none !important")
+                 .custom("box-shadow", "none !important")
+-                .custom("font-size", "13px !important")
++                .custom("font-size", "14px !important")
+ 
+             OrderRule(Pointer("\(root) .\(TCOrderViewClass.rewardsCard)"))
+                 .custom("min-height", "74px")
+@@ -534,7 +534,7 @@
+                 .custom("border-bottom", "1px solid var(--tc-order-border-soft)")
+ 
+             OrderRule(Pointer("\(root) .\(TCOrderViewClass.surveysCard) span"))
+-                .custom("font-size", "12px !important")
++                .custom("font-size", "14px !important")
+                 .custom("color", "var(--tc-order-muted)")
+ 
+             OrderRule(Pointer("\(root) .\(TCOrderViewClass.surveysCard) div div div"))
+--- before/Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift
++++ after/Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift
+@@ -154,7 +154,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.eyebrow)"))
+                 .custom("color", "#f2a65a")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "800")
+                 .custom("letter-spacing", "0.14em")
+                 .custom("text-transform", "uppercase")
+@@ -167,7 +167,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.headerMeta)"))
+                 .custom("color", "var(--tc-store-muted)")
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+ 
+             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.headerActions)"))
+                 .custom("display", "flex")
+@@ -188,7 +188,7 @@
+                 .custom("border-radius", "8px")
+                 .custom("background", "rgba(5, 22, 38, 0.78) !important")
+                 .custom("color", "#dcecf8 !important")
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+                 .custom("font-weight", "700")
+                 .custom("cursor", "pointer")
+                 .custom("transition", "background 140ms ease, border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease")
+@@ -286,7 +286,7 @@
+                 .custom("border-radius", "8px !important")
+                 .custom("background", "rgba(3, 21, 38, 0.78) !important")
+                 .custom("color", "#edf7ff !important")
+-                .custom("font-size", "13px !important")
++                .custom("font-size", "14px !important")
+ 
+             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.storeList)"))
+                 .custom("display", "grid")
+@@ -347,7 +347,7 @@
+                 .custom("text-overflow", "ellipsis")
+                 .custom("white-space", "nowrap")
+                 .custom("color", "var(--tc-store-ink)")
+-                .custom("font-size", "13px")
++                .custom("font-size", "14px")
+                 .custom("font-weight", "700")
+ 
+             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.storeStatus), \(root) .\(TCStoreUserConfigurationClass.storeHeroStatus), \(root) .\(TCStoreUserConfigurationClass.statusPill)"))
+@@ -361,7 +361,7 @@
+                 .custom("border-radius", "999px")
+                 .custom("background", "rgba(52, 107, 43, 0.34)")
+                 .custom("color", "#c9f5b7")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "800")
+         }
+ 
+@@ -376,7 +376,7 @@
+                 .custom("display", "block")
+                 .custom("margin", "3px 0 10px")
+                 .custom("color", "var(--tc-store-muted)")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.summaryRows)"))
+                 .custom("display", "grid")
+@@ -392,7 +392,7 @@
+                 .custom("padding", "5px 7px")
+                 .custom("background", "rgba(3, 18, 33, 0.72)")
+                 .custom("color", "var(--tc-store-muted)")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.summaryRow) strong"))
+                 .custom("color", "var(--tc-store-ink)")
+@@ -427,7 +427,7 @@
+                 .custom("border-radius", "8px")
+                 .custom("background", "rgba(8, 52, 82, 0.76)")
+                 .custom("color", "#dff5ff")
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+                 .custom("font-weight", "700")
+                 .custom("cursor", "pointer")
+ 
+@@ -519,7 +519,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.metricLabel)"))
+                 .custom("color", "var(--tc-store-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "800")
+                 .custom("letter-spacing", "0.08em")
+ 
+@@ -615,7 +615,7 @@
+                 .custom("text-overflow", "ellipsis")
+                 .custom("white-space", "nowrap")
+                 .custom("color", "var(--tc-store-ink)")
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+                 .custom("font-weight", "700")
+ 
+             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.userUsername)"))
+@@ -623,14 +623,14 @@
+                 .custom("text-overflow", "ellipsis")
+                 .custom("white-space", "nowrap")
+                 .custom("color", "var(--tc-store-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.userState)"))
+                 .custom("display", "flex")
+                 .custom("align-items", "center")
+                 .custom("gap", "5px")
+                 .custom("color", "#c9f5b7")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "700")
+ 
+             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.rolePill)"))
+@@ -642,7 +642,7 @@
+                 .custom("border-radius", "6px")
+                 .custom("background", "rgba(14, 73, 108, 0.42)")
+                 .custom("color", "#dff5ff")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "700")
+         }
+ 
+@@ -672,7 +672,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.toolName)"))
+                 .custom("color", "var(--tc-store-ink)")
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+                 .custom("font-weight", "700")
+ 
+             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.toolDetail)"))
+@@ -680,7 +680,7 @@
+                 .custom("text-overflow", "ellipsis")
+                 .custom("white-space", "nowrap")
+                 .custom("color", "var(--tc-store-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.toolCount)"))
+                 .custom("min-width", "24px")
+@@ -688,7 +688,7 @@
+                 .custom("border-radius", "999px")
+                 .custom("background", "rgba(73, 185, 245, 0.14)")
+                 .custom("color", "var(--tc-store-blue)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "800")
+                 .custom("text-align", "center")
+ 
+@@ -697,7 +697,7 @@
+                 .custom("min-height", "38px")
+                 .custom("margin-top", "8px")
+                 .custom("border-radius", "8px")
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+ 
+             CSSRule(Pointer("\(root) \(goodButton)"))
+                 .custom("display", "flex")
+--- before/Sources/App/TierraCeroCustomUI/Theme/TCTripBetaTheme.swift
++++ after/Sources/App/TierraCeroCustomUI/Theme/TCTripBetaTheme.swift
+@@ -267,7 +267,7 @@
+             Rule(Pointer("\(root) .\(TCTripBetaClass.uiSmallTitle)"))
+                 .custom("margin", "0")
+                 .custom("color", "var(--tc-beta-orange)")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "600")
+ 
+             Rule(Pointer("\(root) .\(TCTripBetaClass.uiButton)"))
+@@ -298,7 +298,7 @@
+             Rule(Pointer("\(root) .\(TCTripBetaClass.uiSmallButton)"))
+                 .custom("min-height", "30px")
+                 .custom("padding", "6px 10px")
+-                .custom("font-size", "13px")
++                .custom("font-size", "14px")
+ 
+             Rule(Pointer("\(root) .\(TCTripBetaClass.uiLargeButton)"))
+                 .custom("min-height", "40px")
+--- before/Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift
++++ after/Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift
+@@ -106,7 +106,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.eyebrow)"))
+                 .custom("color", "var(--tc-cancel-orange)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "800")
+                 .custom("letter-spacing", "0.13em")
+                 .custom("text-transform", "uppercase")
+@@ -118,7 +118,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.headerCopy) > span:last-child"))
+                 .custom("color", "var(--tc-cancel-muted)")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.close)"))
+                 .custom("position", "static !important")
+@@ -168,7 +168,7 @@
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.warning) span"))
+                 .custom("margin-top", "3px")
+                 .custom("color", "#d7c1a8")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+                 .custom("line-height", "1.45")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.warning).\(TCUserCancelationRequestClass.statusReady)"))
+@@ -215,7 +215,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.sectionTitle) span"))
+                 .custom("color", "var(--tc-cancel-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.details)"))
+                 .custom("display", "grid")
+@@ -231,7 +231,7 @@
+                 .custom("gap", "12px")
+                 .custom("padding", "8px 10px")
+                 .custom("background", "rgba(3, 18, 33, 0.86)")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.detail) span"))
+                 .custom("color", "var(--tc-cancel-muted)")
+@@ -265,11 +265,11 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.conflictCopy) strong"))
+                 .custom("color", "var(--tc-cancel-ink)")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.conflictCopy) span"))
+                 .custom("color", "var(--tc-cancel-muted)")
+-                .custom("font-size", "9px")
++                .custom("font-size", "13px")
+                 .custom("line-height", "1.35")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.conflictValue)"))
+@@ -283,7 +283,7 @@
+                 .custom("border-radius", "999px")
+                 .custom("background", "rgba(242, 166, 90, 0.09)")
+                 .custom("color", "var(--tc-cancel-orange)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "800")
+                 .custom("overflow", "hidden")
+                 .custom("text-overflow", "ellipsis")
+@@ -326,21 +326,21 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.custodianSelector) > div span:first-child"))
+                 .custom("color", "var(--tc-cancel-orange)")
+-                .custom("font-size", "9px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "800")
+                 .custom("letter-spacing", "0.08em")
+                 .custom("text-transform", "uppercase")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.custodianSelector) strong"))
+                 .custom("color", "var(--tc-cancel-ink)")
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+                 .custom("overflow", "hidden")
+                 .custom("text-overflow", "ellipsis")
+                 .custom("white-space", "nowrap")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.custodianSelector) > div span:last-child"))
+                 .custom("color", "var(--tc-cancel-muted)")
+-                .custom("font-size", "9px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.selectBadge)"))
+                 .custom("display", "inline-flex")
+@@ -351,7 +351,7 @@
+                 .custom("border", "1px solid rgba(73, 185, 245, 0.46)")
+                 .custom("border-radius", "999px")
+                 .custom("color", "var(--tc-cancel-blue)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "800")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.emptyState)"))
+@@ -370,7 +370,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.emptyState) span"))
+                 .custom("color", "#b9ddc8")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+                 .custom("line-height", "1.45")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.footer)"))
+@@ -389,7 +389,7 @@
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.footer) span"))
+                 .custom("margin-top", "2px")
+                 .custom("color", "var(--tc-cancel-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.footerActions)"))
+                 .custom("display", "flex")
+@@ -409,7 +409,7 @@
+                 .custom("border-radius", "9px")
+                 .custom("background", "linear-gradient(145deg, rgba(23, 102, 149, 0.96), rgba(8, 48, 78, 0.96))")
+                 .custom("color", "var(--tc-cancel-ink)")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "800")
+                 .custom("cursor", "pointer")
+ 
+@@ -423,7 +423,7 @@
+                 .custom("padding", "8px 16px")
+                 .custom("box-sizing", "border-box")
+                 .custom("border-radius", "9px")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "800")
+                 .custom("cursor", "pointer")
+ 
+--- before/Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift
++++ after/Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift
+@@ -145,7 +145,7 @@
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.eyebrow)"))
+                 .custom("display", "block")
+                 .custom("color", "#f2a65a")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "800")
+                 .custom("letter-spacing", "0.14em")
+                 .custom("text-transform", "uppercase")
+@@ -155,7 +155,7 @@
+                 .custom("gap", "8px")
+                 .custom("align-items", "center")
+                 .custom("color", "var(--tc-user-muted)")
+-                .custom("font-size", "13px")
++                .custom("font-size", "14px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.headerActions)"))
+                 .custom("display", "flex")
+@@ -179,7 +179,7 @@
+                 .custom("border-radius", "9px")
+                 .custom("background", "linear-gradient(145deg, rgba(13, 55, 84, 0.94), rgba(4, 24, 43, 0.94))")
+                 .custom("color", "var(--tc-user-ink)")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "800")
+                 .custom("line-height", "1")
+                 .custom("white-space", "nowrap")
+@@ -284,7 +284,7 @@
+                 .custom("background", "rgba(2, 15, 28, 0.88)")
+                 .custom("border", "1px solid rgba(73, 185, 245, 0.42)")
+                 .custom("border-radius", "9px")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.profileName)"))
+                 .custom("margin", "0")
+@@ -296,7 +296,7 @@
+                 .custom("display", "block")
+                 .custom("margin", "5px 0 12px")
+                 .custom("color", "var(--tc-user-muted)")
+-                .custom("font-size", "13px")
++                .custom("font-size", "14px")
+                 .custom("text-align", "center")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.profilePills), \(root) .\(TCUserConfigurationClass.tagList)"))
+@@ -318,7 +318,7 @@
+                 .custom("border-radius", "999px")
+                 .custom("background", "rgba(16, 79, 117, 0.42)")
+                 .custom("color", "#dff5ff")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "700")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.statusPill)"))
+@@ -344,7 +344,7 @@
+                 .custom("padding", "8px 11px")
+                 .custom("box-sizing", "border-box")
+                 .custom("background", "rgba(3, 18, 33, 0.84)")
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.summaryRow) > span"))
+                 .custom("color", "var(--tc-user-muted)")
+@@ -367,7 +367,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.colorRow)"))
+                 .custom("color", "var(--tc-user-muted)")
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.colorRow) input"))
+                 .custom("width", "48px !important")
+@@ -381,7 +381,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.permissionHeader) span"))
+                 .custom("color", "var(--tc-user-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.permissionList)"))
+                 .custom("display", "grid")
+@@ -401,7 +401,7 @@
+                 .custom("border-radius", "11px")
+                 .custom("background", "linear-gradient(145deg, rgba(14, 57, 87, 0.95), rgba(5, 27, 48, 0.95))")
+                 .custom("color", "var(--tc-user-ink)")
+-                .custom("font-size", "13px")
++                .custom("font-size", "14px")
+                 .custom("font-weight", "700")
+                 .custom("box-shadow", "inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 20px rgba(0, 0, 0, 0.24)")
+                 .custom("cursor", "pointer")
+@@ -444,7 +444,7 @@
+                 .custom("opacity", "0.78")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.permissionItemHeader) strong"))
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+                 .custom("overflow", "hidden")
+                 .custom("text-overflow", "ellipsis")
+                 .custom("white-space", "nowrap")
+@@ -455,7 +455,7 @@
+                 .custom("border-radius", "999px")
+                 .custom("background", "rgba(73, 185, 245, 0.18)")
+                 .custom("color", "var(--tc-user-blue)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("text-align", "center")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.permissionChildren)"))
+@@ -470,7 +470,7 @@
+                 .custom("background", "rgba(37, 44, 59, 0.72)")
+                 .custom("border-radius", "7px")
+                 .custom("color", "#d7e8f5")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+         }
+ 
+         WebApp.current.addStylesheet {
+@@ -499,7 +499,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.metricLabel)"))
+                 .custom("color", "#f2a65a")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "800")
+                 .custom("letter-spacing", "0.09em")
+                 .custom("text-transform", "uppercase")
+@@ -511,7 +511,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.metricDetail)"))
+                 .custom("color", "var(--tc-user-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.cards)"))
+                 .custom("display", "grid")
+@@ -566,7 +566,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.sectionTitleCopy) > span"))
+                 .custom("color", "var(--tc-user-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.formGrid), \(root) .\(TCUserConfigurationClass.summaryGrid)"))
+                 .custom("display", "grid")
+@@ -583,7 +583,7 @@
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.field) label, \(root) .\(TCUserConfigurationClass.accessGroup) > span"))
+                 .custom("color", "var(--tc-user-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+                 .custom("font-weight", "700")
+                 .custom("letter-spacing", "0.04em")
+                 .custom("text-transform", "uppercase")
+@@ -599,7 +599,7 @@
+                 .custom("border-radius", "9px !important")
+                 .custom("background", "rgba(2, 16, 29, 0.8) !important")
+                 .custom("color", "var(--tc-user-ink) !important")
+-                .custom("font-size", "13px !important")
++                .custom("font-size", "14px !important")
+                 .custom("box-shadow", "inset 0 1px 0 rgba(255, 255, 255, 0.025)")
+ 
+             CSSRule(Pointer("\(root) input:focus, \(root) select:focus"))
+@@ -632,12 +632,12 @@
+                 .custom("display", "block")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.toggleRow) strong"))
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.toggleRow) span"))
+                 .custom("margin-top", "2px")
+                 .custom("color", "var(--tc-user-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.accessGroup)"))
+                 .custom("display", "grid")
+@@ -647,7 +647,7 @@
+                 .custom("display", "block")
+                 .custom("padding", "8px")
+                 .custom("color", "var(--tc-user-muted)")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+                 .custom("font-style", "italic")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.inventoryGrid)"))
+@@ -692,12 +692,12 @@
+                 .custom("white-space", "nowrap")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.inventoryText) strong"))
+-                .custom("font-size", "12px")
++                .custom("font-size", "14px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.inventoryText) span"))
+                 .custom("margin-top", "3px")
+                 .custom("color", "var(--tc-user-muted)")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.emptyState)"))
+                 .custom("grid-column", "1 / -1")
+@@ -724,7 +724,7 @@
+                 .custom("font-size", "14px")
+ 
+             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.emptyState) span"))
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+         }
+ 
+         WebApp.current.addStylesheet {
+--- before/Sources/App/TierraCeroCustomUI/Theme/TCWorkDashboardTheme.swift
++++ after/Sources/App/TierraCeroCustomUI/Theme/TCWorkDashboardTheme.swift
+@@ -258,7 +258,7 @@
+ 
+             Rule(Pointer("\(root) .\(TCWorkDashboardClass.toolbarPrimary) span"))
+                 .custom("color", "#dce7f3")
+-                .custom("font-size", "10px")
++                .custom("font-size", "13px")
+         }
+ 
+         WebApp.current.addStylesheet {
+@@ -438,7 +438,7 @@
+             Rule(Pointer("\(root) .\(TCWorkDashboardClass.messageTabs) > div"))
+                 .custom("padding", "9px 4px")
+                 .custom("text-align", "center")
+-                .custom("font-size", "13px")
++                .custom("font-size", "14px")
+                 .custom("cursor", "pointer")
+ 
+             Rule(Pointer("\(root) .\(TCWorkDashboardClass.messageTabs) > div:first-child"))
+@@ -459,7 +459,7 @@
+             Rule(Pointer("\(root) .\(TCWorkDashboardClass.messageCard)"))
+                 .custom("position", "relative")
+                 .custom("display", "grid")
+-                .custom("grid-template-columns", "38px minmax(0, 1fr)")
++                .custom("grid-template-columns", "48px minmax(0, 1fr)")
+                 .custom("align-items", "center")
+                 .custom("gap", "10px")
+                 .custom("min-height", "76px")
+@@ -494,8 +494,8 @@
+ 
+             Rule(Pointer("\(root) .\(TCWorkDashboardClass.messageFolio)"))
+                 .custom("display", "block")
+-                .custom("max-width", "38px")
+-                .custom("font-size", "10px")
++                .custom("max-width", "48px")
++                .custom("font-size", "12px")
+                 .custom("line-height", "1")
+                 .custom("text-align", "center")
+                 .custom("color", "var(--tc-work-muted)")
+@@ -515,12 +515,12 @@
+                 .custom("overflow", "hidden")
+                 .custom("text-overflow", "ellipsis")
+                 .custom("white-space", "nowrap")
+-                .custom("font-size", "13px")
++                .custom("font-size", "14px")
+                 .custom("font-weight", "600")
+                 .custom("color", "#dfe7f1")
+ 
+             Rule(Pointer("\(root) .\(TCWorkDashboardClass.messageTime)"))
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+                 .custom("white-space", "nowrap")
+                 .custom("color", "var(--tc-work-muted)")
+ 
+@@ -721,7 +721,7 @@
+             Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupCopy)"))
+                 .custom("margin-top", "7px")
+                 .custom("color", "var(--tc-work-muted)")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+                 .custom("letter-spacing", "0.18em")
+                 .custom("text-align", "center")
+ 
+@@ -738,7 +738,7 @@
+                 .custom("padding", "0 8px")
+                 .custom("border-left", "2px solid rgba(77, 163, 255, 0.62)")
+                 .custom("color", "#dfe9f3")
+-                .custom("font-size", "11px")
++                .custom("font-size", "13px")
+                 .custom("letter-spacing", "0.08em")
+                 .custom("opacity", "1")
+                 .custom("transform", "translateX(0)")
+--- before/Sources/App/ViewControlers/WorkViewControler.swift
++++ after/Sources/App/ViewControlers/WorkViewControler.swift
+@@ -198,7 +198,7 @@
+     
+     lazy var privateChatBoxInner = Div()
+         .margin(all: 3.px)
+-        .fontSize(10.px)
++        .fontSize(13.px)
+         .hidden(self.$privateChatList.map{ $0.isEmpty } )
+     
+     lazy var privateChatBox = Div {
+@@ -213,7 +213,7 @@
+         }
+         .overflow(.hidden)
+         .margin(all: 3.px)
+-        .fontSize(10.px)
++        .fontSize(13.px)
+         .align(.center)
+         .hidden(self.$privateChatList.map{ !$0.isEmpty } )
+     }
+@@ -221,7 +221,7 @@
+     lazy var publicChatBoxInner = Div()
+         .hidden(self.$publicChatList.map{ $0.isEmpty } )
+         .margin(all: 3.px)
+-        .fontSize(10.px)
++        .fontSize(13.px)
+     
+     lazy var publicChatBox = Div {
+         
+@@ -233,7 +233,7 @@
+         ))
+         .overflow(.hidden)
+         .margin(all: 3.px)
+-        .fontSize(10.px)
++        .fontSize(13.px)
+         .color(.dimGray)
+         .align(.center)
+         .hidden(self.$publicChatList.map{ !$0.isEmpty } )
+@@ -257,7 +257,7 @@
+                 .borderRadius(all: 10.px)
+                 .backgroundColor(.blue)
+                 .color(.white)
+-                .fontSize(10.px)
++                .fontSize(12.px)
+                 .hidden(self.communicationController.$unreadCount.map { $0 == 0 })
+             }
+             
+@@ -346,7 +346,7 @@
+             Span(CatchControler.shared.$taskAlerts.map { alerts in
+                 alerts.count > 99 ? "99+" : alerts.count.toString
+             })
+-                .fontSize(10.px)
++                .fontSize(12.px)
+                 .color(.white)
+                 .backgroundColor(.blue)
+                 .borderRadius(all: 12.px)
+--- before/Sources/Service/css/main.css
++++ after/Sources/Service/css/main.css
+@@ -19,13 +19,13 @@
+     text-shadow: none;
+     color: #FFF;
+     text-align: right;
+-    font-size: 10px;
++    font-size: 13px;
+     line-height: 50px;
+     padding: 0 0px;
+ }
+ .copyright {
+     text-align: center;
+-    font-size: 10px;
++    font-size: 13px;
+     color: #CCC;
+ }
+ .clear {
+--- before/Sources/Service/skyline/css/main.css
++++ after/Sources/Service/skyline/css/main.css
+@@ -19,13 +19,13 @@
+     text-shadow: none;
+     color: #FFF;
+     text-align: right;
+-    font-size: 10px;
++    font-size: 13px;
+     line-height: 50px;
+     padding: 0 0px;
+ }
+ .copyright {
+     text-align: center;
+-    font-size: 10px;
++    font-size: 13px;
+     color: #CCC;
+ }
+ .clear {
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -8,6 +8,7 @@
+ - The app registers `./service.js` during launch.
+ - The app uses Swift Web `Routes`, `Page`, lifecycle hooks, `@State`, and style declarations.
+ - Theme switching currently selects between `MainStyle`, `SKMainStyle`, and `SKLogInStyle`.
++- The app-wide readability pass raises explicit small UI text to 13px for tiny labels and 14px for supporting text that was 12–13px, including shared Trip/crystal/settings themes, state-dependent equipment fields, and chart labels. Compact counters/status badges retain 12px and the required-field superscript uses 10px. Report hints and product-price label heights accommodate the larger text; print/receipt/PDF/barcode typography and third-party resets retain their original sizing. Source-owned version/copyright footers use 13px in both `main.css` resource copies.
+ - `CreateNewCustomerDataView`, `ManageSubCustomerAccountView`, and `ManualAddressSearch` use TierraCeroCustomUI headers/controls and scoped crystal surfaces. `addToDom` automatically chooses the glass host for these customer/address views, `SearchCustomerView`, `SearchSubCustomerView`, and `CreateNewCusomerView` when the caller uses the standard presentation; explicit interactive/glass presentations remain supported.
+ - `SearchSubCustomerView` scopes API searches to its injected `CustAcctSearch` parent. One match enters selection; multiple matches appear as keyboard-selectable cards. A successful empty search opens `CreateNewCusomerView`, then passes the account type/search term and `requierFullAddress` flag to `ManageSubCustomerAccountView`. Required-address selection checks complete street/colony/city/state/country/zip and finite, in-range latitude/longitud; incomplete items show a Spanish alert and open the prefilled manager for editing. Search remains available after child cancellation and completes once with a parent-validated item after any required edit. Removed-view responses are ignored.
+ - `ManageSubCustomerAccountView` supports new and existing `CustSubAcct` initializers under one injected `CustAcctSearch` parent. Editing prefills all submitted fields and retains status. `requierFullAddress` defaults to false for creation; when true, address lookup reverse-geocodes existing valid coordinates, rejects postal-only results, and save/returned-record validation requires complete address and valid coordinates. Optional-address mode retains postal-only selection with cleared coordinates. Coordinate search-term lookup starts after DOM attachment. Its read-only MapKit preview loads initial edit coordinates and refreshes after either coordinate state changes, combining paired assignments and ignoring stale JWT responses. Invalid/empty coordinates clear the map; required mode shows a hint, optional mode hides it. The view destroys its own map on refresh/removal without modifying shared map globals. The manager returns server-created/reloaded records without introducing a global subaccount cache.
+--- before/Sources/App/Snippits/StartServiceOrderEquipmentView.swift
++++ after/Sources/App/Snippits/StartServiceOrderEquipmentView.swift
+@@ -135,7 +135,7 @@
+     lazy var tag1Label = Label(configServiceTags.tag1Name)
+         .float(.right)
+         .color(self.$selectEquipmentField.map{ $0 == "tag1" ? .black : .gray })
+-        .fontSize(self.$selectEquipmentField.map{ $0 == "tag1" ? 18.px : 12.px })
++        .fontSize(self.$selectEquipmentField.map{ $0 == "tag1" ? 18.px : 14.px })
+     
+     lazy var tag1 = InputText(self.$_tag1)
+         .autocomplete(.off)
+@@ -213,7 +213,7 @@
+     .zIndex(1)
+     
+     lazy var tag2Label = Label(configServiceTags.tag2Name)
+-        .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 12.px })
++        .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 14.px })
+         .color(self.$selectEquipmentField.map{ $0 == "tag2" ? .black : .gray })
+         .float(.right)
+ 
+@@ -295,7 +295,7 @@
+     .zIndex(1)
+     
+     lazy var tag3Label = Label(configServiceTags.tag3Name)
+-        .fontSize(self.$selectEquipmentField.map{ $0 == "tag3" ? 18.px : 12.px })
++        .fontSize(self.$selectEquipmentField.map{ $0 == "tag3" ? 18.px : 14.px })
+         .color(self.$selectEquipmentField.map{ $0 == "tag3" ? .black : .gray })
+         .float(.right)
+     
+@@ -461,7 +461,7 @@
+             Label(configServiceTags.idTagName)
+                 .float(.right)
+                 .color(self.$selectEquipmentField.map{ $0 == "idTag1" ? .black : .gray })
+-                .fontSize(self.$selectEquipmentField.map{ $0 == "idTag1" ? 18.px : 12.px })
++                .fontSize(self.$selectEquipmentField.map{ $0 == "idTag1" ? 18.px : 14.px })
+             
+             Div().class(.clear)
+             
+@@ -474,7 +474,7 @@
+                 Label(configServiceTags.secondIDTagName)
+                     .float(.right)
+                     .color(self.$selectEquipmentField.map{ $0 == "idTag2" ? .black : .gray })
+-                    .fontSize(self.$selectEquipmentField.map{ $0 == "idTag2" ? 18.px : 12.px })
++                    .fontSize(self.$selectEquipmentField.map{ $0 == "idTag2" ? 18.px : 14.px })
+                     
+                 Div().class(.clear)
+                 
+@@ -493,7 +493,7 @@
+                         Label("*").color(.red)
+                             .float(.right)
+                             .fontWeight(.bolder)
+-                            .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 12.px })
++                            .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 14.px })
+                         
+                         self.tag1Label
+                     }
+@@ -620,7 +620,7 @@
+                         Label("*").color(.red)
+                             .float(.right)
+                             .fontWeight(.bolder)
+-                            .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 12.px })
++                            .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 14.px })
+                         
+                         self.tag3Label
+                     }
+@@ -749,7 +749,7 @@
+                         Label("*").color(.red)
+                             .float(.right)
+                             .fontWeight(.bolder)
+-                            .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 12.px })
++                            .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 14.px })
+                         
+                         self.tag2Label
+                     }
+@@ -920,7 +920,7 @@
+                 Label(configServiceTags.tag4Name)
+                     .float(.right)
+                     .color(self.$selectEquipmentField.map{ $0 == "tag4" ? .black : .gray })
+-                    .fontSize(self.$selectEquipmentField.map{ $0 == "tag4" ? 18.px : 12.px })
++                    .fontSize(self.$selectEquipmentField.map{ $0 == "tag4" ? 18.px : 14.px })
+ 
+                 Div().class(.clear)
+                 self.tag4
+@@ -932,7 +932,7 @@
+                 Label(configServiceTags.tag5Name)
+                     .float(.right)
+                     .color(self.$selectEquipmentField.map{ $0 == "tag5" ? .black : .gray })
+-                    .fontSize(self.$selectEquipmentField.map{ $0 == "tag5" ? 18.px : 12.px })
++                    .fontSize(self.$selectEquipmentField.map{ $0 == "tag5" ? 18.px : 14.px })
+ 
+                 Div().class(.clear)
+                 self.tag5
+@@ -944,7 +944,7 @@
+                 Label(configServiceTags.tag6Name)
+                     .float(.right)
+                     .color(self.$selectEquipmentField.map{ $0 == "tag6" ? .black : .gray })
+-                    .fontSize(self.$selectEquipmentField.map{ $0 == "tag6" ? 18.px : 12.px })
++                    .fontSize(self.$selectEquipmentField.map{ $0 == "tag6" ? 18.px : 14.px })
+ 
+                 Div().class(.clear)
+                 self.tag6
+--- before/Sources/App/Snippits/StartServiceOrder.swift
++++ after/Sources/App/Snippits/StartServiceOrder.swift
+@@ -471,7 +471,7 @@
+     @State var tag2SelctedItemID: UUID? = nil
+     
+     lazy var tag1Label = Label(configServiceTags.tag1Name)
+-        .fontSize(self.$selectEquipmentField.map{ $0 == "tag1" ? 18.px : 12.px })
++        .fontSize(self.$selectEquipmentField.map{ $0 == "tag1" ? 18.px : 14.px })
+         .color(self.$selectEquipmentField.map{ $0 == "tag1" ? .black : .gray })
+         .float(.left)
+     
+@@ -550,7 +550,7 @@
+     .zIndex(1)
+     
+     lazy var tag2Label = Label(configServiceTags.tag2Name)
+-        .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 12.px })
++        .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 14.px })
+         .color(self.$selectEquipmentField.map{ $0 == "tag2" ? .black : .gray })
+         .float(.left)
+ 
+@@ -631,7 +631,7 @@
+     .zIndex(1)
+     
+     lazy var tag3Label = Label(configServiceTags.tag3Name)
+-        .fontSize(self.$selectEquipmentField.map{ $0 == "tag3" ? 18.px : 12.px })
++        .fontSize(self.$selectEquipmentField.map{ $0 == "tag3" ? 18.px : 14.px })
+         .color(self.$selectEquipmentField.map{ $0 == "tag3" ? .black : .gray })
+         .float(.left)
+     
+@@ -1694,7 +1694,7 @@
+                         
+                         /// `idTag1`
+                         Div(configServiceTags.idTagName)
+-                            .fontSize(self.$selectEquipmentField.map{ $0 == "idTag1" ? 18.px : 12.px })
++                            .fontSize(self.$selectEquipmentField.map{ $0 == "idTag1" ? 18.px : 14.px })
+                             .color(self.$selectEquipmentField.map{ $0 == "idTag1" ? .black : .gray })
+                         
+                         Div().class(.clear)
+@@ -1706,7 +1706,7 @@
+                         /// `idTag2`
+                         Div{
+                             Div(configServiceTags.secondIDTagName)
+-                                .fontSize(self.$selectEquipmentField.map{ $0 == "idTag2" ? 18.px : 12.px })
++                                .fontSize(self.$selectEquipmentField.map{ $0 == "idTag2" ? 18.px : 14.px })
+                                 .color(self.$selectEquipmentField.map{ $0 == "idTag2" ? .black : .gray })
+                                 .float(.right)
+                                
+@@ -2162,7 +2162,7 @@
+                             Label(configServiceTags.tag4Name)
+                                 .float(.right)
+                                 .color(self.$selectEquipmentField.map{ $0 == "tag4" ? .black : .gray })
+-                                .fontSize(self.$selectEquipmentField.map{ $0 == "tag4" ? 18.px : 12.px })
++                                .fontSize(self.$selectEquipmentField.map{ $0 == "tag4" ? 18.px : 14.px })
+ 
+                             Div().class(.clear)
+                             self.tag4
+@@ -2174,7 +2174,7 @@
+                             Label(configServiceTags.tag5Name)
+                                 .float(.right)
+                                 .color(self.$selectEquipmentField.map{ $0 == "tag5" ? .black : .gray })
+-                                .fontSize(self.$selectEquipmentField.map{ $0 == "tag5" ? 18.px : 12.px })
++                                .fontSize(self.$selectEquipmentField.map{ $0 == "tag5" ? 18.px : 14.px })
+ 
+                             Div().class(.clear)
+                             self.tag5
+@@ -2186,7 +2186,7 @@
+                             Label(configServiceTags.tag6Name)
+                                 .float(.right)
+                                 .color(self.$selectEquipmentField.map{ $0 == "tag6" ? .black : .gray })
+-                                .fontSize(self.$selectEquipmentField.map{ $0 == "tag6" ? 18.px : 12.px })
++                                .fontSize(self.$selectEquipmentField.map{ $0 == "tag6" ? 18.px : 14.px })
+ 
+                             Div().class(.clear)
+                             self.tag6

@@ -631,7 +631,7 @@ private enum TCUserPermissionManagerTheme {
 
             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.panelHeader) span"))
                 .custom("color", "var(--tc-permission-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.categoryList)"))
                 .custom("display", "grid")
@@ -684,7 +684,7 @@ private enum TCUserPermissionManagerTheme {
 
             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.itemMeta)"))
                 .custom("color", "var(--tc-permission-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("white-space", "nowrap")
 
             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.detailHeader)"))
@@ -708,7 +708,7 @@ private enum TCUserPermissionManagerTheme {
                 .custom("display", "block")
                 .custom("margin-bottom", "3px")
                 .custom("color", "rgb(242, 166, 90)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "800")
                 .custom("letter-spacing", "0.12em")
                 .custom("text-transform", "uppercase")
@@ -731,14 +731,14 @@ private enum TCUserPermissionManagerTheme {
 
             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.descriptionLabel)"))
                 .custom("color", "var(--tc-permission-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "800")
                 .custom("letter-spacing", "0.1em")
                 .custom("text-transform", "uppercase")
 
             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.description)"))
                 .custom("color", "rgb(215, 232, 245)")
-                .custom("font-size", "13px")
+                .custom("font-size", "14px")
                 .custom("line-height", "1.55")
                 .custom("white-space", "pre-wrap")
 
@@ -757,7 +757,7 @@ private enum TCUserPermissionManagerTheme {
                 .custom("border-radius", "999px")
                 .custom("background", "rgba(73, 185, 245, 0.18)")
                 .custom("color", "var(--tc-permission-blue)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("text-align", "center")
         }
 
@@ -795,13 +795,13 @@ private enum TCUserPermissionManagerTheme {
             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.optionText) strong"))
                 .custom("overflow", "hidden")
                 .custom("color", "rgb(237, 247, 255)")
-                .custom("font-size", "13px")
+                .custom("font-size", "14px")
                 .custom("text-overflow", "ellipsis")
                 .custom("white-space", "nowrap")
 
             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.optionText) span"))
                 .custom("color", "var(--tc-permission-muted)")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.optionArrow)"))
                 .custom("color", "var(--tc-permission-blue)")
@@ -812,7 +812,7 @@ private enum TCUserPermissionManagerTheme {
                 .custom("display", "inline-block")
                 .custom("margin-bottom", "12px")
                 .custom("color", "var(--tc-permission-blue)")
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
                 .custom("cursor", "pointer")
 
             CSSRule(Pointer("\(root) .\(TCUserPermissionManagerClass.back):hover, \(root) .\(TCUserPermissionManagerClass.back):focus-visible"))

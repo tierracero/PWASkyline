@@ -8,7 +8,7 @@ extension CustAssetsComponents {
         subLocationId: UUID,
         name: String,
         avatar: String? = nil,
-        callback: @escaping ((_ resp: APIResponse?) -> ())
+        callback: @escaping ((_ resp: APIResponseGeneric<CustGeneralNotes>?) -> ())
     ) {
         sendPost(
             rout,
@@ -26,7 +26,10 @@ extension CustAssetsComponents {
             }
 
             do {
-                callback(try decodeAPIResponse(APIResponse.self, from: data))
+                callback(try decodeAPIResponse(
+                    APIResponseGeneric<CustGeneralNotes>.self,
+                    from: data
+                ))
             }
             catch {
                 callback(nil)

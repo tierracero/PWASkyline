@@ -113,7 +113,7 @@ extension CustConcessionView {
             Div{
                 Div("Unidades")
                 .marginBottom(7.px)
-                .fontSize(12.px)
+                .fontSize(14.px)
                 .color(.gray)
 
                 Div(self.$items.map{ $0.count.toString })

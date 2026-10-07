@@ -249,15 +249,14 @@ public class OrderCatchControler {
     lazy var routeViewButtonImg = Img()
         .src("/skyline/media/icon_route.png")
         .class(self.$viewType.map{$0 == .routeView ? .iconBlue : .iconWhite})
-        .hidden(self.$custCatchAccountType.map{ $0 == .entrepreneur })
         .marginBottom(3.px)
         .height(24.px)
     
-
     lazy var routeViewButton = Div {
         self.routeViewButtonImg
         Span("Ruta")
     }
+    .hidden(self.$custCatchAccountType.map{ $0 == .entrepreneur })
     .class(Class(TCWorkDashboardClass.toolbarPrimary))
     .class(self.$viewType.map { viewType in
         Class(viewType == .routeView

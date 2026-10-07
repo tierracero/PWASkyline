@@ -68,6 +68,10 @@ class AddCartaPorteUbicacion: Div {
     @State var country = "MEX"
     /// Domicilio CodigoPostal
     @State var zipCode = ""
+
+    @State var latitude = ""
+
+    @State var longitude = ""
     
     /// Distancia recorrida
     @State var distance = ""
@@ -151,6 +155,18 @@ class AddCartaPorteUbicacion: Div {
         .custom("width","calc(100% - 24px)")
         .class(.textFiledBlackDark)
         .height(31.px)
+
+    lazy var latitudeField = InputText(self.$latitude)
+        .placeholder("Latitud (opcional)")
+        .custom("width","calc(100% - 24px)")
+        .class(.textFiledBlackDark)
+        .height(31.px)
+
+    lazy var longitudeField = InputText(self.$longitude)
+        .placeholder("Longitud (opcional)")
+        .custom("width","calc(100% - 24px)")
+        .class(.textFiledBlackDark)
+        .height(31.px)
     
     lazy var disctaceField = InputText(self.$distance)
         .placeholder("Kilometros")
@@ -197,7 +213,7 @@ class AddCartaPorteUbicacion: Div {
                 
             }
             .marginBottom(7.px)
-            
+
             Div{
                 Div("Nombre de la tienda")
                     .color(.gray)
@@ -376,7 +392,26 @@ class AddCartaPorteUbicacion: Div {
                 Div().class(.clear)
             }
             .marginBottom(7.px)
-            
+
+            Div {
+                Div {
+                    Div("Latitud (opcional)").color(.white)
+                    self.latitudeField
+                }
+                .width(50.percent)
+                .float(.left)
+
+                Div {
+                    Div("Longitud (opcional)").color(.white)
+                    self.longitudeField
+                }
+                .width(50.percent)
+                .float(.left)
+
+                Div().class(.clear)
+            }
+            .marginBottom(7.px)
+
             Div{
                 Div(self.$isHomeItem.map{ $0 ? "Agregar punto de Salida" : "Agregar punto de Recepcion" })
                     .class(.uibtnLargeOrange)
@@ -461,6 +496,8 @@ class AddCartaPorteUbicacion: Div {
         $state.removeAllListeners()
         $country.removeAllListeners()
         $zipCode.removeAllListeners()
+        $latitude.removeAllListeners()
+        $longitude.removeAllListeners()
         $distance.removeAllListeners()
     }
     
@@ -612,6 +649,27 @@ class AddCartaPorteUbicacion: Div {
             showError(.requiredField, "Ingrese Codigo Postal")
             return
         }
+
+        let latitudeText = latitude.purgeSpaces
+        let longitudeText = longitude.purgeSpaces
+        let latitudeValue = Double(latitudeText)
+        let longitudeValue = Double(longitudeText)
+
+        if !latitudeText.isEmpty {
+            guard let latitudeValue, (-90.0...90.0).contains(latitudeValue) else {
+                showError(.requiredField, "Ingrese una latitud valida entre -90 y 90")
+                latitudeField.select()
+                return
+            }
+        }
+
+        if !longitudeText.isEmpty {
+            guard let longitudeValue, (-180.0...180.0).contains(longitudeValue) else {
+                showError(.requiredField, "Ingrese una longitud valida entre -180 y 180")
+                longitudeField.select()
+                return
+            }
+        }
         
         let distance = Float(distance)?.toCents
         
@@ -626,6 +684,8 @@ class AddCartaPorteUbicacion: Div {
             id: .init(),
             placementType: placementType,
             placementId: placementId,
+            locationType: .temporaryLocation,
+            locationId: nil,
             rfc: rfc.purgeSpaces.uppercased().replace(from: " ", to: ""),
             razon: razon.pseudo.purgeSpaces.uppercased(),
             uts: uts,
@@ -638,7 +698,9 @@ class AddCartaPorteUbicacion: Div {
             country: country,
             zipCode: zipCode.purgeSpaces,
             comertialTripControlId: nil,
-            distance: distance
+            distance: distance,
+            latitude: latitudeValue,
+            longitude: longitudeValue
             
         ))
         
@@ -656,6 +718,8 @@ class AddCartaPorteUbicacion: Div {
         self.colonie = ""
         self.refrence = ""
         self.zipCode = ""
+        self.latitude = ""
+        self.longitude = ""
         self.rfcField.text = ""
         self.razonField.text = ""
         self.dateField.text = ""

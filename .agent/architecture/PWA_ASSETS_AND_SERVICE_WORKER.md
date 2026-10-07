@@ -7,11 +7,13 @@ Authoritative rules: `PWA-*`.
 - `Sources/Service/Service.swift` defines the service worker manifest and lifecycle callbacks.
 - `Package.swift` copies `favicon.ico`, `skyline`, `tutorial`, `images`, `js`, and `css` resources for the `Service` target.
 - `WebSources` contains JS/WASI/webpack bootstrap files.
+- Browser WASM module validation limits function signatures to 1000 parameters. Settings synchronization uses a client reference-backed snapshot to avoid oversized aggregate copy signatures; the old inspected development artifact contained 1001/1016-parameter settings-response helpers and must be rebuilt to incorporate the source fix.
 - The app WASI loader performs one GET per WASM target. Webpack embeds the decoded
   WASM byte length from the build artifact so Brotli/Gzip response streams can
   report accurate decoded-byte progress without a second HEAD request.
 - `DevPublic` and `DistPublic` contain app/service JS, WASM, compressed WASM, HTML, manifest, favicon, and service worker outputs.
 - `Sources/Service/skyline/js/speechRecognition.js` is the source-owned browser bridge exposed as `globalThis.PWASkylineSpeech`; it is copied through the existing `skyline` resource declaration and loaded only by the authenticated work shell.
+- `Sources/Service/skyline/js/main.js` exposes `createSubCustomerLocationMap` for the subaccount manager's read-only location preview. It returns a local MapKit instance for caller-owned destruction and does not modify the legacy shared map/marker globals. Generated public copies require the normal resource/build refresh to include this helper.
 
 ## Rules
 

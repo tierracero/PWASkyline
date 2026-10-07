@@ -1,0 +1,250 @@
+--- before/Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift
++++ after/Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift
+@@ -1812,12 +1812,9 @@
+             return
+         }
+ 
+-        addToDom(TripControlerAddElement(
+-            icon: "icon_merchandise.png",
+-            title: "Seleccione Mercancia",
+-            items: merchendises, 
+-            titleForItem: { "\($0.fiscCode) \($0.description)" },
+-            subtitleForItem: { "Unidad \($0.fiscUnitName) | Peso \($0.kilograms.fromCents.toString) kg" },
++        addToDom(TripControlerAddMerchandise(
++            account: account,
++            merchendises: merchendises,
+             callback: { item in
+                 self.configureMerchendise(item)
+             },
+--- before/.agent/SOURCE_MAP.md
++++ after/.agent/SOURCE_MAP.md
+@@ -31,6 +31,7 @@
+ | `Sources/App/Snippits/SearchSubCustomerView.swift` | Parent-account-scoped subcustomer search/selection and no-result creation flow through the customer-type chooser and subaccount data form. |
+ | `Sources/App/Snippits/ManualAddressSearch.swift` | Crystal postal-address and coordinate lookup dialogs; returns the selected address or geocoder snapshot to its caller. |
+ | `Sources/App/Snippits/TripControler/TripControler+AddLocation.swift` | Dedicated fiscal-location picker; owns origin/destination presentation and location-typed item properties/callbacks. |
++| `Sources/App/Snippits/TripControler/TripControler+AddMerchandise.swift` | Account-aware fiscal-merchandise picker with a concessionaire-only asset-search action placeholder. |
+ | `Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+FastAndFurios.swift` | Ranked product revenue velocity, sales velocity, volume, and weighted score report presentation. |
+ | `Sources/App/Styles/` | Swift Web style declarations (`MainStyle`, `SKMainStyle`, `SKLogInStyle`). |
+ | `Sources/App/TierraCeroCustomUI/` | Scoped Tierra Cero layout controls and feature themes, including the production OrderView presentation and persistent speech-recognition control. |
+--- before/.agent/MODULES.md
++++ after/.agent/MODULES.md
+@@ -24,7 +24,7 @@
+ - `API/` — typed client wrappers for auth, customer, order, account, subaccount (create/load/search/update), fiscal, POC, including product-activity and Fast and Furious audit reports, route, mail, social/theme, rewards, and WebSocket API endpoints.
+ - `Websocket/` — real-time message handlers for chat, auth requests, mobile camera/scanner/OCR, async file/image jobs, social notifications, order/status updates, and connection lifecycle.
+ - `ViewControlers/` — page controllers and top-level page flows.
+-- `Snippits/` — reusable UI components and feature views, including Product Manager audit report presentations and velocity scoring.
++- `Snippits/` — reusable UI components and feature views, including Product Manager audit report presentations, velocity scoring, and the dedicated Trip location and account-aware merchandise pickers.
+ - `Styles/` — Swift Web CSS style declarations.
+ - `Functions/`, `Extentions/`, `Enums/`, `Structurs/`, `VirtualControlers/` — shared app helpers and runtime support. Error diagnostics are owned by `ErrorReportingControler`, its record/context types, the centralized POST transport, and the API decoding helper.
+ 
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -15,7 +15,8 @@
+ - `Sources/Service/skyline/js/visualPerformance.js` exposes the derived performance mode as `data-tc-performance-mode` on the document root. In performance mode, named modal veils and glass content shells use translucent black backgrounds (65% and 85% opacity respectively) while backdrop filters remain disabled; disabling the mode restores their theme backgrounds through the CSS cascade.
+ - Browser speech recognition is centralized in `SpeechRecognitionManager`; it retains the JavaScript callback for the active session and routes transcripts to one weak `SpeechRecognitionTarget`.
+ - `WorkViewControler` owns one authenticated-session `TCSpeechRecognitionFloatingButton` and shuts it down when the work shell leaves the DOM.
+-- `CreateTripView.selectLocation` uses the dedicated `TripControlerAddLocation` picker with mutable `[FiscalLocationBase]` items and fiscal-base formatting callbacks. Selection returns a complete `CustCommercialTripsComponents.TripLocation` snapshot with `.location` source type and the base's linked ID. Its own `ViewType` supplies the origin/destination icon and title; other Trip selections continue using `TripControlerAddElement<Item>`.
++- `CreateTripView.selectLocation` uses the dedicated `TripControlerAddLocation` picker with mutable `[FiscalLocationBase]` items and fiscal-base formatting callbacks. Selection returns a complete `CustCommercialTripsComponents.TripLocation` snapshot with `.location` source type and the base's linked ID. Its own `ViewType` supplies the origin/destination icon and title; merchandise uses its own picker, and the remaining Trip selections continue using `TripControlerAddElement<Item>`.
++- `CreateTripView.addMerchendise` uses `TripControlerAddMerchandise` with the current `CustAcctSearch` account and mutable `merchendises: [FiscalMercanciaBase]`. The picker owns merchandise formatting and preserves the base-selection and creation callbacks. Only concessionaire accounts see the header's magnifying-glass Buscar Activo button, immediately before + Agregar; its dedicated `searchAsset()` method is a placeholder that leaves the picker open. Asset searching/selection is not implemented yet.
+ - `CreateTripView` stores origin/destination as `CustCommercialTripsComponents.TripLocation`. Local adapters preserve snapshot fields, source type, and optional source ID for the unchanged `CartaPorteUbicacion`, `ManageLocationItem`, and `AddCartaPorteMerchendise` consumers. Stop matching uses source type and linked ID, or placement ID for unlinked stops; saved-base updates/deletes affect only `.location` sources.
+ - `TripControlerAddLocation` has a header split button: the main Agregar action and menu Agregar ubicación share the existing creation callback; the arrow reveals Seleccionar tienda and Buscar cliente alongside it. Menu options have decorative cyan outline SVG icons for location creation, store selection, and customer search. Store selection opens `SelectStore` and renders a `.store` trip snapshot; customer search opens `SearchSubCustomerView` and renders the selected/created subaccount as a `.subaccount` snapshot. Menu visibility is local presentation state, with Escape and outside-click dismissal and scoped crystal styling.
+ - The picker's `renderLocation` overloads preserve store/subaccount address and coordinates. Store placement IDs use `storePrefix` plus the final UUID segment; subaccounts use `sa` plus the final UUID segment and fiscal identity from the injected parent account. Subaccounts must belong to that account. Successful rendering returns the snapshot and dismisses the picker; unrecognized address states report an error.
+--- before/Sources/App/Snippits/TripControler/TripControler+AddMerchandise.swift
++++ after/Sources/App/Snippits/TripControler/TripControler+AddMerchandise.swift
+@@ -0,0 +1,196 @@
++//
++// TripControler+AddMerchandise.swift
++//
++
++import Foundation
++import TCFundamentals
++import Web
++
++class TripControlerAddMerchandise: Div {
++
++    override class var name: String { "div" }
++
++    let account: CustAcctSearch
++    var merchendises: [FiscalMercanciaBase]
++    let callback: (FiscalMercanciaBase) -> Void
++    let create: () -> Void
++
++    init(
++        account: CustAcctSearch,
++        merchendises: [FiscalMercanciaBase],
++        callback: @escaping (FiscalMercanciaBase) -> Void,
++        create: @escaping () -> Void
++    ) {
++        self.account = account
++        self.merchendises = merchendises
++        self.callback = callback
++        self.create = create
++        super.init()
++    }
++
++    required init() {
++        fatalError("init() has not been implemented")
++    }
++
++    lazy var itemsContainer = Div()
++        .class(Class(TCCrystalSurfaceClass.tripPickerList))
++
++    func searchAsset() {
++        guard account.isConcessionaire else { return }
++        // Pending: open the account's commercial-asset search flow.
++    }
++
++    private func searchAssetButton() -> Button {
++        let svg = """
++        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgb(73,185,245)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="7.5"/><path d="m16 16 5 5"/></svg>
++        """
++
++        let button = Button("")
++            .attribute("type", "button")
++            .class(
++                Class(TCCrystalSurfaceClass.goodButton),
++                Class(TCCrystalSurfaceClass.tripPickerCreate)
++            )
++            .custom("display", "inline-flex")
++            .custom("align-items", "center")
++            .custom("gap", "8px")
++            .onClick {
++                self.searchAsset()
++            }
++
++        button.appendChild(
++            Img()
++                .src("data:image/svg+xml;base64,\(Data(svg.utf8).base64EncodedString())")
++                .attribute("alt", "")
++                .attribute("aria-hidden", "true")
++                .width(18.px)
++                .height(18.px)
++                .custom("flex-shrink", "0")
++        )
++        button.appendChild(Span("Buscar Activo"))
++        return button
++    }
++
++    private func createButton() -> Button {
++        Button("+ Agregar")
++            .attribute("type", "button")
++            .class(
++                Class(TCCrystalSurfaceClass.goodButton),
++                Class(TCCrystalSurfaceClass.tripPickerCreate)
++            )
++            .onClick {
++                self.create()
++                self.remove()
++            }
++    }
++
++    @DOM override var body: DOM.Content {
++        Div {
++            Div {
++                Div {
++                    Img()
++                        .src("/skyline/media/icon_merchandise.png")
++                        .class(.iconBlue)
++                        .height(24.px)
++
++                    H2("Seleccione Mercancia")
++                        .class(
++                            Class(TCTripBetaClass.titleText),
++                            Class(TCCrystalSurfaceClass.tripPickerTitle)
++                        )
++                }
++                .display(.flex)
++                .custom("align-items", "center")
++                .custom("gap", "8px")
++                .custom("min-width", "0")
++
++                Div {
++                    if self.account.isConcessionaire {
++                        self.searchAssetButton()
++                    }
++
++                    self.createButton()
++
++                    Img()
++                        .closeButton(.uiView2)
++                        .class(Class(TCCrystalSurfaceClass.tripPickerClose))
++                        .onClick {
++                            self.remove()
++                        }
++                }
++                .class(
++                    Class(TCTripBetaClass.titleActions),
++                    Class(TCCrystalSurfaceClass.tripPickerActions)
++                )
++            }
++            .class(
++                Class(TCTripBetaClass.title),
++                Class(TCCrystalSurfaceClass.tripPickerHeader)
++            )
++
++            Div {
++                self.itemsContainer
++            }
++            .class(Class(TCCrystalSurfaceClass.tripPickerBody))
++        }
++        .class(
++            Class(TCTripBetaClass.popUpPanel),
++            Class(TCTripBetaClass.popUpPanelFitContent),
++            Class(TCCrystalSurfaceClass.tripPickerPanel)
++        )
++    }
++
++    override func buildUI() {
++        super.buildUI()
++
++        TCTripBetaTheme.apply(to: self)
++        TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
++        self.class(Class(TCCrystalSurfaceClass.tripPicker))
++        self.attribute("role", "dialog")
++        self.attribute("aria-modal", "true")
++
++        if merchendises.isEmpty {
++            itemsContainer.appendChild(
++                Div {
++                    Div("👾")
++                        .class(Class(TCCrystalSurfaceClass.tripPickerEmptyIcon))
++
++                    H2("No hay opciones disponibles")
++                        .class(Class(TCCrystalSurfaceClass.tripPickerEmptyTitle))
++
++                    self.createButton()
++                }
++                .class(Class(TCCrystalSurfaceClass.tripPickerEmpty))
++            )
++            return
++        }
++
++        merchendises.forEach { item in
++            itemsContainer.appendChild(
++                Div {
++                    Div("\(item.fiscCode) \(item.description)")
++                        .class(
++                            .oneLineText,
++                            Class(TCCrystalSurfaceClass.tripPickerItemTitle)
++                        )
++
++                    Div("Unidad \(item.fiscUnitName) | Peso \(item.kilograms.fromCents.toString) kg")
++                        .class(
++                            .oneLineText,
++                            Class(TCCrystalSurfaceClass.tripPickerItemSubtitle)
++                        )
++                }
++                .class(
++                    Class(TCTripBetaClass.box),
++                    Class(TCTripBetaClass.boxInteractive),
++                    Class(TCCrystalSurfaceClass.tripPickerItem)
++                )
++                .onClick {
++                    self.callback(item)
++                    self.remove()
++                }
++            )
++        }
++    }
++
++}

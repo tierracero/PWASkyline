@@ -1303,7 +1303,7 @@ extension OrderRouteView{
                 }
 
                 for (index, address) in addresses.enumerated() {
-                    print("🗺 Posible dirección \(index + 1): \(address.printableAddress)")
+                    print("🗺 Posible dirección [B] \(index + 1): \(address.printableAddress)")
                 }
                 
                 let streetValue = (address.street?.isEmpty == false ? address.street : [address.streetName, address.streetNumber].compactMap { value in

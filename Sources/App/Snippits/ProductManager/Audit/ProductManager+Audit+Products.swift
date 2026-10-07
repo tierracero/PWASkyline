@@ -101,7 +101,7 @@ extension ProductManagerView.AuditView {
                 /// Seleccione Tienda
                 Div{
                     Label("Tipo de Reporte")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.typeSelect
@@ -113,7 +113,7 @@ extension ProductManagerView.AuditView {
                 /// Seleccione Tienda
                 Div{
                     Label("Seleccione Tienda")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.storeSelect
@@ -126,7 +126,7 @@ extension ProductManagerView.AuditView {
                 Div{
                     
                     Label("Seleccione Concesionario")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     
                     Div().clear(.both)
@@ -175,7 +175,7 @@ extension ProductManagerView.AuditView {
                 
                 Div{
                     Label("Seleccione Fecha")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.dateSelect
@@ -186,7 +186,7 @@ extension ProductManagerView.AuditView {
                 
                 Div{
                     Label("Fecha Inicio")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.startAtField
@@ -201,7 +201,7 @@ extension ProductManagerView.AuditView {
                 
                 Div{
                     Label("Fecha Final")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.endAtField

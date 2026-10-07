@@ -7,6 +7,7 @@
 
 import Foundation
 import TCFundamentals
+import TCFireSignal
 import Web
 
 class AddServiceFormView: Div {
@@ -19,6 +20,8 @@ class AddServiceFormView: Div {
     
     /// cost_a, cost_b, cost_c
     let costType: CustAcctCostTypes
+
+    let authorizationContext: CustComponents.ChangePriceAuthorizationContext
     
     private var addSoc: ((
         _ soc: ChargeObject
@@ -29,6 +32,7 @@ class AddServiceFormView: Div {
         socCanLoadAction: Bool,
         /// cost_a, cost_b, cost_c
         costType: CustAcctCostTypes,
+        authorizationContext: CustComponents.ChangePriceAuthorizationContext,
         addSoc: @escaping ((
             _ soc: ChargeObject
         ) -> ())
@@ -36,6 +40,7 @@ class AddServiceFormView: Div {
         self.allowManualCharges = allowManualCharges
         self.socCanLoadAction = socCanLoadAction
         self.costType = costType
+        self.authorizationContext = authorizationContext
     
         self.addSoc = addSoc
     }
@@ -168,7 +173,7 @@ class AddServiceFormView: Div {
                 /// Modelo / SKU / SOC / POC
                 Div{
                     Label("SKU / UPC")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                     Div {
                         self.searchTermInput
                     }
@@ -184,7 +189,7 @@ class AddServiceFormView: Div {
                 /// Amount
                 Div{
                     Label("Cantidad")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                     Div {
                         self.amountInput
                     }
@@ -195,7 +200,7 @@ class AddServiceFormView: Div {
                 /// Description
                 Div{
                     Label("Description")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                     Div {
                         self.nameInput
                     }
@@ -206,7 +211,7 @@ class AddServiceFormView: Div {
                 /// Sale Price
                 Div{
                     Label("Precio")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                     Div {
                         
                         Span{
@@ -267,7 +272,7 @@ class AddServiceFormView: Div {
                 /// `My Cost`
                 Div{
                     Label("Costo Interno")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                     Div {
                         
                         Img()
@@ -382,7 +387,7 @@ class AddServiceFormView: Div {
                                     return
                                 }
                                 
-                                if custCatchHerk > 4 {
+                                if custCatchHerk >= self.authorizationContext.minimumHerk(config: configStoreProcessing) {
                                     
                                     self.changePriceViewIsHidden = true
                                     
@@ -401,6 +406,7 @@ class AddServiceFormView: Div {
                                         id: socid,
                                         requestedPrice: _price,
                                         reason: "",
+                                        authorizationContext: self.authorizationContext,
                                         callback: { auth in
                                             
                                             self.changePriceViewIsHidden = true

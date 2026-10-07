@@ -331,7 +331,7 @@ enum TCMoneyManagerTheme {
                 .custom("border-radius", "999px")
                 .custom("background", "rgba(18, 78, 118, 0.45)")
                 .custom("color", "#9cd9ff")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "700")
         }
 
@@ -356,7 +356,7 @@ enum TCMoneyManagerTheme {
                 .custom("border-radius", "10px")
                 .custom("background", "rgba(112, 65, 8, 0.18)")
                 .custom("color", "#f7c978")
-                .custom("font-size", "13px")
+                .custom("font-size", "14px")
                 .custom("line-height", "1.4")
 
             CSSRule(Pointer("\(root) input, \(root) select, \(root) textarea"))

@@ -21,6 +21,7 @@ extension CustOrderComponents {
 		provider: String,
 		lastFour: String,
 		auth: String,
+        downpayment: Bool = false,
         callback: @escaping ( (_ resp: APIResponseGeneric<AddPaymentResponse>?) -> () )
 	) {
 		sendPost(
@@ -35,7 +36,8 @@ extension CustOrderComponents {
                 cost: cost,
                 provider: provider,
                 lastFour: lastFour,
-                auth: auth
+                auth: auth,
+                downpayment: downpayment
             )
 		) { data in
 			guard let data else{

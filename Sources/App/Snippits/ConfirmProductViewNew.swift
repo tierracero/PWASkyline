@@ -7,6 +7,7 @@
 
 import Foundation
 import TCFundamentals
+import TCFireSignal
 import Web
 
 class ConfirmProductViewNew: Div {
@@ -16,6 +17,8 @@ class ConfirmProductViewNew: Div {
     let accountId: UUID?
     
     let costType: CustAcctCostTypes
+
+    let authorizationContext: CustComponents.ChangePriceAuthorizationContext
     
     let pocid: UUID
     
@@ -47,6 +50,7 @@ class ConfirmProductViewNew: Div {
     init(
         accountId: UUID?,
         costType: CustAcctCostTypes,
+        authorizationContext: CustComponents.ChangePriceAuthorizationContext,
         pocid: UUID,
         selectedInventoryIDs: [UUID],
         blockMultipleStores: Bool = false,
@@ -68,6 +72,7 @@ class ConfirmProductViewNew: Div {
     ) {
         self.accountId = accountId
         self.costType = costType
+        self.authorizationContext = authorizationContext
         self.pocid = pocid
         self.selectedInventoryIDs = selectedInventoryIDs
         self.callback = callback
@@ -456,7 +461,7 @@ class ConfirmProductViewNew: Div {
                                 
                                 if let _cost = Float(self.customePrice)?.toCents  {
                                     
-                                    if custCatchHerk > 4 {
+                                    if custCatchHerk >= self.authorizationContext.minimumHerk(config: configStoreProcessing) {
                                         
                                         self.changePriceViewIsHidden = true
                                         
@@ -470,6 +475,7 @@ class ConfirmProductViewNew: Div {
                                             id: self.pocid,
                                             requestedPrice: _cost,
                                             reason: "",
+                                            authorizationContext: self.authorizationContext,
                                             callback: { auth in
                                                 
                                                 self.changePriceViewIsHidden = true

@@ -225,10 +225,19 @@ func addToDom(
         return
     }
 
+    var resolvedPresentation = presentation
+    if case .standard = presentation {
+        if view is SearchCustomerView || view is SearchSubCustomerView || view is CreateNewCusomerView ||
+            view is CreateNewCustomerDataView || view is ManageSubCustomerAccountView ||
+            view is ManualAddressSearch || view is ConfirmAdddressLocationView {
+            resolvedPresentation = .glass
+        }
+    }
+
     WebApp.shared.document.body.appendChild(
         SuperView(
             content: view,
-            presentation: presentation
+            presentation: resolvedPresentation
         )
     )
     // WebApp.shared.window.document.body.appendChild(view)

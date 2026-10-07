@@ -1,0 +1,196 @@
+--- before/Sources/App/Snippits/ManageSubCustomerAccountView.swift
++++ after/Sources/App/Snippits/ManageSubCustomerAccountView.swift
+@@ -15,6 +15,9 @@
+ 
+     private let callback: (CustSubAcct) -> Void
+     private var savedSubaccount: CustSubAcct?
++    private let mapId = "subcustomer_location_map_" + callKey(32)
++    private var locationMap: JSObject?
++    private var mapRequest = 0
+ 
+     private var isEditing: Bool { custSubAcct != nil || savedSubaccount != nil }
+ 
+@@ -113,6 +116,14 @@
+     @State private var latitude = ""
+     @State private var longitud = ""
+     @State private var isSaving = false
++    @State private var showLocationMap = false
++
++    private lazy var mapContainer = Div()
++        .id(.init(mapId))
++        .width(100.percent)
++        .height(280.px)
++        .borderRadius(10.px)
++        .overflow(.hidden)
+ 
+     private lazy var typeField = USelectField(self.$accountType)
+     private lazy var businessNameField = UTextField(self.$businessName).placeholder("Nombre del negocio")
+@@ -197,14 +208,12 @@
+                         .display(.block)
+                         
+                         USubTitle(self.requierFullAddress ? "Coordenadas requeridas" : "Coordenadas (opcionales)")
+-                        .hidden(self.$latitude.map{ !self.requierFullAddress && $0.isEmpty })
++                        .hidden(self.$showLocationMap.map { !$0 })
+ 
+                         Div {
+-                            // TODO: add MAP here
++                            self.mapContainer
+                         }
+-                        .display(self.$latitude.map{ !self.requierFullAddress && $0.isEmpty ? .none : .block })
+-                        .class(Class(TCCrystalSurfaceClass.customerFormFields))
+-                        .hidden(self.$latitude.map{ !self.requierFullAddress && $0.isEmpty })
++                        .display(self.$showLocationMap.map { $0 ? .block : .none })
+ 
+                         UField("Calle y número", required: self.requierFullAddress) { self.streetField }
+ 
+@@ -303,8 +312,57 @@
+ 
+     override func didAddToDOM() {
+         super.didAddToDOM()
++        $latitude.listen { [weak self] in self?.scheduleMapRefresh() }
++        $longitud.listen { [weak self] in self?.scheduleMapRefresh() }
++        scheduleMapRefresh()
+         firstNameField.select()
+         loadSearchTermAddress()
++    }
++
++    private func scheduleMapRefresh() {
++        mapRequest += 1
++        let request = mapRequest
++        // Address lookup assigns latitude and longitude separately; render the final pair.
++        Dispatch.asyncAfter(0.1) { [weak self] in
++            guard let self, self.isInDOM, self.mapRequest == request else { return }
++            self.refreshLocationMap(request: request)
++        }
++    }
++
++    private func clearLocationMap() {
++        if let locationMap {
++            _ = locationMap.destroy?()
++        }
++        locationMap = nil
++        mapContainer.innerHTML = ""
++    }
++
++    private func refreshLocationMap(request: Int) {
++        clearLocationMap()
++        guard let latitude = Double(latitude.purgeSpaces), latitude.isFinite,
++              (-90.0...90.0).contains(latitude),
++              let longitude = Double(longitud.purgeSpaces), longitude.isFinite,
++              (-180.0...180.0).contains(longitude) else {
++            showLocationMap = requierFullAddress
++            mapContainer.appendChild(USmallTitle("Busque una dirección con ubicación para mostrar el mapa."))
++            return
++        }
++
++        showLocationMap = true
++        mapContainer.appendChild(USmallTitle("Cargando mapa…"))
++        API.v1.jwt { [weak self] token in
++            guard let self, self.isInDOM, self.mapRequest == request else { return }
++            self.mapContainer.innerHTML = ""
++            guard let token,
++                  let createMap = JSObject.global["createSubCustomerLocationMap"].function else {
++                self.mapContainer.appendChild(USmallTitle("No fue posible cargar el mapa. Busque la dirección para intentar de nuevo."))
++                return
++            }
++            self.locationMap = createMap(self.mapId, token, latitude, longitude).object
++            if self.locationMap == nil {
++                self.mapContainer.appendChild(USmallTitle("No fue posible cargar el mapa. Busque la dirección para intentar de nuevo."))
++            }
++        }
+     }
+ 
+     private func loadAddress() {
+@@ -416,14 +474,14 @@
+         if !latitude.purgeSpaces.isEmpty {
+             guard let latitudeValue, latitudeValue.isFinite, (-90.0...90.0).contains(latitudeValue) else {
+                 showError(.invalidField, "Ingrese una latitud válida entre -90 y 90.")
+-                latitudeField.select()
++                loadAddress()
+                 return
+             }
+         }
+         if !longitud.purgeSpaces.isEmpty {
+             guard let longitudeValue, longitudeValue.isFinite, (-180.0...180.0).contains(longitudeValue) else {
+                 showError(.invalidField, "Ingrese una longitud válida entre -180 y 180.")
+-                longitudField.select()
++                loadAddress()
+                 return
+             }
+         }
+@@ -575,6 +633,8 @@
+ 
+     override func didRemoveFromDOM() {
+         super.didRemoveFromDOM()
++        mapRequest += 1
++        clearLocationMap()
+         $accountType.removeAllListeners()
+         $businessName.removeAllListeners()
+         $username.removeAllListeners()
+@@ -595,5 +655,6 @@
+         $latitude.removeAllListeners()
+         $longitud.removeAllListeners()
+         $isSaving.removeAllListeners()
++        $showLocationMap.removeAllListeners()
+     }
+ }
+--- before/Sources/Service/skyline/js/main.js
++++ after/Sources/Service/skyline/js/main.js
+@@ -2111,6 +2111,36 @@
+ 
+ //// load map with location
+ 
++// This preview owns its map; it must not replace the shared map/marker globals.
++function createSubCustomerLocationMap(mapId, token, lat, lon) {
++    if (typeof mapkit === "undefined" || !document.getElementById(mapId)) {
++        return null;
++    }
++
++    let locationMap = null;
++    try {
++        mapkit.init({
++            authorizationCallback: function(done) { done(token); },
++            language: "es"
++        });
++        locationMap = new mapkit.Map(mapId);
++        const coordinate = new mapkit.Coordinate(lat, lon);
++        locationMap.region = new mapkit.CoordinateRegion(
++            coordinate,
++            new mapkit.CoordinateSpan(0.020528323102041, 0.043467582244898)
++        );
++        locationMap.addAnnotation(new mapkit.MarkerAnnotation(coordinate, {
++            draggable: false,
++            selected: true,
++            title: "Ubicación de la subcuenta"
++        }));
++        return locationMap;
++    } catch (_) {
++        if (locationMap) { locationMap.destroy(); }
++        return null;
++    }
++}
++
+ function initiateSingleMapCord(mapId, token, lat, lon, updateCoordinate) {
+     
+     // MARK: Initiate MAP
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -10,7 +10,7 @@
+ - Theme switching currently selects between `MainStyle`, `SKMainStyle`, and `SKLogInStyle`.
+ - `CreateNewCustomerDataView`, `ManageSubCustomerAccountView`, and `ManualAddressSearch` use TierraCeroCustomUI headers/controls and scoped crystal surfaces. `addToDom` automatically chooses the glass host for these customer/address views, `SearchCustomerView`, `SearchSubCustomerView`, and `CreateNewCusomerView` when the caller uses the standard presentation; explicit interactive/glass presentations remain supported.
+ - `SearchSubCustomerView` scopes API searches to its injected `CustAcctSearch` parent. One match enters selection; multiple matches appear as keyboard-selectable cards. A successful empty search opens `CreateNewCusomerView`, then passes the account type/search term and `requierFullAddress` flag to `ManageSubCustomerAccountView`. Required-address selection checks complete street/colony/city/state/country/zip and finite, in-range latitude/longitud; incomplete items show a Spanish alert and open the prefilled manager for editing. Search remains available after child cancellation and completes once with a parent-validated item after any required edit. Removed-view responses are ignored.
+-- `ManageSubCustomerAccountView` supports new and existing `CustSubAcct` initializers under one injected `CustAcctSearch` parent. Editing prefills all submitted fields and retains status. `requierFullAddress` defaults to false for creation; when true, address lookup reverse-geocodes existing valid coordinates or opens coordinate entry, rejects postal-only results, and save/returned-record validation requires complete address and valid coordinates. Optional-address mode retains postal-only selection with cleared coordinates. Coordinate search-term lookup starts after DOM attachment. The manager returns server-created/reloaded records without introducing a global subaccount cache.
++- `ManageSubCustomerAccountView` supports new and existing `CustSubAcct` initializers under one injected `CustAcctSearch` parent. Editing prefills all submitted fields and retains status. `requierFullAddress` defaults to false for creation; when true, address lookup reverse-geocodes existing valid coordinates, rejects postal-only results, and save/returned-record validation requires complete address and valid coordinates. Optional-address mode retains postal-only selection with cleared coordinates. Coordinate search-term lookup starts after DOM attachment. Its read-only MapKit preview loads initial edit coordinates and refreshes after either coordinate state changes, combining paired assignments and ignoring stale JWT responses. Invalid/empty coordinates clear the map; required mode shows a hint, optional mode hides it. The view destroys its own map on refresh/removal without modifying shared map globals. The manager returns server-created/reloaded records without introducing a global subaccount cache.
+ - `ManualAddressSearch` uses `VPopUp`/`VTitle` for address, coordinate, and geocoder-choice dialogs. Coordinate choices display their printable addresses, and coordinate results are returned directly from the geocoder snapshot so postal-code listeners cannot clear the returned address.
+ - `Sources/Service/skyline/js/visualPerformance.js` exposes the derived performance mode as `data-tc-performance-mode` on the document root. In performance mode, named modal veils and glass content shells use translucent black backgrounds (65% and 85% opacity respectively) while backdrop filters remain disabled; disabling the mode restores their theme backgrounds through the CSS cascade.
+ - Browser speech recognition is centralized in `SpeechRecognitionManager`; it retains the JavaScript callback for the active session and routes transcripts to one weak `SpeechRecognitionTarget`.
+--- before/.agent/architecture/PWA_ASSETS_AND_SERVICE_WORKER.md
++++ after/.agent/architecture/PWA_ASSETS_AND_SERVICE_WORKER.md
+@@ -13,6 +13,7 @@
+   report accurate decoded-byte progress without a second HEAD request.
+ - `DevPublic` and `DistPublic` contain app/service JS, WASM, compressed WASM, HTML, manifest, favicon, and service worker outputs.
+ - `Sources/Service/skyline/js/speechRecognition.js` is the source-owned browser bridge exposed as `globalThis.PWASkylineSpeech`; it is copied through the existing `skyline` resource declaration and loaded only by the authenticated work shell.
++- `Sources/Service/skyline/js/main.js` exposes `createSubCustomerLocationMap` for the subaccount manager's read-only location preview. It returns a local MapKit instance for caller-owned destruction and does not modify the legacy shared map/marker globals. Generated public copies require the normal resource/build refresh to include this helper.
+ 
+ ## Rules
+ 

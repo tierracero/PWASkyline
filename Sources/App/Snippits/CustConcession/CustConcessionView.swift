@@ -1935,7 +1935,7 @@ extension CustConcessionView {
                             Div("Tipo de adquisición:")
                             .marginBottom(3.px)
                             .class(.oneLineText)
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                             .color(.gray)
 
                             Div(manager.type.description)
@@ -1951,7 +1951,7 @@ extension CustConcessionView {
                             Div("Folio de adquisición:")
                             .marginBottom(3.px)
                             .class(.oneLineText)
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                             .color(.gray)
 
                             Div(manager.folio)
@@ -1984,7 +1984,7 @@ extension CustConcessionView {
                         Div("Folio de Control:")
                         .marginBottom(3.px)
                         .class(.oneLineText)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
 
                         Div(control.folio)
@@ -2000,7 +2000,7 @@ extension CustConcessionView {
                         Div("Fecha:")
                         .marginBottom(3.px)
                         .class(.oneLineText)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
 
                         Div(getDate(control.createdAt).formatedShort)
@@ -2015,7 +2015,7 @@ extension CustConcessionView {
                         
                         Div("Unis:")
                         .marginBottom(3.px)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .align(.right)
                         .color(.gray)
 
@@ -2035,7 +2035,7 @@ extension CustConcessionView {
 
                         Div("Nombre:")
                         .marginBottom(3.px)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
 
                         Div(control.description)
@@ -2052,7 +2052,7 @@ extension CustConcessionView {
                         Div("Serie Externa:")
                         .marginBottom(3.px)
                         .class(.oneLineText)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
 
                         Div(control.vendorSerie ?? "N/A")
@@ -2068,7 +2068,7 @@ extension CustConcessionView {
                         Div("Folio Externa:")
                         .marginBottom(3.px)
                         .class(.oneLineText)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
 
                         Div(control.vendorFolio ?? "N/A")
@@ -2106,7 +2106,7 @@ extension CustConcessionView {
                         Div("Folio de Control:")
                         .marginBottom(3.px)
                         .class(.oneLineText)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
 
                         Div(control.folio)
@@ -2122,7 +2122,7 @@ extension CustConcessionView {
                         Div("Fecha:")
                         .marginBottom(3.px)
                         .class(.oneLineText)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
 
                         Div(getDate(control.createdAt).formatedShort)
@@ -2137,7 +2137,7 @@ extension CustConcessionView {
                         
                         Div("Unis:")
                         .marginBottom(3.px)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .align(.right)
                         .color(.gray)
 
@@ -2157,7 +2157,7 @@ extension CustConcessionView {
 
                         Div("Nombre:")
                         .marginBottom(3.px)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
 
                         Div(control.description)
@@ -2174,7 +2174,7 @@ extension CustConcessionView {
                         Div("Serie Externa:")
                         .marginBottom(3.px)
                         .class(.oneLineText)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
 
                         Div(control.vendorSerie ?? "N/A")
@@ -2190,7 +2190,7 @@ extension CustConcessionView {
                         Div("Folio Externa:")
                         .marginBottom(3.px)
                         .class(.oneLineText)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
 
                         Div(control.vendorFolio ?? "N/A")

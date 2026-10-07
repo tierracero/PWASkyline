@@ -552,7 +552,7 @@ extension CustConcessionView {
                             Div(self.$docuuid.map{ $0.purgeSpaces.isEmpty ? "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" : $0 })
                                 .color(self.$docuuid.map{ $0.purgeSpaces.isEmpty ? .grayContrast : .white })
                                 .class(.textFiledBlackDarkReadMode, .oneLineText)
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                             
                         }
                         

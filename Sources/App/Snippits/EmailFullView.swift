@@ -7,7 +7,7 @@
 
 import TCFundamentals
 import Foundation
-import MailAPICore
+import MapKitCore
 import Web
 
 class EmailFullView: Div {

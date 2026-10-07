@@ -235,7 +235,7 @@ class CustRemoveFromConcessionView: Div {
         
         Label("Proveedor")
             .color(.lightGray)
-            .fontSize(12.px)
+            .fontSize(14.px)
         
         Div().class(.clear)
         
@@ -251,7 +251,7 @@ class CustRemoveFromConcessionView: Div {
         
         Label("Ultimos Cuatro")
             .color(.lightGray)
-            .fontSize(12.px)
+            .fontSize(14.px)
         
         Div().class(.clear)
         
@@ -261,7 +261,7 @@ class CustRemoveFromConcessionView: Div {
         
         Label("Folio de Autorizacion")
             .color(.lightGray)
-            .fontSize(12.px)
+            .fontSize(14.px)
         
         Div().class(.clear)
         
@@ -308,7 +308,7 @@ class CustRemoveFromConcessionView: Div {
             .color(.lightBlueText)
         
         Label("Motivo del Ajuste")
-            .fontSize(12.px)
+            .fontSize(14.px)
         
         TextArea(self.$auth)
             .placeholder("Ingrese la razon del ajuste")
@@ -332,7 +332,7 @@ class CustRemoveFromConcessionView: Div {
             .color(.lightBlueText)
         
         Label("Proveedor")
-            .fontSize(12.px)
+            .fontSize(14.px)
             .color(.lightGray)
         
         Div().class(.clear)
@@ -347,7 +347,7 @@ class CustRemoveFromConcessionView: Div {
             
         Label("Numero de Cheque")
             .color(.lightGray)
-            .fontSize(12.px)
+            .fontSize(14.px)
         
         Div().class(.clear)
         
@@ -393,7 +393,7 @@ class CustRemoveFromConcessionView: Div {
         
         Label("Banco ¿Donde Recibiste El Deposito?")
             .color(.lightGray)
-            .fontSize(12.px)
+            .fontSize(14.px)
         
         Div().class(.clear)
         
@@ -409,7 +409,7 @@ class CustRemoveFromConcessionView: Div {
         
         Label("Folio De Tranferencia")
             .color(.lightGray)
-            .fontSize(12.px)
+            .fontSize(14.px)
         
         Div().class(.clear)
         
@@ -443,7 +443,7 @@ class CustRemoveFromConcessionView: Div {
                 .float(.left)
                 
                 Label("Cambiar Perfil")
-                    .fontSize(12.px)
+                    .fontSize(14.px)
             }
             .hidden(self.$profiles.map{ $0.count < 2 })
             .marginTop(-7.px)

@@ -21,10 +21,10 @@ Current verified module and source structure for PWASkyline.
 
 ### Feature Areas
 
-- `API/` — typed client wrappers for auth, customer, order, account, fiscal, POC, including product-activity and Fast and Furious audit reports, route, mail, social/theme, rewards, and WebSocket API endpoints.
+- `API/` — typed client wrappers for auth, customer, order (including charge/payment deletion approval), account, subaccount (create/load/search/update), fiscal, POC, including product-activity and Fast and Furious audit reports, route, mail, social/theme, rewards, and WebSocket API endpoints.
 - `Websocket/` — real-time message handlers for chat, auth requests, mobile camera/scanner/OCR, async file/image jobs, social notifications, order/status updates, and connection lifecycle.
 - `ViewControlers/` — page controllers and top-level page flows.
-- `Snippits/` — reusable UI components and feature views, including Product Manager audit report presentations and velocity scoring.
+- `Snippits/` — reusable UI components and feature views, including Product Manager audit report presentations, order report delivery tables and CSV exports, order charge/payment deletion approval and refresh, velocity scoring, the dedicated Trip location and account-aware merchandise pickers, preloaded commercial-asset selection through `SearchComertialAsset`, parent-scoped subaccount creation/editing through `ManageSubCustomerAccountView`, and store-address confirmation through `ConfirmAdddressLocationView`.
 - `Styles/` — Swift Web CSS style declarations.
 - `Functions/`, `Extentions/`, `Enums/`, `Structurs/`, `VirtualControlers/` — shared app helpers and runtime support. Error diagnostics are owned by `ErrorReportingControler`, its record/context types, the centralized POST transport, and the API decoding helper.
 
@@ -55,5 +55,5 @@ These directories should usually be treated as generated/deployable outputs, not
 ## Active Dependencies
 
 - `swifweb/web` from `2.0.0-nightly.5`.
-- Tierra Cero private packages: `TCFundamentals`, `TCFireSignal`, `MailAPICore`, `TCSocialCore`, `TaecelAPICore`, `LanguagePack`, `WaWebAPICore`, `SkylineDocumentationCore`.
+- Tierra Cero private packages: `TCFundamentals`, `TCFireSignal`, `MapKitCore`, `TCSocialCore`, `TaecelAPICore`, `LanguagePack`, `WaWebAPICore`, `SkylineDocumentationCore`.
 - WebSources dev dependencies include webpack, JavaScriptKit local checkout bridge, and Wasmer WASI packages.

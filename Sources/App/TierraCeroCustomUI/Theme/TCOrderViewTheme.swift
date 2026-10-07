@@ -375,7 +375,7 @@ enum TCOrderViewTheme {
 
             OrderRule(Pointer("\(root) .\(TCOrderViewClass.chargesCard) table"))
                 .custom("border-collapse", "collapse")
-                .custom("font-size", "13px !important")
+                .custom("font-size", "14px !important")
 
             OrderRule(Pointer("\(root) .\(TCOrderViewClass.chargesCard) td"))
                 .custom("padding", "4px 6px")
@@ -424,7 +424,7 @@ enum TCOrderViewTheme {
                 .custom("background", "rgba(11, 29, 46, 0.72) !important")
                 .custom("background-image", "none !important")
                 .custom("box-shadow", "none !important")
-                .custom("font-size", "13px")
+                .custom("font-size", "14px")
 
             OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryIdentity)"))
                 .custom("padding", "8px 0 10px")
@@ -505,7 +505,7 @@ enum TCOrderViewTheme {
                 .custom("background", "rgba(8, 30, 48, 0.62) !important")
                 .custom("background-image", "none !important")
                 .custom("box-shadow", "none !important")
-                .custom("font-size", "13px !important")
+                .custom("font-size", "14px !important")
 
             OrderRule(Pointer("\(root) .\(TCOrderViewClass.rewardsCard)"))
                 .custom("min-height", "74px")
@@ -534,7 +534,7 @@ enum TCOrderViewTheme {
                 .custom("border-bottom", "1px solid var(--tc-order-border-soft)")
 
             OrderRule(Pointer("\(root) .\(TCOrderViewClass.surveysCard) span"))
-                .custom("font-size", "12px !important")
+                .custom("font-size", "14px !important")
                 .custom("color", "var(--tc-order-muted)")
 
             OrderRule(Pointer("\(root) .\(TCOrderViewClass.surveysCard) div div div"))

@@ -329,6 +329,14 @@ class CreateCustContractView: Div {
             return serviceTags.checkTag5Name
         case .tagCheck6:
             return serviceTags.checkTag6Name
+        case .tagCheck7:
+            return serviceTags.checkTag7Name
+        case .tagCheck8:
+            return serviceTags.checkTag8Name
+        case .tagCheck9:
+            return serviceTags.checkTag9Name
+        case .tagCheck10:
+            return serviceTags.checkTag10Name
         case .tagDescr:
             return serviceTags.tagDescrName
         }
@@ -354,7 +362,7 @@ class CreateCustContractView: Div {
             return serviceTags.tag5Placeholder
         case .tag6:
             return serviceTags.tag6Placeholder
-        case .tagCheck1, .tagCheck2, .tagCheck3, .tagCheck4, .tagCheck5, .tagCheck6:
+        case .tagCheck1, .tagCheck2, .tagCheck3, .tagCheck4, .tagCheck5, .tagCheck6, .tagCheck7, .tagCheck8, .tagCheck9, .tagCheck10:
             return ""
         case .tagDescr:
             return serviceTags.tagDescrPlaceholder
@@ -393,6 +401,14 @@ class CreateCustContractView: Div {
             return equipment.tagCheck5 ? "true" : "false"
         case .tagCheck6:
             return equipment.tagCheck6 ? "true" : "false"
+        case .tagCheck7:
+            return equipment.tagCheck7 ? "true" : "false"
+        case .tagCheck8:
+            return equipment.tagCheck8 ? "true" : "false"
+        case .tagCheck9:
+            return equipment.tagCheck9 ? "true" : "false"
+        case .tagCheck10:
+            return equipment.tagCheck10 ? "true" : "false"
         case .tagDescr:
             return equipment.tagDescr
         }
@@ -412,6 +428,14 @@ class CreateCustContractView: Div {
             return equipment.tagCheck5
         case .tagCheck6:
             return equipment.tagCheck6
+        case .tagCheck7:
+            return equipment.tagCheck7
+        case .tagCheck8:
+            return equipment.tagCheck8
+        case .tagCheck9:
+            return equipment.tagCheck9
+        case .tagCheck10:
+            return equipment.tagCheck10
         case .refid, .IDTag1, .IDTag2, .tag1, .tag2, .tag3, .tag4, .tag5, .tag6, .tagDescr:
             return false
         }

@@ -16,6 +16,9 @@ extension CustAssetsView {
 
         static var viewid: UUID { .init() }
 
+        /// singleItem, multiItem
+        let createType: ViewCreateType
+
         /// store, warehose, account, subAccount
         let viewType: InitiateAssetItemViewType
 
@@ -28,29 +31,35 @@ extension CustAssetsView {
         let categorie: CustAssetCatsQuick?
 
         // Regulates the primary location, EG: Office 1
-        @State var locations: [CustCommercialAssetsLocation]
+        @State var sections: [CustCommercialAssetsSection]
 
         // Regulates the secondarie location, EG: cubical 1 (in Office 1)
-        @State var subLocations: [CustCommercialAssetsSubLocation]
+        @State var subSections: [CustCommercialAssetsSubSection]
 
-        let callback: (CustCommercialAssetsItem) -> Void
+        let callback: (CallbackType) -> Void
 
-        let onLocationCreated: (CustCommercialAssetsLocation) -> Void
+        let onSectionCreated: (CustCommercialAssetsSection) -> Void
         
-        let onSubLocationCreated: (CustCommercialAssetsSubLocation) -> Void
+        let onSubSectionCreated: (CustCommercialAssetsSubSection) -> Void
 
+        var uploadFileControler: [UUID:ImageGeneralView]  = [:]
+
+        let ws = WS()
+    
         init(
+            createType: ViewCreateType,
             viewType: InitiateAssetItemViewType,
             purchasFiscalDocumentFolio: String,
             asset: CustCommercialAssets,
             department: CustAssetDepsQuick,
             categorie: CustAssetCatsQuick?,
-            locations: [CustCommercialAssetsLocation],
-            subLocations: [CustCommercialAssetsSubLocation],
-            onLocationCreated: @escaping (CustCommercialAssetsLocation) -> Void,
-            onSubLocationCreated: @escaping (CustCommercialAssetsSubLocation) -> Void,
-            callback: @escaping (CustCommercialAssetsItem) -> Void
+            sections: [CustCommercialAssetsSection],
+            subSections: [CustCommercialAssetsSubSection],
+            onSectionCreated: @escaping (CustCommercialAssetsSection) -> Void,
+            onSubSectionCreated: @escaping (CustCommercialAssetsSubSection) -> Void,
+            callback: @escaping (CallbackType) -> Void
         ) {
+            self.createType = createType
             self.viewType = viewType
             self.purchasFiscalDocumentFolio = purchasFiscalDocumentFolio
             self.asset = asset
@@ -58,10 +67,10 @@ extension CustAssetsView {
             self.categorie = categorie
             self.acquisitionCost = asset.initialCost.formatMoney
             self.currentCost = asset.initialCost.formatMoney
-            self.locations = locations
-            self.subLocations = subLocations
-            self.onLocationCreated = onLocationCreated
-            self.onSubLocationCreated = onSubLocationCreated
+            self.sections = sections
+            self.subSections = subSections
+            self.onSectionCreated = onSectionCreated
+            self.onSubSectionCreated = onSubSectionCreated
             self.callback = callback
             super.init()
         }
@@ -77,10 +86,10 @@ extension CustAssetsView {
         @State private var acquisitionCost = "0.00"
         @State private var currentCost = "0.00"
         @State private var selectedAvatar = ""
-        private var selectedLocationId: UUID?
-        private var selectedSubLocationId: UUID?
+        private var selectedSectionId: UUID?
+        private var selectedSubSectionId: UUID?
 
-        private var imageReference: [UUID: ImageGeneralView] = [:]
+        private var imageRefrence: [UUID: ImageGeneralView] = [:]
         private var imageOrder: [UUID] = []
 
         private lazy var mediaFileInput = InputFile()
@@ -103,26 +112,30 @@ extension CustAssetsView {
             .padding(all: 4.px)
             .marginTop(8.px)
 
-        private lazy var locationPicker = AssetLocationPicker(
+        private lazy var sectionPicker = AssetLocationPicker(
             title: "Ubicación", addTitle: "Agregar Ubicación",
             onSelect: { [weak self] id in
                 guard let self else { return }
-                self.selectedLocationId = id
-                self.selectedSubLocationId = nil
-                self.refreshSections()
+                self.selectedSectionId = id
+                self.selectedSubSectionId = nil
+                self.refreshSubSections()
             },
             onCreate: { [weak self] name, completion in
-                self?.openLocationEditor(initialName: name, completion: completion)
+                self?.openSectionEditor(initialName: name, completion: completion)
             }
         )
 
-        private lazy var sectionPicker = AssetLocationPicker(
+        private lazy var subSectionPicker = AssetLocationPicker(
             title: "Sección", addTitle: "Agregar Sección",
-            onSelect: { [weak self] id in self?.selectedSubLocationId = id },
+            onSelect: { [weak self] id in self?.selectedSubSectionId = id },
             onCreate: { [weak self] name, completion in
-                self?.openSubLocationEditor(initialName: name, completion: completion)
+                self?.openSubSectionEditor(initialName: name, completion: completion)
             }
         )
+
+        lazy var serviceCardField = UTextField(self.$serviceCard)
+            .placeholder("Opcional")
+            .custom("width", "calc(100% - 28px)")
 
         @DOM override var body: DOM.Content {
             
@@ -162,8 +175,10 @@ extension CustAssetsView {
                 }
 
                     VGrid(.half) {
+
                         VBox(.raised) {
 
+   
                             Div {
                                 Img()
                                     .src("/skyline/media/upload2.png")
@@ -181,19 +196,61 @@ extension CustAssetsView {
                                 self.mediaFileInput.click()
                             }
 
-                            UTitle("Fotos y videos")
+                            Div{
+                                Img()
+                                    .src("/skyline/media/mobileCamara.png")
+                                    .class(.iconWhite)
+                                    .marginLeft( 3.px)
+                                    .cursor(.pointer)
+                                    .marginTop(7.px)
+                                    .height(28.px)
+                                    .onClick {
+
+                                        loadingView.show()
+
+                                        API.custAPIV1.requestMobileCamara(
+                                            type: .useCamaraForAssetItem,
+                                            connid: custCatchChatConnID,
+                                            eventid: nil,
+                                            relatedid: nil,
+                                            relatedfolio: "",
+                                            multipleTakes: true
+                                        ) { resp in
+                                            
+                                            loadingView.hide()
+                                            
+                                            guard let resp else {
+                                                showError(.comunicationError, .serverConextionError)
+                                                return
+                                            }
+                                            
+                                            guard resp.status == .ok else {
+                                                showError(.generalError, resp.msg)
+                                                return
+                                            }
+                                            
+                                            showSuccess(.operacionExitosa, "Entre en la notificacion en su movil.")
+                                            
+                                        }
+
+                                    }
+                            }
+                            .float(.right)
+
+
+
+                            UTitle("Fotos")
 
                             self.mediaFileInput
 
 
-                            self.mediaGrid
                         }
+
+                        self.mediaGrid
                     }
 
-
-
                     VGrid(.oneForth) {
-                        UField("Nombre") {
+                        UField("Nombre", required: false) {
                             UTextField(self.$name)
                                 .placeholder("Nombre de la unidad")
                         }
@@ -230,9 +287,7 @@ extension CustAssetsView {
                             }
                             .float(.right)
 
-                            UTextField(self.$serviceCard)
-                                .placeholder("Opcional")
-                                .custom("width", "calc(100% - 28px)")
+                            self.serviceCardField
                             
                         }
                     }
@@ -253,9 +308,9 @@ extension CustAssetsView {
                         }
                     }
 
-                    VGrid(.oneForth) { self.locationPicker }
-
                     VGrid(.oneForth) { self.sectionPicker }
+
+                    VGrid(.oneForth) { self.subSectionPicker }
 
                     VGrid(.half) {
                         ULargeButton("Cancelar")
@@ -287,49 +342,274 @@ extension CustAssetsView {
             mediaFileInput.$files.listen { files in
                 files.forEach { self.uploadMedia($0) }
             }
+
+
+            WebApp.current.wsevent.listen {
+                
+                if $0.isEmpty { return }
+                
+                let (event, _) = self.ws.recive($0)
+                
+                guard let event else {
+                    return
+                }
+                    
+                switch event {
+                case .requestMobileCamaraComplete:
+                    
+                    if let payload = self.ws.requestMobileCamaraComplete($0) {
+                        
+                        if let view = self.imageRefrence[payload.eventid] {
+                            
+                            view.loadPercent = ""
+                            
+                            view.mediaId = payload.id
+                            
+                            view.width = payload.width
+                            
+                            view.height = payload.height
+                            
+                            view.file = payload.file
+                            
+                            view.image = payload.avatar
+                            
+                            view.loadImage(payload.avatar)
+                            
+                            var hasAvatar = false
+                            
+                            self.imageRefrence.forEach { _, view in
+                                if view.isAvatar {
+                                    hasAvatar = true
+                                }
+                            }
+                            
+                            if !hasAvatar {
+                                //view.setAsAvatar(image: payload.avatar)
+                            }
+                            
+                        }
+                    }
+
+                case .requestMobileCamaraFail:
+                    if let payload = self.ws.requestMobileCamaraFail($0) {
+                        
+                        if  let view = self.imageRefrence[payload.eventid] {
+                            self.imageRefrence.removeValue(forKey: view.viewId)
+                            view.remove()
+                        }
+                        
+                    }
+                case .requestMobileCamaraInitiate:
+                    if let payload = self.ws.requestMobileCamaraInitiate($0) {
+                        
+
+                        guard let view = self.imageRefrence[payload.eventid] else {
+                            
+                            let view = ImageGeneralView(
+                                        relation: .assetItem,
+                                        relationId: nil,
+                                        type:  .img,
+                                        mediaId: nil,
+                                        file: nil,
+                                        image: nil,
+                                        descr: "",
+                                        width: 0,
+                                        height: 0,
+                                        selectedAvatar: self.$selectedAvatar,
+                                        callback: { [weak self] viewId, _, _, originalImage, originalWidth, originalHeight, _ in
+                                            guard let view = self?.uploadFileControler[viewId] else { return }
+                                            view.file = originalImage
+                                            view.width = originalWidth
+                                            view.height = originalHeight
+                                        },
+                                        imAvatar: { [weak self] _, name in
+                                            self?.selectedAvatar = name
+                                        },
+                                        removeMe: { [weak self] viewId in
+                                            self?.uploadFileControler.removeValue(forKey: viewId)
+                                            self?.imageOrder.removeAll { $0 == viewId }
+                                        }
+                                    )
+
+                            self.imageOrder.append(view.viewId)
+
+                            self.imageRefrence[payload.eventid] = view
+
+                            self.mediaGrid.appendChild(view)
+
+                            view.loadPercent = "Iniciando Carga..."
+
+                            return
+                        }
+
+                        self.mediaGrid.appendChild(view)
+                        
+                        //_ = JSObject.global.scrollToBottom!("pocImageContainer")
+                        
+                    }
+                case .requestMobileCamaraProgress:
+                    
+                    guard let payload = self.ws.requestMobileCamaraProgress($0) else {
+                        return
+                    }
+                    
+                    guard let view = self.imageRefrence[payload.eventid] else {
+                        return
+                    }
+                    
+                    view.loadPercent = "\(payload.percent.toString)%"
+                    
+
+                case .requestMobileCamaraCancel:
+
+                    if let payload = self.ws.requestMobileCamaraCancel($0) {
+                        
+                        if  let view = self.imageRefrence[payload.eventid] {
+                            self.imageRefrence.removeValue(forKey: view.viewId)
+                            view.remove()
+                        }
+                        
+                    }
+                case .requestMobileCamaraSelected:
+
+                    if let payload = self.ws.requestMobileCamaraSelected($0) {
+
+                        guard let view = self.imageRefrence[payload.eventid] else {
+                            
+                            let view = ImageGeneralView(
+                                        relation: .assetItem,
+                                        relationId: nil,
+                                        type:  .img,
+                                        mediaId: nil,
+                                        file: nil,
+                                        image: nil,
+                                        descr: "",
+                                        width: 0,
+                                        height: 0,
+                                        selectedAvatar: self.$selectedAvatar,
+                                        callback: { [weak self] viewId, _, _, originalImage, originalWidth, originalHeight, _ in
+                                            guard let view = self?.uploadFileControler[viewId] else { return }
+                                            view.file = originalImage
+                                            view.width = originalWidth
+                                            view.height = originalHeight
+                                        },
+                                        imAvatar: { [weak self] _, name in
+                                            self?.selectedAvatar = name
+                                        },
+                                        removeMe: { [weak self] viewId in
+                                            self?.uploadFileControler.removeValue(forKey: viewId)
+                                            self?.imageOrder.removeAll { $0 == viewId }
+                                        }
+                                    )
+
+                            self.imageOrder.append(view.viewId)
+
+                            self.imageRefrence[payload.eventid] = view
+
+                            self.mediaGrid.appendChild(view)
+
+                            view.loadPercent = "Iniciando Carga..."
+
+                            return
+                        }
+                        
+                        view.loadPercent = "Iniciando Carga..."
+                    }
+
+                case .asyncFileUpload:
+                    
+                    if let payload = self.ws.asyncFileUpload($0) {
+                        
+                        if let view = self.imageRefrence[payload.eventid] {
+
+                            view.isLoaded = true
+                            
+                            view.loadPercent = ""
+                            
+                            view.mediaId = payload.mediaid
+                            
+                            view.width = payload.width
+                            
+                            view.height = payload.height
+                            
+                            
+                            view.file = payload.fileName
+                            
+                            view.image = payload.fileName
+                            
+                            view.loadImage(payload.avatar)
+                            
+                            
+                        }
+                    }
+                    
+                case .asyncFileUpdate:
+                    
+                    guard let payload = self.ws.asyncFileUpdate($0) else {
+                        return
+                    }
+                    
+                    guard let view = self.imageRefrence[payload.eventId] else {
+                        return
+                    }
+                    
+                    view.loadPercent = payload.message
+                    
+                case .asyncFileOCR:
+                    break
+                case .asyncCropImage:
+                    
+                    guard let payload = self.ws.asyncCropImage($0) else {
+                        return
+                    }
+                    guard let view = self.imageRefrence[payload.eventid] else {
+                        return
+                    }
+                    
+                    view.isLoaded = true
+                    
+                    view.loadPercent = ""
+                    
+                    view.file = payload.fileName
+                    
+                    view.image = payload.fileName
+                    
+                    view.loadImage( payload.fileName )
+                    
+                    if view.isAvatar {
+                        self.selectedAvatar = payload.fileName
+                        view.isAvatar = true
+                    }
+                default:
+                    break
+                }
+                }
+                
+
         }
 
         override func didAddToDOM() {
             super.didAddToDOM()
-            refreshLocations()
+            refreshSections()
         }
 
         func addwarrantyCard() {
 
-            /*
-
             let view = AddWarrantyCard(
-                orderId: self.orderView.order.id,
-                equipmentId: self.equipment.id
+                loadType:.preloadAsset
             ) { cardCode in
             
-                self.warrantyCard = cardCode
+                self.serviceCard = cardCode
 
-                var warrantyCards = self.orderView.order.warrantyCards
-                if !warrantyCards.contains(cardCode) {
-                    warrantyCards.append(cardCode)
-                }
-
-                self.orderView.order.warrantyCards = warrantyCards
-                OrderCatchControler.shared.updateParameter(
-                    self.orderView.order.id,
-                    .warrantyCards(warrantyCards)
-                )
+                self.serviceCardField.disabled(true)
+                
             }
 
-            */
-            
-            // addToDom(view)
+            addToDom(view)
             
         }
         private func create() {
             name = name.purgeSpaces.purgeHtml
-
-            guard !name.isEmpty else {
-                showError(.requiredField, .requierdValid("Nombre"))
-                return
-            }
-
 
             guard let acquisitionCost = parseCents(acquisitionCost) else {
                 showError(.generalError, "Ingrese un costo de adquisición válido")
@@ -341,69 +621,56 @@ extension CustAssetsView {
                 return
             }
 
-            guard let locationId = selectedLocationId else {
+            guard let sectionId = selectedSectionId else {
                 showError(.requiredField, .requierdValid("Ubicación"))
                 return
             }
 
-            guard !imageReference.values.contains(where: { !$0.isLoaded || $0.file == nil }) else {
+            guard !uploadFileControler.values.contains(where: { !$0.isLoaded || $0.file == nil }) else {
                 showError(.generalError, "Espere a que terminen de cargar las fotos y videos.")
                 return
             }
 
-            let images = imageOrder.compactMap { imageReference[$0]?.file }
-            let coordinates = viewType.assetCoordinates
+            let images: [CustAssetsComponents.CreateAssetItemFile] = imageOrder.compactMap { viewId in
+                guard let view = uploadFileControler[viewId], let fileName = view.file else {
+                    return nil
+                }
 
-            loadingView.show()
-
-            var owningAccount: UUID? = nil
-            
-            var owningSubAccount: UUID? = nil
-
-            var currentLocationId: UUID? = nil
-
-            switch viewType {
-            case .account(let account, let store):
-                 owningAccount = account.id
-                currentLocationId = store.id
-            
-            case .store(let store):
-                currentLocationId = store.id
-            
-            case .subAccount(let subAccount, let store):
-                owningAccount = subAccount.custAcct
-                owningSubAccount = subAccount.id
-                currentLocationId = store.id
-            case .warehose(let warehose):
-                currentLocationId = warehose.id
+                return .init(
+                    fileName: fileName,
+                    isAvatar: view.isAvatar || view.image.map { $0 == selectedAvatar } == true
+                )
             }
 
-            guard let currentLocationId else {
-                return
-            }
-            
-            API.custAssetsV1.createAssettem(
-                purchasFiscalDocumentFolio: purchasFiscalDocumentFolio.purgeSpaces,
-                purchasFiscalDocumentId: nil,
-                commercialAssetId: asset.id,
-                owningStore: custCatchStore,
-                owningAccount: owningAccount,
-                currentLocation: .location,
-                currentLocationId: currentLocationId,
-                department: asset.assetDepartmentId,
-                categorie: asset.assetSeccionId,
-                subcategorie: locationId,
-                section: selectedSubLocationId,
-                subSection: nil,
+            let item: CustAssetsComponents.CreateAssetItemObject = CustAssetsComponents.CreateAssetItemObject(
+                section: sectionId,
+                subSection: selectedSubSectionId,
                 acquisitionAt: getNow(),
                 acquisitionCost: acquisitionCost,
                 currentCost: currentCost,
                 serial: serial.isEmpty ? nil : serial.purgeSpaces,
                 name: name,
-                latitude: coordinates.latitude,
-                longitude: coordinates.longitude,
                 serviceCard: serviceCard.isEmpty ? nil : serviceCard.purgeSpaces,
                 images: images
+            )
+
+            if createType == .multiItem {
+                self.remove()
+                self.callback(.preItem(item))
+                return
+            }
+
+            loadingView.show()
+
+            API.custAssetsV1.createAssettem(
+                type: viewType,
+                purchasFiscalDocumentFolio: purchasFiscalDocumentFolio.purgeSpaces,
+                purchasFiscalDocumentId: nil,
+                commercialAssetId: asset.id,
+                department: asset.assetDepartmentId,
+                categorie: asset.assetSeccionId,
+                subcategorie: sectionId,
+                items: [item]
             ) { response in
 
                 guard let response else {
@@ -418,7 +685,7 @@ extension CustAssetsView {
                     return
                 }
 
-                guard let itemId = response.data?.itemId else {
+                guard let items = response.data?.items, !items.isEmpty else {
                     loadingView.hide()
                     showError(.unexpectedResult, .unexpenctedMissingPayload)
                     return
@@ -427,12 +694,8 @@ extension CustAssetsView {
                 loadingView.hide()
                 showSuccess(.operacionExitosa, "Unidad ingresada")
 
-                addToDom(
-                    AssetItemView(
-                        assetItemId: itemId,
-                        onLoaded: self.callback
-                    )
-                )
+                self.callback(.createdItems(items))
+
                 self.remove()
             }
             
@@ -458,7 +721,7 @@ extension CustAssetsView {
                 height: 0,
                 selectedAvatar: $selectedAvatar,
                 callback: { [weak self] viewId, _, _, originalImage, originalWidth, originalHeight, _ in
-                    guard let view = self?.imageReference[viewId] else { return }
+                    guard let view = self?.uploadFileControler[viewId] else { return }
                     view.file = originalImage
                     view.width = originalWidth
                     view.height = originalHeight
@@ -467,16 +730,17 @@ extension CustAssetsView {
                     self?.selectedAvatar = name
                 },
                 removeMe: { [weak self] viewId in
-                    self?.imageReference.removeValue(forKey: viewId)
+                    self?.uploadFileControler.removeValue(forKey: viewId)
                     self?.imageOrder.removeAll { $0 == viewId }
                 }
             )
 
-            imageReference[view.viewId] = view
+            uploadFileControler[view.viewId] = view
+            
             imageOrder.append(view.viewId)
 
             func removeUploadView() {
-                imageReference.removeValue(forKey: view.viewId)
+                uploadFileControler.removeValue(forKey: view.viewId)
                 imageOrder.removeAll { $0 == view.viewId }
                 view.remove()
             }
@@ -586,40 +850,41 @@ extension CustAssetsView {
             xhr.send(formData)
         }
 
-        private func refreshLocations() {
-            let available = locations
+        private func refreshSections() {
+            
+            let available = sections
                 .filter {
                     $0.linkType == viewType.relationType &&
                     $0.linkedTo == viewType.relationId
                 }
                 .map { AssetLocationPicker.PickerOption(id: $0.id, name: $0.name) }
-            if let selectedLocationId,
-               !available.contains(where: { $0.id == selectedLocationId }) {
-                self.selectedLocationId = nil
-                self.selectedSubLocationId = nil
+            if let selectedSectionId,
+               !available.contains(where: { $0.id == selectedSectionId }) {
+                self.selectedSectionId = nil
+                self.selectedSubSectionId = nil
             }
-            if available.count == 1, selectedLocationId == nil {
-                selectedLocationId = available[0].id
+            if available.count == 1, selectedSectionId == nil {
+                selectedSectionId = available[0].id
             }
-            locationPicker.setOptions(available, selectedId: selectedLocationId)
-            refreshSections()
+            sectionPicker.setOptions(available, selectedId: selectedSectionId)
+            refreshSubSections()
         }
 
-        private func refreshSections() {
-            let available = subLocations
-                .filter { $0.commercialAssetsLocationId == selectedLocationId }
+        private func refreshSubSections() {
+            let available = subSections
+                .filter { $0.commercialAssetsLocationId == selectedSectionId }
                 .map { AssetLocationPicker.PickerOption(id: $0.id, name: $0.name) }
-            if let selectedSubLocationId,
-               !available.contains(where: { $0.id == selectedSubLocationId }) {
-                self.selectedSubLocationId = nil
+            if let selectedSubSectionId,
+               !available.contains(where: { $0.id == selectedSubSectionId }) {
+                self.selectedSubSectionId = nil
             }
-            if available.count == 1, selectedSubLocationId == nil {
-                selectedSubLocationId = available[0].id
+            if available.count == 1, selectedSubSectionId == nil {
+                selectedSubSectionId = available[0].id
             }
-            sectionPicker.setOptions(available, selectedId: selectedSubLocationId)
+            subSectionPicker.setOptions(available, selectedId: selectedSubSectionId)
         }
 
-        private func openLocationEditor(
+        private func openSectionEditor(
             initialName rawName: String,
             completion: @escaping (AssetLocationPicker.PickerOption?) -> Void
         ) {
@@ -628,23 +893,23 @@ extension CustAssetsView {
                     relationType: viewType.relationType,
                     relationId: viewType.relationId,
                     initialName: rawName
-                ) { location in
-                    self.locations = self.locations.filter { $0.id != location.id } + [location]
-                    self.onLocationCreated(location)
-                    self.selectedLocationId = location.id
-                    self.selectedSubLocationId = nil
-                    self.refreshLocations()
-                    completion(.init(id: location.id, name: location.name))
+                ) { section in
+                    self.sections = self.sections.filter { $0.id != section.id } + [section]
+                    self.onSectionCreated(section)
+                    self.selectedSectionId = section.id
+                    self.selectedSubSectionId = nil
+                    self.refreshSections()
+                    completion(.init(id: section.id, name: section.name))
                 }
             )
         }
 
-        private func openSubLocationEditor(
+        private func openSubSectionEditor(
             initialName rawName: String,
             completion: @escaping (AssetLocationPicker.PickerOption?) -> Void
         ) {
-            guard let locationId = selectedLocationId,
-                  let location = locations.first(where: { $0.id == locationId }) else {
+            guard let sectionId = selectedSectionId,
+                  let section = sections.first(where: { $0.id == sectionId }) else {
                 showError(.requiredField, .requierdValid("Ubicación"))
                 completion(nil)
                 return
@@ -652,14 +917,14 @@ extension CustAssetsView {
 
             addToDom(
                 SubLocationEditor(
-                    location: location,
+                    section: section,
                     initialName: rawName
-                ) { subLocation in
-                    self.subLocations = self.subLocations.filter { $0.id != subLocation.id } + [subLocation]
-                    self.onSubLocationCreated(subLocation)
-                    self.selectedSubLocationId = subLocation.id
-                    self.refreshSections()
-                    completion(.init(id: subLocation.id, name: subLocation.name))
+                ) { subSection in
+                    self.subSections = self.subSections.filter { $0.id != subSection.id } + [subSection]
+                    self.onSubSectionCreated(subSection)
+                    self.selectedSubSectionId = subSection.id
+                    self.refreshSubSections()
+                    completion(.init(id: subSection.id, name: subSection.name))
                 }
             )
         }
@@ -689,31 +954,32 @@ extension CustAssetsView {
             $serviceCard.removeAllListeners()
             $acquisitionCost.removeAllListeners()
             $currentCost.removeAllListeners()
-            $locations.removeAllListeners()
-            $subLocations.removeAllListeners()
+            $sections.removeAllListeners()
+            $subSections.removeAllListeners()
             $selectedAvatar.removeAllListeners()
             mediaFileInput.$files.removeAllListeners()
         }
     }
 }
 
-extension CustAssetsView.InitiateAssetItemViewType {
-
-    var assetCoordinates: (latitude: Double?, longitude: Double?) {
-        func coordinates(from store: CustStore) -> (latitude: Double?, longitude: Double?) {
-            (Double(store.lat ?? ""), Double(store.lon ?? ""))
-        }
-
-        switch self {
-        case .store(let store), .warehose(let store):
-            return coordinates(from: store)
-        case .account(_, let store), .subAccount(_, let store):
-            return coordinates(from: store)
-        }
-    }
-}
-
 extension CustAssetsView {
+
+    /// singleItem, multiItem
+    enum ViewCreateType {
+
+        case singleItem
+
+        case multiItem
+
+    }
+
+    enum CallbackType {
+
+        case createdItems([CustCommercialAssetsItem])
+
+        case preItem(CustAssetsComponents.CreateAssetItemObject)
+
+    }
 
     final class AssetLocationPicker: Div {
 
@@ -870,4 +1136,5 @@ extension CustAssetsView {
             }
         }
     }
+
 }

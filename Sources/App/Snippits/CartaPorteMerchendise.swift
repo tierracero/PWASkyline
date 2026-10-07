@@ -78,7 +78,7 @@ class CartaPorteMerchendise: Div {
                 
             }
             .marginBottom(7.px)
-            .fontSize(12.px)
+            .fontSize(14.px)
             .color(.gray)
             
             Div{
@@ -147,7 +147,7 @@ class CartaPorteMerchendise: Div {
                 Div().class(.clear)
             }
             .marginBottom(7.px)
-            .fontSize(12.px)
+            .fontSize(14.px)
             .color(.gray)
             
             Div{
@@ -187,7 +187,7 @@ class CartaPorteMerchendise: Div {
             .color(.white)
             
         }
-        .custom("width", canRemove ? "calc(100% - 50px)" : "100%")
+        .custom("width", "calc(100% - 50px)")
         .float(.left)
         
         if canRemove {
@@ -195,6 +195,9 @@ class CartaPorteMerchendise: Div {
                 Table {
                     Tr {
                         Td {
+
+                            self.attachmentIcons()
+
                             Img()
                                 .src("/skyline/media/cross.png")
                                 .cursor(.pointer)
@@ -216,11 +219,56 @@ class CartaPorteMerchendise: Div {
             .width(50.px)
             .float(.left)
         }
+        else {
+            Div {
+                Table {
+                    Tr {
+                        Td {
+
+                            self.attachmentIcons()
+
+                        }
+                        .verticalAlign(.middle)
+                        .align(.center)
+                    }
+                }
+                .height(100.percent)
+                .width(100.percent)
+            }
+            .height(85.px)
+            .width(50.px)
+            .float(.left)
+        }
         
         Div().clear(.both).marginBottom(3.px)
         
     }
     
+    private func attachmentIcons() -> Div {
+        Div {
+            Img()
+                .src("/skyline/media/icon_clip.png")
+                .class(.iconWhite)
+                .width(24.px)
+                .height(24.px)
+                .attribute("alt", "Adjuntos")
+                .attribute("title", "Adjuntos")
+
+            Img()
+                .src("/skyline/media/mobileCamara.png")
+                .class(.iconWhite)
+                .width(24.px)
+                .height(24.px)
+                .attribute("alt", "Cámara remota")
+                .attribute("title", "Cámara remota")
+        }
+        .custom("display", "flex")
+        .custom("flex-direction", "column")
+        .custom("align-items", "center")
+        .custom("gap", "4px")
+        .marginBottom(4.px)
+    }
+
     override func buildUI() {
         super.buildUI()
         

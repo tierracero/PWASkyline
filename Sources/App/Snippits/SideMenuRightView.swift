@@ -133,7 +133,7 @@ class SideMenuView: Div {
                         .height(48.px)
                         .custom("box-sizing", "border-box")
                         .custom("color", "var(--tc-beta-muted)")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .padding(v: 15.px, h: 12.px)
                         .textAlign(.right)
             

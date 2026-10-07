@@ -106,7 +106,7 @@ enum TCUserCancelationRequestTheme {
 
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.eyebrow)"))
                 .custom("color", "var(--tc-cancel-orange)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "800")
                 .custom("letter-spacing", "0.13em")
                 .custom("text-transform", "uppercase")
@@ -118,7 +118,7 @@ enum TCUserCancelationRequestTheme {
 
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.headerCopy) > span:last-child"))
                 .custom("color", "var(--tc-cancel-muted)")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.close)"))
                 .custom("position", "static !important")
@@ -168,7 +168,7 @@ enum TCUserCancelationRequestTheme {
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.warning) span"))
                 .custom("margin-top", "3px")
                 .custom("color", "#d7c1a8")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
                 .custom("line-height", "1.45")
 
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.warning).\(TCUserCancelationRequestClass.statusReady)"))
@@ -215,7 +215,7 @@ enum TCUserCancelationRequestTheme {
 
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.sectionTitle) span"))
                 .custom("color", "var(--tc-cancel-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.details)"))
                 .custom("display", "grid")
@@ -231,7 +231,7 @@ enum TCUserCancelationRequestTheme {
                 .custom("gap", "12px")
                 .custom("padding", "8px 10px")
                 .custom("background", "rgba(3, 18, 33, 0.86)")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.detail) span"))
                 .custom("color", "var(--tc-cancel-muted)")
@@ -265,11 +265,11 @@ enum TCUserCancelationRequestTheme {
 
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.conflictCopy) strong"))
                 .custom("color", "var(--tc-cancel-ink)")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.conflictCopy) span"))
                 .custom("color", "var(--tc-cancel-muted)")
-                .custom("font-size", "9px")
+                .custom("font-size", "13px")
                 .custom("line-height", "1.35")
 
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.conflictValue)"))
@@ -283,7 +283,7 @@ enum TCUserCancelationRequestTheme {
                 .custom("border-radius", "999px")
                 .custom("background", "rgba(242, 166, 90, 0.09)")
                 .custom("color", "var(--tc-cancel-orange)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "800")
                 .custom("overflow", "hidden")
                 .custom("text-overflow", "ellipsis")
@@ -326,21 +326,21 @@ enum TCUserCancelationRequestTheme {
 
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.custodianSelector) > div span:first-child"))
                 .custom("color", "var(--tc-cancel-orange)")
-                .custom("font-size", "9px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "800")
                 .custom("letter-spacing", "0.08em")
                 .custom("text-transform", "uppercase")
 
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.custodianSelector) strong"))
                 .custom("color", "var(--tc-cancel-ink)")
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
                 .custom("overflow", "hidden")
                 .custom("text-overflow", "ellipsis")
                 .custom("white-space", "nowrap")
 
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.custodianSelector) > div span:last-child"))
                 .custom("color", "var(--tc-cancel-muted)")
-                .custom("font-size", "9px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.selectBadge)"))
                 .custom("display", "inline-flex")
@@ -351,7 +351,7 @@ enum TCUserCancelationRequestTheme {
                 .custom("border", "1px solid rgba(73, 185, 245, 0.46)")
                 .custom("border-radius", "999px")
                 .custom("color", "var(--tc-cancel-blue)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "800")
 
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.emptyState)"))
@@ -370,7 +370,7 @@ enum TCUserCancelationRequestTheme {
 
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.emptyState) span"))
                 .custom("color", "#b9ddc8")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
                 .custom("line-height", "1.45")
 
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.footer)"))
@@ -389,7 +389,7 @@ enum TCUserCancelationRequestTheme {
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.footer) span"))
                 .custom("margin-top", "2px")
                 .custom("color", "var(--tc-cancel-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCUserCancelationRequestClass.footerActions)"))
                 .custom("display", "flex")
@@ -409,7 +409,7 @@ enum TCUserCancelationRequestTheme {
                 .custom("border-radius", "9px")
                 .custom("background", "linear-gradient(145deg, rgba(23, 102, 149, 0.96), rgba(8, 48, 78, 0.96))")
                 .custom("color", "var(--tc-cancel-ink)")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "800")
                 .custom("cursor", "pointer")
 
@@ -423,7 +423,7 @@ enum TCUserCancelationRequestTheme {
                 .custom("padding", "8px 16px")
                 .custom("box-sizing", "border-box")
                 .custom("border-radius", "9px")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "800")
                 .custom("cursor", "pointer")
 

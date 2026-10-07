@@ -7,6 +7,7 @@ Authoritative rules: `SEC-*`, `STATE-*`.
 - `SkylineWeb.swift` contains many global variables for tokens, API mode, account/user/store context, caches, and feature configuration.
 - `App.swift` reads and writes browser `localStorage` for language and session-control behavior.
 - API and WebSocket flows use tokens and account/user context.
+- `ConfirmAdddressLocationView` refreshes `SkylineWeb.stores[id]`, the matching `OrderCatchControler.stores` entry, and its matching `selectedStore` from the store reloaded after a successful address save. These targeted cache writes precede the Trip selection callback and also run if the dialog was removed while the save was in flight. Save/reload continuations are scoped to the captured `custCatchID`; a changed session cannot populate another session's caches. Failed reloads do not publish an optimistic store or resume selection.
 - `ErrorReportingControler` owns diagnostic persistence, retry scheduling, account-scoped delivery, and 60-day invalidation.
 - Diagnostic records are stored in the `PWASkylineDiagnostics` IndexedDB database through the `PWASkylineErrorStore` JavaScript bridge.
 

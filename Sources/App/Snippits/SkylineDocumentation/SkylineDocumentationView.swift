@@ -114,7 +114,7 @@ class SkylineDocumentationView: Div {
                         
                         Div("Skyline > Documentacion")
                             .color(.lightGray)
-                            .fontSize(13.px)
+                            .fontSize(14.px)
                             .float(.right)
                             .paddingTop(7.px)
                         
@@ -246,7 +246,7 @@ class SkylineDocumentationView: Div {
                         
                         Div("Skyline > Errores")
                             .color(.lightGray)
-                            .fontSize(13.px)
+                            .fontSize(14.px)
                             .float(.right)
                             .paddingTop(7.px)
                         
@@ -427,7 +427,7 @@ class SkylineDocumentationView: Div {
             
             P(family.documentableDescription)
                 .color(.lightGray)
-                .fontSize(13.px)
+                .fontSize(14.px)
                 .lineHeight(19.px)
                 .textAlign(.center)
         }
@@ -553,7 +553,7 @@ class SkylineDocumentationView: Div {
 
                 Span(record.reported ? "Completado" : "Pendiente")
                     .color(record.reported ? .green : .darkOrange)
-                    .fontSize(13.px)
+                    .fontSize(14.px)
                     .textAlign(.right)
                     .custom("width", "100px")
                     .float(.right)
@@ -566,39 +566,39 @@ class SkylineDocumentationView: Div {
                 "Ocurrencias: \(record.occurrenceCount) • Reintentos: \(record.retries)"
             )
             .color(.lightGray)
-            .fontSize(13.px)
+            .fontSize(14.px)
             .marginTop(6.px)
 
             Div("Generado: \(self.errorReportDate(record.createdAt)) • Último evento: \(self.errorReportDate(record.lastOccurredAt))")
                 .color(.gray)
-                .fontSize(13.px)
+                .fontSize(14.px)
                 .marginTop(5.px)
 
             if let reportedAt = record.reportedAt {
                 Div("Completado: \(self.errorReportDate(reportedAt))")
                     .color(.gray)
-                    .fontSize(13.px)
+                    .fontSize(14.px)
                     .marginTop(5.px)
             }
 
             if !record.endpoint.isEmpty {
                 Div("Solicitud: \(record.method) \(record.endpoint)")
                     .color(.lightBlueText)
-                    .fontSize(13.px)
+                    .fontSize(14.px)
                     .marginTop(7.px)
             }
 
             if let status = record.httpStatus {
                 Div("HTTP: \(status) \(record.httpStatusText ?? "")")
                     .color(.lightGray)
-                    .fontSize(13.px)
+                    .fontSize(14.px)
                     .marginTop(5.px)
             }
 
             if !record.sourceFile.isEmpty {
                 Div("Origen: \(self.errorReportSource(record))")
                     .color(.gray)
-                    .fontSize(13.px)
+                    .fontSize(14.px)
                     .marginTop(5.px)
             }
 
@@ -613,7 +613,7 @@ class SkylineDocumentationView: Div {
             if let reportingError = record.lastReportingError, !reportingError.isEmpty {
                 Div("Último error de envío: \(self.errorReportSummary(reportingError, limit: 300))")
                     .color(.red)
-                    .fontSize(13.px)
+                    .fontSize(14.px)
                     .marginTop(7.px)
             }
         }

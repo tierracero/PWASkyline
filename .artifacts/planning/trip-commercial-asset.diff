@@ -1,0 +1,380 @@
+--- before/Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift
++++ after/Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift
+@@ -110,6 +110,11 @@
+ 
+     @State var autoForm: Bool = true 
+ 
++    @State private var isLoadingAssets = false
++    private var assetSearchRequest = 0
++    private var assetPicker: SearchComertialAsset?
++    private var assetEditor: AddCartaPorteMerchendise?
++
+     @DOM override var body: DOM.Content {
+         VPopUp(.full) {
+ 
+@@ -291,6 +296,8 @@
+         }
+ 
+         $origin.listen { origin in
++            self.invalidateAssetSelection()
++            self.merchendise.removeAll { $0.merchandiseType == .commercialAsset }
+             self.renderLocationSlot(
+                 origin,
+                 placementType: .origen,
+@@ -325,6 +332,7 @@
+ 
+     override func didRemoveFromDOM() {
+         super.didRemoveFromDOM()
++        invalidateAssetSelection()
+ 
+         $operador.removeAllListeners()
+         $permit.removeAllListeners()
+@@ -344,6 +352,7 @@
+         $odometerInitial.removeAllListeners()
+         $odometerFinal.removeAllListeners()
+         $requierTrailer.removeAllListeners()
++        $isLoadingAssets.removeAllListeners()
+     }
+ 
+     private func componentTitle(_ title: String, icons: [String]) -> Div {
+@@ -2004,6 +2013,7 @@
+             .custom("display", "inline-flex")
+             .custom("align-items", "center")
+             .custom("gap", "8px")
++            .disabled(self.$isLoadingAssets)
+             .onClick {
+                 self.searchAsset()
+             }
+@@ -2035,8 +2045,150 @@
+     }
+ 
+     func searchAsset() {
+-        guard account.isConcessionaire else { return }
+-        // Pending: open the account's commercial-asset search flow.
++        guard account.isConcessionaire, !isLoadingAssets else { return }
++        guard let origin, destination != nil else {
++            showError(.requiredField, "Agregue Origen y Destino antes de buscar activos.")
++            return
++        }
++        guard let locationId = origin.locationId else {
++            showError(.requiredField, "El origen debe estar vinculado a una tienda, bodega o subcuenta.")
++            return
++        }
++
++        let currentLocation: CustAssetsComponents.ListAssetItemsType
++        switch origin.locationType {
++        case .store: currentLocation = .store(locationId)
++        case .warehouse: currentLocation = .warehose(locationId)
++        case .subaccount: currentLocation = .subAccount(subAccount: locationId)
++        default:
++            showError(.invalidField, "Solo se pueden buscar activos en una tienda, bodega o subcuenta.")
++            return
++        }
++
++        assetPicker?.remove()
++        assetPicker = nil
++        assetEditor?.remove()
++        assetEditor = nil
++        assetSearchRequest += 1
++        let request = assetSearchRequest
++        isLoadingAssets = true
++        loadingView.show()
++        API.custAssetsV1.listAssetItems(
++            currentLocation: currentLocation,
++            departmentId: nil,
++            categorieId: nil,
++            status: .available
++        ) { [weak self] response in
++            guard let self, self.isInDOM, self.assetSearchRequest == request else { return }
++            self.finishLoadingAssets()
++            guard let response else {
++                showError(.comunicationError, .serverConextionError)
++                return
++            }
++            guard response.status == .ok else {
++                showError(.generalError, response.msg)
++                return
++            }
++            guard let payload = response.data else {
++                showError(.unexpectedResult, .unexpenctedMissingPayload)
++                return
++            }
++            let selectedIds = Set(self.merchendise.filter { $0.merchandiseType == .commercialAsset }.compactMap { $0.merchandiseId })
++            guard let picker = SearchComertialAsset(
++                currentLocation: currentLocation,
++                items: payload.items.filter { !selectedIds.contains($0.id) },
++                callback: { [weak self] item in
++                    guard let self, self.isInDOM, self.assetSearchRequest == request else { return }
++                    self.assetPicker = nil
++                    self.configureCommercialAsset(item, request: request)
++                }
++            ) else { return }
++            self.assetPicker = picker
++            addToDom(picker)
++        }
++    }
++
++    private func configureCommercialAsset(_ item: CustCommercialAssetsItem, request: Int) {
++        guard !merchendise.contains(where: { $0.merchandiseType == .commercialAsset && $0.merchandiseId == item.id }) else { return }
++        isLoadingAssets = true
++        loadingView.show()
++        API.custAssetsV1.getAsset(assetId: item.commercialAssetId) { [weak self] response in
++            guard let self, self.isInDOM, self.assetSearchRequest == request else { return }
++            self.finishLoadingAssets()
++            guard let response else {
++                showError(.comunicationError, .serverConextionError)
++                return
++            }
++            guard response.status == .ok else {
++                showError(.generalError, response.msg)
++                return
++            }
++            guard let asset = response.data?.item, asset.id == item.commercialAssetId,
++                  let origin = self.origin, let destination = self.destination else {
++                showError(.unexpectedResult, .unexpenctedMissingPayload)
++                return
++            }
++            let weight = Double(asset.weight.purgeSpaces)
++            let kilograms: Int64
++            if let weight, weight.isFinite, weight > 0, weight < Double(Int64.max) / 100 {
++                kilograms = weight.toCents
++            } else {
++                kilograms = 0 // The existing editor requires a valid positive weight.
++            }
++            let merchandise = FiscalMercanciaItem(
++                id: .v7(),
++                merchandiseType: .commercialAsset,
++                merchandiseId: item.id,
++                fiscCode: asset.fiscCode,
++                fiscCodeName: fiscCodeRefrence[asset.fiscCode] ?? "",
++                fiscUnit: asset.fiscUnit,
++                fiscUnitName: fiscUnitRefrence[asset.fiscUnit] ?? "",
++                description: [item.folio, item.name, item.serial ?? ""].filter { !$0.isEmpty }.joined(separator: " · "),
++                units: 100, // One concrete asset item (1.00).
++                kilograms: kilograms,
++                isDangerousMatirial: .no,
++                dangerousMatirialCode: "",
++                dangerousMatirialName: "",
++                packagingType: "",
++                packagingName: "",
++                comertialTripControlId: nil,
++                from: origin.placementId,
++                fromStoreName: origin.storeName,
++                to: destination.placementId,
++                toStoreName: destination.storeName
++            )
++            let editor = AddCartaPorteMerchendise(
++                locations: self.selectedLocations.map { self.fiscalLocationItem(from: $0) },
++                merchandise: merchandise,
++                dismissAfterSave: true
++            ) { [weak self] result in
++                guard let self, self.isInDOM, self.assetSearchRequest == request,
++                      self.origin != nil, self.destination != nil,
++                      !self.merchendise.contains(where: { $0.merchandiseType == .commercialAsset && $0.merchandiseId == item.id }) else { return }
++                var result = result
++                result.merchandiseType = .commercialAsset
++                result.merchandiseId = item.id
++                self.merchendise.append(result)
++                self.synchronizeMerchandiseRoute()
++                self.assetEditor = nil
++            }
++            self.assetEditor = editor
++            addToDom(editor)
++        }
++    }
++
++    private func finishLoadingAssets() {
++        isLoadingAssets = false
++        loadingView.hide()
++    }
++
++    private func invalidateAssetSelection() {
++        assetSearchRequest += 1
++        if isLoadingAssets { finishLoadingAssets() }
++        assetPicker?.remove()
++        assetPicker = nil
++        assetEditor?.remove()
++        assetEditor = nil
+     }
+ 
+ }
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -16,7 +16,8 @@
+ - Browser speech recognition is centralized in `SpeechRecognitionManager`; it retains the JavaScript callback for the active session and routes transcripts to one weak `SpeechRecognitionTarget`.
+ - `WorkViewControler` owns one authenticated-session `TCSpeechRecognitionFloatingButton` and shuts it down when the work shell leaves the DOM.
+ - `CreateTripView.selectLocation` uses the dedicated `TripControlerAddLocation` picker with mutable `[FiscalLocationBase]` items and fiscal-base formatting callbacks. Selection returns a complete `CustCommercialTripsComponents.TripLocation` snapshot with `.location` source type and the base's linked ID. Its own `ViewType` supplies the origin/destination icon and title; merchandise uses its own picker, and the remaining Trip selections continue using `TripControlerAddElement<Item>`.
+-- `CreateTripView.addMerchendise` uses `TripControlerAddMerchandise` with the current `CustAcctSearch` account, a required `origin: CustCommercialTripsComponents.TripLocation` snapshot, and mutable `merchendises: [FiscalMercanciaBase]`. The picker owns merchandise formatting and preserves the base-selection and creation callbacks. Only concessionaire accounts see the header's magnifying-glass Buscar Activo button, immediately before + Agregar; its dedicated `searchAsset()` method is a placeholder that leaves the picker open. Asset searching/selection is not implemented yet.
++- `CreateTripView.addMerchendise` uses `TripControlerAddMerchandise` with the current `CustAcctSearch` account, a required `origin: CustCommercialTripsComponents.TripLocation` snapshot, and mutable `merchendises: [FiscalMercanciaBase]`. The picker owns merchandise formatting and preserves the base-selection and creation callbacks. `CreateTripView` owns the concessionaire-only Buscar Activo button, visible for store/warehouse/subaccount origins, and loads available inventory before presenting `SearchComertialAsset`.
++- `SearchComertialAsset` accepts a supported `ListAssetItemsType` and preloaded asset items; it has no API calls. It checks location type/ID, filters folio/name/serial locally, and returns one concrete item. `CreateTripView` excludes already selected IDs, loads the parent asset's fiscal/weight metadata before opening the existing merchandise editor, and stores the result with `.commercialAsset` and the concrete item ID. Origin assignments remove all commercial-asset merchandise, close asset picker/editor views, and invalidate pending loads/results; ordinary merchandise remains. Destination changes synchronize the saved route. Removal also invalidates and cleans up the child flow.
+ - `CreateTripView` stores origin/destination as `CustCommercialTripsComponents.TripLocation`. Local adapters preserve snapshot fields, source type, and optional source ID for the unchanged `CartaPorteUbicacion`, `ManageLocationItem`, and `AddCartaPorteMerchendise` consumers. Stop matching uses source type and linked ID, or placement ID for unlinked stops; saved-base updates/deletes affect only `.location` sources.
+ - `TripControlerAddLocation` has a header split button: the main Agregar action and menu Agregar ubicación share the existing creation callback; the arrow reveals Seleccionar tienda and Buscar cliente alongside it. Menu options have decorative cyan outline SVG icons for location creation, store selection, and customer search. Store selection opens `SelectStore` and renders a `.store` trip snapshot; customer search opens `SearchSubCustomerView` with `requierFullAddress: true` and renders the selected/created/updated subaccount as a `.subaccount` snapshot. Menu visibility is local presentation state, with Escape and outside-click dismissal and scoped crystal styling.
+ - The picker's `renderLocation` overloads preserve store/subaccount address and coordinates. Store placement IDs use `storePrefix` plus the final UUID segment; subaccounts use `sa` plus the final UUID segment and fiscal identity from the injected parent account. Subaccounts must belong to that account. Successful rendering returns the snapshot and dismisses the picker; unrecognized address states report an error.
+--- before/.agent/architecture/API_AND_BACKEND.md
++++ after/.agent/architecture/API_AND_BACKEND.md
+@@ -11,6 +11,7 @@
+ - Asset architecture uses `listStoreArchitecture(relationId:)` and department creation requires a nonoptional `relationId`. Location links use `CustCommercialAssetsLocationLinkedType`; asset-item links retain `CustCommercialAssetsLinkedType`. Asset `custAcct` fields remain customer-account identifiers, not store or warehouse identifiers.
+ - Asset-item creation uses TCFireSignal's shared `InitiateAssetItemViewType`, `CreateAssetItemObject`, and `CreateAssetItemFile` contracts. Single creation submits one object; batch creation collects the requested objects before one request, and `CreateAssetItemResponse.items` returns every created asset item.
+ - Asset-item listing uses the shared `ListAssetItemsType` location scope, optional `departmentId`/`categorieId` filters, and `ListSubAccountItemsStatus` filter in `ListAssetItemsRequest`, posting to `listAssetItems` and decoding `ListAssetItemsResponse.items`.
++- Trip asset search maps linked store/warehouse/subaccount origins to `.store`, `.warehose` (shared wire spelling), or `.subAccount`, with nil department/category filters and `.available` status. Inventory loads before picker presentation; the selected item's parent `getAsset` metadata loads before fiscal editing. Commercial-asset trip merchandise links to `CustCommercialAssetsItem.id`, not its parent `commercialAssetId`, and keeps that identity through the existing trip submission contract.
+ - Asset-item detail uses TCFireSignal's shared `GetAssetItemRequest`/`GetAssetItemResponse` on the exact `GetAssetItem` POST route. Its resolved location and inventory payloads use `GetAssetItemLocationType`, which identifies the current store, warehouse, account, subaccount, or user; detail records retain optional department, category, section, and subsection classification.
+ - Asset creation and update preserve the shared commercial-asset fiscal and physical fields: `fiscCode`, `fiscUnit`, `width`, `height`, `length`, and `weight`.
+ - Asset, asset-item, location, sublocation, category, and department update responses return the inserted `CustGeneralNotes` entry when a change produced an audit note; successful no-op updates may return no note.
+--- before/.agent/SOURCE_MAP.md
++++ after/.agent/SOURCE_MAP.md
+@@ -31,7 +31,8 @@
+ | `Sources/App/Snippits/SearchSubCustomerView.swift` | Parent-account-scoped subcustomer search/selection, no-result creation, and required-address completion through the subaccount manager. |
+ | `Sources/App/Snippits/ManualAddressSearch.swift` | Crystal postal-address and coordinate lookup dialogs; returns the selected address or geocoder snapshot to its caller. |
+ | `Sources/App/Snippits/TripControler/TripControler+AddLocation.swift` | Dedicated fiscal-location picker; owns origin/destination presentation and location-typed item properties/callbacks. |
+-| `Sources/App/Snippits/TripControler/TripControler+AddMerchandise.swift` | Account-aware fiscal-merchandise picker with a concessionaire-only asset-search action placeholder. |
++| `Sources/App/Snippits/TripControler/TripControler+AddMerchandise.swift` | Account/origin-aware fiscal-merchandise base picker; preserves selection and creation callbacks. |
++| `Sources/App/Snippits/SearchComertialAsset.swift` | Trip commercial-asset picker over preloaded available inventory from a store, warehouse or subaccount origin; locally filters folio/name/serial. |
+ | `Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+FastAndFurios.swift` | Ranked product revenue velocity, sales velocity, volume, and weighted score report presentation. |
+ | `Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+OrderProcessing/Tools+HistorySettings+OrderProcessing+Reports.swift` | Order report UI and CSV exports for created, closed, payment, and delivered-equipment sections. |
+ | `Sources/App/Styles/` | Swift Web style declarations (`MainStyle`, `SKMainStyle`, `SKLogInStyle`). |
+--- before/.agent/MODULES.md
++++ after/.agent/MODULES.md
+@@ -24,7 +24,7 @@
+ - `API/` — typed client wrappers for auth, customer, order, account, subaccount (create/load/search/update), fiscal, POC, including product-activity and Fast and Furious audit reports, route, mail, social/theme, rewards, and WebSocket API endpoints.
+ - `Websocket/` — real-time message handlers for chat, auth requests, mobile camera/scanner/OCR, async file/image jobs, social notifications, order/status updates, and connection lifecycle.
+ - `ViewControlers/` — page controllers and top-level page flows.
+-- `Snippits/` — reusable UI components and feature views, including Product Manager audit report presentations, order report delivery tables and CSV exports, velocity scoring, the dedicated Trip location and account-aware merchandise pickers, and parent-scoped subaccount creation/editing through `ManageSubCustomerAccountView`.
++- `Snippits/` — reusable UI components and feature views, including Product Manager audit report presentations, order report delivery tables and CSV exports, velocity scoring, the dedicated Trip location and account-aware merchandise pickers, preloaded commercial-asset selection through `SearchComertialAsset`, and parent-scoped subaccount creation/editing through `ManageSubCustomerAccountView`.
+ - `Styles/` — Swift Web CSS style declarations.
+ - `Functions/`, `Extentions/`, `Enums/`, `Structurs/`, `VirtualControlers/` — shared app helpers and runtime support. Error diagnostics are owned by `ErrorReportingControler`, its record/context types, the centralized POST transport, and the API decoding helper.
+ 
+--- /dev/null
++++ after/Sources/App/Snippits/SearchComertialAsset.swift
+@@ -0,0 +1,132 @@
++import Foundation
++import TCFundamentals
++import TCFireSignal
++import Web
++
++final class SearchComertialAsset: Div {
++    override class var name: String { "div" }
++
++    let currentLocation: CustAssetsComponents.ListAssetItemsType
++    private let items: [CustCommercialAssetsItem]
++    private let callback: (CustCommercialAssetsItem) -> Void
++    private var didSelect = false
++
++    @State private var term = ""
++
++    // The caller loads available inventory before presenting this view.
++    init?(
++        currentLocation: CustAssetsComponents.ListAssetItemsType,
++        items: [CustCommercialAssetsItem],
++        callback: @escaping (CustCommercialAssetsItem) -> Void
++    ) {
++        let locationType: CustCommercialAssetsLinkedType
++        let locationId: UUID
++        switch currentLocation {
++        case .store(let id):
++            locationType = .store
++            locationId = id
++        case .warehose(let id):
++            locationType = .warehouse
++            locationId = id
++        case .subAccount(let id):
++            locationType = .subaccount
++            locationId = id
++        default:
++            return nil
++        }
++        self.currentLocation = currentLocation
++        self.items = items.filter { $0.currentLocation == locationType && $0.currentLocationId == locationId }
++        self.callback = callback
++        super.init()
++    }
++
++    required init() {
++        fatalError("init() has not been implemented")
++    }
++
++    private lazy var searchField = UTextField(self.$term)
++        .placeholder("Buscar por folio, nombre o serie")
++        .width(100.percent)
++
++    private lazy var itemsContainer = Div()
++        .class(Class(TCCrystalSurfaceClass.tripPickerList))
++        .custom("max-height", "440px")
++        .custom("overflow-y", "auto")
++
++    @DOM override var body: DOM.Content {
++        VPopUp(.fitContent(w: 800)) {
++            VTitle("Buscar Activo", icon: "icon_merchandise.png") {
++                USmallTitle("Activos disponibles en el origen del viaje")
++            } onClose: {
++                self.remove()
++            }
++            VBodyGrid {
++                VGrid(.full) {
++                    VBox {
++                        UField("Buscar", required: false) { self.searchField }
++                        self.itemsContainer
++                    }
++                }
++            }
++        }
++    }
++
++    override func buildUI() {
++        super.buildUI()
++        TCTripBetaTheme.apply(to: self)
++        TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
++        attribute("role", "dialog")
++        attribute("aria-modal", "true")
++        $term.listen { [weak self] in self?.renderItems() }
++        renderItems()
++    }
++
++    override func didAddToDOM() {
++        super.didAddToDOM()
++        searchField.select()
++    }
++
++    private func renderItems() {
++        itemsContainer.innerHTML = ""
++        let query = term.purgeSpaces.pseudo
++        let matches = items.filter {
++            query.isEmpty || [$0.folio, $0.name, $0.serial ?? ""].joined(separator: " ").pseudo.contains(query)
++        }
++        guard !matches.isEmpty else {
++            itemsContainer.appendChild(USmallTitle(items.isEmpty
++                ? "No hay activos disponibles para agregar en este origen."
++                : "No hay activos que coincidan con la búsqueda."))
++            return
++        }
++
++        matches.forEach { item in
++            itemsContainer.appendChild(
++                Button {
++                    Div("\(item.folio) · \(item.name)")
++                        .class(Class(TCCrystalSurfaceClass.tripPickerItemTitle))
++                    Div("Serie: \(item.serial ?? "Sin serie")")
++                        .class(Class(TCCrystalSurfaceClass.tripPickerItemSubtitle))
++                }
++                .attribute("type", "button")
++                .class(
++                    Class(TCTripBetaClass.box),
++                    Class(TCTripBetaClass.boxInteractive),
++                    Class(TCCrystalSurfaceClass.tripPickerItem)
++                )
++                .width(100.percent)
++                .textAlign(.left)
++                .onClick { [weak self] in
++                    guard let self, !self.didSelect else { return }
++                    self.didSelect = true
++                    self.callback(item)
++                    self.remove()
++                }
++            )
++        }
++    }
++
++    override func didRemoveFromDOM() {
++        super.didRemoveFromDOM()
++        $term.removeAllListeners()
++    }
++}

@@ -12,6 +12,7 @@ import Web
 class ManualAddressSearch: Div {
     
     /// byCountry(Countries), byAddress(AddressItem)
+    /// 23.710271;;-99.183555
     let loadBy: LoadType
     
     private var callback: ((
@@ -352,6 +353,8 @@ class ManualAddressSearch: Div {
             
         case .byAddress(let address):
             loadByAddress(address)
+        case .byLocation(let latitude, let longitude):
+            self.loadCoordanets(latitude: latitude, longitude: longitude)
         }
         
     }
@@ -423,7 +426,6 @@ class ManualAddressSearch: Div {
                 self.cities.append(name)
                 
             }
-            
             
             self.cities.sort()
             
@@ -513,7 +515,11 @@ class ManualAddressSearch: Div {
                         }
                     }
                 }
+            
+            case .byLocation:
+                break
             }
+        
         }
     }
     
@@ -711,6 +717,7 @@ class ManualAddressSearch: Div {
                             }
                         }
                     }
+
                 }
             
                 Console.clear()
@@ -743,7 +750,8 @@ class ManualAddressSearch: Div {
                 }
                 
                 self.settlement = "\(item.settlementType.description) \(item.settlement)"
-                
+            case .byLocation:
+            break
             }
         }
     }
@@ -760,9 +768,10 @@ class ManualAddressSearch: Div {
         
         API.v1.jwt { token in
             
-            loadingView.hide()
+            
 
             guard let token else {
+                loadingView.hide()
                 showError(.comunicationError, "No se pudo cargar token")
                 return
             }
@@ -773,6 +782,8 @@ class ManualAddressSearch: Div {
                     self.processReverseGeocodeMapResponse(payload, latitude, longitude)
                 }
                 
+                loadingView.hide()
+
                 return .undefined
             }.jsValue)
         }
@@ -780,7 +791,6 @@ class ManualAddressSearch: Div {
     
     func processReverseGeocodeMapResponse(_ json: String, _ latitude: Double, _ longitude: Double) {
         
-        Console.clear()
 
         print(json)
 
@@ -809,39 +819,16 @@ class ManualAddressSearch: Div {
 
                 addresses.forEach { address in
 
-                    let streetValue = (address.street?.isEmpty == false ? address.street : [address.streetName, address.streetNumber].compactMap { value in
-                        guard let value, !value.isEmpty else { return nil }
-                        return value
-                    }.joined(separator: " ")) ?? ""
-                    
-                    let colonyValue = address.colony ?? ""
-                    
-                    let cityValue = address.city ?? ""
-                    
-                    let stateValue = address.state ?? ""
-                    
-                    let countryValue = Countries(rawValue: (address.country ?? "")) ?? .mexico
-                    
-                    let zipValue = address.zip ?? ""
+                    let result = coordinateResult(from: address, latitude: latitude, longitude: longitude)
 
-                    let view = Div("")
+                    let view = Div(address.printableAddress)
                     .marginBottom(7.px)
                     .width(95.percent)
                     .class(.uibtn)
-                    .onClick {
+                    .onClick { [weak self] in
+                        guard let self else { return }
 
-                        self.callback(.coordinates(
-                            .init(
-                                latitude: latitude,
-                                longitude: longitude,
-                                street: streetValue,
-                                settlement: colonyValue,
-                                city: cityValue,
-                                state: stateValue,
-                                zip: zipValue,
-                                country: countryValue
-                            )
-                        ))
+                        self.callback(.coordinates(result))
 
                         self.remove()
                     }
@@ -849,56 +836,19 @@ class ManualAddressSearch: Div {
                     self.multipleResultsContainer.appendChild(view)
                 }
 
+                addManualMultipleCoordanetsIsHidden = false
                 return
             }
 
             for (index, address) in addresses.enumerated() {
-                print("🗺 Posible dirección \(index + 1): \(address.printableAddress)")
-            }
-            
-            let streetValue = address.street?.isEmpty == false ? address.street : [address.streetName, address.streetNumber].compactMap { value in
-                guard let value, !value.isEmpty else { return nil }
-                return value
-            }.joined(separator: " ")
-            
-            if let streetValue, !streetValue.isEmpty {
-                street = streetValue
-            }
-            
-            if let colony = address.colony, !colony.isEmpty {
-                self.settlement = colony
-            }
-            
-            if let city = address.city, !city.isEmpty {
-                self.city = city
-            }
-            
-            if let state = address.state, !state.isEmpty {
-                self.state = state
-            }
-            
-            if let country = address.country, !country.isEmpty {
-                if let value = Countries(rawValue: country) {
-                    self.country = value
-                }
-            }
-            
-            if let zip = address.zip, !zip.isEmpty {
-                self.zip = zip
+                print("🗺 Posible dirección [A] \(index + 1): \(address.printableAddress)")
             }
 
-            self.callback(.coordinates(
-                .init(
-                    latitude: latitude,
-                    longitude: longitude,
-                    street: self.street,
-                    settlement: self.settlement,
-                    city: self.city,
-                    state: self.state,
-                    zip: self.zip,
-                    country: self.country
-                )
-            ))
+            print(address)
+            
+            // Postal-search state listeners clear settlement when city/state changes.
+            // Return the geocoder snapshot directly so colony survives those listeners.
+            self.callback(.coordinates(coordinateResult(from: address, latitude: latitude, longitude: longitude)))
 
             self.remove()
             
@@ -907,6 +857,24 @@ class ManualAddressSearch: Div {
             showError(.unexpectedResult, "No se pudo decodificar dirección de coordenadas.")
             return
         }
+    }
+
+    private func coordinateResult(from address: ReverseGeocodedAddress, latitude: Double, longitude: Double) -> CoordinateResult {
+        let street = (address.street?.isEmpty == false ? address.street : [address.streetName, address.streetNumber].compactMap { value in
+            guard let value, !value.isEmpty else { return nil }
+            return value
+        }.joined(separator: " ")) ?? ""
+
+        return .init(
+            latitude: latitude,
+            longitude: longitude,
+            street: street,
+            settlement: address.colony ?? "",
+            city: address.city ?? "",
+            state: address.state ?? "",
+            zip: address.zip ?? "",
+            country: Countries(rawValue: address.country ?? "") ?? .mexico
+        )
     }
 
     override func didRemoveFromDOM() {
@@ -951,11 +919,13 @@ extension ManualAddressSearch {
         
     }
     
-    /// byCountry(Countries), byAddress(AddressItem)
+    /// byCountry(Countries), byAddress(AddressItem), byLocation(latitude: Double, longitude: Double)
     enum LoadType {
         case byCountry(Countries)
         
         case byAddress(AddressItem)
+
+        case byLocation(latitude: Double, longitude: Double)
         
     }
 

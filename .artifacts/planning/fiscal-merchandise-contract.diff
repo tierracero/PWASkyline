@@ -1,0 +1,34 @@
+--- before/Sources/App/Snippits/AddCartaPorte/AddCartaPorteMerchendise.swift
++++ after/Sources/App/Snippits/AddCartaPorte/AddCartaPorteMerchendise.swift
+@@ -662,6 +662,8 @@
+         
+         callback(.init(
+             id: merchandise?.id ?? .init(),
++            merchandiseType: merchandise?.merchandiseType ?? .merchandise,
++            merchandiseId: merchandise?.merchandiseId,
+             fiscCode: fiscCode,
+             fiscCodeName: fiscCodeName,
+             fiscUnit: fiscUnit,
+--- before/Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift
++++ after/Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift
+@@ -1262,7 +1262,9 @@
+ 
+         case .delete(let id):
+             merchendises.removeAll { $0.id == id }
+-            merchendise.removeAll { $0.id == id }
++            merchendise.removeAll {
++                $0.merchandiseType == .merchandise && ($0.merchandiseId ?? $0.id) == id
++            }
+         }
+     }
+ 
+--- before/.agent/architecture/API_AND_BACKEND.md
++++ after/.agent/architecture/API_AND_BACKEND.md
+@@ -13,6 +13,7 @@
+ - Asset creation and update preserve the shared commercial-asset fiscal and physical fields: `fiscCode`, `fiscUnit`, `width`, `height`, `length`, and `weight`.
+ - Asset, asset-item, location, sublocation, category, and department update responses return the inserted `CustGeneralNotes` entry when a change produced an audit note; successful no-op updates may return no note.
+ - Commercial trip creation submits the complete fiscal location fields for each stop, together with `LocationType` and an optional linked ID; the server persists those submitted snapshots.
++- Fiscal merchandise items distinguish their own UUID from `merchandiseType` and optional linked `merchandiseId`. `AddCartaPorteMerchendise` preserves those source fields on save; new manual entries use `.merchandise` with no linked ID. `CreateTripView` forwards type and linked ID to the shared `TripMerchandise` request, retaining its legacy item-ID fallback; deleting a saved merchandise base matches only `.merchandise` sources by linked ID (or item ID for legacy unlinked items).
+ - `CreateTripView` receives, edits, and submits `CustCommercialTripsComponents.TripLocation` snapshots directly. Its legacy UI adapters retain a nullable `locationId`; an item UUID generated for display/editing is never promoted to a submitted source ID.
+ - Trip store snapshots use the store-linked fiscal profile when available, otherwise the main profile (`FIAccountsType.account`). A missing preferred/main cached profile triggers the existing general `getProfile` request; a failed/unresolved lookup can use the cached main profile, and absence of any usable profile reports the requested fiscal-configuration error. This picker does not mutate the global fiscal-profile cache.
+ - Endpoint files are grouped by domain and often named `Domain+Action.swift`.

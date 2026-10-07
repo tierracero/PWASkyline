@@ -311,7 +311,7 @@ extension SalePointView {
                         /// Tipo de reporte
                         Div{
                             Label("Tipo de reporte")
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                                 .color(.gray)
                             
                             Div().clear(.both)
@@ -325,7 +325,7 @@ extension SalePointView {
                         /// Seleccione Tienda
                         Div{
                             Label("Seleccione Tienda")
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                                 .color(.gray)
                             Div().clear(.both)
                             
@@ -339,7 +339,7 @@ extension SalePointView {
                         /// Seleccione Ususario
                         Div{
                             Label("Seleccione Usuario")
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                                 .color(.gray)
                             Div().clear(.both)
                             
@@ -353,7 +353,7 @@ extension SalePointView {
                         /// Product Search
                         Div{
                             Label("Seleccione Productos")
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                                 .color(.gray)
                             Div().clear(.both)
                             self.parceblePOCDiv
@@ -366,7 +366,7 @@ extension SalePointView {
                         /// Product Search
                         Div{
                             Label("Seleccione Servicio")
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                                 .color(.gray)
                             Div().clear(.both)
                             self.parcebleSOCDiv
@@ -379,7 +379,7 @@ extension SalePointView {
                         /// Date Select Type
                         Div{
                             Label("Seleccione Fecha")
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                                 .color(.gray)
                             Div().clear(.both)
                             self.dateSelect
@@ -392,7 +392,7 @@ extension SalePointView {
                         /// Star At
                         Div{
                             Label("Fecha Inicio")
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                                 .color(.gray)
                             Div().clear(.both)
                             self.startAtField
@@ -409,7 +409,7 @@ extension SalePointView {
                         /// End At
                         Div{
                             Label("Fecha Final")
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                                 .color(.gray)
                             Div().clear(.both)
                             self.endAtField
@@ -437,9 +437,9 @@ extension SalePointView {
                         Div(self.$reportType.map{ $0?.helpText ??  "" })
                             .paddingBottom(7.px)
                             .marginLeft(12.px)
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                             .marginTop(3.px)
-                            .height(15.px)
+                            .minHeight(20.px)
                             .color(.white)
                             
                     }

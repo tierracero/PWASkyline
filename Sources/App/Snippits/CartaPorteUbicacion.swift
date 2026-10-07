@@ -67,7 +67,7 @@ class CartaPorteUbicacion: Div {
                 .marginRight(7.px)
                 .color(.gray)
             
-            Span(self.placement.placementType.description)
+            Span("\(self.placement.placementType.description) / \(self.placement.locationType.description)")
                 .color(.darkOrange)
 
             Span(self.placement.placementId)

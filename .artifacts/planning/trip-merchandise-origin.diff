@@ -1,0 +1,52 @@
+--- before/Sources/App/Snippits/TripControler/TripControler+AddMerchandise.swift
++++ after/Sources/App/Snippits/TripControler/TripControler+AddMerchandise.swift
+@@ -4,6 +4,7 @@
+ 
+ import Foundation
+ import TCFundamentals
++import TCFireSignal
+ import Web
+ 
+ class TripControlerAddMerchandise: Div {
+@@ -11,17 +12,20 @@
+     override class var name: String { "div" }
+ 
+     let account: CustAcctSearch
++    let origin: CustCommercialTripsComponents.TripLocation
+     var merchendises: [FiscalMercanciaBase]
+     let callback: (FiscalMercanciaBase) -> Void
+     let create: () -> Void
+ 
+     init(
+         account: CustAcctSearch,
++        origin: CustCommercialTripsComponents.TripLocation,
+         merchendises: [FiscalMercanciaBase],
+         callback: @escaping (FiscalMercanciaBase) -> Void,
+         create: @escaping () -> Void
+     ) {
+         self.account = account
++        self.origin = origin
+         self.merchendises = merchendises
+         self.callback = callback
+         self.create = create
+--- before/Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift
++++ after/Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift
+@@ -1814,6 +1814,7 @@
+ 
+         addToDom(TripControlerAddMerchandise(
+             account: account,
++            origin: origin,
+             merchendises: merchendises,
+             callback: { item in
+                 self.configureMerchendise(item)
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -16,7 +16,7 @@
+ - Browser speech recognition is centralized in `SpeechRecognitionManager`; it retains the JavaScript callback for the active session and routes transcripts to one weak `SpeechRecognitionTarget`.
+ - `WorkViewControler` owns one authenticated-session `TCSpeechRecognitionFloatingButton` and shuts it down when the work shell leaves the DOM.
+ - `CreateTripView.selectLocation` uses the dedicated `TripControlerAddLocation` picker with mutable `[FiscalLocationBase]` items and fiscal-base formatting callbacks. Selection returns a complete `CustCommercialTripsComponents.TripLocation` snapshot with `.location` source type and the base's linked ID. Its own `ViewType` supplies the origin/destination icon and title; merchandise uses its own picker, and the remaining Trip selections continue using `TripControlerAddElement<Item>`.
+-- `CreateTripView.addMerchendise` uses `TripControlerAddMerchandise` with the current `CustAcctSearch` account and mutable `merchendises: [FiscalMercanciaBase]`. The picker owns merchandise formatting and preserves the base-selection and creation callbacks. Only concessionaire accounts see the header's magnifying-glass Buscar Activo button, immediately before + Agregar; its dedicated `searchAsset()` method is a placeholder that leaves the picker open. Asset searching/selection is not implemented yet.
++- `CreateTripView.addMerchendise` uses `TripControlerAddMerchandise` with the current `CustAcctSearch` account, a required `origin: CustCommercialTripsComponents.TripLocation` snapshot, and mutable `merchendises: [FiscalMercanciaBase]`. The picker owns merchandise formatting and preserves the base-selection and creation callbacks. Only concessionaire accounts see the header's magnifying-glass Buscar Activo button, immediately before + Agregar; its dedicated `searchAsset()` method is a placeholder that leaves the picker open. Asset searching/selection is not implemented yet.
+ - `CreateTripView` stores origin/destination as `CustCommercialTripsComponents.TripLocation`. Local adapters preserve snapshot fields, source type, and optional source ID for the unchanged `CartaPorteUbicacion`, `ManageLocationItem`, and `AddCartaPorteMerchendise` consumers. Stop matching uses source type and linked ID, or placement ID for unlinked stops; saved-base updates/deletes affect only `.location` sources.
+ - `TripControlerAddLocation` has a header split button: the main Agregar action and menu Agregar ubicación share the existing creation callback; the arrow reveals Seleccionar tienda and Buscar cliente alongside it. Menu options have decorative cyan outline SVG icons for location creation, store selection, and customer search. Store selection opens `SelectStore` and renders a `.store` trip snapshot; customer search opens `SearchSubCustomerView` and renders the selected/created subaccount as a `.subaccount` snapshot. Menu visibility is local presentation state, with Escape and outside-click dismissal and scoped crystal styling.
+ - The picker's `renderLocation` overloads preserve store/subaccount address and coordinates. Store placement IDs use `storePrefix` plus the final UUID segment; subaccounts use `sa` plus the final UUID segment and fiscal identity from the injected parent account. Subaccounts must belong to that account. Successful rendering returns the snapshot and dismisses the picker; unrecognized address states report an error.

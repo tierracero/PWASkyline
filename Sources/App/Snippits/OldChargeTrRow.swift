@@ -107,17 +107,17 @@ class OldChargeTrRow: Tr {
         }.width(20.px)
         
         Td(self.$cuantString)
-            .fontSize(12.px)
+            .fontSize(14.px)
         
         Td(self.$name)
             .class(.oneLineText)
-            .fontSize(12.px)
+            .fontSize(14.px)
         
         Td(self.$priceString)
-            .fontSize(12.px)
+            .fontSize(14.px)
         
         Td(self.$total)
-            .fontSize(12.px)
+            .fontSize(14.px)
         
     }
     

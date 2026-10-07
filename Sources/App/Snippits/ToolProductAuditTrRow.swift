@@ -73,14 +73,14 @@ class ToolProductAuditTrRow: Tr {
         .width(83.px)
     
     lazy var link1Input = TextArea(self.$link1)
-        .fontSize(10.px)
+        .fontSize(13.px)
         .disabled(true)
         .class(.textFiledLight)
         .height(45.px)
         .width(175.px)
     
     lazy var link2Input = TextArea(self.$link2)
-        .fontSize(10.px)
+        .fontSize(13.px)
         .class(.textFiledLight)
         .height(45.px)
         .width(175.px)

@@ -242,7 +242,7 @@ public class SKLogInStyle: Stylesheet {
             .custom("border-radius", "999px")
             .custom("background", "rgba(35, 93, 146, 0.28)")
             .custom("color", "#8fc7ff !important")
-            .custom("font-size", "11px")
+            .custom("font-size", "13px")
 
         Rule(Pointer(".tc-login-recovery-popup .tc-v-title-close"))
             .custom("color", "#ff9f0a !important")

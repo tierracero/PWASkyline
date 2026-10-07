@@ -14,11 +14,46 @@ class CustTaskAuthRequestWaitView: Div {
     
     override class var name: String { "div" }
 
-    /// service, product, manual, rental
-    var type: ChargeType
-    var id: UUID
-    var requestedPrice: Int64
-    var reason: String
+    private enum Action {
+        case changePrice(type: ChargeType, id: UUID, requestedPrice: Int64, reason: String, authorizationContext: CustComponents.ChangePriceAuthorizationContext)
+        case removeCharge(orderId: UUID, chargeId: UUID)
+        case removePayment(orderId: UUID, paymentId: UUID)
+
+        var alertType: CustTaskAuthorizationManagerAlertType {
+            switch self {
+            case .changePrice:
+                return .changePrice
+            case .removeCharge:
+                return .orderCharge
+            case .removePayment:
+                return .orderPayment
+            }
+        }
+
+        var title: String {
+            switch self {
+            case .changePrice:
+                return "Solicitando cambio de precio"
+            case .removeCharge:
+                return "Solicitando eliminar cargo"
+            case .removePayment:
+                return "Solicitando eliminar pago"
+            }
+        }
+
+        var deniedMessage: String {
+            switch self {
+            case .changePrice:
+                return "El cambio de precio no fue autorizado."
+            case .removeCharge:
+                return "La eliminacion del cargo no fue autorizada."
+            case .removePayment:
+                return "La eliminacion del pago no fue autorizada."
+            }
+        }
+    }
+
+    private let action: Action
     
     private var callback: ((  
         _ auth: Bool
@@ -29,14 +64,30 @@ class CustTaskAuthRequestWaitView: Div {
         id: UUID,
         requestedPrice: Int64,
         reason: String,
+        authorizationContext: CustComponents.ChangePriceAuthorizationContext,
         callback: @escaping ((
             _ auth: Bool
         ) -> ())
     ) {
-        self.type = type
-        self.id = id
-        self.requestedPrice = requestedPrice
-        self.reason = reason
+        self.action = .changePrice(type: type, id: id, requestedPrice: requestedPrice, reason: reason, authorizationContext: authorizationContext)
+        self.callback = callback
+    }
+
+    init(
+        removeChargeFrom orderId: UUID,
+        chargeId: UUID,
+        callback: @escaping (Bool) -> Void
+    ) {
+        self.action = .removeCharge(orderId: orderId, chargeId: chargeId)
+        self.callback = callback
+    }
+
+    init(
+        removePaymentFrom orderId: UUID,
+        paymentId: UUID,
+        callback: @escaping (Bool) -> Void
+    ) {
+        self.action = .removePayment(orderId: orderId, paymentId: paymentId)
         self.callback = callback
     }
     
@@ -46,7 +97,7 @@ class CustTaskAuthRequestWaitView: Div {
     
     let ws = WS()
     
-    @State var responseText = "Solicitando cambio de precio"
+    @State var responseText = "Solicitando autorizacion"
     
     var taskid: UUID? = nil
     
@@ -129,6 +180,8 @@ class CustTaskAuthRequestWaitView: Div {
     
     override func buildUI() {
         super.buildUI()
+
+        responseText = action.title
         
         position(.absolute)
         height(100.percent)
@@ -152,8 +205,7 @@ class CustTaskAuthRequestWaitView: Div {
             case .custTaskDenied:
                 if let payload = self.ws.custTaskDenied($0) {
                     
-                    if payload.alertType != .changePrice {
-                        /// Only prrice changaes can be auth
+                    if payload.alertType != self.action.alertType {
                         return
                     }
 
@@ -167,7 +219,7 @@ class CustTaskAuthRequestWaitView: Div {
                             
                     self.callback(false)
                     
-                    showError(.generalError, "El cambio de precio no fue autorizado.")
+                    showError(.generalError, self.action.deniedMessage)
                     
                     self.remove()
                     
@@ -175,8 +227,7 @@ class CustTaskAuthRequestWaitView: Div {
             case .custTaskAuthoroized:
                 if let payload = self.ws.custTaskAuthoroized($0) {
                     
-                    if payload.alertType != .changePrice {
-                        /// Only prrice changaes can be auth
+                    if payload.alertType != self.action.alertType {
                         return
                     }
 
@@ -200,36 +251,61 @@ class CustTaskAuthRequestWaitView: Div {
             WebApp.current.wsevent.wrappedValue = ""
         }
         
-        API.custAPIV1.changePrice(
-            type: self.type,
-            id: self.id,
-            requestedPrice: self.requestedPrice,
-            reason: self.reason
-        ) { resp in
-        
-            loadingView.hide()
-            
-            guard let resp else {
-                showError(.comunicationError, .serverConextionError)
-                return
+        switch action {
+        case .changePrice(let type, let id, let requestedPrice, let reason, let authorizationContext):
+            API.custAPIV1.changePrice(
+                type: type,
+                id: id,
+                requestedPrice: requestedPrice,
+                reason: reason,
+                authorizationContext: authorizationContext
+            ) { resp in
+                self.handleRequestResponse(
+                    statusIsOK: resp?.status == .ok,
+                    message: resp?.msg,
+                    taskid: resp?.data?.taskid,
+                    actionType: resp?.data?.actionType
+                )
             }
-            
-            guard resp.status == .ok else{
-                showError(.generalError, resp.msg)
-                self.remove()
-                return
+        case .removeCharge(let orderId, let chargeId):
+            API.custOrderV1.removeChargeCTAM(orderId: orderId, chargeId: chargeId) { resp in
+                self.handleRequestResponse(statusIsOK: resp?.status == .ok, message: resp?.msg, taskid: resp?.data?.taskid)
             }
-            
-            guard let id = resp.data?.taskid else {
-                showError(.unexpectedResult, .unexpenctedMissingPayload)
-                return
+        case .removePayment(let orderId, let paymentId):
+            API.custOrderV1.removePaymentCTAM(orderId: orderId, paymentId: paymentId) { resp in
+                self.handleRequestResponse(statusIsOK: resp?.status == .ok, message: resp?.msg, taskid: resp?.data?.taskid)
             }
-            
-            self.responseText = "Solicitud exitosa, esperando respuesta."
-            
-            self.taskid = id
-            
         }
+    }
+
+    private func handleRequestResponse(
+        statusIsOK: Bool,
+        message: String?,
+        taskid: UUID?,
+        actionType: CustTaskAuthorizationManagerActionType? = nil
+    ) {
+        loadingView.hide()
+
+        guard statusIsOK else {
+            showError(.generalError, message ?? "No se pudo solicitar autorizacion.")
+            remove()
+            return
+        }
+
+        guard let taskid else {
+            showError(.unexpectedResult, .unexpenctedMissingPayload)
+            remove()
+            return
+        }
+
+        if actionType == .notify {
+            callback(true)
+            remove()
+            return
+        }
+
+        responseText = "Solicitud exitosa, esperando respuesta."
+        self.taskid = taskid
     }
     
     override func didAddToDOM() {

@@ -356,7 +356,7 @@ class FollowupControler: Div {
                     .class(.oneLineText)
 
                 Div(item.status.description)
-                    .fontSize(13.px)
+                    .fontSize(14.px)
                     .color(.white)
                     .class(.oneLineText)
             }

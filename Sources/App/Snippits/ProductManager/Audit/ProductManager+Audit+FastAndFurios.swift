@@ -92,7 +92,7 @@ extension ProductManagerView.AuditView.Inventory {
                     .fontWeight(.bold)
                 Div("Ingreso por día 50% • Velocidad de unidades 25% • Total de unidades 25%. Cada componente se compara contra el producto líder del reporte.")
                     .color(.white)
-                    .fontSize(12.px)
+                    .fontSize(14.px)
                     .marginTop(4.px)
             }
             .class(Class(TCCrystalSurfaceClass.auditMetric))

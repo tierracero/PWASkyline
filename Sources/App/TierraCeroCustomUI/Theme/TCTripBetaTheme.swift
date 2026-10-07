@@ -267,7 +267,7 @@ enum TCTripBetaTheme {
             Rule(Pointer("\(root) .\(TCTripBetaClass.uiSmallTitle)"))
                 .custom("margin", "0")
                 .custom("color", "var(--tc-beta-orange)")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "600")
 
             Rule(Pointer("\(root) .\(TCTripBetaClass.uiButton)"))
@@ -298,7 +298,7 @@ enum TCTripBetaTheme {
             Rule(Pointer("\(root) .\(TCTripBetaClass.uiSmallButton)"))
                 .custom("min-height", "30px")
                 .custom("padding", "6px 10px")
-                .custom("font-size", "13px")
+                .custom("font-size", "14px")
 
             Rule(Pointer("\(root) .\(TCTripBetaClass.uiLargeButton)"))
                 .custom("min-height", "40px")

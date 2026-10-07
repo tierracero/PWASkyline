@@ -83,7 +83,7 @@ class ToolFiscalItemView: Div {
             .marginRight(7.px)
         
     }
-        .fontSize(12.px)
+        .fontSize(14.px)
         .color(.gray)
     
     @DOM override var body: DOM.Content {

@@ -12,6 +12,7 @@ enum TCCrystalSurfaceVariant {
     case analytics
     case fiscal
     case customerData
+    case manualAddress
     case customerCreation
     case customerLookup
     case customerSearch
@@ -35,6 +36,8 @@ enum TCCrystalSurfaceVariant {
             return TCCrystalSurfaceClass.fiscal
         case .customerData:
             return TCCrystalSurfaceClass.customerData
+        case .manualAddress:
+            return TCCrystalSurfaceClass.manualAddress
         case .customerCreation:
             return TCCrystalSurfaceClass.customerCreation
         case .customerLookup:
@@ -92,6 +95,8 @@ enum TCCrystalSurfaceClass {
     static let analyticsPanel = "tc-crystal-analytics-panel"
     static let customerData = "tc-crystal-customer-data"
     static let customerDataPanel = "tc-crystal-customer-data-panel"
+    static let manualAddress = "tc-crystal-manual-address"
+    static let customerFormFields = "tc-crystal-customer-form-fields"
     static let customerCreation = "tc-crystal-customer-creation"
     static let customerLookup = "tc-crystal-customer-lookup"
     static let customerSearch = "tc-crystal-customer-search"
@@ -162,6 +167,13 @@ enum TCCrystalSurfaceClass {
     static let tripPickerActions = "tc-crystal-trip-picker-actions"
     static let tripPickerCreate = "tc-crystal-trip-picker-create"
     static let tripPickerClose = "tc-crystal-trip-picker-close"
+    static let tripLocationPicker = "tc-trip-location-picker"
+    static let tripLocationActions = "tc-trip-location-actions"
+    static let tripLocationActionGroup = "tc-trip-location-action-group"
+    static let tripLocationActionMain = "tc-trip-location-action-main"
+    static let tripLocationActionToggle = "tc-trip-location-action-toggle"
+    static let tripLocationActionMenu = "tc-trip-location-action-menu"
+    static let tripLocationActionOption = "tc-trip-location-action-option"
     static let tripPickerBody = "tc-crystal-trip-picker-body"
     static let tripPickerList = "tc-crystal-trip-picker-list"
     static let tripPickerItem = "tc-crystal-trip-picker-item"
@@ -199,8 +211,9 @@ enum TCCrystalSurfaceTheme {
         let root = ".\(TCCrystalSurfaceClass.root)"
         let analyticsPanel = "\(root) .\(TCCrystalSurfaceClass.analyticsPanel)"
         let fiscalRoot = "\(root).\(TCCrystalSurfaceClass.fiscal)"
-        let customerData = "\(root) .\(TCCrystalSurfaceClass.customerData)"
-        let customerDataPanel = "\(customerData) .\(TCCrystalSurfaceClass.customerDataPanel)"
+        let customerData = "\(root).\(TCCrystalSurfaceClass.customerData)"
+        let customerForms = ":is(\(customerData), \(root).\(TCCrystalSurfaceClass.manualAddress))"
+        let customerDataPanel = "\(customerForms) .\(TCCrystalSurfaceClass.customerDataPanel)"
         let customerSearchRoot = "\(root).\(TCCrystalSurfaceClass.customerSearch)"
         let customerLookupRoot = "\(root).\(TCCrystalSurfaceClass.customerLookup)"
         let goodButton = "\(customerSearchRoot) .\(TCCrystalSurfaceClass.goodButton)"
@@ -208,6 +221,7 @@ enum TCCrystalSurfaceTheme {
         let historyTripProcessingRoot = "\(root).\(TCCrystalSurfaceClass.historyTripProcessing)"
         let tripRoot = "\(root).\(TCCrystalSurfaceClass.trip)"
         let tripPicker = "\(tripRoot).\(TCCrystalSurfaceClass.tripPicker)"
+        let locationPicker = "\(tripPicker).\(TCCrystalSurfaceClass.tripLocationPicker)"
         let taskPanel = "\(root) .\(TCCrystalSurfaceClass.taskPanel)"
         let crystalModalHost = ".transparantBlackBackGround:has(> .\(TCCrystalSurfaceClass.root))"
 
@@ -375,7 +389,7 @@ enum TCCrystalSurfaceTheme {
                 .custom("margin", "0 !important")
                 .custom("overflow", "hidden")
                 .custom("color", "var(--tc-crystal-muted) !important")
-                .custom("font-size", "13px !important")
+                .custom("font-size", "14px !important")
                 .custom("line-height", "1.2")
 
             CSSRule(Pointer("\(fiscalRoot) .\(TCCrystalSurfaceClass.fiscalBody)"))
@@ -662,7 +676,7 @@ enum TCCrystalSurfaceTheme {
 
             CSSRule(Pointer("\(customerLookupRoot) .\(TCCrystalSurfaceClass.customerLookupBusiness)"))
                 .custom("color", "#8fb4ca !important")
-                .custom("font-size", "13px !important")
+                .custom("font-size", "14px !important")
                 .custom("font-weight", "600")
 
             CSSRule(Pointer("\(customerLookupRoot) .\(TCCrystalSurfaceClass.customerLookupName)"))
@@ -687,7 +701,7 @@ enum TCCrystalSurfaceTheme {
                 .custom("border-radius", "999px")
                 .custom("background", "rgba(83, 48, 18, 0.32)")
                 .custom("color", "#f5a040 !important")
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
                 .custom("font-weight", "700")
 
             CSSRule(Pointer("\(customerLookupRoot) .\(TCCrystalSurfaceClass.customerLookupReward)"))
@@ -724,12 +738,94 @@ enum TCCrystalSurfaceTheme {
 
         WebApp.current.addStylesheet {
             CSSRule(Pointer(customerDataPanel))
-                .custom("background", "linear-gradient(145deg, rgba(12, 45, 72, 0.94), rgba(4, 17, 31, 0.9)) !important")
+                .custom("background", "linear-gradient(145deg, rgba(12, 45, 72, 0.6), rgba(4, 17, 31, 0.38)) !important")
                 .custom("border", "1px solid var(--tc-crystal-border)")
                 .custom("box-shadow", "0 24px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06)")
                 .custom("color", "var(--tc-crystal-ink) !important")
                 .custom("backdrop-filter", "blur(18px) saturate(130%)")
                 .custom("-webkit-backdrop-filter", "blur(18px) saturate(130%)")
+                .custom("box-sizing", "border-box")
+                .custom("left", "50% !important")
+                .custom("top", "50% !important")
+                .custom("transform", "translate(-50%, -50%)")
+                .custom("max-width", "calc(100vw - 28px)")
+                .custom("max-height", "calc(100vh - 28px)")
+                .custom("height", "auto !important")
+                .custom("overflow", "auto")
+
+            CSSRule(Pointer(customerForms))
+                .custom("color", "var(--tc-crystal-ink)")
+
+            CSSRule(Pointer("\(customerForms) .\(TCTripBetaClass.popUpPanel)"))
+                .custom("display", "flex")
+                .custom("flex-direction", "column")
+                .custom("gap", "12px")
+                .custom("padding", "12px")
+
+            CSSRule(Pointer("\(customerForms) .\(TCTripBetaClass.title)"))
+                .custom("background", "#252c3b !important")
+                .custom("border", "1px solid var(--tc-crystal-border)")
+                .custom("border-radius", "10px")
+                .custom("flex-shrink", "0")
+
+            CSSRule(Pointer("\(customerDataPanel) > .\(TCTripBetaClass.title)"))
+                .custom("margin-bottom", "12px")
+
+            CSSRule(Pointer("\(customerForms) .\(TCTripBetaClass.bodyGrid)"))
+                .custom("min-height", "0")
+                .custom("padding", "0")
+                .custom("max-height", "calc(100vh - 124px)")
+                .custom("overflow", "auto")
+
+            CSSRule(Pointer("\(customerForms) .\(TCCrystalSurfaceClass.customerFormFields)"))
+                .custom("display", "grid")
+                .custom("grid-template-columns", "repeat(2, minmax(0, 1fr))")
+                .custom("gap", "10px")
+
+            CSSRule(Pointer("\(customerForms) .\(TCTripBetaClass.uiSubTitle), \(customerForms) .\(TCTripBetaClass.uiMinorTitle)"))
+                .custom("color", "var(--tc-crystal-blue) !important")
+                .custom("margin-bottom", "8px")
+
+            CSSRule(Pointer("\(customerForms) input, \(customerForms) select"))
+                .custom("box-sizing", "border-box")
+                .custom("min-height", "36px")
+                .custom("border", "1px solid #245a7c !important")
+                .custom("border-radius", "8px")
+                .custom("font-size", "15px !important")
+
+            CSSRule(Pointer("\(customerForms) .\(TCCrystalSurfaceClass.goodButton)"))
+                .custom("display", "inline-flex")
+                .custom("align-items", "center")
+                .custom("justify-content", "center")
+                .custom("box-sizing", "border-box")
+                .custom("min-height", "38px")
+                .custom("padding", "8px 14px")
+                .custom("border", "1px solid #245a7c !important")
+                .custom("border-radius", "10px")
+                .custom("background", "linear-gradient(145deg, rgba(14, 57, 87, 0.95), rgba(5, 27, 48, 0.95)) !important")
+                .custom("color", "var(--tc-crystal-ink) !important")
+                .custom("font-size", "16px !important")
+                .custom("font-weight", "700")
+                .custom("cursor", "pointer")
+
+            CSSRule(Pointer("\(customerForms) .\(TCCrystalSurfaceClass.goodButton):hover"))
+                .custom("border-color", "var(--tc-crystal-blue) !important")
+
+            CSSRule(Pointer("\(customerForms) .\(TCCrystalSurfaceClass.goodButton):disabled"))
+                .custom("opacity", "0.55")
+                .custom("cursor", "wait")
+
+            MediaRule(.screen.maxWidth(760.px)) {
+                CSSRule(Pointer(customerDataPanel))
+                    .custom("width", "calc(100vw - 28px) !important")
+
+                CSSRule(Pointer("\(customerDataPanel) .oneHalf, \(customerDataPanel) .oneThird, \(customerDataPanel) .twoThird, \(customerDataPanel) .oneTwo"))
+                    .custom("width", "100% !important")
+                    .custom("float", "none !important")
+
+                CSSRule(Pointer("\(customerForms) .\(TCCrystalSurfaceClass.customerFormFields)"))
+                    .custom("grid-template-columns", "minmax(0, 1fr)")
+            }
         }
 
         WebApp.current.addStylesheet {
@@ -803,7 +899,7 @@ enum TCCrystalSurfaceTheme {
                 .custom("padding", "13px 16px 0")
                 .custom("box-sizing", "border-box")
                 .custom("color", "var(--tc-crystal-muted) !important")
-                .custom("font-size", "13px !important")
+                .custom("font-size", "14px !important")
 
             CSSRule(Pointer("\(highPriorityRoot) .\(TCCrystalSurfaceClass.highPriorityBody)"))
                 .custom("margin", "0 !important")
@@ -905,7 +1001,7 @@ enum TCCrystalSurfaceTheme {
 
             CSSRule(Pointer("\(tripRoot) .\(TCTripBetaClass.uiFieldLabel)"))
                 .custom("color", "#edf7ff !important")
-                .custom("font-size", "13px !important")
+                .custom("font-size", "14px !important")
                 .custom("font-weight", "700")
                 .custom("line-height", "1.2")
 
@@ -917,7 +1013,7 @@ enum TCCrystalSurfaceTheme {
                 .custom("background", "rgba(3, 21, 38, 0.9) !important")
                 .custom("color", "#edf7ff !important")
                 .custom("padding", "5px 8px !important")
-                .custom("font-size", "13px !important")
+                .custom("font-size", "14px !important")
 
             CSSRule(Pointer("\(tripRoot) input:focus, \(tripRoot) select:focus, \(tripRoot) textarea:focus"))
                 .custom("border-color", "#49b9f5 !important")
@@ -934,7 +1030,7 @@ enum TCCrystalSurfaceTheme {
                 .custom("height", "30px !important")
                 .custom("box-sizing", "border-box")
                 .custom("padding", "5px 8px !important")
-                .custom("font-size", "13px !important")
+                .custom("font-size", "14px !important")
         }
 
         WebApp.current.addStylesheet {
@@ -1007,6 +1103,82 @@ enum TCCrystalSurfaceTheme {
                 .custom("box-sizing", "border-box")
                 .overflow(.hidden)
 
+            // Location actions can extend beyond the panel without changing
+            // clipping or action styles for the other generic trip pickers.
+            CSSRule(Pointer("\(locationPicker) .\(TCCrystalSurfaceClass.tripPickerPanel)"))
+                .custom("overflow", "visible !important")
+
+            CSSRule(Pointer("\(locationPicker) .\(TCCrystalSurfaceClass.tripPickerHeader)"))
+                .custom("border-radius", "20px 20px 0 0")
+
+            CSSRule(Pointer("\(locationPicker) .\(TCCrystalSurfaceClass.tripPickerActions)"))
+                .custom("overflow", "visible !important")
+                .custom("grid-column", "auto !important")
+                .custom("grid-row", "auto !important")
+                .custom("justify-content", "flex-end !important")
+
+            CSSRule(Pointer("\(locationPicker) .\(TCCrystalSurfaceClass.tripLocationActions)"))
+                .custom("position", "relative")
+                .custom("flex-shrink", "0")
+                .custom("z-index", "2")
+
+            CSSRule(Pointer("\(locationPicker) .\(TCCrystalSurfaceClass.tripLocationActionGroup)"))
+                .custom("display", "inline-flex")
+                .custom("align-items", "stretch")
+                .custom("gap", "0")
+
+            CSSRule(Pointer("\(locationPicker) .\(TCCrystalSurfaceClass.tripLocationActionMain)"))
+                .custom("border-radius", "10px 0 0 10px !important")
+                .custom("border-right", "0 !important")
+                .custom("white-space", "nowrap")
+                .custom("cursor", "pointer")
+
+            CSSRule(Pointer("\(locationPicker) .\(TCCrystalSurfaceClass.tripLocationActionToggle)"))
+                .custom("width", "34px")
+                .custom("padding", "0 !important")
+                .custom("border-radius", "0 10px 10px 0 !important")
+                .custom("font-size", "19px")
+                .custom("cursor", "pointer")
+
+            CSSRule(Pointer("\(locationPicker) .\(TCCrystalSurfaceClass.tripLocationActionMenu)"))
+                .custom("position", "absolute")
+                .custom("top", "calc(100% + 8px)")
+                .custom("right", "0")
+                .custom("width", "220px")
+                .custom("max-width", "calc(100vw - 48px)")
+                .custom("box-sizing", "border-box")
+                .custom("padding", "5px")
+                .custom("background", "rgb(9 34 55)")
+                .custom("border", "1px solid var(--tc-crystal-border)")
+                .custom("border-radius", "11px")
+                .custom("box-shadow", "0 12px 32px rgba(0, 0, 0, 0.45)")
+                .custom("z-index", "3")
+
+            CSSRule(Pointer("\(locationPicker) .\(TCCrystalSurfaceClass.tripLocationActionOption)"))
+                .custom("display", "block")
+                .custom("width", "100%")
+                .custom("min-height", "40px")
+                .custom("box-sizing", "border-box")
+                .custom("padding", "10px")
+                .custom("text-align", "left")
+                .custom("font-size", "14px")
+                .custom("background", "transparent")
+                .custom("color", "var(--tc-crystal-ink)")
+                .custom("border", "0 !important")
+                .custom("border-radius", "6px")
+                .custom("cursor", "pointer")
+
+            CSSRule(Pointer("\(locationPicker) .\(TCCrystalSurfaceClass.tripLocationActionOption):hover, \(locationPicker) .\(TCCrystalSurfaceClass.tripLocationActionOption):focus-visible"))
+                .custom("background", "rgba(73, 185, 245, 0.16)")
+
+            CSSRule(Pointer("\(locationPicker) .\(TCCrystalSurfaceClass.tripPickerBody)"))
+                .custom("border-radius", "0 0 20px 20px")
+
+            MediaRule(.screen.maxWidth(440.px)) {
+                CSSRule(Pointer("\(locationPicker) .\(TCCrystalSurfaceClass.tripPickerHeader)"))
+                    .custom("grid-template-columns", "minmax(0, 1fr)")
+            }
+
             CSSRule(Pointer("\(tripPicker) .\(TCCrystalSurfaceClass.tripPickerList)"))
                 .custom("display", "grid")
                 .custom("align-content", "start")
@@ -1037,7 +1209,7 @@ enum TCCrystalSurfaceTheme {
 
             CSSRule(Pointer("\(tripPicker) .\(TCCrystalSurfaceClass.tripPickerItemSubtitle)"))
                 .custom("color", "#9fb8cb !important")
-                .custom("font-size", "13px !important")
+                .custom("font-size", "14px !important")
 
             CSSRule(Pointer("\(tripPicker) .\(TCCrystalSurfaceClass.tripPickerEmpty)"))
                 .custom("display", "flex")

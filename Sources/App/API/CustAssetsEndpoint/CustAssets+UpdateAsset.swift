@@ -10,6 +10,12 @@ extension CustAssetsComponents {
         assetDepartmentId: UUID,
         assetSeccionId: UUID? = nil,
         custAcct: UUID? = nil,
+        fiscCode: String,
+        fiscUnit: String,
+        width: String,
+        height: String,
+        length: String,
+        weight: String,
         productType: String,
         productSubType: String,
         upc: String? = nil,
@@ -25,7 +31,7 @@ extension CustAssetsComponents {
         depreciationRate: Double,
         avatar: String? = nil,
         status: CustCommercialAssetsStatus,
-        callback: @escaping ((_ resp: APIResponse?) -> ())
+        callback: @escaping ((_ resp: APIResponseGeneric<CustGeneralNotes>?) -> ())
     ) {
         sendPost(
             rout,
@@ -37,6 +43,12 @@ extension CustAssetsComponents {
                 assetDepartmentId: assetDepartmentId,
                 assetSeccionId: assetSeccionId,
                 custAcct: custAcct,
+                fiscCode: fiscCode,
+                fiscUnit: fiscUnit,
+                width: width,
+                height: height,
+                length: length,
+                weight: weight,
                 productType: productType,
                 productSubType: productSubType,
                 upc: upc,
@@ -60,7 +72,10 @@ extension CustAssetsComponents {
             }
 
             do {
-                callback(try decodeAPIResponse(APIResponse.self, from: data))
+                callback(try decodeAPIResponse(
+                    APIResponseGeneric<CustGeneralNotes>.self,
+                    from: data
+                ))
             }
             catch {
                 callback(nil)

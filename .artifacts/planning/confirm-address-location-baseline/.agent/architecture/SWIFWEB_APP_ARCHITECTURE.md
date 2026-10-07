@@ -1,0 +1,47 @@
+# Swift Web App Architecture
+
+Authoritative rules: `SWWEB-*`.
+
+## Verified Facts
+
+- `Sources/App/App.swift` is the `@main` app entry point.
+- The app registers `./service.js` during launch.
+- The app uses Swift Web `Routes`, `Page`, lifecycle hooks, `@State`, and style declarations.
+- Theme switching currently selects between `MainStyle`, `SKMainStyle`, and `SKLogInStyle`.
+- The app-wide readability pass raises explicit small UI text to 13px for tiny labels and 14px for supporting text that was 12–13px, including shared Trip/crystal/settings themes, state-dependent equipment fields, and chart labels. Compact counters/status badges retain 12px and the required-field superscript uses 10px. Report hints and product-price label heights accommodate the larger text; print/receipt/PDF/barcode typography and third-party resets retain their original sizing. Source-owned version/copyright footers use 13px in both `main.css` resource copies.
+- `CreateNewCustomerDataView`, `ManageSubCustomerAccountView`, and `ManualAddressSearch` use TierraCeroCustomUI headers/controls and scoped crystal surfaces. `addToDom` automatically chooses the glass host for these customer/address views, `SearchCustomerView`, `SearchSubCustomerView`, and `CreateNewCusomerView` when the caller uses the standard presentation; explicit interactive/glass presentations remain supported.
+- `SearchSubCustomerView` scopes API searches to its injected `CustAcctSearch` parent. One match enters selection; multiple matches appear as keyboard-selectable cards. A successful empty search opens `CreateNewCusomerView`, then passes the account type/search term and `requierFullAddress` flag to `ManageSubCustomerAccountView`. Required-address selection checks complete street/colony/city/state/country/zip and finite, in-range latitude/longitud; incomplete items show a Spanish alert and open the prefilled manager for editing. Search remains available after child cancellation and completes once with a parent-validated item after any required edit. Removed-view responses are ignored.
+- `ManageSubCustomerAccountView` supports new and existing `CustSubAcct` initializers under one injected `CustAcctSearch` parent. Editing prefills all submitted fields and retains status. `requierFullAddress` defaults to false for creation; when true, address lookup reverse-geocodes existing valid coordinates, rejects postal-only results, and save/returned-record validation requires complete address and valid coordinates. Optional-address mode retains postal-only selection with cleared coordinates. Coordinate search-term lookup starts after DOM attachment. Its read-only MapKit preview loads initial edit coordinates and refreshes after either coordinate state changes, combining paired assignments and ignoring stale JWT responses. Invalid/empty coordinates clear the map; required mode shows a hint, optional mode hides it. The view destroys its own map on refresh/removal without modifying shared map globals. The manager returns server-created/reloaded records without introducing a global subaccount cache.
+- `ManualAddressSearch` provides address, coordinate, and geocoder-choice dialogs. Multiple coordinate choices display their printable addresses and reveal the selection overlay. Both single and multiple coordinate results use one conversion from the decoded geocoder snapshot, without assigning postal-search city/state/settlement state. This preserves the normalized `colony` as `CoordinateResult.settlement` through the parent customer/subaccount colony fields, bypassing postal-search listeners that clear settlement when city/state changes.
+- `Sources/Service/skyline/js/visualPerformance.js` exposes the derived performance mode as `data-tc-performance-mode` on the document root. In performance mode, named modal veils and glass content shells use translucent black backgrounds (65% and 85% opacity respectively) while backdrop filters remain disabled; disabling the mode restores their theme backgrounds through the CSS cascade.
+- Browser speech recognition is centralized in `SpeechRecognitionManager`; it retains the JavaScript callback for the active session and routes transcripts to one weak `SpeechRecognitionTarget`.
+- `WorkViewControler` owns one authenticated-session `TCSpeechRecognitionFloatingButton` and shuts it down when the work shell leaves the DOM.
+- `CreateTripView.selectLocation` uses the dedicated `TripControlerAddLocation` picker with mutable `[FiscalLocationBase]` items and fiscal-base formatting callbacks. Selection returns a complete `CustCommercialTripsComponents.TripLocation` snapshot with `.location` source type and the base's linked ID. Its own `ViewType` supplies the origin/destination icon and title; merchandise uses its own picker, and the remaining Trip selections continue using `TripControlerAddElement<Item>`.
+- `CreateTripView.addMerchendise` uses `TripControlerAddMerchandise` with the current `CustAcctSearch` account, a required `origin: CustCommercialTripsComponents.TripLocation` snapshot, and mutable `merchendises: [FiscalMercanciaBase]`. The picker owns merchandise formatting and preserves the base-selection and creation callbacks. `CreateTripView` owns the concessionaire-only Buscar Activo button, visible for store/warehouse/subaccount origins, and loads available inventory before presenting `SearchComertialAsset`.
+- `SearchComertialAsset` accepts a supported `ListAssetItemsType` and preloaded asset items; it has no API calls. It checks location type/ID, filters folio/name/serial locally, and returns one concrete item. `CreateTripView` excludes already selected IDs, loads the parent asset's fiscal/weight metadata before opening the existing merchandise editor, and stores the result with `.commercialAsset` and the concrete item ID. Origin assignments remove all commercial-asset merchandise, close asset picker/editor views, and invalidate pending loads/results; ordinary merchandise remains. Destination changes synchronize the saved route. Removal also invalidates and cleans up the child flow.
+- `CreateTripView` stores origin/destination as `CustCommercialTripsComponents.TripLocation`. Local adapters preserve snapshot fields, source type, and optional source ID for the unchanged `CartaPorteUbicacion`, `ManageLocationItem`, and `AddCartaPorteMerchendise` consumers. Stop matching uses source type and linked ID, or placement ID for unlinked stops; saved-base updates/deletes affect only `.location` sources.
+- `TripControlerAddLocation` has a header split button: the main Agregar action and menu Agregar ubicación share the existing creation callback; the arrow reveals Seleccionar tienda and Buscar cliente alongside it. Menu options have decorative cyan outline SVG icons for location creation, store selection, and customer search. Store selection opens `SelectStore` and renders a `.store` trip snapshot; customer search opens `SearchSubCustomerView` with `requierFullAddress: true` and renders the selected/created/updated subaccount as a `.subaccount` snapshot. Menu visibility is local presentation state, with Escape and outside-click dismissal and scoped crystal styling.
+- The picker's `renderLocation` overloads preserve store/subaccount address and coordinates. Store placement IDs use `storePrefix` plus the final UUID segment; subaccounts use `sa` plus the final UUID segment and fiscal identity from the injected parent account. Subaccounts must belong to that account. Successful rendering returns the snapshot and dismisses the picker; unrecognized address states report an error.
+
+## Rules
+
+### SWWEB-001 — Browser UI Ownership
+
+Browser-facing UI, routes, page controllers, snippets, and styles belong to the `App` target under `Sources/App/**`.
+
+### SWWEB-002 — Lifecycle and Routing Preservation
+
+Route, theme, and lifecycle changes must preserve service-worker registration, localization initialization, session-control behavior, and existing deep-link paths unless the task explicitly changes them.
+
+### SWWEB-003 — UI State Is Not Server Authority
+
+`@State` and DOM/browser state may drive presentation and interaction, but server-owned business data must remain synchronized through API/WebSocket contracts. UI-only state must not become hidden authoritative business state.
+
+## Implementation Guidance
+
+- Prefer focused snippet extraction over broad controller rewrites.
+- Keep localized visible strings in the existing localization pattern.
+- When touching `WorkViewControler.swift`, read only the relevant section and supporting snippet files.
+- Keep CSS class changes aligned with `Sources/App/Styles/**` and static CSS resources where applicable.
+- Speech-enabled inputs opt in by registering as the active `SpeechRecognitionTarget`. Final transcripts may update that target, but speech infrastructure must not submit or persist user content automatically.
+- Keep browser speech bridge calls and callback ownership inside `SpeechRecognitionManager`; keep floating-control DOM and theme rules inside `TCSpeechRecognitionFloatingButton` rather than dispersing them through page controllers.

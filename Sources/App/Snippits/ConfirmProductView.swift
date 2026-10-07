@@ -7,6 +7,7 @@
 
 import Foundation
 import TCFundamentals
+import TCFireSignal
 import Web
 
 class ConfirmProductView: Div {
@@ -16,6 +17,8 @@ class ConfirmProductView: Div {
     let accountId: UUID?
     
     let costType: CustAcctCostTypes
+
+    let authorizationContext: CustComponents.ChangePriceAuthorizationContext
     
     let pocid: UUID
     
@@ -48,6 +51,7 @@ class ConfirmProductView: Div {
     init(
         accountId: UUID?,
         costType: CustAcctCostTypes,
+        authorizationContext: CustComponents.ChangePriceAuthorizationContext,
         pocid: UUID,
         selectedInventoryIDs: [UUID],
         blockMultipleStores: Bool = false,
@@ -70,6 +74,7 @@ class ConfirmProductView: Div {
     ) {
         self.accountId = accountId
         self.costType = costType
+        self.authorizationContext = authorizationContext
         self.pocid = pocid
         self.selectedInventoryIDs = selectedInventoryIDs
         self.callback = callback
@@ -460,7 +465,7 @@ class ConfirmProductView: Div {
                                 
                                 if let _cost = Float(self.customePrice)?.toCents  {
                                     
-                                    if custCatchHerk > 4 {
+                                    if custCatchHerk >= self.authorizationContext.minimumHerk(config: configStoreProcessing) {
                                         
                                         self.changePriceViewIsHidden = true
                                         
@@ -474,6 +479,7 @@ class ConfirmProductView: Div {
                                             id: self.pocid,
                                             requestedPrice: _cost,
                                             reason: "",
+                                            authorizationContext: self.authorizationContext,
                                             callback: { auth in
                                                 
                                                 self.changePriceViewIsHidden = true

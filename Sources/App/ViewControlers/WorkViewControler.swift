@@ -9,7 +9,7 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 import WebSocketAPI
-import MailAPICore
+import MapKitCore
 import FetchAPI
 import Web
 
@@ -198,7 +198,7 @@ class WorkViewControler: PageController {
     
     lazy var privateChatBoxInner = Div()
         .margin(all: 3.px)
-        .fontSize(10.px)
+        .fontSize(13.px)
         .hidden(self.$privateChatList.map{ $0.isEmpty } )
     
     lazy var privateChatBox = Div {
@@ -213,7 +213,7 @@ class WorkViewControler: PageController {
         }
         .overflow(.hidden)
         .margin(all: 3.px)
-        .fontSize(10.px)
+        .fontSize(13.px)
         .align(.center)
         .hidden(self.$privateChatList.map{ !$0.isEmpty } )
     }
@@ -221,7 +221,7 @@ class WorkViewControler: PageController {
     lazy var publicChatBoxInner = Div()
         .hidden(self.$publicChatList.map{ $0.isEmpty } )
         .margin(all: 3.px)
-        .fontSize(10.px)
+        .fontSize(13.px)
     
     lazy var publicChatBox = Div {
         
@@ -233,7 +233,7 @@ class WorkViewControler: PageController {
         ))
         .overflow(.hidden)
         .margin(all: 3.px)
-        .fontSize(10.px)
+        .fontSize(13.px)
         .color(.dimGray)
         .align(.center)
         .hidden(self.$publicChatList.map{ !$0.isEmpty } )
@@ -257,7 +257,7 @@ class WorkViewControler: PageController {
                 .borderRadius(all: 10.px)
                 .backgroundColor(.blue)
                 .color(.white)
-                .fontSize(10.px)
+                .fontSize(12.px)
                 .hidden(self.communicationController.$unreadCount.map { $0 == 0 })
             }
             
@@ -346,7 +346,7 @@ class WorkViewControler: PageController {
             Span(CatchControler.shared.$taskAlerts.map { alerts in
                 alerts.count > 99 ? "99+" : alerts.count.toString
             })
-                .fontSize(10.px)
+                .fontSize(12.px)
                 .color(.white)
                 .backgroundColor(.blue)
                 .borderRadius(all: 12.px)
@@ -2241,9 +2241,9 @@ class WorkViewControler: PageController {
                         
                         addToDom(view)
                         
-                    case .scanner, .ocr, .paymentOrder, .paymentAccount, .paymentSale, .authTask,  .notifyTask, .social, .orderFiles, .orderMessage, .orderSendToUser, .customerMessage, .tierraceroMessage, .papacontadorMessage, .useCamaraForProduct, .useCamaraForOrder, .useCamaraForUser, .debugMode, .useCamaraForAsset, .useCamaraForOCR:
-                        break
-                    }
+                    case .scanner, .ocr, .paymentOrder, .paymentAccount, .paymentSale, .authTask,  .notifyTask, .social, .orderFiles, .orderMessage, .orderSendToUser, .customerMessage, .tierraceroMessage, .papacontadorMessage, .useCamaraForProduct, .useCamaraForOrder, .useCamaraForUser, .debugMode, .useCamaraForAsset, .useCamaraForOCR, .useCamaraForAssetItem:
+                        break 
+}
                     
                 }
                 
@@ -3806,6 +3806,8 @@ class WorkViewControler: PageController {
                 case .followup: 
                     break
                 case .comertialTrip:
+                    showAlert(.alerta, "\(type.description) aun no es soportado")
+                case .assetDocument, .asset:
                     showAlert(.alerta, "\(type.description) aun no es soportado")
                 }
                 

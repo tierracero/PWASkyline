@@ -7,7 +7,7 @@
 
 import Foundation
 import TCFundamentals
-import MailAPICore
+import MapKitCore
 import XMLHttpRequest
 import Web
 

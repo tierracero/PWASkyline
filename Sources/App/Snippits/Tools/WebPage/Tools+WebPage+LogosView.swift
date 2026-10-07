@@ -146,18 +146,12 @@ extension ToolsView.WebPage {
                 Div{
                     
                     Img()
-                        .closeButton(.subView)
-                        .onClick {
-                            self.remove()
-                        }
-                    
-                    Img()
                         .src("/skyline/media/panel_service.png")
                         .marginLeft(7.px)
                         .height(35.px)
                         .float(.left)
                     
-                    H2("Configuracion Pagina Contacto")
+                    H2("Configuracion Pagina Logos")
                         .color(.lightBlueText)
                         .marginLeft(7.px)
                         .float(.left)
@@ -315,21 +309,25 @@ extension ToolsView.WebPage {
 
             }
             .backgroundColor(.backGroundGraySlate)
-            .custom("left", "calc(5% - 14px)")
-            .custom("top", "calc(5% - 14px)")
-            .borderRadius(all: 24.px)
-            .position(.absolute)
+            // .custom("left", "calc(5% - 14px)")
+            // .custom("top", "calc(5% - 14px)")
+            // .borderRadius(all: 24.px)
+            // .position(.absolute)
+            // .padding(all: 7.px)
+            // .height(90.percent)
+            // .width(90.percent)
+            .height(100.percent)
+            .width(100.percent)
             .padding(all: 7.px)
-            .height(90.percent)
-            .width(90.percent)
         }
 
         override func buildUI() {
-            position(.absolute)
-            height(100.percent)
-            width(100.percent)
-            left(0.px)
-            top(0.px)
+
+            // position(.absolute)
+            // height(100.percent)
+            // width(100.percent)
+            // left(0.px)
+            // top(0.px)
             
             darkLogos.forEach { image in
                 
@@ -734,10 +732,6 @@ extension ToolsView.WebPage {
             
         }
         
-        
-
-
-
         override func didRemoveFromDOM() {
             super.didRemoveFromDOM()
             $darkLogo.removeAllListeners()

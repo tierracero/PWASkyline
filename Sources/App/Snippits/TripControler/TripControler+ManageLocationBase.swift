@@ -112,6 +112,8 @@ class ManageLocationBase: Div {
         self.state = item.state
         self.country = item.country
         self.zipCode = item.zipCode
+        self.latitude = item.latitude.map { String($0) } ?? ""
+        self.longitude = item.longitude.map { String($0) } ?? ""
         self.isHomeItem = item.placementType == .origen
         self.hasDestination = true
 
@@ -162,6 +164,10 @@ class ManageLocationBase: Div {
     @State var country = "MEX"
     /// Domicilio CodigoPostal
     @State var zipCode = ""
+
+    @State var latitude = ""
+
+    @State var longitude = ""
     
     /// Distancia recorrida
     @State var distance = ""
@@ -242,6 +248,18 @@ class ManageLocationBase: Div {
     
     lazy var zipCodeField = InputText(self.$zipCode)
         .placeholder("87000")
+        .custom("width","calc(100% - 24px)")
+        .class(.textFiledBlackDark)
+        .height(31.px)
+
+    lazy var latitudeField = InputText(self.$latitude)
+        .placeholder("Latitud (opcional)")
+        .custom("width","calc(100% - 24px)")
+        .class(.textFiledBlackDark)
+        .height(31.px)
+
+    lazy var longitudeField = InputText(self.$longitude)
+        .placeholder("Longitud (opcional)")
         .custom("width","calc(100% - 24px)")
         .class(.textFiledBlackDark)
         .height(31.px)
@@ -489,6 +507,25 @@ class ManageLocationBase: Div {
                     Div().class(.clear)
                 }
                 .marginBottom(7.px)
+
+                Div {
+                    Div {
+                        Div("Latitud (opcional)").color(.white)
+                        self.latitudeField
+                    }
+                    .width(50.percent)
+                    .float(.left)
+
+                    Div {
+                        Div("Longitud (opcional)").color(.white)
+                        self.longitudeField
+                    }
+                    .width(50.percent)
+                    .float(.left)
+
+                    Div().class(.clear)
+                }
+                .marginBottom(7.px)
                 
                 Div{
                     Div("Eliminar")
@@ -609,6 +646,8 @@ class ManageLocationBase: Div {
         $state.removeAllListeners()
         $country.removeAllListeners()
         $zipCode.removeAllListeners()
+        $latitude.removeAllListeners()
+        $longitude.removeAllListeners()
         $distance.removeAllListeners()
     }
     
@@ -655,6 +694,27 @@ class ManageLocationBase: Div {
             return
         }
 
+        let latitudeText = latitude.purgeSpaces
+        let longitudeText = longitude.purgeSpaces
+        let latitudeValue = Double(latitudeText)
+        let longitudeValue = Double(longitudeText)
+
+        if !latitudeText.isEmpty {
+            guard let latitudeValue, (-90.0...90.0).contains(latitudeValue) else {
+                showError(.requiredField, "Ingrese una latitud valida entre -90 y 90")
+                latitudeField.select()
+                return
+            }
+        }
+
+        if !longitudeText.isEmpty {
+            guard let longitudeValue, (-180.0...180.0).contains(longitudeValue) else {
+                showError(.requiredField, "Ingrese una longitud valida entre -180 y 180")
+                longitudeField.select()
+                return
+            }
+        }
+
         let item = FiscalLocationBase(
             id: id ?? UUID(),
             placementType: placementType,
@@ -670,7 +730,9 @@ class ManageLocationBase: Div {
             state: state,
             country: country,
             zipCode: zipCode.purgeSpaces,
-            status: status
+            status: status,
+            latitude: latitudeValue,
+            longitude: longitudeValue
         )
 
         loadingView.show()
@@ -690,7 +752,9 @@ class ManageLocationBase: Div {
                 refrence: item.refrence,
                 state: item.state,
                 country: item.country,
-                zipCode: item.zipCode
+                zipCode: item.zipCode,
+                latitude: item.latitude,
+                longitude: item.longitude
             ) { resp in
                 loadingView.hide()
 
@@ -724,7 +788,9 @@ class ManageLocationBase: Div {
             refrence: item.refrence,
             state: item.state,
             country: item.country,
-            zipCode: item.zipCode
+            zipCode: item.zipCode,
+            latitude: item.latitude,
+            longitude: item.longitude
         ) { resp in
             loadingView.hide()
 

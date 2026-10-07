@@ -30,7 +30,8 @@ class AddPaymentFormView: Div {
         _ provider: String,
         _ lastFour: String,
         _ auth: String,
-        _ uts: Int64?
+        _ uts: Int64?,
+        _ downpayment: Bool
     ) -> ())
         
     init(
@@ -45,7 +46,8 @@ class AddPaymentFormView: Div {
             _ provider: String,
             _ lastFour: String,
             _ auth: String,
-            _ uts: Int64?
+            _ uts: Int64?,
+            _ downpayment: Bool
         ) -> ())
     ) {
         self.accountId = accountId
@@ -895,7 +897,7 @@ class AddPaymentFormView: Div {
              i dont know if i need this !!
              
             if meth == .efectivo {
-                self.callback( .efectivo, "", 0, "", "", "", nil)
+                self.callback( .efectivo, "", 0, "", "", "", nil, false)
                 return
             }
             */
@@ -906,7 +908,7 @@ class AddPaymentFormView: Div {
         
         var thisPayment = thisPaymentFloat.toCents
         
-        if !self.isDownPayment {
+        if !self.isDownPayment && currentBalance > 0 {
             if thisPayment > currentBalance {
                 
                 let change = currentBalance - thisPayment
@@ -928,7 +930,7 @@ class AddPaymentFormView: Div {
             
         }
         
-        self.callback(meth, payDescr, thisPayment, provider, lastFour, auth, uts)
+        self.callback(meth, payDescr, thisPayment, provider, lastFour, auth, uts, self.isDownPayment)
         
         self.remove()
         
@@ -981,7 +983,7 @@ class AddPaymentFormView: Div {
                 points: payload
             ) { code, description, amount, provider, lastFour, auth, uts in
                
-                self.callback(code, description, amount, provider, lastFour, auth, uts)
+                self.callback(code, description, amount, provider, lastFour, auth, uts, false)
                 
                 self.remove()
                 

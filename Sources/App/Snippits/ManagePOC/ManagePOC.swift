@@ -1112,7 +1112,7 @@ class ManagePOC: Div {
                 Div{
                     Div("Departamento")
                         .color(.lightGray)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                     
                     H4(self.$depname.map{ "\($0)" })
                         .color(.goldenRod)
@@ -1124,7 +1124,7 @@ class ManagePOC: Div {
                 Div{
                     Div("Categoria")
                         .color(.lightGray)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                     
                     H4( self.$catname.map{ "\($0)" })
                         .color(.goldenRod)
@@ -1136,7 +1136,7 @@ class ManagePOC: Div {
                 Div{
                     Div("Linea")
                         .color(.lightGray)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                     
                     H4( self.$linename.map{ "\($0)" })
                         .color(.goldenRod)
@@ -1257,6 +1257,7 @@ class ManagePOC: Div {
                                         showSuccess(.operacionExitosa, "Entre en la notificacion en su movil.")
                                         
                                     }
+                                    
                                 }
                         }
                         .float(.left)
@@ -1396,8 +1397,8 @@ class ManagePOC: Div {
                     Div{
                         Div("Que costo el producto")
                             .class(.oneLineText)
-                            .fontSize(12.px)
-                            .height(18.px)
+                            .fontSize(14.px)
+                            .minHeight(20.px)
                             .color(.white)
                         
                         Div().class(.clear)
@@ -1426,8 +1427,8 @@ class ManagePOC: Div {
                         
                         Div("Costo al Publico")
                         .class(.oneLineText)
-                        .fontSize(12.px)
-                        .height(18.px)
+                        .fontSize(14.px)
+                        .minHeight(20.px)
                         .color(.white)
                         
                         Div().class(.clear)
@@ -1455,8 +1456,8 @@ class ManagePOC: Div {
                     Div{
                         Div("Medio Mayoreo")
                             .class(.oneLineText)
-                            .fontSize(12.px)
-                            .height(18.px)
+                            .fontSize(14.px)
+                            .minHeight(20.px)
                             .color(.white)
                         
                         Div().class(.clear)
@@ -1485,8 +1486,8 @@ class ManagePOC: Div {
                         
                         Div("Costo Mayoreo")
                             .class(.oneLineText)
-                            .fontSize(12.px)
-                            .height(18.px)
+                            .fontSize(14.px)
+                            .minHeight(20.px)
                             .color(.white)
                         
                         Div().class(.clear)
@@ -1514,8 +1515,8 @@ class ManagePOC: Div {
                         
                         Div("Costo Promocional")
                             .class(.oneLineText)
-                            .fontSize(12.px)
-                            .height(18.px)
+                            .fontSize(14.px)
+                            .minHeight(20.px)
                             .color(.white)
                      
                         Div().class(.clear)
@@ -1547,8 +1548,8 @@ class ManagePOC: Div {
                     
                     Div("Sub Total + IVA")
                         .class(.oneLineText)
-                        .fontSize(12.px)
-                        .height(12.px)
+                        .fontSize(14.px)
+                        .minHeight(20.px)
                         .color(.white)
                     
                     self.costTaxDiv
@@ -1557,8 +1558,8 @@ class ManagePOC: Div {
                     
                     Div("Ganacia")
                         .class(.oneLineText)
-                        .fontSize(12.px)
-                        .height(12.px)
+                        .fontSize(14.px)
+                        .minHeight(20.px)
                         .color(.white)
                  
                     self.priceaTaxDiv
@@ -1567,8 +1568,8 @@ class ManagePOC: Div {
                     
                     Div("Ganacia")
                         .class(.oneLineText)
-                        .fontSize(12.px)
-                        .height(12.px)
+                        .fontSize(14.px)
+                        .minHeight(20.px)
                         .color(.white)
                     
                     self.pricebTaxDiv
@@ -1577,8 +1578,8 @@ class ManagePOC: Div {
                     
                     Div("Ganacia")
                         .class(.oneLineText)
-                        .fontSize(12.px)
-                        .height(12.px)
+                        .fontSize(14.px)
+                        .minHeight(20.px)
                         .color(.white)
                     
                     self.pricecTaxDiv
@@ -1587,8 +1588,8 @@ class ManagePOC: Div {
                     
                     Div("Ganacia")
                         .class(.oneLineText)
-                        .fontSize(12.px)
-                        .height(12.px)
+                        .fontSize(14.px)
+                        .minHeight(20.px)
                         .color(.white)
                     
                     self.priceprTaxDiv
@@ -1630,7 +1631,7 @@ class ManagePOC: Div {
                             Div().class(.clear)
                             Div("Que precio a credito")
                                 .class(.oneLineText)
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                                 .color(.gray)
                         }
                     }
@@ -1654,7 +1655,7 @@ class ManagePOC: Div {
                             Div().class(.clear)
                             Div("% de anticipo")
                                 .class(.oneLineText)
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                                 .color(.gray)
                         }
                     }
@@ -1678,7 +1679,7 @@ class ManagePOC: Div {
                             Div().class(.clear)
                             Div("Cuantas mensualidades")
                                 .class(.oneLineText)
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                                 .color(.gray)
                         }
                     }
@@ -2360,7 +2361,7 @@ class ManagePOC: Div {
                             Div().class(.clear)
                             
                             Div("Agregar Comentarios")
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                                 .color(.white)
                             
                             Div()

@@ -15,18 +15,18 @@ extension CustAssetsView {
 
         override class var name: String { "div" }
 
-        let location: CustCommercialAssetsLocation
-        let callback: (CustCommercialAssetsSubLocation) -> Void
+        let section: CustCommercialAssetsSection
+        let callback: (CustCommercialAssetsSubSection) -> Void
 
         @State private var name: String
         @State private var avatar = ""
 
         init(
-            location: CustCommercialAssetsLocation,
+            section: CustCommercialAssetsSection,
             initialName: String = "",
-            callback: @escaping (CustCommercialAssetsSubLocation) -> Void
+            callback: @escaping (CustCommercialAssetsSubSection) -> Void
         ) {
-            self.location = location
+            self.section = section
             self.name = initialName
             self.callback = callback
             super.init()
@@ -39,7 +39,7 @@ extension CustAssetsView {
         @DOM override var body: DOM.Content {
             VPopUp(.fitContent(w: 580)) {
                 VTitle("Crear Sección", icon: "commertial_assets_icon.png") {
-                    USmallTitle(self.location.name)
+                    USmallTitle(self.section.name)
                 } onClose: {
                     self.remove()
                 }
@@ -47,7 +47,7 @@ extension CustAssetsView {
                 VBodyGrid {
                     VGrid(.twoThirds) {
                         Div {
-                            Div("Crear sección en (self.location.name)")
+                            Div("Crear sección en \(self.section.name)")
                                 .color(custAssetsSubLocationEditorAccent)
                                 .fontWeight(.bold)
 
@@ -58,7 +58,7 @@ extension CustAssetsView {
                             }
 
                             UField("Ubicación principal", required: false) {
-                                USubTitle(self.location.name)
+                                USubTitle(self.section.name)
                             }
                         }
                         .display(.flex)
@@ -107,7 +107,7 @@ extension CustAssetsView {
 
             loadingView.show()
             API.custAssetsV1.createAssetSubLocation(
-                commercialAssetsLocationId: location.id,
+                commercialAssetsLocationId: section.id,
                 name: name,
                 avatar: avatar.isEmpty ? nil : avatar
             ) { response in

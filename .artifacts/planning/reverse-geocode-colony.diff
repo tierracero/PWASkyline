@@ -1,0 +1,155 @@
+--- before/Sources/App/Snippits/ManualAddressSearch.swift
++++ after/Sources/App/Snippits/ManualAddressSearch.swift
+@@ -782,6 +782,8 @@
+                     self.processReverseGeocodeMapResponse(payload, latitude, longitude)
+                 }
+                 
++                loadingView.hide()
++
+                 return .undefined
+             }.jsValue)
+         }
+@@ -817,39 +819,16 @@
+ 
+                 addresses.forEach { address in
+ 
+-                    let streetValue = (address.street?.isEmpty == false ? address.street : [address.streetName, address.streetNumber].compactMap { value in
+-                        guard let value, !value.isEmpty else { return nil }
+-                        return value
+-                    }.joined(separator: " ")) ?? ""
+-                    
+-                    let colonyValue = address.colony ?? ""
+-                    
+-                    let cityValue = address.city ?? ""
+-                    
+-                    let stateValue = address.state ?? ""
+-                    
+-                    let countryValue = Countries(rawValue: (address.country ?? "")) ?? .mexico
+-                    
+-                    let zipValue = address.zip ?? ""
+-
+-                    let view = Div("")
++                    let result = coordinateResult(from: address, latitude: latitude, longitude: longitude)
++
++                    let view = Div(address.printableAddress)
+                     .marginBottom(7.px)
+                     .width(95.percent)
+                     .class(.uibtn)
+-                    .onClick {
+-
+-                        self.callback(.coordinates(
+-                            .init(
+-                                latitude: latitude,
+-                                longitude: longitude,
+-                                street: streetValue,
+-                                settlement: colonyValue,
+-                                city: cityValue,
+-                                state: stateValue,
+-                                zip: zipValue,
+-                                country: countryValue
+-                            )
+-                        ))
++                    .onClick { [weak self] in
++                        guard let self else { return }
++
++                        self.callback(.coordinates(result))
+ 
+                         self.remove()
+                     }
+@@ -857,6 +836,7 @@
+                     self.multipleResultsContainer.appendChild(view)
+                 }
+ 
++                addManualMultipleCoordanetsIsHidden = false
+                 return
+             }
+ 
+@@ -866,49 +846,9 @@
+ 
+             print(address)
+             
+-            let streetValue = address.street?.isEmpty == false ? address.street : [address.streetName, address.streetNumber].compactMap { value in
+-                guard let value, !value.isEmpty else { return nil }
+-                return value
+-            }.joined(separator: " ")
+-            
+-            if let streetValue, !streetValue.isEmpty {
+-                street = streetValue
+-            }
+-            
+-            if let colony = address.colony, !colony.isEmpty {
+-                self.settlement = colony
+-            }
+-            
+-            if let city = address.city, !city.isEmpty {
+-                self.city = city
+-            }
+-            
+-            if let state = address.state, !state.isEmpty {
+-                self.state = state
+-            }
+-            
+-            if let country = address.country, !country.isEmpty {
+-                if let value = Countries(rawValue: country) {
+-                    self.country = value
+-                }
+-            }
+-            
+-            if let zip = address.zip, !zip.isEmpty {
+-                self.zip = zip
+-            }
+-
+-            self.callback(.coordinates(
+-                .init(
+-                    latitude: latitude,
+-                    longitude: longitude,
+-                    street: self.street,
+-                    settlement: self.settlement,
+-                    city: self.city,
+-                    state: self.state,
+-                    zip: self.zip,
+-                    country: self.country
+-                )
+-            ))
++            // Postal-search state listeners clear settlement when city/state changes.
++            // Return the geocoder snapshot directly so colony survives those listeners.
++            self.callback(.coordinates(coordinateResult(from: address, latitude: latitude, longitude: longitude)))
+ 
+             self.remove()
+             
+@@ -917,6 +857,24 @@
+             showError(.unexpectedResult, "No se pudo decodificar dirección de coordenadas.")
+             return
+         }
++    }
++
++    private func coordinateResult(from address: ReverseGeocodedAddress, latitude: Double, longitude: Double) -> CoordinateResult {
++        let street = (address.street?.isEmpty == false ? address.street : [address.streetName, address.streetNumber].compactMap { value in
++            guard let value, !value.isEmpty else { return nil }
++            return value
++        }.joined(separator: " ")) ?? ""
++
++        return .init(
++            latitude: latitude,
++            longitude: longitude,
++            street: street,
++            settlement: address.colony ?? "",
++            city: address.city ?? "",
++            state: address.state ?? "",
++            zip: address.zip ?? "",
++            country: Countries(rawValue: address.country ?? "") ?? .mexico
++        )
+     }
+ 
+     override func didRemoveFromDOM() {
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -11,7 +11,7 @@
+ - `CreateNewCustomerDataView`, `ManageSubCustomerAccountView`, and `ManualAddressSearch` use TierraCeroCustomUI headers/controls and scoped crystal surfaces. `addToDom` automatically chooses the glass host for these customer/address views, `SearchCustomerView`, `SearchSubCustomerView`, and `CreateNewCusomerView` when the caller uses the standard presentation; explicit interactive/glass presentations remain supported.
+ - `SearchSubCustomerView` scopes API searches to its injected `CustAcctSearch` parent. One match enters selection; multiple matches appear as keyboard-selectable cards. A successful empty search opens `CreateNewCusomerView`, then passes the account type/search term and `requierFullAddress` flag to `ManageSubCustomerAccountView`. Required-address selection checks complete street/colony/city/state/country/zip and finite, in-range latitude/longitud; incomplete items show a Spanish alert and open the prefilled manager for editing. Search remains available after child cancellation and completes once with a parent-validated item after any required edit. Removed-view responses are ignored.
+ - `ManageSubCustomerAccountView` supports new and existing `CustSubAcct` initializers under one injected `CustAcctSearch` parent. Editing prefills all submitted fields and retains status. `requierFullAddress` defaults to false for creation; when true, address lookup reverse-geocodes existing valid coordinates, rejects postal-only results, and save/returned-record validation requires complete address and valid coordinates. Optional-address mode retains postal-only selection with cleared coordinates. Coordinate search-term lookup starts after DOM attachment. Its read-only MapKit preview loads initial edit coordinates and refreshes after either coordinate state changes, combining paired assignments and ignoring stale JWT responses. Invalid/empty coordinates clear the map; required mode shows a hint, optional mode hides it. The view destroys its own map on refresh/removal without modifying shared map globals. The manager returns server-created/reloaded records without introducing a global subaccount cache.
+-- `ManualAddressSearch` uses `VPopUp`/`VTitle` for address, coordinate, and geocoder-choice dialogs. Coordinate choices display their printable addresses, and coordinate results are returned directly from the geocoder snapshot so postal-code listeners cannot clear the returned address.
++- `ManualAddressSearch` provides address, coordinate, and geocoder-choice dialogs. Multiple coordinate choices display their printable addresses and reveal the selection overlay. Both single and multiple coordinate results use one conversion from the decoded geocoder snapshot, without assigning postal-search city/state/settlement state. This preserves the normalized `colony` as `CoordinateResult.settlement` through the parent customer/subaccount colony fields, bypassing postal-search listeners that clear settlement when city/state changes.
+ - `Sources/Service/skyline/js/visualPerformance.js` exposes the derived performance mode as `data-tc-performance-mode` on the document root. In performance mode, named modal veils and glass content shells use translucent black backgrounds (65% and 85% opacity respectively) while backdrop filters remain disabled; disabling the mode restores their theme backgrounds through the CSS cascade.
+ - Browser speech recognition is centralized in `SpeechRecognitionManager`; it retains the JavaScript callback for the active session and routes transcripts to one weak `SpeechRecognitionTarget`.
+ - `WorkViewControler` owns one authenticated-session `TCSpeechRecognitionFloatingButton` and shuts it down when the work shell leaves the DOM.

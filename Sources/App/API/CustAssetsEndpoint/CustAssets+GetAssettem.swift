@@ -4,15 +4,15 @@ import TCFireSignal
 
 extension CustAssetsComponents {
 
-    static func getAssettem(
+    static func getAssetItem(
         assetItemId: UUID,
-        callback: @escaping ((_ resp: APIResponseGeneric<GetAssettemResponse>?) -> ())
+        callback: @escaping ((_ resp: APIResponseGeneric<GetAssetItemResponse>?) -> ())
     ) {
         sendPost(
             rout,
             version,
-            "getAssettem",
-            GetAssettemRequest(assetItemId: assetItemId)
+            "GetAssetItem",
+            GetAssetItemRequest(assetItemId: assetItemId)
         ) { data in
             guard let data else {
                 callback(nil)
@@ -21,7 +21,7 @@ extension CustAssetsComponents {
 
             do {
                 callback(try decodeAPIResponse(
-                    APIResponseGeneric<GetAssettemResponse>.self,
+                    APIResponseGeneric<GetAssetItemResponse>.self,
                     from: data
                 ))
             }

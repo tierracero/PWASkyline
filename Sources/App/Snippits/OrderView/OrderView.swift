@@ -359,7 +359,7 @@ class OrderView: Div {
                             accountId: self.order.custAcct,
                             cardId: self.accountView.cardId,
                             currentBalance: self.total
-                        ) { code, description, amount, provider, lastFour, auth, uts in
+                        ) { code, description, amount, provider, lastFour, auth, uts, downpayment in
                             
                             loadingView.show()
                             
@@ -367,7 +367,7 @@ class OrderView: Div {
                                 self.proccessPaymentWithPoints(amount.fromCents)
                             }
                             else {
-                                self.proccessPayment(code, description, amount.fromCents, provider, lastFour, auth, uts)
+                                self.proccessPayment(code, description, amount.fromCents, provider, lastFour, auth, uts, downpayment)
                             }
                             
                         }
@@ -480,18 +480,18 @@ class OrderView: Div {
                 Div{
                     Div{
                         Span("T. Cargos")
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                             .color(.white)
                         Div().class(.clear).marginTop(7.px)
                         
                         
                         Span("T. Pagos")
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                             .color(.white)
                         Div().class(.clear).marginTop(7.px)
                         
                         Span("Balance")
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                             .fontWeight(.bolder)
                             .color(.white)
                         Div().class(.clear).marginTop(7.px)
@@ -1135,7 +1135,7 @@ class OrderView: Div {
                     
                     Div().class(.clear)
                 }
-                .fontSize(28.px)
+                .fontSize(26.px)
                 .align(.right)
                 
                 // OnWork User
@@ -1207,7 +1207,7 @@ class OrderView: Div {
                     .float(.right)
                 }
                 .hidden(self.$onWorkUser.map{ $0 == nil })
-                .fontSize(28.px)
+                .fontSize(26.px)
                 
                 Div().class(.clear).height(7.px)
                 
@@ -3445,12 +3445,14 @@ class OrderView: Div {
             allowWarrantyCharges: true,
             socCanLoadAction: true,
             costType: self.accountView.account?.costType ?? .cost_a, 
+            authorizationContext: .order,
             currentSOCMasters: socIds
         ){ id, isWarenty, internalWarenty in
             
             let view = ConfirmProductViewNew(
                 accountId: self.order.custAcct,
                 costType: .cost_a,
+                authorizationContext: .order,
                 pocid: id,
                 selectedInventoryIDs: [],
                 blockPurchaseOrders: false,
@@ -3771,7 +3773,20 @@ class OrderView: Div {
                 title: "Eliminar Cargo",
                 message: "Confirme eliminacion de:\n\(name) $\(amount.formatMoney)",
                 callback: { confirmed, _ in
-                    
+                    guard confirmed else { return }
+
+                    if custCatchHerk < configStoreProcessing.restrictDeleteCharges {
+                        addToDom(CustTaskAuthRequestWaitView(
+                            removeChargeFrom: self.order.id,
+                            chargeId: id
+                        ) { authorized in
+                            if authorized {
+                                self.refreshAfterCTAMRemoval()
+                            }
+                        })
+                        return
+                    }
+
                     loadingView.show()
                     
                     API.custOrderV1.removeCharge(
@@ -3797,15 +3812,16 @@ class OrderView: Div {
                             return
                         }
                         
-                        if !payload.auth {
+                        guard payload.auth else {
                             showAlert(.alerta, "Se ha solicitado remover el cargo")
+                            return
                         }
                         
                         var _charges: [CustOrderLoadFolioCharges] = []
                         
-                        if let tr = self.chargesRefrence[id] {
+                        if let tr = self.chargesRefrence[viewId] {
                             tr.remove()
-                            self.chargesRefrence.removeValue(forKey: id)
+                            self.chargesRefrence.removeValue(forKey: viewId)
                         }
                         
                         self.charges.forEach { obj in
@@ -3834,13 +3850,6 @@ class OrderView: Div {
                             }
                             
                         }
-                        
-                        guard let view = self.chargesRefrence[viewId] else {
-                            showError(.generalError, "No localizo cargo a remover")
-                            return
-                        }
-                        
-                        view.remove()
                         
                     }
                 })
@@ -3963,6 +3972,67 @@ class OrderView: Div {
                     }
                 })
         )
+    }
+
+    func refreshAfterCTAMRemoval() {
+        let orderId = order.id
+        loadingView.show()
+
+        API.custOrderV1.loadOrder(identifier: .id(orderId), modifiedAt: nil) { [weak self] resp in
+            loadingView.hide()
+
+            guard let self, self.isInDOM else { return }
+
+            guard let resp, resp.status == .ok else {
+                showError(.generalError, resp?.msg ?? "No se pudo actualizar la orden.")
+                return
+            }
+
+            guard let payload = resp.data else {
+                showError(.unexpectedResult, .unexpenctedMissingPayload)
+                return
+            }
+
+            guard case .load(let data) = payload else {
+                showError(.unexpectedResult, .unexpenctedMissingPayload)
+                return
+            }
+
+            acctMinCatch[orderId] = data.account
+            orderCatch[orderId] = data.order
+            notesCatch[orderId] = data.notes
+            paymentsCatch[orderId] = data.payments
+            chargesCatch[orderId] = data.charges
+            pocsCatch[orderId] = data.pocs
+            filesCatch[orderId] = data.files
+            contractsCatch[orderId] = data.contracts
+            equipmentsCatch[orderId] = data.equipments
+            rentalsCatch[orderId] = data.rentals
+            if let transferOrder = data.transferOrder {
+                transferOrderCatch[orderId] = transferOrder
+            }
+            if let route = data.route {
+                custOrderRouteCatch[orderId] = route
+            }
+
+            Dispatch.asyncAfter(0.05) { [weak self] in
+                guard let self, self.isInDOM else { return }
+
+                self.accountView.acctType = data.account.type
+                self.accountView.cardId = data.account.CardID
+                self.order = data.order
+                self.notes = data.notes
+                self.payments = data.payments
+                self.charges = data.charges
+                self.pocs = data.pocs
+                self.files = data.files
+                self.contracts = data.contracts
+                self.equipments = data.equipments
+                self.rentals = data.rentals
+                self.transferOrder = data.transferOrder
+                self.parseOrderData()
+            }
+        }
     }
     
     func editPoc(viewId: UUID, ids: [UUID]) {
@@ -4169,7 +4239,20 @@ class OrderView: Div {
                 title: "Eliminar Pago",
                 message: "Confirme eliminacion de:\n\(name) $\(amount.formatMoney)",
                 callback: { confirmed, _ in
-                    
+                    guard confirmed else { return }
+
+                    if custCatchHerk < configStoreProcessing.restrictDeletePayments {
+                        addToDom(CustTaskAuthRequestWaitView(
+                            removePaymentFrom: self.order.id,
+                            paymentId: id
+                        ) { authorized in
+                            if authorized {
+                                self.refreshAfterCTAMRemoval()
+                            }
+                        })
+                        return
+                    }
+
                     loadingView.show()
                     
                     API.custOrderV1.removePayment(
@@ -4187,6 +4270,16 @@ class OrderView: Div {
                         
                         guard resp.status == .ok  else {
                             showError(.generalError, resp.msg)
+                            return
+                        }
+
+                        guard let payload = resp.data else {
+                            showError(.unexpectedResult, .unexpenctedMissingPayload)
+                            return
+                        }
+
+                        guard payload.auth else {
+                            showAlert(.alerta, "Se ha solicitado remover el pago")
                             return
                         }
                         
@@ -5529,7 +5622,7 @@ class OrderView: Div {
             }.jsValue)
         }
 
-    func proccessPayment(_ code: FiscalPaymentCodes, _ description: String, _ amount: Float, _ provider: String, _ lastFour: String, _ auth: String, _ uts: Int64?){
+    func proccessPayment(_ code: FiscalPaymentCodes, _ description: String, _ amount: Float, _ provider: String, _ lastFour: String, _ auth: String, _ uts: Int64?, _ downpayment: Bool){
         
         print("⚠️ API.custOrderV1.addPayment")
 
@@ -5541,7 +5634,8 @@ class OrderView: Div {
             cost: amount,
             provider: provider,
             lastFour: lastFour,
-            auth: auth
+            auth: auth,
+            downpayment: downpayment
         ) { resp in
 
             Console.clear()

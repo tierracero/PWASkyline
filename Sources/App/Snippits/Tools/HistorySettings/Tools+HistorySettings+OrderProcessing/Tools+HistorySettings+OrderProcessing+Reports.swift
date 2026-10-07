@@ -99,7 +99,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
                 /// Tipo de reporte
                 Div{
                     Label("Tipo de reporte")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.reportTypeSelect
@@ -111,7 +111,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
                 /// Seleccione Tienda
                 Div{
                     Label("Seleccione Tienda")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.storeSelect
@@ -124,7 +124,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
                 /// Seleccione Usuario
                 Div{
                     Label("Seleccione Usuario")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.userSelect
@@ -136,7 +136,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
                 
                 Div{
                     Label("Seleccione Fecha")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.dateSelect
@@ -148,7 +148,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
                 
                 Div{
                     Label("Fecha Inicio")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.startAtField
@@ -164,7 +164,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
                 
                 Div{
                     Label("Fecha Final")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.endAtField
@@ -477,7 +477,8 @@ extension ToolsView.HistorySettings.OrderProcessing {
                 parseReportGeneral(
                     created: general.created,
                     closed: general.closed,
-                    payments: general.payments
+                    payments: general.payments,
+                    delivered: general.delivered
                 )
             case .byOrder(_):
                 break
@@ -485,13 +486,15 @@ extension ToolsView.HistorySettings.OrderProcessing {
                 parseReportGeneral(
                     created: byStore.created,
                     closed: byStore.closed,
-                    payments: byStore.payments
+                    payments: byStore.payments,
+                    delivered: byStore.delivered
                 )
             case .byUser(let byUser):
                 parseReportGeneral(
                     created: byUser.created,
                     closed: byUser.closed,
-                    payments: byUser.payments
+                    payments: byUser.payments,
+                    delivered: byUser.delivered
                 )
             case .byType(_):
                 break
@@ -499,7 +502,12 @@ extension ToolsView.HistorySettings.OrderProcessing {
             
         }
         
-        func parseReportGeneral(created: [API.custOrderV1.ReportsObjects], closed: [API.custOrderV1.ReportsObjects], payments: [CustAcctPaymentsQuick]){
+        func parseReportGeneral(
+            created: [API.custOrderV1.ReportsObjects],
+            closed: [API.custOrderV1.ReportsObjects],
+            payments: [CustAcctPaymentsQuick],
+            delivered: [API.custOrderV1.ReportsDeliveredEquipment]
+        ) {
             
             self.gridDiv.innerHTML = ""
             
@@ -628,14 +636,65 @@ extension ToolsView.HistorySettings.OrderProcessing {
                                 }
                             
                             
-                            H1("Pagos Recidos")
+                            H1("Pagos y anticipos recibidos")
                                 .color(.yellowTC)
                                 .marginBottom(7.px)
                                 .marginTop(12.px)
                         }
                     )
                     
-                    self.parseReportPaymentData(userref: userref, isHidden: $isHiddenC, data: payments)
+                    let generalPayments = payments.filter { !$0.downpayment }
+                    let downpayments = payments.filter { $0.downpayment }
+                    let generalTotal = self.reportPaymentTotal(generalPayments)
+                    let downpaymentTotal = self.reportPaymentTotal(downpayments)
+
+                    self.gridDiv.appendChild(Div {
+                        H2("Pagos generales: \(generalTotal.formatMoney)")
+                        H2("Anticipos: \(downpaymentTotal.formatMoney)")
+                        H2("TOTAL PAGOS Y ANTICIPOS: \((generalTotal + downpaymentTotal).formatMoney)")
+                    }.color(.yellowTC))
+
+                    self.gridDiv.appendChild(H2("Pagos generales").color(.yellowTC))
+                    self.parseReportPaymentData(userref: userref, isHidden: $isHiddenC, data: generalPayments)
+                    self.gridDiv.appendChild(H2("Anticipos").color(.yellowTC))
+                    self.parseReportPaymentData(userref: userref, isHidden: $isHiddenC, data: downpayments)
+                }
+
+                if !delivered.isEmpty {
+                    @State var isHiddenD = false
+
+                    self.gridDiv.appendChild(
+                        Div {
+                            Img()
+                                .src($isHiddenD.map { $0 ? "/skyline/media/dropDown.png" : "/skyline/media/dropDownClose.png" })
+                                .marginRight(24.px)
+                                .class(.iconWhite)
+                                .paddingTop(7.px)
+                                .float(.right)
+                                .opacity(0.5)
+                                .width(36.px)
+                                .onClick {
+                                    isHiddenD = !isHiddenD
+                                }
+
+                            Img()
+                                .src("/skyline/media/download2.png")
+                                .marginRight(24.px)
+                                .paddingTop(7.px)
+                                .float(.right)
+                                .width(36.px)
+                                .onClick {
+                                    self.downloadReport(type: .delivered)
+                                }
+
+                            H1("Equipos Entregados")
+                                .color(.yellowTC)
+                                .marginBottom(7.px)
+                                .marginTop(12.px)
+                        }
+                    )
+
+                    self.parseReportDeliveredData(userref: userref, isHidden: $isHiddenD, data: delivered)
                 }
                 
                 loadingView.hide()
@@ -870,6 +929,83 @@ extension ToolsView.HistorySettings.OrderProcessing {
             
         }
         
+        func parseReportDeliveredData(
+            userref: [UUID: CustUsername],
+            isHidden: State<Bool>,
+            data: [API.custOrderV1.ReportsDeliveredEquipment]
+        ) {
+            var tableView = TBody().hidden(isHidden)
+
+            let table = Table {
+                THead {
+                    Tr {
+                        Td("Entregado")
+                        Td("Folio")
+                        Td("Orden Creada")
+                        Td("Orden Cerrada")
+                        Td("Tipo")
+                        Td("Equipo")
+                        Td("Identificador")
+                        Td("Descripción del Equipo")
+                        Td("Entregado Por")
+                        Td("Otros Equipos Pendientes")
+                        Td("Estado de la Orden")
+                    }
+                    .backgroundColor(.black)
+                    .color(.yellowTC)
+                    .position(.sticky)
+                    .top(0.px)
+                }
+
+                tableView
+            }
+            .width(100.percent)
+            .color(.white)
+
+            data.forEach { item in
+                let equipmentName = [item.equipment.tag1, item.equipment.tag2, item.equipment.tag3]
+                    .filter { !$0.isEmpty }
+                    .joined(separator: " / ")
+                let identifier = [item.equipment.IDTag1, item.equipment.IDTag2]
+                    .filter { !$0.isEmpty }
+                    .joined(separator: " / ")
+
+                var deliveredBy = "N/A"
+                if let userId = item.equipment.deliveredBy, let user = userref[userId] {
+                    deliveredBy = user.username.explode("@").first ?? user.username
+                }
+
+                tableView.appendChild(
+                    Tr {
+                        Td(getDate(item.equipment.deliveredAt).formatedLong)
+                        Td(item.order.folio)
+                        Td(getDate(item.order.createdAt).formatedLong)
+                        Td(item.order.closedAt.map { getDate($0).formatedLong } ?? "--")
+                        Td(item.order.type.description)
+                        Td(equipmentName.isEmpty ? "N/A" : equipmentName)
+                        Td(identifier.isEmpty ? "N/A" : identifier)
+                        Td(item.equipment.tagDescr)
+                        Td(deliveredBy)
+                        Td(item.hasPendingEquipment ? "Sí" : "No")
+                        Td(item.order.status.description)
+                    }.color(.white)
+                )
+            }
+
+            self.gridDiv.appendChild(table)
+        }
+
+        func reportPaymentTotal(_ payments: [CustAcctPaymentsQuick]) -> Int64 {
+            payments.reduce(0) { total, payment in
+                switch payment.type {
+                case .payment:
+                    return total + payment.cost
+                case .adjustment:
+                    return total - payment.cost
+                }
+            }
+        }
+
         func parseReportPaymentData( userref: [UUID:CustUsername], isHidden: State<Bool>, data: [CustAcctPaymentsQuick]){
             
             var tableView = TBody()
@@ -912,17 +1048,9 @@ extension ToolsView.HistorySettings.OrderProcessing {
             .width(100.percent)
             .color(.white)
             
-            var total: Int64 = 0
+            let total = reportPaymentTotal(data)
             
             data.forEach { item in
-                
-                switch item.type {
-                    
-                case .payment:
-                    total += item.cost
-                case .adjustment:
-                    total -= item.cost
-                }
                 
                 var uname = ""
                 
@@ -1171,6 +1299,12 @@ extension ToolsView.HistorySettings.OrderProcessing {
                             fileName: "reporte genral de finanzas \(storeName)\(getDate(startAtUTS).formatedLong)-\(getDate(endAtUTS).formatedLong)".uppercased().replace(from: " ", to: "_") + ".csv",
                             data: payload.payments
                         )
+                    case .delivered:
+                        self.printReportDeliveredData(
+                            userref: userref,
+                            fileName: "reporte general de equipos entregados \(storeName)\(getDate(startAtUTS).formatedLong)-\(getDate(endAtUTS).formatedLong)".uppercased().replace(from: " ", to: "_") + ".csv",
+                            data: payload.delivered
+                        )
                     }
                 case .byOrder(_):
                     break
@@ -1207,6 +1341,12 @@ extension ToolsView.HistorySettings.OrderProcessing {
                             fileName: "reporte pagos por tienda \(storeName)\(getDate(startAtUTS).formatedLong)-\(getDate(endAtUTS).formatedLong)".uppercased().replace(from: " ", to: "_") + ".csv",
                             data: payload.payments
                         )
+                    case .delivered:
+                        self.printReportDeliveredData(
+                            userref: userref,
+                            fileName: "reporte equipos entregados por tienda \(storeName)\(getDate(startAtUTS).formatedLong)-\(getDate(endAtUTS).formatedLong)".uppercased().replace(from: " ", to: "_") + ".csv",
+                            data: payload.delivered
+                        )
                     }
                 case .byUser(let payload):
                     
@@ -1238,6 +1378,12 @@ extension ToolsView.HistorySettings.OrderProcessing {
                             userref: userref,
                             fileName: "reporte pagos por usuario \(uname)\(getDate(startAtUTS).formatedLong)-\(getDate(endAtUTS).formatedLong)".uppercased().replace(from: " ", to: "_") + ".csv",
                             data: payload.payments
+                        )
+                    case .delivered:
+                        self.printReportDeliveredData(
+                            userref: userref,
+                            fileName: "reporte equipos entregados por usuario \(uname)\(getDate(startAtUTS).formatedLong)-\(getDate(endAtUTS).formatedLong)".uppercased().replace(from: " ", to: "_") + ".csv",
+                            data: payload.delivered
                         )
                     }
                 case .byType(_):
@@ -1337,41 +1483,85 @@ extension ToolsView.HistorySettings.OrderProcessing {
             
         }
         
-        func printReportPaymentData( userref: [UUID:CustUsername], fileName: String, data: [CustAcctPaymentsQuick]){
-            
-            var csvString = "Creado,Tipo,Folio,Orden,Creado Por,Descripción,Cantidad"
-            
-            var total: Int64 = 0
-            
+        func printReportDeliveredData(
+            userref: [UUID: CustUsername],
+            fileName: String,
+            data: [API.custOrderV1.ReportsDeliveredEquipment]
+        ) {
+            var csvString = "Entregado,Folio,Orden Creada,Orden Cerrada,Tienda,Cuenta,Subcuenta,Tipo de Orden,Estado de Orden,Descripción de Orden,ID Equipo,IDTag1,IDTag2,Marca,Modelo,Tipo de Equipo,Descripción de Equipo,Procesado Por,Entregado Por,Otros Equipos Pendientes"
+
             data.forEach { item in
-                
-                switch item.type {
-                    
-                case .payment:
-                    total += item.cost
-                case .adjustment:
-                    total -= item.cost
+                var deliveredBy = ""
+                if let userId = item.equipment.deliveredBy, let user = userref[userId] {
+                    deliveredBy = user.username.explode("@").first ?? user.username
                 }
-                
-                var uname = ""
-                
-                if let createdBy = item.createdBy {
-                    if let user = userref[createdBy] {
+
+                var workedBy = ""
+                if let userId = item.equipment.workedBy, let user = userref[userId] {
+                    workedBy = user.username.explode("@").first ?? user.username
+                }
+
+                let values: [String] = [
+                    getDate(item.equipment.deliveredAt).formatedLong,
+                    item.order.folio,
+                    getDate(item.order.createdAt).formatedLong,
+                    item.order.closedAt.map { getDate($0).formatedLong } ?? "",
+                    item.order.store?.uuidString ?? "",
+                    item.order.custAcct.uuidString,
+                    item.order.custSubAcct?.uuidString ?? "",
+                    item.order.type.description,
+                    item.order.status.description,
+                    item.order.description,
+                    item.equipment.id.uuidString,
+                    item.equipment.IDTag1,
+                    item.equipment.IDTag2,
+                    item.equipment.tag1,
+                    item.equipment.tag2,
+                    item.equipment.tag3,
+                    item.equipment.tagDescr,
+                    workedBy,
+                    deliveredBy,
+                    item.hasPendingEquipment ? "SI" : "NO"
+                ]
+
+                csvString += "\n" + values.map { value in
+                    "\"\(value.replacingOccurrences(of: "\"", with: "\"\""))\""
+                }.joined(separator: ",")
+            }
+
+            _ = JSObject.global.download!(fileName, csvString)
+        }
+
+        func printReportPaymentData(userref: [UUID:CustUsername], fileName: String, data: [CustAcctPaymentsQuick]) {
+            var csvString = "Clasificación,Creado,Tipo,Folio,Orden,Creado Por,Descripción,Cantidad"
+            let generalPayments = data.filter { !$0.downpayment }
+            let downpayments = data.filter { $0.downpayment }
+
+            for (label, payments) in [("Pagos generales", generalPayments), ("Anticipos", downpayments)] {
+                for item in payments {
+                    var uname = ""
+                    if let createdBy = item.createdBy, let user = userref[createdBy] {
                         uname = user.username.explode("@").first ?? user.username
                     }
+                    let values = [
+                        label,
+                        getDate(item.createdAt).formatedLong,
+                        item.type.description,
+                        item.folio,
+                        "--",
+                        uname,
+                        item.description,
+                        item.cost.formatMoney.replace(from: ",", to: "")
+                    ]
+                    csvString += "\n" + values.map { value in
+                        "\"\(value.replacingOccurrences(of: "\"", with: "\"\""))\""
+                    }.joined(separator: ",")
                 }
-                
-                csvString += "\n\(getDate(item.createdAt).formatedLong),\(item.type.description.replace(from: ",", to: "")),\(item.folio),--,\(uname),\(item.description.replace(from: ",", to: " ")),\(item.cost.formatMoney.replace(from: ",", to: ""))"
-                
+                csvString += "\n\(label),,,,,,SUBTOTAL,\(reportPaymentTotal(payments).formatMoney.replace(from: ",", to: ""))"
             }
-            
-            csvString += "\n,,,,,TOTAL,\(total.formatMoney.replace(from: ",", to: ""))"
-            
-            _ = JSObject.global.download!( fileName, csvString)
-            
+            csvString += "\n,,,,,,TOTAL PAGOS Y ANTICIPOS,\(reportPaymentTotal(data).formatMoney.replace(from: ",", to: ""))"
+            _ = JSObject.global.download!(fileName, csvString)
         }
-        
-        
 
         override func didRemoveFromDOM() {
             super.didRemoveFromDOM()
@@ -1393,5 +1583,6 @@ extension ToolsView.HistorySettings.OrderProcessing.Reports {
         case created
         case closed
         case payments
+        case delivered
     }
 }

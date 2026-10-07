@@ -1,0 +1,318 @@
+--- before/Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift
++++ after/Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift
+@@ -96,9 +96,9 @@
+ 
+     @State var fiscalProfileListener = fiscalProfiles.first?.id.uuidString ?? ""
+ 
+-    @State var origin: FiscalLocationItem? = nil
+-
+-    @State var destination: FiscalLocationItem? = nil
++    @State var origin: CustCommercialTripsComponents.TripLocation? = nil
++
++    @State var destination: CustCommercialTripsComponents.TripLocation? = nil
+ 
+     @State var balance: String = ""
+ 
+@@ -408,12 +408,12 @@
+         .display(self.$profiles.map{ ($0.count < 2) ? .none : .block })
+     }
+ 
+-    private var selectedLocations: [FiscalLocationItem] {
++    private var selectedLocations: [CustCommercialTripsComponents.TripLocation] {
+         [origin, destination].compactMap { $0 }
+     }
+ 
+     private func renderLocationSlot(
+-        _ item: FiscalLocationItem?,
++        _ item: CustCommercialTripsComponents.TripLocation?,
+         placementType: TipoUbicacion,
+         container: Div
+     ) {
+@@ -426,13 +426,13 @@
+ 
+         container.appendChild(
+             CartaPorteUbicacion(
+-                placement: item,
++                placement: fiscalLocationItem(from: item),
+                 canRemove: true,
+-                edit: { item in
++                edit: { _ in
+                     self.manageLocationItem(item, isEditing: true)
+                 }
+-            ) { id in
+-                self.clearLocation(placementType, matching: id)
++            ) { _ in
++                self.clearLocation(placementType, matching: item)
+             }
+         )
+     }
+@@ -1232,7 +1232,7 @@
+ 
+     func configureMerchendise(_ item: FiscalMercanciaBase) {
+         addToDom(AddCartaPorteMerchendise(
+-            locations: selectedLocations,
++            locations: selectedLocations.map { fiscalLocationItem(from: $0) },
+             merchandise: merchendiseItem(from: item),
+             dismissAfterSave: true
+         ) { result in
+@@ -1264,19 +1264,19 @@
+     }
+ 
+     func addLocation(_ item: FiscalLocationBase) {
+-        setLocation(locationItem(from: item))
+-    }
+-
+-    private func setLocation(_ item: FiscalLocationItem) {
++        setLocation(tripLocation(from: item))
++    }
++
++    private func setLocation(_ item: CustCommercialTripsComponents.TripLocation) {
+         switch item.placementType {
+         case .origen:
+-            if destination?.id == item.id {
++            if isSameLocation(destination, as: item) {
+                 destination = nil
+             }
+             origin = item
+ 
+         case .destino:
+-            if origin?.id == item.id {
++            if isSameLocation(origin, as: item) {
+                 origin = nil
+             }
+             destination = item
+@@ -1287,17 +1287,32 @@
+ 
+     private func clearLocation(
+         _ placementType: TipoUbicacion,
+-        matching id: UUID
++        matching item: CustCommercialTripsComponents.TripLocation
+     ) {
+         switch placementType {
+         case .origen:
+-            guard origin?.id == id else { return }
++            guard isSameLocation(origin, as: item) else { return }
+             origin = nil
+ 
+         case .destino:
+-            guard destination?.id == id else { return }
++            guard isSameLocation(destination, as: item) else { return }
+             destination = nil
+         }
++    }
++
++    private func isSameLocation(
++        _ selected: CustCommercialTripsComponents.TripLocation?,
++        as item: CustCommercialTripsComponents.TripLocation
++    ) -> Bool {
++        guard let selected,
++              selected.locationType == item.locationType,
++              selected.locationId == item.locationId else { return false }
++
++        if item.locationId != nil {
++            return true
++        }
++
++        return selected.placementId == item.placementId
+     }
+ 
+     private func synchronizeMerchandiseRoute() {
+@@ -1316,24 +1331,23 @@
+     }
+ 
+     func manageLocationItem(
+-        _ item: FiscalLocationItem,
++        _ item: CustCommercialTripsComponents.TripLocation,
+         isEditing: Bool = false
+     ) {
+-        addToDom(ManageLocationItem(item: item, isEditing: isEditing) { updatedItem in
+-            self.setLocation(updatedItem)
++        addToDom(ManageLocationItem(item: fiscalLocationItem(from: item), isEditing: isEditing) { updatedItem in
++            self.setLocation(self.tripLocation(from: updatedItem))
+         })
+     }
+ 
+-    func configureLocation(_ item: FiscalLocationBase) {
+-        manageLocationItem(locationItem(from: item))
+-    }
+-
+-    func locationItem(
++    func configureLocation(_ item: CustCommercialTripsComponents.TripLocation) {
++        manageLocationItem(item)
++    }
++
++    private func tripLocation(
+         from item: FiscalLocationBase,
+-        existing: FiscalLocationItem? = nil
+-    ) -> FiscalLocationItem {
+-        FiscalLocationItem(
+-            id: item.id,
++        existing: CustCommercialTripsComponents.TripLocation? = nil
++    ) -> CustCommercialTripsComponents.TripLocation {
++        CustCommercialTripsComponents.TripLocation(
+             placementType: item.placementType,
+             placementId: item.placementId,
+             locationType: .location,
+@@ -1349,9 +1363,53 @@
+             state: item.state,
+             country: item.country,
+             zipCode: item.zipCode,
+-            position: existing?.position ?? (item.placementType == .origen ? 0 : 1),
++            distance: existing?.distance
++        )
++    }
++
++    private func tripLocation(from item: FiscalLocationItem) -> CustCommercialTripsComponents.TripLocation {
++        CustCommercialTripsComponents.TripLocation(
++            placementType: item.placementType,
++            placementId: item.placementId,
++            locationType: item.locationType,
++            locationId: item.locationId,
++            rfc: item.rfc,
++            razon: item.razon,
++            uts: item.uts,
++            storeName: item.storeName,
++            street: item.street,
++            number: item.number,
++            colonie: item.colonie,
++            refrence: item.refrence,
++            state: item.state,
++            country: item.country,
++            zipCode: item.zipCode,
++            distance: item.distance
++        )
++    }
++
++    // Legacy cards and editors require an item UUID; it is never used as the source ID.
++    private func fiscalLocationItem(from item: CustCommercialTripsComponents.TripLocation) -> FiscalLocationItem {
++        FiscalLocationItem(
++            id: item.locationId ?? UUID(),
++            placementType: item.placementType,
++            placementId: item.placementId,
++            locationType: item.locationType,
++            locationId: item.locationId,
++            rfc: item.rfc,
++            razon: item.razon,
++            uts: item.uts,
++            storeName: item.storeName,
++            street: item.street,
++            number: item.number,
++            colonie: item.colonie,
++            refrence: item.refrence,
++            state: item.state,
++            country: item.country,
++            zipCode: item.zipCode,
++            position: item.placementType == .origen ? 0 : 1,
+             comertialTripControlId: nil,
+-            distance: existing?.distance
++            distance: item.distance
+         )
+     }
+ 
+@@ -1407,17 +1465,21 @@
+         case .update(let item):
+             upsertBaseLocation(item)
+ 
+-            if let origin, origin.id == item.id {
+-                setLocation(locationItem(from: item, existing: origin))
+-            }
+-            else if let destination, destination.id == item.id {
+-                setLocation(locationItem(from: item, existing: destination))
++            if let origin, origin.locationType == .location, origin.locationId == item.id {
++                setLocation(tripLocation(from: item, existing: origin))
++            }
++            else if let destination, destination.locationType == .location, destination.locationId == item.id {
++                setLocation(tripLocation(from: item, existing: destination))
+             }
+         case .delete(let id):
+             baseLocationsOrigin.removeAll { $0.id == id }
+             baseLocationsDestination.removeAll { $0.id == id }
+-            clearLocation(.origen, matching: id)
+-            clearLocation(.destino, matching: id)
++            if let origin, origin.locationType == .location, origin.locationId == id {
++                clearLocation(.origen, matching: origin)
++            }
++            if let destination, destination.locationType == .location, destination.locationId == id {
++                clearLocation(.destino, matching: destination)
++            }
+         }
+     }
+ 
+@@ -1849,26 +1911,7 @@
+ 
+         let trailerIds = [trailerOne?.id, trailerTwo?.id].compactMap { $0 }
+ 
+-        let tripLocations = [origin, destination].map {
+-            CustCommercialTripsComponents.TripLocation(
+-                placementType: $0.placementType,
+-                placementId: $0.placementId,
+-                locationType: $0.locationType,
+-                locationId: $0.locationId,
+-                rfc: $0.rfc,
+-                razon: $0.razon,
+-                uts: $0.uts,
+-                storeName: $0.storeName,
+-                street: $0.street,
+-                number: $0.number,
+-                colonie: $0.colonie,
+-                refrence: $0.refrence,
+-                state: $0.state,
+-                country: $0.country,
+-                zipCode: $0.zipCode,
+-                distance: $0.distance
+-            )
+-        }
++        let tripLocations = [origin, destination]
+ 
+         let tripMerchandise = merchendise.map {
+             CustCommercialTripsComponents.TripMerchandise(
+--- before/Sources/App/Snippits/TripControler/TripControler+AddLocation.swift
++++ after/Sources/App/Snippits/TripControler/TripControler+AddLocation.swift
+@@ -261,7 +261,24 @@
+                 .custom("gap", "10px")
+                 .onClick {
+ 
+-                    //self.callback(item)
++                    self.callback(CustCommercialTripsComponents.TripLocation(
++                        placementType: item.placementType,
++                        placementId: item.placementId,
++                        locationType: .location,
++                        locationId: item.id,
++                        rfc: item.rfc,
++                        razon: item.razon,
++                        uts: item.uts,
++                        storeName: item.storeName,
++                        street: item.street,
++                        number: item.number,
++                        colonie: item.colonie,
++                        refrence: item.refrence,
++                        state: item.state,
++                        country: item.country,
++                        zipCode: item.zipCode,
++                        distance: nil
++                    ))
+ 
+                     self.remove()
+ 
+--- before/.agent/architecture/API_AND_BACKEND.md
++++ after/.agent/architecture/API_AND_BACKEND.md
+@@ -11,6 +11,7 @@
+ - Asset creation and update preserve the shared commercial-asset fiscal and physical fields: `fiscCode`, `fiscUnit`, `width`, `height`, `length`, and `weight`.
+ - Asset, asset-item, location, sublocation, category, and department update responses return the inserted `CustGeneralNotes` entry when a change produced an audit note; successful no-op updates may return no note.
+ - Commercial trip creation submits the complete fiscal location fields for each stop, together with `LocationType` and an optional linked ID; the server persists those submitted snapshots.
++- `CreateTripView` receives, edits, and submits `CustCommercialTripsComponents.TripLocation` snapshots directly. Its legacy UI adapters retain a nullable `locationId`; an item UUID generated for display/editing is never promoted to a submitted source ID.
+ - Endpoint files are grouped by domain and often named `Domain+Action.swift`.
+ - The app depends on multiple Tierra Cero core packages that likely define shared payloads and contracts.
+ - The three public `sendPost` overloads share one internal XMLHttpRequest transport that preserves response-body callback compatibility while recording transport failures.
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -11,7 +11,8 @@
+ - `Sources/Service/skyline/js/visualPerformance.js` exposes the derived performance mode as `data-tc-performance-mode` on the document root. In performance mode, named modal veils and glass content shells use translucent black backgrounds (65% and 85% opacity respectively) while backdrop filters remain disabled; disabling the mode restores their theme backgrounds through the CSS cascade.
+ - Browser speech recognition is centralized in `SpeechRecognitionManager`; it retains the JavaScript callback for the active session and routes transcripts to one weak `SpeechRecognitionTarget`.
+ - `WorkViewControler` owns one authenticated-session `TCSpeechRecognitionFloatingButton` and shuts it down when the work shell leaves the DOM.
+-- `CreateTripView.selectLocation` uses the dedicated `TripControlerAddLocation` picker with mutable `[FiscalLocationBase]` items and location-typed formatting/selection callbacks. Its own `ViewType` supplies the origin/destination icon and title; other Trip selections continue using `TripControlerAddElement<Item>`.
++- `CreateTripView.selectLocation` uses the dedicated `TripControlerAddLocation` picker with mutable `[FiscalLocationBase]` items and fiscal-base formatting callbacks. Selection returns a complete `CustCommercialTripsComponents.TripLocation` snapshot with `.location` source type and the base's linked ID. Its own `ViewType` supplies the origin/destination icon and title; other Trip selections continue using `TripControlerAddElement<Item>`.
++- `CreateTripView` stores origin/destination as `CustCommercialTripsComponents.TripLocation`. Local adapters preserve snapshot fields, source type, and optional source ID for the unchanged `CartaPorteUbicacion`, `ManageLocationItem`, and `AddCartaPorteMerchendise` consumers. Stop matching uses source type and linked ID, or placement ID for unlinked stops; saved-base updates/deletes affect only `.location` sources.
+ - `TripControlerAddLocation` has a header split button: the main Agregar action and menu Agregar ubicación share the existing creation callback; the arrow reveals Seleccionar tienda and Buscar cliente alongside it. Those two actions currently call empty `selectStore()` / `searchCustomer()` methods and leave the picker open. Menu visibility is local presentation state, with Escape and outside-click dismissal and scoped crystal styling.
+ 
+ ## Rules

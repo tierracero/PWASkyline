@@ -40,3 +40,5 @@ When this governance bootstrap began, the repository already contained many modi
 - Source layout: `SOURCE_MAP.md`.
 - Modules: `MODULES.md`.
 - Open decisions: `OPEN_DECISIONS.md`.
+
+- 2026-10-07: `CustAcctPayments.downpayment` defaults false; only explicit selection marks an order payment as an anticipo. Full/quick shared payloads, `PaymentObject`, and order AddPayment requests decode missing flags as false. Existing tenants need the manual payment-column SQL before server deployment. Order reports and payment CSVs show general/downpayment subtotals and a combined total while retaining existing adjustment arithmetic.

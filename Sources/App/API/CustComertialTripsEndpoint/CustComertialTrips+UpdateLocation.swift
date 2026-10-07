@@ -20,6 +20,8 @@ extension CustCommercialTripsComponents {
         state: CountryStatesMexico,
         country: String,
         zipCode: String,
+        latitude: Double?,
+        longitude: Double?,
         callback: @escaping ((_ resp: APIResponse?) -> ())
     ) {
         sendPost(
@@ -40,7 +42,9 @@ extension CustCommercialTripsComponents {
                 refrence: refrence,
                 state: state,
                 country: country,
-                zipCode: zipCode
+                zipCode: zipCode,
+                latitude: latitude,
+                longitude: longitude
             )
         ) { data in
             

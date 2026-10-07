@@ -1,0 +1,2711 @@
+[
+  {
+    "path": "Sources/App/ViewControlers/WorkViewControler.swift",
+    "line": 201,
+    "old": 10.0,
+    "new": 13,
+    "source": ".fontSize(10.px)"
+  },
+  {
+    "path": "Sources/App/ViewControlers/WorkViewControler.swift",
+    "line": 216,
+    "old": 10.0,
+    "new": 13,
+    "source": ".fontSize(10.px)"
+  },
+  {
+    "path": "Sources/App/ViewControlers/WorkViewControler.swift",
+    "line": 224,
+    "old": 10.0,
+    "new": 13,
+    "source": ".fontSize(10.px)"
+  },
+  {
+    "path": "Sources/App/ViewControlers/WorkViewControler.swift",
+    "line": 236,
+    "old": 10.0,
+    "new": 13,
+    "source": ".fontSize(10.px)"
+  },
+  {
+    "path": "Sources/App/ViewControlers/WorkViewControler.swift",
+    "line": 260,
+    "old": 10.0,
+    "new": 13,
+    "source": ".fontSize(10.px)"
+  },
+  {
+    "path": "Sources/App/ViewControlers/WorkViewControler.swift",
+    "line": 349,
+    "old": 10.0,
+    "new": 13,
+    "source": ".fontSize(10.px)"
+  },
+  {
+    "path": "Sources/App/Styles/SKLogInStyle.swift",
+    "line": 245,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/Styles/SKMainStyle.swift",
+    "line": 160,
+    "old": 11.0,
+    "new": 13,
+    "source": ".fontSize(11.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolReciveSendInventory.swift",
+    "line": 539,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductTransferReportView.swift",
+    "line": 121,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductTransferReportView.swift",
+    "line": 141,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductTransferReportView.swift",
+    "line": 162,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductTransferReportView.swift",
+    "line": 173,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductTransferReportView.swift",
+    "line": 188,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CartaPorteMerchendise.swift",
+    "line": 81,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CartaPorteMerchendise.swift",
+    "line": 150,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SideMenuRightView.swift",
+    "line": 136,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolProductAuditTrRow.swift",
+    "line": 76,
+    "old": 10.0,
+    "new": 13,
+    "source": ".fontSize(10.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolProductAuditTrRow.swift",
+    "line": 83,
+    "old": 10.0,
+    "new": 13,
+    "source": ".fontSize(10.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/AdvancesSearchViewControler.swift",
+    "line": 444,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/AdvancesSearchViewControler.swift",
+    "line": 458,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/AdvancesSearchViewControler.swift",
+    "line": 480,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManageSOCView.swift",
+    "line": 643,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManageSOCView.swift",
+    "line": 667,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManageSOCView.swift",
+    "line": 691,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManageSOCView.swift",
+    "line": 715,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManageSOCView.swift",
+    "line": 739,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManageSOCView.swift",
+    "line": 1382,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolViewFiscalXMLDocument.swift",
+    "line": 288,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/AddServiceFormView.swift",
+    "line": 176,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/AddServiceFormView.swift",
+    "line": 192,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/AddServiceFormView.swift",
+    "line": 203,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/AddServiceFormView.swift",
+    "line": 214,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/AddServiceFormView.swift",
+    "line": 275,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SocialManagerItem.swift",
+    "line": 55,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolViewHistoricalInventoryManualDispertionsView.swift",
+    "line": 280,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolViewHistoricalInventoryManualDispertionsView.swift",
+    "line": 294,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolViewHistoricalInventoryManualDispertionsView.swift",
+    "line": 306,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolViewHistoricalInventoryManualDispertionsView.swift",
+    "line": 322,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolViewHistoricalInventoryManualDispertionsView.swift",
+    "line": 339,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolViewHistoricalInventoryManualDispertionsView.swift",
+    "line": 352,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolViewHistoricalInventoryManualDispertionsView.swift",
+    "line": 376,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/IMChatBubbleView.swift",
+    "line": 103,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/POCStorageControlItemView.swift",
+    "line": 65,
+    "old": 12.0,
+    "new": 14,
+    "source": "fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/POCStorageControlItemView.swift",
+    "line": 86,
+    "old": 12.0,
+    "new": 14,
+    "source": "locationView.appendChild(Span(str).fontSize(12.px))"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrderEquipmentView.swift",
+    "line": 138,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"tag1\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrderEquipmentView.swift",
+    "line": 216,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"tag2\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrderEquipmentView.swift",
+    "line": 298,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"tag3\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrderEquipmentView.swift",
+    "line": 464,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"idTag1\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrderEquipmentView.swift",
+    "line": 477,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"idTag2\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrderEquipmentView.swift",
+    "line": 496,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"tag2\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrderEquipmentView.swift",
+    "line": 623,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"tag2\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrderEquipmentView.swift",
+    "line": 752,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"tag2\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrderEquipmentView.swift",
+    "line": 923,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"tag4\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrderEquipmentView.swift",
+    "line": 935,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"tag5\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrderEquipmentView.swift",
+    "line": 947,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"tag6\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/CustRemoveFromConcessionView.swift",
+    "line": 238,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustRemoveFromConcessionView.swift",
+    "line": 254,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustRemoveFromConcessionView.swift",
+    "line": 264,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustRemoveFromConcessionView.swift",
+    "line": 311,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustRemoveFromConcessionView.swift",
+    "line": 335,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustRemoveFromConcessionView.swift",
+    "line": 350,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustRemoveFromConcessionView.swift",
+    "line": 396,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustRemoveFromConcessionView.swift",
+    "line": 412,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustRemoveFromConcessionView.swift",
+    "line": 446,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/MessageObject.swift",
+    "line": 237,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/MessageObject.swift",
+    "line": 288,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/MessageObject.swift",
+    "line": 417,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/MessageObject.swift",
+    "line": 618,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrder.swift",
+    "line": 474,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"tag1\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrder.swift",
+    "line": 553,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"tag2\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrder.swift",
+    "line": 634,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"tag3\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrder.swift",
+    "line": 1697,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"idTag1\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrder.swift",
+    "line": 1709,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"idTag2\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrder.swift",
+    "line": 2165,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"tag4\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrder.swift",
+    "line": 2177,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"tag5\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/StartServiceOrder.swift",
+    "line": 2189,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(self.$selectEquipmentField.map{ $0 == \"tag6\" ? 18.px : 12.px })"
+  },
+  {
+    "path": "Sources/App/Snippits/OrderCalendarView.swift",
+    "line": 332,
+    "old": 8.0,
+    "new": 13,
+    "source": ".fontSize(8.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/OrderCalendarView.swift",
+    "line": 338,
+    "old": 8.0,
+    "new": 13,
+    "source": ".fontSize(8.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/StartManualInventory.swift",
+    "line": 180,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolReciveSendInventoryManualDispertionsView.swift",
+    "line": 325,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/OldChargeTrRow.swift",
+    "line": 110,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/OldChargeTrRow.swift",
+    "line": 114,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/OldChargeTrRow.swift",
+    "line": 117,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/OldChargeTrRow.swift",
+    "line": 120,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustFollowUpRowView.swift",
+    "line": 76,
+    "old": 10.0,
+    "new": 13,
+    "source": ".fontSize(10.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustFollowUpRowView.swift",
+    "line": 85,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/FollowupControler/FollowupControler.swift",
+    "line": 359,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolFiscal/ToolFiscalItemView.swift",
+    "line": 86,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolFiscal/ToolFiscalViewDocument.swift",
+    "line": 557,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolFiscal/ToolFiscalViewDocument.swift",
+    "line": 660,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolFiscal/ToolFiscal.swift",
+    "line": 375,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolFiscal/ToolFiscal.swift",
+    "line": 452,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolFiscal/ToolFiscal.swift",
+    "line": 468,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolFiscal/ToolFiscal.swift",
+    "line": 478,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolFiscal/ToolFiscal.swift",
+    "line": 526,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolFiscal/ToolFiscal.swift",
+    "line": 541,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolFiscal/ToolFiscal.swift",
+    "line": 587,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolFiscal/ToolFiscal.swift",
+    "line": 603,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ToolFiscal/ToolFiscal.swift",
+    "line": 636,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/Tools+ServiceManager.swift",
+    "line": 184,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/ProductManagerView.swift",
+    "line": 668,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/ProductManagerView.swift",
+    "line": 697,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SkylineDocumentation/SkylineDocumentation+DocumentView.swift",
+    "line": 96,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SkylineDocumentation/SkylineDocumentation+DocumentView.swift",
+    "line": 104,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SkylineDocumentation/SkylineDocumentation+DocumentView.swift",
+    "line": 113,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SkylineDocumentation/SkylineDocumentation+DocumentView.swift",
+    "line": 310,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SkylineDocumentation/SkylineDocumentationView.swift",
+    "line": 117,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SkylineDocumentation/SkylineDocumentationView.swift",
+    "line": 249,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SkylineDocumentation/SkylineDocumentationView.swift",
+    "line": 430,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SkylineDocumentation/SkylineDocumentationView.swift",
+    "line": 556,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SkylineDocumentation/SkylineDocumentationView.swift",
+    "line": 569,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SkylineDocumentation/SkylineDocumentationView.swift",
+    "line": 574,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SkylineDocumentation/SkylineDocumentationView.swift",
+    "line": 580,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SkylineDocumentation/SkylineDocumentationView.swift",
+    "line": 587,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SkylineDocumentation/SkylineDocumentationView.swift",
+    "line": 594,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SkylineDocumentation/SkylineDocumentationView.swift",
+    "line": 601,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SkylineDocumentation/SkylineDocumentationView.swift",
+    "line": 616,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SalePoint/SalePoint+HistoryView.swift",
+    "line": 314,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SalePoint/SalePoint+HistoryView.swift",
+    "line": 328,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SalePoint/SalePoint+HistoryView.swift",
+    "line": 342,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SalePoint/SalePoint+HistoryView.swift",
+    "line": 356,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SalePoint/SalePoint+HistoryView.swift",
+    "line": 369,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SalePoint/SalePoint+HistoryView.swift",
+    "line": 382,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SalePoint/SalePoint+HistoryView.swift",
+    "line": 395,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SalePoint/SalePoint+HistoryView.swift",
+    "line": 412,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/SalePoint/SalePoint+HistoryView.swift",
+    "line": 440,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManagePOC/ManagePOC.swift",
+    "line": 1115,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManagePOC/ManagePOC.swift",
+    "line": 1127,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManagePOC/ManagePOC.swift",
+    "line": 1139,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManagePOC/ManagePOC.swift",
+    "line": 1400,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManagePOC/ManagePOC.swift",
+    "line": 1430,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManagePOC/ManagePOC.swift",
+    "line": 1459,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManagePOC/ManagePOC.swift",
+    "line": 1489,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManagePOC/ManagePOC.swift",
+    "line": 1518,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManagePOC/ManagePOC.swift",
+    "line": 1551,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManagePOC/ManagePOC.swift",
+    "line": 1561,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManagePOC/ManagePOC.swift",
+    "line": 1571,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManagePOC/ManagePOC.swift",
+    "line": 1581,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManagePOC/ManagePOC.swift",
+    "line": 1591,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManagePOC/ManagePOC.swift",
+    "line": 1634,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManagePOC/ManagePOC.swift",
+    "line": 1658,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManagePOC/ManagePOC.swift",
+    "line": 1682,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ManagePOC/ManagePOC.swift",
+    "line": 2364,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustAssetsView/CustAssetsView.swift",
+    "line": 559,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/MoneyManager/MoneyManagerView.swift",
+    "line": 334,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/Snippits/MoneyManager/MoneyManagerView.swift",
+    "line": 359,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px\")"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripsControlerView.swift",
+    "line": 175,
+    "old": 11.0,
+    "new": 13,
+    "source": ".fontSize(11.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripsControlerView.swift",
+    "line": 534,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripsControlerView.swift",
+    "line": 542,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripsControlerView.swift",
+    "line": 553,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift",
+    "line": 263,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift",
+    "line": 269,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift",
+    "line": 274,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift",
+    "line": 511,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift",
+    "line": 536,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift",
+    "line": 608,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift",
+    "line": 617,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift",
+    "line": 627,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift",
+    "line": 649,
+    "old": 11.0,
+    "new": 13,
+    "source": ".fontSize(11.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift",
+    "line": 654,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift",
+    "line": 721,
+    "old": 11.0,
+    "new": 13,
+    "source": ".fontSize(header ? 11.px : 13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift",
+    "line": 721,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(header ? 11.px : 13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift",
+    "line": 846,
+    "old": 11.0,
+    "new": 13,
+    "source": ".fontSize(11.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift",
+    "line": 859,
+    "old": 11.0,
+    "new": 13,
+    "source": ".fontSize(11.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift",
+    "line": 888,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift",
+    "line": 892,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift",
+    "line": 405,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift",
+    "line": 472,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/OrderView/OrderView.swift",
+    "line": 483,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/OrderView/OrderView.swift",
+    "line": 489,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/OrderView/OrderView.swift",
+    "line": 494,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustConcession/CustConcession+BodegaView.swift",
+    "line": 116,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustConcession/CustConcession+AddManualInventorieView.swift",
+    "line": 555,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustConcession/CustConcessionView.swift",
+    "line": 1938,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustConcession/CustConcessionView.swift",
+    "line": 1954,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustConcession/CustConcessionView.swift",
+    "line": 1987,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustConcession/CustConcessionView.swift",
+    "line": 2003,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustConcession/CustConcessionView.swift",
+    "line": 2018,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustConcession/CustConcessionView.swift",
+    "line": 2038,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustConcession/CustConcessionView.swift",
+    "line": 2055,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustConcession/CustConcessionView.swift",
+    "line": 2071,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustConcession/CustConcessionView.swift",
+    "line": 2109,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustConcession/CustConcessionView.swift",
+    "line": 2125,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustConcession/CustConcessionView.swift",
+    "line": 2140,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustConcession/CustConcessionView.swift",
+    "line": 2160,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustConcession/CustConcessionView.swift",
+    "line": 2177,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/CustConcession/CustConcessionView.swift",
+    "line": 2193,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/OrderView/EquipmentView/OrderView+EquipmentView.swift",
+    "line": 301,
+    "old": 10.0,
+    "new": 13,
+    "source": ".fontSize(10.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/OrderView/EquipmentView/OrderView+EquipmentView.swift",
+    "line": 317,
+    "old": 10.0,
+    "new": 13,
+    "source": ".fontSize(10.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/OrderView/EquipmentView/OrderView+EquipmentView.swift",
+    "line": 334,
+    "old": 10.0,
+    "new": 13,
+    "source": ".fontSize(10.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/OrderView/EquipmentView/OrderView+EquipmentView.swift",
+    "line": 351,
+    "old": 10.0,
+    "new": 13,
+    "source": ".fontSize(10.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/OrderView/EquipmentView/OrderView+EquipmentView.swift",
+    "line": 368,
+    "old": 10.0,
+    "new": 13,
+    "source": ".fontSize(10.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/OrderView/EquipmentView/OrderView+EquipmentView.swift",
+    "line": 385,
+    "old": 10.0,
+    "new": 13,
+    "source": ".fontSize(10.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/OrderView/EquipmentView/OrderView+EquipmentView.swift",
+    "line": 402,
+    "old": 10.0,
+    "new": 13,
+    "source": ".fontSize(10.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/OrderView/EquipmentView/OrderView+EquipmentView.swift",
+    "line": 419,
+    "old": 10.0,
+    "new": 13,
+    "source": ".fontSize(10.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/MoneyManager/FinancialServices/MoneyManger+FinancialServices+DetailView.swift",
+    "line": 185,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/MoneyManager/FinancialServices/MoneyManger+FinancialServices+DetailView.swift",
+    "line": 200,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/MoneyManager/FinancialServices/MoneyManger+FinancialServices+DetailView.swift",
+    "line": 224,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/MoneyManager/FinancialServices/MoneyManger+FinancialServices+DetailView.swift",
+    "line": 239,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/MoneyManager/FinancialServices/MoneyManger+FinancialServices+DetailView.swift",
+    "line": 254,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/MoneyManager/FinancialServices/MoneyManger+FinancialServices+DetailView.swift",
+    "line": 483,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Theme.swift",
+    "line": 152,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px !important\")"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Theme.swift",
+    "line": 213,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Theme.swift",
+    "line": 275,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Theme.swift",
+    "line": 293,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Theme.swift",
+    "line": 424,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Theme.swift",
+    "line": 427,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Theme.swift",
+    "line": 437,
+    "old": 11.0,
+    "new": 13,
+    "source": ".fontSize(11.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Theme.swift",
+    "line": 444,
+    "old": 11.0,
+    "new": 13,
+    "source": ".fontSize(11.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift",
+    "line": 194,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift",
+    "line": 216,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift",
+    "line": 229,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift",
+    "line": 242,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift",
+    "line": 255,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift",
+    "line": 267,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift",
+    "line": 279,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift",
+    "line": 295,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift",
+    "line": 326,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift",
+    "line": 2740,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift",
+    "line": 3011,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift",
+    "line": 3029,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift",
+    "line": 3608,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift",
+    "line": 3615,
+    "old": 11.0,
+    "new": 13,
+    "source": ".fontSize(11.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift",
+    "line": 3942,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift",
+    "line": 3960,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift",
+    "line": 4161,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift",
+    "line": 104,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift",
+    "line": 116,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift",
+    "line": 129,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift",
+    "line": 178,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift",
+    "line": 189,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift",
+    "line": 204,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift",
+    "line": 89,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift",
+    "line": 103,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift",
+    "line": 116,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift",
+    "line": 127,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift",
+    "line": 142,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+CardexGraph.swift",
+    "line": 81,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+CardexGraph.swift",
+    "line": 231,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12\")"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+CardexGraph.swift",
+    "line": 279,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11\")"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+CardexGraph.swift",
+    "line": 286,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11\")"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+CardexGraph.swift",
+    "line": 304,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+CardexGraph.swift",
+    "line": 533,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+CardexGraph.swift",
+    "line": 549,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+CardexGraph.swift",
+    "line": 579,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Activity.swift",
+    "line": 74,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Activity.swift",
+    "line": 85,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Activity.swift",
+    "line": 100,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Activity.swift",
+    "line": 572,
+    "old": 11.0,
+    "new": 13,
+    "source": ".fontSize(11.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Activity.swift",
+    "line": 575,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Activity.swift",
+    "line": 599,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+FastAndFurios.swift",
+    "line": 95,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift",
+    "line": 79,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift",
+    "line": 92,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift",
+    "line": 103,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift",
+    "line": 118,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+OrderProcessing/Tools+HistorySettings+OrderProcessing+Reports.swift",
+    "line": 102,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+OrderProcessing/Tools+HistorySettings+OrderProcessing+Reports.swift",
+    "line": 114,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+OrderProcessing/Tools+HistorySettings+OrderProcessing+Reports.swift",
+    "line": 127,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+OrderProcessing/Tools+HistorySettings+OrderProcessing+Reports.swift",
+    "line": 139,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+OrderProcessing/Tools+HistorySettings+OrderProcessing+Reports.swift",
+    "line": 151,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+OrderProcessing/Tools+HistorySettings+OrderProcessing+Reports.swift",
+    "line": 167,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+TripProcessing/Tools+HistorySettings+TripProcessing+Reports.swift",
+    "line": 120,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+TripProcessing/Tools+HistorySettings+TripProcessing+Reports.swift",
+    "line": 131,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+TripProcessing/Tools+HistorySettings+TripProcessing+Reports.swift",
+    "line": 144,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+TripProcessing/Tools+HistorySettings+TripProcessing+Reports.swift",
+    "line": 157,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+TripProcessing/Tools+HistorySettings+TripProcessing+Reports.swift",
+    "line": 168,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+TripProcessing/Tools+HistorySettings+TripProcessing+Reports.swift",
+    "line": 180,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+TripProcessing/Tools+HistorySettings+TripProcessing+Reports.swift",
+    "line": 196,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+TripProcessing/Tools+HistorySettings+TripProcessing+Reports.swift",
+    "line": 631,
+    "old": 13.0,
+    "new": 14,
+    "source": ".fontSize(13.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+TripProcessing/Tools+HistorySettings+TripProcessing+Reports.swift",
+    "line": 669,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+TripProcessing/Tools+HistorySettings+TripProcessing+Reports.swift",
+    "line": 697,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+TripProcessing/Tools+HistorySettings+TripProcessing+Settings.swift",
+    "line": 334,
+    "old": 12.0,
+    "new": 14,
+    "source": ".fontSize(12.px)"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/SystemSettings/Tools+SystemSettings+UserStoreConfiguration/Tools+SystemSettings+UserStoreConfiguration+UserView/Tools+SystemSettings+UserStoreConfiguration+PermitionManager.swift",
+    "line": 634,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/SystemSettings/Tools+SystemSettings+UserStoreConfiguration/Tools+SystemSettings+UserStoreConfiguration+UserView/Tools+SystemSettings+UserStoreConfiguration+PermitionManager.swift",
+    "line": 687,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/SystemSettings/Tools+SystemSettings+UserStoreConfiguration/Tools+SystemSettings+UserStoreConfiguration+UserView/Tools+SystemSettings+UserStoreConfiguration+PermitionManager.swift",
+    "line": 711,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/SystemSettings/Tools+SystemSettings+UserStoreConfiguration/Tools+SystemSettings+UserStoreConfiguration+UserView/Tools+SystemSettings+UserStoreConfiguration+PermitionManager.swift",
+    "line": 734,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/SystemSettings/Tools+SystemSettings+UserStoreConfiguration/Tools+SystemSettings+UserStoreConfiguration+UserView/Tools+SystemSettings+UserStoreConfiguration+PermitionManager.swift",
+    "line": 741,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px\")"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/SystemSettings/Tools+SystemSettings+UserStoreConfiguration/Tools+SystemSettings+UserStoreConfiguration+UserView/Tools+SystemSettings+UserStoreConfiguration+PermitionManager.swift",
+    "line": 760,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/SystemSettings/Tools+SystemSettings+UserStoreConfiguration/Tools+SystemSettings+UserStoreConfiguration+UserView/Tools+SystemSettings+UserStoreConfiguration+PermitionManager.swift",
+    "line": 798,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px\")"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/SystemSettings/Tools+SystemSettings+UserStoreConfiguration/Tools+SystemSettings+UserStoreConfiguration+UserView/Tools+SystemSettings+UserStoreConfiguration+PermitionManager.swift",
+    "line": 804,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/Snippits/Tools/SystemSettings/Tools+SystemSettings+UserStoreConfiguration/Tools+SystemSettings+UserStoreConfiguration+UserView/Tools+SystemSettings+UserStoreConfiguration+PermitionManager.swift",
+    "line": 815,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Components/TCSpeechRecognitionFloatingButton.swift",
+    "line": 487,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Components/TCSpeechRecognitionFloatingButton.swift",
+    "line": 501,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 113,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 126,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 140,
+    "old": 9.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"9px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 229,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 250,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 257,
+    "old": 7.0,
+    "new": 10,
+    "source": ".custom(\"font-size\", \"7px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 271,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px !important\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 299,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 312,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 332,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 336,
+    "old": 9.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"9px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 359,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 373,
+    "old": 9.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"9px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 408,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 415,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 430,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 435,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 457,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 461,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift",
+    "line": 479,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCTripBetaTheme.swift",
+    "line": 270,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCTripBetaTheme.swift",
+    "line": 301,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCWorkDashboardTheme.swift",
+    "line": 261,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCWorkDashboardTheme.swift",
+    "line": 441,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCWorkDashboardTheme.swift",
+    "line": 498,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCWorkDashboardTheme.swift",
+    "line": 518,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCWorkDashboardTheme.swift",
+    "line": 523,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCWorkDashboardTheme.swift",
+    "line": 724,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCWorkDashboardTheme.swift",
+    "line": 741,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCMessageObjectTheme.swift",
+    "line": 54,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px !important\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCMessageObjectTheme.swift",
+    "line": 121,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCOrderViewTheme.swift",
+    "line": 378,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px !important\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCOrderViewTheme.swift",
+    "line": 427,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCOrderViewTheme.swift",
+    "line": 508,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px !important\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCOrderViewTheme.swift",
+    "line": 537,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px !important\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCrystalSurfaceTheme.swift",
+    "line": 392,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px !important\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCrystalSurfaceTheme.swift",
+    "line": 679,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px !important\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCrystalSurfaceTheme.swift",
+    "line": 704,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCrystalSurfaceTheme.swift",
+    "line": 902,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px !important\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCrystalSurfaceTheme.swift",
+    "line": 1004,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px !important\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCrystalSurfaceTheme.swift",
+    "line": 1016,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px !important\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCrystalSurfaceTheme.swift",
+    "line": 1033,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px !important\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCrystalSurfaceTheme.swift",
+    "line": 1164,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCCrystalSurfaceTheme.swift",
+    "line": 1212,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px !important\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 148,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 158,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 182,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 287,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 299,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 321,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 347,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 370,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 384,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 404,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 447,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 458,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 473,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 502,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 514,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 569,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 586,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 602,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px !important\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 635,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 640,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 650,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 695,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 700,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift",
+    "line": 727,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift",
+    "line": 109,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift",
+    "line": 121,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift",
+    "line": 171,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift",
+    "line": 218,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift",
+    "line": 234,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift",
+    "line": 268,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift",
+    "line": 272,
+    "old": 9.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"9px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift",
+    "line": 286,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift",
+    "line": 329,
+    "old": 9.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"9px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift",
+    "line": 336,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift",
+    "line": 343,
+    "old": 9.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"9px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift",
+    "line": 354,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift",
+    "line": 373,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift",
+    "line": 392,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift",
+    "line": 412,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift",
+    "line": 426,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift",
+    "line": 157,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift",
+    "line": 170,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift",
+    "line": 191,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift",
+    "line": 289,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px !important\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift",
+    "line": 350,
+    "old": 13.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"13px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift",
+    "line": 364,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift",
+    "line": 379,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift",
+    "line": 395,
+    "old": 11.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"11px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift",
+    "line": 430,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift",
+    "line": 522,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift",
+    "line": 618,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift",
+    "line": 626,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift",
+    "line": 633,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift",
+    "line": 645,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift",
+    "line": 675,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift",
+    "line": 683,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift",
+    "line": 691,
+    "old": 10.0,
+    "new": 13,
+    "source": ".custom(\"font-size\", \"10px\")"
+  },
+  {
+    "path": "Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift",
+    "line": 700,
+    "old": 12.0,
+    "new": 14,
+    "source": ".custom(\"font-size\", \"12px\")"
+  }
+]

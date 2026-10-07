@@ -554,7 +554,7 @@ class ToolFiscalViewDocument: Div {
                         }
                     }
                         .width(100.percent)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                     
                     var retenidos: Int64 = 0
                     var trasladados: Int64 = 0
@@ -657,7 +657,7 @@ class ToolFiscalViewDocument: Div {
                         }
                     }
                         .width(100.percent)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                     
                     var retenidos: Int64 = 0
                     var trasladados: Int64 = 0
@@ -1025,7 +1025,7 @@ class ToolFiscalViewDocument: Div {
             accountId: nil,
             cardId: nil,
             currentBalance: balance
-        ) { code, description, amount, provider, lastFour, auth, uts in
+        ) { code, description, amount, provider, lastFour, auth, uts, _ in
             
             API.fiscalV1.payment(
                 storeId: custCatchStore, 

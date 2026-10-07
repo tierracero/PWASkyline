@@ -52,7 +52,7 @@ class SocialManagerItem: Div {
                     .height(12.px)
                     
                 Span(self.page.profileType.description).color(.gray)
-                    .fontSize(12.px)
+                    .fontSize(14.px)
                 
                 Div().class(.clear)
             }

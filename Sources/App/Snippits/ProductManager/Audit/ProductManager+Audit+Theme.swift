@@ -149,7 +149,7 @@ extension ProductManagerView.AuditView {
                     .custom("display", "block")
                     .custom("margin-bottom", "4px")
                     .custom("color", "#a8bed0 !important")
-                    .custom("font-size", "11px !important")
+                    .custom("font-size", "13px !important")
                     .custom("font-weight", "700")
                     .custom("letter-spacing", "0.45px")
                     .custom("text-transform", "uppercase")
@@ -210,7 +210,7 @@ extension ProductManagerView.AuditView {
                     .custom("border-radius", "999px")
                     .custom("background", "#ff9f0a")
                     .custom("color", "#07111d")
-                    .custom("font-size", "11px")
+                    .custom("font-size", "13px")
                     .custom("padding-left", "1px")
 
                 CSSRule(Pointer("\(root) .\(TCCrystalSurfaceClass.auditResults)"))
@@ -272,7 +272,7 @@ extension ProductManagerView.AuditView {
                     .custom("text-overflow", "ellipsis")
                     .custom("white-space", "nowrap")
                     .custom("color", "#d8e9f6")
-                    .custom("font-size", "12px")
+                    .custom("font-size", "14px")
 
                 CSSRule(Pointer("\(root) .\(TCCrystalSurfaceClass.auditChartTrack)"))
                     .custom("height", "10px")
@@ -290,7 +290,7 @@ extension ProductManagerView.AuditView {
 
                 CSSRule(Pointer("\(root) .\(TCCrystalSurfaceClass.auditChartValue)"))
                     .custom("color", "#edf7ff")
-                    .custom("font-size", "12px")
+                    .custom("font-size", "14px")
                     .custom("font-weight", "800")
                     .custom("text-align", "right")
 
@@ -421,10 +421,10 @@ extension ProductManagerView.AuditView {
                 .marginBottom(3.px)
             Div(subtitle)
                 .color(.gray)
-                .fontSize(13.px)
+                .fontSize(14.px)
             Div(context)
                 .color(.white)
-                .fontSize(13.px)
+                .fontSize(14.px)
                 .marginTop(5.px)
         }
         .class(Class(TCCrystalSurfaceClass.auditReportHeader))
@@ -434,14 +434,14 @@ extension ProductManagerView.AuditView {
         Div {
             Div(title)
                 .color(.gray)
-                .fontSize(11.px)
+                .fontSize(13.px)
             Div(value)
                 .color(.lightBlueText)
                 .fontSize(23.px)
                 .fontWeight(.bold)
             Div(detail)
                 .color(.white)
-                .fontSize(11.px)
+                .fontSize(13.px)
         }
         .class(Class(TCCrystalSurfaceClass.auditMetric))
     }

@@ -455,7 +455,7 @@ class ImageGeneralView: Div {
             self.imAvatar( self.viewId, image)
             return
         }
-        
+        /*
         var relationType: API.themeV1.ImageConfigurationSaveType? = nil
 
         switch relation {
@@ -493,7 +493,7 @@ class ImageGeneralView: Div {
             self.imAvatar( self.viewId, image)
             
         }
-        
+        */
     }
     
     func loadImage(_ image: String) {

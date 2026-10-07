@@ -93,7 +93,7 @@ extension SkylineDocumentationView {
                             
                             Span("Version \(self.item.version)")
                                 .color(.white)
-                                .fontSize(13.px)
+                                .fontSize(14.px)
                                 .backgroundColor(.slateHeader)
                                 .borderRadius(all: 7.px)
                                 .padding(v: 5.px, h: 9.px)
@@ -101,7 +101,7 @@ extension SkylineDocumentationView {
                             
                             Span(self.item.status.rawValue)
                                 .color(.white)
-                                .fontSize(13.px)
+                                .fontSize(14.px)
                                 .backgroundColor(.darkOrange)
                                 .borderRadius(all: 7.px)
                                 .padding(v: 5.px, h: 9.px)
@@ -110,7 +110,7 @@ extension SkylineDocumentationView {
                             if !self.item.keywords.isEmpty {
                                 Span(self.item.keywords.joined(separator: ", "))
                                     .color(.lightBlueText)
-                                    .fontSize(13.px)
+                                    .fontSize(14.px)
                             }
                         }
                     }
@@ -307,7 +307,7 @@ extension SkylineDocumentationView {
                 
                 Div(payload)
                     .color(.gray)
-                    .fontSize(13.px)
+                    .fontSize(14.px)
                     .marginTop(7.px)
             }
             .backgroundColor(.grayBlackDark)

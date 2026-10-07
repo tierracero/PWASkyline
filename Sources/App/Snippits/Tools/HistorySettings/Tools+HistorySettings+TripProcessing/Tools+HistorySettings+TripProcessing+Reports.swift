@@ -117,7 +117,7 @@ extension ToolsView.HistorySettings.TripProcessing {
                 /// Tipo de reporte
                 Div{
                     Label("Tipo de reporte")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.reportTypeSelect
@@ -128,7 +128,7 @@ extension ToolsView.HistorySettings.TripProcessing {
                 /// Seleccione Cliente
                 Div{
                     Label("Cliente")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.customerSelect
@@ -141,7 +141,7 @@ extension ToolsView.HistorySettings.TripProcessing {
                 /// Seleccione Operador
                 Div{
                     Label("Operador")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.operadorSelect
@@ -154,7 +154,7 @@ extension ToolsView.HistorySettings.TripProcessing {
                 /// Seleccione Vehículo
                 Div{
                     Label("Vehículo")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.vehicalSelect
@@ -165,7 +165,7 @@ extension ToolsView.HistorySettings.TripProcessing {
                 .float(.left)
                 Div{
                     Label("Seleccione Fecha")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.dateSelect
@@ -177,7 +177,7 @@ extension ToolsView.HistorySettings.TripProcessing {
                 
                 Div{
                     Label("Fecha Inicio")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.startAtField
@@ -193,7 +193,7 @@ extension ToolsView.HistorySettings.TripProcessing {
                 
                 Div{
                     Label("Fecha Final")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.endAtField
@@ -628,7 +628,7 @@ extension ToolsView.HistorySettings.TripProcessing {
                         // TODO: Replace this inline accent with the shared crystal palette token.
                         .color(.init(r: 49, g: 185, b: 245))
                     Span("\(getDate(from).formatedShort) — \(getDate(to).formatedShort) · \(relation)")
-                        .fontSize(13.px)
+                        .fontSize(14.px)
                         .color(.gray)
                 }
                     .custom("display", "flex")
@@ -666,7 +666,7 @@ extension ToolsView.HistorySettings.TripProcessing {
                 kpis.appendChild(
                     Div {
                         Span(label)
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                             .color(.gray)
                         Strong(value)
                             .fontSize(16.px)
@@ -694,7 +694,7 @@ extension ToolsView.HistorySettings.TripProcessing {
                     ["Creado", "Folio", "Estado", "Cliente", "Operador", "Vehículo", "Origen", "Destino", "Kg", "Odómetro", "Ingresos", "Inversion / Gasto", "Utilidad", "Saldo"]
                         .map { title in
                             Td(title)
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                                 .color(.gray)
                                 .padding(all: 7.px)
                         }

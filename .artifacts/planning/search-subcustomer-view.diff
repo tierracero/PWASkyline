@@ -1,0 +1,304 @@
+--- before/Sources/App/Snippits/CreateNewSubCustomerDataView.swift
++++ after/Sources/App/Snippits/CreateNewSubCustomerDataView.swift
+@@ -32,18 +32,22 @@
+ 
+     init(
+         custAcct: CustAcctSearch,
++        acctType: CustAcctTypes = .personal,
+         searchTerm: String = "",
+         callback: @escaping (CustSubAcct) -> Void
+     ) {
+         self.custAcct = custAcct
+         self.callback = callback
+         super.init()
++        accountType = acctType.rawValue
+ 
+         let term = searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
+         if isValidEmail(term) {
+             email = term
+         } else if !term.isEmpty, Int64(term) != nil {
+             mobile = term
++        } else if acctType != .personal {
++            businessName = term
+         } else {
+             let names = term.split(separator: " ", maxSplits: 1)
+             firstName = names.first.map(String.init) ?? ""
+--- before/Sources/App/Snippits/TripControler/TripControler+AddLocation.swift
++++ after/Sources/App/Snippits/TripControler/TripControler+AddLocation.swift
+@@ -81,7 +81,9 @@
+     }
+ 
+     func searchCustomer() {
+-        // Pending: search and select a customer.
++        addToDom(SearchSubCustomerView(custAcct: account) { subaccount in
++            self.renderLocation(subaccount)
++        })
+     }
+ 
+     private func performAction(_ action: () -> Void, dismissPicker: Bool) {
+--- before/Sources/App/Functions/addToDom.swift
++++ after/Sources/App/Functions/addToDom.swift
+@@ -227,7 +227,7 @@
+ 
+     var resolvedPresentation = presentation
+     if case .standard = presentation {
+-        if view is SearchCustomerView || view is CreateNewCusomerView ||
++        if view is SearchCustomerView || view is SearchSubCustomerView || view is CreateNewCusomerView ||
+             view is CreateNewCustomerDataView || view is CreateNewSubCustomerDataView ||
+             view is ManualAddressSearch {
+             resolvedPresentation = .glass
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -8,7 +8,8 @@
+ - The app registers `./service.js` during launch.
+ - The app uses Swift Web `Routes`, `Page`, lifecycle hooks, `@State`, and style declarations.
+ - Theme switching currently selects between `MainStyle`, `SKMainStyle`, and `SKLogInStyle`.
+-- `CreateNewCustomerDataView`, `CreateNewSubCustomerDataView`, and `ManualAddressSearch` use TierraCeroCustomUI headers/controls and scoped crystal surfaces. `addToDom` automatically chooses the glass host for these customer/address views, `SearchCustomerView`, and `CreateNewCusomerView` when the caller uses the standard presentation; explicit interactive/glass presentations remain supported.
++- `CreateNewCustomerDataView`, `CreateNewSubCustomerDataView`, and `ManualAddressSearch` use TierraCeroCustomUI headers/controls and scoped crystal surfaces. `addToDom` automatically chooses the glass host for these customer/address views, `SearchCustomerView`, `SearchSubCustomerView`, and `CreateNewCusomerView` when the caller uses the standard presentation; explicit interactive/glass presentations remain supported.
++- `SearchSubCustomerView` scopes API searches to its injected `CustAcctSearch` parent. One match is selected directly; multiple matches appear as keyboard-selectable cards. A successful empty search opens `CreateNewCusomerView`, then passes the selected account type and search term to `CreateNewSubCustomerDataView` using the same parent. Failures report an error, removed-view responses are ignored, and existing/created results return a single parent-validated `CustSubAcct`.
+ - `CreateNewSubCustomerDataView` receives a `CustAcctSearch` parent and displays every `CustSubAcctComponents.CreateRequest` field. Its address loader populates editable postal-address fields and optional coordinates; postal-only selection clears previously selected coordinates. It returns the server-created `CustSubAcct` after a successful create response, without introducing a global subaccount cache.
+ - `ManualAddressSearch` uses `VPopUp`/`VTitle` for address, coordinate, and geocoder-choice dialogs. Coordinate choices display their printable addresses, and coordinate results are returned directly from the geocoder snapshot so postal-code listeners cannot clear the returned address.
+ - `Sources/Service/skyline/js/visualPerformance.js` exposes the derived performance mode as `data-tc-performance-mode` on the document root. In performance mode, named modal veils and glass content shells use translucent black backgrounds (65% and 85% opacity respectively) while backdrop filters remain disabled; disabling the mode restores their theme backgrounds through the CSS cascade.
+@@ -16,7 +17,7 @@
+ - `WorkViewControler` owns one authenticated-session `TCSpeechRecognitionFloatingButton` and shuts it down when the work shell leaves the DOM.
+ - `CreateTripView.selectLocation` uses the dedicated `TripControlerAddLocation` picker with mutable `[FiscalLocationBase]` items and fiscal-base formatting callbacks. Selection returns a complete `CustCommercialTripsComponents.TripLocation` snapshot with `.location` source type and the base's linked ID. Its own `ViewType` supplies the origin/destination icon and title; other Trip selections continue using `TripControlerAddElement<Item>`.
+ - `CreateTripView` stores origin/destination as `CustCommercialTripsComponents.TripLocation`. Local adapters preserve snapshot fields, source type, and optional source ID for the unchanged `CartaPorteUbicacion`, `ManageLocationItem`, and `AddCartaPorteMerchendise` consumers. Stop matching uses source type and linked ID, or placement ID for unlinked stops; saved-base updates/deletes affect only `.location` sources.
+-- `TripControlerAddLocation` has a header split button: the main Agregar action and menu Agregar ubicación share the existing creation callback; the arrow reveals Seleccionar tienda and Buscar cliente alongside it. Menu options have decorative cyan outline SVG icons for location creation, store selection, and customer search. Store selection opens `SelectStore` and renders a `.store` trip snapshot; `searchCustomer()` remains pending. Menu visibility is local presentation state, with Escape and outside-click dismissal and scoped crystal styling.
++- `TripControlerAddLocation` has a header split button: the main Agregar action and menu Agregar ubicación share the existing creation callback; the arrow reveals Seleccionar tienda and Buscar cliente alongside it. Menu options have decorative cyan outline SVG icons for location creation, store selection, and customer search. Store selection opens `SelectStore` and renders a `.store` trip snapshot; customer search opens `SearchSubCustomerView` and renders the selected/created subaccount as a `.subaccount` snapshot. Menu visibility is local presentation state, with Escape and outside-click dismissal and scoped crystal styling.
+ - The picker's `renderLocation` overloads preserve store/subaccount address and coordinates. Store placement IDs use `storePrefix` plus the final UUID segment; subaccounts use `sa` plus the final UUID segment and fiscal identity from the injected parent account. Subaccounts must belong to that account. Successful rendering returns the snapshot and dismisses the picker; unrecognized address states report an error.
+ 
+ ## Rules
+--- before/.agent/SOURCE_MAP.md
++++ after/.agent/SOURCE_MAP.md
+@@ -28,6 +28,7 @@
+ | `Sources/App/Snippits/` | Reusable UI snippets, forms, panels, print engines, and feature views. |
+ | `Sources/App/Snippits/CreateNewCustomerDataView.swift` | Customer creation forms using crystal surfaces, TierraCeroCustomUI headers/controls, and the existing verification flow. |
+ | `Sources/App/Snippits/CreateNewSubCustomerDataView.swift` | Parent-account-scoped subaccount creation; displays every shared create-request field and returns the server-created `CustSubAcct`. |
++| `Sources/App/Snippits/SearchSubCustomerView.swift` | Parent-account-scoped subcustomer search/selection and no-result creation flow through the customer-type chooser and subaccount data form. |
+ | `Sources/App/Snippits/ManualAddressSearch.swift` | Crystal postal-address and coordinate lookup dialogs; returns the selected address or geocoder snapshot to its caller. |
+ | `Sources/App/Snippits/TripControler/TripControler+AddLocation.swift` | Dedicated fiscal-location picker; owns origin/destination presentation and location-typed item properties/callbacks. |
+ | `Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+FastAndFurios.swift` | Ranked product revenue velocity, sales velocity, volume, and weighted score report presentation. |
+--- /dev/null
++++ Sources/App/Snippits/SearchSubCustomerView.swift
+@@ -0,0 +1,221 @@
++import Foundation
++import TCFundamentals
++import TCFireSignal
++import Web
++
++final class SearchSubCustomerView: Div {
++    override class var name: String { "div" }
++
++    let custAcct: CustAcctSearch
++    private let callback: (CustSubAcct) -> Void
++    private var searchRequestId: UUID?
++    private var hasCompleted = false
++    private var hasRemoved = false
++
++    @State var term = ""
++    @State private var isSearching = false
++    @State private var statusText = ""
++
++    init(
++        custAcct: CustAcctSearch,
++        callback: @escaping (CustSubAcct) -> Void
++    ) {
++        self.custAcct = custAcct
++        self.callback = callback
++        super.init()
++    }
++
++    required init() {
++        fatalError("init() has not been implemented")
++    }
++
++    private var parentName: String {
++        custAcct.type == .personal
++            ? "\(custAcct.firstName) \(custAcct.lastName)".purgeSpaces
++            : custAcct.businessName
++    }
++
++    lazy var searchCustomerField = InputText(self.$term)
++        .placeholder("Ingrese teléfono, empresa o nombre")
++        .width(100.percent)
++        .height(48.px)
++        .fontSize(18.px)
++        .class(.textFiledLight)
++        .disabled(self.$isSearching)
++        .onKeyUp { _, event in
++            if event.code == "Enter" || event.code == "NumpadEnter" {
++                self.searchCustomer()
++            }
++        }
++
++    private lazy var resultsContainer = Div()
++        .custom("max-height", "360px")
++        .custom("overflow-y", "auto")
++        .custom("display", "grid")
++        .custom("gap", "12px")
++
++    @DOM override var body: DOM.Content {
++        VPopUp(.fitContent(w: 560)) {
++            VTitle("Buscar Subcliente", icon: "icon_user.png") {
++                USmallTitle("Cuenta: \(self.parentName)")
++            } onClose: {
++                self.remove()
++            }
++
++            VBodyGrid {
++                VGrid(.full) {
++                    VBox(.raised) {
++                        UMinorTitle("Ingrese teléfono, nombre de empresa, o nombre y apellido.")
++                            .custom("line-height", "1.5")
++
++                        UField("Teléfono, empresa o nombre", required: false) {
++                            self.searchCustomerField
++                        }
++                        .marginTop(14.px)
++
++                        ULargeButton(self.$isSearching.map { $0 ? "Buscando…" : "Buscar Subcliente" })
++                            .class(Class(TCCrystalSurfaceClass.goodButton))
++                            .width(100.percent)
++                            .marginTop(16.px)
++                            .disabled(self.$isSearching)
++                            .onClick(self.searchCustomer)
++
++                        UMinorTitle(self.$statusText)
++                            .attribute("role", "status")
++                            .attribute("aria-live", "polite")
++                            .marginTop(14.px)
++                            .hidden(self.$statusText.map { $0.isEmpty })
++
++                        self.resultsContainer
++                            .marginTop(14.px)
++                    }
++                }
++            }
++        }
++    }
++
++    override func buildUI() {
++        super.buildUI()
++        TCCrystalSurfaceTheme.apply(to: self, variant: .customerSearch)
++        position(.absolute)
++        width(100.percent)
++        height(100.percent)
++        top(0.px)
++        left(0.px)
++        attribute("role", "dialog")
++        attribute("aria-modal", "true")
++    }
++
++    override func didAddToDOM() {
++        super.didAddToDOM()
++        searchCustomerField.select()
++    }
++
++    func searchCustomer() {
++        guard !isSearching, !hasRemoved, !hasCompleted else { return }
++        term = term.purgeSpaces
++        guard !term.isEmpty else { return }
++
++        if Int64(term) != nil {
++            guard term.count >= 5 else {
++                showError(.invalidFormat, "Si busca por teléfono, deberá ingresar 5 dígitos por lo menos")
++                return
++            }
++        } else {
++            guard term.count >= 4 else {
++                showError(.invalidFormat, "La búsqueda debe incluir por lo menos 4 caracteres")
++                return
++            }
++        }
++
++        let requestId = UUID()
++        searchRequestId = requestId
++        isSearching = true
++        statusText = "Buscando…"
++        resultsContainer.innerHTML = ""
++
++        API.custSubAcctV1.search(custAcct: custAcct.id, term: term) { [weak self] searchedTerm, response in
++            guard let self, self.searchRequestId == requestId, !self.hasRemoved else { return }
++            self.searchRequestId = nil
++            self.isSearching = false
++
++            guard let results = response else {
++                self.statusText = "No se pudo completar la búsqueda. Intente de nuevo."
++                showError(.comunicationError, .serverConextionError)
++                return
++            }
++            guard results.allSatisfy({ $0.custAcct == self.custAcct.id }) else {
++                self.statusText = "No se pudieron cargar los clientes de esta cuenta."
++                showError(.unexpectedResult, "La búsqueda devolvió clientes de otra cuenta")
++                return
++            }
++
++            if results.isEmpty {
++                self.statusText = "No se encontraron clientes. Puede crear uno nuevo."
++                self.createCustomer(searchTerm: searchedTerm)
++            } else if results.count == 1, let item = results.first {
++                self.selectCustomer(item)
++            } else {
++                self.statusText = "Seleccione un cliente de los resultados."
++                results.forEach { self.resultsContainer.appendChild(self.resultCard($0)) }
++            }
++        }
++    }
++
++    private func resultCard(_ item: CustSubAcct) -> VBox {
++        let name = item.businessName.purgeSpaces.isEmpty
++            ? [item.firstName, item.secondName, item.lastName, item.secondLastName]
++                .filter { !$0.purgeSpaces.isEmpty }.joined(separator: " ")
++            : item.businessName
++        let contact = [item.mobile, item.telephone, item.email]
++            .filter { !$0.purgeSpaces.isEmpty }.joined(separator: " · ")
++        let address = [item.street, item.colony, item.city, item.state]
++            .filter { !$0.purgeSpaces.isEmpty }.joined(separator: ", ")
++
++        return VBox(.interactive) {
++            USubTitle(name.isEmpty ? item.folio : name)
++            if !contact.isEmpty { UMinorTitle(contact) }
++            if !address.isEmpty { UMinorTitle(address) }
++        }
++        .attribute("role", "button")
++        .attribute("tabindex", "0")
++        .onClick { self.selectCustomer(item) }
++        .onKeyDown { _, event in
++            guard event.code == "Enter" || event.code == "NumpadEnter" || event.code == "Space" else { return }
++            event.preventDefault()
++            self.selectCustomer(item)
++        }
++    }
++
++    private func createCustomer(searchTerm: String) {
++        addToDom(CreateNewCusomerView(
++            searchTerm: searchTerm,
++            custType: .general
++        ) { acctType, _, selectedTerm in
++            guard !self.hasRemoved, !self.hasCompleted else { return }
++            addToDom(CreateNewSubCustomerDataView(
++                custAcct: self.custAcct,
++                acctType: acctType,
++                searchTerm: selectedTerm
++            ) { item in
++                self.selectCustomer(item)
++            })
++        })
++    }
++
++    private func selectCustomer(_ item: CustSubAcct) {
++        guard !hasCompleted, !hasRemoved, item.custAcct == custAcct.id else { return }
++        hasCompleted = true
++        callback(item)
++        remove()
++    }
++
++    override func didRemoveFromDOM() {
++        hasRemoved = true
++        searchRequestId = nil
++        $term.removeAllListeners()
++        $isSearching.removeAllListeners()
++        $statusText.removeAllListeners()
++        super.didRemoveFromDOM()
++    }
++}

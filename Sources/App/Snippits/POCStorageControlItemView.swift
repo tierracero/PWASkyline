@@ -62,7 +62,7 @@ class POCStorageControlItemView: Div {
         
         marginBottom(7.px)
         padding(all: 3.px)
-        fontSize(12.px)
+        fontSize(14.px)
         self.class(.uibtn)
         width(95.percent)
         onClick {
@@ -83,7 +83,7 @@ class POCStorageControlItemView: Div {
             str += seccions[secid]?.name ?? "S.N/D"
         }
      
-        locationView.appendChild(Span(str).fontSize(12.px))
+        locationView.appendChild(Span(str).fontSize(14.px))
     }
     
     override func didAddToDOM() {

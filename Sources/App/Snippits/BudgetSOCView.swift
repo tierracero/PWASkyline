@@ -21,6 +21,8 @@ class BudgetSOCView: Div {
     /// cost_a, cost_b, cost_c
     let costType: CustAcctCostTypes
 
+    let authorizationContext: CustComponents.ChangePriceAuthorizationContext
+
     private var addSoc: ((
       _ soc: ChargeObject
     ) -> ())
@@ -30,6 +32,7 @@ class BudgetSOCView: Div {
         /// cost_a, cost_b, cost_c
         soc: SearchChargeResponse,
         costType: CustAcctCostTypes,
+        authorizationContext: CustComponents.ChangePriceAuthorizationContext,
         addSoc: @escaping ((
           _ soc: ChargeObject
         ) -> ())
@@ -37,6 +40,7 @@ class BudgetSOCView: Div {
         self.loadSocDetails = loadSocDetails
         self.soc = soc
         self.costType = costType
+        self.authorizationContext = authorizationContext
         self.addSoc = addSoc
     }
 
@@ -360,7 +364,7 @@ class BudgetSOCView: Div {
                                     return
                                 }
                                 
-                                if custCatchHerk > 4 {
+                                if custCatchHerk >= self.authorizationContext.minimumHerk(config: configStoreProcessing) {
                                     
                                     self.changePriceViewIsHidden = true
                                     
@@ -379,6 +383,7 @@ class BudgetSOCView: Div {
                                         id: socid,
                                         requestedPrice: _price,
                                         reason: "",
+                                        authorizationContext: self.authorizationContext,
                                         callback: { auth in
                                             
                                             self.changePriceViewIsHidden = true

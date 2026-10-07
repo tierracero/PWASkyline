@@ -15,8 +15,6 @@ extension CustAssetsView {
 
         override class var name: String { "div" }
 
-        let ws = WS()
-        
         let viewId: UUID = .init()
 
         /// store, customer, warehose
@@ -69,7 +67,9 @@ extension CustAssetsView {
             .width(100.percent)
 
         @DOM override var body: DOM.Content {
+
             VPopUp(.fitContent(w: 580)) {
+
                 VTitle(
                     self.department == nil ? "Crear Departamento" : "Editar Departamento"
                 ) {

@@ -234,7 +234,7 @@ class MessageObject: Div {
             .color(self.$titleColor)
             .marginRight(12.px)
             .marginLeft(12.px)
-            .fontSize(13.px)
+            .fontSize(14.px)
             .align(.left)
             
             Div().class(.clear).marginTop(3.px)
@@ -285,7 +285,7 @@ class MessageObject: Div {
                         .class(.oneLineText)
                         .color(.lightGray)
                         .textAlign(.right)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .width(100.px)
                 }
                 .class(Class(TCMessageObjectClass.bubble))
@@ -414,7 +414,7 @@ class MessageObject: Div {
             .color(self.titleColor)
             .marginRight(12.px)
             .marginLeft(12.px)
-            .fontSize(13.px)
+            .fontSize(14.px)
             .align(.right)
             
             Div().class(.clear).marginTop(3.px)
@@ -615,7 +615,7 @@ class MessageObject: Div {
             }
                 .class(Class(TCMessageObjectClass.meta))
                 .align(.left)
-                .fontSize(13.px)
+                .fontSize(14.px)
                 .marginLeft(12.px)
                 .marginRight(12.px)
                 .color(self.$titleColor)

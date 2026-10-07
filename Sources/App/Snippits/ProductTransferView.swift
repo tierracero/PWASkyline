@@ -814,6 +814,7 @@ class ProductTransferView: Div {
         let _view = ConfirmProductView(
             accountId: nil, 
             costType: .cost_a,
+            authorizationContext: self.currentView == .mermInventory ? .inventoryMerma : .sale,
             pocid: pocid,
             selectedInventoryIDs: self.selectedInventoryIDs,
             blockMultipleStores: true,

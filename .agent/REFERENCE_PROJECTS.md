@@ -23,7 +23,7 @@ These are active dependencies declared in `Package.swift`:
 
 - `TCFundamentals`
 - `TCFireSignal`
-- `MailAPICore`
+- `MapKitCore`
 - `TCSocialCore`
 - `TaecelAPICore`
 - `LanguagePack`

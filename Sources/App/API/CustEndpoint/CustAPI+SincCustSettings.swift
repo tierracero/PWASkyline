@@ -9,9 +9,29 @@ import Foundation
 import TCFundamentals
 import TCFireSignal
 
+// Keep this wire-compatible with CustComponents.SincCustSettingsResponse.
+// A reference avoids WASM copy helpers exceeding the browser's parameter limit.
+final class SincCustSettingsSnapshot: Payloadable {
+    let account: TCAccountsItem
+    let custWebFilesLogos: CustWebFilesLogos
+    let configStoreProduct: ConfigStoreProduct?
+    let configContactTags: ConfigContactTags?
+    let configServiceTags: ConfigServiceTags?
+    let configStoreProcessing: ConfigStoreProcessing?
+    let configGeneral: ConfigGeneral?
+    let customerServiceProfile: CustomerServiceProfile
+    let custOperationWorkProfile: CustOperationWorkProfile
+    let configStore: ConfigStore?
+    let alertManagerConfiguration: AlertManagerConfiguration
+    let mercadoLibreProfile: MercadoLibreProfile?
+    let orcScripts: [OCRCustomeScript]
+    let printScripts: [CustomerCustomeScript]
+    let internalCommunications: [InternalCommunicationMessagesMin]
+}
+
 extension CustComponents {
 	
-	static func sincCustSettings( callback: @escaping ( (_ resp: APIResponseGeneric<SincCustSettingsResponse>?) -> () )) {
+	static func sincCustSettings( callback: @escaping ( (_ resp: APIResponseGeneric<SincCustSettingsSnapshot>?) -> () )) {
 		sendPost(
 			rout,
 			version,
@@ -23,7 +43,7 @@ extension CustComponents {
 				return
 			}
 			do{
-				let resp = try decodeAPIResponse(APIResponseGeneric<SincCustSettingsResponse>.self, from: data)
+				let resp = try decodeAPIResponse(APIResponseGeneric<SincCustSettingsSnapshot>.self, from: data)
 				callback(resp)
 			}
 			catch{

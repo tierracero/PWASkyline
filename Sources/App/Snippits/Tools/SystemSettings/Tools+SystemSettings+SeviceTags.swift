@@ -80,6 +80,18 @@ extension ToolsView.SystemSettings {
         @State var checkTag6: Bool
         @State var checkTag6Name: String
 
+        @State var checkTag7: Bool
+        @State var checkTag7Name: String
+
+        @State var checkTag8: Bool
+        @State var checkTag8Name: String
+
+        @State var checkTag9: Bool
+        @State var checkTag9Name: String
+
+        @State var checkTag10: Bool
+        @State var checkTag10Name: String
+
         @State var tagDescrName: String
         @State var tagDescrPlaceholder: String
 
@@ -133,6 +145,14 @@ extension ToolsView.SystemSettings {
             self.checkTag5Name = configServiceTags.checkTag5Name
             self.checkTag6 = configServiceTags.checkTag6
             self.checkTag6Name = configServiceTags.checkTag6Name
+            self.checkTag7 = configServiceTags.checkTag7
+            self.checkTag7Name = configServiceTags.checkTag7Name
+            self.checkTag8 = configServiceTags.checkTag8
+            self.checkTag8Name = configServiceTags.checkTag8Name
+            self.checkTag9 = configServiceTags.checkTag9
+            self.checkTag9Name = configServiceTags.checkTag9Name
+            self.checkTag10 = configServiceTags.checkTag10
+            self.checkTag10Name = configServiceTags.checkTag10Name
             self.tagDescrName = configServiceTags.tagDescrName
             self.tagDescrPlaceholder = configServiceTags.tagDescrPlaceholder
             self.additionalMainTags = configServiceTags.additionalMainTags
@@ -334,6 +354,38 @@ extension ToolsView.SystemSettings {
             .width(95.percent)
             .placeholder("Chekbox Seis")
             
+
+        lazy var checkTag7Checkbox = InputCheckbox().toggle(self.$checkTag7)
+        lazy var checkTag7NameField: InputText = InputText(self.$checkTag7Name)
+            .onFocus { tf in tf.select() }
+            .class(.textFiledBlackDark)
+            .width(95.percent)
+            .placeholder("Chekbox Siete")
+
+
+        lazy var checkTag8Checkbox = InputCheckbox().toggle(self.$checkTag8)
+        lazy var checkTag8NameField: InputText = InputText(self.$checkTag8Name)
+            .onFocus { tf in tf.select() }
+            .class(.textFiledBlackDark)
+            .width(95.percent)
+            .placeholder("Chekbox Ocho")
+
+
+        lazy var checkTag9Checkbox = InputCheckbox().toggle(self.$checkTag9)
+        lazy var checkTag9NameField: InputText = InputText(self.$checkTag9Name)
+            .onFocus { tf in tf.select() }
+            .class(.textFiledBlackDark)
+            .width(95.percent)
+            .placeholder("Chekbox Nueve")
+
+
+        lazy var checkTag10Checkbox = InputCheckbox().toggle(self.$checkTag10)
+        lazy var checkTag10NameField: InputText = InputText(self.$checkTag10Name)
+            .onFocus { tf in tf.select() }
+            .class(.textFiledBlackDark)
+            .width(95.percent)
+            .placeholder("Chekbox Diez")
+
 
         lazy var tagDescrNameField: InputText = InputText(self.$tagDescrName)
             .onFocus { tf in tf.select() }
@@ -680,6 +732,122 @@ extension ToolsView.SystemSettings {
                                 self.checkTag6NameField
                                 .color(self.$checkTag6.map{  !$0 ? .gray : .white })
                                 .disabled(self.$checkTag6.map{  !$0 })
+                            }
+                            .width(50.percent)
+                            .align(.right)
+                            .float(.left)
+
+                            Div().clear(.both).height(3.px)
+
+                        }
+                        Div().clear(.both).height(12.px)
+                        /* MARK: Checkboxs Siete*/
+                        Div{
+
+                            Div{
+                                self.checkTag7Checkbox
+                                .float(.right)
+                                H3("Checkbox Siete")
+                            }
+                            Div().clear(.both).height(7.px)
+
+                            Div{
+                                Label("Valor del checkbox")
+                            }
+                            .width(50.percent)
+                            .float(.left)
+
+                            Div{
+                                self.checkTag7NameField
+                                .color(self.$checkTag7.map{  !$0 ? .gray : .white })
+                                .disabled(self.$checkTag7.map{  !$0 })
+                            }
+                            .width(50.percent)
+                            .align(.right)
+                            .float(.left)
+
+                            Div().clear(.both).height(3.px)
+
+                        }
+                        Div().clear(.both).height(12.px)
+                        /* MARK: Checkboxs Ocho*/
+                        Div{
+
+                            Div{
+                                self.checkTag8Checkbox
+                                .float(.right)
+                                H3("Checkbox Ocho")
+                            }
+                            Div().clear(.both).height(7.px)
+
+                            Div{
+                                Label("Valor del checkbox")
+                            }
+                            .width(50.percent)
+                            .float(.left)
+
+                            Div{
+                                self.checkTag8NameField
+                                .color(self.$checkTag8.map{  !$0 ? .gray : .white })
+                                .disabled(self.$checkTag8.map{  !$0 })
+                            }
+                            .width(50.percent)
+                            .align(.right)
+                            .float(.left)
+
+                            Div().clear(.both).height(3.px)
+
+                        }
+                        Div().clear(.both).height(12.px)
+                        /* MARK: Checkboxs Nueve*/
+                        Div{
+
+                            Div{
+                                self.checkTag9Checkbox
+                                .float(.right)
+                                H3("Checkbox Nueve")
+                            }
+                            Div().clear(.both).height(7.px)
+
+                            Div{
+                                Label("Valor del checkbox")
+                            }
+                            .width(50.percent)
+                            .float(.left)
+
+                            Div{
+                                self.checkTag9NameField
+                                .color(self.$checkTag9.map{  !$0 ? .gray : .white })
+                                .disabled(self.$checkTag9.map{  !$0 })
+                            }
+                            .width(50.percent)
+                            .align(.right)
+                            .float(.left)
+
+                            Div().clear(.both).height(3.px)
+
+                        }
+                        Div().clear(.both).height(12.px)
+                        /* MARK: Checkboxs Diez*/
+                        Div{
+
+                            Div{
+                                self.checkTag10Checkbox
+                                .float(.right)
+                                H3("Checkbox Diez")
+                            }
+                            Div().clear(.both).height(7.px)
+
+                            Div{
+                                Label("Valor del checkbox")
+                            }
+                            .width(50.percent)
+                            .float(.left)
+
+                            Div{
+                                self.checkTag10NameField
+                                .color(self.$checkTag10.map{  !$0 ? .gray : .white })
+                                .disabled(self.$checkTag10.map{  !$0 })
                             }
                             .width(50.percent)
                             .align(.right)
@@ -1295,6 +1463,34 @@ extension ToolsView.SystemSettings {
                 return
             }
 
+            // Checkbox Siete
+            if checkTag7 && checkTag7Name.isEmpty{
+                showError(.requiredField, .requierdValid("Nombre Checkbox Siete"), .short)
+                checkTag7NameField.select()
+                return
+            }
+
+            // Checkbox Ocho
+            if checkTag8 && checkTag8Name.isEmpty{
+                showError(.requiredField, .requierdValid("Nombre Checkbox Ocho"), .short)
+                checkTag8NameField.select()
+                return
+            }
+
+            // Checkbox Nueve
+            if checkTag9 && checkTag9Name.isEmpty{
+                showError(.requiredField, .requierdValid("Nombre Checkbox Nueve"), .short)
+                checkTag9NameField.select()
+                return
+            }
+
+            // Checkbox Diez
+            if checkTag10 && checkTag10Name.isEmpty{
+                showError(.requiredField, .requierdValid("Nombre Checkbox Diez"), .short)
+                checkTag10NameField.select()
+                return
+            }
+
             loadingView.show()
             
             API.custAPIV1.saveConfigs(
@@ -1340,6 +1536,14 @@ extension ToolsView.SystemSettings {
                     checkTag5Name: checkTag5Name,
                     checkTag6: checkTag6,
                     checkTag6Name: checkTag6Name,
+                    checkTag7: checkTag7,
+                    checkTag7Name: checkTag7Name,
+                    checkTag8: checkTag8,
+                    checkTag8Name: checkTag8Name,
+                    checkTag9: checkTag9,
+                    checkTag9Name: checkTag9Name,
+                    checkTag10: checkTag10,
+                    checkTag10Name: checkTag10Name,
                     tagDescrName: tagDescrName,
                     tagDescrPlaceholder: tagDescrPlaceholder,
                     additionalMainTags: additionalMainTags,
@@ -1412,6 +1616,14 @@ extension ToolsView.SystemSettings {
             $checkTag5Name.removeAllListeners()
             $checkTag6.removeAllListeners()
             $checkTag6Name.removeAllListeners()
+            $checkTag7.removeAllListeners()
+            $checkTag7Name.removeAllListeners()
+            $checkTag8.removeAllListeners()
+            $checkTag8Name.removeAllListeners()
+            $checkTag9.removeAllListeners()
+            $checkTag9Name.removeAllListeners()
+            $checkTag10.removeAllListeners()
+            $checkTag10Name.removeAllListeners()
             $tagDescrName.removeAllListeners()
             $tagDescrPlaceholder.removeAllListeners()
             $additionalMainTags.removeAllListeners()

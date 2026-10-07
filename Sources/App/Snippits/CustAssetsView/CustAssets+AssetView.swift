@@ -1,3 +1,6 @@
+//
+// CustAssets+AssetView.swift
+//
 import Foundation
 import TCFundamentals
 import TCFireSignal
@@ -11,43 +14,41 @@ extension CustAssetsView {
 
         override class var name: String { "div" }
 
-        private enum AssetTab: Equatable {
-            case inventory
-            case notes
-        }
-
         /// store, warehose, account, subAccount
         let viewType: InitiateAssetItemViewType
 
         let assetId: UUID
 
-        var locations: [CustCommercialAssetsLocation]
+        var sections: [CustCommercialAssetsSection]
 
-        var subLocations: [CustCommercialAssetsSubLocation]
+        var subSections: [CustCommercialAssetsSubSection]
 
         let onLoaded: ((CustCommercialAssets) -> Void)?
-        let onLocationCreated: ((CustCommercialAssetsLocation) -> Void)?
-        let onSubLocationCreated: ((CustCommercialAssetsSubLocation) -> Void)?
+
+        let onSectionCreated: ((CustCommercialAssetsSection) -> Void)?
+
+        let onSubSectionCreated: ((CustCommercialAssetsSubSection) -> Void)?
 
         private lazy var statusSelect = USelectField(self.$status)
             .width(100.percent)
+            .disabled(true)
 
         init(
             viewType: InitiateAssetItemViewType,
             assetId: UUID,
-            locations: [CustCommercialAssetsLocation],
-            subLocations: [CustCommercialAssetsSubLocation],
+            sections: [CustCommercialAssetsSection],
+            subSections: [CustCommercialAssetsSubSection],
             onLoaded: ((CustCommercialAssets) -> Void)? = nil,
-            onLocationCreated: ((CustCommercialAssetsLocation) -> Void)? = nil,
-            onSubLocationCreated: ((CustCommercialAssetsSubLocation) -> Void)? = nil
+            onSectionCreated: ((CustCommercialAssetsSection) -> Void)? = nil,
+            onSubSectionCreated: ((CustCommercialAssetsSubSection) -> Void)? = nil
         ) {
             self.viewType = viewType
             self.assetId = assetId
-            self.locations = locations
-            self.subLocations = subLocations
+            self.sections = sections
+            self.subSections = subSections
             self.onLoaded = onLoaded
-            self.onLocationCreated = onLocationCreated
-            self.onSubLocationCreated = onSubLocationCreated
+            self.onSectionCreated = onSectionCreated
+            self.onSubSectionCreated = onSubSectionCreated
             super.init()
         }
 
@@ -57,10 +58,16 @@ extension CustAssetsView {
 
         @State private var title = "Cargando activo…"
 
-        @State private var activeTab: AssetTab = .inventory
+        @State private var noteCount = 0
 
         @State private var productType = ""
         @State private var productSubType = ""
+        @State private var fiscCode = ""
+        @State private var fiscUnit = ""
+        @State private var assetWidth = ""
+        @State private var assetHeight = ""
+        @State private var assetLength = ""
+        @State private var assetWeight = ""
         @State private var upc = ""
         @State private var name = ""
         @State private var descriptionText = ""
@@ -75,28 +82,44 @@ extension CustAssetsView {
         @State private var avatar = ""
         @State private var status = CustCommercialAssetsStatus.active.rawValue
 
+        private lazy var fiscCodeField = FiscCodeField(style: .dark, type: .product) { data in
+            self.fiscCode = data.c
+        }
+
+        private lazy var fiscUnitField = FiscUnitField(style: .dark, type: .product) { data in
+            self.fiscUnit = data.c
+        }
+
         private var currentAsset: CustCommercialAssets?
+
+        private var notes: [CustGeneralNotes] = []
+
+        @State var items: [CustAssetsComponents.AssetsItemPayload] = []
 
         @State var department: CustAssetDepsQuick? = nil
         
         @State var categorie: CustAssetCatsQuick? = nil
 
         private lazy var contentView = Div()
-        .id(.init("contentView_\(callKey(7))"))
-        .height(100.percent)
+            .id(.init("contentView_\(callKey(7))"))
+            .custom("min-height", "0")
+            .height(100.percent)
+
+        private lazy var notesGrid = VGrid(.full) {}
+            .custom("min-height", "0")
+            .height(100.percent)
+            .marginTop(10.px)
+            .overflow(.auto)
 
         private lazy var addAssetButton = USmallButton("+ Ingresar Inventario")
-            .marginTop(-9.px)
-            .float(.right)
             .onClick {
                 self.createAsset()
             }
 
-            /// CustCommercialAssetsType
-
         @DOM override var body: DOM.Content {
 
             VPopUp(.full) {
+
                 VTitle(self.$title.map{ "Activo \(self.department?.assetType.description ?? "N/D") | \($0)" }, icon: "commertial_assets_icon.png") {
                     USmallTitle("Editar activo")
                 } onClose: {
@@ -104,17 +127,16 @@ extension CustAssetsView {
                 }
 
                 VBodyGrid {
-                    /*
                     VGrid(.full) {
                         self.contentView
                     }
                     .height(100.percent)
-                    .display(.block)
-                    */
-
-                    self.contentView
+                    .custom("min-height", "0")
+                    .custom("grid-template-rows", "minmax(0, 1fr)")
+                    .custom("align-content", "stretch")
                 }
-                .display(.block)
+                .custom("grid-template-rows", "minmax(0, 1fr)")
+                .custom("align-content", "stretch")
             }
         }
 
@@ -165,11 +187,18 @@ extension CustAssetsView {
         }
 
         private func render(_ payload: CustAssetsComponents.GetAssetResponse) {
-            let item = payload.item
-            currentAsset = item
 
+            let item = payload.item
+
+            currentAsset = item
             productType = item.productType
             productSubType = item.productSubType
+            fiscCode = item.fiscCode
+            fiscUnit = item.fiscUnit
+            assetWidth = item.width
+            assetHeight = item.height
+            assetLength = item.length
+            assetWeight = item.weight
             upc = item.upc ?? ""
             name = item.name
             descriptionText = item.description
@@ -185,6 +214,14 @@ extension CustAssetsView {
             avatar = item.avatar ?? ""
             department = payload.department
             categorie = payload.categorie
+            notes = payload.notes
+
+            items = payload.items
+
+            renderNotes()
+
+            fiscCodeField.loadFiscalCodeData(item.fiscCode)
+            fiscUnitField.loadFiscalCodeData(item.fiscUnit)
 
             statusSelect.innerHTML = ""
             CustCommercialAssetsStatus.allCases.forEach { value in
@@ -196,324 +233,313 @@ extension CustAssetsView {
 
             contentView.innerHTML = ""
 
-            let editor = Div {
-                
-                Div{
+
+            let editor = VGrid(.full) {
+                VGrid(.oneThird) {
                     self.mediaColumn(item)
                 }
-                .marginRight(1.percent)
-                .width(33.percent)
-                .float(.left)
 
-                Div{
-                    self.productColumn(item)
+                VGrid(.twoThirds) {
+                    self.productColumn()
                 }
-                .float(.left)
-                .width(66.percent)
 
-                Div().clear(.both)
-                
-                Div {
-                    UTitle("Notas")
-
-                    Div().clear(.both)
-
+                VGrid(.oneThird) {
                     VBox(.raised) {
-                        self.notesList(payload.notes)
+                        UTitle(self.$noteCount.map { "Notas (\($0))" })
+                        self.notesGrid
                     }
-                    .custom("height","calc(100% - 35px)")
-                    .marginTop(10.px)
-
+                    .height(100.percent)
+                    .custom("min-height", "0")
+                    .display(.grid)
+                    .custom("grid-template-rows", "auto minmax(0, 1fr)")
                 }
-                .custom("height","calc(100% - 505px)")
-                .marginRight(1.percent)
-                .width(33.percent)
-                .float(.left)
+                .height(100.percent)
+                .custom("min-height", "0")
+                .custom("grid-template-rows", "minmax(0, 1fr)")
+                .custom("align-content", "stretch")
 
-                Div {
-                    Div {
-                        self.addAssetButton
-                        UTitle("Inventario")
+                VGrid(.twoThirds) {
+                    VBox(.raised) {
+                        Div {
+                            
+                            UTitle("Inventario")
+                            .marginRight(7.px)
+                            .float(.left)
+
+                            UTitle(self.$items.map{ $0.count.toString })
+                            .color(.white)
+                            .float(.left)
+                            
+                            self.addAssetButton
+                            .float(.right)
+
+                            Div().clear(.both)
+
+                        }
+                        .display(.block)
+
+                        AssetInventoryController(items: self.$items)
+                        .custom("min-height", "0")
+                        .height(100.percent)
+                        .marginTop(10.px)
+                        .overflow(.auto)
                     }
-
-                    Div().clear(.both)
-
-                    AssetInventoryController(items: payload.items) { item in
-                        addToDom(
-                            AssetItemView(assetItemId: item.id) { _ in
-                                self.load()
-                            }
-                        )
-                    }
-                        .marginTop(3.px)
-                        .custom("height","calc(100% - 35px)")
+                    .custom("grid-template-rows", "auto minmax(0, 1fr)")
+                    .custom("background-color", "rgb(20 22 23) !important")
+                    .custom("min-height", "0")
+                    .height(100.percent)
+                    .display(.grid)
                 }
-                .custom("height","calc(100% - 505px)")
-                .width(66.percent)
-                .float(.left)
-
-                Div().clear(.both)
-
+                .custom("grid-template-rows", "minmax(0, 1fr)")
+                .custom("align-content", "stretch")
+                .custom("min-height", "0")
+                .height(100.percent)
             }
+            .custom("grid-template-rows", "auto minmax(0, 1fr)")
+            .custom("align-content", "stretch")
+            .custom("min-height", "0")
             .height(100.percent)
 
-            contentView.appendChild(
-                Div {
-                    editor
-                }
-                .custom("max-height", "calc(100vh - 105px)")
-                .custom("box-sizing", "border-box")
-                .custom("overflow", "auto")
-                .custom("width", "100%")
-                .height(100.percent)
-
-            )
+            contentView.appendChild(editor)
         }
 
         private func mediaColumn(_ item: CustCommercialAssets) -> Div {
-            Div {
+            VGrid(.full) {
+                VGrid(.half) {
+                    VBox(.raised) {
+                        UTitle("Fotos y videos")
 
-                VBox(.raised) {
-                    UTitle("Fotos y videos")
-
-                    CustAssetsAvatarUploader(
-                        avatar: self.$avatar,
-                        destination: .asset,
-                        itemId: item.id
-                    )
-                    .marginTop(8.px)
+                        CustAssetsAvatarUploader(
+                            avatar: self.$avatar,
+                            destination: .asset,
+                            itemId: item.id
+                        )
+                        .marginTop(8.px)
+                    }
                 }
 
-                VBox(.raised) {
+                VGrid(.half) {
 
-                    UTitle("Estado General")
+                    VGrid(.full) {
 
-                    Div {
-                        Div {
-
-                            UField("Estado") {
-                                self.statusSelect
-                            }
+                        UField("Departamento", required: false) {
+                            USubTitle(self.$department.map{ $0?.name ?? "" } )
                         }
-                        .margin(all: 3.px)
+                        .hidden(self.$department.map { $0 == nil })
+                        .display(self.$department.map { $0 == nil ? .none : .block })
                     }
-                    .width(50.percent)
-                    .float(.left)
 
-                    Div {
-                        Div {
-                            UField("Tipo de activo") {
-                                USubTitle(item.assetType.description)
-                            }
+                    VGrid(.full) {
+                        UField("Categoria", required: false) {
+                            USubTitle(self.$categorie.map{ $0?.name ?? "" } )
                         }
-                        .margin(all: 3.px)
+                        .hidden(self.$categorie.map { $0 == nil })
+                        .display(self.$categorie.map { $0 == nil ? .none : .block })
                     }
-                    .width(50.percent)
-                    .float(.left)
 
-                    Div().clear(.both)
-
-                    Div {
-
-                        Div {
-                            UField("Costo inicial") {
-                                UTextField(self.$initialCost)
-                                    .placeholder("0.00")
-                                    .onFocus { field in field.select() }
-                            }
+                    VGrid(.full) {
+                        UField("Tipo de activo", required: false) {
+                            USubTitle(item.assetType.description)
                         }
-                        .margin(all: 3.px)
-
                     }
-                    .width(50.percent)
-                    .float(.left)
 
-                    Div {
-
-                        Div {
-                            UField("Depreciación") {
-                                UTextField(self.$depreciationRate)
-                                    .placeholder("0")
-                                    .onFocus { field in field.select() }
-                            }
+                    VGrid(.full) {
+                        UField("Estado") {
+                            self.statusSelect
                         }
-                        .margin(all: 3.px)
-
                     }
-                    .width(50.percent)
-                    .float(.left)
-
-                    Div().clear(.both)
-
-                    Div {
-                        
-                        Div {
-                            UField("Tipo de producto") {
-                                UTextField(self.$productType)
-                            }                            
-                        }
-                        .margin(all: 3.px)
-
-                    }
-                    .width(50.percent)
-                    .float(.left)
-
-                    Div {
-                        
-                        Div {
-                            UField("Subtipo", required: false) {
-                                UTextField(self.$productSubType)
-                            }   
-                        }
-                        .margin(all: 3.px)
-
-                    }
-                    .width(50.percent)
-                    .float(.left)
-
-                    Div().clear(.both)
-
                 }
-                .marginTop(12.px)
+
+                VGrid(.full) {
+                    VBox(.raised) {
+
+                        UTitle("Estado general")
+
+                        VGrid(.full) {
+
+                            VGrid(.half) {
+                                UField("Costo inicial") {
+                                    UTextField(self.$initialCost)
+                                        .placeholder("0.00")
+                                        .onFocus { field in field.select() }
+                                }
+                            }
+
+                            VGrid(.half) {
+                                UField("Depreciación") {
+                                    UTextField(self.$depreciationRate)
+                                        .placeholder("0")
+                                        .onFocus { field in field.select() }
+                                }
+                            }
+
+                            VGrid(.half) {
+                                UField("Tipo de producto") {
+                                    UTextField(self.$productType)
+                                }
+                            }
+
+                            VGrid(.half) {
+                                UField("Subtipo", required: false) {
+                                    UTextField(self.$productSubType)
+                                }
+                            }
+                        }
+                        .marginTop(10.px)
+                    }
+                }
             }
-            .display(.flex)
-            .custom("flex-direction", "column")
-            .custom("gap", "12px")
         }
 
-        private func productColumn(_ item: CustCommercialAssets) -> Div {
+        private func productColumn() -> Div {
             VBox(.raised) {
-                Div {
-                    UTitle("Datos del producto")
+                UTitle("Datos del producto")
 
-                    Div {
-
+                VGrid(.full) {
+                    VGrid(.oneForth) {
                         UField("Marca", required: false) {
                             UTextField(self.$brand)
                         }
+                    }
 
+                    VGrid(.oneForth) {
                         UField("Modelo", required: false) {
                             UTextField(self.$model)
                         }
+                    }
 
+                    VGrid(.oneForth) {
                         UField("SKU / UPC / POC", required: false) {
                             UTextField(self.$upc)
                         }
+                    }
 
+                    VGrid(.oneForth) {
                         UField("Pseudo modelo", required: false) {
                             UTextField(self.$pseudoModel)
                         }
+                    }
 
-                        UField("Nombre") {
+                    VGrid(.half) {
+                        UField("Código fiscal", required: false) {
+                            self.fiscCodeField
+                        }
+                    }
+
+                    VGrid(.half) {
+                        UField("Unidad fiscal", required: false) {
+                            self.fiscUnitField
+                        }
+                    }
+
+                    VGrid(.oneForth) {
+                        UField("Ancho", required: false) {
+                            UTextField(self.$assetWidth)
+                        }
+                    }
+
+                    VGrid(.oneForth) {
+                        UField("Alto", required: false) {
+                            UTextField(self.$assetHeight)
+                        }
+                    }
+
+                    VGrid(.oneForth) {
+                        UField("Largo", required: false) {
+                            UTextField(self.$assetLength)
+                        }
+                    }
+
+                    VGrid(.oneForth) {
+                        UField("Peso", required: false) {
+                            UTextField(self.$assetWeight)
+                        }
+                    }
+
+                    VGrid(.half) {
+                        UField("Nombre", required: false) {
                             UTextField(self.$name)
                         }
-                        .custom("grid-column", "1 / -1")
+                    }
 
+                    VGrid(.half) {
                         UField("Descripción corta", required: false) {
                             UTextField(self.$descriptionText)
                         }
-                        .custom("grid-column", "1 / -1")
                     }
-                    .display(.grid)
-                    .custom("grid-template-columns", "repeat(4, minmax(0, 1fr))")
-                    .custom("gap", "8px 12px")
-                    .marginTop(8.px)
+                }
+                .marginTop(10.px)
 
-                    UTitle("Descripciones")
-                        .marginTop(14.px)
-
-                    Div {
-                        UField("General", required: false) {
+                VGrid(.full) {
+                    VGrid(.oneThird) {
+                        UField("Descripción General", required: false) {
                             UTextArea(self.$generalDescription)
                                 .height(92.px)
                         }
+                    }
 
-                        UField("Comercial", required: false) {
+                    VGrid(.oneThird) {
+                        UField("Descripción Comercial", required: false) {
                             UTextArea(self.$commercialDescription)
                                 .height(92.px)
                         }
+                    }
 
-                        UField("Técnica", required: false) {
+                    VGrid(.oneThird) {
+                        UField("Descripción Técnica", required: false) {
                             UTextArea(self.$technicalDescription)
                                 .height(92.px)
                         }
                     }
-                    .display(.grid)
-                    .custom("grid-template-columns", "repeat(3, minmax(0, 1fr))")
-                    .custom("gap", "8px 12px")
-                    .marginTop(8.px)
                 }
+                .marginTop(10.px)
 
-                Div {
 
-                    UMinorTitle(self.$department.map{ "Departamento: \( $0?.name ?? "N/D" )" })
-                    .marginRight(7.px)
-                    .float(.left)
+                VGrid(.full) {
 
-                    UMinorTitle(self.$categorie.map{ "Categoría: \( $0?.name ?? "N/D" )" })
-                        .marginTop(3.px)
-                        .float(.left)
-                        .hidden(self.$categorie.map{ $0 == nil })
-                        
+                    VGrid(.half) { }
+
+                    VGrid(.half) {
+                        ULargeButton("Guardar cambios")
+                            .class(Class(TCCrystalSurfaceClass.goodButton))
+                            .width(100.percent)
+                            .onClick { self.save() }
+                    }
                 }
-                .marginTop(12.px)
-
-                Div {
-                    ULargeButton("Cerrar")
-                        .onClick { self.remove() }
-
-                    ULargeButton("Guardar cambios")
-                        .class(Class(TCCrystalSurfaceClass.goodButton))
-                        .onClick { self.save() }
-                }
-                .display(.flex)
-                .custom("justify-content", "flex-end")
-                .custom("gap", "8px")
                 .marginTop(12.px)
             }
         }
 
-        private func tabButton(_ title: String, tab: AssetTab) -> Div {
-            Div(title)
-                .padding(v: 8.px, h: 14.px)
-                .cursor(.pointer)
-                .fontWeight(.bold)
-                .color(self.$activeTab.map { $0 == tab ? .white : .gray })
-                .backgroundColor(self.$activeTab.map {
-                    $0 == tab ? .init(r: 37, g: 90, b: 124, a: 0.82) : .transparent
-                })
-                .custom("border", "1px solid rgba(102, 184, 236, 0.24)")
-                .custom("border-bottom", "0")
-                .custom("border-radius", "8px 8px 0 0")
-                .onClick {
-                    self.activeTab = tab
-                }
-        }
-
-        private func notesList(_ notes: [CustGeneralNotes]) -> Div {
-            let list = Div()
-                .display(.grid)
-                .custom("gap", "8px")
-                .marginTop(8.px)
+        private func renderNotes() {
+            noteCount = notes.count
+            notesGrid.innerHTML = ""
 
             if notes.isEmpty {
-                list.appendChild(emptyState("No hay notas registradas para este activo."))
-                return list
+                notesGrid.appendChild(emptyState("No hay notas registradas para este activo."))
+                return
             }
 
             notes.forEach { note in
-                list.appendChild(
-                    VBox(.raised) {
-                        Div(note.activity)
-                            .custom("white-space", "pre-wrap")
-                            .custom("line-height", "1.45")
-                        UMinorTitle(note.type.rawValue)
-                            .marginTop(5.px)
-                    }
-                )
+                notesGrid.appendChild(noteView(note))
             }
+        }
 
-            return list
+        private func upsertNote(_ note: CustGeneralNotes) {
+            notes.removeAll { $0.id == note.id }
+            notes.insert(note, at: 0)
+            renderNotes()
+        }
+
+        private func noteView(_ note: CustGeneralNotes) -> Div {
+            VGrid(.full) {
+                VBox {
+                    Div(note.activity)
+                        .custom("white-space", "pre-wrap")
+                        .custom("line-height", "1.45")
+                    UMinorTitle(note.type.rawValue)
+                        .marginTop(5.px)
+                }
+            }
         }
 
         private func save() {
@@ -525,6 +551,20 @@ extension CustAssetsView {
             name = name.purgeSpaces.purgeHtml
             productType = productType.purgeSpaces.purgeHtml
             productSubType = productSubType.purgeSpaces.purgeHtml
+            fiscCode = fiscCode.purgeSpaces.purgeHtml
+            fiscUnit = fiscUnit.purgeSpaces.purgeHtml
+            assetWidth = assetWidth.purgeSpaces.purgeHtml
+            assetHeight = assetHeight.purgeSpaces.purgeHtml
+            assetLength = assetLength.purgeSpaces.purgeHtml
+            assetWeight = assetWeight.purgeSpaces.purgeHtml
+            upc = upc.purgeSpaces.purgeHtml
+            descriptionText = descriptionText.purgeSpaces.purgeHtml
+            brand = brand.purgeSpaces.purgeHtml
+            model = model.purgeSpaces.purgeHtml
+            pseudoModel = pseudoModel.purgeSpaces.purgeHtml
+            generalDescription = generalDescription.purgeSpaces.purgeHtml
+            commercialDescription = commercialDescription.purgeSpaces.purgeHtml
+            technicalDescription = technicalDescription.purgeSpaces.purgeHtml
 
             guard !name.isEmpty else {
                 showError(.requiredField, .requierdValid("Nombre"))
@@ -563,6 +603,12 @@ extension CustAssetsView {
                 assetDepartmentId: currentAsset.assetDepartmentId,
                 assetSeccionId: currentAsset.assetSeccionId,
                 custAcct: currentAsset.custAcct,
+                fiscCode: fiscCode,
+                fiscUnit: fiscUnit,
+                width: assetWidth,
+                height: assetHeight,
+                length: assetLength,
+                weight: assetWeight,
                 productType: productType,
                 productSubType: productSubType,
                 upc: upc.isEmpty ? nil : upc,
@@ -591,17 +637,50 @@ extension CustAssetsView {
                     return
                 }
 
+                var updatedAsset = currentAsset
+                updatedAsset.modifiedAt = getNow()
+                updatedAsset.fiscCode = self.fiscCode
+                updatedAsset.fiscUnit = self.fiscUnit
+                updatedAsset.width = self.assetWidth
+                updatedAsset.height = self.assetHeight
+                updatedAsset.length = self.assetLength
+                updatedAsset.weight = self.assetWeight
+                updatedAsset.productType = self.productType
+                updatedAsset.productSubType = self.productSubType
+                updatedAsset.upc = self.upc.isEmpty ? nil : self.upc
+                updatedAsset.name = self.name
+                updatedAsset.description = self.descriptionText
+                updatedAsset.brand = self.brand
+                updatedAsset.model = self.model
+                updatedAsset.pseudoModel = self.pseudoModel
+                updatedAsset.generalDescription = self.generalDescription
+                updatedAsset.comertialDescription = self.commercialDescription
+                updatedAsset.tecnicalDescription = self.technicalDescription
+                updatedAsset.initialCost = cost
+                updatedAsset.depreciationRate = depreciation
+                updatedAsset.avatar = self.avatar.isEmpty ? nil : self.avatar
+                updatedAsset.status = selectedStatus
+
+                self.currentAsset = updatedAsset
+                self.title = updatedAsset.name
+                self.onLoaded?(updatedAsset)
+
+                if let note = response.data {
+                    self.upsertNote(note)
+                }
+
                 showSuccess(.operacionExitosa, "Activo actualizado")
-                self.load()
             }
         }
 
         private func renderError(_ message: String) {
             contentView.innerHTML = ""
             contentView.appendChild(
-                VBox(.raised) {
-                    USubTitle("No se pudo cargar el activo")
-                    UMinorTitle(message).marginTop(5.px)
+                VGrid(.full) {
+                    VBox(.raised) {
+                        USubTitle("No se pudo cargar el activo")
+                        UMinorTitle(message).marginTop(5.px)
+                    }
                 }
             )
         }
@@ -609,9 +688,15 @@ extension CustAssetsView {
         override func didRemoveFromDOM() {
             super.didRemoveFromDOM()
             $title.removeAllListeners()
-            $activeTab.removeAllListeners()
+            $noteCount.removeAllListeners()
             $productType.removeAllListeners()
             $productSubType.removeAllListeners()
+            $fiscCode.removeAllListeners()
+            $fiscUnit.removeAllListeners()
+            $assetWidth.removeAllListeners()
+            $assetHeight.removeAllListeners()
+            $assetLength.removeAllListeners()
+            $assetWeight.removeAllListeners()
             $upc.removeAllListeners()
             $name.removeAllListeners()
             $descriptionText.removeAllListeners()
@@ -677,28 +762,54 @@ extension CustAssetsView {
                 if units == 1 {
                     addToDom(
                         CreateAssetItemView(
+                            createType: .singleItem,
                             viewType: self.viewType,
                             purchasFiscalDocumentFolio: folio,
                             asset: currentAsset,
                             department: department,
                             categorie: self.categorie,
-                            locations: self.locations,
-                            subLocations: self.subLocations,
-                            onLocationCreated: { location in
-                                self.locations = self.upserting(location, into: self.locations)
-                                self.onLocationCreated?(location)
+                            sections: self.sections,
+                            subSections: self.subSections,
+                            onSectionCreated: { section in
+                                self.sections = self.upserting(section, into: self.sections)
+                                self.onSectionCreated?(section)
                             },
-                            onSubLocationCreated: { subLocation in
-                                self.subLocations = self.upserting(subLocation, into: self.subLocations)
-                                self.onSubLocationCreated?(subLocation)
+                            onSubSectionCreated: { subSection in
+                                self.subSections = self.upserting(subSection, into: self.subSections)
+                                self.onSubSectionCreated?(subSection)
                             }
-                        ) { _ in
-                            self.load()
+                        ) { response in
+                            switch response {
+                            case .createdItems:
+                                self.load()
+                            case .preItem:
+                                break
+                            }
                         }
                     )
                 }
                 else {
-
+                    let view = CreateAssetMultipleItemView(
+                        requestedUnits: units,
+                        viewType: self.viewType,
+                        purchasFiscalDocumentFolio: folio,
+                        asset: currentAsset,
+                        department: department,
+                        categorie: self.categorie,
+                        sections: self.sections,
+                        subSections: self.subSections,
+                        onSectionCreated: { section in
+                                self.sections = self.upserting(section, into: self.sections)
+                                self.onSectionCreated?(section)
+                            },
+                            onSubSectionCreated: { subSection in
+                                self.subSections = self.upserting(subSection, into: self.subSections)
+                                self.onSubSectionCreated?(subSection)
+                            }
+                        ) { _ in
+                            self.load()
+                        }
+                    addToDom(view)
                 }
 
             })
@@ -706,20 +817,20 @@ extension CustAssetsView {
         }
 
         private func upserting(
-            _ location: CustCommercialAssetsLocation,
-            into values: [CustCommercialAssetsLocation]
-        ) -> [CustCommercialAssetsLocation] {
-            var result = values.filter { $0.id != location.id }
-            result.append(location)
+            _ section: CustCommercialAssetsSection,
+            into values: [CustCommercialAssetsSection]
+        ) -> [CustCommercialAssetsSection] {
+            var result = values.filter { $0.id != section.id }
+            result.append(section)
             return result.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
         }
 
         private func upserting(
-            _ subLocation: CustCommercialAssetsSubLocation,
-            into values: [CustCommercialAssetsSubLocation]
-        ) -> [CustCommercialAssetsSubLocation] {
-            var result = values.filter { $0.id != subLocation.id }
-            result.append(subLocation)
+            _ subSection: CustCommercialAssetsSubSection,
+            into values: [CustCommercialAssetsSubSection]
+        ) -> [CustCommercialAssetsSubSection] {
+            var result = values.filter { $0.id != subSection.id }
+            result.append(subSection)
             return result.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
         }
 

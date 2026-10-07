@@ -191,7 +191,7 @@ extension ProductManagerView.AuditView {
                 /* Tipo de reporte*/
                 Div{
                     Label("Tipo de reporte")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     
                     Div().clear(.both)
@@ -213,7 +213,7 @@ extension ProductManagerView.AuditView {
                 /// Seleccione Tienda
                 Div{
                     Label("Seleccione Tienda")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.storeSelect
@@ -226,7 +226,7 @@ extension ProductManagerView.AuditView {
                 /// Seleccione Departament
                 Div{
                     Label("Seleccione Departament")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.departmentSelect
@@ -239,7 +239,7 @@ extension ProductManagerView.AuditView {
                 /// Seleccione Usuario
                 Div{
                     Label("Seleccione Usuario")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.usertSelect
@@ -252,7 +252,7 @@ extension ProductManagerView.AuditView {
                 /// Product Search
                 Div{
                     Label("Seleccione Productos")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.parceblePOCDiv
@@ -264,7 +264,7 @@ extension ProductManagerView.AuditView {
                 
                 Div{
                     Label("Seleccione Fecha")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.dateSelect
@@ -276,7 +276,7 @@ extension ProductManagerView.AuditView {
                 
                 Div{
                     Label("Fecha Inicio")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.startAtField
@@ -292,7 +292,7 @@ extension ProductManagerView.AuditView {
                 
                 Div{
                     Label("Fecha Final")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.endAtField
@@ -323,9 +323,9 @@ extension ProductManagerView.AuditView {
                 Div(self.$reportType.map{ $0?.helpText ??  "" })
                     .paddingBottom(7.px)
                     .marginLeft(12.px)
-                    .fontSize(12.px)
+                            .fontSize(14.px)
                     .marginTop(3.px)
-                    .height(15.px)
+                    .minHeight(20.px)
                     .color(.white)
                     
             }
@@ -2737,7 +2737,7 @@ extension ProductManagerView.AuditView {
                         .color(.white)
                 }
             }
-            .fontSize(13.px)
+            .fontSize(14.px)
             .marginBottom(7.px))
 
             let tableBody = TBody()
@@ -3008,7 +3008,7 @@ extension ProductManagerView.AuditView {
 
                 Div("Productos con actividad durante los últimos 90 días")
                     .color(.gray)
-                    .fontSize(13.px)
+                    .fontSize(14.px)
 
                 Div {
                     Span("Alcance: ")
@@ -3026,7 +3026,7 @@ extension ProductManagerView.AuditView {
                     Span(self.inventoryDateTime(payload.generatedAt))
                         .color(.white)
                 }
-                .fontSize(13.px)
+                .fontSize(14.px)
                 .marginTop(5.px)
             }
             .padding(all: 12.px)
@@ -3605,14 +3605,14 @@ extension ProductManagerView.AuditView {
             Div {
                 Div(title)
                     .color(.gray)
-                    .fontSize(12.px)
+                    .fontSize(14.px)
                 Div(value)
                     .color(.yellowTC)
                     .fontSize(18.px)
                     .fontWeight(.bold)
                 Div(detail)
                     .color(.white)
-                    .fontSize(11.px)
+                    .fontSize(13.px)
             }
             .class(Class(TCCrystalSurfaceClass.auditMetric))
             .custom("flex", "1 1 150px")
@@ -3939,7 +3939,7 @@ extension ProductManagerView.AuditView {
 
                 Div("Existencias actuales y productos con actividad durante los últimos 90 días")
                     .color(.gray)
-                    .fontSize(13.px)
+                    .fontSize(14.px)
 
                 Div {
                     Span("Alcance: ")
@@ -3957,7 +3957,7 @@ extension ProductManagerView.AuditView {
                     Span(self.inventoryDateTime(payload.generatedAt))
                         .color(.white)
                 }
-                .fontSize(13.px)
+                .fontSize(14.px)
                 .marginTop(5.px)
             }
             .padding(all: 12.px)
@@ -4158,7 +4158,7 @@ extension ProductManagerView.AuditView {
 
                 Div("El servicio no incluyó existencias ni actividad de inventario. Se muestran los datos disponibles del catálogo.")
                     .color(.gray)
-                    .fontSize(13.px)
+                    .fontSize(14.px)
             }
             .padding(all: 12.px)
             .marginBottom(10.px)

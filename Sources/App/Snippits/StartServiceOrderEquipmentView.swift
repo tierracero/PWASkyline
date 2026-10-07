@@ -34,6 +34,28 @@ class StartServiceOrderEquipmentView: Div {
         self.refid = equipment?.refid ?? .init()
         
         super.init()
+
+        if let equipment {
+            self._idTag1 = equipment.IDTag1
+            self._idTag2 = equipment.IDTag2
+            self._tag1 = equipment.tag1
+            self._tag2 = equipment.tag2
+            self._tag3 = equipment.tag3
+            self._tag4 = equipment.tag4
+            self._tag5 = equipment.tag5
+            self._tag6 = equipment.tag6
+            self._descr = equipment.tagDescr
+            self._checkTag1 = equipment.tagCheck1
+            self._checkTag2 = equipment.tagCheck2
+            self._checkTag3 = equipment.tagCheck3
+            self._checkTag4 = equipment.tagCheck4
+            self._checkTag5 = equipment.tagCheck5
+            self._checkTag6 = equipment.tagCheck6
+            self._checkTag7 = equipment.tagCheck7
+            self._checkTag8 = equipment.tagCheck8
+            self._checkTag9 = equipment.tagCheck9
+            self._checkTag10 = equipment.tagCheck10
+        }
     }
     
     required init() {
@@ -57,6 +79,10 @@ class StartServiceOrderEquipmentView: Div {
     @State var _checkTag4: Bool = false
     @State var _checkTag5: Bool = false
     @State var _checkTag6: Bool = false
+    @State var _checkTag7: Bool = false
+    @State var _checkTag8: Bool = false
+    @State var _checkTag9: Bool = false
+    @State var _checkTag10: Bool = false
     
     lazy var idTag1 = InputText(self.$_idTag1)
         .autocomplete(.off)
@@ -109,7 +135,7 @@ class StartServiceOrderEquipmentView: Div {
     lazy var tag1Label = Label(configServiceTags.tag1Name)
         .float(.right)
         .color(self.$selectEquipmentField.map{ $0 == "tag1" ? .black : .gray })
-        .fontSize(self.$selectEquipmentField.map{ $0 == "tag1" ? 18.px : 12.px })
+        .fontSize(self.$selectEquipmentField.map{ $0 == "tag1" ? 18.px : 14.px })
     
     lazy var tag1 = InputText(self.$_tag1)
         .autocomplete(.off)
@@ -187,7 +213,7 @@ class StartServiceOrderEquipmentView: Div {
     .zIndex(1)
     
     lazy var tag2Label = Label(configServiceTags.tag2Name)
-        .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 12.px })
+        .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 14.px })
         .color(self.$selectEquipmentField.map{ $0 == "tag2" ? .black : .gray })
         .float(.right)
 
@@ -269,7 +295,7 @@ class StartServiceOrderEquipmentView: Div {
     .zIndex(1)
     
     lazy var tag3Label = Label(configServiceTags.tag3Name)
-        .fontSize(self.$selectEquipmentField.map{ $0 == "tag3" ? 18.px : 12.px })
+        .fontSize(self.$selectEquipmentField.map{ $0 == "tag3" ? 18.px : 14.px })
         .color(self.$selectEquipmentField.map{ $0 == "tag3" ? .black : .gray })
         .float(.right)
     
@@ -402,6 +428,10 @@ class StartServiceOrderEquipmentView: Div {
     lazy var checkTag5 = InputCheckbox().toggle(self.$_checkTag5)
     
     lazy var checkTag6 = InputCheckbox().toggle(self.$_checkTag6)
+    lazy var checkTag7 = InputCheckbox().toggle(self.$_checkTag7)
+    lazy var checkTag8 = InputCheckbox().toggle(self.$_checkTag8)
+    lazy var checkTag9 = InputCheckbox().toggle(self.$_checkTag9)
+    lazy var checkTag10 = InputCheckbox().toggle(self.$_checkTag10)
     
     @DOM override var body: DOM.Content {
         
@@ -431,7 +461,7 @@ class StartServiceOrderEquipmentView: Div {
             Label(configServiceTags.idTagName)
                 .float(.right)
                 .color(self.$selectEquipmentField.map{ $0 == "idTag1" ? .black : .gray })
-                .fontSize(self.$selectEquipmentField.map{ $0 == "idTag1" ? 18.px : 12.px })
+                .fontSize(self.$selectEquipmentField.map{ $0 == "idTag1" ? 18.px : 14.px })
             
             Div().class(.clear)
             
@@ -444,7 +474,7 @@ class StartServiceOrderEquipmentView: Div {
                 Label(configServiceTags.secondIDTagName)
                     .float(.right)
                     .color(self.$selectEquipmentField.map{ $0 == "idTag2" ? .black : .gray })
-                    .fontSize(self.$selectEquipmentField.map{ $0 == "idTag2" ? 18.px : 12.px })
+                    .fontSize(self.$selectEquipmentField.map{ $0 == "idTag2" ? 18.px : 14.px })
                     
                 Div().class(.clear)
                 
@@ -463,7 +493,7 @@ class StartServiceOrderEquipmentView: Div {
                         Label("*").color(.red)
                             .float(.right)
                             .fontWeight(.bolder)
-                            .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 12.px })
+                            .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 14.px })
                         
                         self.tag1Label
                     }
@@ -590,7 +620,7 @@ class StartServiceOrderEquipmentView: Div {
                         Label("*").color(.red)
                             .float(.right)
                             .fontWeight(.bolder)
-                            .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 12.px })
+                            .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 14.px })
                         
                         self.tag3Label
                     }
@@ -719,7 +749,7 @@ class StartServiceOrderEquipmentView: Div {
                         Label("*").color(.red)
                             .float(.right)
                             .fontWeight(.bolder)
-                            .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 12.px })
+                            .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 14.px })
                         
                         self.tag2Label
                     }
@@ -890,7 +920,7 @@ class StartServiceOrderEquipmentView: Div {
                 Label(configServiceTags.tag4Name)
                     .float(.right)
                     .color(self.$selectEquipmentField.map{ $0 == "tag4" ? .black : .gray })
-                    .fontSize(self.$selectEquipmentField.map{ $0 == "tag4" ? 18.px : 12.px })
+                    .fontSize(self.$selectEquipmentField.map{ $0 == "tag4" ? 18.px : 14.px })
 
                 Div().class(.clear)
                 self.tag4
@@ -902,7 +932,7 @@ class StartServiceOrderEquipmentView: Div {
                 Label(configServiceTags.tag5Name)
                     .float(.right)
                     .color(self.$selectEquipmentField.map{ $0 == "tag5" ? .black : .gray })
-                    .fontSize(self.$selectEquipmentField.map{ $0 == "tag5" ? 18.px : 12.px })
+                    .fontSize(self.$selectEquipmentField.map{ $0 == "tag5" ? 18.px : 14.px })
 
                 Div().class(.clear)
                 self.tag5
@@ -914,7 +944,7 @@ class StartServiceOrderEquipmentView: Div {
                 Label(configServiceTags.tag6Name)
                     .float(.right)
                     .color(self.$selectEquipmentField.map{ $0 == "tag6" ? .black : .gray })
-                    .fontSize(self.$selectEquipmentField.map{ $0 == "tag6" ? 18.px : 12.px })
+                    .fontSize(self.$selectEquipmentField.map{ $0 == "tag6" ? 18.px : 14.px })
 
                 Div().class(.clear)
                 self.tag6
@@ -1026,6 +1056,66 @@ class StartServiceOrderEquipmentView: Div {
                     Div().class(.clear)
                 }
                 .hidden(!configServiceTags.checkTag6)
+                .class(.oneHalf)
+                /// checkTag7
+                Div{
+                    Div{
+                        self.checkTag7
+                    }
+                    .width(70.px)
+                    .float(.left)
+                    Div(configServiceTags.checkTag7Name)
+                    .class(.oneLineText)
+                    .custom("width", "calc(100% - 70px)")
+                    .float(.left)
+                    Div().class(.clear)
+                }
+                .hidden(!configServiceTags.checkTag7)
+                .class(.oneHalf)
+                /// checkTag8
+                Div{
+                    Div{
+                        self.checkTag8
+                    }
+                    .width(70.px)
+                    .float(.left)
+                    Div(configServiceTags.checkTag8Name)
+                    .class(.oneLineText)
+                    .custom("width", "calc(100% - 70px)")
+                    .float(.left)
+                    Div().class(.clear)
+                }
+                .hidden(!configServiceTags.checkTag8)
+                .class(.oneHalf)
+                /// checkTag9
+                Div{
+                    Div{
+                        self.checkTag9
+                    }
+                    .width(70.px)
+                    .float(.left)
+                    Div(configServiceTags.checkTag9Name)
+                    .class(.oneLineText)
+                    .custom("width", "calc(100% - 70px)")
+                    .float(.left)
+                    Div().class(.clear)
+                }
+                .hidden(!configServiceTags.checkTag9)
+                .class(.oneHalf)
+                /// checkTag10
+                Div{
+                    Div{
+                        self.checkTag10
+                    }
+                    .width(70.px)
+                    .float(.left)
+                    Div(configServiceTags.checkTag10Name)
+                    .class(.oneLineText)
+                    .custom("width", "calc(100% - 70px)")
+                    .float(.left)
+                    Div().class(.clear)
+                }
+                .hidden(!configServiceTags.checkTag10)
                 .class(.oneHalf)
                 
             }
@@ -1619,6 +1709,10 @@ class StartServiceOrderEquipmentView: Div {
             tagCheck4: _checkTag4,
             tagCheck5: _checkTag5,
             tagCheck6: _checkTag6,
+            tagCheck7: _checkTag7,
+            tagCheck8: _checkTag8,
+            tagCheck9: _checkTag9,
+            tagCheck10: _checkTag10,
             tagDescr: _descr
         ))
         
@@ -1645,6 +1739,10 @@ class StartServiceOrderEquipmentView: Div {
         $_checkTag4.removeAllListeners()
         $_checkTag5.removeAllListeners()
         $_checkTag6.removeAllListeners()
+        $_checkTag7.removeAllListeners()
+        $_checkTag8.removeAllListeners()
+        $_checkTag9.removeAllListeners()
+        $_checkTag10.removeAllListeners()
         $curOrderManagerBrand.removeAllListeners()
         $curOrderManagerType.removeAllListeners()
         $curOrderManagerModel.removeAllListeners()

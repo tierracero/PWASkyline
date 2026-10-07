@@ -1,0 +1,214 @@
+MM .agent/MODULES.md
+M  .agent/REFERENCE_PROJECTS.md
+MM .agent/SOURCE_MAP.md
+MM .agent/architecture/API_AND_BACKEND.md
+ M .agent/architecture/PWA_ASSETS_AND_SERVICE_WORKER.md
+MM .agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+A  .artifacts/planning/cust-subaccount-endpoints-backup.txt
+A  .artifacts/planning/cust-subaccount-endpoints.diff
+A  .artifacts/planning/cust-subaccount-endpoints.md
+A  .artifacts/planning/cust-subaccount-update-parameters.md
+A  .artifacts/planning/dedicated-trip-location-picker.md
+A  .artifacts/planning/performance-mode-backgrounds.md
+A  .artifacts/planning/search-subcustomer-view-backup.txt
+A  .artifacts/planning/search-subcustomer-view.diff
+A  .artifacts/planning/search-subcustomer-view.md
+A  .artifacts/planning/tab-button-state-mapping.md
+A  .artifacts/planning/trip-location-contract-backup-path.txt
+A  .artifacts/planning/trip-location-contract-migration.diff
+A  .artifacts/planning/trip-location-contract-migration.md
+A  .artifacts/planning/trip-location-menu-icons-backup.txt
+A  .artifacts/planning/trip-location-menu-icons.md
+A  .artifacts/planning/trip-location-source-rendering-backup.txt
+A  .artifacts/planning/trip-location-source-rendering.diff
+A  .artifacts/planning/trip-location-source-rendering.md
+A  .artifacts/planning/trip-location-split-menu.md
+ M Package.swift
+ M Sources/App/API/API.swift
+M  Sources/App/API/CustAssetsEndpoint/CustAssets+CreateAsset.swift
+M  Sources/App/API/CustAssetsEndpoint/CustAssets+CreateAssettem.swift
+M  Sources/App/API/CustAssetsEndpoint/CustAssets+GetAssetItemKardex.swift
+ M Sources/App/API/CustAssetsEndpoint/CustAssets+GetAssettem.swift
+ M Sources/App/API/CustAssetsEndpoint/CustAssets+ListAssetItems.swift
+M  Sources/App/API/CustAssetsEndpoint/CustAssets+RemoveAssettem.swift
+M  Sources/App/API/CustAssetsEndpoint/CustAssets+UpdateAsset.swift
+M  Sources/App/API/CustAssetsEndpoint/CustAssets+UpdateAssetLocation.swift
+M  Sources/App/API/CustAssetsEndpoint/CustAssets+UpdateAssetSubLocation.swift
+M  Sources/App/API/CustAssetsEndpoint/CustAssets+UpdateAssettem.swift
+M  Sources/App/API/CustAssetsEndpoint/CustAssets+UpdateCategorie.swift
+M  Sources/App/API/CustAssetsEndpoint/CustAssets+UpdateDepartment.swift
+ M Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+CreateLocation.swift
+ M Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+UpdateLocation.swift
+ M Sources/App/API/CustEndpoint/Cust+ChangePrice.swift
+ M Sources/App/API/CustEndpoint/Cust+RequestMobileCamara.swift
+ M Sources/App/API/CustEndpoint/CustAPI+SincCustSettings.swift
+ M Sources/App/API/CustOrderEndpoint/CustOrder+SaveFolioObjectDetail.swift
+ M Sources/App/API/MailEndpoint/Mail+Box.swift
+ M Sources/App/API/MailEndpoint/Mail+Boxes.swift
+ M Sources/App/API/MailEndpoint/Mail+Delete.swift
+ M Sources/App/API/MailEndpoint/Mail+DownloadAttachment.swift
+ M Sources/App/API/MailEndpoint/Mail+Flag.swift
+ M Sources/App/API/MailEndpoint/Mail+Open.swift
+ M Sources/App/API/MailEndpoint/Mail+Send.swift
+ M Sources/App/Enums/ServerRouts.swift
+ M Sources/App/Functions/addToDom.swift
+ M Sources/App/SkylineWeb.swift
+ M Sources/App/Snippits/AccountView/AccountView.swift
+ M Sources/App/Snippits/AddCartaPorte/AddCartaPorteMerchendise.swift
+ M Sources/App/Snippits/AddCartaPorte/AddCartaPorteUbicacion.swift
+ M Sources/App/Snippits/AddChargeFormView.swift
+ M Sources/App/Snippits/AddServiceFormView.swift
+ M Sources/App/Snippits/AdvancesSearchViewControler.swift
+ M Sources/App/Snippits/BudgetSOCView.swift
+ M Sources/App/Snippits/BudgetView/BudgetView.swift
+ M Sources/App/Snippits/CartaPorteMerchendise.swift
+ M Sources/App/Snippits/CartaPorteUbicacion.swift
+ M Sources/App/Snippits/ConfirmProductView.swift
+ M Sources/App/Snippits/ConfirmProductViewNew.swift
+ M Sources/App/Snippits/CreateCustContractView.swift
+ M Sources/App/Snippits/CreateNewCustomerDataView.swift
+ M Sources/App/Snippits/CustAssetsView/CustAssets+AssetInventoryController.swift
+ M Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemView.swift
+ M Sources/App/Snippits/CustAssetsView/CustAssets+AssetView.swift
+ M Sources/App/Snippits/CustAssetsView/CustAssets+CreateAssetItemView.swift
+ M Sources/App/Snippits/CustAssetsView/CustAssets+CreateAssetView.swift
+ M Sources/App/Snippits/CustAssetsView/CustAssets+DepartmentEditor.swift
+ M Sources/App/Snippits/CustAssetsView/CustAssets+LocationEditor.swift
+ M Sources/App/Snippits/CustAssetsView/CustAssets+SubLocationEditor.swift
+ M Sources/App/Snippits/CustAssetsView/CustAssetsView.swift
+ M Sources/App/Snippits/CustConcession/CustConcession+AddManualInventorieView.swift
+ M Sources/App/Snippits/CustConcession/CustConcession+BodegaView.swift
+ M Sources/App/Snippits/CustConcession/CustConcessionView.swift
+ M Sources/App/Snippits/CustFollowUpRowView.swift
+ M Sources/App/Snippits/CustRemoveFromConcessionView.swift
+ M Sources/App/Snippits/CustTaskAuthRequestWaitView.swift
+ M Sources/App/Snippits/EmailBoxQuickView.swift
+ M Sources/App/Snippits/EmailBoxView.swift
+ M Sources/App/Snippits/EmailCompose.swift
+ M Sources/App/Snippits/EmailFullView.swift
+ M Sources/App/Snippits/EmailQuickView.swift
+ M Sources/App/Snippits/EmailViewControler.swift
+ M Sources/App/Snippits/FollowupControler/FollowupControler.swift
+ M Sources/App/Snippits/IMChatBubbleView.swift
+ M Sources/App/Snippits/ImageGeneralView.swift
+ M Sources/App/Snippits/ManagePOC/ManagePOC.swift
+ M Sources/App/Snippits/ManageSOCView.swift
+ M Sources/App/Snippits/ManualAddressSearch.swift
+ M Sources/App/Snippits/MessageObject.swift
+ M Sources/App/Snippits/MoneyManager/FinancialServices/MoneyManger+FinancialServices+DetailView.swift
+ M Sources/App/Snippits/MoneyManager/MoneyManagerView.swift
+ M Sources/App/Snippits/OldChargeTrRow.swift
+ M Sources/App/Snippits/OrderCalendarView.swift
+ M Sources/App/Snippits/OrderRouteView/OrderRoute+SelectOrderView.swift
+ M Sources/App/Snippits/OrderView/EquipmentView/OrderView+EquipmentView.swift
+ M Sources/App/Snippits/OrderView/OrderView.swift
+ M Sources/App/Snippits/POCStorageControlItemView.swift
+ M Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Activity.swift
+ M Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+CardexGraph.swift
+ M Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+FastAndFurios.swift
+ M Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift
+ M Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift
+ M Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift
+ M Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Theme.swift
+ M Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift
+ M Sources/App/Snippits/ProductManager/ProductManagerView.swift
+ M Sources/App/Snippits/ProductTransferReportView.swift
+ M Sources/App/Snippits/ProductTransferView.swift
+ M Sources/App/Snippits/SalePoint/SalePoint+HistoryView.swift
+ M Sources/App/Snippits/SalePoint/SalePointView.swift
+ M Sources/App/Snippits/SearchChargeView.swift
+ M Sources/App/Snippits/SideMenuRightView.swift
+ M Sources/App/Snippits/SkylineDocumentation/SkylineDocumentation+DocumentView.swift
+ M Sources/App/Snippits/SkylineDocumentation/SkylineDocumentationView.swift
+ M Sources/App/Snippits/SocialManagerItem.swift
+ M Sources/App/Snippits/StartManualInventory.swift
+ M Sources/App/Snippits/StartServiceOrder.swift
+ M Sources/App/Snippits/StartServiceOrderEquipmentView.swift
+ M Sources/App/Snippits/ToolFiscal/ToolFiscal.swift
+ M Sources/App/Snippits/ToolFiscal/ToolFiscalItemView.swift
+ M Sources/App/Snippits/ToolFiscal/ToolFiscalViewDocument.swift
+ M Sources/App/Snippits/ToolProductAuditTrRow.swift
+ M Sources/App/Snippits/ToolReciveSendInventory.swift
+ M Sources/App/Snippits/ToolReciveSendInventoryManualDispertionsView.swift
+ M Sources/App/Snippits/ToolViewFiscalXMLDocument.swift
+ M Sources/App/Snippits/ToolViewHistoricalInventoryManualDispertionsView.swift
+ M Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+OrderProcessing/Tools+HistorySettings+OrderProcessing+Reports.swift
+ M Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+TripProcessing/Tools+HistorySettings+TripProcessing+Reports.swift
+ M Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+TripProcessing/Tools+HistorySettings+TripProcessing+Settings.swift
+ M Sources/App/Snippits/Tools/SystemSettings/Tools+SystemSettings+SeviceTags.swift
+ M Sources/App/Snippits/Tools/SystemSettings/Tools+SystemSettings+UserStoreConfiguration/Tools+SystemSettings+UserStoreConfiguration+UserView/Tools+SystemSettings+UserStoreConfiguration+PermitionManager.swift
+ M Sources/App/Snippits/Tools/Tools+ServiceManager.swift
+ M Sources/App/Snippits/Tools/WebPage/Tools+WebPage+LogosView.swift
+ M Sources/App/Snippits/TripControler/TripControler+AddElement.swift
+ M Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift
+ M Sources/App/Snippits/TripControler/TripControler+ManageLocationBase.swift
+ M Sources/App/Snippits/TripControler/TripControler+ManageLocationItem.swift
+ M Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift
+ M Sources/App/Snippits/TripControler/TripsControlerView.swift
+ M Sources/App/Styles/SKLogInStyle.swift
+ M Sources/App/Styles/SKMainStyle.swift
+ M Sources/App/TierraCeroCustomUI/Components/TCSpeechRecognitionFloatingButton.swift
+ M Sources/App/TierraCeroCustomUI/Theme/TCCreateUserTheme.swift
+ M Sources/App/TierraCeroCustomUI/Theme/TCCrystalSurfaceTheme.swift
+ M Sources/App/TierraCeroCustomUI/Theme/TCMessageObjectTheme.swift
+ M Sources/App/TierraCeroCustomUI/Theme/TCOrderViewTheme.swift
+ M Sources/App/TierraCeroCustomUI/Theme/TCStoreUserConfigurationTheme.swift
+ M Sources/App/TierraCeroCustomUI/Theme/TCTripBetaTheme.swift
+ M Sources/App/TierraCeroCustomUI/Theme/TCUserCancelationRequestTheme.swift
+ M Sources/App/TierraCeroCustomUI/Theme/TCUserConfigurationTheme.swift
+ M Sources/App/TierraCeroCustomUI/Theme/TCWorkDashboardTheme.swift
+ M Sources/App/ViewControlers/WorkViewControler.swift
+ M Sources/App/VirtualControlers/CustAssetsAvatarUploader.swift
+ M Sources/App/VirtualControlers/OrderCatchControler.swift
+ M Sources/Service/css/main.css
+ M Sources/Service/skyline/css/main.css
+ M Sources/Service/skyline/js/main.js
+ M Sources/Service/skyline/js/visualPerformance.js
+?? .artifacts/planning/asset-items-contract-backup.txt
+?? .artifacts/planning/asset-items-contract.diff
+?? .artifacts/planning/asset-items-contract.md
+?? .artifacts/planning/confirm-address-location-baseline/
+?? .artifacts/planning/confirm-address-location.md
+?? .artifacts/planning/fiscal-merchandise-contract-backup.txt
+?? .artifacts/planning/fiscal-merchandise-contract.diff
+?? .artifacts/planning/fiscal-merchandise-contract.md
+?? .artifacts/planning/manage-subcustomer-backup.txt
+?? .artifacts/planning/manage-subcustomer.diff
+?? .artifacts/planning/manage-subcustomer.md
+?? .artifacts/planning/reverse-geocode-colony-backup.txt
+?? .artifacts/planning/reverse-geocode-colony.diff
+?? .artifacts/planning/reverse-geocode-colony.md
+?? .artifacts/planning/subcustomer-location-map-backup.txt
+?? .artifacts/planning/subcustomer-location-map.diff
+?? .artifacts/planning/subcustomer-location-map.md
+?? .artifacts/planning/trip-commercial-asset-backup.txt
+?? .artifacts/planning/trip-commercial-asset.diff
+?? .artifacts/planning/trip-commercial-asset.md
+?? .artifacts/planning/trip-merchandise-origin-backup.txt
+?? .artifacts/planning/trip-merchandise-origin.diff
+?? .artifacts/planning/trip-merchandise-origin.md
+?? .artifacts/planning/trip-merchandise-picker-backup.txt
+?? .artifacts/planning/trip-merchandise-picker.diff
+?? .artifacts/planning/trip-merchandise-picker.md
+?? .artifacts/planning/ui-small-fonts-backup.txt
+?? .artifacts/planning/ui-small-fonts-inventory.json
+?? .artifacts/planning/ui-small-fonts.diff
+?? .artifacts/planning/ui-small-fonts.md
+?? .artifacts/planning/ui-small-fonts.patch
+?? .artifacts/planning/wasm-settings-backup.txt
+?? .artifacts/planning/wasm-settings-offending-functions.json
+?? .artifacts/planning/wasm-settings-parameter-limit.md
+?? .artifacts/planning/wasm-settings.diff
+?? Sources/App/API/CustOrderEndpoint/CustOrder+RemoveChargeCTAM.swift
+?? Sources/App/API/CustOrderEndpoint/CustOrder+RemovePaymentCTAM.swift
+?? Sources/App/API/CustSubAcctEndpoint/
+?? Sources/App/Functions/tabsContainer.swift
+?? Sources/App/Snippits/CreateNewSubCustomerDataView.swift
+?? Sources/App/Snippits/CustAssetsView/CustAssets+AssetInventoryItemController.swift
+?? Sources/App/Snippits/CustAssetsView/CustAssets+CreateAssetMultipleItemView.swift
+?? Sources/App/Snippits/ManageSubCustomerAccountView.swift
+?? Sources/App/Snippits/SearchComertialAsset.swift
+?? Sources/App/Snippits/SearchSubCustomerView.swift
+?? Sources/App/Snippits/SelectStore.swift
+?? Sources/App/Snippits/TripControler/TripControler+AddLocation.swift
+?? Sources/App/Snippits/TripControler/TripControler+AddMerchandise.swift

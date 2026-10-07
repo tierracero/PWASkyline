@@ -17,7 +17,7 @@ extension CustAssetsView {
 
         let relationType: CustCommercialAssetsLocationLinkedType
         let relationId: UUID
-        let callback: (CustCommercialAssetsLocation) -> Void
+        let callback: (CustCommercialAssetsSection) -> Void
 
         @State private var name: String
         @State private var avatar = ""
@@ -26,7 +26,7 @@ extension CustAssetsView {
             relationType: CustCommercialAssetsLocationLinkedType,
             relationId: UUID,
             initialName: String = "",
-            callback: @escaping (CustCommercialAssetsLocation) -> Void
+            callback: @escaping (CustCommercialAssetsSection) -> Void
         ) {
             self.relationType = relationType
             self.relationId = relationId

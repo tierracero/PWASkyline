@@ -536,7 +536,7 @@ class ToolReciveSendInventory: Div {
                         Div(self.$docuuid.map{ $0.isEmpty ? "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" : $0 })
                             .color(self.$docuuid.map{ $0.isEmpty ? .grayContrast : .white })
                             .class(.textFiledBlackDarkReadMode, .oneLineText)
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                         
                     }
                     

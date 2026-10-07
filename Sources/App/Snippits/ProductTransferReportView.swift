@@ -118,7 +118,7 @@ class ProductTransferReportView: Div {
                 /// Seleccione Tienda
                 Div{
                     Label("Seleccione Tienda")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.storeSelect
@@ -138,7 +138,7 @@ class ProductTransferReportView: Div {
                 /// Seleccione Tienda
                 Div{
                     Label("Cliente")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     Div(self.$customerName)
@@ -159,7 +159,7 @@ class ProductTransferReportView: Div {
                 
                 Div{
                     Label("Seleccione Fecha")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.dateSelect
@@ -170,7 +170,7 @@ class ProductTransferReportView: Div {
                 
                 Div{
                     Label("Fecha Inicio")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.startAtField
@@ -185,7 +185,7 @@ class ProductTransferReportView: Div {
                 
                 Div{
                     Label("Fecha Final")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.endAtField

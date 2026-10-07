@@ -1626,7 +1626,8 @@ class AccountView: PageController {
                             let view = AddServiceFormView(
                                 allowManualCharges: false,
                                 socCanLoadAction: false,
-                                costType: self.costType) { soc in
+                                costType: self.costType,
+                                authorizationContext: .sale) { soc in
                                     
                                     guard let id = soc.id else {
                                         showError(.unexpectedResult, "No se localizo id del codigo")
@@ -2364,7 +2365,7 @@ class AccountView: PageController {
             accountId: self.account.id,
             cardId: self.CardID.wrappedValue,
             currentBalance: _balance
-        ) { code, description, amount, provider, lastFour, auth, uts in
+        ) { code, description, amount, provider, lastFour, auth, uts, _ in
             
             loadingView.show()
             
@@ -2452,8 +2453,8 @@ class AccountView: PageController {
             addToDom(CustAssetsView(
                 viewType: .account(account: self.account, store: store),
                 departments: payload.departments,
-                locations: payload.locations,
-                subLocations: payload.subLocations
+                sections: payload.locations,
+                subSections: payload.subLocations
             ))
 
         }

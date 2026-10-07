@@ -640,7 +640,7 @@ class ManageSOCView: Div {
                             Div().class(.clear)
                             Div("Que costo el producto")
                                 .class(.oneLineText)
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                                 .color(.gray)
                         }
                     }
@@ -664,7 +664,7 @@ class ManageSOCView: Div {
                             Div().class(.clear)
                             Div("Costo al Publico")
                                 .class(.oneLineText)
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                                 .color(.gray)
                         }
                     }
@@ -688,7 +688,7 @@ class ManageSOCView: Div {
                             Div().class(.clear)
                             Div("Medio Mayoreo")
                                 .class(.oneLineText)
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                                 .color(.gray)
                         }
                     }
@@ -712,7 +712,7 @@ class ManageSOCView: Div {
                             Div().class(.clear)
                             Div("Costo Mayoreo")
                                 .class(.oneLineText)
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                                 .color(.gray)
                         }
                     }
@@ -736,7 +736,7 @@ class ManageSOCView: Div {
                             Div().class(.clear)
                             Div("Costo Promocional")
                                 .class(.oneLineText)
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                                 .color(.gray)
                         }
                     }
@@ -1379,7 +1379,7 @@ class ManageSOCView: Div {
                         Div().class(.clear)
                         
                         Div("Agregar Comentarios")
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                             .color(.white)
                         
                         Div()

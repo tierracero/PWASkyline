@@ -7,7 +7,7 @@
 
 import Foundation
 import TCFundamentals
-import MailAPICore
+import MapKitCore
 import Web
 
 extension MailComponents {

@@ -157,7 +157,7 @@ public class SKMainStyle: Stylesheet {
             .textShadow(TextShadowType.none)
             .border(width: .thin, style: .solid, color: .hex(0xaaaaaa))
             .fontWeight(.bold)
-            .fontSize(11.px)
+            .fontSize(13.px)
             .backgroundSize(h:  100.percent, v: 100.percent)
             .custom("background-image", "-webkit-gradient(linear, 0 0, 0 100%, from(#f4f4f4), to(#f4f4f4))")
             .custom("box-shadow", "0 1px 0 rgb(0 0 0 / 10%), inset 0 1px 0 #f2f2f2")

@@ -18,6 +18,8 @@ Repository file map for PWASkyline.
 | `Sources/App/App.swift` | `@main` Swift Web app lifecycle, service-worker registration, route table, and theme switching. |
 | `Sources/App/SkylineWeb.swift` | Project version, environment flags, global app/session/cache variables. |
 | `Sources/App/API/` | Client API wrapper namespaces and endpoint files. |
+| `Sources/App/API/CustSubAcctEndpoint/` | Shared subaccount create/load/update POST wrappers and account-scoped GET search exposed as `API.custSubAcctV1`. |
+| `Sources/App/API/CustOrderEndpoint/CustOrder+RemoveChargeCTAM.swift`, `CustOrder+RemovePaymentCTAM.swift` | Typed order charge/payment deletion approval request wrappers. |
 | `Sources/App/API/CustPOCEndpoint/CustPOC+AuditProductActivity.swift` | Typed client wrapper for the product creation, edit, image, and duplicate audit report. |
 | `Sources/App/API/CustPOCEndpoint/CustPOC+AuditsVT.swift` | Typed client wrapper for the Fast and Furious product velocity report. |
 | `Sources/App/Websocket/` | WebSocket type and message/event handlers. |
@@ -25,7 +27,18 @@ Repository file map for PWASkyline.
 | `Sources/App/VirtualControlers/` | Shared non-visual controllers/caches, including centralized error-report lifecycle, IndexedDB bridge ownership, and browser speech-recognition callback/target routing. |
 | `Sources/App/Pages/` | Swift Web page definitions. |
 | `Sources/App/Snippits/` | Reusable UI snippets, forms, panels, print engines, and feature views. |
+| `Sources/App/Snippits/CustTaskAuthRequestWaitView.swift`, `OrderView/OrderView.swift` | Approval waiting view and order charge/payment deletion permission checks; approved removals reload the order. |
+| `Sources/App/Snippits/AddChargeFormView.swift`, `AddServiceFormView.swift`, `BudgetSOCView.swift`, `ConfirmProductView.swift`, `ConfirmProductViewNew.swift` | Price override entry points; each uses its caller-provided order, sale, or inventory-merma authorization context. |
+| `Sources/App/Snippits/CreateNewCustomerDataView.swift` | Customer creation forms using crystal surfaces, TierraCeroCustomUI headers/controls, and the existing verification flow. |
+| `Sources/App/Snippits/ManageSubCustomerAccountView.swift` | Parent-account-scoped subaccount creation/editing with optional full address/coordinate requirements; edits update then reload the saved `CustSubAcct`. |
+| `Sources/App/Snippits/ConfirmAdddressLocationView.swift` | Prefilled store-address confirmation with required postal fields/state/coordinates, address lookup and map preview; preserves loaded store configuration while saving, reloads the store, refreshes caches, and returns it to the Trip picker. |
+| `Sources/App/Snippits/SearchSubCustomerView.swift` | Parent-account-scoped subcustomer search/selection, no-result creation, and required-address completion through the subaccount manager. |
+| `Sources/App/Snippits/ManualAddressSearch.swift` | Crystal postal-address and coordinate lookup dialogs; returns the selected address or geocoder snapshot to its caller. |
+| `Sources/App/Snippits/TripControler/TripControler+AddLocation.swift` | Dedicated fiscal-location picker; owns origin/destination presentation and location-typed callbacks, including prefilled confirmation and resumption for incomplete store addresses. |
+| `Sources/App/Snippits/TripControler/TripControler+AddMerchandise.swift` | Account/origin-aware fiscal-merchandise base picker; preserves selection and creation callbacks. |
+| `Sources/App/Snippits/SearchComertialAsset.swift` | Trip commercial-asset picker over preloaded available inventory from a store, warehouse or subaccount origin; locally filters folio/name/serial. |
 | `Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+FastAndFurios.swift` | Ranked product revenue velocity, sales velocity, volume, and weighted score report presentation. |
+| `Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+OrderProcessing/Tools+HistorySettings+OrderProcessing+Reports.swift` | Order report UI and CSV exports for created, closed, payment, and delivered-equipment sections; payments split into general payments and explicit downpayments with subtotals and a combined total. |
 | `Sources/App/Styles/` | Swift Web style declarations (`MainStyle`, `SKMainStyle`, `SKLogInStyle`). |
 | `Sources/App/TierraCeroCustomUI/` | Scoped Tierra Cero layout controls and feature themes, including the production OrderView presentation and persistent speech-recognition control. |
 | `Sources/App/Functions/` | Free functions and browser helpers, including centralized POST transport and API response decoding instrumentation. |

@@ -441,7 +441,7 @@ class AdvancesSearchViewControler: Div {
                     /// Date Select Type
                     Div{
                         Label("Seleccione Fecha")
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                             .color(.gray)
                         
                         Div().clear(.both)
@@ -455,7 +455,7 @@ class AdvancesSearchViewControler: Div {
                     Div{
                         Label("Fecha Inicio")
                             .marginBottom(3.px)
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                             .color(.gray)
                         
                         Div().clear(.both)
@@ -477,7 +477,7 @@ class AdvancesSearchViewControler: Div {
                     Div{
                         Label("Fecha Final")
                             .marginBottom(3.px)
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                             .color(.gray)
                         
                         Div().clear(.both)

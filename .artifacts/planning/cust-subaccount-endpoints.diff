@@ -1,0 +1,212 @@
+--- before/Sources/App/API/API.swift
++++ after/Sources/App/API/API.swift
+@@ -16,6 +16,7 @@
+     public typealias authV1 = AuthComponents
+     public typealias cloudUserV1 = CloudUserComponents
+     public typealias custAccountV1 = CustAccountComponents
++    public typealias custSubAcctV1 = CustSubAcctComponents
+     public typealias custAssetsV1 = CustAssetsComponents
+     public typealias custPDVV1 = CustPDVComponents
+ 
+--- before/Sources/App/Enums/ServerRouts.swift
++++ after/Sources/App/Enums/ServerRouts.swift
+@@ -18,6 +18,7 @@
+     case custExcel = "custExcel/"
+     case custFollowup = "custFollowup/"
+     case custAccount = "custAccount/"
++    case custSubAcct = "custSubAcct/"
+     case customer = "customer/"
+     case fiscal = "fiscal/"
+     case route = "custRoute/"
+--- before/.agent/architecture/API_AND_BACKEND.md
++++ after/.agent/architecture/API_AND_BACKEND.md
+@@ -5,6 +5,7 @@
+ ## Verified Facts
+ 
+ - Client API wrappers live under `Sources/App/API/**`.
++- `API.custSubAcctV1` uses the shared `CustSubAcctComponents` contracts under `custSubAcct/v1`. Create/load/update use authenticated POST; account-scoped search uses authenticated GET and decodes a raw `[CustSubAcct]`, retaining the searched term in its callback and returning nil on transport/decoding failure. Create/update accept the shared request objects directly and preserve the coordinate wire key `longitud`; load accepts `HybridIdentifier`.
+ - Asset architecture uses `listStoreArchitecture(relationId:)` and department creation requires a nonoptional `relationId`. Location links use `CustCommercialAssetsLocationLinkedType`; asset-item links retain `CustCommercialAssetsLinkedType`. Asset `custAcct` fields remain customer-account identifiers, not store or warehouse identifiers.
+ - Asset-item creation uses TCFireSignal's shared `InitiateAssetItemViewType`, `CreateAssetItemObject`, and `CreateAssetItemFile` contracts. Single creation submits one object; batch creation collects the requested objects before one request, and `CreateAssetItemResponse.items` returns every created asset item.
+ - Asset-item detail uses TCFireSignal's shared `GetAssettemResponse`, which resolves the current store, warehouse, account, sub-account, or user plus the optional department, category, location, and sublocation records.
+--- before/.agent/SOURCE_MAP.md
++++ after/.agent/SOURCE_MAP.md
+@@ -18,6 +18,7 @@
+ | `Sources/App/App.swift` | `@main` Swift Web app lifecycle, service-worker registration, route table, and theme switching. |
+ | `Sources/App/SkylineWeb.swift` | Project version, environment flags, global app/session/cache variables. |
+ | `Sources/App/API/` | Client API wrapper namespaces and endpoint files. |
++| `Sources/App/API/CustSubAcctEndpoint/` | Shared subaccount create/load/update POST wrappers and account-scoped GET search exposed as `API.custSubAcctV1`. |
+ | `Sources/App/API/CustPOCEndpoint/CustPOC+AuditProductActivity.swift` | Typed client wrapper for the product creation, edit, image, and duplicate audit report. |
+ | `Sources/App/API/CustPOCEndpoint/CustPOC+AuditsVT.swift` | Typed client wrapper for the Fast and Furious product velocity report. |
+ | `Sources/App/Websocket/` | WebSocket type and message/event handlers. |
+--- before/.agent/MODULES.md
++++ after/.agent/MODULES.md
+@@ -21,7 +21,7 @@
+ 
+ ### Feature Areas
+ 
+-- `API/` — typed client wrappers for auth, customer, order, account, fiscal, POC, including product-activity and Fast and Furious audit reports, route, mail, social/theme, rewards, and WebSocket API endpoints.
++- `API/` — typed client wrappers for auth, customer, order, account, subaccount (create/load/search/update), fiscal, POC, including product-activity and Fast and Furious audit reports, route, mail, social/theme, rewards, and WebSocket API endpoints.
+ - `Websocket/` — real-time message handlers for chat, auth requests, mobile camera/scanner/OCR, async file/image jobs, social notifications, order/status updates, and connection lifecycle.
+ - `ViewControlers/` — page controllers and top-level page flows.
+ - `Snippits/` — reusable UI components and feature views, including Product Manager audit report presentations and velocity scoring.
+--- /dev/null
++++ Sources/App/API/CustSubAcctEndpoint/CustSubAcct+Create.swift
+@@ -0,0 +1,23 @@
++import Foundation
++import TCFundamentals
++import TCFireSignal
++
++extension CustSubAcctComponents {
++    public static func create(
++        _ payload: CreateRequest,
++        callback: @escaping (APIResponseGeneric<CreateResponse>?) -> Void
++    ) {
++        sendPost(rout, version, "create", payload) { data in
++            guard let data else {
++                callback(nil)
++                return
++            }
++
++            do {
++                callback(try decodeAPIResponse(APIResponseGeneric<CreateResponse>.self, from: data))
++            } catch {
++                callback(nil)
++            }
++        }
++    }
++}
+--- /dev/null
++++ Sources/App/API/CustSubAcctEndpoint/CustSubAcct+Load.swift
+@@ -0,0 +1,23 @@
++import Foundation
++import TCFundamentals
++import TCFireSignal
++
++extension CustSubAcctComponents {
++    public static func load(
++        id: HybridIdentifier,
++        callback: @escaping (APIResponseGeneric<LoadResponse>?) -> Void
++    ) {
++        sendPost(rout, version, "load", LoadRequest(id: id)) { data in
++            guard let data else {
++                callback(nil)
++                return
++            }
++
++            do {
++                callback(try decodeAPIResponse(APIResponseGeneric<LoadResponse>.self, from: data))
++            } catch {
++                callback(nil)
++            }
++        }
++    }
++}
+--- /dev/null
++++ Sources/App/API/CustSubAcctEndpoint/CustSubAcct+Search.swift
+@@ -0,0 +1,69 @@
++import Foundation
++import TCFundamentals
++import TCFireSignal
++import Web
++import XMLHttpRequest
++
++extension CustSubAcctComponents {
++    /// An empty list is a successful search; nil indicates a request or decoding failure.
++    public static func search(
++        custAcct: UUID,
++        term: String,
++        callback: @escaping (_ term: String, _ response: [CustSubAcct]?) -> Void
++    ) {
++        let payload = SearchRequest(custAcct: custAcct, term: term)
++        let queryCharacters = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~")
++        guard let encodedAccount = payload.custAcct.uuidString.addingPercentEncoding(withAllowedCharacters: queryCharacters),
++              let encodedTerm = payload.term.addingPercentEncoding(withAllowedCharacters: queryCharacters) else {
++            callback(term, nil)
++            return
++        }
++
++        var server = "https://api.tierracero.co"
++        switch developmentMode {
++        case .local:
++            server = "https://localhost:8800/api"
++        case .develpment:
++            server = "https://dev.tierracero.co/api"
++        case .produccion:
++            break
++        }
++
++        let url = baseAPIUrl("\(server)/\(endpoint)/search") +
++            "&custAcct=\(encodedAccount)&term=\(encodedTerm)"
++        let xhr = XMLHttpRequest()
++        var hasCompleted = false
++        let complete: ([CustSubAcct]?) -> Void = { response in
++            guard !hasCompleted else { return }
++            hasCompleted = true
++            callback(term, response)
++        }
++
++        xhr.open(method: "GET", url: url)
++        xhr.jsValue.timeout = Double(120_000).jsValue
++        xhr.setRequestHeader("Accept", "application/json")
++            .setRequestHeader("Content-Type", "application/json")
++            .setRequestHeader("AppName", applicationName)
++            .setRequestHeader("AppVersion", SkylineWeb().version.description)
++            .setRequestHeader("WSId", custCatchChatConnID)
++
++        xhr.onError { complete(nil) }
++        xhr.onTimeout { complete(nil) }
++        xhr.onAbort { complete(nil) }
++        xhr.onLoad {
++            guard (200..<300).contains(xhr.status),
++                  let data = xhr.responseText?.data(using: .utf8) else {
++                complete(nil)
++                return
++            }
++
++            do {
++                complete(try decodeAPIResponse([CustSubAcct].self, from: data))
++            } catch {
++                complete(nil)
++            }
++        }
++
++        xhr.send()
++    }
++}
+--- /dev/null
++++ Sources/App/API/CustSubAcctEndpoint/CustSubAcct+Update.swift
+@@ -0,0 +1,23 @@
++import Foundation
++import TCFundamentals
++import TCFireSignal
++
++extension CustSubAcctComponents {
++    public static func update(
++        _ payload: UpdateRequest,
++        callback: @escaping (APIResponse?) -> Void
++    ) {
++        sendPost(rout, version, "update", payload) { data in
++            guard let data else {
++                callback(nil)
++                return
++            }
++
++            do {
++                callback(try decodeAPIResponse(APIResponse.self, from: data))
++            } catch {
++                callback(nil)
++            }
++        }
++    }
++}
+--- /dev/null
++++ Sources/App/API/CustSubAcctEndpoint/CustSubAcctEndpoint.swift
+@@ -0,0 +1,8 @@
++import Foundation
++import TCFundamentals
++import TCFireSignal
++
++extension CustSubAcctComponents {
++    static var rout: ServerRouts = .custSubAcct
++    static var version: ServerVersion? = .v1
++}

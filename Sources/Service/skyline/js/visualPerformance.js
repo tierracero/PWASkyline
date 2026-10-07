@@ -76,6 +76,44 @@ html[data-tc-modal-backdrop-blur="off"] [data-add-to-dom-super-view="true"] {
     -webkit-backdrop-filter: none !important;
 }
 
+/* Without blur, darken the veil and content separately so underlying UI
+   remains visible without competing with the foreground text. */
+html[data-tc-performance-mode="on"][data-tc-performance-mode="on"][data-tc-performance-mode="on"][data-tc-performance-mode="on"][data-tc-performance-mode="on"][data-tc-performance-mode="on"] body :is(
+    [data-add-to-dom-super-view="true"],
+    .transparantBlackBackGround,
+    .tc-v-popup,
+    .tc-login-recovery-popup,
+    .tc-account-view-theme.tc-account-detail,
+    .tc-crystal-surface.tc-crystal-fiscal,
+    .tc-crystal-surface.tc-crystal-high-priority-note,
+    .tc-crystal-surface.tc-crystal-trip-picker,
+    .tc-crystal-surface .tc-audit-popup
+) {
+    background: rgba(0, 0, 0, 0.65) !important;
+}
+
+html[data-tc-performance-mode="on"][data-tc-performance-mode="on"][data-tc-performance-mode="on"][data-tc-performance-mode="on"][data-tc-performance-mode="on"][data-tc-performance-mode="on"] body :is(
+    .tc-v-popup-panel,
+    .tc-login-main-card,
+    .tc-account-editor-shell,
+    .tc-order-shell,
+    .tc-create-user-shell,
+    .tc-user-configuration-shell,
+    .tc-user-cancelation-request-shell,
+    .tc-crystal-surface .tc-crystal-fiscal-panel,
+    .tc-crystal-surface .tc-crystal-payment-panel,
+    .tc-crystal-surface .tc-crystal-customer-data-panel,
+    .tc-crystal-surface .tc-crystal-high-priority-panel,
+    .tc-crystal-surface .tc-crystal-history-trip-processing-panel,
+    .tc-crystal-surface .tc-crystal-trip-picker-panel,
+    .tc-crystal-surface .tc-crystal-analytics-panel,
+    .tc-crystal-surface .tc-crystal-task-panel,
+    .tc-crystal-surface .tc-audit-shell,
+    .tc-crystal-surface .tc-audit-modal-panel
+) {
+    background: rgba(0, 0, 0, 0.85) !important;
+}
+
 html[data-tc-animated-blur="off"] .tc-work-dashboard.tc-work-starting .tc-work-background,
 html[data-tc-animated-blur="off"] .tc-work-dashboard.tc-work-starting .tc-work-workspace,
 html[data-tc-animated-blur="off"] .tc-login-mesh-page.tc-login-handoff .tc-login-content-layer,
@@ -144,6 +182,10 @@ html[data-tc-large-shadows="off"][data-tc-large-shadows="off"][data-tc-large-sha
 
         ensureOverrideStyles()
 
+        setBooleanAttribute(
+            "data-tc-performance-mode",
+            settings.performanceModeEnabled
+        )
         setBooleanAttribute(
             "data-tc-backdrop-filters",
             settings.backdropFiltersEnabled

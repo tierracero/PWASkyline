@@ -27,6 +27,10 @@ extension CustOrderComponents {
         tagCheck4: Bool,
         tagCheck5: Bool,
         tagCheck6: Bool,
+        tagCheck7: Bool,
+        tagCheck8: Bool,
+        tagCheck9: Bool,
+        tagCheck10: Bool,
         diagnostic: String?,
         resolution: String?,
         tagDescr: String,
@@ -53,6 +57,10 @@ extension CustOrderComponents {
                 tagCheck4: tagCheck4,
                 tagCheck5: tagCheck5,
                 tagCheck6: tagCheck6,
+                tagCheck7: tagCheck7,
+                tagCheck8: tagCheck8,
+                tagCheck9: tagCheck9,
+                tagCheck10: tagCheck10,
                 diagnostic: diagnostic,
                 resolution: resolution,
                 tagDescr: tagDescr
@@ -76,4 +84,3 @@ extension CustOrderComponents {
     }
     
 }
-

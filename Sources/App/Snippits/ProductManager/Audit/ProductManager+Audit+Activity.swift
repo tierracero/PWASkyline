@@ -71,7 +71,7 @@ extension ProductManagerView.AuditView {
                 
                 Div{
                     Label("Seleccione Fecha")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.dateSelect
@@ -82,7 +82,7 @@ extension ProductManagerView.AuditView {
                 
                 Div{
                     Label("Fecha Inicio")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.startAtField
@@ -97,7 +97,7 @@ extension ProductManagerView.AuditView {
                 
                 Div{
                     Label("Fecha Final")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                     Div().clear(.both)
                     self.endAtField
@@ -569,10 +569,10 @@ extension ProductManagerView.AuditView {
                         .fontWeight(.bold)
                     Div("\(self.activityDateTime(event.occurredAt)) • \(self.activityUserName(event.userId, usersById: usersById))")
                         .color(.gray)
-                        .fontSize(11.px)
+                        .fontSize(13.px)
                     if !detail.isEmpty {
                         Div(detail)
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                             .marginTop(2.px)
                             .custom("white-space", "pre-wrap")
                     }
@@ -596,7 +596,7 @@ extension ProductManagerView.AuditView {
                     .marginBottom(3.px)
                 Div("El análisis considera el catálogo completo y solo muestra coincidencias estrictas.")
                     .color(.gray)
-                    .fontSize(12.px)
+                    .fontSize(14.px)
                     .marginBottom(7.px)
             }
 

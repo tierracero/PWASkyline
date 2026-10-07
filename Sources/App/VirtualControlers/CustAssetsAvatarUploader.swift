@@ -29,8 +29,8 @@ final class CustAssetsAvatarUploader: Div {
 
     private lazy var avatarImage = Img()
         .src(self.avatar.map { self.source(for: $0) })
-        .width(126.px)
-        .height(126.px)
+        .width(100.percent)
+        .height(100.percent)
         .objectFit(.contain)
         .cursor(.pointer)
 
@@ -92,12 +92,10 @@ final class CustAssetsAvatarUploader: Div {
         }
         .custom("border", "1px solid rgba(19, 60, 82, 0.68)")
         .custom("background", "rgba(3, 18, 32, 0.68)")
-        .custom("justify-content", "center")
-        .custom("align-items", "center")
-        .custom("align-self", "center")
         .custom("max-width", "100%")
         .borderRadius(all: 7.percent)
         .position(.relative)
+        .overflow(.hidden)
         .cursor(.pointer)
         .display(.flex)
         .height(148.px)
@@ -128,6 +126,7 @@ final class CustAssetsAvatarUploader: Div {
 
             switch event {
             case .asyncFileUpload:
+
                 guard let payload = self.ws.asyncFileUpload($0),
                       payload.eventid == self.viewId else {
                     return

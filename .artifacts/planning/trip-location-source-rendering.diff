@@ -1,0 +1,165 @@
+--- before/Sources/App/Snippits/TripControler/TripControler+AddLocation.swift
++++ after/Sources/App/Snippits/TripControler/TripControler+AddLocation.swift
+@@ -75,10 +75,9 @@
+ 
+     func selectStore() {
+         let view = SelectStore { store in
+-        
+-
+-
+-        }
++            self.renderLocation(store)
++        }
++        addToDom(view)
+     }
+ 
+     func searchCustomer() {
+@@ -352,11 +351,121 @@
+     }
+ 
+     func renderLocation(_ store: CustStore) {
+-
+-    }
+-
+-    func renderLocation (_ subaccount: CustSubAcct) {
+-        
++        guard let state = locationState(store.state) else {
++            showError(.invalidFormat, "Configure un estado válido para la tienda")
++            return
++        }
++
++        loadStoreFiscalProfile(store) { [weak self] profile in
++            guard let self else { return }
++            guard let profile else {
++                showError(.requiredField, "Porfavor  configure el perfil fiscal de la cuenta ")
++                return
++            }
++
++            self.callback(CustCommercialTripsComponents.TripLocation(
++                placementType: self.viewType == .origin ? .origen : .destino,
++                placementId: store.storePrefix + String(store.id.uuidString.suffix(12)),
++                locationType: .store,
++                locationId: store.id,
++                rfc: profile.rfc,
++                razon: profile.razon,
++                uts: getNow(),
++                storeName: store.name,
++                street: store.street,
++                number: "",
++                colonie: store.colony,
++                refrence: "",
++                state: state,
++                country: store.country,
++                zipCode: store.zip,
++                distance: nil,
++                latitude: store.lat.flatMap { Double($0.purgeSpaces) },
++                longitude: store.lon.flatMap { Double($0.purgeSpaces) }
++            ))
++            self.remove()
++        }
++    }
++
++    private func loadStoreFiscalProfile(
++        _ store: CustStore,
++        callback: @escaping (FiscalComponents.Profile?) -> Void
++    ) {
++        if let profileId = store.fiscal {
++            if let profile = fiscalProfiles.first(where: { $0.id == profileId }) {
++                callback(profile)
++                return
++            }
++        } else if let profile = fiscalProfiles.first(where: { $0.type == .account }) {
++            callback(profile)
++            return
++        }
++
++        loadingView.show()
++        API.fiscalV1.getProfile(type: .general, relation: nil) { response in
++            loadingView.hide()
++
++            let mainProfile = fiscalProfiles.first(where: { $0.type == .account })
++            guard let response, response.status == .ok, let data = response.data else {
++                callback(mainProfile)
++                return
++            }
++
++            let storeProfile = data.profiles.first { $0.id == store.fiscal }
++            callback(storeProfile ?? data.profiles.first(where: { $0.type == .account }) ?? mainProfile)
++        }
++    }
++
++    func renderLocation(_ subaccount: CustSubAcct) {
++        guard subaccount.custAcct == account.id else {
++            showError(.invalidFormat, "La subcuenta no pertenece a la cuenta seleccionada")
++            return
++        }
++        guard let state = locationState(subaccount.state) else {
++            showError(.invalidFormat, "Configure un estado válido para la subcuenta")
++            return
++        }
++
++        let personalName = [subaccount.firstName, subaccount.secondName, subaccount.lastName, subaccount.secondLastName]
++            .map { $0.purgeSpaces }
++            .filter { !$0.isEmpty }
++            .joined(separator: " ")
++        let storeName = subaccount.businessName.purgeSpaces.isEmpty ? personalName : subaccount.businessName
++
++        callback(CustCommercialTripsComponents.TripLocation(
++            placementType: viewType == .origin ? .origen : .destino,
++            placementId: "sa" + String(subaccount.id.uuidString.suffix(12)),
++            locationType: .subaccount,
++            locationId: subaccount.id,
++            rfc: account.fiscalRfc,
++            razon: account.fiscalRazon,
++            uts: getNow(),
++            storeName: storeName,
++            street: subaccount.street,
++            number: "",
++            colonie: subaccount.colony,
++            refrence: "",
++            state: state,
++            country: subaccount.country,
++            zipCode: subaccount.zip,
++            distance: nil,
++            latitude: subaccount.latitude,
++            longitude: subaccount.longitud
++        ))
++        remove()
++    }
++
++    private func locationState(_ value: String) -> CountryStatesMexico? {
++        func normalized(_ text: String) -> String {
++            text.pseudo.lowercased().filter { !$0.isWhitespace }
++        }
++
++        let stateValue = normalized(value)
++        return CountryStatesMexico.allCases.first {
++            normalized($0.rawValue) == stateValue ||
++            normalized($0.code) == stateValue ||
++            normalized($0.description) == stateValue
++        }
+     }
+ 
+ }
+--- before/.agent/architecture/API_AND_BACKEND.md
++++ after/.agent/architecture/API_AND_BACKEND.md
+@@ -12,6 +12,7 @@
+ - Asset, asset-item, location, sublocation, category, and department update responses return the inserted `CustGeneralNotes` entry when a change produced an audit note; successful no-op updates may return no note.
+ - Commercial trip creation submits the complete fiscal location fields for each stop, together with `LocationType` and an optional linked ID; the server persists those submitted snapshots.
+ - `CreateTripView` receives, edits, and submits `CustCommercialTripsComponents.TripLocation` snapshots directly. Its legacy UI adapters retain a nullable `locationId`; an item UUID generated for display/editing is never promoted to a submitted source ID.
++- Trip store snapshots use the store-linked fiscal profile when available, otherwise the main profile (`FIAccountsType.account`). A missing preferred/main cached profile triggers the existing general `getProfile` request; a failed/unresolved lookup can use the cached main profile, and absence of any usable profile reports the requested fiscal-configuration error. This picker does not mutate the global fiscal-profile cache.
+ - Endpoint files are grouped by domain and often named `Domain+Action.swift`.
+ - The app depends on multiple Tierra Cero core packages that likely define shared payloads and contracts.
+ - The three public `sendPost` overloads share one internal XMLHttpRequest transport that preserves response-body callback compatibility while recording transport failures.
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -13,7 +13,8 @@
+ - `WorkViewControler` owns one authenticated-session `TCSpeechRecognitionFloatingButton` and shuts it down when the work shell leaves the DOM.
+ - `CreateTripView.selectLocation` uses the dedicated `TripControlerAddLocation` picker with mutable `[FiscalLocationBase]` items and fiscal-base formatting callbacks. Selection returns a complete `CustCommercialTripsComponents.TripLocation` snapshot with `.location` source type and the base's linked ID. Its own `ViewType` supplies the origin/destination icon and title; other Trip selections continue using `TripControlerAddElement<Item>`.
+ - `CreateTripView` stores origin/destination as `CustCommercialTripsComponents.TripLocation`. Local adapters preserve snapshot fields, source type, and optional source ID for the unchanged `CartaPorteUbicacion`, `ManageLocationItem`, and `AddCartaPorteMerchendise` consumers. Stop matching uses source type and linked ID, or placement ID for unlinked stops; saved-base updates/deletes affect only `.location` sources.
+-- `TripControlerAddLocation` has a header split button: the main Agregar action and menu Agregar ubicación share the existing creation callback; the arrow reveals Seleccionar tienda and Buscar cliente alongside it. Menu options have decorative cyan outline SVG icons for location creation, store selection, and customer search. Those two selection/search actions currently call empty `selectStore()` / `searchCustomer()` methods and leave the picker open. Menu visibility is local presentation state, with Escape and outside-click dismissal and scoped crystal styling.
++- `TripControlerAddLocation` has a header split button: the main Agregar action and menu Agregar ubicación share the existing creation callback; the arrow reveals Seleccionar tienda and Buscar cliente alongside it. Menu options have decorative cyan outline SVG icons for location creation, store selection, and customer search. Store selection opens `SelectStore` and renders a `.store` trip snapshot; `searchCustomer()` remains pending. Menu visibility is local presentation state, with Escape and outside-click dismissal and scoped crystal styling.
++- The picker's `renderLocation` overloads preserve store/subaccount address and coordinates. Store placement IDs use `storePrefix` plus the final UUID segment; subaccounts use `sa` plus the final UUID segment and fiscal identity from the injected parent account. Subaccounts must belong to that account. Successful rendering returns the snapshot and dismisses the picker; unrecognized address states report an error.
+ 
+ ## Rules
+ 

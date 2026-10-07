@@ -154,7 +154,7 @@ enum TCStoreUserConfigurationTheme {
 
             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.eyebrow)"))
                 .custom("color", "#f2a65a")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "800")
                 .custom("letter-spacing", "0.14em")
                 .custom("text-transform", "uppercase")
@@ -167,7 +167,7 @@ enum TCStoreUserConfigurationTheme {
 
             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.headerMeta)"))
                 .custom("color", "var(--tc-store-muted)")
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
 
             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.headerActions)"))
                 .custom("display", "flex")
@@ -188,7 +188,7 @@ enum TCStoreUserConfigurationTheme {
                 .custom("border-radius", "8px")
                 .custom("background", "rgba(5, 22, 38, 0.78) !important")
                 .custom("color", "#dcecf8 !important")
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
                 .custom("font-weight", "700")
                 .custom("cursor", "pointer")
                 .custom("transition", "background 140ms ease, border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease")
@@ -286,7 +286,7 @@ enum TCStoreUserConfigurationTheme {
                 .custom("border-radius", "8px !important")
                 .custom("background", "rgba(3, 21, 38, 0.78) !important")
                 .custom("color", "#edf7ff !important")
-                .custom("font-size", "13px !important")
+                .custom("font-size", "14px !important")
 
             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.storeList)"))
                 .custom("display", "grid")
@@ -347,7 +347,7 @@ enum TCStoreUserConfigurationTheme {
                 .custom("text-overflow", "ellipsis")
                 .custom("white-space", "nowrap")
                 .custom("color", "var(--tc-store-ink)")
-                .custom("font-size", "13px")
+                .custom("font-size", "14px")
                 .custom("font-weight", "700")
 
             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.storeStatus), \(root) .\(TCStoreUserConfigurationClass.storeHeroStatus), \(root) .\(TCStoreUserConfigurationClass.statusPill)"))
@@ -361,7 +361,7 @@ enum TCStoreUserConfigurationTheme {
                 .custom("border-radius", "999px")
                 .custom("background", "rgba(52, 107, 43, 0.34)")
                 .custom("color", "#c9f5b7")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "800")
         }
 
@@ -376,7 +376,7 @@ enum TCStoreUserConfigurationTheme {
                 .custom("display", "block")
                 .custom("margin", "3px 0 10px")
                 .custom("color", "var(--tc-store-muted)")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.summaryRows)"))
                 .custom("display", "grid")
@@ -392,7 +392,7 @@ enum TCStoreUserConfigurationTheme {
                 .custom("padding", "5px 7px")
                 .custom("background", "rgba(3, 18, 33, 0.72)")
                 .custom("color", "var(--tc-store-muted)")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.summaryRow) strong"))
                 .custom("color", "var(--tc-store-ink)")
@@ -427,7 +427,7 @@ enum TCStoreUserConfigurationTheme {
                 .custom("border-radius", "8px")
                 .custom("background", "rgba(8, 52, 82, 0.76)")
                 .custom("color", "#dff5ff")
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
                 .custom("font-weight", "700")
                 .custom("cursor", "pointer")
 
@@ -519,7 +519,7 @@ enum TCStoreUserConfigurationTheme {
 
             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.metricLabel)"))
                 .custom("color", "var(--tc-store-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "800")
                 .custom("letter-spacing", "0.08em")
 
@@ -615,7 +615,7 @@ enum TCStoreUserConfigurationTheme {
                 .custom("text-overflow", "ellipsis")
                 .custom("white-space", "nowrap")
                 .custom("color", "var(--tc-store-ink)")
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
                 .custom("font-weight", "700")
 
             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.userUsername)"))
@@ -623,14 +623,14 @@ enum TCStoreUserConfigurationTheme {
                 .custom("text-overflow", "ellipsis")
                 .custom("white-space", "nowrap")
                 .custom("color", "var(--tc-store-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.userState)"))
                 .custom("display", "flex")
                 .custom("align-items", "center")
                 .custom("gap", "5px")
                 .custom("color", "#c9f5b7")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "700")
 
             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.rolePill)"))
@@ -642,7 +642,7 @@ enum TCStoreUserConfigurationTheme {
                 .custom("border-radius", "6px")
                 .custom("background", "rgba(14, 73, 108, 0.42)")
                 .custom("color", "#dff5ff")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "700")
         }
 
@@ -672,7 +672,7 @@ enum TCStoreUserConfigurationTheme {
 
             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.toolName)"))
                 .custom("color", "var(--tc-store-ink)")
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
                 .custom("font-weight", "700")
 
             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.toolDetail)"))
@@ -680,7 +680,7 @@ enum TCStoreUserConfigurationTheme {
                 .custom("text-overflow", "ellipsis")
                 .custom("white-space", "nowrap")
                 .custom("color", "var(--tc-store-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCStoreUserConfigurationClass.toolCount)"))
                 .custom("min-width", "24px")
@@ -688,7 +688,7 @@ enum TCStoreUserConfigurationTheme {
                 .custom("border-radius", "999px")
                 .custom("background", "rgba(73, 185, 245, 0.14)")
                 .custom("color", "var(--tc-store-blue)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "800")
                 .custom("text-align", "center")
 
@@ -697,7 +697,7 @@ enum TCStoreUserConfigurationTheme {
                 .custom("min-height", "38px")
                 .custom("margin-top", "8px")
                 .custom("border-radius", "8px")
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
 
             CSSRule(Pointer("\(root) \(goodButton)"))
                 .custom("display", "flex")

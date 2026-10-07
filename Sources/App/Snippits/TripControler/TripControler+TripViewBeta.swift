@@ -260,18 +260,18 @@ final class TripViewBeta: Div {
             Div{
                 Div{
                     Span("T. Cargos")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.white)
                     Div().class(.clear).marginTop(7.px)
 
 
                     Span("T. Pagos")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.white)
                     Div().class(.clear).marginTop(7.px)
 
                     Span("Balance")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .fontWeight(.bolder)
                         .color(.white)
                     Div().class(.clear).marginTop(7.px)
@@ -508,7 +508,7 @@ final class TripViewBeta: Div {
 
                 Div {
                     Div("Balance")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
 
                     Div("$\(self.balance.formatMoney)")
@@ -533,7 +533,7 @@ final class TripViewBeta: Div {
     private func summaryMetric(_ label: String, _ value: String) -> Div {
         Div {
             Div(label)
-                .fontSize(12.px)
+                .fontSize(14.px)
                 .color(.gray)
 
             Div(value)
@@ -605,7 +605,7 @@ final class TripViewBeta: Div {
                         .custom("padding", "5px 8px")
                         .custom("border", "1px solid var(--tc-beta-border)")
                         .custom("border-radius", "8px")
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.lightBlueText)
                 }
             }
@@ -614,7 +614,7 @@ final class TripViewBeta: Div {
 
             Div(location.rfc)
                 .marginTop(12.px)
-                .fontSize(13.px)
+                .fontSize(14.px)
                 .color(.gray)
 
             Div(location.razon)
@@ -624,7 +624,7 @@ final class TripViewBeta: Div {
 
             Div(address.isEmpty ? "Sin dirección registrada" : address)
                 .marginTop(3.px)
-                .fontSize(13.px)
+                .fontSize(14.px)
                 .color(.gray)
 
             Div {
@@ -646,12 +646,12 @@ final class TripViewBeta: Div {
     private func inlineMetadata(_ label: String, _ value: String) -> Div {
         Div {
             Div(label)
-                .fontSize(11.px)
+                .fontSize(13.px)
                 .color(.gray)
 
             Div(value)
                 .marginTop(2.px)
-                .fontSize(13.px)
+                .fontSize(14.px)
                 .color(.white)
         }
     }
@@ -718,7 +718,7 @@ final class TripViewBeta: Div {
         values.forEach { value in
             row.appendChild(
                 Div(value.isEmpty ? "—" : value)
-                    .fontSize(header ? 11.px : 13.px)
+                    .fontSize(header ? 13.px : 14.px)
                     .fontWeight(header ? .bold : .normal)
                     .color(header ? .gray : .white)
             )
@@ -843,7 +843,7 @@ final class TripViewBeta: Div {
                 if !detail.isEmpty {
                     Div(detail)
                         .marginTop(3.px)
-                        .fontSize(11.px)
+                        .fontSize(13.px)
                         .color(.gray)
                 }
             }
@@ -856,7 +856,7 @@ final class TripViewBeta: Div {
                     positive ? "rgba(87, 154, 75, 0.22)" : "rgba(214, 82, 61, 0.22)"
                 )
                 .custom("color", positive ? "#8bd17f" : "#ff7866")
-                .fontSize(11.px)
+                .fontSize(13.px)
                 .fontWeight(.bold)
         }
         .display(.grid)
@@ -885,11 +885,11 @@ final class TripViewBeta: Div {
     private func detailRow(_ label: String, _ value: String) -> Div {
         Div {
             Div(label)
-                .fontSize(12.px)
+                .fontSize(14.px)
                 .color(.gray)
 
             Div(value.isEmpty ? "Sin información" : value)
-                .fontSize(13.px)
+                .fontSize(14.px)
                 .color(.white)
                 .custom("text-align", "right")
         }
@@ -1238,12 +1238,14 @@ final class TripViewBeta: Div {
             allowWarrantyCharges: true,
             socCanLoadAction: true,
             costType: self.account.costType,
+            authorizationContext: .order,
             currentSOCMasters: socIds
         ){ id, isWarenty, internalWarenty in
 
             let view = ConfirmProductViewNew(
                 accountId: self.account.id,
                 costType: .cost_a,
+                authorizationContext: .order,
                 pocid: id,
                 selectedInventoryIDs: [],
                 blockPurchaseOrders: false,

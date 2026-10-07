@@ -1149,7 +1149,7 @@ class SalePointView: Div {
             cardId: self.custAcct?.CardID,
             currentBalance: currentBalance,
             isUsingPoints: ((self.rewadsPoints ?? 0) != 0 )
-        ) { code, description, amount, provider, lastFour, auth, uts in
+        ) { code, description, amount, provider, lastFour, auth, uts, _ in
             
             if code == .dineroElectronico {
                 self.payWithPoints(amount.fromCents)
@@ -1612,6 +1612,7 @@ class SalePointView: Div {
         let _view = ConfirmProductView(
             accountId: custAcct?.id,
             costType: custAcct?.costType ?? .cost_a,
+            authorizationContext: .sale,
             pocid: pocid,
             selectedInventoryIDs: self.selectedInventoryIDs,
             callback: { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
@@ -1927,7 +1928,8 @@ class SalePointView: Div {
        let view = BudgetSOCView(
             loadSocDetails: false,
             soc: soc,
-            costType: custAcct?.costType ?? .cost_a
+            costType: custAcct?.costType ?? .cost_a,
+            authorizationContext: .sale
        ) { soc in
            
            let id = UUID()

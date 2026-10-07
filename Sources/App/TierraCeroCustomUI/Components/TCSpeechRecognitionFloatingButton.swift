@@ -484,7 +484,7 @@ private enum TCSpeechRecognitionFloatingTheme {
                 .custom("display", "block")
                 .custom("padding-right", "24px")
                 .custom("color", "rgba(99, 203, 255, 1)")
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
                 .custom("font-weight", "700")
                 .custom("letter-spacing", "0.04em")
 
@@ -498,7 +498,7 @@ private enum TCSpeechRecognitionFloatingTheme {
             CSSRule(Pointer("\(root) .\(TCSpeechRecognitionFloatingClass.interimText)"))
                 .custom("margin-top", "5px")
                 .custom("color", "rgba(171, 191, 208, 1)")
-                .custom("font-size", "13px")
+                .custom("font-size", "14px")
                 .custom("font-style", "italic")
                 .custom("line-height", "1.35")
                 .custom("overflow-wrap", "anywhere")

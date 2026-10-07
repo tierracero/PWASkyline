@@ -1,0 +1,635 @@
+--- before/Sources/App/Snippits/CreateNewSubCustomerDataView.swift
++++ after/Sources/App/Snippits/ManageSubCustomerAccountView.swift
+@@ -3,25 +3,32 @@
+ import TCFireSignal
+ import Web
+ 
+-final class CreateNewSubCustomerDataView: Div {
++final class ManageSubCustomerAccountView: Div {
+ 
+     override class var name: String { "div" }
+ 
+     let searchTerm: String
+ 
+     let custAcct: CustAcctSearch
++    let custSubAcct: CustSubAcct?
++    let requierFullAddress: Bool
+ 
+     private let callback: (CustSubAcct) -> Void
++    private var savedSubaccount: CustSubAcct?
++
++    private var isEditing: Bool { custSubAcct != nil || savedSubaccount != nil }
+ 
+     init(
+         custAcct: CustAcctSearch,
+         acctType: CustAcctTypes = .personal,
+         searchTerm: String = "",
+-        requierFullAddress: Bool,
++        requierFullAddress: Bool = false,
+         callback: @escaping (CustSubAcct) -> Void
+     ) {
+         self.searchTerm = searchTerm
+         self.custAcct = custAcct
++        self.custSubAcct = nil
++        self.requierFullAddress = requierFullAddress
+         self.callback = callback
+         super.init()
+         accountType = acctType.rawValue
+@@ -48,11 +55,43 @@
+         }
+     }
+ 
++    init(
++        custAcct: CustAcctSearch,
++        custSubAcct: CustSubAcct,
++        requierFullAddress: Bool,
++        callback: @escaping (CustSubAcct) -> Void
++    ) {
++        self.searchTerm = ""
++        self.custAcct = custAcct
++        self.custSubAcct = custSubAcct
++        self.requierFullAddress = requierFullAddress
++        self.callback = callback
++        super.init()
++
++        accountType = custSubAcct.type.rawValue
++        businessName = custSubAcct.businessName
++        username = custSubAcct.username
++        title = custSubAcct.title
++        firstName = custSubAcct.firstName
++        secondName = custSubAcct.secondName
++        lastName = custSubAcct.lastName
++        secondLastName = custSubAcct.secondLastName
++        telephone = custSubAcct.telephone
++        mobile = custSubAcct.mobile
++        email = custSubAcct.email
++        street = custSubAcct.street
++        colony = custSubAcct.colony
++        city = custSubAcct.city
++        state = custSubAcct.state
++        country = custSubAcct.country
++        zip = custSubAcct.zip
++        latitude = custSubAcct.latitude.map { String($0) } ?? ""
++        longitud = custSubAcct.longitud.map { String($0) } ?? ""
++    }
++
+     required init() {
+         fatalError("init() has not been implemented")
+     }
+-
+-    @State private var subaccountId: UUID? = nil
+ 
+     @State private var accountType = CustAcctTypes.personal.rawValue
+     @State private var businessName = ""
+@@ -94,17 +133,17 @@
+     private lazy var zipField = UTextField(self.$zip).placeholder("Código postal")
+     
+     private lazy var latitudeField = UTextField(self.$latitude)
+-    .placeholder("Latitud (opcional)")
++    .placeholder(self.requierFullAddress ? "Latitud requerida" : "Latitud (opcional)")
+     .disabled(true)
+ 
+     private lazy var longitudField = UTextField(self.$longitud)
+-    .placeholder("Longitud (opcional)")
++    .placeholder(self.requierFullAddress ? "Longitud requerida" : "Longitud (opcional)")
+     .disabled(true)
+ 
+     @DOM override var body: DOM.Content {
+         VPopUp(.fitContent(w: 1000)) {
+-            VTitle("Crear Subcuenta") {
+-                USmallTitle("Nueva cuenta relacionada")
++            VTitle(self.isEditing ? "Editar Subcuenta" : "Crear Subcuenta") {
++                USmallTitle(self.isEditing ? "Actualizar cuenta relacionada" : "Nueva cuenta relacionada")
+             } onClose: {
+                 if !self.isSaving { self.remove() }
+             }
+@@ -153,7 +192,7 @@
+ 
+                         Div{
+ 
+-                            USmallButton("Buscar Dirección")
++                            USmallButton(self.requierFullAddress ? "Buscar Dirección con Ubicación" : "Buscar Dirección")
+                                 .class(Class(TCCrystalSurfaceClass.goodButton))
+                                 .disabled(self.$isSaving)
+                                 .float(.right)
+@@ -164,43 +203,63 @@
+                         }
+                         .display(.block)
+                         
+-                        UField("Calle y número", required: false) { self.streetField }
++                        UField("Calle y número", required: self.requierFullAddress) { self.streetField }
+ 
+                         Div().width(100.percent).height(7.px)
+ 
+                         Div {
+-                            UField("Colonia / asentamiento", required: false) { self.colonyField }
+-                            UField("Ciudad / municipio", required: false) { self.cityField }
+-                            UField("Estado", required: false) { self.stateField }
+-                            UField("País", required: false) { self.countryField }
+-                            UField("Código postal", required: false) { self.zipField }
++                            UField("Colonia / asentamiento", required: self.requierFullAddress) { self.colonyField }
++                            UField("Ciudad / municipio", required: self.requierFullAddress) { self.cityField }
++                            UField("Estado", required: self.requierFullAddress) { self.stateField }
++                            UField("País", required: self.requierFullAddress) { self.countryField }
++                            UField("Código postal", required: self.requierFullAddress) { self.zipField }
+                         }
+                         .class(Class(TCCrystalSurfaceClass.customerFormFields))
+ 
+-                        USubTitle("Coordenadas (opcionales)")
+-                        .hidden(self.$latitude.map{ $0.isEmpty })
++                        USubTitle(self.requierFullAddress ? "Coordenadas requeridas" : "Coordenadas (opcionales)")
++                        .hidden(self.$latitude.map{ !self.requierFullAddress && $0.isEmpty })
+ 
+                         Div {
+-                            UField("Latitud", required: false) { self.latitudeField }
+-                            UField("Longitud", required: false) { self.longitudField }
++                            UField("Latitud", required: self.requierFullAddress) { self.latitudeField }
++                            UField("Longitud", required: self.requierFullAddress) { self.longitudField }
+                         }
+-                        .display(self.$latitude.map{ $0.isEmpty ? .none : .block })
++                        .display(self.$latitude.map{ !self.requierFullAddress && $0.isEmpty ? .none : .block })
+                         .class(Class(TCCrystalSurfaceClass.customerFormFields))
+-                        .hidden(self.$latitude.map{ $0.isEmpty })
++                        .hidden(self.$latitude.map{ !self.requierFullAddress && $0.isEmpty })
+                     }
+                 }
+             }
+ 
+-            ULargeButton(self.$isSaving.map { $0 ? "Creando Subcuenta…" : "Crear Subcuenta" })
++            ULargeButton(self.$isSaving.map {
++                if self.isEditing { return $0 ? "Guardando Subcuenta…" : "Guardar Cambios" }
++                return $0 ? "Creando Subcuenta…" : "Crear Subcuenta"
++            })
+                 .class(Class(TCCrystalSurfaceClass.goodButton))
+                 .disabled(self.$isSaving)
+-                .onClick { self.createSubAccount() }
++                .onClick { self.saveSubAccount() }
+         }
+     }
+ 
+     private var parentName: String {
+         if !custAcct.businessName.isEmpty { return custAcct.businessName }
+         return [custAcct.firstName, custAcct.lastName].filter { !$0.isEmpty }.joined(separator: " ")
++    }
++
++    static let fullAddressMessage = "Para utilizar esta subcuenta, se requiere una dirección completa con ubicación (latitud y longitud). Por favor, complete la dirección y seleccione su ubicación."
++
++    static func hasFullAddress(_ item: CustSubAcct) -> Bool {
++        hasFullAddress(
++            fields: [item.street, item.colony, item.city, item.state, item.country, item.zip],
++            latitude: item.latitude,
++            longitude: item.longitud
++        )
++    }
++
++    private static func hasFullAddress(fields: [String], latitude: Double?, longitude: Double?) -> Bool {
++        guard fields.allSatisfy({ !$0.purgeSpaces.isEmpty }),
++              let latitude, latitude.isFinite, (-90.0...90.0).contains(latitude),
++              let longitude, longitude.isFinite, (-180.0...180.0).contains(longitude) else { return false }
++        return true
+     }
+ 
+     override func buildUI() {
+@@ -218,6 +277,9 @@
+         CustAcctTypes.allCases.forEach { type in
+             typeField.appendChild(Option(type.description).value(type.rawValue).selected(type.rawValue == accountType))
+         }
++    }
++
++    private func loadSearchTermAddress() {
+         // 23.710271;;-99.183555
+ 
+         if searchTerm.contains(";;") {
+@@ -226,8 +288,8 @@
+             guard parts.count == 2,
+             let latstr = parts.first,
+             let lonstr = parts.last,
+-            let latitude = Double(latstr),
+-            let longitude = Double(lonstr) else {
++            let latitude = Double(latstr), latitude.isFinite, (-90.0...90.0).contains(latitude),
++            let longitude = Double(lonstr), longitude.isFinite, (-180.0...180.0).contains(longitude) else {
+                 return
+             }
+ 
+@@ -238,27 +300,7 @@
+ 
+                 guard let self, self.isInDOM else { return }
+ 
+-                switch result {
+-                case .address(let address):
+-                    self.colony = address.settlement
+-                    self.city = address.city
+-                    self.state = address.state
+-                    self.country = address.country.description
+-                    self.zip = address.zip
+-                    self.latitude = ""
+-                    self.longitud = ""
+-                case .coordinates(let address):
+-                    self.street = address.street
+-                    self.colony = address.settlement
+-                    self.city = address.city
+-                    self.state = address.state
+-                    self.country = address.country.description
+-                    self.zip = address.zip
+-                    self.latitude = String(address.latitude)
+-                    self.longitud = String(address.longitude)
+-                }
+-
+-                self.streetField.select()
++                self.applyAddress(result)
+ 
+             })
+ 
+@@ -269,11 +311,13 @@
+     override func didAddToDOM() {
+         super.didAddToDOM()
+         firstNameField.select()
++        loadSearchTermAddress()
+     }
+ 
+     private func loadAddress() {
+ 
+         guard !isSaving else { return }
++        if country.purgeSpaces.isEmpty { country = Countries.mexico.description }
+ 
+         guard country.purgeSpaces.pseudo == Countries.mexico.description.pseudo ||
+                 country.purgeSpaces.pseudo == Countries.mexico.rawValue.pseudo else {
+@@ -281,41 +325,67 @@
+             return
+         }
+ 
+-        let loadBy: ManualAddressSearch.LoadType = state.isEmpty ? .byCountry(.mexico) : .byAddress(.init(
+-            orderId: custAcct.id,
+-            colony: colony,
+-            city: city,
+-            state: state,
+-            country: country
+-        ))
+-
+-        addToDom(ManualAddressSearch(loadBy) { [weak self] result in
++        let loadBy: ManualAddressSearch.LoadType
++        if requierFullAddress,
++           let latitude = Double(latitude.purgeSpaces), latitude.isFinite, (-90.0...90.0).contains(latitude),
++           let longitude = Double(longitud.purgeSpaces), longitude.isFinite, (-180.0...180.0).contains(longitude) {
++            loadBy = .byLocation(latitude: latitude, longitude: longitude)
++        } else {
++            loadBy = state.isEmpty ? .byCountry(.mexico) : .byAddress(.init(
++                orderId: custAcct.id,
++                colony: colony,
++                city: city,
++                state: state,
++                country: country
++            ))
++        }
++
++        let view = ManualAddressSearch(loadBy) { [weak self] result in
+             guard let self, self.isInDOM else { return }
+-            switch result {
+-            case .address(let address):
+-                self.colony = address.settlement
+-                self.city = address.city
+-                self.state = address.state
+-                self.country = address.country.description
+-                self.zip = address.zip
+-                self.latitude = ""
+-                self.longitud = ""
+-            case .coordinates(let address):
+-                self.street = address.street
+-                self.colony = address.settlement
+-                self.city = address.city
+-                self.state = address.state
+-                self.country = address.country.description
+-                self.zip = address.zip
+-                self.latitude = String(address.latitude)
+-                self.longitud = String(address.longitude)
+-            }
+-            self.streetField.select()
+-        })
+-    }
+-
+-    private func createSubAccount() {
++            self.applyAddress(result)
++        }
++        if requierFullAddress {
++            switch loadBy {
++            case .byLocation: break
++            default: view.addCoordanets()
++            }
++        }
++        addToDom(view)
++    }
++
++    private func applyAddress(_ result: ManualAddressSearch.ResultType) {
++        switch result {
++        case .address(let address):
++            guard !requierFullAddress else {
++                showError(.requiredField, Self.fullAddressMessage)
++                return
++            }
++            colony = address.settlement
++            city = address.city
++            state = address.state
++            country = address.country.description
++            zip = address.zip
++            latitude = ""
++            longitud = ""
++        case .coordinates(let address):
++            street = address.street
++            colony = address.settlement
++            city = address.city
++            state = address.state
++            country = address.country.description
++            zip = address.zip
++            latitude = String(address.latitude)
++            longitud = String(address.longitude)
++        }
++        streetField.select()
++    }
++
++    private func saveSubAccount() {
+         guard !isSaving else { return }
++        if let custSubAcct, custSubAcct.custAcct != custAcct.id {
++            showError(.unexpectedResult, "La subcuenta no pertenece a la cuenta principal.")
++            return
++        }
+         guard let acctType = CustAcctTypes(rawValue: accountType) else {
+             showError(.requiredField, "Seleccione un tipo de cuenta válido.")
+             return
+@@ -362,8 +432,62 @@
+             }
+         }
+ 
++        if requierFullAddress, !Self.hasFullAddress(
++            fields: [street, colony, city, state, country, zip],
++            latitude: latitudeValue,
++            longitude: longitudeValue
++        ) {
++            showError(.requiredField, Self.fullAddressMessage)
++            if latitudeValue == nil || longitudeValue == nil { loadAddress() }
++            else { streetField.select() }
++            return
++        }
++
+         isSaving = true
+         loadingView.show()
++        if let custSubAcct = savedSubaccount ?? custSubAcct {
++            API.custSubAcctV1.update(
++                id: custSubAcct.id,
++                type: acctType,
++                businessName: businessName.purgeSpaces,
++                username: username.purgeSpaces,
++                title: title.purgeSpaces,
++                firstName: firstName.purgeSpaces,
++                secondName: secondName.purgeSpaces,
++                lastName: lastName.purgeSpaces,
++                secondLastName: secondLastName.purgeSpaces,
++                telephone: telephone.purgeSpaces,
++                mobile: mobile.purgeSpaces,
++                email: email.purgeSpaces,
++                street: street.purgeSpaces,
++                colony: colony.purgeSpaces,
++                city: city.purgeSpaces,
++                state: state.purgeSpaces,
++                country: country.purgeSpaces,
++                zip: zip.purgeSpaces,
++                latitude: latitudeValue,
++                longitud: longitudeValue,
++                status: custSubAcct.status
++            ) { [weak self] response in
++                guard let self, self.isInDOM else {
++                    loadingView.hide()
++                    return
++                }
++                guard let response else {
++                    self.finishSaving()
++                    showError(.comunicationError, .serverConextionError)
++                    return
++                }
++                guard response.status == .ok else {
++                    self.finishSaving()
++                    showError(.generalError, response.msg)
++                    return
++                }
++                self.loadUpdatedSubAccount(id: custSubAcct.id)
++            }
++            return
++        }
++
+         API.custSubAcctV1.create(
+             custAcct: custAcct.id,
+             type: acctType,
+@@ -387,7 +511,7 @@
+             longitud: longitudeValue
+         ) { [weak self] response in
+             loadingView.hide()
+-            guard let self else { return }
++            guard let self, self.isInDOM else { return }
+             self.isSaving = false
+ 
+             guard let response else {
+@@ -411,10 +535,46 @@
+                 return
+             }
+ 
+-            showSuccess(.operacionExitosa, "Subcuenta creada \(item.folio)")
+-            self.callback(item)
+-            self.remove()
+-        }
++            self.complete(item)
++        }
++    }
++
++    private func finishSaving() {
++        loadingView.hide()
++        isSaving = false
++    }
++
++    private func loadUpdatedSubAccount(id: UUID) {
++        API.custSubAcctV1.load(id: .id(id)) { [weak self] response in
++            loadingView.hide()
++            guard let self, self.isInDOM else { return }
++            self.isSaving = false
++            guard let response else {
++                showError(.comunicationError, "Los cambios se guardaron, pero no fue posible cargar la subcuenta. Intente guardar de nuevo.")
++                return
++            }
++            guard response.status == .ok else {
++                showError(.generalError, response.msg)
++                return
++            }
++            guard let item = response.data?.custSubAcct, item.id == id, item.custAcct == self.custAcct.id else {
++                showError(.unexpectedResult, .unexpenctedMissingPayload)
++                return
++            }
++            self.complete(item)
++        }
++    }
++
++    private func complete(_ item: CustSubAcct) {
++        let wasEditing = isEditing
++        savedSubaccount = item
++        guard !requierFullAddress || Self.hasFullAddress(item) else {
++            showError(.requiredField, Self.fullAddressMessage)
++            return
++        }
++        showSuccess(.operacionExitosa, wasEditing ? "Subcuenta actualizada \(item.folio)" : "Subcuenta creada \(item.folio)")
++        callback(item)
++        remove()
+     }
+ 
+     override func didRemoveFromDOM() {
+--- before/Sources/App/Snippits/SearchSubCustomerView.swift
++++ after/Sources/App/Snippits/SearchSubCustomerView.swift
+@@ -7,19 +7,23 @@
+     override class var name: String { "div" }
+ 
+     let custAcct: CustAcctSearch
++    let requierFullAddress: Bool
+     private let callback: (CustSubAcct) -> Void
+     private var searchRequestId: UUID?
+     private var hasCompleted = false
+     private var hasRemoved = false
++    private weak var subaccountEditor: ManageSubCustomerAccountView?
+ 
+     @State var term = ""
+     @State private var isSearching = false
+ 
+     init(
+         custAcct: CustAcctSearch,
++        requierFullAddress: Bool = false,
+         callback: @escaping (CustSubAcct) -> Void
+     ) {
+         self.custAcct = custAcct
++        self.requierFullAddress = requierFullAddress
+         self.callback = callback
+         super.init()
+     }
+@@ -150,10 +154,8 @@
+ 
+             if results.isEmpty {
+                 self.createCustomer(searchTerm: searchedTerm)
+-                self.remove()
+             } else if results.count == 1, let item = results.first {
+                 self.selectCustomer(item)
+-                self.remove()
+             } else {
+                 results.forEach { self.resultsContainer.appendChild(self.resultCard($0)) }
+             }
+@@ -192,10 +194,11 @@
+             custType: .general
+         ) { acctType, _, selectedTerm in
+             guard !self.hasRemoved, !self.hasCompleted else { return }
+-            addToDom(CreateNewSubCustomerDataView(
++            addToDom(ManageSubCustomerAccountView(
+                 custAcct: self.custAcct,
+                 acctType: acctType,
+-                searchTerm: selectedTerm
++                searchTerm: selectedTerm,
++                requierFullAddress: self.requierFullAddress
+             ) { item in
+                 self.selectCustomer(item)
+             })
+@@ -204,6 +207,22 @@
+  
+     private func selectCustomer(_ item: CustSubAcct) {
+         guard !hasCompleted, !hasRemoved, item.custAcct == custAcct.id else { return }
++        guard subaccountEditor?.isInDOM != true else { return }
++        if requierFullAddress, !ManageSubCustomerAccountView.hasFullAddress(item) {
++            showAlert(.alerta, ManageSubCustomerAccountView.fullAddressMessage)
++            let view = ManageSubCustomerAccountView(
++                custAcct: custAcct,
++                custSubAcct: item,
++                requierFullAddress: true
++            ) { [weak self] updated in
++                guard let self else { return }
++                self.subaccountEditor = nil
++                self.selectCustomer(updated)
++            }
++            subaccountEditor = view
++            addToDom(view)
++            return
++        }
+         hasCompleted = true
+         callback(item)
+         remove()
+--- before/Sources/App/Snippits/TripControler/TripControler+AddLocation.swift
++++ after/Sources/App/Snippits/TripControler/TripControler+AddLocation.swift
+@@ -81,7 +81,7 @@
+     }
+ 
+     func searchCustomer() {
+-        addToDom(SearchSubCustomerView(custAcct: account) { subaccount in
++        addToDom(SearchSubCustomerView(custAcct: account, requierFullAddress: true) { subaccount in
+             self.renderLocation(subaccount)
+         })
+     }
+--- before/Sources/App/Functions/addToDom.swift
++++ after/Sources/App/Functions/addToDom.swift
+@@ -228,7 +228,7 @@
+     var resolvedPresentation = presentation
+     if case .standard = presentation {
+         if view is SearchCustomerView || view is SearchSubCustomerView || view is CreateNewCusomerView ||
+-            view is CreateNewCustomerDataView || view is CreateNewSubCustomerDataView ||
++            view is CreateNewCustomerDataView || view is ManageSubCustomerAccountView ||
+             view is ManualAddressSearch {
+             resolvedPresentation = .glass
+         }
+--- before/.agent/SOURCE_MAP.md
++++ after/.agent/SOURCE_MAP.md
+@@ -27,8 +27,8 @@
+ | `Sources/App/Pages/` | Swift Web page definitions. |
+ | `Sources/App/Snippits/` | Reusable UI snippets, forms, panels, print engines, and feature views. |
+ | `Sources/App/Snippits/CreateNewCustomerDataView.swift` | Customer creation forms using crystal surfaces, TierraCeroCustomUI headers/controls, and the existing verification flow. |
+-| `Sources/App/Snippits/CreateNewSubCustomerDataView.swift` | Parent-account-scoped subaccount creation; displays every shared create-request field and returns the server-created `CustSubAcct`. |
+-| `Sources/App/Snippits/SearchSubCustomerView.swift` | Parent-account-scoped subcustomer search/selection and no-result creation flow through the customer-type chooser and subaccount data form. |
++| `Sources/App/Snippits/ManageSubCustomerAccountView.swift` | Parent-account-scoped subaccount creation/editing with optional full address/coordinate requirements; edits update then reload the saved `CustSubAcct`. |
++| `Sources/App/Snippits/SearchSubCustomerView.swift` | Parent-account-scoped subcustomer search/selection, no-result creation, and required-address completion through the subaccount manager. |
+ | `Sources/App/Snippits/ManualAddressSearch.swift` | Crystal postal-address and coordinate lookup dialogs; returns the selected address or geocoder snapshot to its caller. |
+ | `Sources/App/Snippits/TripControler/TripControler+AddLocation.swift` | Dedicated fiscal-location picker; owns origin/destination presentation and location-typed item properties/callbacks. |
+ | `Sources/App/Snippits/TripControler/TripControler+AddMerchandise.swift` | Account-aware fiscal-merchandise picker with a concessionaire-only asset-search action placeholder. |
+--- before/.agent/MODULES.md
++++ after/.agent/MODULES.md
+@@ -24,7 +24,7 @@
+ - `API/` — typed client wrappers for auth, customer, order, account, subaccount (create/load/search/update), fiscal, POC, including product-activity and Fast and Furious audit reports, route, mail, social/theme, rewards, and WebSocket API endpoints.
+ - `Websocket/` — real-time message handlers for chat, auth requests, mobile camera/scanner/OCR, async file/image jobs, social notifications, order/status updates, and connection lifecycle.
+ - `ViewControlers/` — page controllers and top-level page flows.
+-- `Snippits/` — reusable UI components and feature views, including Product Manager audit report presentations, velocity scoring, and the dedicated Trip location and account-aware merchandise pickers.
++- `Snippits/` — reusable UI components and feature views, including Product Manager audit report presentations, velocity scoring, the dedicated Trip location and account-aware merchandise pickers, and parent-scoped subaccount creation/editing through `ManageSubCustomerAccountView`.
+ - `Styles/` — Swift Web CSS style declarations.
+ - `Functions/`, `Extentions/`, `Enums/`, `Structurs/`, `VirtualControlers/` — shared app helpers and runtime support. Error diagnostics are owned by `ErrorReportingControler`, its record/context types, the centralized POST transport, and the API decoding helper.
+ 
+--- before/.agent/architecture/API_AND_BACKEND.md
++++ after/.agent/architecture/API_AND_BACKEND.md
+@@ -5,7 +5,7 @@
+ ## Verified Facts
+ 
+ - Client API wrappers live under `Sources/App/API/**`.
+-- The subaccount creation form submits the injected parent account's UUID through `API.custSubAcctV1.create`, retaining the shared `longitud` wire key. It checks both the outer API status and `CreateResponse.status`, then requires a returned `CustSubAcct` belonging to that parent before calling its completion callback.
++- `ManageSubCustomerAccountView` creates with the injected parent's UUID through `API.custSubAcctV1.create`, checking outer/create response statuses and the returned parent ID. Editing validates the source parent, uses `update` with the source UUID/status, then `load(.id)` to return the server's record after verifying its ID and parent. Both paths retain `longitud` and validate returned full address/coordinates when required.
+ - `API.custSubAcctV1` uses the shared `CustSubAcctComponents` contracts under `custSubAcct/v1`. Create/load/update use authenticated POST; account-scoped search uses authenticated GET and decodes a raw `[CustSubAcct]`, retaining the searched term in its callback and returning nil on transport/decoding failure. Create/update expose labeled parameters and construct the shared request objects internally, preserving the coordinate wire key `longitud`; load accepts `HybridIdentifier`.
+ - Asset architecture uses `listStoreArchitecture(relationId:)` and department creation requires a nonoptional `relationId`. Location links use `CustCommercialAssetsLocationLinkedType`; asset-item links retain `CustCommercialAssetsLinkedType`. Asset `custAcct` fields remain customer-account identifiers, not store or warehouse identifiers.
+ - Asset-item creation uses TCFireSignal's shared `InitiateAssetItemViewType`, `CreateAssetItemObject`, and `CreateAssetItemFile` contracts. Single creation submits one object; batch creation collects the requested objects before one request, and `CreateAssetItemResponse.items` returns every created asset item.
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -8,9 +8,9 @@
+ - The app registers `./service.js` during launch.
+ - The app uses Swift Web `Routes`, `Page`, lifecycle hooks, `@State`, and style declarations.
+ - Theme switching currently selects between `MainStyle`, `SKMainStyle`, and `SKLogInStyle`.
+-- `CreateNewCustomerDataView`, `CreateNewSubCustomerDataView`, and `ManualAddressSearch` use TierraCeroCustomUI headers/controls and scoped crystal surfaces. `addToDom` automatically chooses the glass host for these customer/address views, `SearchCustomerView`, `SearchSubCustomerView`, and `CreateNewCusomerView` when the caller uses the standard presentation; explicit interactive/glass presentations remain supported.
+-- `SearchSubCustomerView` scopes API searches to its injected `CustAcctSearch` parent. One match is selected directly; multiple matches appear as keyboard-selectable cards. A successful empty search opens `CreateNewCusomerView`, then passes the selected account type and search term to `CreateNewSubCustomerDataView` using the same parent. Failures report an error, removed-view responses are ignored, and existing/created results return a single parent-validated `CustSubAcct`.
+-- `CreateNewSubCustomerDataView` receives a `CustAcctSearch` parent and displays every `CustSubAcctComponents.CreateRequest` field. Its address loader populates editable postal-address fields and optional coordinates; postal-only selection clears previously selected coordinates. It returns the server-created `CustSubAcct` after a successful create response, without introducing a global subaccount cache.
++- `CreateNewCustomerDataView`, `ManageSubCustomerAccountView`, and `ManualAddressSearch` use TierraCeroCustomUI headers/controls and scoped crystal surfaces. `addToDom` automatically chooses the glass host for these customer/address views, `SearchCustomerView`, `SearchSubCustomerView`, and `CreateNewCusomerView` when the caller uses the standard presentation; explicit interactive/glass presentations remain supported.
++- `SearchSubCustomerView` scopes API searches to its injected `CustAcctSearch` parent. One match enters selection; multiple matches appear as keyboard-selectable cards. A successful empty search opens `CreateNewCusomerView`, then passes the account type/search term and `requierFullAddress` flag to `ManageSubCustomerAccountView`. Required-address selection checks complete street/colony/city/state/country/zip and finite, in-range latitude/longitud; incomplete items show a Spanish alert and open the prefilled manager for editing. Search remains available after child cancellation and completes once with a parent-validated item after any required edit. Removed-view responses are ignored.
++- `ManageSubCustomerAccountView` supports new and existing `CustSubAcct` initializers under one injected `CustAcctSearch` parent. Editing prefills all submitted fields and retains status. `requierFullAddress` defaults to false for creation; when true, address lookup reverse-geocodes existing valid coordinates or opens coordinate entry, rejects postal-only results, and save/returned-record validation requires complete address and valid coordinates. Optional-address mode retains postal-only selection with cleared coordinates. Coordinate search-term lookup starts after DOM attachment. The manager returns server-created/reloaded records without introducing a global subaccount cache.
+ - `ManualAddressSearch` uses `VPopUp`/`VTitle` for address, coordinate, and geocoder-choice dialogs. Coordinate choices display their printable addresses, and coordinate results are returned directly from the geocoder snapshot so postal-code listeners cannot clear the returned address.
+ - `Sources/Service/skyline/js/visualPerformance.js` exposes the derived performance mode as `data-tc-performance-mode` on the document root. In performance mode, named modal veils and glass content shells use translucent black backgrounds (65% and 85% opacity respectively) while backdrop filters remain disabled; disabling the mode restores their theme backgrounds through the CSS cascade.
+ - Browser speech recognition is centralized in `SpeechRecognitionManager`; it retains the JavaScript callback for the active session and routes transcripts to one weak `SpeechRecognitionTarget`.
+@@ -18,7 +18,7 @@
+ - `CreateTripView.selectLocation` uses the dedicated `TripControlerAddLocation` picker with mutable `[FiscalLocationBase]` items and fiscal-base formatting callbacks. Selection returns a complete `CustCommercialTripsComponents.TripLocation` snapshot with `.location` source type and the base's linked ID. Its own `ViewType` supplies the origin/destination icon and title; merchandise uses its own picker, and the remaining Trip selections continue using `TripControlerAddElement<Item>`.
+ - `CreateTripView.addMerchendise` uses `TripControlerAddMerchandise` with the current `CustAcctSearch` account, a required `origin: CustCommercialTripsComponents.TripLocation` snapshot, and mutable `merchendises: [FiscalMercanciaBase]`. The picker owns merchandise formatting and preserves the base-selection and creation callbacks. Only concessionaire accounts see the header's magnifying-glass Buscar Activo button, immediately before + Agregar; its dedicated `searchAsset()` method is a placeholder that leaves the picker open. Asset searching/selection is not implemented yet.
+ - `CreateTripView` stores origin/destination as `CustCommercialTripsComponents.TripLocation`. Local adapters preserve snapshot fields, source type, and optional source ID for the unchanged `CartaPorteUbicacion`, `ManageLocationItem`, and `AddCartaPorteMerchendise` consumers. Stop matching uses source type and linked ID, or placement ID for unlinked stops; saved-base updates/deletes affect only `.location` sources.
+-- `TripControlerAddLocation` has a header split button: the main Agregar action and menu Agregar ubicación share the existing creation callback; the arrow reveals Seleccionar tienda and Buscar cliente alongside it. Menu options have decorative cyan outline SVG icons for location creation, store selection, and customer search. Store selection opens `SelectStore` and renders a `.store` trip snapshot; customer search opens `SearchSubCustomerView` and renders the selected/created subaccount as a `.subaccount` snapshot. Menu visibility is local presentation state, with Escape and outside-click dismissal and scoped crystal styling.
++- `TripControlerAddLocation` has a header split button: the main Agregar action and menu Agregar ubicación share the existing creation callback; the arrow reveals Seleccionar tienda and Buscar cliente alongside it. Menu options have decorative cyan outline SVG icons for location creation, store selection, and customer search. Store selection opens `SelectStore` and renders a `.store` trip snapshot; customer search opens `SearchSubCustomerView` with `requierFullAddress: true` and renders the selected/created/updated subaccount as a `.subaccount` snapshot. Menu visibility is local presentation state, with Escape and outside-click dismissal and scoped crystal styling.
+ - The picker's `renderLocation` overloads preserve store/subaccount address and coordinates. Store placement IDs use `storePrefix` plus the final UUID segment; subaccounts use `sa` plus the final UUID segment and fiscal identity from the injected parent account. Subaccounts must belong to that account. Successful rendering returns the snapshot and dismisses the picker; unrecognized address states report an error.
+ 
+ ## Rules

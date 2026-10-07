@@ -415,6 +415,10 @@ class StartServiceOrder: Div {
     @State var _checkTag4: Bool = false
     @State var _checkTag5: Bool = false
     @State var _checkTag6: Bool = false
+    @State var _checkTag7: Bool = false
+    @State var _checkTag8: Bool = false
+    @State var _checkTag9: Bool = false
+    @State var _checkTag10: Bool = false
     
     lazy var idTag1 = InputText(self.$_idTag1)
         .autocomplete(.off)
@@ -467,7 +471,7 @@ class StartServiceOrder: Div {
     @State var tag2SelctedItemID: UUID? = nil
     
     lazy var tag1Label = Label(configServiceTags.tag1Name)
-        .fontSize(self.$selectEquipmentField.map{ $0 == "tag1" ? 18.px : 12.px })
+        .fontSize(self.$selectEquipmentField.map{ $0 == "tag1" ? 18.px : 14.px })
         .color(self.$selectEquipmentField.map{ $0 == "tag1" ? .black : .gray })
         .float(.left)
     
@@ -546,7 +550,7 @@ class StartServiceOrder: Div {
     .zIndex(1)
     
     lazy var tag2Label = Label(configServiceTags.tag2Name)
-        .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 12.px })
+        .fontSize(self.$selectEquipmentField.map{ $0 == "tag2" ? 18.px : 14.px })
         .color(self.$selectEquipmentField.map{ $0 == "tag2" ? .black : .gray })
         .float(.left)
 
@@ -627,7 +631,7 @@ class StartServiceOrder: Div {
     .zIndex(1)
     
     lazy var tag3Label = Label(configServiceTags.tag3Name)
-        .fontSize(self.$selectEquipmentField.map{ $0 == "tag3" ? 18.px : 12.px })
+        .fontSize(self.$selectEquipmentField.map{ $0 == "tag3" ? 18.px : 14.px })
         .color(self.$selectEquipmentField.map{ $0 == "tag3" ? .black : .gray })
         .float(.left)
     
@@ -760,6 +764,10 @@ class StartServiceOrder: Div {
     lazy var checkTag5 = InputCheckbox().toggle(self.$_checkTag5)
     
     lazy var checkTag6 = InputCheckbox().toggle(self.$_checkTag6)
+    lazy var checkTag7 = InputCheckbox().toggle(self.$_checkTag7)
+    lazy var checkTag8 = InputCheckbox().toggle(self.$_checkTag8)
+    lazy var checkTag9 = InputCheckbox().toggle(self.$_checkTag9)
+    lazy var checkTag10 = InputCheckbox().toggle(self.$_checkTag10)
     
     /**  `` /General Input Items `` */
     
@@ -1686,7 +1694,7 @@ class StartServiceOrder: Div {
                         
                         /// `idTag1`
                         Div(configServiceTags.idTagName)
-                            .fontSize(self.$selectEquipmentField.map{ $0 == "idTag1" ? 18.px : 12.px })
+                            .fontSize(self.$selectEquipmentField.map{ $0 == "idTag1" ? 18.px : 14.px })
                             .color(self.$selectEquipmentField.map{ $0 == "idTag1" ? .black : .gray })
                         
                         Div().class(.clear)
@@ -1698,7 +1706,7 @@ class StartServiceOrder: Div {
                         /// `idTag2`
                         Div{
                             Div(configServiceTags.secondIDTagName)
-                                .fontSize(self.$selectEquipmentField.map{ $0 == "idTag2" ? 18.px : 12.px })
+                                .fontSize(self.$selectEquipmentField.map{ $0 == "idTag2" ? 18.px : 14.px })
                                 .color(self.$selectEquipmentField.map{ $0 == "idTag2" ? .black : .gray })
                                 .float(.right)
                                
@@ -2154,7 +2162,7 @@ class StartServiceOrder: Div {
                             Label(configServiceTags.tag4Name)
                                 .float(.right)
                                 .color(self.$selectEquipmentField.map{ $0 == "tag4" ? .black : .gray })
-                                .fontSize(self.$selectEquipmentField.map{ $0 == "tag4" ? 18.px : 12.px })
+                                .fontSize(self.$selectEquipmentField.map{ $0 == "tag4" ? 18.px : 14.px })
 
                             Div().class(.clear)
                             self.tag4
@@ -2166,7 +2174,7 @@ class StartServiceOrder: Div {
                             Label(configServiceTags.tag5Name)
                                 .float(.right)
                                 .color(self.$selectEquipmentField.map{ $0 == "tag5" ? .black : .gray })
-                                .fontSize(self.$selectEquipmentField.map{ $0 == "tag5" ? 18.px : 12.px })
+                                .fontSize(self.$selectEquipmentField.map{ $0 == "tag5" ? 18.px : 14.px })
 
                             Div().class(.clear)
                             self.tag5
@@ -2178,7 +2186,7 @@ class StartServiceOrder: Div {
                             Label(configServiceTags.tag6Name)
                                 .float(.right)
                                 .color(self.$selectEquipmentField.map{ $0 == "tag6" ? .black : .gray })
-                                .fontSize(self.$selectEquipmentField.map{ $0 == "tag6" ? 18.px : 12.px })
+                                .fontSize(self.$selectEquipmentField.map{ $0 == "tag6" ? 18.px : 14.px })
 
                             Div().class(.clear)
                             self.tag6
@@ -2297,6 +2305,74 @@ class StartServiceOrder: Div {
                                 Div().class(.clear)
                             }
                             .hidden(!configServiceTags.checkTag6)
+                            .class(.oneHalf)
+                            /// checkTag7
+                            Div{
+                                Div{
+                                    self.checkTag7
+                                }
+                                .width(70.px)
+                                .float(.left)
+
+                                Div(configServiceTags.checkTag7Name)
+                                .custom("width", "calc(100% - 70px)")
+                                .class( .oneLineText)
+                                .color(.white)
+                                .float(.left)
+                                Div().class(.clear)
+                            }
+                            .hidden(!configServiceTags.checkTag7)
+                            .class(.oneHalf)
+                            /// checkTag8
+                            Div{
+                                Div{
+                                    self.checkTag8
+                                }
+                                .width(70.px)
+                                .float(.left)
+
+                                Div(configServiceTags.checkTag8Name)
+                                .custom("width", "calc(100% - 70px)")
+                                .class( .oneLineText)
+                                .color(.white)
+                                .float(.left)
+                                Div().class(.clear)
+                            }
+                            .hidden(!configServiceTags.checkTag8)
+                            .class(.oneHalf)
+                            /// checkTag9
+                            Div{
+                                Div{
+                                    self.checkTag9
+                                }
+                                .width(70.px)
+                                .float(.left)
+
+                                Div(configServiceTags.checkTag9Name)
+                                .custom("width", "calc(100% - 70px)")
+                                .class( .oneLineText)
+                                .color(.white)
+                                .float(.left)
+                                Div().class(.clear)
+                            }
+                            .hidden(!configServiceTags.checkTag9)
+                            .class(.oneHalf)
+                            /// checkTag10
+                            Div{
+                                Div{
+                                    self.checkTag10
+                                }
+                                .width(70.px)
+                                .float(.left)
+
+                                Div(configServiceTags.checkTag10Name)
+                                .custom("width", "calc(100% - 70px)")
+                                .class( .oneLineText)
+                                .color(.white)
+                                .float(.left)
+                                Div().class(.clear)
+                            }
+                            .hidden(!configServiceTags.checkTag10)
                             .class(.oneHalf)
                             
                         }
@@ -2664,6 +2740,20 @@ class StartServiceOrder: Div {
             }
         }
 
+    
+    }
+    
+    override func didAddToDOM(){
+        super.didAddToDOM()
+
+        print("🟢  configStore.print.image")
+        print(configStore.print.image)
+
+        if configStore.print.image == .pinpattern {
+            _ = JSObject.global.initiateCanvas!()
+        }
+
+
         custAcct.highPriorityNotes?.forEach({ note in
             
             if shownHighPriorityNotes.contains(note.id) {
@@ -2679,18 +2769,6 @@ class StartServiceOrder: Div {
                 name: self.custAcct.firstName
             ))
         })
-    
-    }
-    
-    override func didAddToDOM(){
-        super.didAddToDOM()
-
-        print("🟢  configStore.print.image")
-        print(configStore.print.image)
-
-        if configStore.print.image == .pinpattern {
-            _ = JSObject.global.initiateCanvas!()
-        }
 
     }
 
@@ -2807,6 +2885,10 @@ class StartServiceOrder: Div {
         $_checkTag4.removeAllListeners()
         $_checkTag5.removeAllListeners()
         $_checkTag6.removeAllListeners()
+        $_checkTag7.removeAllListeners()
+        $_checkTag8.removeAllListeners()
+        $_checkTag9.removeAllListeners()
+        $_checkTag10.removeAllListeners()
         $curOrderManagerBrand.removeAllListeners()
         $curOrderManagerType.removeAllListeners()
         $curOrderManagerModel.removeAllListeners()
@@ -2992,6 +3074,10 @@ class StartServiceOrder: Div {
             tagCheck4: self._checkTag4,
             tagCheck5: self._checkTag5,
             tagCheck6: self._checkTag6,
+            tagCheck7: self._checkTag7,
+            tagCheck8: self._checkTag8,
+            tagCheck9: self._checkTag9,
+            tagCheck10: self._checkTag10,
             tagDescr: self._descr + (pinOfDevice.isEmpty ? "" : "\nPIN / CONTRASEñA: \(pinOfDevice)")
         ))
         
@@ -3864,6 +3950,7 @@ class StartServiceOrder: Div {
             allowWarrantyCharges: true,
             socCanLoadAction: true,
             costType: custAcct.costType,
+            authorizationContext: .order,
             currentSOCMasters: socIds
         ) { pocid, isWarenty, internalWarenty in
             
@@ -3876,6 +3963,7 @@ class StartServiceOrder: Div {
             let view = ConfirmProductView(
                 accountId: self.custAcct.id,
                 costType: self.custAcct.costType,
+                authorizationContext: .order,
                 pocid: pocid,
                 selectedInventoryIDs: selectedInventoryIDs
             ) { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
@@ -4022,7 +4110,7 @@ class StartServiceOrder: Div {
             accountId: self.custAcct.id,
             cardId: self.cardId,
             currentBalance: self.total
-        ) { code, description, amount, provider, lastFour, auth, uts in
+        ) { code, description, amount, provider, lastFour, auth, uts, downpayment in
             
             let refid: UUID = .init()
             
@@ -4035,7 +4123,8 @@ class StartServiceOrder: Div {
                     reference: "",
                     provider: provider,
                     lastFour: lastFour,
-                    auth: auth
+                    auth: auth,
+                    downpayment: downpayment
                 )
             )
             
@@ -4347,4 +4436,3 @@ class StartServiceOrder: Div {
 
 
 }
-

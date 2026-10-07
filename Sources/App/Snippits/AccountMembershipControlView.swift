@@ -699,7 +699,7 @@ class AccountMembershipControlView: Div {
             accountId: accountId,
             cardId: cardId,
             currentBalance: payment
-        ) { code, description, amount, provider, lastFour, auth, uts in
+        ) { code, description, amount, provider, lastFour, auth, uts, _ in
             
             self.payCode = code
             self.payDescription = description

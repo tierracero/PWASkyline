@@ -1,0 +1,577 @@
+--- before/Sources/App/Snippits/TripControler/TripControler+AddLocation.swift
++++ after/Sources/App/Snippits/TripControler/TripControler+AddLocation.swift
+@@ -52,6 +52,7 @@
+ 
+     @State private var isActionMenuOpen = false
+     private let actionMenuId = "trip-location-actions-\(UUID().uuidString)"
++    private var addressConfirmationView: ConfirmAdddressLocationView?
+ 
+     lazy var actionMenuToggle = Button("▾")
+         .attribute("type", "button")
+@@ -74,7 +75,8 @@
+     }
+ 
+     func selectStore() {
+-        let view = SelectStore { store in
++        let view = SelectStore { [weak self] store in
++            guard let self, self.isInDOM else { return }
+             self.renderLocation(store)
+         }
+         addToDom(view)
+@@ -348,20 +350,30 @@
+     }
+ 
+     override func didRemoveFromDOM() {
++        addressConfirmationView?.remove()
++        addressConfirmationView = nil
+         setActionMenuOpen(false)
+         $isActionMenuOpen.removeAllListeners()
+         super.didRemoveFromDOM()
+     }
+ 
+     func renderLocation(_ store: CustStore) {
+-        
+-        guard let state = locationState(store.state) else {
+-            showError(.invalidFormat, "Configure un estado válido para la tienda")
++        guard isInDOM, addressConfirmationView == nil else { return }
++        guard ConfirmAdddressLocationView.hasFullAddress(store),
++              let state = locationState(store.state) else {
++            let view = ConfirmAdddressLocationView(store: store) { [weak self] updatedStore in
++                guard let self, self.isInDOM else { return }
++                self.addressConfirmationView = nil
++                self.renderLocation(updatedStore)
++            }
++            addressConfirmationView = view
++            view.onDidRemoveFromDOM { [weak self] in self?.addressConfirmationView = nil }
++            addToDom(view)
+             return
+         }
+ 
+         loadStoreFiscalProfile(store) { [weak self] profile in
+-            guard let self else { return }
++            guard let self, self.isInDOM else { return }
+             guard let profile else {
+                 showError(.requiredField, "Porfavor  configure el perfil fiscal de la cuenta ")
+                 return
+@@ -470,16 +482,7 @@
+     }
+ 
+     private func locationState(_ value: String) -> CountryStatesMexico? {
+-        func normalized(_ text: String) -> String {
+-            text.pseudo.lowercased().filter { !$0.isWhitespace }
+-        }
+-
+-        let stateValue = normalized(value)
+-        return CountryStatesMexico.allCases.first {
+-            normalized($0.rawValue) == stateValue ||
+-            normalized($0.code) == stateValue ||
+-            normalized($0.description) == stateValue
+-        }
++        ConfirmAdddressLocationView.locationState(value)
+     }
+ 
+     private func extractStreetAndNumber(from address: String) -> (street: String, number: String?) {
+--- before/Sources/App/Functions/addToDom.swift
++++ after/Sources/App/Functions/addToDom.swift
+@@ -229,7 +229,7 @@
+     if case .standard = presentation {
+         if view is SearchCustomerView || view is SearchSubCustomerView || view is CreateNewCusomerView ||
+             view is CreateNewCustomerDataView || view is ManageSubCustomerAccountView ||
+-            view is ManualAddressSearch {
++            view is ManualAddressSearch || view is ConfirmAdddressLocationView {
+             resolvedPresentation = .glass
+         }
+     }
+--- before/.agent/SOURCE_MAP.md
++++ after/.agent/SOURCE_MAP.md
+@@ -31,9 +31,10 @@
+ | `Sources/App/Snippits/AddChargeFormView.swift`, `AddServiceFormView.swift`, `BudgetSOCView.swift`, `ConfirmProductView.swift`, `ConfirmProductViewNew.swift` | Price override entry points; each uses its caller-provided order, sale, or inventory-merma authorization context. |
+ | `Sources/App/Snippits/CreateNewCustomerDataView.swift` | Customer creation forms using crystal surfaces, TierraCeroCustomUI headers/controls, and the existing verification flow. |
+ | `Sources/App/Snippits/ManageSubCustomerAccountView.swift` | Parent-account-scoped subaccount creation/editing with optional full address/coordinate requirements; edits update then reload the saved `CustSubAcct`. |
++| `Sources/App/Snippits/ConfirmAdddressLocationView.swift` | Prefilled store-address confirmation with required postal fields/state/coordinates, address lookup and map preview; preserves loaded store configuration while saving, reloads the store, refreshes caches, and returns it to the Trip picker. |
+ | `Sources/App/Snippits/SearchSubCustomerView.swift` | Parent-account-scoped subcustomer search/selection, no-result creation, and required-address completion through the subaccount manager. |
+ | `Sources/App/Snippits/ManualAddressSearch.swift` | Crystal postal-address and coordinate lookup dialogs; returns the selected address or geocoder snapshot to its caller. |
+-| `Sources/App/Snippits/TripControler/TripControler+AddLocation.swift` | Dedicated fiscal-location picker; owns origin/destination presentation and location-typed item properties/callbacks. |
++| `Sources/App/Snippits/TripControler/TripControler+AddLocation.swift` | Dedicated fiscal-location picker; owns origin/destination presentation and location-typed callbacks, including prefilled confirmation and resumption for incomplete store addresses. |
+ | `Sources/App/Snippits/TripControler/TripControler+AddMerchandise.swift` | Account/origin-aware fiscal-merchandise base picker; preserves selection and creation callbacks. |
+ | `Sources/App/Snippits/SearchComertialAsset.swift` | Trip commercial-asset picker over preloaded available inventory from a store, warehouse or subaccount origin; locally filters folio/name/serial. |
+ | `Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+FastAndFurios.swift` | Ranked product revenue velocity, sales velocity, volume, and weighted score report presentation. |
+--- before/.agent/MODULES.md
++++ after/.agent/MODULES.md
+@@ -24,7 +24,7 @@
+ - `API/` — typed client wrappers for auth, customer, order (including charge/payment deletion approval), account, subaccount (create/load/search/update), fiscal, POC, including product-activity and Fast and Furious audit reports, route, mail, social/theme, rewards, and WebSocket API endpoints.
+ - `Websocket/` — real-time message handlers for chat, auth requests, mobile camera/scanner/OCR, async file/image jobs, social notifications, order/status updates, and connection lifecycle.
+ - `ViewControlers/` — page controllers and top-level page flows.
+-- `Snippits/` — reusable UI components and feature views, including Product Manager audit report presentations, order report delivery tables and CSV exports, order charge/payment deletion approval and refresh, velocity scoring, the dedicated Trip location and account-aware merchandise pickers, preloaded commercial-asset selection through `SearchComertialAsset`, and parent-scoped subaccount creation/editing through `ManageSubCustomerAccountView`.
++- `Snippits/` — reusable UI components and feature views, including Product Manager audit report presentations, order report delivery tables and CSV exports, order charge/payment deletion approval and refresh, velocity scoring, the dedicated Trip location and account-aware merchandise pickers, preloaded commercial-asset selection through `SearchComertialAsset`, parent-scoped subaccount creation/editing through `ManageSubCustomerAccountView`, and store-address confirmation through `ConfirmAdddressLocationView`.
+ - `Styles/` — Swift Web CSS style declarations.
+ - `Functions/`, `Extentions/`, `Enums/`, `Structurs/`, `VirtualControlers/` — shared app helpers and runtime support. Error diagnostics are owned by `ErrorReportingControler`, its record/context types, the centralized POST transport, and the API decoding helper.
+ 
+--- before/.agent/TASKS_ARCHIVE.md
++++ after/.agent/TASKS_ARCHIVE.md
+@@ -1,6 +1,19 @@
+ # Tasks Archive
+ 
+ Verified completed tasks live here.
++
++---
++
++## TRIP-ADDRESS-001 — Confirm Incomplete Store Addresses
++
++- **Status**: Implemented; non-build source review completed, compilation and runtime behavior unverified
++- **Completed**: 2026-10-06
++- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `STATE-001`
++- **Implementation**: Added the prefilled `ConfirmAdddressLocationView` with required address/state/coordinate validation, lookup, and an independently owned map preview. Incomplete store selection opens confirmation and resumes `renderLocation` only with the saved/reloaded store. Existing `loadStore`/`saveStore` contracts preserve loaded non-address metadata and configuration. Matching global/order caches refresh before resumption; session changes and removed pickers cannot receive late results.
++- **Validation evidence**: Reviewed the task-only diff against saved working-file baselines, save argument/model mappings, required-field and coordinate guards, failure/cancellation paths, and map/child cleanup. Focused tracked-file `git diff --check` passed. Source/navigation and state docs were synchronized. Final status review preserves pre-existing user work and staging.
++- **Build/tests**: Not run; the user explicitly selected non-build checks only. No browser execution performed.
++- **Evidence**: `.artifacts/planning/confirm-address-location.md` and `.artifacts/planning/confirm-address-location.diff`.
++- **Commit**: Not created.
+ 
+ ---
+ 
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -21,7 +21,8 @@
+ - `SearchComertialAsset` accepts a supported `ListAssetItemsType` and preloaded asset items; it has no API calls. It checks location type/ID, filters folio/name/serial locally, and returns one concrete item. `CreateTripView` excludes already selected IDs, loads the parent asset's fiscal/weight metadata before opening the existing merchandise editor, and stores the result with `.commercialAsset` and the concrete item ID. Origin assignments remove all commercial-asset merchandise, close asset picker/editor views, and invalidate pending loads/results; ordinary merchandise remains. Destination changes synchronize the saved route. Removal also invalidates and cleans up the child flow.
+ - `CreateTripView` stores origin/destination as `CustCommercialTripsComponents.TripLocation`. Local adapters preserve snapshot fields, source type, and optional source ID for the unchanged `CartaPorteUbicacion`, `ManageLocationItem`, and `AddCartaPorteMerchendise` consumers. Stop matching uses source type and linked ID, or placement ID for unlinked stops; saved-base updates/deletes affect only `.location` sources.
+ - `TripControlerAddLocation` has a header split button: the main Agregar action and menu Agregar ubicación share the existing creation callback; the arrow reveals Seleccionar tienda and Buscar cliente alongside it. Menu options have decorative cyan outline SVG icons for location creation, store selection, and customer search. Store selection opens `SelectStore` and renders a `.store` trip snapshot; customer search opens `SearchSubCustomerView` with `requierFullAddress: true` and renders the selected/created/updated subaccount as a `.subaccount` snapshot. Menu visibility is local presentation state, with Escape and outside-click dismissal and scoped crystal styling.
+-- The picker's `renderLocation` overloads preserve store/subaccount address and coordinates. Store placement IDs use `storePrefix` plus the final UUID segment; subaccounts use `sa` plus the final UUID segment and fiscal identity from the injected parent account. Subaccounts must belong to that account. Successful rendering returns the snapshot and dismisses the picker; unrecognized address states report an error.
++- The picker's `renderLocation` overloads preserve store/subaccount address and coordinates. Store placement IDs use `storePrefix` plus the final UUID segment; subaccounts use `sa` plus the final UUID segment and fiscal identity from the injected parent account. Subaccounts must belong to that account. Successful rendering returns the snapshot and dismisses the picker; unrecognized subaccount address states report an error.
++- Store selection checks nonempty street/colony/city/state/country/zip, a recognized state, and finite latitude/longitude within their geographic ranges before rendering. Incomplete stores open the prefilled `ConfirmAdddressLocationView` crystal modal. It reuses `ManualAddressSearch` and an independently owned map preview, validates all required fields, loads current store metadata/configuration before `saveStore`, reloads the saved record, refreshes store caches, and recalls `renderLocation` with that record. Confirmation/lookup cancellation leaves the picker available; picker removal dismisses confirmation and ignores late selection/profile results. The subaccount state's existing error path remains unchanged.
+ 
+ ## Rules
+ 
+--- before/.agent/architecture/SECURITY_AND_STATE.md
++++ after/.agent/architecture/SECURITY_AND_STATE.md
+@@ -7,6 +7,7 @@
+ - `SkylineWeb.swift` contains many global variables for tokens, API mode, account/user/store context, caches, and feature configuration.
+ - `App.swift` reads and writes browser `localStorage` for language and session-control behavior.
+ - API and WebSocket flows use tokens and account/user context.
++- `ConfirmAdddressLocationView` refreshes `SkylineWeb.stores[id]`, the matching `OrderCatchControler.stores` entry, and its matching `selectedStore` from the store reloaded after a successful address save. These targeted cache writes precede the Trip selection callback and also run if the dialog was removed while the save was in flight. Save/reload continuations are scoped to the captured `custCatchID`; a changed session cannot populate another session's caches. Failed reloads do not publish an optimistic store or resume selection.
+ - `ErrorReportingControler` owns diagnostic persistence, retry scheduling, account-scoped delivery, and 60-day invalidation.
+ - Diagnostic records are stored in the `PWASkylineDiagnostics` IndexedDB database through the `PWASkylineErrorStore` JavaScript bridge.
+ 
+--- before/Sources/App/Snippits/ConfirmAdddressLocationView.swift
++++ after/Sources/App/Snippits/ConfirmAdddressLocationView.swift
+@@ -0,0 +1,421 @@
++import Foundation
++import TCFundamentals
++import TCFireSignal
++import Web
++
++final class ConfirmAdddressLocationView: Div {
++
++    override class var name: String { "div" }
++
++    let store: CustStore
++    private let sessionId = custCatchID
++    private let callback: (CustStore) -> Void
++    private var addressSearch: ManualAddressSearch?
++    private let mapId = "confirm_address_location_map_" + callKey(32)
++    private var locationMap: JSObject?
++    private var mapRequest = 0
++
++    init(store: CustStore, callback: @escaping (CustStore) -> Void) {
++        self.store = store
++        self.callback = callback
++        super.init()
++        street = store.street
++        colony = store.colony
++        city = store.city
++        state = store.state
++        country = store.country
++        zip = store.zip
++        latitude = store.lat ?? ""
++        longitude = store.lon ?? ""
++    }
++
++    required init() {
++        fatalError("init() has not been implemented")
++    }
++
++    @State private var street = ""
++    @State private var colony = ""
++    @State private var city = ""
++    @State private var state = ""
++    @State private var country = ""
++    @State private var zip = ""
++    @State private var latitude = ""
++    @State private var longitude = ""
++    @State private var isSaving = false
++
++    private lazy var streetField = UTextField(self.$street).placeholder("Calle y número").disabled(self.$isSaving)
++    private lazy var colonyField = UTextField(self.$colony).placeholder("Colonia / asentamiento").disabled(self.$isSaving)
++    private lazy var cityField = UTextField(self.$city).placeholder("Ciudad / municipio").disabled(self.$isSaving)
++    private lazy var stateField = UTextField(self.$state).placeholder("Estado").disabled(self.$isSaving)
++    private lazy var countryField = UTextField(self.$country).placeholder("País").disabled(self.$isSaving)
++    private lazy var zipField = UTextField(self.$zip).placeholder("Código postal").disabled(self.$isSaving)
++    private lazy var latitudeField = UTextField(self.$latitude).placeholder("Latitud").disabled(self.$isSaving)
++    private lazy var longitudeField = UTextField(self.$longitude).placeholder("Longitud").disabled(self.$isSaving)
++
++    private lazy var mapContainer = Div {
++        USmallTitle("Busque la dirección o capture latitud y longitud para mostrar la ubicación.")
++    }
++        .id(.init(mapId))
++        .borderRadius(10.px)
++        .width(100.percent)
++        .overflow(.hidden)
++        .height(150.px)
++
++    @DOM override var body: DOM.Content {
++        VPopUp(.fitContent(w: 800)) {
++            VTitle("Confirmar dirección y ubicación") {
++                USmallTitle(self.store.name)
++            } onClose: {
++                if !self.isSaving { self.remove() }
++            }
++
++            VBodyGrid {
++                VGrid(.half) {
++                    VBox {
++                        Div {
++                            USmallButton("Buscar Dirección")
++                                .class(Class(TCCrystalSurfaceClass.goodButton))
++                                .disabled(self.$isSaving)
++                                .float(.right)
++                                .onClick { self.loadAddress() }
++                            USubTitle("Dirección de servicio")
++                            USmallTitle("Complete todos los campos para continuar.")
++                        }
++                        .display(.block)
++
++                        UField("Calle y número") { self.streetField }
++                        UField("Colonia / asentamiento") { self.colonyField }
++                        UField("Ciudad / municipio") { self.cityField }
++                        UField("Estado") { self.stateField }
++                        UField("País") { self.countryField }
++                        UField("Código postal") { self.zipField }
++                    }
++                }
++                VGrid(.half) {
++                    VBox {
++                        USubTitle("Ubicación")
++                        USmallTitle("Latitud y longitud requeridas")
++                        self.mapContainer
++                        UField("Latitud") { self.latitudeField }
++                        UField("Longitud") { self.longitudeField }
++                    }
++                }
++            }
++
++            ULargeButton(self.$isSaving.map { $0 ? "Guardando dirección…" : "Guardar y continuar" })
++                .class(Class(TCCrystalSurfaceClass.goodButton))
++                .disabled(self.$isSaving)
++                .onClick { self.saveAddress() }
++        }
++    }
++
++    static func hasFullAddress(_ store: CustStore) -> Bool {
++        hasFullAddress(
++            fields: [store.street, store.colony, store.city, store.state, store.country, store.zip],
++            state: store.state,
++            latitude: store.lat.flatMap { Double($0.purgeSpaces) },
++            longitude: store.lon.flatMap { Double($0.purgeSpaces) }
++        )
++    }
++
++    static func locationState(_ value: String) -> CountryStatesMexico? {
++        func normalized(_ text: String) -> String {
++            text.pseudo.lowercased().filter { !$0.isWhitespace }
++        }
++        let state = normalized(value)
++        return CountryStatesMexico.allCases.first {
++            normalized($0.rawValue) == state ||
++            normalized($0.code) == state ||
++            normalized($0.description) == state
++        }
++    }
++
++    private static func hasFullAddress(
++        fields: [String], state: String, latitude: Double?, longitude: Double?
++    ) -> Bool {
++        fields.allSatisfy { !$0.purgeSpaces.isEmpty } &&
++            locationState(state) != nil && validCoordinates(latitude: latitude, longitude: longitude)
++    }
++
++    private static func validCoordinates(latitude: Double?, longitude: Double?) -> Bool {
++        guard let latitude, latitude.isFinite, (-90.0...90.0).contains(latitude),
++              let longitude, longitude.isFinite, (-180.0...180.0).contains(longitude) else { return false }
++        return true
++    }
++
++    override func buildUI() {
++        super.buildUI()
++        TCTripBetaTheme.apply(to: self)
++        TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
++        position(.absolute)
++        width(100.percent)
++        height(100.percent)
++        left(0.px)
++        top(0.px)
++        attribute("role", "dialog")
++        attribute("aria-modal", "true")
++    }
++
++    override func didAddToDOM() {
++        super.didAddToDOM()
++        $latitude.listen { [weak self] in self?.scheduleMapRefresh() }
++        $longitude.listen { [weak self] in self?.scheduleMapRefresh() }
++        scheduleMapRefresh()
++        streetField.select()
++    }
++
++    private func loadAddress() {
++        guard !isSaving, addressSearch == nil else { return }
++        if country.purgeSpaces.isEmpty { country = Countries.mexico.description }
++        guard country.purgeSpaces.pseudo == Countries.mexico.description.pseudo ||
++                country.purgeSpaces.pseudo == Countries.mexico.rawValue.pseudo else {
++            showError(.invalidField, "La búsqueda de dirección está disponible para México. Puede capturar los campos manualmente.")
++            return
++        }
++
++        let loadBy: ManualAddressSearch.LoadType
++        let latitudeValue = Double(latitude.purgeSpaces)
++        let longitudeValue = Double(longitude.purgeSpaces)
++        if Self.validCoordinates(latitude: latitudeValue, longitude: longitudeValue),
++           let latitudeValue, let longitudeValue {
++            loadBy = .byLocation(latitude: latitudeValue, longitude: longitudeValue)
++        } else if state.purgeSpaces.isEmpty {
++            loadBy = .byCountry(.mexico)
++        } else {
++            loadBy = .byAddress(.init(
++                orderId: store.id, colony: colony, city: city, state: state, country: country
++            ))
++        }
++
++        let view = ManualAddressSearch(loadBy) { [weak self] result in
++            guard let self, self.isInDOM, !self.isSaving else { return }
++            switch result {
++            case .address:
++                showError(.requiredField, "Seleccione una dirección con latitud y longitud para continuar.")
++            case .coordinates(let address):
++                self.street = address.street
++                self.colony = address.settlement
++                self.city = address.city
++                self.state = address.state
++                self.country = address.country.description
++                self.zip = address.zip
++                self.latitude = String(address.latitude)
++                self.longitude = String(address.longitude)
++                self.streetField.select()
++            }
++        }
++        addressSearch = view
++        view.onDidRemoveFromDOM { [weak self] in self?.addressSearch = nil }
++        addToDom(view)
++    }
++
++    private func scheduleMapRefresh() {
++        mapRequest += 1
++        let request = mapRequest
++        Dispatch.asyncAfter(0.1) { [weak self] in
++            guard let self, self.isInDOM, self.mapRequest == request else { return }
++            self.refreshMap(request: request)
++        }
++    }
++
++    private func clearMap() {
++        if let locationMap { _ = locationMap.destroy?() }
++        locationMap = nil
++        mapContainer.innerHTML = ""
++    }
++
++    private func refreshMap(request: Int) {
++        clearMap()
++        let latitudeValue = Double(latitude.purgeSpaces)
++        let longitudeValue = Double(longitude.purgeSpaces)
++        guard Self.validCoordinates(latitude: latitudeValue, longitude: longitudeValue),
++              let latitudeValue, let longitudeValue else {
++            mapContainer.appendChild(USmallTitle("Busque la dirección o capture latitud y longitud para mostrar la ubicación."))
++            return
++        }
++        mapContainer.appendChild(USmallTitle("Cargando mapa…"))
++        API.v1.jwt { [weak self] token in
++            guard let self, self.isInDOM, self.mapRequest == request else { return }
++            self.mapContainer.innerHTML = ""
++            guard let token, let createMap = JSObject.global["createSubCustomerLocationMap"].function else {
++                self.mapContainer.appendChild(USmallTitle("No fue posible cargar el mapa. Busque la dirección para intentar de nuevo."))
++                return
++            }
++            self.locationMap = createMap(self.mapId, token, latitudeValue, longitudeValue).object
++            if self.locationMap == nil {
++                self.mapContainer.appendChild(USmallTitle("No fue posible cargar el mapa. Busque la dirección para intentar de nuevo."))
++            }
++        }
++    }
++
++    private func saveAddress() {
++        guard !isSaving, custCatchID == sessionId else { return }
++        guard Self.hasFullAddress(
++            fields: [street, colony, city, state, country, zip], state: state,
++            latitude: Double(latitude.purgeSpaces), longitude: Double(longitude.purgeSpaces)
++        ) else {
++            showError(.requiredField, "Complete la dirección, seleccione un estado válido e ingrese latitud y longitud válidas para continuar.")
++            return
++        }
++
++        var address = store
++        address.street = street.purgeSpaces
++        address.colony = colony.purgeSpaces
++        address.city = city.purgeSpaces
++        address.state = state.purgeSpaces
++        address.country = country.purgeSpaces
++        address.zip = zip.purgeSpaces
++        address.lat = latitude.purgeSpaces
++        address.lon = longitude.purgeSpaces
++        isSaving = true
++        loadingView.show()
++
++        // saveStore also writes configuration: carry forward the current server values.
++        API.custAPIV1.loadStore(storeId: store.id) { [weak self] response in
++            guard let self, self.isInDOM, custCatchID == self.sessionId else { loadingView.hide(); return }
++            guard let response else {
++                self.finishSaving()
++                showError(.comunicationError, .serverConextionError)
++                return
++            }
++            guard response.status == .ok else {
++                self.finishSaving()
++                showError(.generalError, response.msg)
++                return
++            }
++            guard let data = response.data, data.store.id == self.store.id else {
++                self.finishSaving()
++                showError(.unexpectedResult, .unexpenctedMissingPayload)
++                return
++            }
++            self.saveAddress(address, preserving: data)
++        }
++    }
++
++    private func saveAddress(_ address: CustStore, preserving data: CustComponents.LoadStoreResponse) {
++        let current = data.store
++        let config = data.config
++        let sessionId = self.sessionId
++        let profileName = data.fiscal.first(where: { $0.id == current.fiscal })
++            .map { "\($0.rfc) \($0.razon)" } ?? ""
++        API.custAPIV1.saveStore(
++            storeId: current.id,
++            name: current.name,
++            telephone: current.telephone,
++            mobile: current.mobile,
++            email: current.email,
++            street: address.street,
++            colony: address.colony,
++            city: address.city,
++            state: address.state,
++            country: address.country,
++            zip: address.zip,
++            isPublic: current.isPublic,
++            isFiscalable: current.isFiscalable,
++            fiscalProfileId: current.fiscal,
++            fiscalProfileName: profileName,
++            lat: address.lat.flatMap { Double($0) },
++            lon: address.lon.flatMap { Double($0) },
++            button: config.print.button,
++            document: config.print.document,
++            image: config.print.image,
++            lineBreak: config.print.lineBreak,
++            buttonPdv: config.printPdv.button,
++            documentPdv: config.printPdv.document,
++            imagePdv: config.printPdv.image,
++            lineBreakPdv: config.printPdv.lineBreak,
++            priceModifierPdv: Double(config.priceModifierPdv) / 100.0,
++            priceModifierOrder: Double(config.priceModifierOrder) / 100.0,
++            operationType: config.operationType,
++            operationStore: config.operationStore,
++            sunday: config.schedule.sunday,
++            monday: config.schedule.monday,
++            tuesday: config.schedule.tuesday,
++            wednesday: config.schedule.wednesday,
++            thursday: config.schedule.thursday,
++            friday: config.schedule.friday,
++            saturday: config.schedule.saturday,
++            lockedInventory: config.lockedInventory
++        ) { [weak self] response in
++            guard custCatchID == sessionId else { loadingView.hide(); return }
++            guard let response else {
++                loadingView.hide()
++                self?.isSaving = false
++                if self?.isInDOM == true { showError(.comunicationError, .serverConextionError) }
++                return
++            }
++            guard response.status == .ok else {
++                loadingView.hide()
++                self?.isSaving = false
++                if self?.isInDOM == true { showError(.generalError, response.msg) }
++                return
++            }
++            // Refresh server-owned caches even if the dialog was removed while saving.
++            Self.reloadSavedStore(id: current.id, sessionId: sessionId) { [weak self] savedStore in
++                guard let self, self.isInDOM else { return }
++                self.isSaving = false
++                guard let savedStore else {
++                    showError(.comunicationError, "La dirección se guardó, pero no fue posible cargar la tienda. Intente guardar de nuevo.")
++                    return
++                }
++                guard Self.hasFullAddress(savedStore) else {
++                    showError(.requiredField, "La tienda guardada aún requiere una dirección completa y coordenadas válidas.")
++                    return
++                }
++                self.remove()
++                self.callback(savedStore)
++            }
++        }
++    }
++
++    private func finishSaving() {
++        loadingView.hide()
++        isSaving = false
++    }
++
++    private static func reloadSavedStore(id: UUID, sessionId: UUID, callback: @escaping (CustStore?) -> Void) {
++        API.custAPIV1.loadStore(storeId: id) { response in
++            loadingView.hide()
++            guard custCatchID == sessionId,
++                  let response, response.status == .ok, let data = response.data, data.store.id == id else {
++                callback(nil)
++                return
++            }
++            let store = data.store
++            stores[id] = store
++
++            let basic = CustStoreBasic(
++                id: store.id, name: store.name, mainStore: store.mainStore,
++                telephone: store.telephone, mobile: store.mobile, email: store.email,
++                street: store.street, colony: store.colony, city: store.city, state: store.state,
++                schedulea: store.schedulea, scheduleb: store.scheduleb, schedulec: store.schedulec,
++                lat: store.lat, lon: store.lon
++            )
++            let orderCache = OrderCatchControler.shared
++            if let index = orderCache.stores.firstIndex(where: { $0.id == id }) {
++                var updated = orderCache.stores
++                updated[index] = basic
++                orderCache.stores = updated
++            }
++            if orderCache.selectedStore?.id == id { orderCache.selectedStore = basic }
++            callback(store)
++        }
++    }
++
++    override func didRemoveFromDOM() {
++        super.didRemoveFromDOM()
++        addressSearch?.remove()
++        addressSearch = nil
++        mapRequest += 1
++        clearMap()
++        $street.removeAllListeners()
++        $colony.removeAllListeners()
++        $city.removeAllListeners()
++        $state.removeAllListeners()
++        $country.removeAllListeners()
++        $zip.removeAllListeners()
++        $latitude.removeAllListeners()
++        $longitude.removeAllListeners()
++        $isSaving.removeAllListeners()
++    }
++}

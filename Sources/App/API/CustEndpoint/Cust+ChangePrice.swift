@@ -16,6 +16,7 @@ extension CustComponents {
         id: UUID,
         requestedPrice: Int64,
         reason: String,
+        authorizationContext: ChangePriceAuthorizationContext,
         callback: @escaping ( (_ resp: APIResponseGeneric<ChangePriceResponse>?) -> () )
     ) {
         sendPost(
@@ -26,7 +27,8 @@ extension CustComponents {
                 type: type,
                 id: id,
                 requestedPrice: requestedPrice,
-                reason: reason
+                reason: reason,
+                authorizationContext: authorizationContext
             )
         ) { payload in
             guard let data = payload else{
@@ -45,4 +47,3 @@ extension CustComponents {
         }
     }
 }
-

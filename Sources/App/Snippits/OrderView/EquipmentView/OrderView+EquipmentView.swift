@@ -107,6 +107,10 @@ extension OrderView {
         @State var _checkTag5: Bool = false
         
         @State var _checkTag6: Bool = false
+        @State var _checkTag7: Bool = false
+        @State var _checkTag8: Bool = false
+        @State var _checkTag9: Bool = false
+        @State var _checkTag10: Bool = false
         
         @State var diagnostic: String = ""
         
@@ -268,6 +272,22 @@ extension OrderView {
             self._checkTag6 = !bool
         }
         
+        lazy var checkTag7 = InputCheckbox().toggle(self.$_checkTag7, self.$isDisabled){ bool in
+            self._checkTag7 = !bool
+        }
+
+        lazy var checkTag8 = InputCheckbox().toggle(self.$_checkTag8, self.$isDisabled){ bool in
+            self._checkTag8 = !bool
+        }
+
+        lazy var checkTag9 = InputCheckbox().toggle(self.$_checkTag9, self.$isDisabled){ bool in
+            self._checkTag9 = !bool
+        }
+
+        lazy var checkTag10 = InputCheckbox().toggle(self.$_checkTag10, self.$isDisabled){ bool in
+            self._checkTag10 = !bool
+        }
+
         /**  `` /General Input Items `` */
         
         @DOM override var body: DOM.Content {
@@ -278,7 +298,7 @@ extension OrderView {
                     
                     Label(configServiceTags.idTagName)
                         .color(.gray)
-                        .fontSize(10.px)
+                        .fontSize(13.px)
                     
                     Div(self.$_idTag1.map{ $0.isEmpty ? configServiceTags.idTagPlaceholder : $0 })
                         .class(.textFiledBlackDarkReadMode, .oneLineText)
@@ -294,7 +314,7 @@ extension OrderView {
                 Div {
                     Label(configServiceTags.secondIDTagName).color(.gray)
                         .color(.gray)
-                        .fontSize(10.px)
+                        .fontSize(13.px)
                       
                     Div(self.$_idTag2.map{ $0.isEmpty ? configServiceTags.secondIDTagPlaceholder : $0 })
                         .class(.textFiledBlackDarkReadMode, .oneLineText)
@@ -311,7 +331,7 @@ extension OrderView {
                 Div {
                     Label(configServiceTags.tag1Name).color(.gray)
                         .color(.gray)
-                        .fontSize(10.px)
+                        .fontSize(13.px)
                       
                     Div(self.$_tag1.map{ $0.isEmpty ? configServiceTags.tag1Placeholder : $0 })
                         .class(.textFiledBlackDarkReadMode, .oneLineText)
@@ -328,7 +348,7 @@ extension OrderView {
                 Div {
                     Label(configServiceTags.tag2Name).color(.gray)
                         .color(.gray)
-                        .fontSize(10.px)
+                        .fontSize(13.px)
                       
                     Div(self.$_tag2.map{ $0.isEmpty ? configServiceTags.tag2Placeholder : $0 })
                         .class(.textFiledBlackDarkReadMode, .oneLineText)
@@ -345,7 +365,7 @@ extension OrderView {
                 Div {
                     Label(configServiceTags.tag3Name).color(.gray)
                         .color(.gray)
-                        .fontSize(10.px)
+                        .fontSize(13.px)
                       
                     Div(self.$_tag3.map{ $0.isEmpty ? configServiceTags.tag3Placeholder : $0 })
                         .class(.textFiledBlackDarkReadMode, .oneLineText)
@@ -362,7 +382,7 @@ extension OrderView {
                 Div {
                     Label(configServiceTags.tag4Name).color(.gray)
                         .color(.gray)
-                        .fontSize(10.px)
+                        .fontSize(13.px)
                       
                     Div(self.$_tag4.map{ $0.isEmpty ? configServiceTags.tag4Placeholder : $0 })
                         .class(.textFiledBlackDarkReadMode, .oneLineText)
@@ -379,7 +399,7 @@ extension OrderView {
                 Div {
                     Label(configServiceTags.tag5Name).color(.gray)
                         .color(.gray)
-                        .fontSize(10.px)
+                        .fontSize(13.px)
                       
                     Div(self.$_tag5.map{ $0.isEmpty ? configServiceTags.tag5Placeholder : $0 })
                         .class(.textFiledBlackDarkReadMode, .oneLineText)
@@ -396,7 +416,7 @@ extension OrderView {
                 Div {
                     Label(configServiceTags.tag6Name).color(.gray)
                         .color(.gray)
-                        .fontSize(10.px)
+                        .fontSize(13.px)
                       
                     Div(self.$_tag6.map{ $0.isEmpty ? configServiceTags.tag6Placeholder : $0 })
                         .class(.textFiledBlackDarkReadMode, .oneLineText)
@@ -528,6 +548,78 @@ extension OrderView {
                         }
                         .hidden(!configServiceTags.checkTag6)
                         .class(.oneHalf)
+                        /// checkTag7
+                        Div{
+                            Div{
+                                self.checkTag7
+                            }
+                            .width(70.px)
+                            .float(.left)
+
+                            Div(configServiceTags.checkTag7Name)
+                                .color(.white)
+                                .class(.oneLineText)
+                                .custom("width", "calc(100% - 70px)")
+                                .float(.left)
+
+                            Div().class(.clear)
+                        }
+                        .hidden(!configServiceTags.checkTag7)
+                        .class(.oneHalf)
+                        /// checkTag8
+                        Div{
+                            Div{
+                                self.checkTag8
+                            }
+                            .width(70.px)
+                            .float(.left)
+
+                            Div(configServiceTags.checkTag8Name)
+                                .color(.white)
+                                .class(.oneLineText)
+                                .custom("width", "calc(100% - 70px)")
+                                .float(.left)
+
+                            Div().class(.clear)
+                        }
+                        .hidden(!configServiceTags.checkTag8)
+                        .class(.oneHalf)
+                        /// checkTag9
+                        Div{
+                            Div{
+                                self.checkTag9
+                            }
+                            .width(70.px)
+                            .float(.left)
+
+                            Div(configServiceTags.checkTag9Name)
+                                .color(.white)
+                                .class(.oneLineText)
+                                .custom("width", "calc(100% - 70px)")
+                                .float(.left)
+
+                            Div().class(.clear)
+                        }
+                        .hidden(!configServiceTags.checkTag9)
+                        .class(.oneHalf)
+                        /// checkTag10
+                        Div{
+                            Div{
+                                self.checkTag10
+                            }
+                            .width(70.px)
+                            .float(.left)
+
+                            Div(configServiceTags.checkTag10Name)
+                                .color(.white)
+                                .class(.oneLineText)
+                                .custom("width", "calc(100% - 70px)")
+                                .float(.left)
+
+                            Div().class(.clear)
+                        }
+                        .hidden(!configServiceTags.checkTag10)
+                        .class(.oneHalf)
                         
                         Div().class(.clear)
                         
@@ -539,12 +631,14 @@ extension OrderView {
                     
                     /// Description
                     Div{
+
+                        Label("Descripcion")
                         
                         Div(self.$_descr)
                             .hidden(self.$editMode.map{$0})
                             .marginBottom(7.px)
                             .color(.goldenRod)
-                            .fontSize(18.px)
+                            .fontSize(22.px)
                         
                         Div{
                             Div("+ Agregar Diagnostico")
@@ -707,7 +801,7 @@ extension OrderView {
                 .custom("height", "calc(100% - 60px) !important")
                 
                 Div{
-                    
+                    /*
                     /// Ready Toggle
                     Div{
                         Label("Preparado")
@@ -1090,7 +1184,7 @@ extension OrderView {
                     .position(.relative)
                     .float(.left)
                     .top(-7.px)
-                    
+                    */
                     Img()
                         .src("/skyline/media/cross.png")
                         .hidden(self.$editMode.map{!$0})
@@ -1118,6 +1212,10 @@ extension OrderView {
                             self._checkTag4 = self.equipment.tagCheck4
                             self._checkTag5 = self.equipment.tagCheck5
                             self._checkTag6 = self.equipment.tagCheck6
+                            self._checkTag7 = self.equipment.tagCheck7
+                            self._checkTag8 = self.equipment.tagCheck8
+                            self._checkTag9 = self.equipment.tagCheck9
+                            self._checkTag10 = self.equipment.tagCheck10
                             self.diagnostic = self.equipment.diagnostic ?? ""
                             self.resolution = self.equipment.resolution ?? ""
                             
@@ -1152,6 +1250,10 @@ extension OrderView {
                                 if self._checkTag4 != self.equipment.tagCheck4 { canSave =  true }
                                 if self._checkTag5 != self.equipment.tagCheck5 { canSave =  true }
                                 if self._checkTag6 != self.equipment.tagCheck6 { canSave =  true }
+                                if self._checkTag7 != self.equipment.tagCheck7 { canSave =  true }
+                                if self._checkTag8 != self.equipment.tagCheck8 { canSave =  true }
+                                if self._checkTag9 != self.equipment.tagCheck9 { canSave =  true }
+                                if self._checkTag10 != self.equipment.tagCheck10 { canSave =  true }
                                 if self.diagnostic != self.equipment.diagnostic { canSave = true }
                                 if self.resolution != self.equipment.resolution { canSave = true }
                                 
@@ -1190,6 +1292,10 @@ extension OrderView {
                                     tagCheck4: self._checkTag4,
                                     tagCheck5: self._checkTag5,
                                     tagCheck6: self._checkTag6,
+                                    tagCheck7: self._checkTag7,
+                                    tagCheck8: self._checkTag8,
+                                    tagCheck9: self._checkTag9,
+                                    tagCheck10: self._checkTag10,
                                     diagnostic: _diagnostic,
                                     resolution: _resolution,
                                     tagDescr: self._descr
@@ -1222,6 +1328,10 @@ extension OrderView {
                                     self.equipment.tagCheck4 = self._checkTag4
                                     self.equipment.tagCheck5 = self._checkTag5
                                     self.equipment.tagCheck6 = self._checkTag6
+                                    self.equipment.tagCheck7 = self._checkTag7
+                                    self.equipment.tagCheck8 = self._checkTag8
+                                    self.equipment.tagCheck9 = self._checkTag9
+                                    self.equipment.tagCheck10 = self._checkTag10
                                     self.equipment.diagnostic = _diagnostic
                                     self.equipment.resolution = _resolution
                                     
@@ -1314,6 +1424,10 @@ extension OrderView {
                                                     tagCheck4: equipment.tagCheck4,
                                                     tagCheck5: equipment.tagCheck5,
                                                     tagCheck6: equipment.tagCheck6,
+                                                    tagCheck7: equipment.tagCheck7,
+                                                    tagCheck8: equipment.tagCheck8,
+                                                    tagCheck9: equipment.tagCheck9,
+                                                    tagCheck10: equipment.tagCheck10,
                                                     pendingSpareEvent: manager.id,
                                                     pendingSpare: manager,
                                                     diagnostic: equipment.diagnostic,
@@ -1397,6 +1511,10 @@ extension OrderView {
                                                tagCheck4: equipment.tagCheck4,
                                                tagCheck5: equipment.tagCheck5,
                                                tagCheck6: equipment.tagCheck6,
+                                               tagCheck7: equipment.tagCheck7,
+                                               tagCheck8: equipment.tagCheck8,
+                                               tagCheck9: equipment.tagCheck9,
+                                               tagCheck10: equipment.tagCheck10,
                                                pendingSpareEvent: nil,
                                                pendingSpare: equipment.pendingSpare,
                                                diagnostic: equipment.diagnostic,
@@ -1610,6 +1728,10 @@ extension OrderView {
             _checkTag5 = equipment.tagCheck5
             
             _checkTag6 = equipment.tagCheck6
+            _checkTag7 = equipment.tagCheck7
+            _checkTag8 = equipment.tagCheck8
+            _checkTag9 = equipment.tagCheck9
+            _checkTag10 = equipment.tagCheck10
             
             diagnostic = equipment.diagnostic ?? ""
             
@@ -1785,6 +1907,10 @@ extension OrderView {
                                     tagCheck4: equipment.tagCheck4,
                                     tagCheck5: equipment.tagCheck5,
                                     tagCheck6: equipment.tagCheck6,
+                                    tagCheck7: equipment.tagCheck7,
+                                    tagCheck8: equipment.tagCheck8,
+                                    tagCheck9: equipment.tagCheck9,
+                                    tagCheck10: equipment.tagCheck10,
                                     pendingSpareEvent: nil,
                                     pendingSpare: equipment.pendingSpare,
                                     diagnostic: equipment.diagnostic,
@@ -1829,6 +1955,10 @@ extension OrderView {
             $_checkTag4.removeAllListeners()
             $_checkTag5.removeAllListeners()
             $_checkTag6.removeAllListeners()
+            $_checkTag7.removeAllListeners()
+            $_checkTag8.removeAllListeners()
+            $_checkTag9.removeAllListeners()
+            $_checkTag10.removeAllListeners()
             $diagnostic.removeAllListeners()
             $resolution.removeAllListeners()
             $equipmentStatus.removeAllListeners()

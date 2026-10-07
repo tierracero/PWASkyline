@@ -100,7 +100,7 @@ class IMChatBubbleView: Div {
             }
             
             Div(self.$chatNick)
-                .fontSize(12.px)
+                .fontSize(14.px)
                 .color(.gray)
                 .class(.oneLineText)
             

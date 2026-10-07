@@ -51,7 +51,7 @@ enum TCMessageObjectTheme {
 
             CSSRule(Pointer("\(root) .\(TCMessageObjectClass.meta)"))
                 .custom("color", "var(--tc-message-muted) !important")
-                .custom("font-size", "12px !important")
+                .custom("font-size", "14px !important")
                 .custom("line-height", "1.25")
 
             CSSRule(Pointer("\(root) .\(TCMessageObjectClass.meta) strong"))
@@ -118,7 +118,7 @@ enum TCMessageObjectTheme {
                 .custom("border-radius", "8px !important")
                 .custom("background", "rgba(83, 48, 18, 0.38) !important")
                 .custom("color", "#f5b05b !important")
-                .custom("font-size", "13px")
+                .custom("font-size", "14px")
                 .custom("box-shadow", "none !important")
 
             CSSRule(Pointer("\(root) audio"))

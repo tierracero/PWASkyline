@@ -172,7 +172,7 @@ class TripsControlerView: Div {
                         .fontSize(18.px)
                         .fontWeight(.bold)
                     Div("Gestión comercial y Carta Porte")
-                        .fontSize(11.px)
+                        .fontSize(13.px)
                         .color(.gray)
                 }
                 */
@@ -531,7 +531,7 @@ class TripsControlerView: Div {
                     .class(.oneLineText)
 
                 Div(item.status.description)
-                    .fontSize(12.px)
+                    .fontSize(14.px)
                     .custom("color", accent)
                     .class(.oneLineText)
             }
@@ -539,7 +539,7 @@ class TripsControlerView: Div {
 
             Div {
                 Div(getDate(item.createdAt).formatedShort)
-                    .fontSize(12.px)
+                    .fontSize(14.px)
                     .color(.gray)
                     .class(.oneLineText)
 
@@ -550,7 +550,7 @@ class TripsControlerView: Div {
                     .custom("font-weight", "700")
 
                 Div(item.fiscalId == nil ? "Sin fiscal" : "Fiscal \(String(item.fiscalId!.uuidString.prefix(8)).uppercased())")
-                    .fontSize(12.px)
+                    .fontSize(14.px)
                     .color(.lightBlueText)
                     .class(.oneLineText)
             }

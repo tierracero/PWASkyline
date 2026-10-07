@@ -4,6 +4,55 @@ Verified completed tasks live here.
 
 ---
 
+## CARTA-PORTE-ICONS-001 — Merchandise Attachment/Camera Icons
+
+- **Status**: Implemented; static source/asset review only, compilation/runtime unverified
+- **Completed**: 2026-10-07
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-003`
+- **Implementation**: Completed both `CartaPorteMerchendise` icon TODOs using a shared vertical group of existing white clip and remote-camera assets with 24px sizing and Spanish image labels/tooltips. Both row modes reserve the 50px icon column; removable rows retain their original delete action. This is an icon-only change, with no new upload/camera handlers.
+- **Validation evidence**: Verified static asset paths, vertical spacing/column sizing, both branches and unchanged remove callback/fiscal data. Reviewed the task-only diff, whitespace, git status and existing staging. Evidence: `.artifacts/planning/carta-porte-merchandise-icons.md` and `.artifacts/planning/carta-porte-merchandise-icons.diff`.
+- **Build/tests**: Not run, following the user's non-build-only instruction. No browser execution performed.
+- **Commit**: Not created.
+
+---
+
+## ASSET-LIST-SCOPE-001 — Updated Asset Listing Location Contract
+
+- **Status**: Implemented; non-build source review completed, compilation/runtime unverified
+- **Completed**: 2026-10-06
+- **Chunks/IDs**: `API-001`, `API-002`, `SWWEB-001`, `SWWEB-003`
+- **Implementation**: Updated trip store/warehouse listing cases to pass the new `storeId`/`account` arguments with the trip's customer account. The picker matches location/ID plus owning account for those scopes and matches subaccount ownership for subaccount scope, retaining results whose current custody differs. The existing shared request/response POST wrapper remains compatible and unchanged.
+- **Validation evidence**: Reviewed every app listing-type consumer against local/shared GitHub main contract and local backend query; inspected task-only diffs, callback/selection preservation, whitespace, git status and staging. Task changes introduce no whitespace errors; tracked-file whitespace findings predate this task. Evidence: `.artifacts/planning/list-asset-items-account-scope.md` and `.artifacts/planning/list-asset-items-account-scope.diff`.
+- **Build/tests**: Not run, following the user's non-build-only instruction. No browser execution performed.
+- **Commit**: Not created.
+
+---
+
+## TRIP-ASSET-POSITION-001 — Asset Picker Modal Frame
+
+- **Status**: Implemented; non-build source review only, browser behavior unverified
+- **Completed**: 2026-10-06
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`
+- **Implementation**: Gave `SearchComertialAsset` the established full-overlay absolute root frame so its fixed `VPopUp` has a correctly sized containing block inside the translated `SuperView`. Existing popup sizing/scrolling and asset filtering/selection remain in place.
+- **Validation evidence**: Compared the root frame with working address/customer dialogs, inspected host translation and viewport-limited popup/body rules, reviewed the task-only diff, and checked whitespace/status/staging. Evidence: `.artifacts/planning/search-commercial-asset-position.md` and `.artifacts/planning/search-commercial-asset-position.diff`.
+- **Build/tests**: Not run, following the user's non-build-only instruction. No browser execution performed.
+- **Commit**: Not created.
+
+---
+
+## TRIP-ADDRESS-001 — Confirm Incomplete Store Addresses
+
+- **Status**: Implemented; non-build source review completed, compilation and runtime behavior unverified
+- **Completed**: 2026-10-06
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `STATE-001`
+- **Implementation**: Added the prefilled `ConfirmAdddressLocationView` with required address/state/coordinate validation, lookup, and an independently owned map preview. Incomplete store selection opens confirmation and resumes `renderLocation` only with the saved/reloaded store. Existing `loadStore`/`saveStore` contracts preserve loaded non-address metadata and configuration. Matching global/order caches refresh before resumption; session changes and removed pickers cannot receive late results.
+- **Validation evidence**: Reviewed the task-only diff against saved working-file baselines, save argument/model mappings, required-field and coordinate guards, failure/cancellation paths, and map/child cleanup. Focused tracked-file `git diff --check` passed. Source/navigation and state docs were synchronized. Final status review preserves pre-existing user work and staging.
+- **Build/tests**: Not run; the user explicitly selected non-build checks only. No browser execution performed.
+- **Evidence**: `.artifacts/planning/confirm-address-location.md` and `.artifacts/planning/confirm-address-location.diff`.
+- **Commit**: Not created.
+
+---
+
 ## UI-USER-CONFIG-001 — Dark-Crystal User Configuration View
 
 - **Status**: Implemented; build and browser verification not run without the required user confirmation
@@ -58,3 +107,14 @@ Verified completed tasks live here.
   - Webpack compiled and included `errorReportingIndexedDB.js`, then stopped on the pre-existing broken `javascript-kit-swift` local symlink.
   - Source audit found 549 `decodeAPIResponse` calls in 548 API files and no direct `JSONDecoder().decode` calls under `Sources/App/API/**` outside the intentionally isolated report endpoint decoder variable.
 - **Notes**: Public output trees were not regenerated. Persistence and delivery use `TCFundamentals.ErrorReportingPriorty` directly.
+
+## DATA-PAYMENT-DOWNPAYMENT-001 — Explicit order downpayments
+
+- **Date**: 2026-10-07.
+- **Status**: Implemented and source-audited; builds/tests and database execution were not run because they require separate user authorization.
+- **Scope**: TCFundamentals payment protocol/full/quick values and PaymentObject; TCFoundation table/new-tenant default/conversion; TCFireSignal order AddPayment request/client; server order creation, payment persistence and report/get-charge projections; PWA payment form callbacks, service/rental/existing-order submission, split report and CSV totals; manual existing-tenant SQL.
+- **User decision**: Only explicitly selected downpayments are true; neither order creation nor a zero balance infers the classification. Older payloads and new constructors default false.
+- **Report semantics**: General payments and downpayments partition the existing payment list; each has a subtotal, with a combined total retaining the existing payment-add/adjustment-subtract arithmetic. CSV includes classification, both groups and subtotals, and the combined total. Existing historical rows remain false unless deliberately updated.
+- **Deployment**: Run SkylineServer `Scripts/Database/AddCustAcctPaymentsDownpayment.sql` for each existing tenant before deploying the coordinated shared/server/PWA changes. No database command was executed.
+- **Evidence**: SkylineServer `.artifacts/planning/downpayment/audit.md` records exact files and non-build checks. Four payload field/key/decoder sets match; all eight form callbacks adopt the flag; baseline-relative whitespace checks pass for every changed source file. Existing unrelated staged/unstaged work was preserved.
+- **Git**: No staging or commit was performed by this agent. Shared package statuses became clean through external Git activity during the session.

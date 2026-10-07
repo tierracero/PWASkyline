@@ -145,7 +145,7 @@ enum TCUserConfigurationTheme {
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.eyebrow)"))
                 .custom("display", "block")
                 .custom("color", "#f2a65a")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "800")
                 .custom("letter-spacing", "0.14em")
                 .custom("text-transform", "uppercase")
@@ -155,7 +155,7 @@ enum TCUserConfigurationTheme {
                 .custom("gap", "8px")
                 .custom("align-items", "center")
                 .custom("color", "var(--tc-user-muted)")
-                .custom("font-size", "13px")
+                .custom("font-size", "14px")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.headerActions)"))
                 .custom("display", "flex")
@@ -179,7 +179,7 @@ enum TCUserConfigurationTheme {
                 .custom("border-radius", "9px")
                 .custom("background", "linear-gradient(145deg, rgba(13, 55, 84, 0.94), rgba(4, 24, 43, 0.94))")
                 .custom("color", "var(--tc-user-ink)")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "800")
                 .custom("line-height", "1")
                 .custom("white-space", "nowrap")
@@ -284,7 +284,7 @@ enum TCUserConfigurationTheme {
                 .custom("background", "rgba(2, 15, 28, 0.88)")
                 .custom("border", "1px solid rgba(73, 185, 245, 0.42)")
                 .custom("border-radius", "9px")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.profileName)"))
                 .custom("margin", "0")
@@ -296,7 +296,7 @@ enum TCUserConfigurationTheme {
                 .custom("display", "block")
                 .custom("margin", "5px 0 12px")
                 .custom("color", "var(--tc-user-muted)")
-                .custom("font-size", "13px")
+                .custom("font-size", "14px")
                 .custom("text-align", "center")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.profilePills), \(root) .\(TCUserConfigurationClass.tagList)"))
@@ -318,7 +318,7 @@ enum TCUserConfigurationTheme {
                 .custom("border-radius", "999px")
                 .custom("background", "rgba(16, 79, 117, 0.42)")
                 .custom("color", "#dff5ff")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "700")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.statusPill)"))
@@ -344,7 +344,7 @@ enum TCUserConfigurationTheme {
                 .custom("padding", "8px 11px")
                 .custom("box-sizing", "border-box")
                 .custom("background", "rgba(3, 18, 33, 0.84)")
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.summaryRow) > span"))
                 .custom("color", "var(--tc-user-muted)")
@@ -367,7 +367,7 @@ enum TCUserConfigurationTheme {
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.colorRow)"))
                 .custom("color", "var(--tc-user-muted)")
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.colorRow) input"))
                 .custom("width", "48px !important")
@@ -381,7 +381,7 @@ enum TCUserConfigurationTheme {
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.permissionHeader) span"))
                 .custom("color", "var(--tc-user-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.permissionList)"))
                 .custom("display", "grid")
@@ -401,7 +401,7 @@ enum TCUserConfigurationTheme {
                 .custom("border-radius", "11px")
                 .custom("background", "linear-gradient(145deg, rgba(14, 57, 87, 0.95), rgba(5, 27, 48, 0.95))")
                 .custom("color", "var(--tc-user-ink)")
-                .custom("font-size", "13px")
+                .custom("font-size", "14px")
                 .custom("font-weight", "700")
                 .custom("box-shadow", "inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 20px rgba(0, 0, 0, 0.24)")
                 .custom("cursor", "pointer")
@@ -444,7 +444,7 @@ enum TCUserConfigurationTheme {
                 .custom("opacity", "0.78")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.permissionItemHeader) strong"))
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
                 .custom("overflow", "hidden")
                 .custom("text-overflow", "ellipsis")
                 .custom("white-space", "nowrap")
@@ -455,7 +455,7 @@ enum TCUserConfigurationTheme {
                 .custom("border-radius", "999px")
                 .custom("background", "rgba(73, 185, 245, 0.18)")
                 .custom("color", "var(--tc-user-blue)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("text-align", "center")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.permissionChildren)"))
@@ -470,7 +470,7 @@ enum TCUserConfigurationTheme {
                 .custom("background", "rgba(37, 44, 59, 0.72)")
                 .custom("border-radius", "7px")
                 .custom("color", "#d7e8f5")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
         }
 
         WebApp.current.addStylesheet {
@@ -499,7 +499,7 @@ enum TCUserConfigurationTheme {
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.metricLabel)"))
                 .custom("color", "#f2a65a")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "800")
                 .custom("letter-spacing", "0.09em")
                 .custom("text-transform", "uppercase")
@@ -511,7 +511,7 @@ enum TCUserConfigurationTheme {
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.metricDetail)"))
                 .custom("color", "var(--tc-user-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.cards)"))
                 .custom("display", "grid")
@@ -566,7 +566,7 @@ enum TCUserConfigurationTheme {
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.sectionTitleCopy) > span"))
                 .custom("color", "var(--tc-user-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.formGrid), \(root) .\(TCUserConfigurationClass.summaryGrid)"))
                 .custom("display", "grid")
@@ -583,7 +583,7 @@ enum TCUserConfigurationTheme {
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.field) label, \(root) .\(TCUserConfigurationClass.accessGroup) > span"))
                 .custom("color", "var(--tc-user-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "700")
                 .custom("letter-spacing", "0.04em")
                 .custom("text-transform", "uppercase")
@@ -599,7 +599,7 @@ enum TCUserConfigurationTheme {
                 .custom("border-radius", "9px !important")
                 .custom("background", "rgba(2, 16, 29, 0.8) !important")
                 .custom("color", "var(--tc-user-ink) !important")
-                .custom("font-size", "13px !important")
+                .custom("font-size", "14px !important")
                 .custom("box-shadow", "inset 0 1px 0 rgba(255, 255, 255, 0.025)")
 
             CSSRule(Pointer("\(root) input:focus, \(root) select:focus"))
@@ -632,12 +632,12 @@ enum TCUserConfigurationTheme {
                 .custom("display", "block")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.toggleRow) strong"))
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.toggleRow) span"))
                 .custom("margin-top", "2px")
                 .custom("color", "var(--tc-user-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.accessGroup)"))
                 .custom("display", "grid")
@@ -647,7 +647,7 @@ enum TCUserConfigurationTheme {
                 .custom("display", "block")
                 .custom("padding", "8px")
                 .custom("color", "var(--tc-user-muted)")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
                 .custom("font-style", "italic")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.inventoryGrid)"))
@@ -692,12 +692,12 @@ enum TCUserConfigurationTheme {
                 .custom("white-space", "nowrap")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.inventoryText) strong"))
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.inventoryText) span"))
                 .custom("margin-top", "3px")
                 .custom("color", "var(--tc-user-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.emptyState)"))
                 .custom("grid-column", "1 / -1")
@@ -724,7 +724,7 @@ enum TCUserConfigurationTheme {
                 .custom("font-size", "14px")
 
             CSSRule(Pointer("\(root) .\(TCUserConfigurationClass.emptyState) span"))
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
         }
 
         WebApp.current.addStylesheet {

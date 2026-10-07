@@ -662,6 +662,8 @@ class AddCartaPorteMerchendise: Div {
         
         callback(.init(
             id: merchandise?.id ?? .init(),
+            merchandiseType: merchandise?.merchandiseType ?? .merchandise,
+            merchandiseId: merchandise?.merchandiseId,
             fiscCode: fiscCode,
             fiscCodeName: fiscCodeName,
             fiscUnit: fiscUnit,

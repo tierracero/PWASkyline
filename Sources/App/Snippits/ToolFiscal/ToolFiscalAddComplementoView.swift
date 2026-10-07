@@ -546,7 +546,7 @@ class ToolFiscalAddComplementoView: Div {
             accountId: nil,
             cardId: nil,
             currentBalance: self.subtotal
-        ) { code, description, amount, provider, lastFour, auth, uts in
+        ) { code, description, amount, provider, lastFour, auth, uts, _ in
             API.fiscalV1.payment(
                 storeId: custCatchStore, 
                 ids: self.selectedDocumentsIds,

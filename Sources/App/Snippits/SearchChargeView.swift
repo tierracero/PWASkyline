@@ -12,10 +12,10 @@ class SearchChargeView: Div {
     
     override class var name: String { "div" }
     
-    var name = ""
+    var title = ""
     
-    var upc = "N/A"
-    
+    var subTitle = ""
+
     var cost: Int64 = 0
     
     let avatar = Img()
@@ -45,23 +45,55 @@ class SearchChargeView: Div {
         self.costType = costType
         
         self.callback = callback
+
+        self.cost = data.p
         
-        name = data.n
-            .replace(from: data.b, to: "")
-            .replace(from: data.m, to: "")
+        var name = data.n
+        .lowercased()
+        .purgeSpaces
+
+        let brand = data.b
+        .lowercased()
+        .purgeSpaces
+
+        let model = data.m
+        .lowercased()
+        .purgeSpaces
+
+        let upc = data.u
+        .lowercased()
+        .purgeSpaces
+
+        name = name
+        .replace(from: brand, to: "")
+        .replace(from: model, to: "")
+        .replace(from: upc, to: "")
         
-        if !self.data.b.isEmpty {
-            name = data.b
+        if name.isEmpty {
+
+            self.title = "\(brand) \(model)"
+
+            if !self.title.isEmpty {
+                self.subTitle  = upc
+            }
+            else {
+                self.title  = upc
+            }
+            
         }
-        
-        if !self.data.m.isEmpty {
-            name = "\(data.m) \(name)"
+        else {
+
+            if name.count > 7 {
+                self.title = name
+                self.subTitle = "\(upc) \(model) \(brand) "
+            }
+            else {
+                self.title = "\(brand) \(name)"
+                self.subTitle = "\(upc) \(model)"
+            }
+
         }
-        
-        name = name.purgeSpaces
-        
-        cost = data.p
-        
+
         super.init()
     }
     
@@ -74,13 +106,22 @@ class SearchChargeView: Div {
         self.avatar
             .float(.left)
         
-        Div(self.name)
+        Div {
+            Div(self.title)
+            .class(.twoLineText)
+            .fontSize(20.px)
+            .color(.white)
+
+            Div(self.subTitle)
+            .class(.twoLineText)
+            .fontSize(16.px)
+            .color(.gray)
+
+        }
         .custom("width", "calc(100% - 200px)")
-        .class(.twoLineText)
         .marginRight(7.px)
-        .fontSize(18.px)
         .float(.left)
-        
+
         Div{
             Div(self.cost.formatMoney)
                 .class(.oneLineText)

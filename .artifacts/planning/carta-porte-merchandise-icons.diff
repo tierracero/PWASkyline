@@ -1,0 +1,82 @@
+--- before/Sources/App/Snippits/CartaPorteMerchendise.swift
++++ after/Sources/App/Snippits/CartaPorteMerchendise.swift
+@@ -187,7 +187,7 @@
+             .color(.white)
+             
+         }
+-        .custom("width", canRemove ? "calc(100% - 50px)" : "100%")
++        .custom("width", "calc(100% - 50px)")
+         .float(.left)
+         
+         if canRemove {
+@@ -196,7 +196,7 @@
+                     Tr {
+                         Td {
+ 
+-                            // TODO: Add clip icon, add  remote camara icon(/skyline/media/mobileCamara.png) (verical )
++                            self.attachmentIcons()
+ 
+                             Img()
+                                 .src("/skyline/media/cross.png")
+@@ -225,7 +225,7 @@
+                     Tr {
+                         Td {
+ 
+-                            // TODO: Add clip icon, add  remote camara icon(/skyline/media/mobileCamara.png) (verical )
++                            self.attachmentIcons()
+ 
+                         }
+                         .verticalAlign(.middle)
+@@ -244,6 +244,31 @@
+         
+     }
+     
++    private func attachmentIcons() -> Div {
++        Div {
++            Img()
++                .src("/skyline/media/icon_clip.png")
++                .class(.iconWhite)
++                .width(24.px)
++                .height(24.px)
++                .attribute("alt", "Adjuntos")
++                .attribute("title", "Adjuntos")
++
++            Img()
++                .src("/skyline/media/mobileCamara.png")
++                .class(.iconWhite)
++                .width(24.px)
++                .height(24.px)
++                .attribute("alt", "Cámara remota")
++                .attribute("title", "Cámara remota")
++        }
++        .custom("display", "flex")
++        .custom("flex-direction", "column")
++        .custom("align-items", "center")
++        .custom("gap", "4px")
++        .marginBottom(4.px)
++    }
++
+     override func buildUI() {
+         super.buildUI()
+         
+--- before/.agent/TASKS_ARCHIVE.md
++++ after/.agent/TASKS_ARCHIVE.md
+@@ -1,6 +1,18 @@
+ # Tasks Archive
+ 
+ Verified completed tasks live here.
++
++---
++
++## CARTA-PORTE-ICONS-001 — Merchandise Attachment/Camera Icons
++
++- **Status**: Implemented; static source/asset review only, compilation/runtime unverified
++- **Completed**: 2026-10-07
++- **Chunks/IDs**: `SWWEB-001`, `SWWEB-003`
++- **Implementation**: Completed both `CartaPorteMerchendise` icon TODOs using a shared vertical group of existing white clip and remote-camera assets with 24px sizing and Spanish image labels/tooltips. Both row modes reserve the 50px icon column; removable rows retain their original delete action. This is an icon-only change, with no new upload/camera handlers.
++- **Validation evidence**: Verified static asset paths, vertical spacing/column sizing, both branches and unchanged remove callback/fiscal data. Reviewed the task-only diff, whitespace, git status and existing staging. Evidence: `.artifacts/planning/carta-porte-merchandise-icons.md` and `.artifacts/planning/carta-porte-merchandise-icons.diff`.
++- **Build/tests**: Not run, following the user's non-build-only instruction. No browser execution performed.
++- **Commit**: Not created.
+ 
+ ---
+ 

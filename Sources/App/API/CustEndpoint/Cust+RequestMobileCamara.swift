@@ -14,7 +14,7 @@ extension CustComponents {
     static func requestMobileCamara(
         type: APNSNotificationType,
         connid: String,
-        eventid: UUID,
+        eventid: UUID?,
         relatedid: UUID?,
         relatedfolio: String,
         multipleTakes: Bool,

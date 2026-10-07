@@ -1,0 +1,46 @@
+--- before/Sources/App/Snippits/SearchComertialAsset.swift
++++ after/Sources/App/Snippits/SearchComertialAsset.swift
+@@ -75,6 +75,12 @@
+         super.buildUI()
+         TCTripBetaTheme.apply(to: self)
+         TCCrystalSurfaceTheme.apply(to: self, variant: .trip)
++        // The animated host makes this root the containing block for VPopUp.
++        position(.absolute)
++        top(0.px)
++        left(0.px)
++        width(100.percent)
++        height(100.percent)
+         attribute("role", "dialog")
+         attribute("aria-modal", "true")
+         $term.listen { [weak self] in self?.renderItems() }
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -19,6 +19,7 @@
+ - `CreateTripView.selectLocation` uses the dedicated `TripControlerAddLocation` picker with mutable `[FiscalLocationBase]` items and fiscal-base formatting callbacks. Selection returns a complete `CustCommercialTripsComponents.TripLocation` snapshot with `.location` source type and the base's linked ID. Its own `ViewType` supplies the origin/destination icon and title; merchandise uses its own picker, and the remaining Trip selections continue using `TripControlerAddElement<Item>`.
+ - `CreateTripView.addMerchendise` uses `TripControlerAddMerchandise` with the current `CustAcctSearch` account, a required `origin: CustCommercialTripsComponents.TripLocation` snapshot, and mutable `merchendises: [FiscalMercanciaBase]`. The picker owns merchandise formatting and preserves the base-selection and creation callbacks. `CreateTripView` owns the concessionaire-only Buscar Activo button, visible for store/warehouse/subaccount origins, and loads available inventory before presenting `SearchComertialAsset`.
+ - `SearchComertialAsset` accepts a supported `ListAssetItemsType` and preloaded asset items; it has no API calls. It checks location type/ID, filters folio/name/serial locally, and returns one concrete item. `CreateTripView` excludes already selected IDs, loads the parent asset's fiscal/weight metadata before opening the existing merchandise editor, and stores the result with `.commercialAsset` and the concrete item ID. Origin assignments remove all commercial-asset merchandise, close asset picker/editor views, and invalidate pending loads/results; ordinary merchandise remains. Destination changes synchronize the saved route. Removal also invalidates and cleans up the child flow.
++- `SearchComertialAsset` fills its `SuperView` host with an absolute root at top/left zero and 100% width/height. This provides full-overlay bounds for its fixed `VPopUp` under the host's translated entrance animation; the existing fit-content panel and scrollable body keep the dialog viewport-bounded.
+ - `CreateTripView` stores origin/destination as `CustCommercialTripsComponents.TripLocation`. Local adapters preserve snapshot fields, source type, and optional source ID for the unchanged `CartaPorteUbicacion`, `ManageLocationItem`, and `AddCartaPorteMerchendise` consumers. Stop matching uses source type and linked ID, or placement ID for unlinked stops; saved-base updates/deletes affect only `.location` sources.
+ - `TripControlerAddLocation` has a header split button: the main Agregar action and menu Agregar ubicación share the existing creation callback; the arrow reveals Seleccionar tienda and Buscar cliente alongside it. Menu options have decorative cyan outline SVG icons for location creation, store selection, and customer search. Store selection opens `SelectStore` and renders a `.store` trip snapshot; customer search opens `SearchSubCustomerView` with `requierFullAddress: true` and renders the selected/created/updated subaccount as a `.subaccount` snapshot. Menu visibility is local presentation state, with Escape and outside-click dismissal and scoped crystal styling.
+ - The picker's `renderLocation` overloads preserve store/subaccount address and coordinates. Store placement IDs use `storePrefix` plus the final UUID segment; subaccounts use `sa` plus the final UUID segment and fiscal identity from the injected parent account. Subaccounts must belong to that account. Successful rendering returns the snapshot and dismisses the picker; unrecognized subaccount address states report an error.
+--- before/.agent/TASKS_ARCHIVE.md
++++ after/.agent/TASKS_ARCHIVE.md
+@@ -1,6 +1,18 @@
+ # Tasks Archive
+ 
+ Verified completed tasks live here.
++
++---
++
++## TRIP-ASSET-POSITION-001 — Asset Picker Modal Frame
++
++- **Status**: Implemented; non-build source review only, browser behavior unverified
++- **Completed**: 2026-10-06
++- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`
++- **Implementation**: Gave `SearchComertialAsset` the established full-overlay absolute root frame so its fixed `VPopUp` has a correctly sized containing block inside the translated `SuperView`. Existing popup sizing/scrolling and asset filtering/selection remain in place.
++- **Validation evidence**: Compared the root frame with working address/customer dialogs, inspected host translation and viewport-limited popup/body rules, reviewed the task-only diff, and checked whitespace/status/staging. Evidence: `.artifacts/planning/search-commercial-asset-position.md` and `.artifacts/planning/search-commercial-asset-position.diff`.
++- **Build/tests**: Not run, following the user's non-build-only instruction. No browser execution performed.
++- **Commit**: Not created.
+ 
+ ---
+ 

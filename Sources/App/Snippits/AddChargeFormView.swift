@@ -7,6 +7,7 @@
 
 import Foundation
 import TCFundamentals
+import TCFireSignal
 import Web
 
 class AddChargeFormView: Div {
@@ -25,6 +26,8 @@ class AddChargeFormView: Div {
     
     /// cost_a, cost_b, cost_c
     let costType: CustAcctCostTypes
+
+    let authorizationContext: CustComponents.ChangePriceAuthorizationContext
     
     private var addPoc: ((
         _ pocid: UUID,
@@ -51,6 +54,7 @@ class AddChargeFormView: Div {
         socCanLoadAction: Bool,
         /// cost_a, cost_b, cost_c
         costType: CustAcctCostTypes,
+        authorizationContext: CustComponents.ChangePriceAuthorizationContext,
         currentSOCMasters: [UUID],
         addPoc: @escaping ((
             _ pocid: UUID,
@@ -73,6 +77,7 @@ class AddChargeFormView: Div {
         self.allowWarrantyCharges = allowWarrantyCharges
         self.socCanLoadAction = socCanLoadAction
         self.costType = costType
+        self.authorizationContext = authorizationContext
         self.currentSOCMasters = currentSOCMasters
         self.addPoc = addPoc
         self.addSoc = addSoc
@@ -392,7 +397,7 @@ class AddChargeFormView: Div {
                                             return
                                         }
                                         
-                                        if custCatchHerk > 4 {
+                                        if custCatchHerk >= self.authorizationContext.minimumHerk(config: configStoreProcessing) {
                                             
                                             self.changePriceViewIsHidden = true
                                             
@@ -411,6 +416,7 @@ class AddChargeFormView: Div {
                                                 id: socid,
                                                 requestedPrice: _price,
                                                 reason: "",
+                                                authorizationContext: self.authorizationContext,
                                                 callback: { auth in
                                                     self.changePriceViewIsHidden = true
                                                     if auth {

@@ -96,9 +96,9 @@ class CreateTripView: Div {
 
     @State var fiscalProfileListener = fiscalProfiles.first?.id.uuidString ?? ""
 
-    @State var origin: FiscalLocationItem? = nil
+    @State var origin: CustCommercialTripsComponents.TripLocation? = nil
 
-    @State var destination: FiscalLocationItem? = nil
+    @State var destination: CustCommercialTripsComponents.TripLocation? = nil
 
     @State var balance: String = ""
 
@@ -109,6 +109,11 @@ class CreateTripView: Div {
     @State var requierTrailer: Bool = false
 
     @State var autoForm: Bool = true 
+
+    @State private var isLoadingAssets = false
+    private var assetSearchRequest = 0
+    private var assetPicker: SearchComertialAsset?
+    private var assetEditor: AddCartaPorteMerchendise?
 
     @DOM override var body: DOM.Content {
         VPopUp(.full) {
@@ -196,6 +201,7 @@ class CreateTripView: Div {
                 }
 
                 VGrid(.twoThirds) {
+
                     VBox {
                         self.componentTitle(
                             "Ruta del viaje",
@@ -207,20 +213,55 @@ class CreateTripView: Div {
 
                     VBox {
                         Div {
+
+                            USmallButton("Agregar mercancía")
+                                .marginRight(7.px)
+                                .float(.right)
+                                .onClick {
+                                    self.addMerchendise()
+                                }
+                                
+                            if self.account.isConcessionaire {
+                                self.searchAssetButton()
+                                .float(.right)
+                                .display(self.$origin.map {
+
+                                    guard let origin = $0 else {
+                                        return .none
+                                    }
+
+                                    guard origin.locationType == .store ||  origin.locationType == .warehouse || origin.locationType == .subaccount else {
+                                        return .none
+                                    }
+
+                                    return .block
+
+                                })
+                                .hidden(self.$origin.map {
+
+                                    guard let origin = $0 else {
+                                        return true
+                                    }
+
+                                    guard origin.locationType == .store ||  origin.locationType == .warehouse || origin.locationType == .subaccount else {
+                                        return true
+                                    }
+
+                                    return false
+
+                                })
+                            }
+
                             self.componentTitle(
                                 "Mercancía a trasladar",
                                 icons: ["icon_merchandise.png"]
                             )
+                            .float(.left)
 
-                            USmallButton("Agregar mercancía")
-                                .onClick {
-                                    self.addMerchendise()
-                                }
+
                         }
-                        .display(.grid)
-                        .custom("grid-template-columns", "minmax(0, 1fr) auto")
-                        .custom("align-items", "center")
-                        .custom("gap", "10px")
+
+                        Div().clear(.both)
 
                         self.mercaciaGrid
                     }
@@ -285,6 +326,8 @@ class CreateTripView: Div {
         }
 
         $origin.listen { origin in
+            self.invalidateAssetSelection()
+            self.merchendise.removeAll { $0.merchandiseType == .commercialAsset }
             self.renderLocationSlot(
                 origin,
                 placementType: .origen,
@@ -319,6 +362,7 @@ class CreateTripView: Div {
 
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        invalidateAssetSelection()
 
         $operador.removeAllListeners()
         $permit.removeAllListeners()
@@ -338,6 +382,7 @@ class CreateTripView: Div {
         $odometerInitial.removeAllListeners()
         $odometerFinal.removeAllListeners()
         $requierTrailer.removeAllListeners()
+        $isLoadingAssets.removeAllListeners()
     }
 
     private func componentTitle(_ title: String, icons: [String]) -> Div {
@@ -390,7 +435,7 @@ class CreateTripView: Div {
 
                     Div(self.$profile.map { $0?.rfc ?? "" })
                         .class(.oneLineText)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.gray)
                 }
                 .float(.left)
@@ -408,12 +453,12 @@ class CreateTripView: Div {
         .display(self.$profiles.map{ ($0.count < 2) ? .none : .block })
     }
 
-    private var selectedLocations: [FiscalLocationItem] {
+    private var selectedLocations: [CustCommercialTripsComponents.TripLocation] {
         [origin, destination].compactMap { $0 }
     }
 
     private func renderLocationSlot(
-        _ item: FiscalLocationItem?,
+        _ item: CustCommercialTripsComponents.TripLocation?,
         placementType: TipoUbicacion,
         container: Div
     ) {
@@ -426,13 +471,13 @@ class CreateTripView: Div {
 
         container.appendChild(
             CartaPorteUbicacion(
-                placement: item,
+                placement: fiscalLocationItem(from: item),
                 canRemove: true,
-                edit: { item in
+                edit: { _ in
                     self.manageLocationItem(item, isEditing: true)
                 }
-            ) { id in
-                self.clearLocation(placementType, matching: id)
+            ) { _ in
+                self.clearLocation(placementType, matching: item)
             }
         )
     }
@@ -457,7 +502,7 @@ class CreateTripView: Div {
                 .custom("color", "var(--tc-crystal-ink)")
 
             Div("Elige una ubicación registrada o crea una nueva")
-                .fontSize(12.px)
+                .fontSize(14.px)
                 .custom("color", "var(--tc-crystal-muted)")
         }
         .display(.flex)
@@ -487,16 +532,19 @@ class CreateTripView: Div {
         self.originLocationSlot
         self.destinationLocationSlot
     }
-        .display(.grid)
         .custom("grid-template-columns", "repeat(2, minmax(0, 1fr))")
-        .custom("gap", "10px")
+        .custom("background", "var(--tc-beta-surface-deep)")
+        .border(width: .thin, style: .solid, color: .gray)
         .custom("min-height", "150px")
         .custom("max-height", "360px")
         .custom("margin-top", "12px")
-        .custom("background", "var(--tc-beta-surface-deep)")
-        .border(width: .thin, style: .solid, color: .gray)
         .borderRadius(all: 10.px)
+        .custom("gap", "10px")
         .overflow(.auto)
+        .display(.grid)
+
+        // display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:10px;min-height:150px;max-height:360px;margin-top:12px;background:var(--tc-beta-surface-deep);border:thin solid gray;border-radius:10.0px;overflow:auto;
+
 
     lazy var mercaciaGrid = Div()
         .custom("min-height", "190px")
@@ -532,8 +580,6 @@ class CreateTripView: Div {
 
         }
         
-        Div().clear(.both).height(3.px)
-        
         Div{
 
             self.operadorSelectButton
@@ -545,6 +591,7 @@ class CreateTripView: Div {
 
     }
     .overflow(.hidden)
+    .display(.grid)
 
     lazy var vehicalPanel = VBox {
 
@@ -581,6 +628,7 @@ class CreateTripView: Div {
 
     }
     .overflow(.hidden)
+    .display(.grid)
 
     lazy var insurancePanel = VBox {
         
@@ -660,6 +708,7 @@ class CreateTripView: Div {
     }
     .overflowX(.hidden)
     .overflowY(.auto)
+    .display(.grid)
 
     lazy var trailerPanel = VBox {
 
@@ -701,6 +750,7 @@ class CreateTripView: Div {
         .hidden(self.$requierTrailer.map { !$0 })
     }
     .overflow(.auto)
+    .display(.grid)
 
     lazy var operadorSelectButton = Table {
         Tr{
@@ -1234,7 +1284,7 @@ class CreateTripView: Div {
 
     func configureMerchendise(_ item: FiscalMercanciaBase) {
         addToDom(AddCartaPorteMerchendise(
-            locations: selectedLocations,
+            locations: selectedLocations.map { fiscalLocationItem(from: $0) },
             merchandise: merchendiseItem(from: item),
             dismissAfterSave: true
         ) { result in
@@ -1261,24 +1311,26 @@ class CreateTripView: Div {
 
         case .delete(let id):
             merchendises.removeAll { $0.id == id }
-            merchendise.removeAll { $0.id == id }
+            merchendise.removeAll {
+                $0.merchandiseType == .merchandise && ($0.merchandiseId ?? $0.id) == id
+            }
         }
     }
 
     func addLocation(_ item: FiscalLocationBase) {
-        setLocation(locationItem(from: item))
+        setLocation(tripLocation(from: item))
     }
 
-    private func setLocation(_ item: FiscalLocationItem) {
+    private func setLocation(_ item: CustCommercialTripsComponents.TripLocation) {
         switch item.placementType {
         case .origen:
-            if destination?.id == item.id {
+            if isSameLocation(destination, as: item) {
                 destination = nil
             }
             origin = item
 
         case .destino:
-            if origin?.id == item.id {
+            if isSameLocation(origin, as: item) {
                 origin = nil
             }
             destination = item
@@ -1289,17 +1341,32 @@ class CreateTripView: Div {
 
     private func clearLocation(
         _ placementType: TipoUbicacion,
-        matching id: UUID
+        matching item: CustCommercialTripsComponents.TripLocation
     ) {
         switch placementType {
         case .origen:
-            guard origin?.id == id else { return }
+            guard isSameLocation(origin, as: item) else { return }
             origin = nil
 
         case .destino:
-            guard destination?.id == id else { return }
+            guard isSameLocation(destination, as: item) else { return }
             destination = nil
         }
+    }
+
+    private func isSameLocation(
+        _ selected: CustCommercialTripsComponents.TripLocation?,
+        as item: CustCommercialTripsComponents.TripLocation
+    ) -> Bool {
+        guard let selected,
+              selected.locationType == item.locationType,
+              selected.locationId == item.locationId else { return false }
+
+        if item.locationId != nil {
+            return true
+        }
+
+        return selected.placementId == item.placementId
     }
 
     private func synchronizeMerchandiseRoute() {
@@ -1318,26 +1385,27 @@ class CreateTripView: Div {
     }
 
     func manageLocationItem(
-        _ item: FiscalLocationItem,
+        _ item: CustCommercialTripsComponents.TripLocation,
         isEditing: Bool = false
     ) {
-        addToDom(ManageLocationItem(item: item, isEditing: isEditing) { updatedItem in
-            self.setLocation(updatedItem)
+        addToDom(ManageLocationItem(item: fiscalLocationItem(from: item), isEditing: isEditing) { updatedItem in
+            self.setLocation(self.tripLocation(from: updatedItem))
         })
     }
 
-    func configureLocation(_ item: FiscalLocationBase) {
-        manageLocationItem(locationItem(from: item))
+    func configureLocation(_ item: CustCommercialTripsComponents.TripLocation) {
+        manageLocationItem(item)
     }
 
-    func locationItem(
+    private func tripLocation(
         from item: FiscalLocationBase,
-        existing: FiscalLocationItem? = nil
-    ) -> FiscalLocationItem {
-        FiscalLocationItem(
-            id: item.id,
+        existing: CustCommercialTripsComponents.TripLocation? = nil
+    ) -> CustCommercialTripsComponents.TripLocation {
+        CustCommercialTripsComponents.TripLocation(
             placementType: item.placementType,
             placementId: item.placementId,
+            locationType: .location,
+            locationId: item.id,
             rfc: item.rfc,
             razon: item.razon,
             uts: item.uts,
@@ -1349,15 +1417,67 @@ class CreateTripView: Div {
             state: item.state,
             country: item.country,
             zipCode: item.zipCode,
-            position: existing?.position ?? (item.placementType == .origen ? 0 : 1),
+            distance: existing?.distance,
+            latitude: item.latitude,
+            longitude: item.longitude
+        )
+    }
+
+    private func tripLocation(from item: FiscalLocationItem) -> CustCommercialTripsComponents.TripLocation {
+        CustCommercialTripsComponents.TripLocation(
+            placementType: item.placementType,
+            placementId: item.placementId,
+            locationType: item.locationType,
+            locationId: item.locationId,
+            rfc: item.rfc,
+            razon: item.razon,
+            uts: item.uts,
+            storeName: item.storeName,
+            street: item.street,
+            number: item.number,
+            colonie: item.colonie,
+            refrence: item.refrence,
+            state: item.state,
+            country: item.country,
+            zipCode: item.zipCode,
+            distance: item.distance,
+            latitude: item.latitude,
+            longitude: item.longitude
+        )
+    }
+
+    // Legacy cards and editors require an item UUID; it is never used as the source ID.
+    private func fiscalLocationItem(from item: CustCommercialTripsComponents.TripLocation) -> FiscalLocationItem {
+        FiscalLocationItem(
+            id: .v7(),
+            placementType: item.placementType,
+            placementId: item.placementId,
+            locationType: item.locationType,
+            locationId: item.locationId,
+            rfc: item.rfc,
+            razon: item.razon,
+            uts: item.uts,
+            storeName: item.storeName,
+            street: item.street,
+            number: item.number,
+            colonie: item.colonie,
+            refrence: item.refrence,
+            state: item.state,
+            country: item.country,
+            zipCode: item.zipCode,
+            position: item.placementType == .origen ? 0 : 1,
             comertialTripControlId: nil,
-            distance: existing?.distance
+            distance: item.distance,
+            latitude: item.latitude,
+            longitude: item.longitude
         )
     }
 
     func merchendiseItem(from item: FiscalMercanciaBase) -> FiscalMercanciaItem {
         return FiscalMercanciaItem(
-            id: item.id,
+            id: .v7(),
+            merchandiseType: .merchandise,
+            merchandiseId: item.id,
             fiscCode: item.fiscCode,
             fiscCodeName: item.fiscCodeName,
             fiscUnit: item.fiscUnit,
@@ -1407,17 +1527,21 @@ class CreateTripView: Div {
         case .update(let item):
             upsertBaseLocation(item)
 
-            if let origin, origin.id == item.id {
-                setLocation(locationItem(from: item, existing: origin))
+            if let origin, origin.locationType == .location, origin.locationId == item.id {
+                setLocation(tripLocation(from: item, existing: origin))
             }
-            else if let destination, destination.id == item.id {
-                setLocation(locationItem(from: item, existing: destination))
+            else if let destination, destination.locationType == .location, destination.locationId == item.id {
+                setLocation(tripLocation(from: item, existing: destination))
             }
         case .delete(let id):
             baseLocationsOrigin.removeAll { $0.id == id }
             baseLocationsDestination.removeAll { $0.id == id }
-            clearLocation(.origen, matching: id)
-            clearLocation(.destino, matching: id)
+            if let origin, origin.locationType == .location, origin.locationId == id {
+                clearLocation(.origen, matching: origin)
+            }
+            if let destination, destination.locationType == .location, destination.locationId == id {
+                clearLocation(.destino, matching: destination)
+            }
         }
     }
 
@@ -1715,9 +1839,9 @@ class CreateTripView: Div {
 
         let isOrigin = placementType == .origen
 
-        addToDom(TripControlerAddElement(
-            icon: isOrigin ? "icon_origin.png" : "icon_destination.png",
-            title: isOrigin ? "Seleccionar Origen" : "Seleccionar Destino",
+        addToDom(TripControlerAddLocation(
+            viewType: isOrigin ? .origin : .destination,
+            account: account, 
             items: isOrigin ? baseLocationsOrigin : baseLocationsDestination,
             titleForItem: { "\($0.placementId) \($0.storeName)" },
             subtitleForItem: { "\($0.colonie) \($0.state)" },
@@ -1731,19 +1855,16 @@ class CreateTripView: Div {
     }
 
     func addMerchendise() {
-        guard origin != nil, destination != nil else {
+
+        guard let origin, destination != nil else {
             showError(.requiredField, "Agregue Origen y Destino antes de agregar mercancia")
             return
         }
 
-        
-
-        addToDom(TripControlerAddElement(
-            icon: "icon_merchandise.png",
-            title: "Seleccione Mercancia",
-            items: merchendises, 
-            titleForItem: { "\($0.fiscCode) \($0.description)" },
-            subtitleForItem: { "Unidad \($0.fiscUnitName) | Peso \($0.kilograms.fromCents.toString) kg" },
+        addToDom(TripControlerAddMerchandise(
+            account: account,
+            origin: origin,
+            merchendises: merchendises,
             callback: { item in
                 self.configureMerchendise(item)
             },
@@ -1850,16 +1971,12 @@ class CreateTripView: Div {
 
         let trailerIds = [trailerOne?.id, trailerTwo?.id].compactMap { $0 }
 
-        let tripLocations = [origin, destination].map {
-            CustCommercialTripsComponents.TripLocation(
-                locationId: $0.id,
-                distance: $0.distance
-            )
-        }
+        let tripLocations = [origin, destination].compactMap { $0 }
 
         let tripMerchandise = merchendise.map {
             CustCommercialTripsComponents.TripMerchandise(
-                merchandiseId: $0.id,
+                merchandiseType: $0.merchandiseType,
+                merchandiseId: $0.merchandiseId ?? $0.id,
                 from: $0.from,
                 fromStoreName: $0.fromStoreName,
                 to: $0.to,
@@ -1909,6 +2026,185 @@ class CreateTripView: Div {
             self.remove()
         }
 
+    }
+
+
+    private func searchAssetButton() -> Button {
+        let svg = """
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgb(73,185,245)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="7.5"/><path d="m16 16 5 5"/></svg>
+        """
+
+        let button = USmallButton("")
+                        .marginRight(7.px)
+                        .float(.right)
+                        .onClick {
+                            self.searchAsset()
+                        }
+
+        button.appendChild(
+            Img()
+                .src("data:image/svg+xml;base64,\(Data(svg.utf8).base64EncodedString())")
+                .attribute("aria-hidden", "true")
+                .attribute("alt", "buscar atuvo")
+                .height(18.px)
+                .width(18.px)
+                .float(.left)
+        )
+        button.appendChild(Div{
+            Span("Buscar Activo")
+            .marginTop(3.px)
+        }.float(.left))
+
+        button.appendChild(Div().clear(.both))
+
+        return button
+    }
+
+    func searchAsset() {
+        guard account.isConcessionaire, !isLoadingAssets else { return }
+        guard let origin, destination != nil else {
+            showError(.requiredField, "Agregue Origen y Destino antes de buscar activos.")
+            return
+        }
+        guard let locationId = origin.locationId else {
+            showError(.requiredField, "El origen debe estar vinculado a una tienda, bodega o subcuenta.")
+            return
+        }
+
+        let currentLocation: CustAssetsComponents.ListAssetItemsType
+        switch origin.locationType {
+        case .store: currentLocation = .store(storeId: locationId, account: account.id)
+        case .warehouse: currentLocation = .warehose(storeId: locationId, account: account.id)
+        case .subaccount: currentLocation = .subAccount(subAccount: locationId)
+        default:
+            showError(.invalidField, "Solo se pueden buscar activos en una tienda, bodega o subcuenta.")
+            return
+        }
+
+        assetPicker?.remove()
+        assetPicker = nil
+        assetEditor?.remove()
+        assetEditor = nil
+        assetSearchRequest += 1
+        let request = assetSearchRequest
+        isLoadingAssets = true
+        loadingView.show()
+        API.custAssetsV1.listAssetItems(
+            currentLocation: currentLocation,
+            departmentId: nil,
+            categorieId: nil,
+            status: .available
+        ) { [weak self] response in
+            guard let self, self.isInDOM, self.assetSearchRequest == request else { return }
+            self.finishLoadingAssets()
+            guard let response else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+            guard response.status == .ok else {
+                showError(.generalError, response.msg)
+                return
+            }
+            guard let payload = response.data else {
+                showError(.unexpectedResult, .unexpenctedMissingPayload)
+                return
+            }
+            let selectedIds = Set(self.merchendise.filter { $0.merchandiseType == .commercialAsset }.compactMap { $0.merchandiseId })
+            guard let picker = SearchComertialAsset(
+                currentLocation: currentLocation,
+                items: payload.items.filter { !selectedIds.contains($0.id) },
+                callback: { [weak self] item in
+                    guard let self, self.isInDOM, self.assetSearchRequest == request else { return }
+                    self.assetPicker = nil
+                    self.configureCommercialAsset(item, request: request)
+                }
+            ) else { return }
+            self.assetPicker = picker
+            addToDom(picker)
+        }
+    }
+
+    private func configureCommercialAsset(_ item: CustCommercialAssetsItem, request: Int) {
+        guard !merchendise.contains(where: { $0.merchandiseType == .commercialAsset && $0.merchandiseId == item.id }) else { return }
+        isLoadingAssets = true
+        loadingView.show()
+        API.custAssetsV1.getAsset(assetId: item.commercialAssetId) { [weak self] response in
+            guard let self, self.isInDOM, self.assetSearchRequest == request else { return }
+            self.finishLoadingAssets()
+            guard let response else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+            guard response.status == .ok else {
+                showError(.generalError, response.msg)
+                return
+            }
+            guard let asset = response.data?.item, asset.id == item.commercialAssetId,
+                  let origin = self.origin, let destination = self.destination else {
+                showError(.unexpectedResult, .unexpenctedMissingPayload)
+                return
+            }
+            let weight = Double(asset.weight.purgeSpaces)
+            let kilograms: Int64
+            if let weight, weight.isFinite, weight > 0, weight < Double(Int64.max) / 100 {
+                kilograms = weight.toCents
+            } else {
+                kilograms = 0 // The existing editor requires a valid positive weight.
+            }
+            let merchandise = FiscalMercanciaItem(
+                id: .v7(),
+                merchandiseType: .commercialAsset,
+                merchandiseId: item.id,
+                fiscCode: asset.fiscCode,
+                fiscCodeName: fiscCodeRefrence[asset.fiscCode] ?? "",
+                fiscUnit: asset.fiscUnit,
+                fiscUnitName: fiscUnitRefrence[asset.fiscUnit] ?? "",
+                description: [item.folio, item.name, item.serial ?? ""].filter { !$0.isEmpty }.joined(separator: " · "),
+                units: 100, // One concrete asset item (1.00).
+                kilograms: kilograms,
+                isDangerousMatirial: .no,
+                dangerousMatirialCode: "",
+                dangerousMatirialName: "",
+                packagingType: "",
+                packagingName: "",
+                comertialTripControlId: nil,
+                from: origin.placementId,
+                fromStoreName: origin.storeName,
+                to: destination.placementId,
+                toStoreName: destination.storeName
+            )
+            let editor = AddCartaPorteMerchendise(
+                locations: self.selectedLocations.map { self.fiscalLocationItem(from: $0) },
+                merchandise: merchandise,
+                dismissAfterSave: true
+            ) { [weak self] result in
+                guard let self, self.isInDOM, self.assetSearchRequest == request,
+                      self.origin != nil, self.destination != nil,
+                      !self.merchendise.contains(where: { $0.merchandiseType == .commercialAsset && $0.merchandiseId == item.id }) else { return }
+                var result = result
+                result.merchandiseType = .commercialAsset
+                result.merchandiseId = item.id
+                self.merchendise.append(result)
+                self.synchronizeMerchandiseRoute()
+                self.assetEditor = nil
+            }
+            self.assetEditor = editor
+            addToDom(editor)
+        }
+    }
+
+    private func finishLoadingAssets() {
+        isLoadingAssets = false
+        loadingView.hide()
+    }
+
+    private func invalidateAssetSelection() {
+        assetSearchRequest += 1
+        if isLoadingAssets { finishLoadingAssets() }
+        assetPicker?.remove()
+        assetPicker = nil
+        assetEditor?.remove()
+        assetEditor = nil
     }
 
 }

@@ -1,0 +1,120 @@
+--- before/Sources/App/API/CustAssetsEndpoint/CustAssets+ListAssetItems.swift
++++ after/Sources/App/API/CustAssetsEndpoint/CustAssets+ListAssetItems.swift
+@@ -5,8 +5,10 @@
+ extension CustAssetsComponents {
+ 
+     static func listAssetItems(
+-        type: String,
+-        id: UUID,
++        currentLocation: ListAssetItemsType,
++        departmentId: UUID?,
++        categorieId: UUID?,
++        status: ListSubAccountItemsStatus,
+         callback: @escaping ((_ resp: APIResponseGeneric<ListAssetItemsResponse>?) -> ())
+     ) {
+         sendPost(
+@@ -14,8 +16,10 @@
+             version,
+             "listAssetItems",
+             ListAssetItemsRequest(
+-                type: type,
+-                id: id
++                currentLocation: currentLocation,
++                departmentId: departmentId,
++                categorieId: categorieId,
++                status: status
+             )
+         ) { data in
+             guard let data else {
+--- before/Sources/App/API/CustAssetsEndpoint/CustAssets+GetAssettem.swift
++++ after/Sources/App/API/CustAssetsEndpoint/CustAssets+GetAssettem.swift
+@@ -4,15 +4,15 @@
+ 
+ extension CustAssetsComponents {
+ 
+-    static func getAssettem(
++    static func getAssetItem(
+         assetItemId: UUID,
+-        callback: @escaping ((_ resp: APIResponseGeneric<GetAssettemResponse>?) -> ())
++        callback: @escaping ((_ resp: APIResponseGeneric<GetAssetItemResponse>?) -> ())
+     ) {
+         sendPost(
+             rout,
+             version,
+-            "getAssettem",
+-            GetAssettemRequest(assetItemId: assetItemId)
++            "GetAssetItem",
++            GetAssetItemRequest(assetItemId: assetItemId)
+         ) { data in
+             guard let data else {
+                 callback(nil)
+@@ -21,7 +21,7 @@
+ 
+             do {
+                 callback(try decodeAPIResponse(
+-                    APIResponseGeneric<GetAssettemResponse>.self,
++                    APIResponseGeneric<GetAssetItemResponse>.self,
+                     from: data
+                 ))
+             }
+--- before/Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemView.swift
++++ after/Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemView.swift
+@@ -117,7 +117,7 @@
+ 
+             loadingView.show()
+ 
+-            API.custAssetsV1.getAssettem(assetItemId: assetItemId) { response in
++            API.custAssetsV1.getAssetItem(assetItemId: assetItemId) { response in
+                 loadingView.hide()
+ 
+                 guard let response else {
+@@ -146,7 +146,7 @@
+             }
+         }
+ 
+-        private func render(_ payload: CustAssetsComponents.GetAssettemResponse) {
++        private func render(_ payload: CustAssetsComponents.GetAssetItemResponse) {
+             contentView.innerHTML = ""
+             notesGrid.innerHTML = ""
+             kardexGrid.innerHTML = ""
+@@ -197,7 +197,7 @@
+             loadMap(payload.item)
+         }
+ 
+-        private func mediaColumn(_ payload: CustAssetsComponents.GetAssettemResponse) -> Div {
++        private func mediaColumn(_ payload: CustAssetsComponents.GetAssetItemResponse) -> Div {
+             VGrid(.full) {
+                 VGrid(.half) {
+                     VBox(.raised) {
+@@ -248,7 +248,7 @@
+             }
+         }
+ 
+-        private func dataColumn(_ payload: CustAssetsComponents.GetAssettemResponse) -> Div {
++        private func dataColumn(_ payload: CustAssetsComponents.GetAssetItemResponse) -> Div {
+             let item = payload.item
+ 
+             return VBox(.raised) {
+--- before/Sources/App/Snippits/CustAssetsView/CustAssets+AssetInventoryItemController.swift
++++ after/Sources/App/Snippits/CustAssetsView/CustAssets+AssetInventoryItemController.swift
+@@ -21,7 +21,7 @@
+         @State var avatar: String?
+ 
+         /// store, warehouse, account, subaccount, user
+-        @State var location: CustAssetsComponents.LocationType
++        @State var location: CustAssetsComponents.GetAssetItemLocationType
+         
+         @State var department: CustAssetDeps?
+ 
+--- before/.agent/architecture/API_AND_BACKEND.md
++++ after/.agent/architecture/API_AND_BACKEND.md
+@@ -9,7 +9,8 @@
+ - `API.custSubAcctV1` uses the shared `CustSubAcctComponents` contracts under `custSubAcct/v1`. Create/load/update use authenticated POST; account-scoped search uses authenticated GET and decodes a raw `[CustSubAcct]`, retaining the searched term in its callback and returning nil on transport/decoding failure. Create/update expose labeled parameters and construct the shared request objects internally, preserving the coordinate wire key `longitud`; load accepts `HybridIdentifier`.
+ - Asset architecture uses `listStoreArchitecture(relationId:)` and department creation requires a nonoptional `relationId`. Location links use `CustCommercialAssetsLocationLinkedType`; asset-item links retain `CustCommercialAssetsLinkedType`. Asset `custAcct` fields remain customer-account identifiers, not store or warehouse identifiers.
+ - Asset-item creation uses TCFireSignal's shared `InitiateAssetItemViewType`, `CreateAssetItemObject`, and `CreateAssetItemFile` contracts. Single creation submits one object; batch creation collects the requested objects before one request, and `CreateAssetItemResponse.items` returns every created asset item.
+-- Asset-item detail uses TCFireSignal's shared `GetAssettemResponse`, which resolves the current store, warehouse, account, sub-account, or user plus the optional department, category, location, and sublocation records.
++- Asset-item listing uses the shared `ListAssetItemsType` location scope, optional `departmentId`/`categorieId` filters, and `ListSubAccountItemsStatus` filter in `ListAssetItemsRequest`, posting to `listAssetItems` and decoding `ListAssetItemsResponse.items`.
++- Asset-item detail uses TCFireSignal's shared `GetAssetItemRequest`/`GetAssetItemResponse` on the exact `GetAssetItem` POST route. Its resolved location and inventory payloads use `GetAssetItemLocationType`, which identifies the current store, warehouse, account, subaccount, or user; detail records retain optional department, category, section, and subsection classification.
+ - Asset creation and update preserve the shared commercial-asset fiscal and physical fields: `fiscCode`, `fiscUnit`, `width`, `height`, `length`, and `weight`.
+ - Asset, asset-item, location, sublocation, category, and department update responses return the inserted `CustGeneralNotes` entry when a change produced an audit note; successful no-op updates may return no note.
+ - Commercial trip creation submits the complete fiscal location fields for each stop, together with `LocationType` and an optional linked ID; the server persists those submitted snapshots.

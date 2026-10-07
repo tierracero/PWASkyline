@@ -329,13 +329,13 @@ class OrderCalendarView: Div {
                             .width(30.px)
                             .align(.center)
                             .float(.right)
-                            .fontSize(8.px)
+                            .fontSize(13.px)
                         
                         Span("ORD")
                             .float(.right)
                             .color(.white)
                             .margin(all: 3.px)
-                            .fontSize(8.px)
+                            .fontSize(13.px)
                         
                         Div().class(.clear)
                         

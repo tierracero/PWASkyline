@@ -2111,6 +2111,36 @@ function initmap( url, lat, lon, storeName){
 
 //// load map with location
 
+// This preview owns its map; it must not replace the shared map/marker globals.
+function createSubCustomerLocationMap(mapId, token, lat, lon) {
+    if (typeof mapkit === "undefined" || !document.getElementById(mapId)) {
+        return null;
+    }
+
+    let locationMap = null;
+    try {
+        mapkit.init({
+            authorizationCallback: function(done) { done(token); },
+            language: "es"
+        });
+        locationMap = new mapkit.Map(mapId);
+        const coordinate = new mapkit.Coordinate(lat, lon);
+        locationMap.region = new mapkit.CoordinateRegion(
+            coordinate,
+            new mapkit.CoordinateSpan(0.020528323102041, 0.043467582244898)
+        );
+        locationMap.addAnnotation(new mapkit.MarkerAnnotation(coordinate, {
+            draggable: false,
+            selected: true,
+            title: "Ubicación de la subcuenta"
+        }));
+        return locationMap;
+    } catch (_) {
+        if (locationMap) { locationMap.destroy(); }
+        return null;
+    }
+}
+
 function initiateSingleMapCord(mapId, token, lat, lon, updateCoordinate) {
     
     // MARK: Initiate MAP

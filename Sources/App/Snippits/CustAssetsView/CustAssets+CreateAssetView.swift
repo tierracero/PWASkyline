@@ -20,6 +20,18 @@ extension CustAssetsView {
         @State private var productType = ""
         
         @State private var productSubType = ""
+
+        @State private var fiscCode = ""
+
+        @State private var fiscUnit = ""
+
+        @State private var assetWidth = ""
+
+        @State private var assetHeight = ""
+
+        @State private var assetLength = ""
+
+        @State private var assetWeight = ""
         
         @State private var upc = ""
         
@@ -44,6 +56,14 @@ extension CustAssetsView {
         @State private var depreciationRate = "0"
         
         @State private var avatar = ""
+
+        private lazy var fiscCodeField = FiscCodeField(style: .dark, type: .product) { data in
+            self.fiscCode = data.c
+        }
+
+        private lazy var fiscUnitField = FiscUnitField(style: .dark, type: .product) { data in
+            self.fiscUnit = data.c
+        }
 
         init(
             viewType: InitiateAssetItemViewType,
@@ -154,6 +174,42 @@ extension CustAssetsView {
 
                         }
                     }
+
+                    VGrid(.half) {
+                        UField("Código fiscal", required: false) {
+                            self.fiscCodeField
+                        }
+                    }
+
+                    VGrid(.half) {
+                        UField("Unidad fiscal", required: false) {
+                            self.fiscUnitField
+                        }
+                    }
+
+                    VGrid(.half) {
+                        UField("Ancho", required: false) {
+                            UTextField(self.$assetWidth).placeholder("Ancho")
+                        }
+                    }
+
+                    VGrid(.half) {
+                        UField("Alto", required: false) {
+                            UTextField(self.$assetHeight).placeholder("Alto")
+                        }
+                    }
+
+                    VGrid(.half) {
+                        UField("Largo", required: false) {
+                            UTextField(self.$assetLength).placeholder("Largo")
+                        }
+                    }
+
+                    VGrid(.half) {
+                        UField("Peso", required: false) {
+                            UTextField(self.$assetWeight).placeholder("Peso")
+                        }
+                    }
                     
                     VGrid(.twoThirds) {
                         UField("Nombre") {
@@ -225,6 +281,13 @@ extension CustAssetsView {
 
             productSubType = productSubType.purgeSpaces.purgeHtml.capitalizeFirstLetter
 
+            fiscCode = fiscCode.purgeSpaces.purgeHtml
+            fiscUnit = fiscUnit.purgeSpaces.purgeHtml
+            assetWidth = assetWidth.purgeSpaces.purgeHtml
+            assetHeight = assetHeight.purgeSpaces.purgeHtml
+            assetLength = assetLength.purgeSpaces.purgeHtml
+            assetWeight = assetWeight.purgeSpaces.purgeHtml
+
             guard !name.isEmpty else {
                 showError(.requiredField, .requierdValid("Nombre"))
                 return
@@ -256,6 +319,12 @@ extension CustAssetsView {
                 assetDepartmentId: department.id,
                 assetSeccionId: category?.id,
                 custAcct: viewType.relationId,
+                fiscCode: fiscCode,
+                fiscUnit: fiscUnit,
+                width: assetWidth,
+                height: assetHeight,
+                length: assetLength,
+                weight: assetWeight,
                 productType: productType,
                 productSubType: productSubType,
                 upc: upc.isEmpty ? nil : upc,
@@ -295,6 +364,12 @@ extension CustAssetsView {
                     assetDepartmentId: self.department.id,
                     assetSeccionId: self.category?.id,
                     custAcct: self.viewType.relationId,
+                    fiscCode: self.fiscCode,
+                    fiscUnit: self.fiscUnit,
+                    width: self.assetWidth,
+                    height: self.assetHeight,
+                    length: self.assetLength,
+                    weight: self.assetWeight,
                     productType: self.productType,
                     productSubType: self.productSubType,
                     upc: self.upc.isEmpty ? nil : self.upc,
@@ -323,6 +398,12 @@ extension CustAssetsView {
             super.didRemoveFromDOM()
             $productType.removeAllListeners()
             $productSubType.removeAllListeners()
+            $fiscCode.removeAllListeners()
+            $fiscUnit.removeAllListeners()
+            $assetWidth.removeAllListeners()
+            $assetHeight.removeAllListeners()
+            $assetLength.removeAllListeners()
+            $assetWeight.removeAllListeners()
             $upc.removeAllListeners()
             $name.removeAllListeners()
             $descriptionText.removeAllListeners()

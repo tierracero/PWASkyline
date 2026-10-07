@@ -322,7 +322,7 @@ class ToolReciveSendInventoryManualDispertionsView: Div {
                             .float(.left)
                             
                             Label("Cambiar Perfil")
-                                .fontSize(12.px)
+                                .fontSize(14.px)
                         }
                         .hidden(self.$profiles.map{ $0.count < 2 })
                         .marginTop(-7.px)

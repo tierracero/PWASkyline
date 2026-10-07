@@ -258,7 +258,7 @@ enum TCWorkDashboardTheme {
 
             Rule(Pointer("\(root) .\(TCWorkDashboardClass.toolbarPrimary) span"))
                 .custom("color", "#dce7f3")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
         }
 
         WebApp.current.addStylesheet {
@@ -438,7 +438,7 @@ enum TCWorkDashboardTheme {
             Rule(Pointer("\(root) .\(TCWorkDashboardClass.messageTabs) > div"))
                 .custom("padding", "9px 4px")
                 .custom("text-align", "center")
-                .custom("font-size", "13px")
+                .custom("font-size", "14px")
                 .custom("cursor", "pointer")
 
             Rule(Pointer("\(root) .\(TCWorkDashboardClass.messageTabs) > div:first-child"))
@@ -459,7 +459,7 @@ enum TCWorkDashboardTheme {
             Rule(Pointer("\(root) .\(TCWorkDashboardClass.messageCard)"))
                 .custom("position", "relative")
                 .custom("display", "grid")
-                .custom("grid-template-columns", "38px minmax(0, 1fr)")
+                .custom("grid-template-columns", "48px minmax(0, 1fr)")
                 .custom("align-items", "center")
                 .custom("gap", "10px")
                 .custom("min-height", "76px")
@@ -494,8 +494,8 @@ enum TCWorkDashboardTheme {
 
             Rule(Pointer("\(root) .\(TCWorkDashboardClass.messageFolio)"))
                 .custom("display", "block")
-                .custom("max-width", "38px")
-                .custom("font-size", "10px")
+                .custom("max-width", "48px")
+                .custom("font-size", "12px")
                 .custom("line-height", "1")
                 .custom("text-align", "center")
                 .custom("color", "var(--tc-work-muted)")
@@ -515,12 +515,12 @@ enum TCWorkDashboardTheme {
                 .custom("overflow", "hidden")
                 .custom("text-overflow", "ellipsis")
                 .custom("white-space", "nowrap")
-                .custom("font-size", "13px")
+                .custom("font-size", "14px")
                 .custom("font-weight", "600")
                 .custom("color", "#dfe7f1")
 
             Rule(Pointer("\(root) .\(TCWorkDashboardClass.messageTime)"))
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
                 .custom("white-space", "nowrap")
                 .custom("color", "var(--tc-work-muted)")
 
@@ -721,7 +721,7 @@ enum TCWorkDashboardTheme {
             Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupCopy)"))
                 .custom("margin-top", "7px")
                 .custom("color", "var(--tc-work-muted)")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
                 .custom("letter-spacing", "0.18em")
                 .custom("text-align", "center")
 
@@ -738,7 +738,7 @@ enum TCWorkDashboardTheme {
                 .custom("padding", "0 8px")
                 .custom("border-left", "2px solid rgba(77, 163, 255, 0.62)")
                 .custom("color", "#dfe9f3")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
                 .custom("letter-spacing", "0.08em")
                 .custom("opacity", "1")
                 .custom("transform", "translateX(0)")

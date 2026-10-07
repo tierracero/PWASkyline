@@ -78,7 +78,7 @@ extension ProductManagerView.AuditView {
 
                     Div("\(self.storeName)  •  \(getDate(self.startAt).formatedLong) al \(getDate(self.endAt).formatedLong)")
                         .color(.gray)
-                        .fontSize(13.px)
+                        .fontSize(14.px)
                         .marginTop(3.px)
 
                     Div().clear(.both)
@@ -179,9 +179,9 @@ extension ProductManagerView.AuditView {
         private func lineChart() -> Div {
             let chartWidth = 920.0
             let chartHeight = 330.0
-            let leftInset = 58.0
-            let rightInset = 24.0
-            let topInset = 22.0
+            let leftInset = 76.0
+            let rightInset = 44.0
+            let topInset = 26.0
             let bottomInset = 62.0
             let plotWidth = chartWidth - leftInset - rightInset
             let plotHeight = chartHeight - topInset - bottomInset
@@ -228,7 +228,7 @@ extension ProductManagerView.AuditView {
                     .custom("x", self.coordinate(leftInset - 9))
                     .custom("y", self.coordinate(y + 4))
                     .custom("fill", "#9fb5c5")
-                    .custom("font-size", "12")
+                    .custom("font-size", "14")
                     .custom("text-anchor", "end"))
             }
 
@@ -276,14 +276,14 @@ extension ProductManagerView.AuditView {
                         .custom("x", self.coordinate(point.x))
                         .custom("y", self.coordinate(chartHeight - 28))
                         .custom("fill", "#a8bed0")
-                        .custom("font-size", "11")
+                        .custom("font-size", "13")
                         .custom("text-anchor", "middle"))
 
                     svg.appendChild(SVGText(point.units.toString)
                         .custom("x", self.coordinate(point.x))
-                        .custom("y", self.coordinate(max(point.y - 11, 12)))
+                        .custom("y", self.coordinate(max(point.y - 13, 16)))
                         .custom("fill", "#edf7ff")
-                        .custom("font-size", "11")
+                        .custom("font-size", "13")
                         .custom("font-weight", "700")
                         .custom("text-anchor", "middle"))
                 }
@@ -301,7 +301,7 @@ extension ProductManagerView.AuditView {
                     Span("Existencia después de cada actividad")
                         .color(.gray)
                 }
-                .fontSize(12.px)
+                .fontSize(14.px)
                 .padding(top: 0.px, right: 12.px, bottom: 0.px, left: 12.px)
             }
             .padding(top: 8.px, right: 10.px, bottom: 8.px, left: 10.px)
@@ -530,7 +530,7 @@ extension ProductManagerView.AuditView {
 
                 Div(title)
                     .color(.white)
-                    .fontSize(13.px)
+                    .fontSize(14.px)
                     .marginTop(7.px)
             }
             .display(.flex)
@@ -546,7 +546,7 @@ extension ProductManagerView.AuditView {
             Div {
                 Div(title)
                     .color(.gray)
-                    .fontSize(12.px)
+                    .fontSize(14.px)
                 Div(value.formatMoney)
                     .color(.white)
                     .fontSize(17.px)
@@ -576,7 +576,7 @@ extension ProductManagerView.AuditView {
             .borderRadius(all: 7.px)
             .backgroundColor(.grayBlackDark)
             .color(.white)
-            .fontSize(12.px)
+            .fontSize(14.px)
             .fontWeight(.bold)
             .cursor(.pointer)
             .onClick {

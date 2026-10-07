@@ -11,23 +11,23 @@ final class CustAssetsView: Div {
 
     @State private var departments: [CustAssetDeps]
 
-    @State private var locations: [CustCommercialAssetsLocation]
+    @State private var sections: [CustCommercialAssetsSection]
 
-    @State private var subLocations: [CustCommercialAssetsSubLocation]
+    @State private var subSections: [CustCommercialAssetsSubSection]
 
     @State private var selectedDepartment: CustAssetDeps?
 
     init(
         viewType: InitiateAssetItemViewType,
         departments: [CustAssetDeps],
-        locations: [CustCommercialAssetsLocation],
-        subLocations: [CustCommercialAssetsSubLocation]
+        sections: [CustCommercialAssetsSection],
+        subSections: [CustCommercialAssetsSubSection]
     ) {
 
         self.viewType = viewType
         self.departments = departments
-        self.locations = locations
-        self.subLocations = subLocations
+        self.sections = sections
+        self.subSections = subSections
         super.init()
     }
 
@@ -62,6 +62,16 @@ final class CustAssetsView: Div {
             ForEach(self.$departments) { department in
 
                 VBox(.interactive) {
+                        Img()
+                            .src(self.avatarSource(department.coverLandscape, destination: .assetDepartment))
+                            .width(48.px)
+                            .height(48.px)
+                            .objectFit(.contain)
+                            .custom("flex", "0 0 48px")
+                            .custom("border", "1px solid rgba(66, 183, 245, 0.28)")
+                            .custom("border-radius", "9px")
+                            .custom("background", "rgba(3, 18, 32, 0.68)")
+
                         Div {
                             Div(department.name)
                                 .class(.oneLineText)
@@ -76,6 +86,7 @@ final class CustAssetsView: Div {
                             .marginTop(2.px)
                         }
                         .custom("min-width", "0")
+                        .custom("flex", "1 1 auto")
 
                         Span( self.$selectedDepartment.map{ ($0?.id == department.id) ? "●" : "›" })
                             .color(self.$selectedDepartment.map{ ($0?.id == department.id) ? .lightBlue : .gray })
@@ -518,6 +529,16 @@ final class CustAssetsView: Div {
 
         assets.forEach { asset in
             let row = VBox(.interactive) {
+                Img()
+                    .src(self.avatarSource(asset.avatar, destination: .asset))
+                    .width(48.px)
+                    .height(48.px)
+                    .objectFit(.contain)
+                    .custom("flex", "0 0 48px")
+                    .custom("border", "1px solid rgba(66, 183, 245, 0.28)")
+                    .custom("border-radius", "9px")
+                    .custom("background", "rgba(3, 18, 32, 0.68)")
+
                 Div {
                     USubTitle(asset.name)
                         .class(.oneLineText)
@@ -531,10 +552,11 @@ final class CustAssetsView: Div {
                     .marginTop(2.px)
                 }
                 .custom("min-width", "0")
+                .custom("flex", "1 1 auto")
 
                 Div {
                     Div(asset.assetType.description)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .color(.lightBlue)
 
                     Div(asset.initialCost.formatMoney)
@@ -553,8 +575,8 @@ final class CustAssetsView: Div {
                     CustAssetsView.AssetView(
                         viewType: self.viewType,
                         assetId: asset.id,
-                        locations: self.locations,
-                        subLocations: self.subLocations,
+                        sections: self.sections,
+                        subSections: self.subSections,
                         onLoaded: { updated in
                             guard self.selectedDepartment?.id == updated.assetDepartmentId,
                                   self.selectedCategory?.id == updated.assetSeccionId else {
@@ -569,11 +591,11 @@ final class CustAssetsView: Div {
 
                             self.renderAssets()
                         },
-                        onLocationCreated: { location in
-                            self.locations = self.upserting(location, into: self.locations)
+                        onSectionCreated: { section in
+                            self.sections = self.upserting(section, into: self.sections)
                         },
-                        onSubLocationCreated: { subLocation in
-                            self.subLocations = self.upserting(subLocation, into: self.subLocations)
+                        onSubSectionCreated: { subSection in
+                            self.subSections = self.upserting(subSection, into: self.subSections)
                         }
                     )
                 )
@@ -583,6 +605,27 @@ final class CustAssetsView: Div {
 
             assetList.appendChild(Div().height(7.px))
         }
+    }
+
+    private func avatarSource(_ avatar: String?, destination: ImagePickerTo) -> String {
+        let normalized = (avatar ?? "").purgeSpaces
+
+        guard !normalized.isEmpty else {
+            return "/skyline/media/tierraceroRoundLogoWhite.svg"
+        }
+
+        guard !normalized.hasPrefix("/") &&
+                !normalized.hasPrefix("http://") &&
+                !normalized.hasPrefix("https://") else {
+            return normalized
+        }
+
+        return destination.url(
+            url: custCatchUrl,
+            pDir: pDir,
+            isPreRegistration: false,
+            accountType: custCatchAccountType
+        ) + normalized
     }
 
     private func createDepartment() {
@@ -658,13 +701,13 @@ final class CustAssetsView: Div {
                 addToDom(CustAssetsView.AssetView(
                     viewType: self.viewType,
                     assetId: asset.id,
-                    locations: self.locations,
-                    subLocations:  self.subLocations,
-                    onLocationCreated: { location in
-                        self.locations = self.upserting(location, into: self.locations)
+                    sections: self.sections,
+                    subSections:  self.subSections,
+                    onSectionCreated: { section in
+                        self.sections = self.upserting(section, into: self.sections)
                     },
-                    onSubLocationCreated: { subLocation in
-                        self.subLocations = self.upserting(subLocation, into: self.subLocations)
+                    onSubSectionCreated: { subSection in
+                        self.subSections = self.upserting(subSection, into: self.subSections)
                     }
                 ))
 
@@ -674,20 +717,20 @@ final class CustAssetsView: Div {
     }
 
     private func upserting(
-        _ location: CustCommercialAssetsLocation,
-        into values: [CustCommercialAssetsLocation]
-    ) -> [CustCommercialAssetsLocation] {
-        var result = values.filter { $0.id != location.id }
-        result.append(location)
+        _ section: CustCommercialAssetsSection,
+        into values: [CustCommercialAssetsSection]
+    ) -> [CustCommercialAssetsSection] {
+        var result = values.filter { $0.id != section.id }
+        result.append(section)
         return result.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
 
     private func upserting(
-        _ subLocation: CustCommercialAssetsSubLocation,
-        into values: [CustCommercialAssetsSubLocation]
-    ) -> [CustCommercialAssetsSubLocation] {
-        var result = values.filter { $0.id != subLocation.id }
-        result.append(subLocation)
+        _ subSection: CustCommercialAssetsSubSection,
+        into values: [CustCommercialAssetsSubSection]
+    ) -> [CustCommercialAssetsSubSection] {
+        var result = values.filter { $0.id != subSection.id }
+        result.append(subSection)
         return result.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
 
@@ -695,80 +738,6 @@ final class CustAssetsView: Div {
 
 extension CustAssetsView {
 
-    /// store, warehose, account, subAccount
-    enum InitiateAssetItemViewType {
-
-        case store(CustStore)
-
-        case warehose(CustStore)
-        
-        case account(account: CustAcct, store: CustStore)
-
-        case subAccount(subAccount: CustSubAcct, store: CustStore )
-
-        var description: String {
-            switch self {    
-            case .store:
-            return "Tienda"
-            case .warehose:
-            return "Bodega"
-            case .account:
-            return "Cuenta"
-            case .subAccount:
-            return "Sub Cliente"
-            }
-        }
-
-        var relationName: String {
-
-            switch self {    
-            case .store(let item):
-            return item.name
-            case .warehose(let item):
-            return item.name
-            case .account(let item, let store):
-                if item.type == .personal {
-                    return "\(item.folio) \(item.firstName) \(item.lastName)"
-                }
-                else {
-                    return "\(item.folio) \(item.businessName) \(item.fiscalRfc) \(item.fiscalRazon)"
-                }
-            case .subAccount(let item, let store):
-            if item.type == .personal {
-                    return "\(item.folio) \(item.firstName) \(item.lastName)"
-                }
-                else {
-                    return "\(item.folio) \(item.businessName)"
-                }
-            }
-        }
-
-        var relationId: UUID {
-
-            switch self {    
-            case .store(let item):
-            return item.id
-            case .warehose(let item):
-            return item.id
-            case .account(let item, _):
-            return item.id
-            case .subAccount(let item, _):
-            return item.custAcct
-            }
-
-        }
-
-        var relationType: CustCommercialAssetsLocationLinkedType {
-            switch self {    
-            case .store:
-            return .store
-            case .warehose:
-            return .warehose
-            case .account, .subAccount:
-            return .customer
-            }
-        }
-        
-    }
+    typealias InitiateAssetItemViewType = CustAssetsComponents.InitiateAssetItemViewType
     
 }

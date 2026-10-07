@@ -18,6 +18,7 @@ public enum ServerRouts: String {
     case custExcel = "custExcel/"
     case custFollowup = "custFollowup/"
     case custAccount = "custAccount/"
+    case custSubAcct = "custSubAcct/"
     case customer = "customer/"
     case fiscal = "fiscal/"
     case route = "custRoute/"

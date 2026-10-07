@@ -7,7 +7,6 @@ extension CustAssetsComponents {
     static func removeAssettem(
         assetItemId: UUID,
         disposedReason: String? = nil,
-        correlationId: UUID = .init(),
         callback: @escaping ((_ resp: APIResponse?) -> ())
     ) {
         sendPost(
@@ -16,8 +15,7 @@ extension CustAssetsComponents {
             "removeAssettem",
             RemoveAssettemRequest(
                 assetItemId: assetItemId,
-                disposedReason: disposedReason,
-                correlationId: correlationId
+                disposedReason: disposedReason
             )
         ) { data in
             guard let data else {

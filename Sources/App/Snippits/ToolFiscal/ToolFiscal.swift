@@ -372,7 +372,7 @@ class ToolFiscal: Div {
             .color(.lightBlueText)
         
         Label("Motivo del Ajuste")
-            .fontSize(12.px)
+            .fontSize(14.px)
         
         TextArea(self.$auth)
             .placeholder("Ingrese la razon del ajuste")
@@ -449,7 +449,7 @@ class ToolFiscal: Div {
         
         Label("Proveedor")
             .color(.lightGray)
-            .fontSize(12.px)
+            .fontSize(14.px)
         
         Div().class(.clear)
         
@@ -465,7 +465,7 @@ class ToolFiscal: Div {
         
         Label("Ultimos Cuatro")
             .color(.lightGray)
-            .fontSize(12.px)
+            .fontSize(14.px)
         
         Div().class(.clear)
         
@@ -475,7 +475,7 @@ class ToolFiscal: Div {
         
         Label("Folio de Autorizacion")
             .color(.lightGray)
-            .fontSize(12.px)
+            .fontSize(14.px)
         
         Div().class(.clear)
         
@@ -523,7 +523,7 @@ class ToolFiscal: Div {
             .color(.lightBlueText)
         
         Label("Proveedor")
-            .fontSize(12.px)
+            .fontSize(14.px)
             .color(.lightGray)
         
         Div().class(.clear)
@@ -538,7 +538,7 @@ class ToolFiscal: Div {
             
         Label("Numero de Cheque")
             .color(.lightGray)
-            .fontSize(12.px)
+            .fontSize(14.px)
         
         Div().class(.clear)
         
@@ -584,7 +584,7 @@ class ToolFiscal: Div {
         
         Label("Banco ¿Donde Recibiste El Deposito?")
             .color(.lightGray)
-            .fontSize(12.px)
+            .fontSize(14.px)
         
         Div().class(.clear)
         
@@ -600,7 +600,7 @@ class ToolFiscal: Div {
         
         Label("Folio De Tranferencia")
             .color(.lightGray)
-            .fontSize(12.px)
+            .fontSize(14.px)
         
         Div().class(.clear)
         
@@ -633,7 +633,7 @@ class ToolFiscal: Div {
                 .float(.left)
                 
                 Label("Cambiar Perfil")
-                    .fontSize(12.px)
+                    .fontSize(14.px)
             }
             .hidden(self.$profiles.map{ $0.count < 2 })
             .marginTop(-7.px)
@@ -1000,7 +1000,6 @@ class ToolFiscal: Div {
             
             Div{
                 
-
                 Img()
                     .src("/skyline/media/reload.png")
                     .marginLeft(7.px)
@@ -1024,8 +1023,14 @@ class ToolFiscal: Div {
                 
                 self.documentFilterFilter
                 
-                H2("Historial")
-                   .color(.white)
+                Div {
+                    H2("Historial")
+                        .color(.white)
+                }
+                .float(.left)
+                
+                Div().clear(.both)
+                
             }
             .marginTop(3.px)
 
@@ -2924,9 +2929,11 @@ class ToolFiscal: Div {
         var prof: FiscalComponents.Profile? = nil
         
         profiles.forEach { _prof in
+            
             if fiscalProfileListener == _prof.rfc {
                 prof = _prof
             }
+            
         }
         
         guard let emisorRfc = prof?.rfc else {
@@ -3445,12 +3452,14 @@ extension ToolFiscal {
                                 allowWarrantyCharges: false,
                                 socCanLoadAction: false,
                                 costType: .cost_a, 
+                                authorizationContext: .sale,
                                 currentSOCMasters: []
                             ) { pocid, isWarenty, internalWarenty in
                                 
                                 let view = ConfirmProductView(
                                     accountId: self.reciver?.id,
                                     costType: .cost_a,
+                                    authorizationContext: .sale,
                                     pocid: pocid,
                                     selectedInventoryIDs: []
                                 ) { poc, price, costType, _units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in

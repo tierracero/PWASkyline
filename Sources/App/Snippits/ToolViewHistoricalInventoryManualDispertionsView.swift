@@ -277,7 +277,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                     /* Tipo de reporte*/
                     Div{
                         Label("Tipo de reporte")
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                             .color(.gray)
                         
                         Div().clear(.both)
@@ -291,7 +291,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                     
                     Div{
                         Label("Seleccione Fecha")
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                             .color(.gray)
                         Div().clear(.both)
                         self.dateSelect
@@ -303,7 +303,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                     
                     Div{
                         Label("Fecha Inicio")
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                             .color(.gray)
                         Div().clear(.both)
                         self.startAtField
@@ -319,7 +319,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                     
                     Div{
                         Label("Fecha Final")
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                             .color(.gray)
                         Div().clear(.both)
                         self.endAtField
@@ -336,7 +336,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                     /// Seleccione Tienda
                     Div{
                         Label("Seleccione Tienda")
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                             .color(.gray)
                         Div().clear(.both)
                         self.storeSelect
@@ -349,7 +349,7 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                     /// Seleccione Usuario
                     Div{
                         Label("Seleccione Vendor")
-                            .fontSize(12.px)
+                            .fontSize(14.px)
                             .color(.gray)
                         Div().clear(.both)
                         self.vendorSelect
@@ -373,9 +373,9 @@ class ToolViewHistoricalInventoryManualDispertionsView: Div {
                     Div(self.$reportType.map{ $0?.helpText ??  "" })
                         .paddingBottom(7.px)
                         .marginLeft(12.px)
-                        .fontSize(12.px)
+                        .fontSize(14.px)
                         .marginTop(3.px)
-                        .height(15.px)
+                        .minHeight(20.px)
                         .color(.white)
                         
                 }

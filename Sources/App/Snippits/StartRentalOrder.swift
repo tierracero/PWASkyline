@@ -452,8 +452,8 @@ class StartRentalOrder: Div {
             accountId: custAcct.id,
             cardId: custAcct.CardID,
             currentBalance: currentBalance
-        ) { code, description, amount, provider, lastFour, auth, uts in
-            self.closeSale(code, description, amount.fromCents, provider, lastFour, auth)
+        ) { code, description, amount, provider, lastFour, auth, uts, downpayment in
+            self.closeSale(code, description, amount.fromCents, provider, lastFour, auth, downpayment)
         }
         
         addToDom(paymentView)
@@ -468,7 +468,8 @@ class StartRentalOrder: Div {
         _ amount: Float,
         _ provider: String,
         _ lastFour: String,
-        _ auth: String
+        _ auth: String,
+        _ downpayment: Bool
     ){
         
         let rentals: [RentalObject] = currentRentals.map{ $0.rental }
@@ -489,7 +490,8 @@ class StartRentalOrder: Div {
                     reference: "",
                     provider: provider,
                     lastFour: lastFour,
-                    auth: auth
+                    auth: auth,
+                    downpayment: downpayment
                 )
             )
             

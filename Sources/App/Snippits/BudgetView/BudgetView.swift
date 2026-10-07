@@ -974,6 +974,7 @@ class BudgetView: Div {
         let view = ConfirmProductView(
             accountId: accountId,
             costType: costType,
+            authorizationContext: .order,
             pocid: id,
             selectedInventoryIDs: []
         ) { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
@@ -1105,7 +1106,8 @@ class BudgetView: Div {
         let view = BudgetSOCView(
             loadSocDetails: false,
             soc: soc,
-            costType: costType
+            costType: costType,
+            authorizationContext: .order
         ) { soc in
             
             guard let socid = soc.id else{

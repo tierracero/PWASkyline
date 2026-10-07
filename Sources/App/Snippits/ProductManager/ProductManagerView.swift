@@ -665,7 +665,7 @@ class ProductManagerView: Div {
                     .class(.oneLineText)
                     .textAlign(.center)
                     .color(.lightGray)
-                    .fontSize(13.px)
+                    .fontSize(14.px)
                 }
                 .boxShadow(h: 0.px, v: 0.px, blur: 24.px, color: .black)
                 .hidden(self.$productTranferMode.map{ !$0 })
@@ -694,7 +694,7 @@ class ProductManagerView: Div {
                     .class(.oneLineText)
                     .textAlign(.center)
                     .color(.lightGray)
-                    .fontSize(13.px)
+                    .fontSize(14.px)
                 }
                     .boxShadow(h: 0.px, v: 0.px, blur: 24.px, color: .black)
                     .hidden(self.$productTranferMode.map{ $0 })

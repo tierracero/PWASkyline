@@ -1,0 +1,62 @@
+--- before/Sources/App/API/CustEndpoint/CustAPI+SincCustSettings.swift
++++ after/Sources/App/API/CustEndpoint/CustAPI+SincCustSettings.swift
+@@ -9,9 +9,29 @@
+ import TCFundamentals
+ import TCFireSignal
+ 
++// Keep this wire-compatible with CustComponents.SincCustSettingsResponse.
++// A reference avoids WASM copy helpers exceeding the browser's parameter limit.
++final class SincCustSettingsSnapshot: Payloadable {
++    let account: TCAccountsItem
++    let custWebFilesLogos: CustWebFilesLogos
++    let configStoreProduct: ConfigStoreProduct?
++    let configContactTags: ConfigContactTags?
++    let configServiceTags: ConfigServiceTags?
++    let configStoreProcessing: ConfigStoreProcessing?
++    let configGeneral: ConfigGeneral?
++    let customerServiceProfile: CustomerServiceProfile
++    let custOperationWorkProfile: CustOperationWorkProfile
++    let configStore: ConfigStore?
++    let alertManagerConfiguration: AlertManagerConfiguration
++    let mercadoLibreProfile: MercadoLibreProfile?
++    let orcScripts: [OCRCustomeScript]
++    let printScripts: [CustomerCustomeScript]
++    let internalCommunications: [InternalCommunicationMessagesMin]
++}
++
+ extension CustComponents {
+ 	
+-	static func sincCustSettings( callback: @escaping ( (_ resp: APIResponseGeneric<SincCustSettingsResponse>?) -> () )) {
++	static func sincCustSettings( callback: @escaping ( (_ resp: APIResponseGeneric<SincCustSettingsSnapshot>?) -> () )) {
+ 		sendPost(
+ 			rout,
+ 			version,
+@@ -23,7 +43,7 @@
+ 				return
+ 			}
+ 			do{
+-				let resp = try decodeAPIResponse(APIResponseGeneric<SincCustSettingsResponse>.self, from: data)
++				let resp = try decodeAPIResponse(APIResponseGeneric<SincCustSettingsSnapshot>.self, from: data)
+ 				callback(resp)
+ 			}
+ 			catch{
+--- before/.agent/architecture/API_AND_BACKEND.md
++++ after/.agent/architecture/API_AND_BACKEND.md
+@@ -5,6 +5,7 @@
+ ## Verified Facts
+ 
+ - Client API wrappers live under `Sources/App/API/**`.
++- The client `sincCustSettings` wrapper decodes an immutable reference-backed `SincCustSettingsSnapshot` with the same fields/keys/optionality as the shared `CustComponents.SincCustSettingsResponse`. This avoids passing/copying the whole settings aggregate by value through optional response callbacks on WASM; shared package definitions remain the wire-contract authority.
+ - `ManageSubCustomerAccountView` creates with the injected parent's UUID through `API.custSubAcctV1.create`, checking outer/create response statuses and the returned parent ID. Editing validates the source parent, uses `update` with the source UUID/status, then `load(.id)` to return the server's record after verifying its ID and parent. Both paths retain `longitud` and validate returned full address/coordinates when required.
+ - `API.custSubAcctV1` uses the shared `CustSubAcctComponents` contracts under `custSubAcct/v1`. Create/load/update use authenticated POST; account-scoped search uses authenticated GET and decodes a raw `[CustSubAcct]`, retaining the searched term in its callback and returning nil on transport/decoding failure. Create/update expose labeled parameters and construct the shared request objects internally, preserving the coordinate wire key `longitud`; load accepts `HybridIdentifier`.
+ - Asset architecture uses `listStoreArchitecture(relationId:)` and department creation requires a nonoptional `relationId`. Location links use `CustCommercialAssetsLocationLinkedType`; asset-item links retain `CustCommercialAssetsLinkedType`. Asset `custAcct` fields remain customer-account identifiers, not store or warehouse identifiers.
+--- before/.agent/architecture/PWA_ASSETS_AND_SERVICE_WORKER.md
++++ after/.agent/architecture/PWA_ASSETS_AND_SERVICE_WORKER.md
+@@ -7,6 +7,7 @@
+ - `Sources/Service/Service.swift` defines the service worker manifest and lifecycle callbacks.
+ - `Package.swift` copies `favicon.ico`, `skyline`, `tutorial`, `images`, `js`, and `css` resources for the `Service` target.
+ - `WebSources` contains JS/WASI/webpack bootstrap files.
++- Browser WASM module validation limits function signatures to 1000 parameters. Settings synchronization uses a client reference-backed snapshot to avoid oversized aggregate copy signatures; the old inspected development artifact contained 1001/1016-parameter settings-response helpers and must be rebuilt to incorporate the source fix.
+ - The app WASI loader performs one GET per WASM target. Webpack embeds the decoded
+   WASM byte length from the build artifact so Brotli/Gzip response streams can
+   report accurate decoded-byte progress without a second HEAD request.

@@ -110,7 +110,7 @@ enum TCCreateUserTheme {
 
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.eyebrow)"))
                 .custom("color", "var(--tc-create-orange)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "800")
                 .custom("letter-spacing", "0.13em")
                 .custom("text-transform", "uppercase")
@@ -123,7 +123,7 @@ enum TCCreateUserTheme {
 
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.headerCopy) > span:last-child"))
                 .custom("color", "var(--tc-create-muted)")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.headerAvailability)"))
                 .custom("display", "flex")
@@ -137,7 +137,7 @@ enum TCCreateUserTheme {
                 .custom("border-radius", "999px")
                 .custom("background", "rgba(242, 166, 90, 0.08)")
                 .custom("color", "var(--tc-create-orange)")
-                .custom("font-size", "9px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "800")
                 .custom("letter-spacing", "0.07em")
 
@@ -226,7 +226,7 @@ enum TCCreateUserTheme {
 
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.sectionHeader) > div > span"))
                 .custom("color", "var(--tc-create-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.formGrid)"))
                 .custom("display", "grid")
@@ -247,14 +247,14 @@ enum TCCreateUserTheme {
                 .custom("justify-content", "space-between")
                 .custom("gap", "7px")
                 .custom("color", "var(--tc-create-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "700")
                 .custom("letter-spacing", "0.04em")
                 .custom("text-transform", "uppercase")
 
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.field) sup"))
                 .custom("color", "var(--tc-create-orange)")
-                .custom("font-size", "7px")
+                .custom("font-size", "10px")
                 .custom("letter-spacing", "0.08em")
 
             CSSRule(Pointer("\(root) input:not([type='checkbox']), \(root) select"))
@@ -268,7 +268,7 @@ enum TCCreateUserTheme {
                 .custom("border-radius", "9px !important")
                 .custom("background", "rgba(2, 16, 29, 0.82) !important")
                 .custom("color", "var(--tc-create-ink) !important")
-                .custom("font-size", "13px !important")
+                .custom("font-size", "14px !important")
                 .custom("box-shadow", "inset 0 1px 0 rgba(255, 255, 255, 0.025)")
 
             CSSRule(Pointer("\(root) input:not([type='checkbox']):focus, \(root) select:focus"))
@@ -296,7 +296,7 @@ enum TCCreateUserTheme {
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.usernameField) > span"))
                 .custom("padding", "0 10px")
                 .custom("color", "var(--tc-create-blue)")
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
                 .custom("white-space", "nowrap")
 
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.readOnlyValue)"))
@@ -309,7 +309,7 @@ enum TCCreateUserTheme {
                 .custom("border-radius", "9px")
                 .custom("background", "rgba(37, 44, 59, 0.58)")
                 .custom("color", "var(--tc-create-ink)")
-                .custom("font-size", "13px")
+                .custom("font-size", "14px")
 
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.toggleRow)"))
                 .custom("display", "flex")
@@ -329,11 +329,11 @@ enum TCCreateUserTheme {
 
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.toggleRow) strong"))
                 .custom("color", "var(--tc-create-ink)")
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
 
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.toggleRow) span"))
                 .custom("color", "var(--tc-create-muted)")
-                .custom("font-size", "9px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .switch"))
                 .custom("float", "none !important")
@@ -356,7 +356,7 @@ enum TCCreateUserTheme {
                 .custom("border-radius", "8px")
                 .custom("background", "rgba(2, 16, 29, 0.64)")
                 .custom("color", "var(--tc-create-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.day) .switch"))
                 .custom("transform", "scale(0.72)")
@@ -370,7 +370,7 @@ enum TCCreateUserTheme {
                 .custom("border-left", "2px solid #f2a65a")
                 .custom("background", "rgba(242, 166, 90, 0.06)")
                 .custom("color", "var(--tc-create-muted)")
-                .custom("font-size", "9px")
+                .custom("font-size", "13px")
                 .custom("line-height", "1.4")
 
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.avatarCard)"))
@@ -405,14 +405,14 @@ enum TCCreateUserTheme {
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.avatarCard) > span"))
                 .custom("max-width", "230px")
                 .custom("color", "var(--tc-create-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("line-height", "1.4")
 
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.summary) > span"))
                 .custom("display", "block")
                 .custom("margin-bottom", "8px")
                 .custom("color", "var(--tc-create-orange)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
                 .custom("font-weight", "800")
                 .custom("letter-spacing", "0.1em")
                 .custom("text-transform", "uppercase")
@@ -427,12 +427,12 @@ enum TCCreateUserTheme {
 
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.summaryRow) span"))
                 .custom("color", "var(--tc-create-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.summaryRow) strong"))
                 .custom("max-width", "170px")
                 .custom("color", "var(--tc-create-ink)")
-                .custom("font-size", "11px")
+                .custom("font-size", "13px")
                 .custom("text-align", "right")
                 .custom("overflow-wrap", "anywhere")
 
@@ -454,11 +454,11 @@ enum TCCreateUserTheme {
 
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.footer) strong"))
                 .custom("color", "var(--tc-create-ink)")
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
 
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.footer) span"))
                 .custom("color", "var(--tc-create-muted)")
-                .custom("font-size", "10px")
+                .custom("font-size", "13px")
 
             CSSRule(Pointer("\(root) .\(TCCreateUserClass.footerActions)"))
                 .custom("display", "flex")
@@ -476,7 +476,7 @@ enum TCCreateUserTheme {
                 .custom("border-radius", "11px")
                 .custom("background", "rgba(2, 16, 29, 0.72)")
                 .custom("color", "var(--tc-create-muted)")
-                .custom("font-size", "12px")
+                .custom("font-size", "14px")
                 .custom("font-weight", "700")
                 .custom("cursor", "pointer")
 
