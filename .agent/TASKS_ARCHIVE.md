@@ -4,6 +4,15 @@ Verified completed tasks live here.
 
 ---
 
+## PUSH-FREQUENCY-001 — Grouped personal push preferences
+
+- **Completed**: 2026-10-19
+- **Approved scope**: Seven group-frequency selectors in `CustTaskAuthorizationView`, explicit `notificationsSaveSettings` arguments, and the seven matching recipient categories in communication settings.
+- **Reviewed plan**: Load personal push preferences from the shared AlertManagerConfiguration; save every group through the existing request; apply local values only after success. Keep the existing PWA reminder controls and add controls for Money, Cash control, Orders, Approvals, Fiscal documents, Inventory and assets, and Account security.
+- **Chunks/IDs**: API-001, API-002, SWWEB-003.
+- **Completion criteria**: All seven selectors match the shared request/model; recipient categories match; focused source parsing, contract/diff and status checks pass. Builds/tests/browser verification require separate confirmation.
+- **Status**: Source implementation complete. Formatter parsing and contract/group/selector/whitespace/status checks passed; all seven personal settings reach the request and update local configuration after success. Builds, tests, browser behavior, and push dispatch remain unverified. No commit created.
+
 ## TRIP-LOCATION-ITEM-DELETE-001 — Cancel a Saved Location from the Trip Editor
 
 - **Completed**: 2026-10-09

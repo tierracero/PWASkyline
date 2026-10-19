@@ -21,6 +21,8 @@ Current verified module and source structure for PWASkyline.
 
 ### Feature Areas
 
+- Personal notification preferences live in `Snippits/CustTaskAuthorizationView.swift`; seven typed push frequencies save through the existing `API/CustEndpoint/Cust+NotificationsSaveSettings.swift` wrapper. Communication profile recipient controls use the same seven business-event categories.
+
 - `API/` — typed client wrappers for auth, customer, order (including charge/payment deletion approval), account, subaccount (create/load/search/update), fiscal, POC, including product-activity and Fast and Furious audit reports, route, mail, social/theme, rewards, and WebSocket API endpoints.
 - `Websocket/` — real-time message handlers for chat, auth requests, mobile camera/scanner/OCR, async file/image jobs, social notifications, order/status updates, and connection lifecycle.
 - `ViewControlers/` — page controllers and top-level page flows.

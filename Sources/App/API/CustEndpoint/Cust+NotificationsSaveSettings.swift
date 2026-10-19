@@ -14,6 +14,13 @@ extension CustComponents {
     static func notificationsSaveSettings(
         frequency: CustTaskAuthorizationManagerAlertFrequency,
         level: CustTaskAuthorizationManagerAlertLevel,
+        moneyPushNotificationAlertFrequency: CustPushNotificationAlertFrequency,
+        cashControlPushNotificationAlertFrequency: CustPushNotificationAlertFrequency,
+        ordersPushNotificationAlertFrequency: CustPushNotificationAlertFrequency,
+        approvalsPushNotificationAlertFrequency: CustPushNotificationAlertFrequency,
+        fiscalDocumentsPushNotificationAlertFrequency: CustPushNotificationAlertFrequency,
+        inventoryAndAssetsPushNotificationAlertFrequency: CustPushNotificationAlertFrequency,
+        accountSecurityPushNotificationAlertFrequency: CustPushNotificationAlertFrequency,
         callback: @escaping ( (_ resp: APIResponse?) -> () )
     ) {
         sendPost(
@@ -22,7 +29,14 @@ extension CustComponents {
             "notificationsSaveSettings",
             NotificationsSaveSettingsRequest(
                 frequency: frequency,
-                level: level
+                level: level,
+                moneyPushNotificationAlertFrequency: moneyPushNotificationAlertFrequency,
+                cashControlPushNotificationAlertFrequency: cashControlPushNotificationAlertFrequency,
+                ordersPushNotificationAlertFrequency: ordersPushNotificationAlertFrequency,
+                approvalsPushNotificationAlertFrequency: approvalsPushNotificationAlertFrequency,
+                fiscalDocumentsPushNotificationAlertFrequency: fiscalDocumentsPushNotificationAlertFrequency,
+                inventoryAndAssetsPushNotificationAlertFrequency: inventoryAndAssetsPushNotificationAlertFrequency,
+                accountSecurityPushNotificationAlertFrequency: accountSecurityPushNotificationAlertFrequency
             )
         ) { data in
             

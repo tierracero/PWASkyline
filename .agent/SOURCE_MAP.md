@@ -31,6 +31,7 @@ Repository file map for PWASkyline.
 | `Sources/App/VirtualControlers/` | Shared non-visual controllers/caches, including centralized error-report lifecycle, IndexedDB bridge ownership, and browser speech-recognition callback/target routing. |
 | `Sources/App/Pages/` | Swift Web page definitions. |
 | `Sources/App/Snippits/` | Reusable UI snippets, forms, panels, print engines, and feature views. |
+| `Sources/App/Snippits/CustTaskAuthorizationView.swift` | Task inbox and personal settings popup, including existing PWA reminder controls and seven device-push frequency selectors |
 | `Sources/App/Snippits/CustTaskAuthRequestWaitView.swift`, `OrderView/OrderView.swift` | Approval waiting view and order charge/payment deletion permission checks; approved removals reload the order. |
 | `Sources/App/Snippits/AddChargeFormView.swift`, `AddServiceFormView.swift`, `BudgetSOCView.swift`, `ConfirmProductView.swift`, `ConfirmProductViewNew.swift` | Price override entry points; each uses its caller-provided order, sale, or inventory-merma authorization context. |
 | `Sources/App/Snippits/CreateNewCustomerDataView.swift` | Customer creation forms using crystal surfaces, TierraCeroCustomUI headers/controls, and the existing verification flow. |

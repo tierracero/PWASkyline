@@ -35,6 +35,8 @@ When this governance bootstrap began, the repository already contained many modi
 
 ## Authoritative References
 
+- 2026-10-19: Personal settings include seven business-event push frequencies using the shared CustPushNotificationAlertFrequency enum, saved explicitly through notificationsSaveSettings. The existing PWA reminder controls remain distinct. See API_AND_BACKEND and SWIFWEB_APP_ARCHITECTURE; source-only validation, no delivery scheduler in this phase.
+
 - 2026-10-09: The saved-location cancellation action in `ManageLocationItem` and its linked-ID/picker synchronization are documented in `architecture/SWIFWEB_APP_ARCHITECTURE.md`.
 - 2026-10-09: The minimal asset-creation camera-image payload lookup is documented in `architecture/SWIFWEB_APP_ARCHITECTURE.md`; the previous camera and upload logic is retained.
 - 2026-10-08: Trip beta status confirmation and shared media-gallery source integration are documented in `architecture/SWIFWEB_APP_ARCHITECTURE.md`. The beta API handoff now submits status/comment/media and synchronizes status only after success; `ChangeTripStatusMedia` exists in the local TCFireSignal source but is absent from the repository's cached dependency. Build verification is blocked by the unavailable pinned TCFundamentals revision.

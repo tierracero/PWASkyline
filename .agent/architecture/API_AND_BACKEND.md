@@ -43,6 +43,12 @@ Authoritative rules: `API-*`.
 - API wrapper decoding is routed through `decodeAPIResponse`, except the recursion-protected error-reporting endpoint response.
 - `API.v1.reportError` uses the shared `ReportErrorRequest` contract and a reporting-disabled transport policy.
 
+- The existing `saveCommunicationProfile` wrapper sends all 28 named `notifyOn…: [String]` fields directly. The server saves each corresponding profile list; every recipient field is required and an empty array clears its list. Source reviewed; build verification remains unrun.
+
+- `notificationsSaveSettings` sends seven required named CustPushNotificationAlertFrequency arguments together with the existing PWA reminder frequency and level. The server persists them per user, and the PWA updates its local AlertManagerConfiguration only after success. Older stored configuration JSON defaults the new group fields to silent. Source-reviewed; builds/runtime verification remain unrun.
+
+- Shared CTAM full/Quick responses include alertFamily, optional alertFrequency, and optional notified. Legacy transport payloads decode to general/nil/nil. The server preserves these fields through list/detail/order queries and WebSocket copies; existing PWA renderers consume the extended shared types without a route or UI change in this metadata stage.
+
 ## Rules
 
 ### API-001 — Client Contract Ownership

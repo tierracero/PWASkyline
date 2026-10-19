@@ -13,10 +13,111 @@ import XMLHttpRequest
 extension ToolsView.SystemSettings {
     
     class CommunicationProfile: Div {
+
+        private final class RecipientListEditor: Div {
+            override class var name: String { "div" }
+
+            private let title: String
+            private let onChange: ([String]) -> Void
+
+            @State private var usernamesText: String = ""
+
+            init(
+                title: String,
+                usernames: [String],
+                onChange: @escaping ([String]) -> Void
+            ) {
+                self.title = title
+                self.usernamesText = usernames.joined(separator: "\n")
+                self.onChange = onChange
+                super.init()
+            }
+
+            required init() {
+                fatalError("init() has not been implemented")
+            }
+
+            lazy var usernamesField = TextArea(self.$usernamesText)
+                .placeholder("Un nombre de usuario por línea")
+                .class(.textFiledBlackDark)
+                .width(95.percent)
+                .height(64.px)
+
+            @DOM override var body: DOM.Content {
+                Div {
+                    Label(self.title).color(.lightGray)
+                    Div().height(3.px)
+                    self.usernamesField
+                    Div().height(7.px)
+                }
+            }
+
+            override func buildUI() {
+                super.buildUI()
+                self.$usernamesText.listen { [weak self] value in
+                    guard let self else { return }
+                    let names = value
+                        .components(separatedBy: "\n")
+                        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                        .filter { !$0.isEmpty }
+                    self.onChange(Array(Set(names)).sorted())
+                }
+            }
+
+            override func didRemoveFromDOM() {
+                super.didRemoveFromDOM()
+                self.$usernamesText.removeAllListeners()
+            }
+        }
         
         override class var name: String { "div" }
 
         var viewId: UUID = .init()
+
+        private static let notificationRecipientGroups: [(title: String, events: [(recipients: WritableKeyPath<CustCommunicationProfile, [String]>, label: String)])] = [
+            ("Dinero", [
+                (\.notifyOnPaymentReversed, "Pago revertido"),
+                (\.notifyOnPaymentDeleted, "Pago eliminado"),
+                (\.notifyOnRefundIssued, "Devolución emitida"),
+                (\.notifyOnOverdueBalance, "Saldo vencido"),
+            ]),
+            ("Control de caja", [
+                (\.notifyOnCashClosing, "Cierre de caja completado"),
+                (\.notifyOnCashDiscrepancy, "Faltante o excedente de caja"),
+            ]),
+            ("Órdenes", [
+                (\.notifyOnNewOrder, "Orden nueva"),
+                (\.notifyOnCloseOrder, "Orden cerrada"),
+                (\.notifyOnPickedUpEquipment, "Equipo recogido"),
+                (\.notifyOnOrderCanceled, "Orden cancelada"),
+                (\.notifyOnOrderOverdue, "Orden vencida según fecha prometida"),
+                (\.notifyOnBudgetAccepted, "Presupuesto aceptado"),
+                (\.notifyOnBudgetRejected, "Presupuesto rechazado"),
+            ]),
+            ("Aprobaciones", [
+                (\.notifyOnDiscountApproval, "Descuento por aprobar"),
+                (\.notifyOnPriceOverrideApproval, "Cambio de precio por aprobar"),
+                (\.notifyOnPaymentRemovalApproval, "Eliminación de pago por aprobar"),
+                (\.notifyOnExpenseApproval, "Gasto por aprobar"),
+            ]),
+            ("Documentos fiscales", [
+                (\.notifyOnNewFiscalDocument, "Nuevo documento fiscal"),
+                (\.notifyOnFiscalGenerationFailed, "Falló la generación fiscal"),
+                (\.notifyOnFiscalDocumentCanceled, "Documento fiscal cancelado"),
+                (\.notifyOnCreditNoteIssued, "Nota de crédito emitida"),
+            ]),
+            ("Inventario y activos", [
+                (\.notifyOnCriticalStock, "Inventario bajo"),
+                (\.notifyOnInventoryLoss, "Pérdida de inventario"),
+                (\.notifyOnTransferAwaitingReceipt, "Transferencia por recibir"),
+                (\.notifyOnOverdueAssetReturn, "Devolución de activo vencida"),
+            ]),
+            ("Seguridad de la cuenta", [
+                (\.notifyOnPrivilegedUserAdded, "Usuario con privilegios agregado"),
+                (\.notifyOnPermissionsChanged, "Permisos modificados"),
+                (\.notifyOnUnfamiliarDeviceSignIn, "Inicio de sesión desde dispositivo desconocido"),
+            ]),
+        ]
         
         init(communicationProfile: CustCommunicationProfile) {
             self.orderCommunicationProfile = communicationProfile.orderCommunicationProfile
@@ -39,6 +140,7 @@ extension ToolsView.SystemSettings {
             self.dateTermsAndConditions = communicationProfile.dateTermsAndConditions ?? ""
             self.rentalTermsAndConditions = communicationProfile.rentalTermsAndConditions ?? ""
             self.followUpWelcomeDocument = communicationProfile.followUpWelcomeDocument ?? ""
+            self.notificationProfile = communicationProfile
             super.init()
         }
         
@@ -71,11 +173,14 @@ extension ToolsView.SystemSettings {
         @State var dateTermsAndConditions: String = ""
         @State var rentalTermsAndConditions: String = ""
         @State var followUpWelcomeDocument: String = ""
+
+        private var notificationProfile: CustCommunicationProfile
         
         let orderCommunicationProfileDiv = Div().class(.roundDarkBlue)
         let saleCommunicationProfileDiv = Div().class(.roundDarkBlue)
         let dateCommunicationProfileDiv = Div().class(.roundDarkBlue)
         let rentCommunicationProfileDiv = Div().class(.roundDarkBlue)
+        let notificationRecipientsDiv = Div().class(.roundDarkBlue)
         
         let ws = WS()
 
@@ -225,6 +330,10 @@ extension ToolsView.SystemSettings {
 
                 self.profileSection("Rentas", self.rentCommunicationProfileDiv)
                 
+                Div().clear(.both).height(7.px)
+
+                self.profileSection("Destinatarios por evento", self.notificationRecipientsDiv)
+
                 Div().clear(.both).height(7.px)
 
                 Div {
@@ -409,7 +518,7 @@ extension ToolsView.SystemSettings {
             renderSaleProfile()
             renderDateProfile()
             renderRentProfile()
-
+            renderNotificationRecipients()
 
             fileLoaderFinalize.$files.listen {
                 $0.forEach { file in
@@ -927,6 +1036,28 @@ extension ToolsView.SystemSettings {
                 self.toggleRentCommunicationProfile(item)
             }
         }
+
+
+        private func renderNotificationRecipients() {
+            self.notificationRecipientsDiv.innerHTML = ""
+
+            for group in Self.notificationRecipientGroups {
+                let section = Div()
+                section.appendChild(H3(group.title).color(.lightBlueText))
+
+                for event in group.events {
+                    section.appendChild(RecipientListEditor(
+                        title: event.label,
+                        usernames: self.notificationProfile[keyPath: event.recipients]
+                    ) { [weak self] usernames in
+                        guard let self else { return }
+                        self.notificationProfile[keyPath: event.recipients] = usernames
+                    })
+                }
+
+                self.notificationRecipientsDiv.appendChild(section)
+            }
+        }
         
         func renderProfile(
             _ container: Div,
@@ -1044,7 +1175,35 @@ extension ToolsView.SystemSettings {
                 saleTermsAndConditions: optionalString(saleTermsAndConditions),
                 dateTermsAndConditions: optionalString(dateTermsAndConditions),
                 rentalTermsAndConditions: optionalString(rentalTermsAndConditions),
-                followUpWelcomeDocument: optionalString(followUpWelcomeDocument)
+                followUpWelcomeDocument: optionalString(followUpWelcomeDocument),
+                notifyOnNewOrder: notificationProfile.notifyOnNewOrder,
+                notifyOnCloseOrder: notificationProfile.notifyOnCloseOrder,
+                notifyOnPickedUpEquipment: notificationProfile.notifyOnPickedUpEquipment,
+                notifyOnNewFiscalDocument: notificationProfile.notifyOnNewFiscalDocument,
+                notifyOnPaymentReversed: notificationProfile.notifyOnPaymentReversed,
+                notifyOnPaymentDeleted: notificationProfile.notifyOnPaymentDeleted,
+                notifyOnRefundIssued: notificationProfile.notifyOnRefundIssued,
+                notifyOnOverdueBalance: notificationProfile.notifyOnOverdueBalance,
+                notifyOnCashClosing: notificationProfile.notifyOnCashClosing,
+                notifyOnCashDiscrepancy: notificationProfile.notifyOnCashDiscrepancy,
+                notifyOnOrderCanceled: notificationProfile.notifyOnOrderCanceled,
+                notifyOnOrderOverdue: notificationProfile.notifyOnOrderOverdue,
+                notifyOnBudgetAccepted: notificationProfile.notifyOnBudgetAccepted,
+                notifyOnBudgetRejected: notificationProfile.notifyOnBudgetRejected,
+                notifyOnDiscountApproval: notificationProfile.notifyOnDiscountApproval,
+                notifyOnPriceOverrideApproval: notificationProfile.notifyOnPriceOverrideApproval,
+                notifyOnPaymentRemovalApproval: notificationProfile.notifyOnPaymentRemovalApproval,
+                notifyOnExpenseApproval: notificationProfile.notifyOnExpenseApproval,
+                notifyOnFiscalGenerationFailed: notificationProfile.notifyOnFiscalGenerationFailed,
+                notifyOnFiscalDocumentCanceled: notificationProfile.notifyOnFiscalDocumentCanceled,
+                notifyOnCreditNoteIssued: notificationProfile.notifyOnCreditNoteIssued,
+                notifyOnCriticalStock: notificationProfile.notifyOnCriticalStock,
+                notifyOnInventoryLoss: notificationProfile.notifyOnInventoryLoss,
+                notifyOnTransferAwaitingReceipt: notificationProfile.notifyOnTransferAwaitingReceipt,
+                notifyOnOverdueAssetReturn: notificationProfile.notifyOnOverdueAssetReturn,
+                notifyOnPrivilegedUserAdded: notificationProfile.notifyOnPrivilegedUserAdded,
+                notifyOnPermissionsChanged: notificationProfile.notifyOnPermissionsChanged,
+                notifyOnUnfamiliarDeviceSignIn: notificationProfile.notifyOnUnfamiliarDeviceSignIn
             ) { resp in
                 
                 loadingView.hide()

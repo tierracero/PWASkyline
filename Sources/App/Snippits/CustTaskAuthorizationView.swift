@@ -38,6 +38,14 @@ class CustTaskAuthorizationView: Div {
     @State var frequencySelectListener = ""
     
     @State var levelSelectListener = ""
+
+    @State var moneyPushFrequencySelectListener = ""
+    @State var cashControlPushFrequencySelectListener = ""
+    @State var ordersPushFrequencySelectListener = ""
+    @State var approvalsPushFrequencySelectListener = ""
+    @State var fiscalDocumentsPushFrequencySelectListener = ""
+    @State var inventoryAndAssetsPushFrequencySelectListener = ""
+    @State var accountSecurityPushFrequencySelectListener = ""
     
     lazy var frequencySelect = USelectField(self.$frequencySelectListener)
         .custom("min-height", "42px")
@@ -47,6 +55,34 @@ class CustTaskAuthorizationView: Div {
         .width(100.percent)
         .custom("min-height", "42px")
     
+    lazy var moneyPushFrequencySelect = USelectField(self.$moneyPushFrequencySelectListener)
+        .width(100.percent)
+        .custom("min-height", "42px")
+
+    lazy var cashControlPushFrequencySelect = USelectField(self.$cashControlPushFrequencySelectListener)
+        .width(100.percent)
+        .custom("min-height", "42px")
+
+    lazy var ordersPushFrequencySelect = USelectField(self.$ordersPushFrequencySelectListener)
+        .width(100.percent)
+        .custom("min-height", "42px")
+
+    lazy var approvalsPushFrequencySelect = USelectField(self.$approvalsPushFrequencySelectListener)
+        .width(100.percent)
+        .custom("min-height", "42px")
+
+    lazy var fiscalDocumentsPushFrequencySelect = USelectField(self.$fiscalDocumentsPushFrequencySelectListener)
+        .width(100.percent)
+        .custom("min-height", "42px")
+
+    lazy var inventoryAndAssetsPushFrequencySelect = USelectField(self.$inventoryAndAssetsPushFrequencySelectListener)
+        .width(100.percent)
+        .custom("min-height", "42px")
+
+    lazy var accountSecurityPushFrequencySelect = USelectField(self.$accountSecurityPushFrequencySelectListener)
+        .width(100.percent)
+        .custom("min-height", "42px")
+
     @DOM override var body: DOM.Content {
         VPopUp(.custome(w: 900, h: 760)) {
             
@@ -144,14 +180,56 @@ class CustTaskAuthorizationView: Div {
                             .custom("line-height", "1.45")
                             .marginBottom(16.px)
 
-                        UField("Frecuencia de notificaciones", required: false) {
+                        UField("Frecuencia de recordatorios en PWA", required: false) {
                             self.frequencySelect
                         }
                         .marginBottom(14.px)
 
-                        UField("Nivel de notificaciones", required: false) {
+                        UField("Nivel de recordatorios en PWA", required: false) {
                             self.levelSelect
                         }
+                        .marginBottom(20.px)
+
+                        USubTitle("Push a mis dispositivos")
+                            .marginBottom(6.px)
+
+                        UMinorTitle("Seleccione una frecuencia para cada grupo de eventos.")
+                            .marginBottom(16.px)
+
+                        UField("Dinero", required: false) {
+                            self.moneyPushFrequencySelect
+                        }
+                        .marginBottom(14.px)
+
+                        UField("Control de caja", required: false) {
+                            self.cashControlPushFrequencySelect
+                        }
+                        .marginBottom(14.px)
+
+                        UField("Órdenes", required: false) {
+                            self.ordersPushFrequencySelect
+                        }
+                        .marginBottom(14.px)
+
+                        UField("Aprobaciones", required: false) {
+                            self.approvalsPushFrequencySelect
+                        }
+                        .marginBottom(14.px)
+
+                        UField("Documentos fiscales", required: false) {
+                            self.fiscalDocumentsPushFrequencySelect
+                        }
+                        .marginBottom(14.px)
+
+                        UField("Inventario y activos", required: false) {
+                            self.inventoryAndAssetsPushFrequencySelect
+                        }
+                        .marginBottom(14.px)
+
+                        UField("Seguridad de la cuenta", required: false) {
+                            self.accountSecurityPushFrequencySelect
+                        }
+                        .marginBottom(14.px)
                     }
                 }
 
@@ -218,6 +296,28 @@ class CustTaskAuthorizationView: Div {
             )
         }
         
+        for select in [
+            self.moneyPushFrequencySelect,
+            self.cashControlPushFrequencySelect,
+            self.ordersPushFrequencySelect,
+            self.approvalsPushFrequencySelect,
+            self.fiscalDocumentsPushFrequencySelect,
+            self.inventoryAndAssetsPushFrequencySelect,
+            self.accountSecurityPushFrequencySelect
+        ] {
+            for frequency in CustPushNotificationAlertFrequency.allCases {
+                select.appendChild(Option(frequency.description).value(frequency.rawValue))
+            }
+        }
+
+        moneyPushFrequencySelectListener = alertManagerConfiguration.moneyPushNotificationAlertFrequency.rawValue
+        cashControlPushFrequencySelectListener = alertManagerConfiguration.cashControlPushNotificationAlertFrequency.rawValue
+        ordersPushFrequencySelectListener = alertManagerConfiguration.ordersPushNotificationAlertFrequency.rawValue
+        approvalsPushFrequencySelectListener = alertManagerConfiguration.approvalsPushNotificationAlertFrequency.rawValue
+        fiscalDocumentsPushFrequencySelectListener = alertManagerConfiguration.fiscalDocumentsPushNotificationAlertFrequency.rawValue
+        inventoryAndAssetsPushFrequencySelectListener = alertManagerConfiguration.inventoryAndAssetsPushNotificationAlertFrequency.rawValue
+        accountSecurityPushFrequencySelectListener = alertManagerConfiguration.accountSecurityPushNotificationAlertFrequency.rawValue
+
         frequencySelectListener = alertManagerConfiguration.frequency.rawValue
         
         levelSelectListener = alertManagerConfiguration.level.rawValue
@@ -546,11 +646,31 @@ class CustTaskAuthorizationView: Div {
             return
         }
 
+        guard
+            let moneyPushNotificationAlertFrequency = CustPushNotificationAlertFrequency(rawValue: moneyPushFrequencySelectListener),
+            let cashControlPushNotificationAlertFrequency = CustPushNotificationAlertFrequency(rawValue: cashControlPushFrequencySelectListener),
+            let ordersPushNotificationAlertFrequency = CustPushNotificationAlertFrequency(rawValue: ordersPushFrequencySelectListener),
+            let approvalsPushNotificationAlertFrequency = CustPushNotificationAlertFrequency(rawValue: approvalsPushFrequencySelectListener),
+            let fiscalDocumentsPushNotificationAlertFrequency = CustPushNotificationAlertFrequency(rawValue: fiscalDocumentsPushFrequencySelectListener),
+            let inventoryAndAssetsPushNotificationAlertFrequency = CustPushNotificationAlertFrequency(rawValue: inventoryAndAssetsPushFrequencySelectListener),
+            let accountSecurityPushNotificationAlertFrequency = CustPushNotificationAlertFrequency(rawValue: accountSecurityPushFrequencySelectListener)
+        else {
+            showError(.invalidField, "Seleccione una frecuencia de push para cada grupo")
+            return
+        }
+
         loadingView.show()
 
         API.custAPIV1.notificationsSaveSettings(
             frequency: frequency,
-            level: level
+            level: level,
+            moneyPushNotificationAlertFrequency: moneyPushNotificationAlertFrequency,
+            cashControlPushNotificationAlertFrequency: cashControlPushNotificationAlertFrequency,
+            ordersPushNotificationAlertFrequency: ordersPushNotificationAlertFrequency,
+            approvalsPushNotificationAlertFrequency: approvalsPushNotificationAlertFrequency,
+            fiscalDocumentsPushNotificationAlertFrequency: fiscalDocumentsPushNotificationAlertFrequency,
+            inventoryAndAssetsPushNotificationAlertFrequency: inventoryAndAssetsPushNotificationAlertFrequency,
+            accountSecurityPushNotificationAlertFrequency: accountSecurityPushNotificationAlertFrequency
         ) { resp in
             loadingView.hide()
 
@@ -566,6 +686,13 @@ class CustTaskAuthorizationView: Div {
 
             alertManagerConfiguration.frequency = frequency
             alertManagerConfiguration.level = level
+            alertManagerConfiguration.moneyPushNotificationAlertFrequency = moneyPushNotificationAlertFrequency
+            alertManagerConfiguration.cashControlPushNotificationAlertFrequency = cashControlPushNotificationAlertFrequency
+            alertManagerConfiguration.ordersPushNotificationAlertFrequency = ordersPushNotificationAlertFrequency
+            alertManagerConfiguration.approvalsPushNotificationAlertFrequency = approvalsPushNotificationAlertFrequency
+            alertManagerConfiguration.fiscalDocumentsPushNotificationAlertFrequency = fiscalDocumentsPushNotificationAlertFrequency
+            alertManagerConfiguration.inventoryAndAssetsPushNotificationAlertFrequency = inventoryAndAssetsPushNotificationAlertFrequency
+            alertManagerConfiguration.accountSecurityPushNotificationAlertFrequency = accountSecurityPushNotificationAlertFrequency
         }
     }
     
@@ -588,6 +715,13 @@ class CustTaskAuthorizationView: Div {
         $changeSettingViewIsHidden.removeAllListeners()
         $frequencySelectListener.removeAllListeners()
         $levelSelectListener.removeAllListeners()
+        $moneyPushFrequencySelectListener.removeAllListeners()
+        $cashControlPushFrequencySelectListener.removeAllListeners()
+        $ordersPushFrequencySelectListener.removeAllListeners()
+        $approvalsPushFrequencySelectListener.removeAllListeners()
+        $fiscalDocumentsPushFrequencySelectListener.removeAllListeners()
+        $inventoryAndAssetsPushFrequencySelectListener.removeAllListeners()
+        $accountSecurityPushFrequencySelectListener.removeAllListeners()
     }
 }
 // GOKU - Centralize this
