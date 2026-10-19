@@ -1,0 +1,85 @@
+--- before/Sources/App/API/CustAssetsEndpoint/CustAssets+GetAssettem.swift
++++ Sources/App/API/CustAssetsEndpoint/CustAssets+GetAssettem.swift
+@@ -5,14 +5,14 @@
+ extension CustAssetsComponents {
+ 
+     static func getAssetItem(
+-        assetItemId: UUID,
++        itemId: MultipleIdentifier,
+         callback: @escaping ((_ resp: APIResponseGeneric<GetAssetItemResponse>?) -> ())
+     ) {
+         sendPost(
+             rout,
+             version,
+             "getAssetItem",
+-            GetAssetItemRequest(assetItemId: assetItemId)
++            GetAssetItemRequest(itemId: itemId)
+         ) { data in
+             guard let data else {
+                 callback(nil)
+--- before/Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemView.swift
++++ Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemView.swift
+@@ -18,12 +18,12 @@
+             case kardex
+         }
+ 
+-        let itemId: HybridIdentifier
++        let itemId: MultipleIdentifier
+ 
+         let onLoaded: ((CustCommercialAssetsItem) -> Void)?
+ 
+         init(
+-            itemId: HybridIdentifier,
++            itemId: MultipleIdentifier,
+             onLoaded: ((CustCommercialAssetsItem) -> Void)? = nil
+         ) {
+             self.itemId = itemId
+@@ -534,6 +534,7 @@
+ 
+             guard let assetItemId else {
+                 showAlert(.alerta, "No se ha cargado id del activo")
++                return
+             }
+ 
+             guard !kardexLoaded else { return }
+@@ -645,6 +646,7 @@
+ 
+             guard let assetItemId else {
+                 showAlert(.alerta, "No se ha cargado id del activo")
++                return
+             }
+ 
+             let view = AddWarrantyCard(
+--- before/Sources/App/Snippits/CustAssetsView/CustAssets+AssetInventoryItemController.swift
++++ Sources/App/Snippits/CustAssetsView/CustAssets+AssetInventoryItemController.swift
+@@ -161,7 +161,7 @@
+ 
+         private func load() {
+             
+-            let view = AssetItemView(assetItemId: item.id) { _ in
++            let view = AssetItemView(itemId: .id(item.id)) { _ in
+ 
+             }
+             
+--- before/Sources/App/ViewControlers/WorkViewControler.swift
++++ Sources/App/ViewControlers/WorkViewControler.swift
+@@ -3811,7 +3811,7 @@
+                     // aun no es soportado
+ 
+ 
+-                    let view = CustAssetsView.AssetItemView(assetItemId: item.id) { _ in
++                    let view = CustAssetsView.AssetItemView(itemId: .folio(term)) { _ in
+ 
+                     }
+                     
+--- before/.agent/architecture/API_AND_BACKEND.md
++++ .agent/architecture/API_AND_BACKEND.md
+@@ -12,7 +12,7 @@
+ - Asset-item creation uses TCFireSignal's shared `InitiateAssetItemViewType`, `CreateAssetItemObject`, and `CreateAssetItemFile` contracts. Single creation submits one object; batch creation collects the requested objects before one request, and `CreateAssetItemResponse.items` returns every created asset item.
+ - Asset-item listing uses the shared `ListAssetItemsType` location scope, optional `departmentId`/`categorieId` filters, and `ListSubAccountItemsStatus` filter in `ListAssetItemsRequest`, posting to `listAssetItems` and decoding `ListAssetItemsResponse.items`. Store/warehouse scopes take `storeId` and an optional owning `account`; the backend treats a nil account as unowned inventory. Account scope takes `account`, optional `storeId`, and optional `loadSubAccounts` (nil: all, true: linked, false: unlinked). Subaccount scope selects by `owningSubAccount` rather than current custody location.
+ - Trip asset search maps linked store/warehouse/subaccount origins to `.store(storeId:account:)`, `.warehose(storeId:account:)` (shared wire spelling), or `.subAccount(subAccount:)`, with nil department/category filters and `.available` status. Store/warehouse requests pass the trip's customer `account.id`. Inventory loads before picker presentation; the selected item's parent `getAsset` metadata loads before fiscal editing. Commercial-asset trip merchandise links to `CustCommercialAssetsItem.id`, not its parent `commercialAssetId`, and keeps that identity through the existing trip submission contract.
+-- Asset-item detail uses TCFireSignal's shared `GetAssetItemRequest`/`GetAssetItemResponse` on the exact `GetAssetItem` POST route. Its resolved location and inventory payloads use `GetAssetItemLocationType`, which identifies the current store, warehouse, account, subaccount, or user; detail records retain optional department, category, section, and subsection classification.
++- Asset-item detail uses TCFireSignal's shared `GetAssetItemRequest(itemId: MultipleIdentifier)`/`GetAssetItemResponse` on the exact `getAssetItem` POST route. The detail view accepts UUID, folio, and service-card identifiers; inventory opens `.id(item.id)` and Work asset folio search opens `.folio(term)`. The returned concrete item's UUID is retained for Kardex and warranty-card operations, which stop when no UUID has loaded. Its response includes the parent asset, and resolved location/inventory payloads use `GetAssetItemLocationType`, identifying the current store, warehouse, account, subaccount, or user; detail records retain optional department, category, section, and subsection classification.
+ - Asset creation and update preserve the shared commercial-asset fiscal and physical fields: `fiscCode`, `fiscUnit`, `width`, `height`, `length`, and `weight`.
+ - Asset, asset-item, location, sublocation, category, and department update responses return the inserted `CustGeneralNotes` entry when a change produced an audit note; successful no-op updates may return no note.
+ - Commercial trip creation submits the complete fiscal location fields for each stop, together with `LocationType` and an optional linked ID; the server persists those submitted snapshots.

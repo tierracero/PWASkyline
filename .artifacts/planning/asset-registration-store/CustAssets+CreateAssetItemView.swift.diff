@@ -1,0 +1,13 @@
+--- CustAssets+CreateAssetItemView.swift.before
++++ Sources/App/Snippits/CustAssetsView/CustAssets+CreateAssetItemView.swift
+@@ -162,6 +162,10 @@
+                         }
+ 
+                         VGrid(.full) {
++                            self.readOnly("Tienda de registro", self.viewType.registrationStore.name)
++                        }
++
++                        VGrid(.full) {
+                             VBox(.raised) {
+ 
+                                 Div {

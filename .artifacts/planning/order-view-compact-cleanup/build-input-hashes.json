@@ -1,0 +1,8 @@
+{
+  "Sources/App/Snippits/AccoutOverview.swift": "738535d95ee48c0726ee076bf4681906b71c550b1d013c635a8d45f7d64c1a42",
+  "Sources/App/Snippits/OrderView/OrderView.swift": "666bd4ee93ded12978f7b8f654a7fbd695e37029d89fd3d4cd2e636acfebae59",
+  "Sources/App/Snippits/OrderView/EquipmentView/OrderView+EquipmentView.swift": "ebfa503cfa90745c997efca5edcde33e2f564aaff2ee0043f6d4921daa96d065",
+  "Sources/App/TierraCeroCustomUI/Theme/TCOrderViewTheme.swift": "0af1966d7389644bd916edf52a65a4ab438cf24e49027b8fda77c9e06c8ac724",
+  "Package.swift": "26373382560b7ca4fd0d5853793e1e4e574bc915bbae77af9fb527b1e5762405",
+  "Package.resolved": "1989e9d383cc868f67f5576d69ff25dc7f165bdd05afe88fb91aff2b338e2bb1"
+}

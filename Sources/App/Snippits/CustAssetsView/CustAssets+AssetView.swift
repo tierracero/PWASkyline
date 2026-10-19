@@ -96,6 +96,20 @@ extension CustAssetsView {
 
         @State var items: [CustAssetsComponents.AssetsItemPayload] = []
 
+        @State private var inventorySearchTerm = ""
+
+        private lazy var inventorySearchField = UTextField(self.$inventorySearchTerm)
+            .placeholder("Filtrar por folio, serie o nombre")
+            .attribute("aria-label", "Filtrar inventario")
+            .width(260.px)
+            .custom("max-width", "100%")
+            .marginLeft(12.px)
+
+        private lazy var inventoryController = AssetInventoryController(
+            items: self.$items,
+            searchTerm: self.$inventorySearchTerm
+        )
+
         @State var department: CustAssetDepsQuick? = nil
         
         @State var categorie: CustAssetCatsQuick? = nil
@@ -269,6 +283,9 @@ extension CustAssetsView {
                             UTitle(self.$items.map{ $0.count.toString })
                             .color(.white)
                             .float(.left)
+
+                            self.inventorySearchField
+                            .float(.left)
                             
                             self.addAssetButton
                             .float(.right)
@@ -278,7 +295,7 @@ extension CustAssetsView {
                         }
                         .display(.block)
 
-                        AssetInventoryController(items: self.$items)
+                        self.inventoryController
                         .custom("min-height", "0")
                         .height(100.percent)
                         .marginTop(10.px)
@@ -420,18 +437,6 @@ extension CustAssetsView {
                         }
                     }
 
-                    VGrid(.half) {
-                        UField("Código fiscal", required: false) {
-                            self.fiscCodeField
-                        }
-                    }
-
-                    VGrid(.half) {
-                        UField("Unidad fiscal", required: false) {
-                            self.fiscUnitField
-                        }
-                    }
-
                     VGrid(.oneForth) {
                         UField("Ancho", required: false) {
                             UTextField(self.$assetWidth)
@@ -456,17 +461,30 @@ extension CustAssetsView {
                         }
                     }
 
-                    VGrid(.half) {
+                    VGrid(.oneForth) {
                         UField("Nombre", required: false) {
                             UTextField(self.$name)
                         }
                     }
 
-                    VGrid(.half) {
+                    VGrid(.oneForth) {
                         UField("Descripción corta", required: false) {
                             UTextField(self.$descriptionText)
                         }
                     }
+                    
+                    VGrid(.oneForth) {
+                        UField("Código fiscal", required: false) {
+                            self.fiscCodeField
+                        }
+                    }
+
+                    VGrid(.oneForth) {
+                        UField("Unidad fiscal", required: false) {
+                            self.fiscUnitField
+                        }
+                    }
+
                 }
                 .marginTop(10.px)
 
@@ -687,6 +705,8 @@ extension CustAssetsView {
 
         override func didRemoveFromDOM() {
             super.didRemoveFromDOM()
+            $items.removeAllListeners()
+            $inventorySearchTerm.removeAllListeners()
             $title.removeAllListeners()
             $noteCount.removeAllListeners()
             $productType.removeAllListeners()
@@ -714,37 +734,6 @@ extension CustAssetsView {
 
         func createAsset() {
 
-            switch viewType {
-                case .account(_, let store):
-                
-                guard let lat: String = store.lat, let lon: String = store.lon, let _ = Double(lat), let _ = Double(lon) else {
-                    showError(.unexpectedResult, "Tu tienda base \(store.name.capitalized), requeire cargar mapa")
-                    return
-                }
-
-                case .subAccount(_, let store):
-                
-                guard let lat: String = store.lat, let lon: String = store.lon, let _ = Double(lat), let _ = Double(lon) else {
-                    showError(.unexpectedResult, "Tu tienda base \(store.name.capitalized), requeire cargar mapa")
-                    return
-                }
-
-                case .store(let store):
-                
-                guard let lat: String = store.lat, let lon: String = store.lon, let _ = Double(lat), let _ = Double(lon) else {
-                    showError(.unexpectedResult, "La tienda \(store.name.capitalized), requeire cargar mapa")
-                    return
-                }
-                
-                case .warehose(let store):
-                
-                guard let lat: String = store.lat, let lon: String = store.lon, let _ = Double(lat), let _ = Double(lon) else {
-                    showError(.unexpectedResult, "La tienda \(store.name.capitalized), requeire cargar mapa")
-                    return
-                }
-                
-            }
-
             guard let currentAsset else {
                 showError(.unexpectedResult, "El activo aún no está disponible.")
                 return
@@ -757,13 +746,86 @@ extension CustAssetsView {
 
             addToDom(InitiateAssetItemView(
                 viewType: viewType
-            ){ folio, units in
+            ) { folio, units, registrationType in
 
-                if units == 1 {
-                    addToDom(
-                        CreateAssetItemView(
-                            createType: .singleItem,
-                            viewType: self.viewType,
+                loadingView.show()
+
+
+                var thisStore: CustStore? = nil
+                
+                switch self.viewType {
+                case .store(let store):
+                    thisStore = store
+                case .warehose(let store):
+                    thisStore = store
+                case .account(account: _, store: let store):
+                    thisStore = store
+                case .subAccount(subAccount: _, store: let store):
+                    thisStore = store
+                }
+                
+                guard let thisStore else { return }
+                
+
+                API.custAssetsV1.getAssetsSection(
+                    type: thisStore.storeType == .warehouse ? .warehose(thisStore) : .store(thisStore)
+                ) { response in
+                    loadingView.hide()
+
+                    guard self.isInDOM else { return }
+
+                    guard let response else {
+                        showError(.comunicationError, .serverConextionError)
+                        return
+                    }
+
+                    guard response.status == .ok else {
+                        showError(.generalError, response.msg)
+                        return
+                    }
+
+                    guard let data = response.data else {
+                        showError(.unexpectedResult, .unexpenctedMissingPayload)
+                        return
+                    }
+
+                    // The registration type contains the store selected in InitiateAssetItemView.
+                    self.sections = data.sections
+                    self.subSections = data.subSections
+
+                    if units == 1 {
+                        addToDom(
+                            CreateAssetItemView(
+                                createType: .singleItem,
+                                viewType: registrationType,
+                                purchasFiscalDocumentFolio: folio,
+                                asset: currentAsset,
+                                department: department,
+                                categorie: self.categorie,
+                                sections: self.sections,
+                                subSections: self.subSections,
+                                onSectionCreated: { section in
+                                    self.sections = self.upserting(section, into: self.sections)
+                                    self.onSectionCreated?(section)
+                                },
+                                onSubSectionCreated: { subSection in
+                                    self.subSections = self.upserting(subSection, into: self.subSections)
+                                    self.onSubSectionCreated?(subSection)
+                                }
+                            ) { response in
+                                switch response {
+                                case .createdItems:
+                                    self.load()
+                                case .preItem:
+                                    break
+                                }
+                            }
+                        )
+                    }
+                    else {
+                        let view = CreateAssetMultipleItemView(
+                            requestedUnits: units,
+                            viewType: registrationType,
                             purchasFiscalDocumentFolio: folio,
                             asset: currentAsset,
                             department: department,
@@ -771,47 +833,19 @@ extension CustAssetsView {
                             sections: self.sections,
                             subSections: self.subSections,
                             onSectionCreated: { section in
-                                self.sections = self.upserting(section, into: self.sections)
-                                self.onSectionCreated?(section)
-                            },
-                            onSubSectionCreated: { subSection in
-                                self.subSections = self.upserting(subSection, into: self.subSections)
-                                self.onSubSectionCreated?(subSection)
-                            }
-                        ) { response in
-                            switch response {
-                            case .createdItems:
+                                    self.sections = self.upserting(section, into: self.sections)
+                                    self.onSectionCreated?(section)
+                                },
+                                onSubSectionCreated: { subSection in
+                                    self.subSections = self.upserting(subSection, into: self.subSections)
+                                    self.onSubSectionCreated?(subSection)
+                                }
+                            ) { _ in
                                 self.load()
-                            case .preItem:
-                                break
                             }
-                        }
-                    )
+                        addToDom(view)
+                    }
                 }
-                else {
-                    let view = CreateAssetMultipleItemView(
-                        requestedUnits: units,
-                        viewType: self.viewType,
-                        purchasFiscalDocumentFolio: folio,
-                        asset: currentAsset,
-                        department: department,
-                        categorie: self.categorie,
-                        sections: self.sections,
-                        subSections: self.subSections,
-                        onSectionCreated: { section in
-                                self.sections = self.upserting(section, into: self.sections)
-                                self.onSectionCreated?(section)
-                            },
-                            onSubSectionCreated: { subSection in
-                                self.subSections = self.upserting(subSection, into: self.subSections)
-                                self.onSubSectionCreated?(subSection)
-                            }
-                        ) { _ in
-                            self.load()
-                        }
-                    addToDom(view)
-                }
-
             })
             
         }

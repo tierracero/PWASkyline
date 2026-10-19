@@ -1,0 +1,55 @@
+--- before/.agent/PROJECT_MEMORY.md
++++ after/.agent/PROJECT_MEMORY.md
+@@ -55,3 +55,5 @@
+ - 2026-10-14: Asset-item media now shows one main avatar preview with up to five selection dots; the separate lower thumbnail grid and its private helpers were removed. The existing selected-photo/full-gallery MediaViewer flow remains intact. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`; source audit only, no builds/tests or browser execution.
+ 
+ - 2026-10-14: MediaViewer thumbnail naming now preserves URL separators/suffixes by inserting thump_ directly before the filename instead of using NSString filesystem path operations. Bottom thumbnail buttons center as a group with auto outer margins and retain overflow scrolling. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`; source audit only, no builds/tests or browser execution.
++
++- 2026-10-14: Order mode now uses an inset rounded holder matching the standalone point-of-sale offsets/dimensions, replacing the theme's forced full-screen geometry. Only five shell declarations changed; internal order elements and the corner icon remain unchanged. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`; source audit only, no builds/tests or browser execution.
+--- before/.agent/TASKS_ARCHIVE.md
++++ after/.agent/TASKS_ARCHIVE.md
+@@ -364,3 +364,12 @@
+ - **Implementation**: Replaced NSString filesystem normalization with filename-boundary string insertion, preserving https:// and original query/fragment text while avoiding duplicate thump_ prefixes. Added vertical icon alignment and first/last auto outer margins to horizontally center fitting thumbnail groups while keeping overflowing items accessible.
+ - **Verification**: Source-flow and baseline-relative diff/whitespace/status review. No builds/tests or browser execution without user confirmation. Evidence: `.artifacts/planning/media-viewer-thumbnail-url/`.
+ - **Commit**: Not created.
++
++
++## ORDER-VIEW-INSET-HOLDER-001 — Match point-of-sale holder geometry
++
++- **Completed**: 2026-10-14
++- **Scope/IDs**: `TCOrderViewTheme` shell geometry; `SWWEB-001/002/003`.
++- **Implementation**: Replaced order-mode full-screen shell overrides with the standalone SalePointView offsets/dimensions (top 25px, left 40px, width minus 100px, height minus 70px) and 24px corners. Existing zero padding and border-box sizing are preserved; internal order controls and the corner icon are unchanged.
++- **Verification**: Five-declaration source diff, protected-source hashes, task-added whitespace and git status reviewed. Builds/tests and browser rendering were not run without user confirmation. Evidence: `.artifacts/planning/order-view-inset-holder/`.
++- **Commit**: Not created.
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -4,6 +4,7 @@
+ 
+ ## Verified Facts
+ 
++- In order mode, `TCOrderViewTheme` scopes the `AccoutOverview` shell to the standalone `SalePointView` holder geometry: top 25px, left 40px, width `calc(100% - 100px)`, height `calc(100% - 70px)` and 24px rounded corners. The theme retains its existing zero shell padding and border-box sizing. Internal OrderView elements, toolbar/content rules and corner speech icon placement are unchanged. Source-audited; browser rendering remains unverified.
+ - `AssetItemView.dataColumn` edits the existing update contract fields: name, serial, current cost, section and subsection. Other item/custody metadata remains read-only and service-card activation stays separate. `Guardar Cambios` validates exact nonnegative cents and classification IDs, calls `updateAssettem` with the loaded item UUID, accepts a successful nil-note no-op response, and reloads authoritative details/notes by UUID. Current classification scope supplies catalog choices; failed catalog reads preserve existing IDs, and changing section clears its subsection. Mount/session/generation guards and disabled controls protect pending loads/saves. Source-audited; browser/build behavior remains unverified.
+ - Store configuration binds existing and newly created `StoreView` instances to `display: flex` when selected and `display: none` otherwise, preserving the theme’s bounded flex column so its card grid fills the available workspace height. `StoreView.usersContainers` retains `flex: 1 1 0`, an initial zero height, `min-height: 0`, and automatic overflow; the user list grows between its header and action and excess rows scroll. The supplied recording showed the prior block-display override leaving unused space below the cards. Loading and user-card interactions remain unchanged; source-audited, fixed browser rendering remains unverified.
+ - `CustAssetsAvatarUploader` accepts an optional `[MediaViewer.MediaFile]` image list, initializes the current avatar first, and shows at most five 12px selection dots beneath the preview. Selecting a dot changes the preview without changing the saved avatar; clicking the preview opens the existing MediaViewer with the full photo list at that image and media actions disabled. Asset-item detail supplies its existing photos and displays only the uploader preview, with no separate thumbnail grid below it. Upload results and external avatar changes restore focus to the current avatar. Updated on 2026-10-14; source review only, browser/build behavior remains unverified.
+--- before/Sources/App/TierraCeroCustomUI/Theme/TCOrderViewTheme.swift
++++ after/Sources/App/TierraCeroCustomUI/Theme/TCOrderViewTheme.swift
+@@ -99,14 +99,14 @@
+                 .custom("-webkit-backdrop-filter", "none")
+ 
+             OrderRule(Pointer("\(root) .\(TCOrderViewClass.shell)"))
+-                .custom("top", "0 !important")
+-                .custom("left", "0 !important")
+-                .custom("width", "100% !important")
+-                .custom("height", "100% !important")
++                .custom("top", "25px !important")
++                .custom("left", "40px !important")
++                .custom("width", "calc(100% - 100px) !important")
++                .custom("height", "calc(100% - 70px) !important")
+                 .custom("padding", "0 !important")
+                 .custom("box-sizing", "border-box")
+                 .custom("border", "1px solid var(--tc-order-border)")
+-                .custom("border-radius", "0 !important")
++                .custom("border-radius", "24px !important")
+                 .custom("background", "linear-gradient(145deg, rgba(8, 34, 57, 0.28), rgba(3, 17, 32, 0.18)) !important")
+                 .custom("box-shadow", "0 18px 54px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04) !important")
+                 .custom("backdrop-filter", "blur(8px) saturate(116%)")

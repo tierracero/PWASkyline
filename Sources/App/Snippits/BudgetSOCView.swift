@@ -88,6 +88,8 @@ class BudgetSOCView: Div {
     
     ///product, service, manual
     var chargeType: ChargeType = .manual
+
+    private var billingType: BillingType = .charge
     
     /// the UUID If its a POC or SOC
     @State var chargeId: UUID? = nil
@@ -510,6 +512,7 @@ class BudgetSOCView: Div {
                 return
             }
             
+            self.billingType = soc.codeType == .adjustment ? .adjustment : .charge
             self.fiscCode = soc.fiscCode
             
             self.fiscUnit = soc.fiscUnit
@@ -620,6 +623,7 @@ class BudgetSOCView: Div {
                 price: priceFloat.toCents,
                 description: self.name,
                 type: self.chargeType,
+                billingType: self.billingType,
                 cost: Float(costFloat ?? 0).toCents,
                 productionTime: self.productionTime,
                 ids: [],

@@ -345,22 +345,6 @@ class BudgetConfirmationView: Div {
             
             showSuccess(.operacionExitosa, "Presupuesto creado \(folio)", .long)
 
-            Console.clear()
-            
-            print("⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎")
-            print("⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎")
-            
-            
-            print(self.selectedFiscalProfileListener)
-            print(self.selectedFiscalProfileListener)
-            print(self.selectedFiscalProfileListener)
-            print(self.selectedFiscalProfileListener)
-            
-            print("⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎")
-            print("⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎   ⭐️   💎")
-            
-
-
             self.callback(type, id, folio,  UUID(uuidString: self.selectedFiscalProfileListener), self.showDetail, self.showTaxes, custAcct)
             
             self.remove()

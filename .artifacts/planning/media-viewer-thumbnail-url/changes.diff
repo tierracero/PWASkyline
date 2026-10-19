@@ -1,0 +1,70 @@
+--- before/.agent/PROJECT_MEMORY.md
++++ after/.agent/PROJECT_MEMORY.md
+@@ -53,3 +53,5 @@
+ - 2026-10-14: Asset-item details now edit the supported name/serial/current-cost/section/subsection fields and save through the existing updateAssettem wrapper, then reload by concrete UUID. Other metadata and service-card activation remain separate. See the UI/API architecture chunks; source audit only, builds/tests/browser execution were not authorized.
+ 
+ - 2026-10-14: Asset-item media now shows one main avatar preview with up to five selection dots; the separate lower thumbnail grid and its private helpers were removed. The existing selected-photo/full-gallery MediaViewer flow remains intact. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`; source audit only, no builds/tests or browser execution.
++
++- 2026-10-14: MediaViewer thumbnail naming now preserves URL separators/suffixes by inserting thump_ directly before the filename instead of using NSString filesystem path operations. Bottom thumbnail buttons center as a group with auto outer margins and retain overflow scrolling. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`; source audit only, no builds/tests or browser execution.
+--- before/.agent/TASKS_ARCHIVE.md
++++ after/.agent/TASKS_ARCHIVE.md
+@@ -355,3 +355,12 @@
+ - **Implementation**: Removed the separate lower thumbnail grid and its unused private helpers. Raised the uploader's preview dot limit to five. Existing dot selection updates only the preview; clicking it opens the full associated image list in MediaViewer at the selected image. Existing upload controls and shared viewer remain unchanged.
+ - **Verification**: Source-flow and task-relative diff/whitespace/status review; builds/tests and live browser execution were not run without user confirmation. Evidence: `.artifacts/planning/asset-avatar-single-preview/`.
+ - **Commit**: Not created.
++
++
++## MEDIA-VIEWER-THUMBNAIL-URL-001 — Preserve thumbnail URL schemes and center icons
++
++- **Completed**: 2026-10-14
++- **Scope/IDs**: `MediaViewer.thumbnailName`, thumbnail strip/button styles; `SWWEB-001/002/003`.
++- **Implementation**: Replaced NSString filesystem normalization with filename-boundary string insertion, preserving https:// and original query/fragment text while avoiding duplicate thump_ prefixes. Added vertical icon alignment and first/last auto outer margins to horizontally center fitting thumbnail groups while keeping overflowing items accessible.
++- **Verification**: Source-flow and baseline-relative diff/whitespace/status review. No builds/tests or browser execution without user confirmation. Evidence: `.artifacts/planning/media-viewer-thumbnail-url/`.
++- **Commit**: Not created.
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -19,7 +19,7 @@
+ - `TripViewBeta` shows an Estatus metric immediately before Creado in its top summary, using the shared Spanish status descriptions and existing metric styling. Its persistent value element binds to the existing status state, updating after API success and server refresh; the summary grid explicitly provides one account column and five metric columns. Browser rendering remains unverified.
+ - Successful, same-session `TripViewBeta` status changes notify the mounted `TripsControlerView` directly as well as retaining caller callbacks, covering Work search and followup entry points. The Work-owned dashboard registers a private weak reference on mount and clears it on removal; matching trip updates are idempotent and regroup status cards/counters. A local dictionary tracks acknowledgements made during a list request and merges them into that response to prevent stale status rollback; completion/removal clears it and later requests use server state. Removed-view or changed-session list responses are ignored. These paths were reviewed in source; live browser behavior remains unverified.
+ - `TripViewBeta` reserves a 35px status action row below its right-side data grid. Pending trips expose Iniciar Viaje and Cancelar Viaje; in-progress trips expose Completar Viaje and Cancelar Viaje; terminal states expose neither. Start/complete actions use the shared green crystal modifier and cancel uses red, with matching hover/focus accents and a dimmed disabled state. `ConfirmTripStatusUpdate` gathers the typed transition, a trimmed comment (required for cancellation), and `ChangeTripStatusMedia` grouped by fiscal merchandise item ID. Its source uses the existing unregistered `.asset` image-upload/camera pipeline with per-file XHR progress/status checks. Camera requests use `eventid: nil` and `multipleTakes: true`, with no request-time upload placeholder or camera-pending controls. New selected/initiate capture IDs attach to the most recently requested merchandise row; IDs already assigned keep their original row and terminal IDs cannot be revived by duplicate or delayed events. Confirmation remains available and snapshots only completed images; each row retains its numbered completed-file count, first completed image avatar and existing MediaViewer gallery. Removal aborts pending local uploads and ignores late responses. Before presentation/submission, asset merchandise requires unique linked store/warehouse/subaccount origin and destination snapshots; media requires unique trip-merchandise IDs and safe image basenames. The server remains authoritative for actual asset state and tenant records. The beta `changeStatus` method submits the trip ID, requested status, comment and media through the typed wrapper. Status actions are disabled while the request is pending. Only a successful API response changes the local trip/status and calls the parent status callback; a guarded getTrip refresh loads the new status/comment notes, while failed requests retain the prior status. Responses from a changed session are ignored, while successful responses still notify the parent if the detail was closed. These facts were verified in source; browser/upload behavior remains unverified.
+-- `MediaViewer` honors `currentView` with a zero-index fallback, presents clickable `thump_` thumbnails and previous/next navigation for multiple files, and uses the selected file for downloads/rotations/deletion. Direct image source assignment avoids an older image-load callback replacing a newer selection. Each `MediaFile` can supply its own URL base; `allowsMediaActions: false` hides mutation/download actions for staged evidence while existing callers retain the default behavior.
++- `MediaViewer` honors `currentView` with a zero-index fallback, presents clickable `thump_` thumbnails and previous/next navigation for multiple files, and uses the selected file for downloads/rotations/deletion. Direct image source assignment avoids an older image-load callback replacing a newer selection. Each `MediaFile` can supply its own URL base; `allowsMediaActions: false` hides mutation/download actions for staged evidence while existing callers retain the default behavior. Thumbnail naming inserts `thump_` at the filename boundary without filesystem normalization, preserving URL scheme slashes, query strings and fragments, and retaining existing thumbnail prefixes. Auto outer margins center the bottom thumbnail group when it fits; overflowing rows retain scrolling from the first item. Source-audited; browser rendering remains unverified.
+ - `Sources/App/App.swift` is the `@main` app entry point.
+ - The app registers `./service.js` during launch.
+ - The app uses Swift Web `Routes`, `Page`, lifecycle hooks, `@State`, and style declarations.
+--- before/Sources/App/Snippits/MediaViewer.swift
++++ after/Sources/App/Snippits/MediaViewer.swift
+@@ -76,6 +76,7 @@
+ 
+     private lazy var thumbnails = Div()
+         .custom("display", "flex")
++        .custom("align-items", "center")
+         .custom("gap", "8px")
+         .custom("padding", "8px 12px")
+         .custom("box-sizing", "border-box")
+@@ -247,10 +248,12 @@
+ 
+     private func thumbnailName(_ file: MediaFile) -> String {
+         let name = file.avatar.isEmpty ? file.file : file.avatar
+-        let path = name as NSString
+-        guard !path.lastPathComponent.hasPrefix("thump_") else { return name }
+-        let directory = path.deletingLastPathComponent
+-        return (directory.isEmpty ? "" : directory + "/") + "thump_" + path.lastPathComponent
++        // Preserve URL separators and suffixes instead of normalizing a filesystem path.
++        let pathEnd = name.firstIndex { $0 == "?" || $0 == "#" } ?? name.endIndex
++        let path = name[..<pathEnd]
++        let filenameStart = path.lastIndex(of: "/").map { name.index(after: $0) } ?? name.startIndex
++        guard !name[filenameStart..<pathEnd].hasPrefix("thump_") else { return name }
++        return String(name[..<filenameStart]) + "thump_" + String(name[filenameStart...])
+     }
+ 
+     private func renderThumbnails() {
+@@ -270,6 +273,8 @@
+                 .custom("border", "2px solid #252c3b")
+                 .custom("padding", "0")
+                 .custom("flex", "0 0 auto")
++                .custom("margin-left", index == 0 ? "auto" : "0")
++                .custom("margin-right", index == files.count - 1 ? "auto" : "0")
+                 .custom("border-radius", "6px")
+                 .overflow(.hidden)
+                 .cursor(.pointer)

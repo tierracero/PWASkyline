@@ -16,14 +16,14 @@ public struct SkylineWeb {
         mode: .beta,
         major: 0,
         minor: 90,
-        patch: 24
+        patch: 29
     )
 	
 	public init() {}
     
 }
 
-var applicationName = "PWASkyline"  // 
+var applicationName = "PWASkyline"
 
 var developmentMode: ApplicationAPIMode = .produccion
 
@@ -257,7 +257,7 @@ open class _SkyLine {
         mode: .beta,
         major: 0,
         minor: 90,
-        patch: 24
+        patch: 29
     )
 	
 	lazy var loadingView: LoadingView = LoadingView ()

@@ -1,0 +1,251 @@
+--- a/Sources/App/VirtualControlers/CustAssetsAvatarUploader.swift
++++ b/Sources/App/VirtualControlers/CustAssetsAvatarUploader.swift
+@@ -21,6 +21,14 @@
+     
+     private let itemId: UUID?
+ 
++    private var availableImages: [MediaViewer.MediaFile]
++
++    private var images: [MediaViewer.MediaFile] = []
++
++    private var selectedImageIndex = 0
++
++    @State private var selectedImageSource = ""
++
+     @State private var uploadPercent: String? = nil
+ 
+     private lazy var fileLoader = InputFile()
+@@ -28,21 +36,33 @@
+         .hidden(true)
+ 
+     private lazy var avatarImage = Img()
+-        .src(self.avatar.map { self.source(for: $0) })
++        .src(self.$selectedImageSource)
++        .attribute("alt", "Imagen del activo")
+         .width(100.percent)
+         .height(100.percent)
+         .objectFit(.contain)
+         .cursor(.pointer)
++        .onClick { self.openMediaViewer() }
++
++    private lazy var imageDots = Div()
++        .display(.flex)
++        .custom("justify-content", "center")
++        .custom("gap", "10px")
++        .width(148.px)
++        .custom("max-width", "100%")
+ 
+     init(
+         avatar: State<String>,
+         destination: ImagePickerTo,
+-        itemId: UUID? = nil
++        itemId: UUID? = nil,
++        images: [MediaViewer.MediaFile] = []
+     ) {
+         self.avatar = avatar
+         self.destination = destination
+         self.itemId = itemId
++        self.availableImages = images.filter { $0.type == .image && !$0.file.purgeSpaces.isEmpty }
+         super.init()
++        refreshImages()
+     }
+ 
+     required init() {
+@@ -109,7 +129,8 @@
+         .display(.flex)
+         .height(148.px)
+         .width(148.px)
+-        
++
++        self.imageDots
+     }
+ 
+     override func buildUI() {
+@@ -123,7 +144,13 @@
+             $0.forEach { self.loadMedia($0) }
+         }
+ 
+-        WebApp.current.wsevent.listen {
++        avatar.listen { [weak self] _ in
++            guard let self, self.isInDOM else { return }
++            self.refreshImages()
++        }
++
++        WebApp.current.wsevent.listen { [weak self] in
++            guard let self, self.isInDOM else { return }
+             
+             guard !$0.isEmpty else { return }
+ 
+@@ -140,7 +167,7 @@
+                 }
+ 
+                 self.uploadPercent = nil
+-                self.avatar.wrappedValue = payload.avatar
++                self.updateAvatar(payload.avatar, fileName: payload.fileName)
+ 
+             case .asyncFileUpdate:
+                 guard let payload = self.ws.asyncFileUpdate($0),
+@@ -160,6 +187,7 @@
+         super.didRemoveFromDOM()
+         fileLoader.$files.removeAllListeners()
+         $uploadPercent.removeAllListeners()
++        $selectedImageSource.removeAllListeners()
+     }
+ 
+     private func loadMedia(_ file: File) {
+@@ -168,8 +196,104 @@
+             eventId: viewId,
+             id: itemId,
+             to: destination,
+-            progress: { self.uploadPercent = $0 },
+-            completed: { self.avatar.wrappedValue = $0 }
++            progress: { [weak self] value in
++                guard let self, self.isInDOM else { return }
++                self.uploadPercent = value
++            },
++            completed: { [weak self] value in
++                guard let self, self.isInDOM else { return }
++                self.updateAvatar(value)
++            }
++        )
++    }
++
++    private func updateAvatar(_ value: String, fileName: String? = nil) {
++        if let fileName, !fileName.purgeSpaces.isEmpty {
++            availableImages.removeAll { self.source(for: $0.file) == self.source(for: fileName) }
++            availableImages.insert(
++                .init(fileId: nil, file: fileName, avatar: value, type: .image),
++                at: 0
++            )
++        }
++        avatar.wrappedValue = value
++        refreshImages()
++    }
++
++    private func refreshImages() {
++        images = availableImages
++        let avatarName = avatar.wrappedValue.purgeSpaces
++
++        if !avatarName.isEmpty {
++            let avatarSource = source(for: avatarName)
++            if let index = images.firstIndex(where: {
++                source(for: $0.file) == avatarSource || source(for: $0.avatar) == avatarSource
++            }) {
++                let avatarImage = images.remove(at: index)
++                images.insert(avatarImage, at: 0)
++            } else {
++                images.insert(
++                    .init(fileId: nil, file: avatarName, avatar: avatarName, type: .image),
++                    at: 0
++                )
++            }
++        }
++
++        selectedImageIndex = 0
++        selectedImageSource = images.first.map {
++            source(for: $0.avatar.isEmpty ? $0.file : $0.avatar)
++        } ?? source(for: "")
++        renderDots()
++    }
++
++    private func selectImage(at index: Int) {
++        guard images.indices.contains(index) else { return }
++        selectedImageIndex = index
++        let image = images[index]
++        selectedImageSource = source(for: image.avatar.isEmpty ? image.file : image.avatar)
++        renderDots()
++    }
++
++    private func renderDots() {
++        imageDots.innerHTML = ""
++        for (index, _) in images.prefix(4).enumerated() {
++            let isSelected = index == selectedImageIndex
++            imageDots.appendChild(
++                Button()
++                    .attribute("type", "button")
++                    .attribute("aria-label", "Ver imagen \(index + 1)")
++                    .attribute("aria-pressed", isSelected ? "true" : "false")
++                    .width(12.px)
++                    .height(12.px)
++                    .padding(all: 0.px)
++                    .borderRadius(all: 50.percent)
++                    .backgroundColor(isSelected ? .init(r: 36, g: 185, b: 232) : .init(r: 37, g: 44, b: 59))
++                    .custom("border", "1px solid rgba(102, 184, 236, 0.55)")
++                    .cursor(.pointer)
++                    .onClick { self.selectImage(at: index) }
++            )
++        }
++    }
++
++    private func openMediaViewer() {
++        guard uploadPercent == nil, images.indices.contains(selectedImageIndex) else { return }
++        let files = images.map {
++            MediaViewer.MediaFile(
++                fileId: $0.fileId,
++                file: source(for: $0.file),
++                avatar: source(for: $0.avatar.isEmpty ? $0.file : $0.avatar),
++                type: $0.type
++            )
++        }
++        addToDom(
++            MediaViewer(
++                relid: itemId,
++                type: .content,
++                url: "",
++                files: files,
++                currentView: selectedImageIndex,
++                allowsMediaActions: false
++            ),
++            presentation: .interactive
+         )
+     }
+ 
+--- a/Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemView.swift
++++ b/Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemView.swift
+@@ -211,7 +211,10 @@
+                         CustAssetsAvatarUploader(
+                             avatar: self.$avatar,
+                             destination: .assetItem,
+-                            itemId: payload.item.id
++                            itemId: payload.item.id,
++                            images: payload.images.map {
++                                .init(fileId: $0.id, file: $0.file, avatar: $0.avatar, type: $0.type)
++                            }
+                         )
+                         .marginTop(8.px)
+ 
+--- a/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ b/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -4,6 +4,7 @@
+ 
+ ## Verified Facts
+ 
++- `CustAssetsAvatarUploader` accepts an optional `[MediaViewer.MediaFile]` image list, initializes the current avatar first, and shows at most four 12px selection dots beneath the preview. Selecting a dot changes the preview without changing the saved avatar; clicking the preview opens the existing MediaViewer at that image with media actions disabled. Asset-item detail supplies its existing photos. Upload results and external avatar changes restore focus to the current avatar. Reapplied on 2026-10-13 after accidental removal; source review only, browser/build behavior remains unverified.
+ - `ManageLocationItem` exposes a bottom-left red crystal Eliminar action for an existing editor ID linked to a saved `.location` source. It uses the linked `locationId`, not the generated editor UUID, with the existing `deleteLocation` confirmation/error flow. The endpoint cancels the saved location without deleting its database record. Only success closes the editor and notifies `CreateTripView` through its existing saved-location list/selection cleanup; pending deletion prevents duplicate calls and saving. The existing `removeLocation` trip-stop operation is not called. Browser/server behavior remains unverified.
+ - `CreateAssetItemView.create()` builds ordered image metadata from the existing upload registry, falling back to remote camera preview references by view ID. This includes uploaded camera files in `CreateAssetItemObject.images` while retaining the previous camera handlers, upload state and submission logic. Live browser/mobile behavior remains unverified.
+ - `InitiateAssetItemView` offers a required registration-store selector, defaulting to the embedded store and listing the existing cached stores. It validates the chosen store's existing numeric map prerequisite and returns a registration context that retains the original store/warehouse mode or customer/subcustomer ownership while replacing the physical store snapshot. `AssetView` forwards this context to single or batch creation; batch children retain it for every staged item. Both forms show the selected registration-store name, and existing create requests receive that same context. Browser/server behavior remains unverified.
+--- a/.agent/PROJECT_MEMORY.md
++++ b/.agent/PROJECT_MEMORY.md
+@@ -45,3 +45,5 @@
+ - Open decisions: `OPEN_DECISIONS.md`.
+ 
+ - 2026-10-07: `CustAcctPayments.downpayment` defaults false; only explicit selection marks an order payment as an anticipo. Full/quick shared payloads, `PaymentObject`, and order AddPayment requests decode missing flags as false. Existing tenants need the manual payment-column SQL before server deployment. Order reports and payment CSVs show general/downpayment subtotals and a combined total while retaining existing adjustment arithmetic.
++
++- 2026-10-13: Restored the asset avatar gallery in the main checkout: avatar-first image initialization, up to four preview-selection dots, and selected-image MediaViewer opening. Existing title/upload layout and MediaViewer implementation were preserved. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`; source audit only, builds/tests were not authorized.
+--- a/.agent/TASKS_ARCHIVE.md
++++ b/.agent/TASKS_ARCHIVE.md
+@@ -301,3 +301,14 @@
+ - **Deployment**: Run SkylineServer `Scripts/Database/AddCustAcctPaymentsDownpayment.sql` for each existing tenant before deploying the coordinated shared/server/PWA changes. No database command was executed.
+ - **Evidence**: SkylineServer `.artifacts/planning/downpayment/audit.md` records exact files and non-build checks. Four payload field/key/decoder sets match; all eight form callbacks adopt the flag; baseline-relative whitespace checks pass for every changed source file. Existing unrelated staged/unstaged work was preserved.
+ - **Git**: No staging or commit was performed by this agent. Shared package statuses became clean through external Git activity during the session.
++
++---
++
++## ASSET-AVATAR-GALLERY-RESTORE-001 — Reapply the avatar-first image gallery
++
++- **Completed**: 2026-10-13.
++- **Status**: Restored and source-audited; browser/build behavior remains unverified.
++- **Architecture IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`.
++- **Implementation**: Restored the optional image-list initializer, avatar-first ordering, up to four medium selection dots, and selected-image MediaViewer opening in `CustAssetsAvatarUploader`; reconnected the asset-item image list. Preserved the 22px upload icon, current layout, newer MediaViewer and unrelated pending user edits.
++- **Validation**: Reviewed the baseline-relative patch, image/default/selection/upload handling, existing viewer selected-index support, and final git status. No builds, tests, full compilation, browser execution, staging or commit.
++- **Evidence**: `.artifacts/planning/reapply-avatar-gallery/plan.md` and `reapplied.diff`.

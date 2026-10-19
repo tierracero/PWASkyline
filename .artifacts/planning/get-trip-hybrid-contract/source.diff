@@ -1,0 +1,53 @@
+--- before/Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+GetTrip.swift
++++ Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+GetTrip.swift
+@@ -6,7 +6,7 @@
+ extension CustCommercialTripsComponents {
+     
+     static func getTrip(
+-        tripId: UUID,
++        tripId: HybridIdentifier,
+         callback: @escaping ((_ resp: APIResponseGeneric<GetTripResponse>?) -> ())
+     ) {
+         sendPost(
+--- before/Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift
++++ Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift
+@@ -1127,7 +1127,7 @@
+             self?.status = newStatus
+             statusChanged(tripId, newStatus)
+             showSuccess(.operacionExitosa, "Estatus actualizado")
+-            API.custCommercialTrips.getTrip(tripId: tripId) { [weak self] refreshed in
++            API.custCommercialTrips.getTrip(tripId: .id(tripId)) { [weak self] refreshed in
+                 guard custCatchID == sessionId, let self, self.isInDOM,
+                       self.trip.status == newStatus, let refreshed, refreshed.status == .ok,
+                       let payload = refreshed.data, payload.trip.id == tripId,
+@@ -1701,7 +1701,7 @@
+ extension TripViewBeta {
+ 
+     static func loadAndPresent(
+-        tripId: UUID,
++        tripId: HybridIdentifier,
+         statusChangedCallback: @escaping (UUID, FiscalTripFollowupStatus) -> Void = { _, _ in }
+     ) {
+         loadingView.show()
+--- before/Sources/App/Snippits/TripControler/TripsControlerView.swift
++++ Sources/App/Snippits/TripControler/TripsControlerView.swift
+@@ -570,7 +570,7 @@
+         .custom("gap", "10px")
+         .padding(v: 9.px, h: 10.px)
+         .onClick {
+-            TripViewBeta.loadAndPresent(tripId: item.id) { tripId, status in
++            TripViewBeta.loadAndPresent(tripId: .id(item.id)) { tripId, status in
+                 self.updateTripStatus(tripId: tripId, status: status)
+             }
+         }
+--- before/Sources/App/Snippits/FollowupControler/FollowupControler.swift
++++ Sources/App/Snippits/FollowupControler/FollowupControler.swift
+@@ -392,7 +392,7 @@
+             Div().class(.clear)
+         }
+         .onClick {
+-            TripViewBeta.loadAndPresent(tripId: item.id) { tripId, status in
++            TripViewBeta.loadAndPresent(tripId: .id(item.id)) { tripId, status in
+                 self.updateTripStatus(tripId: tripId, status: status)
+             }
+         }

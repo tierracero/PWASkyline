@@ -1,0 +1,190 @@
+# Tasks Archive
+
+Verified completed tasks live here.
+
+---
+
+## WORK-FOLIO-SINGLE-001 — Prevent Duplicate Work Code Loads
+
+- **Status**: Implemented; focused App compilation passed, browser/scanner behavior unverified
+- **Completed**: 2026-10-09
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`
+- **Cause and implementation**: The work input's key-up timer and onEnter subscriber both submitted formatted codes, while earlier timers remained eligible. A controller-owned generation token now invalidates older timers on subsequent edits, any search submission and DOM removal. Enter/NumpadEnter and ignored event keys do not schedule automatic searches. Automatic searches use the normalized snapshot and clear immediately; empty submissions do not minimize the result view, and fallback results retain the submitted term.
+- **Validation evidence**: Swift frontend parsing and the previously user-approved focused App build passed (`Build of target: 'App' complete! (142.10s)`). Reviewed actual Web/InputText subscriber behavior and source traces for Enter before/after automatic submission, click/mobile submission, ignored keys, input changes, normalized separators and removal. Authored-line whitespace and repository status/staging checks passed; concurrent blank-line spacing was preserved and the latest source parsed again. Lookup branches and dependency pins are unchanged.
+- **Limits**: No test suite, browser or hardware-scanner session was run. Evidence: `.artifacts/planning/work-folio-single-search/AUDIT.md` and `EVENT_REVIEW.md`.
+- **Commit**: Not created.
+
+---
+
+## TRIP-CAMERA-FLOW-001 — Nonblocking Trip Status Camera and Upload Flow
+
+- **Status**: Implemented; focused App compilation passed, device/upload behavior unverified
+- **Completed**: 2026-10-08
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `WS-001`, `WS-002`, `SEC-001`
+- **Implementation**: ConfirmTripStatusUpdate requests the asset camera with `eventid:nil`/multiple captures and no request-time placeholder, cameraEventId, isCameraPending or cancel-camera control. New capture IDs bind to the latest requested merchandise row; existing owners and terminal IDs survive row switches and duplicate/delayed events. Confirmation stays available and includes only completed images. Per-file local uploads, counters, first completed avatar and MediaViewer gallery remain intact.
+- **Validation evidence**: Swift frontend parsing and the previously user-approved focused App build passed (`Build of target: 'App' complete! (69.48s)`). Source traces reviewed capture duplication, row switching, cancellation/late completion, HTTP/WebSocket races, completion order and removal. Baseline-relative diff/whitespace/status/staging checks passed; ManagePOC, MediaViewer and dependency pins were unchanged.
+- **Limits**: No test suite or browser/mobile/server upload session was run. Selected/initiate messages carry only event ID, so new unassigned captures follow the latest requested merchandise row. Evidence: `.artifacts/planning/trip-status-upload-parity/AUDIT.md` and `EVENT_REVIEW.md`.
+- **Commit**: Not created.
+
+---
+
+## GET-TRIP-HYBRID-001 — GetTrip UUID/Folio Contract Usage
+
+- **Status**: Completed; focused App compilation passed
+- **Completed**: 2026-10-08
+- **Chunks/IDs**: `API-001`, `API-002`, `API-003`, `SWWEB-001`, `SWWEB-002`, `SWWEB-003`
+- **Implementation**: GetTrip wrapper and beta detail presenter accept shared `HybridIdentifier`. Existing trip-list/followup opens and post-status refreshes use `.id(UUID)`; the presenter also accepts `.folio(String)`. Shared response, transport/error behavior and UUID status callbacks are preserved.
+- **Validation evidence**: All four modified files passed syntax parsing. A limited compile-only check of the exact updated request/wrapper/presenter logic passed for both identifier cases. The user-approved `swift build --disable-sandbox --target App --jobs 4 --disable-automatic-resolution` succeeded after fetching the fixed pinned revisions; only existing warnings remained. Focused diff, whitespace, staging, lockfile and repository status checks passed.
+- **Scope**: No dependency pins, tests, browser/server execution, staging or commits. Evidence: `.artifacts/planning/get-trip-hybrid-contract/AUDIT.md` and `build-pinned.log`.
+
+---
+
+## TRIP-STATUS-COLORS-001 — Crystal Trip Action Colors
+
+- **Status**: Implemented and source-audited; browser rendering unverified
+- **Completed**: 2026-10-08
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`
+- **Implementation**: Start/complete use green crystal button modifiers; cancel uses the existing red crystal palette. Trip-scoped selectors override the blue control defaults and supply matching hover/focus accents and disabled dimming. Status visibility, callbacks and 35px sizing are preserved.
+- **Validation evidence**: Both Swift files passed frontend syntax parsing. Baseline-relative source diff, added-line whitespace, CSS cascade and repository status were reviewed. No repeated package build or tests were run; the earlier approved App build remains blocked by the unavailable pinned TCFundamentals revision. Evidence: `.artifacts/planning/trip-status-button-colors/AUDIT.md`.
+- **Commit**: Not created.
+
+---
+
+## TRIP-STATUS-API-001 — Complete Beta Trip Status API Handoff
+
+- **Status**: Implemented; full build blocked by dependency resolution, live behavior unverified
+- **Completed**: 2026-10-08
+- **Chunks/IDs**: `API-001`, `API-002`, `SWWEB-003`, `SEC-001`
+- **Implementation**: The client wrapper encodes trip ID, status, comment and merchandise media using the updated shared request. Beta status actions disable during submission, retain status on errors, and update the trip and parent list only after an .ok response. Session changes suppress late responses. A successful response can still notify the parent after the detail closes.
+- **Validation evidence**: Both modified Swift files passed syntax parsing. An isolated compile-only type check of the exact shared DTOs, wrapper and changeStatus method passed with unrelated transport/presentation dependencies scaffolded. Focused diff/whitespace/status review passed. No live server mutation or test suite was run.
+- **Build**: The previously authorized focused App build was retried and still fails on unavailable pinned TCFundamentals revision `25fd6294b7ccbca6a5542769e9dadbb709121988`. Dependencies and lockfile were left unchanged. Evidence: `.artifacts/planning/trip-status-api/AUDIT.md`.
+- **Commit**: Not created.
+
+---
+
+## TRIP-STATUS-CONFIRM-001 — Beta Trip Status Confirmation and Merchandise Images
+
+- **Status**: Implemented; full build and browser/upload verification blocked or unperformed
+- **Completed**: 2026-10-08
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`; API contracts and server status authority preserved
+- **Implementation**: Added state-specific actions in the 35px right-side status grid, a two-column crystal confirmation form with required cancellation comments and merchandise image uploads/camera capture, and a shared viewer gallery with clickable thumbnails. The callback passes typed status/comment/media to beta `changeStatus`; the follow-up API integration is recorded in TRIP-STATUS-API-001.
+- **Validation evidence**: All three Swift files passed syntax parsing; the confirmation/viewer passed a limited cached-module type check using the exact local media contract and temporary compatibility adjustments. Task-only diffs and focused whitespace/status checks passed; existing user changes were preserved.
+- **Build/tests**: User authorized a focused build. `swift build --product App --jobs 4 --skip-update` ultimately failed dependency resolution on unavailable TCFundamentals revision `25fd6294b7ccbca6a5542769e9dadbb709121988`. Cached TCFireSignal also lacks `ChangeTripStatusMedia`. No test suite or browser/upload session was run. See `.artifacts/planning/trip-status-confirmation/AUDIT.md` for limitations and logs.
+- **Commit**: Not created.
+
+---
+
+## CARTA-PORTE-ICONS-001 — Merchandise Attachment/Camera Icons
+
+- **Status**: Implemented; static source/asset review only, compilation/runtime unverified
+- **Completed**: 2026-10-07
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-003`
+- **Implementation**: Completed both `CartaPorteMerchendise` icon TODOs using a shared vertical group of existing white clip and remote-camera assets with 24px sizing and Spanish image labels/tooltips. Both row modes reserve the 50px icon column; removable rows retain their original delete action. This is an icon-only change, with no new upload/camera handlers.
+- **Validation evidence**: Verified static asset paths, vertical spacing/column sizing, both branches and unchanged remove callback/fiscal data. Reviewed the task-only diff, whitespace, git status and existing staging. Evidence: `.artifacts/planning/carta-porte-merchandise-icons.md` and `.artifacts/planning/carta-porte-merchandise-icons.diff`.
+- **Build/tests**: Not run, following the user's non-build-only instruction. No browser execution performed.
+- **Commit**: Not created.
+
+---
+
+## ASSET-LIST-SCOPE-001 — Updated Asset Listing Location Contract
+
+- **Status**: Implemented; non-build source review completed, compilation/runtime unverified
+- **Completed**: 2026-10-06
+- **Chunks/IDs**: `API-001`, `API-002`, `SWWEB-001`, `SWWEB-003`
+- **Implementation**: Updated trip store/warehouse listing cases to pass the new `storeId`/`account` arguments with the trip's customer account. The picker matches location/ID plus owning account for those scopes and matches subaccount ownership for subaccount scope, retaining results whose current custody differs. The existing shared request/response POST wrapper remains compatible and unchanged.
+- **Validation evidence**: Reviewed every app listing-type consumer against local/shared GitHub main contract and local backend query; inspected task-only diffs, callback/selection preservation, whitespace, git status and staging. Task changes introduce no whitespace errors; tracked-file whitespace findings predate this task. Evidence: `.artifacts/planning/list-asset-items-account-scope.md` and `.artifacts/planning/list-asset-items-account-scope.diff`.
+- **Build/tests**: Not run, following the user's non-build-only instruction. No browser execution performed.
+- **Commit**: Not created.
+
+---
+
+## TRIP-ASSET-POSITION-001 — Asset Picker Modal Frame
+
+- **Status**: Implemented; non-build source review only, browser behavior unverified
+- **Completed**: 2026-10-06
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`
+- **Implementation**: Gave `SearchComertialAsset` the established full-overlay absolute root frame so its fixed `VPopUp` has a correctly sized containing block inside the translated `SuperView`. Existing popup sizing/scrolling and asset filtering/selection remain in place.
+- **Validation evidence**: Compared the root frame with working address/customer dialogs, inspected host translation and viewport-limited popup/body rules, reviewed the task-only diff, and checked whitespace/status/staging. Evidence: `.artifacts/planning/search-commercial-asset-position.md` and `.artifacts/planning/search-commercial-asset-position.diff`.
+- **Build/tests**: Not run, following the user's non-build-only instruction. No browser execution performed.
+- **Commit**: Not created.
+
+---
+
+## TRIP-ADDRESS-001 — Confirm Incomplete Store Addresses
+
+- **Status**: Implemented; non-build source review completed, compilation and runtime behavior unverified
+- **Completed**: 2026-10-06
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `STATE-001`
+- **Implementation**: Added the prefilled `ConfirmAdddressLocationView` with required address/state/coordinate validation, lookup, and an independently owned map preview. Incomplete store selection opens confirmation and resumes `renderLocation` only with the saved/reloaded store. Existing `loadStore`/`saveStore` contracts preserve loaded non-address metadata and configuration. Matching global/order caches refresh before resumption; session changes and removed pickers cannot receive late results.
+- **Validation evidence**: Reviewed the task-only diff against saved working-file baselines, save argument/model mappings, required-field and coordinate guards, failure/cancellation paths, and map/child cleanup. Focused tracked-file `git diff --check` passed. Source/navigation and state docs were synchronized. Final status review preserves pre-existing user work and staging.
+- **Build/tests**: Not run; the user explicitly selected non-build checks only. No browser execution performed.
+- **Evidence**: `.artifacts/planning/confirm-address-location.md` and `.artifacts/planning/confirm-address-location.diff`.
+- **Commit**: Not created.
+
+---
+
+## UI-USER-CONFIG-001 — Dark-Crystal User Configuration View
+
+- **Status**: Implemented; build and browser verification not run without the required user confirmation
+- **Completed**: 2026-08-04
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `SEC-001`
+- **Goal**: Rebuild the user configuration detail view as a responsive dark-crystal surface populated exclusively from `CustComponents.GetUserResponse`.
+- **Implementation**:
+  - Replaced the incomplete two-column shell with a response-driven profile sidebar, live permissions, KPI summaries, editable personal/contact fields, credential controls, operational summaries, schedule/preferences, financial summaries, and inventory cards.
+  - Added a scoped crystal theme with layered translucent surfaces, cyan hierarchy rails, graphite section bars, responsive breakpoints at 1080, 760, and 420 pixels, and reduced-motion behavior.
+  - Kept password and PIN state empty, avoided secret/debug logging, retained group/supervisor/permission lookups, and rendered honest empty states instead of demo records.
+- **Validation evidence**:
+  - `swiftc -frontend -parse` passed for the updated view and new theme.
+  - Focused trailing-whitespace inspection passed for the task files.
+  - All referenced local media assets were verified under `Sources/Service/skyline/media`.
+  - Focused response-property, responsive-theme, and secret/debug-log searches passed.
+  - The scoped diff and repository status were reviewed; unrelated pre-existing warranty, communication, layout, and work-controller changes remain untouched.
+  - Build/test and browser validation were not run because the user did not grant the separately required confirmation.
+- **Documentation sync**: The new theme stays within the existing `TierraCeroCustomUI/Theme` source area, so source-map, module, and architecture ownership documents remain current.
+- **Commit**: Not created; commits require explicit user request.
+
+---
+
+## DOC-001 — Agent Governance Bootstrap
+
+- **Status**: Completed
+- **Completed**: 2026-07-08
+- **Chunks/IDs**: `APP-*`, `SWWEB-*`, `API-*`, `WS-*`, `PWA-*`, `SEC-*`, `STATE-*`
+- **Goal**: Create root `AGENTS.md` and `.agent/**` governance docs adapted from the supplied example archive to PWASkyline.
+- **Files created**: 36 total — root `AGENTS.md` plus 35 Markdown files under `.agent/**`.
+- **Validation evidence**:
+  - `project.detect_docs` detected root `AGENTS.md` and `.agent/ARCH_INDEX.md`.
+  - `.agent/**/*.md` glob returned the expected governance, architecture, skill, and template docs.
+  - Git status showed only `AGENTS.md` and `.agent/` added by this task; pre-existing source changes remained untouched.
+- **Notes**: `MASTER_WORKFLOW.md` was included as a compatibility router for tooling that expects a master workflow file, with canonical workflow authority remaining in `WORKFLOW.md`.
+
+---
+
+## ERROR-REPORTING-001 — Centralized Error Reporting
+
+- **Status**: Completed
+- **Completed**: 2026-07-16
+- **Chunks/IDs**: `API-001`, `API-002`, `SEC-001`, `SEC-002`, `STATE-001`
+- **Goal**: Persist, prioritize, retry, sanitize, and deliver App transport/API decoding diagnostics without blocking existing user callbacks.
+- **Implementation**:
+  - Centralized the three `sendPost` overloads and protected `API.v1.reportError` from recursive reporting.
+  - Added shared four-level priority, diagnostic context/record models, IndexedDB persistence, atomic multi-tab claims, 10-minute retries, duplicate merging, and 60-day retention.
+  - Migrated API decoding through `decodeAPIResponse` and integrated launch, activation, session restoration, login, and online triggers.
+- **Validation evidence**:
+  - App source compilation completed; native linking remains blocked by pre-existing missing `ShowSuccess`, `ShowAlert`, and `ShowError` symbols.
+  - JavaScript syntax validation passed and priority ordering/rank checks returned `high, med, low, zero` / `0,1,2,3`; schema version 2 migrates legacy `medium`/`critical` values.
+  - In-browser IndexedDB validation passed duplicate merging/escalation, priority-first claiming, cleanup, delivery/failure metadata updates, and two simultaneous claims without duplicate IDs.
+  - Webpack compiled and included `errorReportingIndexedDB.js`, then stopped on the pre-existing broken `javascript-kit-swift` local symlink.
+  - Source audit found 549 `decodeAPIResponse` calls in 548 API files and no direct `JSONDecoder().decode` calls under `Sources/App/API/**` outside the intentionally isolated report endpoint decoder variable.
+- **Notes**: Public output trees were not regenerated. Persistence and delivery use `TCFundamentals.ErrorReportingPriorty` directly.
+
+## DATA-PAYMENT-DOWNPAYMENT-001 — Explicit order downpayments
+
+- **Date**: 2026-10-07.
+- **Status**: Implemented and source-audited; builds/tests and database execution were not run because they require separate user authorization.
+- **Scope**: TCFundamentals payment protocol/full/quick values and PaymentObject; TCFoundation table/new-tenant default/conversion; TCFireSignal order AddPayment request/client; server order creation, payment persistence and report/get-charge projections; PWA payment form callbacks, service/rental/existing-order submission, split report and CSV totals; manual existing-tenant SQL.
+- **User decision**: Only explicitly selected downpayments are true; neither order creation nor a zero balance infers the classification. Older payloads and new constructors default false.
+- **Report semantics**: General payments and downpayments partition the existing payment list; each has a subtotal, with a combined total retaining the existing payment-add/adjustment-subtract arithmetic. CSV includes classification, both groups and subtotals, and the combined total. Existing historical rows remain false unless deliberately updated.
+- **Deployment**: Run SkylineServer `Scripts/Database/AddCustAcctPaymentsDownpayment.sql` for each existing tenant before deploying the coordinated shared/server/PWA changes. No database command was executed.
+- **Evidence**: SkylineServer `.artifacts/planning/downpayment/audit.md` records exact files and non-build checks. Four payload field/key/decoder sets match; all eight form callbacks adopt the flag; baseline-relative whitespace checks pass for every changed source file. Existing unrelated staged/unstaged work was preserved.
+- **Git**: No staging or commit was performed by this agent. Shared package statuses became clean through external Git activity during the session.

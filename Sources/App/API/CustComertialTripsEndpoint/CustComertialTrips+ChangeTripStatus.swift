@@ -8,6 +8,8 @@ extension CustCommercialTripsComponents {
     static func changeTripStatus(
         tripId: UUID,
         status: FiscalTripFollowupStatus,
+        comment: String,
+        media: [ChangeTripStatusMedia],
         callback: @escaping ((_ resp: APIResponse?) -> ())
     ) {
         sendPost(
@@ -16,7 +18,9 @@ extension CustCommercialTripsComponents {
             "changeTripStatus",
             ChangeTripStatusRequest(
                 tripId: tripId,
-                status: status
+                status: status,
+                comment: comment,
+                media: media
             )
         ) { data in
             

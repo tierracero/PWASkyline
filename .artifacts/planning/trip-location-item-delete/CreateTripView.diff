@@ -1,0 +1,17 @@
+--- before/CreateTripView.before.swift
++++ Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift
+@@ -1388,7 +1388,13 @@
+         _ item: CustCommercialTripsComponents.TripLocation,
+         isEditing: Bool = false
+     ) {
+-        addToDom(ManageLocationItem(item: fiscalLocationItem(from: item), isEditing: isEditing) { updatedItem in
++        addToDom(ManageLocationItem(
++            item: fiscalLocationItem(from: item),
++            isEditing: isEditing,
++            onDelete: { [weak self] id in
++                self?.handleDestination(.delete(id))
++            }
++        ) { updatedItem in
+             self.setLocation(self.tripLocation(from: updatedItem))
+         })
+     }

@@ -1,0 +1,205 @@
+--- before/Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift
++++ Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift
+@@ -41,7 +41,7 @@
+ 
+     @State var fiscalId: UUID?
+ 
+-    @State private var status: String
++    @State private var status: FiscalTripFollowupStatus
+ 
+     @State var financialView:  FinancialView = .charges
+ 
+@@ -64,7 +64,7 @@
+         self.cost = response.trip.cost
+         self.balance = response.trip.balance
+         self.fiscalId = response.trip.fiscalId
+-        self.status = response.trip.status.rawValue
++        self.status = response.trip.status
+         self.statusChangedCallback = statusChangedCallback
+         super.init()
+     }
+@@ -73,13 +73,31 @@
+         fatalError("init() has not been implemented")
+     }
+ 
+-    private lazy var statusSelect = USelectField(self.$status)
+-        .custom("width", "150px")
+-        .custom("min-height", "30px")
+-        .custom("padding", "5px 8px")
+-        .onChange { _, select in
+-            self.changeStatus(select.value)
+-        }
++    private var statusConfirmation: ConfirmTripStatusUpdate?
++
++    private lazy var startTripButton = statusButton("Iniciar Viaje", nextStatus: .inProgress)
++        .hidden(self.$status.map { $0 != .pending })
++        .display(self.$status.map { $0 == .pending ? .inlineFlex : .none })
++
++    private lazy var completeTripButton = statusButton("Completar Viaje", nextStatus: .completed)
++        .hidden(self.$status.map { $0 != .inProgress })
++        .display(self.$status.map { $0 == .inProgress ? .inlineFlex : .none })
++
++    private lazy var cancelTripButton = statusButton("Cancelar Viaje", nextStatus: .cancelled)
++        .hidden(self.$status.map { $0 == .completed || $0 == .cancelled })
++        .display(self.$status.map { $0 == .pending || $0 == .inProgress ? .inlineFlex : .none })
++
++    private func statusButton(_ title: String, nextStatus: FiscalTripFollowupStatus) -> USmallButton {
++        USmallButton(title)
++            .class(Class(TCCrystalSurfaceClass.goodButton))
++            .custom("height", "35px")
++            .custom("min-height", "35px")
++            .custom("padding", "4px 10px")
++            .custom("flex", "1")
++            .onClick {
++                self.confirmStatus(nextStatus)
++            }
++    }
+ 
+     private lazy var fiscalButton = USmallButton(
+         self.$fiscalId.map { $0 == nil ? "Facturar" : "Ver Factura" }
+@@ -409,7 +427,6 @@
+                     }
+ 
+                 self.fiscalButton
+-                self.statusSelect
+             } onClose: {
+                 self.remove()
+             }
+@@ -429,7 +446,7 @@
+                 }
+ 
+                 VGrid(.oneThird) {
+-                    
++
+                     // data grid
+                     VGrid(.full) {
+                         self.operatorBox
+@@ -437,14 +454,26 @@
+                         self.complianceBox
+                     }
+                     .custom("height", "calc(100% - 35px)")
++                    .custom("min-height", "0")
++                    .overflow(.auto)
+ 
+                     // status grid
+                     VGrid(.full) {
+-
++                        self.startTripButton
++                        self.completeTripButton
++                        self.cancelTripButton
+                     }
+                     .height(35.px)
+-
+-                }
++                    .custom("flex", "0 0 35px")
++                    .custom("display", "flex")
++                    .custom("gap", "7px")
++
++                }
++                .custom("display", "flex")
++                .custom("flex-direction", "column")
++                .custom("gap", "0")
++                .custom("min-height", "0")
++                .height(100.percent)
+             }
+         }
+     }
+@@ -461,13 +490,6 @@
+         width(100.percent)
+         height(100.percent)
+ 
+-        FiscalTripFollowupStatus.allCases.forEach { status in
+-            statusSelect.appendChild(
+-                Option(status.description)
+-                    .value(status.rawValue)
+-            )
+-        }
+-
+         $costs.listen {
+             self.renderCosts($0)
+         }
+@@ -476,7 +498,7 @@
+     }
+ 
+     private func renderTrip() {
+-        status = trip.status.rawValue
++        status = trip.status
+         cost = trip.cost
+         balance = trip.balance
+         fiscalId = trip.fiscalId
+@@ -1023,44 +1045,37 @@
+     }
+ 
+ 
+-    private func changeStatus(_ rawValue: String) {
+-        
+-        guard let newStatus = FiscalTripFollowupStatus(rawValue: rawValue) else {
+-            showError(.unexpectedResult, "Estatus de viaje invalido.")
+-            return
+-        }
+-
+-        let currentStatus = trip.status
+-
+-        guard currentStatus != newStatus else {
+-            return
+-        }
+-
+-        loadingView.show()
+-
+-        API.custCommercialTrips.changeTripStatus(
+-            tripId: trip.id,
+-            status: newStatus
+-        ) { resp in
+-            loadingView.hide()
+-
+-            guard let resp else {
+-                self.status = currentStatus.rawValue
+-                showError(.comunicationError, .serverConextionError)
+-                return
+-            }
+-
+-            guard resp.status == .ok else {
+-                self.status = currentStatus.rawValue
+-                showError(.generalError, resp.msg)
+-                return
+-            }
+-
+-            self.trip.status = newStatus
+-            self.status = newStatus.rawValue
+-            self.statusChangedCallback(self.trip.id, newStatus)
+-            showSuccess(.operacionExitosa, "Estatus actualizado")
+-        }
++    private func confirmStatus(_ nextStatus: FiscalTripFollowupStatus) {
++        guard statusConfirmation == nil else { return }
++
++        let view = ConfirmTripStatusUpdate(
++            currentStatus: trip.status,
++            nextStatus: nextStatus,
++            merchandise: trip.merchandise
++        ) { [weak self] newStatus, comment, media in
++            self?.changeStatus(newStatus, comment: comment, media: media)
++        }
++        statusConfirmation = view
++        view.onDidRemoveFromDOM { [weak self] in
++            self?.statusConfirmation = nil
++        }
++        addToDom(view, presentation: .glass)
++    }
++
++    private func changeStatus(
++        _ newStatus: FiscalTripFollowupStatus,
++        comment: String,
++        media: [CustCommercialTripsComponents.ChangeTripStatusMedia]
++    ) {
++        // TODO: Forward trip.id, newStatus, comment and media once
++        // API.custCommercialTrips.changeTripStatus supports the new contract.
++    }
++
++    override func didRemoveFromDOM() {
++        super.didRemoveFromDOM()
++        statusConfirmation?.remove()
++        statusConfirmation = nil
++        $status.removeAllListeners()
+     }
+ 
+     private func viewFiscalDocument(_ id: UUID) {

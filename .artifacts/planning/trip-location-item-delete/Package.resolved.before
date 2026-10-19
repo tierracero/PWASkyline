@@ -1,0 +1,186 @@
+{
+  "originHash" : "26373382560b7ca4fd0d5853793e1e4e574bc915bbae77af9fb527b1e5762405",
+  "pins" : [
+    {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire.git",
+      "state" : {
+        "revision" : "747c8db8d57b68d5e35275f10c92d55f982adbd4",
+        "version" : "4.9.1"
+      }
+    },
+    {
+      "identity" : "codyfire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MihaelIsaev/CodyFire",
+      "state" : {
+        "revision" : "5341de03986741d210bf736ba0498b15a287c522",
+        "version" : "1.15.4"
+      }
+    },
+    {
+      "identity" : "internetxapicore",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:tierracero/InternetXAPICore.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "168935c7b00e795eb5bef9dcc42f2fecade3cc12"
+      }
+    },
+    {
+      "identity" : "javascriptkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftwasm/JavaScriptKit",
+      "state" : {
+        "revision" : "dac9d7b0342c5027fc74c8d2f212f10624123a7b",
+        "version" : "0.17.0"
+      }
+    },
+    {
+      "identity" : "languagepack",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:tierracero/LanguagePack.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "922cf3515261247ba631a12bd1dd02d39dd515e6"
+      }
+    },
+    {
+      "identity" : "mapkitcore",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:tierracero/MapKitCore.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "57943c00dec148ee8262c87a8495a061d6f8592a"
+      }
+    },
+    {
+      "identity" : "powermailcore",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:tierracero/PowerMailCore.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "3aa24095df43bd1acfa66070cbee162a514e8687"
+      }
+    },
+    {
+      "identity" : "siweapicore",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:tierracero/SiweAPICore.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "529cffe46c216d89635e5111807629df373ad8ed"
+      }
+    },
+    {
+      "identity" : "skylinedocumentationcore",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:tierracero/SkylineDocumentationCore.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "d6d99effdcd5915819b868ce6096f99d21e0f48b"
+      }
+    },
+    {
+      "identity" : "starscream",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/daltoniam/Starscream.git",
+      "state" : {
+        "revision" : "a063fda2b8145a231953c20e7a646be254365396",
+        "version" : "3.1.2"
+      }
+    },
+    {
+      "identity" : "swift-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-algorithms",
+      "state" : {
+        "revision" : "87e50f483c54e6efd60e885f7f5aa946cee68023",
+        "version" : "1.2.1"
+      }
+    },
+    {
+      "identity" : "swift-nio-zlib-support",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio-zlib-support.git",
+      "state" : {
+        "revision" : "37760e9a52030bb9011972c5213c3350fa9d41fd",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "swift-numerics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-numerics.git",
+      "state" : {
+        "revision" : "0c0290ff6b24942dadb83a929ffaaa1481df04a2",
+        "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "taecelapicore",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:tierracero/TaecelAPICore.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "09fa4952e24a544c9c0553960b43580a5fa5a61c"
+      }
+    },
+    {
+      "identity" : "tcfiresignal",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:tierracero/TCFireSignal.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "08967c8621117ae18d2298ff46f71cb50942ca90"
+      }
+    },
+    {
+      "identity" : "tcfundamentals",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:tierracero/TCFundamentals.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "48b0bdebb49b40201b50249e08942dfe49874b7d"
+      }
+    },
+    {
+      "identity" : "tcsocialcore",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:tierracero/TCSocialCore.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "b7c0251751b5da55d29095a57861ac79e91c63a3"
+      }
+    },
+    {
+      "identity" : "uikitplus",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MihaelIsaev/UIKitPlus",
+      "state" : {
+        "revision" : "f1d23d0ebdd1a79beffbe154382564a83a985905",
+        "version" : "2.3.0"
+      }
+    },
+    {
+      "identity" : "wawebapicore",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:tierracero/WaWebAPICore.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "4e23d112e9727cd1d86eb2f16745061cfaa7d07f"
+      }
+    },
+    {
+      "identity" : "web",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swifweb/web",
+      "state" : {
+        "revision" : "6159d951fc9411ff6168685ad4a460a3adeca241",
+        "version" : "2.0.0-nightly.11"
+      }
+    }
+  ],
+  "version" : 3
+}

@@ -104,7 +104,9 @@ class OldChargeTrRow: Tr {
                     self.edit(self.viewId)
                 }
             
-        }.width(20.px)
+        }
+        .align(.right)
+        .width(35.px)
         
         Td(self.$cuantString)
             .fontSize(14.px)

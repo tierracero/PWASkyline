@@ -72,6 +72,7 @@ class CartaPorteMerchendise: Div {
                 
                 Div("Destino")
                     .width(25.percent)
+                    .color(.yellowTC)
                     .float(.left)
                 
                 Div().class(.clear)
@@ -109,6 +110,7 @@ class CartaPorteMerchendise: Div {
                 Div("\(self.merchadise.to) \(self.merchadise.toStoreName)")
                     .class(.oneLineText)
                     .width(25.percent)
+                    .color(.yellowTC)
                     .float(.left)
                 
                 Div().class(.clear)
@@ -196,7 +198,6 @@ class CartaPorteMerchendise: Div {
                     Tr {
                         Td {
 
-                            self.attachmentIcons()
 
                             Img()
                                 .src("/skyline/media/cross.png")
@@ -219,54 +220,9 @@ class CartaPorteMerchendise: Div {
             .width(50.px)
             .float(.left)
         }
-        else {
-            Div {
-                Table {
-                    Tr {
-                        Td {
-
-                            self.attachmentIcons()
-
-                        }
-                        .verticalAlign(.middle)
-                        .align(.center)
-                    }
-                }
-                .height(100.percent)
-                .width(100.percent)
-            }
-            .height(85.px)
-            .width(50.px)
-            .float(.left)
-        }
         
         Div().clear(.both).marginBottom(3.px)
         
-    }
-    
-    private func attachmentIcons() -> Div {
-        Div {
-            Img()
-                .src("/skyline/media/icon_clip.png")
-                .class(.iconWhite)
-                .width(24.px)
-                .height(24.px)
-                .attribute("alt", "Adjuntos")
-                .attribute("title", "Adjuntos")
-
-            Img()
-                .src("/skyline/media/mobileCamara.png")
-                .class(.iconWhite)
-                .width(24.px)
-                .height(24.px)
-                .attribute("alt", "Cámara remota")
-                .attribute("title", "Cámara remota")
-        }
-        .custom("display", "flex")
-        .custom("flex-direction", "column")
-        .custom("align-items", "center")
-        .custom("gap", "4px")
-        .marginBottom(4.px)
     }
 
     override func buildUI() {

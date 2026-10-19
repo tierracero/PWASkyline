@@ -1,0 +1,21 @@
+--- Archive.before.md
++++ .agent/TASKS_ARCHIVE.md
+@@ -1,6 +1,18 @@
+ # Tasks Archive
+ 
+ Verified completed tasks live here.
++
++---
++
++## ASSET-SERIAL-SCANNER-001 — Mobile Scanner for Asset Serial Entry
++
++- **Status**: Implemented; focused App compilation passed, browser/mobile behavior unverified
++- **Completed**: 2026-10-09
++- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `WS-001`, `WS-002`, `SEC-001`
++- **Implementation**: Completed CreateAssetItemView.addSeries with Work's mobile scanner request arguments and a per-request correlation UUID. The existing serial icon now requests the scanner; a matching same-session requestMobileScannerComplete event fills the bound serial, trimming outer whitespace without applying folio/URL transformations. Initiation guards, consumed/superseded IDs and removal/session checks prevent duplicate or late results. The WS subscription captures the form weakly and ignores detached views. Manual entry, explicit submission and existing media/warranty flows remain.
++- **Validation evidence**: Frontend parsing and the previously user-approved focused App build passed (`Build of target: 'App' complete! (234.96s)`). Source traces reviewed acknowledgements/errors, empty/manual serials, duplicate requests/events, overlapping forms, superseded scans, completion-before-acknowledgement and removal/session changes. Task-relative source/doc diff, added-line whitespace, status/staging and unchanged dependency-pin checks passed; preexisting user edits are preserved.
++- **Limits**: No test suite, live mobile scanner/notification session, server asset mutation or deployment was executed. Evidence: `.artifacts/planning/asset-serial-mobile-scanner/AUDIT.md` and `EVENT_REVIEW.md`.
++- **Commit**: Not created.
+ 
+ ---
+ 

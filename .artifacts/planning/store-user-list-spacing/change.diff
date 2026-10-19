@@ -1,0 +1,65 @@
+--- a/Sources/App/Snippits/Tools/SystemSettings/Tools+SystemSettings+UserStoreConfiguration/Tools+SystemSettings+UserStoreConfiguration.swift
++++ b/Sources/App/Snippits/Tools/SystemSettings/Tools+SystemSettings+UserStoreConfiguration/Tools+SystemSettings+UserStoreConfiguration.swift
+@@ -340,7 +340,7 @@
+                 
+                 let view = StoreView(store: store)
+                     .hidden(self.$selectedStore.map { $0?.id != id })
+-                    .display(self.$selectedStore.map { ($0?.id != id) ? .none : .block })
++                    .display(self.$selectedStore.map { ($0?.id != id) ? .none : .flex })
+                 
+                 storeContainer.appendChild(view)
+                 
+@@ -394,6 +394,7 @@
+                             
+                             let view = StoreView(store: store)
+                                 .hidden(self.$selectedStore.map{ store.id != self.selectedStore?.id })
++                                .display(self.$selectedStore.map { ($0?.id != store.id) ? .none : .flex })
+                             
+                             self.storeContainer.appendChild(view)
+                             
+@@ -474,6 +475,7 @@
+                     
+                     let view = StoreView(store: store)
+                         .hidden(self.$selectedStore.map{ store.id != self.selectedStore?.id })
++                        .display(self.$selectedStore.map { ($0?.id != store.id) ? .none : .flex })
+                     
+                     self.storeContainer.appendChild(view)
+                     
+--- a/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ b/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -5,7 +5,7 @@
+ ## Verified Facts
+ 
+ - `AssetItemView.dataColumn` edits the existing update contract fields: name, serial, current cost, section and subsection. Other item/custody metadata remains read-only and service-card activation stays separate. `Guardar Cambios` validates exact nonnegative cents and classification IDs, calls `updateAssettem` with the loaded item UUID, accepts a successful nil-note no-op response, and reloads authoritative details/notes by UUID. Current classification scope supplies catalog choices; failed catalog reads preserve existing IDs, and changing section clears its subsection. Mount/session/generation guards and disabled controls protect pending loads/saves. Source-audited; browser/build behavior remains unverified.
+-- Store configuration `StoreView.usersContainers` explicitly uses `flex: 1 1 0`, an initial zero height, `min-height: 0`, and automatic overflow inside the existing bounded flex card. The list grows into the space remaining below its header and above its action, allowing excess user rows to scroll. Loading and user-card interactions remain unchanged; source review only, browser rendering remains unverified.
++- Store configuration binds existing and newly created `StoreView` instances to `display: flex` when selected and `display: none` otherwise, preserving the theme’s bounded flex column so its card grid fills the available workspace height. `StoreView.usersContainers` retains `flex: 1 1 0`, an initial zero height, `min-height: 0`, and automatic overflow; the user list grows between its header and action and excess rows scroll. The supplied recording showed the prior block-display override leaving unused space below the cards. Loading and user-card interactions remain unchanged; source-audited, fixed browser rendering remains unverified.
+ - `CustAssetsAvatarUploader` accepts an optional `[MediaViewer.MediaFile]` image list, initializes the current avatar first, and shows at most four 12px selection dots beneath the preview. Selecting a dot changes the preview without changing the saved avatar; clicking the preview opens the existing MediaViewer at that image with media actions disabled. Asset-item detail supplies its existing photos. Upload results and external avatar changes restore focus to the current avatar. Reapplied on 2026-10-13 after accidental removal; source review only, browser/build behavior remains unverified.
+ - `ManageLocationItem` exposes a bottom-left red crystal Eliminar action for an existing editor ID linked to a saved `.location` source. It uses the linked `locationId`, not the generated editor UUID, with the existing `deleteLocation` confirmation/error flow. The endpoint cancels the saved location without deleting its database record. Only success closes the editor and notifies `CreateTripView` through its existing saved-location list/selection cleanup; pending deletion prevents duplicate calls and saving. The existing `removeLocation` trip-stop operation is not called. Browser/server behavior remains unverified.
+ - `CreateAssetItemView.create()` builds ordered image metadata from the existing upload registry, falling back to remote camera preview references by view ID. This includes uploaded camera files in `CreateAssetItemObject.images` while retaining the previous camera handlers, upload state and submission logic. Live browser/mobile behavior remains unverified.
+--- a/.agent/PROJECT_MEMORY.md
++++ b/.agent/PROJECT_MEMORY.md
+@@ -48,6 +48,6 @@
+ 
+ - 2026-10-13: Restored the asset avatar gallery in the main checkout: avatar-first image initialization, up to four preview-selection dots, and selected-image MediaViewer opening. Existing title/upload layout and MediaViewer implementation were preserved. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`; source audit only, builds/tests were not authorized.
+ 
+-- 2026-10-14: StoreView bounds `usersContainers` with a zero flex basis/height and automatic overflow so additional users can scroll within the existing card. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`. Source review only; no builds/tests or browser execution.
++- 2026-10-14: StoreView bounds `usersContainers` with a zero flex basis/height and automatic overflow. Its parent now uses explicit none/flex display bindings for existing/new stores, allowing the cards and user scroll area to fill the workspace instead of leaving the unused height shown in the supplied recording. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`. Source review and original-recording inspection only; no builds/tests or fixed-browser execution.
+ 
+ - 2026-10-14: Asset-item details now edit the supported name/serial/current-cost/section/subsection fields and save through the existing updateAssettem wrapper, then reload by concrete UUID. Other metadata and service-card activation remain separate. See the UI/API architecture chunks; source audit only, builds/tests/browser execution were not authorized.
+--- a/.agent/TASKS_ARCHIVE.md
++++ b/.agent/TASKS_ARCHIVE.md
+@@ -335,3 +335,14 @@
+ - **Dependency**: Deploy the companion SkylineServer updateAssettem persistence/transaction fix. No shared contract, wrapper or migration changes were needed.
+ - **Verification**: Reviewed request/response and server mappings, scoped catalogs, initialization/change/failure/no-op/removal/session paths, exact-cent parsing and focused diff/status. No build/test/full compile, browser/database execution, staging, commit or deployment.
+ - **Evidence**: `.artifacts/planning/asset-item-editing/plan.md`, `change.diff`, and `audit.md`.
++
++---
++
++## STORE-USERS-SPACE-001 — Fill the store workspace while retaining user scroll
++
++- **Completed**: 2026-10-14.
++- **Status**: Implemented and source-audited; fixed browser/build behavior remains unverified.
++- **Architecture IDs**: `SWWEB-001`, `SWWEB-002`.
++- **Implementation**: Changed the parent selected-store display binding from block to flex and added matching none/flex visibility to both new-store creation paths. The existing bounded card grid can now fill the workspace; usersContainers retains its scroll sizing and user actions/loading are unchanged.
++- **Verification**: Inspected the supplied recording, traced the CSS/inline-display mismatch, reviewed the task-only diff and final status/content preservation. No builds, tests, full compilation, live-browser execution, staging or commit.
++- **Evidence**: `.artifacts/planning/store-user-list-spacing/plan.md`, `change.diff`, and `audit.md`.

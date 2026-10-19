@@ -1,0 +1,11 @@
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ .agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -4,6 +4,8 @@
+ 
+ ## Verified Facts
+ 
++- `TripViewBeta` reserves a 35px status action row below its right-side data grid. Pending trips expose Iniciar Viaje and Cancelar Viaje; in-progress trips expose Completar Viaje and Cancelar Viaje; terminal states expose neither. `ConfirmTripStatusUpdate` gathers the typed transition, a trimmed comment (required for cancellation), and `ChangeTripStatusMedia` grouped by fiscal merchandise item ID. Its source uses the existing unregistered `.asset` image-upload/camera pipeline, correlates each completion to a row/event, keeps the first completed image as avatar, and blocks confirmation until pending uploads/camera requests finish or are cancelled. Removal aborts local uploads and ignores late responses. The beta `changeStatus` method is intentionally inert pending the API wrapper update; confirmation does not change server-owned status or call the status-changed callback. These facts were verified in source; browser/upload behavior remains unverified because the package build is blocked by dependency resolution.
++- `MediaViewer` honors `currentView` with a zero-index fallback, presents clickable `thump_` thumbnails and previous/next navigation for multiple files, and uses the selected file for downloads/rotations/deletion. Direct image source assignment avoids an older image-load callback replacing a newer selection. Each `MediaFile` can supply its own URL base; `allowsMediaActions: false` hides mutation/download actions for staged evidence while existing callers retain the default behavior.
+ - `Sources/App/App.swift` is the `@main` app entry point.
+ - The app registers `./service.js` during launch.
+ - The app uses Swift Web `Routes`, `Page`, lifecycle hooks, `@State`, and style declarations.

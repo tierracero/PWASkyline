@@ -1,0 +1,19 @@
+--- before/ARCHIVE.before.md
++++ .agent/TASKS_ARCHIVE.md
+@@ -1,6 +1,16 @@
+ # Tasks Archive
+ 
+ Verified completed tasks live here.
++
++---
++
++## ASSET-CAMERA-PAYLOAD-001 — Include Camera Photos in Asset Creation
++
++- **Completed**: 2026-10-09
++- **Scope**: `CreateAssetItemView.create()` image payload lookup; `SWWEB-001/003`.
++- **Implementation**: At the user's request, reverted the broader camera changes. The sole source change falls back from the existing upload registry to `imageRefrence` by ordered view ID when building `items[].images`. Existing camera handlers, state, readiness checks, removal behavior and upload logic are retained.
++- **Verification**: Frontend parsing and the previously approved focused App build passed (`Build of target: 'App' complete! (58.02s)`). The diff against the original task snapshot contains only the payload lookup; status/staging and dependency pins are unchanged.
++- **Evidence**: Minimal task-relative diff and validation recorded in `.artifacts/planning/asset-camera-payload/`; no live camera upload, server mutation or commit.
+ 
+ ---
+ 

@@ -1,0 +1,11 @@
+warning: '--skip-update' option is deprecated and will be removed in a future release
+warning: /Users/victorcantu/Library/org.swift.swiftpm/configuration is not accessible or not writable, disabling user-level cache features.
+warning: /Users/victorcantu/Library/org.swift.swiftpm/security is not accessible or not writable, disabling user-level cache features.
+warning: /Users/victorcantu/Library/Caches/org.swift.swiftpm is not accessible or not writable, disabling user-level cache features.
+warning: 'pwaskyline': failed storing manifest for 'pwaskyline' in cache: attempt to write a readonly database
+error: 'tcfundamentals': Couldn’t check out revision ‘97229faa07b1fcb776c623b002a474bd95e906d1’:
+    fatal: unable to read tree (97229faa07b1fcb776c623b002a474bd95e906d1)
+error: 'tcfiresignal': Couldn’t check out revision ‘eabefeb658dfe26409a9c93278bf5c6f80b05e01’:
+    fatal: unable to read tree (eabefeb658dfe26409a9c93278bf5c6f80b05e01)
+[0/1] Planning build
+warning: 'pwaskyline': Invalid Resource 'tutorial': File not found.

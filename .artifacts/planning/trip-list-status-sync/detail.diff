@@ -1,0 +1,10 @@
+--- .artifacts/planning/trip-list-status-sync/TripViewBeta.before.swift	2026-10-09 00:36:04
++++ Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift	2026-10-09 00:36:50
+@@ -1134,6 +1134,7 @@
+ 
+             self?.trip.status = newStatus
+             self?.status = newStatus
++            TripsControlerView.notifyTripStatusChanged(tripId: tripId, status: newStatus)
+             statusChanged(tripId, newStatus)
+             showSuccess(.operacionExitosa, "Estatus actualizado")
+             

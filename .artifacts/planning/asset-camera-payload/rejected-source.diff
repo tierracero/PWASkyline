@@ -1,0 +1,352 @@
+--- before/CreateAssetItemView.before.swift
++++ Sources/App/Snippits/CustAssetsView/CustAssets+CreateAssetItemView.swift
+@@ -95,6 +95,8 @@
+ 
+         private var imageRefrence: [UUID: ImageGeneralView] = [:]
+         private var imageOrder: [UUID] = []
++        private var remoteCameraSessionId: UUID?
++        private var finishedRemoteCameraEvents: Set<UUID> = []
+ 
+         private lazy var mediaFileInput = InputFile()
+             .accept([
+@@ -214,6 +216,7 @@
+                                     .height(28.px)
+                                     .onClick {
+ 
++                                        self.remoteCameraSessionId = custCatchID
+                                         loadingView.show()
+ 
+                                         API.custAPIV1.requestMobileCamara(
+@@ -397,200 +400,74 @@
+                     self.serial = text
+ 
+                 case .requestMobileCamaraComplete:
+-                    
+-                    if let payload = self.ws.requestMobileCamaraComplete($0) {
+-                        
+-                        if let view = self.imageRefrence[payload.eventid] {
+-                            
+-                            view.loadPercent = ""
+-                            
+-                            view.mediaId = payload.id
+-                            
+-                            view.width = payload.width
+-                            
+-                            view.height = payload.height
+-                            
+-                            view.file = payload.file
+-                            
+-                            view.image = payload.avatar
+-                            
+-                            view.loadImage(payload.avatar)
+-                            
+-                            var hasAvatar = false
+-                            
+-                            self.imageRefrence.forEach { _, view in
+-                                if view.isAvatar {
+-                                    hasAvatar = true
+-                                }
+-                            }
+-                            
+-                            if !hasAvatar {
+-                                //view.setAsAvatar(image: payload.avatar)
+-                            }
+-                            
+-                        }
+-                    }
++                    guard let payload = self.ws.requestMobileCamaraComplete($0),
++                          payload.to == .assetItem,
++                          let view = self.remoteCameraImage(for: payload.eventid) else { return }
++
++                    self.finishedRemoteCameraEvents.insert(payload.eventid)
++                    view.isLoaded = true
++                    view.loadPercent = ""
++                    view.mediaId = payload.id
++                    view.width = payload.width
++                    view.height = payload.height
++                    view.file = payload.file
++                    view.image = payload.avatar
++                    view.loadImage(payload.avatar)
+ 
+                 case .requestMobileCamaraFail:
+                     if let payload = self.ws.requestMobileCamaraFail($0) {
+-                        
+-                        if  let view = self.imageRefrence[payload.eventid] {
+-                            self.imageRefrence.removeValue(forKey: view.viewId)
+-                            view.remove()
+-                        }
+-                        
+-                    }
++                        self.removeRemoteCameraImage(for: payload.eventid)
++                    }
++
+                 case .requestMobileCamaraInitiate:
+                     if let payload = self.ws.requestMobileCamaraInitiate($0) {
+-                        
+-
+-                        guard let view = self.imageRefrence[payload.eventid] else {
+-                            
+-                            let view = ImageGeneralView(
+-                                        relation: .assetItem,
+-                                        relationId: nil,
+-                                        type:  .img,
+-                                        mediaId: nil,
+-                                        file: nil,
+-                                        image: nil,
+-                                        descr: "",
+-                                        width: 0,
+-                                        height: 0,
+-                                        selectedAvatar: self.$selectedAvatar,
+-                                        callback: { [weak self] viewId, _, _, originalImage, originalWidth, originalHeight, _ in
+-                                            guard let view = self?.uploadFileControler[viewId] else { return }
+-                                            view.file = originalImage
+-                                            view.width = originalWidth
+-                                            view.height = originalHeight
+-                                        },
+-                                        imAvatar: { [weak self] _, name in
+-                                            self?.selectedAvatar = name
+-                                        },
+-                                        removeMe: { [weak self] viewId in
+-                                            self?.uploadFileControler.removeValue(forKey: viewId)
+-                                            self?.imageOrder.removeAll { $0 == viewId }
+-                                        }
+-                                    )
+-
+-                            self.imageOrder.append(view.viewId)
+-
+-                            self.imageRefrence[payload.eventid] = view
+-
+-                            self.mediaGrid.appendChild(view)
+-
+-                            view.loadPercent = "Iniciando Carga..."
+-
+-                            return
+-                        }
+-
+-                        self.mediaGrid.appendChild(view)
+-                        
+-                        //_ = JSObject.global.scrollToBottom!("pocImageContainer")
+-                        
+-                    }
++                        _ = self.remoteCameraImage(for: payload.eventid)
++                    }
++
+                 case .requestMobileCamaraProgress:
+-                    
+-                    guard let payload = self.ws.requestMobileCamaraProgress($0) else {
+-                        return
+-                    }
+-                    
+-                    guard let view = self.imageRefrence[payload.eventid] else {
+-                        return
+-                    }
+-                    
++                    guard let payload = self.ws.requestMobileCamaraProgress($0),
++                          self.remoteCameraSessionId == custCatchID,
++                          !self.finishedRemoteCameraEvents.contains(payload.eventid),
++                          let view = self.imageRefrence[payload.eventid] else { return }
++
+                     view.loadPercent = "\(payload.percent.toString)%"
+-                    
+ 
+                 case .requestMobileCamaraCancel:
+-
+                     if let payload = self.ws.requestMobileCamaraCancel($0) {
+-                        
+-                        if  let view = self.imageRefrence[payload.eventid] {
+-                            self.imageRefrence.removeValue(forKey: view.viewId)
+-                            view.remove()
+-                        }
+-                        
+-                    }
++                        self.removeRemoteCameraImage(for: payload.eventid)
++                    }
++
+                 case .requestMobileCamaraSelected:
+-
+                     if let payload = self.ws.requestMobileCamaraSelected($0) {
+-
+-                        guard let view = self.imageRefrence[payload.eventid] else {
+-                            
+-                            let view = ImageGeneralView(
+-                                        relation: .assetItem,
+-                                        relationId: nil,
+-                                        type:  .img,
+-                                        mediaId: nil,
+-                                        file: nil,
+-                                        image: nil,
+-                                        descr: "",
+-                                        width: 0,
+-                                        height: 0,
+-                                        selectedAvatar: self.$selectedAvatar,
+-                                        callback: { [weak self] viewId, _, _, originalImage, originalWidth, originalHeight, _ in
+-                                            guard let view = self?.uploadFileControler[viewId] else { return }
+-                                            view.file = originalImage
+-                                            view.width = originalWidth
+-                                            view.height = originalHeight
+-                                        },
+-                                        imAvatar: { [weak self] _, name in
+-                                            self?.selectedAvatar = name
+-                                        },
+-                                        removeMe: { [weak self] viewId in
+-                                            self?.uploadFileControler.removeValue(forKey: viewId)
+-                                            self?.imageOrder.removeAll { $0 == viewId }
+-                                        }
+-                                    )
+-
+-                            self.imageOrder.append(view.viewId)
+-
+-                            self.imageRefrence[payload.eventid] = view
+-
+-                            self.mediaGrid.appendChild(view)
+-
+-                            view.loadPercent = "Iniciando Carga..."
+-
+-                            return
+-                        }
+-                        
+-                        view.loadPercent = "Iniciando Carga..."
++                        _ = self.remoteCameraImage(for: payload.eventid)
+                     }
+ 
+                 case .asyncFileUpload:
+-                    
+-                    if let payload = self.ws.asyncFileUpload($0) {
+-                        
+-                        if let view = self.imageRefrence[payload.eventid] {
+-
+-                            view.isLoaded = true
+-                            
+-                            view.loadPercent = ""
+-                            
+-                            view.mediaId = payload.mediaid
+-                            
+-                            view.width = payload.width
+-                            
+-                            view.height = payload.height
+-                            
+-                            
+-                            view.file = payload.fileName
+-                            
+-                            view.image = payload.fileName
+-                            
+-                            view.loadImage(payload.avatar)
+-                            
+-                            
+-                        }
+-                    }
+-                    
++                    guard let payload = self.ws.asyncFileUpload($0),
++                          payload.to == .assetItem,
++                          self.remoteCameraSessionId == custCatchID,
++                          !self.finishedRemoteCameraEvents.contains(payload.eventid),
++                          let view = self.imageRefrence[payload.eventid] else { return }
++
++                    self.finishedRemoteCameraEvents.insert(payload.eventid)
++                    view.isLoaded = true
++                    view.loadPercent = ""
++                    view.mediaId = payload.mediaid
++                    view.width = payload.width
++                    view.height = payload.height
++                    view.file = payload.fileName
++                    view.image = payload.avatar
++                    view.loadImage(payload.avatar)
++
+                 case .asyncFileUpdate:
+                     
+                     guard let payload = self.ws.asyncFileUpdate($0) else {
+                         return
+                     }
+                     
+-                    guard let view = self.imageRefrence[payload.eventId] else {
++                    guard self.remoteCameraSessionId == custCatchID,
++                          !self.finishedRemoteCameraEvents.contains(payload.eventId),
++                          let view = self.imageRefrence[payload.eventId] else {
+                         return
+                     }
+                     
+@@ -603,7 +480,8 @@
+                     guard let payload = self.ws.asyncCropImage($0) else {
+                         return
+                     }
+-                    guard let view = self.imageRefrence[payload.eventid] else {
++                    guard self.remoteCameraSessionId == custCatchID,
++                          let view = self.imageRefrence[payload.eventid] else {
+                         return
+                     }
+                     
+@@ -681,6 +559,66 @@
+             serialScannerEventId = nil
+             serialScannerSessionId = nil
+             isRequestingSerialScanner = false
++        }
++
++        private func remoteCameraImage(for eventId: UUID) -> ImageGeneralView? {
++            guard isInDOM, remoteCameraSessionId == custCatchID,
++                  !finishedRemoteCameraEvents.contains(eventId) else { return nil }
++
++            if let view = imageRefrence[eventId] {
++                return view
++            }
++
++            let view = ImageGeneralView(
++                relation: .assetItem,
++                relationId: nil,
++                type: .img,
++                mediaId: nil,
++                file: nil,
++                image: nil,
++                descr: "",
++                width: 0,
++                height: 0,
++                selectedAvatar: $selectedAvatar,
++                callback: { [weak self] viewId, _, _, originalImage, originalWidth, originalHeight, _ in
++                    guard let view = self?.uploadFileControler[viewId] else { return }
++                    view.file = originalImage
++                    view.width = originalWidth
++                    view.height = originalHeight
++                },
++                imAvatar: { [weak self] _, name in
++                    self?.selectedAvatar = name
++                },
++                removeMe: { [weak self] _ in
++                    self?.discardRemoteCameraImage(for: eventId)
++                }
++            )
++
++            // Remote events use the capture ID; submission and card callbacks use the view ID.
++            imageRefrence[eventId] = view
++            uploadFileControler[view.viewId] = view
++            imageOrder.append(view.viewId)
++            view.loadPercent = "Iniciando Carga..."
++            mediaGrid.appendChild(view)
++            return view
++        }
++
++        private func discardRemoteCameraImage(for eventId: UUID) {
++            finishedRemoteCameraEvents.insert(eventId)
++            guard let view = imageRefrence.removeValue(forKey: eventId) else { return }
++            uploadFileControler.removeValue(forKey: view.viewId)
++            imageOrder.removeAll { $0 == view.viewId }
++            if view.image == selectedAvatar {
++                selectedAvatar = ""
++            }
++        }
++
++        private func removeRemoteCameraImage(for eventId: UUID) {
++            guard remoteCameraSessionId == custCatchID,
++                  !finishedRemoteCameraEvents.contains(eventId) else { return }
++            let view = imageRefrence[eventId]
++            discardRemoteCameraImage(for: eventId)
++            view?.remove()
+         }
+ 
+         func addwarrantyCard() {
+@@ -1040,6 +978,7 @@
+ 
+         override func didRemoveFromDOM() {
+             resetSerialScanner()
++            remoteCameraSessionId = nil
+             super.didRemoveFromDOM()
+             $name.removeAllListeners()
+             $serial.removeAllListeners()

@@ -2986,7 +2986,15 @@ class StartServiceOrder: Div {
         total = 0
         
         charges.forEach { obj in
-            total += ((obj.price * obj.units) / 100)
+            
+            if obj.billingType == .adjustment {
+                total -= ((obj.price * obj.units) / 100)
+            }
+            else {
+                total += ((obj.price * obj.units) / 100)
+            }
+
+            
         }
         
         payments.forEach { obj in
@@ -3978,6 +3986,7 @@ class StartServiceOrder: Div {
                     price: price,
                     description: "\(poc.brand) \(poc.model) \(poc.name)",
                     type: .product,
+                    billingType: .charge,
                     cost: poc.cost,
                     productionTime: 0,
                     ids: items.map{ $0.id },
@@ -4047,11 +4056,7 @@ class StartServiceOrder: Div {
             
             let id = soc.refid
             
-            var price = soc.price
-            
-            if codeType == .adjustment{
-                price = (price * -1)
-            }
+            let price = soc.billingType.signedAmount(soc.price)
             
             let tr = OldChargeTrRow(
                 preCharge: true,

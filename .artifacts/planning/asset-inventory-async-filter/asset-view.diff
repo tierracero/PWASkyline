@@ -1,0 +1,51 @@
+--- .artifacts/planning/asset-inventory-async-filter/AssetView.before.swift	2026-10-09 01:16:17
++++ Sources/App/Snippits/CustAssetsView/CustAssets+AssetView.swift	2026-10-09 01:17:20
+@@ -96,6 +96,20 @@
+ 
+         @State var items: [CustAssetsComponents.AssetsItemPayload] = []
+ 
++        @State private var inventorySearchTerm = ""
++
++        private lazy var inventorySearchField = UTextField(self.$inventorySearchTerm)
++            .placeholder("Filtrar por folio, serie o nombre")
++            .attribute("aria-label", "Filtrar inventario")
++            .width(260.px)
++            .custom("max-width", "100%")
++            .marginLeft(12.px)
++
++        private lazy var inventoryController = AssetInventoryController(
++            items: self.$items,
++            searchTerm: self.$inventorySearchTerm
++        )
++
+         @State var department: CustAssetDepsQuick? = nil
+         
+         @State var categorie: CustAssetCatsQuick? = nil
+@@ -270,7 +284,8 @@
+                             .color(.white)
+                             .float(.left)
+ 
+-                            /// TODO: add search filter field 
++                            self.inventorySearchField
++                            .float(.left)
+                             
+                             self.addAssetButton
+                             .float(.right)
+@@ -280,7 +295,7 @@
+                         }
+                         .display(.block)
+ 
+-                        AssetInventoryController(items: self.$items)
++                        self.inventoryController
+                         .custom("min-height", "0")
+                         .height(100.percent)
+                         .marginTop(10.px)
+@@ -690,6 +705,8 @@
+ 
+         override func didRemoveFromDOM() {
+             super.didRemoveFromDOM()
++            $items.removeAllListeners()
++            $inventorySearchTerm.removeAllListeners()
+             $title.removeAllListeners()
+             $noteCount.removeAllListeners()
+             $productType.removeAllListeners()

@@ -1,0 +1,144 @@
+--- CustAssets+InitiateAssetItemView.swift.before
++++ Sources/App/Snippits/CustAssetsView/CustAssets+InitiateAssetItemView.swift
+@@ -17,20 +17,37 @@
+         /// store, warehose, account, subAccount
+         let viewType: InitiateAssetItemViewType
+ 
++        private let availableStores: [CustStore]
++
++        @State private var selectedStoreId = ""
++
+         private var callback: (
+             _ folio: String,
+-            _ units: Int
++            _ units: Int,
++            _ registrationType: InitiateAssetItemViewType
+         ) -> Void
+ 
+         init(
+             viewType: InitiateAssetItemViewType,
+             callback: @escaping (
+                 _ folio: String,
+-                _ units: Int
++                _ units: Int,
++                _ registrationType: InitiateAssetItemViewType
+             ) -> Void
+         ) {
+             self.viewType = viewType
+             self.callback = callback
++
++            let baseStore = viewType.registrationStore
++            var choices = Array(stores.values)
++            if !choices.contains(where: { $0.id == baseStore.id }) {
++                choices.append(baseStore)
++            }
++            self.availableStores = choices.sorted {
++                $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
++            }
++            self.selectedStoreId = baseStore.id.uuidString
++            super.init()
+         }
+ 
+         required init() {
+@@ -40,6 +57,10 @@
+         @State var folio: String  = ""
+ 
+         @State var units: String  = ""
++
++        private lazy var storeSelect = USelectField(self.$selectedStoreId)
++            .attribute("aria-label", "Tienda de registro")
++            .width(100.percent)
+ 
+         lazy var folioField = UTextField(self.$folio)
+             .placeholder("Folio de la compra")
+@@ -100,7 +121,9 @@
+ 
+ 
+                     VGrid(.full) {
+-                        // TODO ADD SELECT STORE 
++                        UField("Tienda de registro") {
++                            self.storeSelect
++                        }
+                     }
+ 
+                     VGrid(.full) {
+@@ -130,23 +153,78 @@
+         override func didAddToDOM() {
+             super.didAddToDOM()
+ 
++            storeSelect.innerHTML = ""
++            storeSelect.appendChild(
++                Option("Seleccione tienda").value("").selected(selectedStoreId.isEmpty)
++            )
++            availableStores.forEach { store in
++                storeSelect.appendChild(
++                    Option(store.name)
++                        .value(store.id.uuidString)
++                        .selected(store.id.uuidString == selectedStoreId)
++                )
++            }
++
+             folioField.select()
+ 
+         }
+ 
+         func save() {
++            guard isInDOM else { return }
+ 
+             guard let units = Int(units), units > 0  else {
+                 showError(.generalError, "Ingrese numero de unidades valido")
+                 return
+             }
+ 
+-            callback(folio, units)
++            guard let store = availableStores.first(where: { $0.id.uuidString == selectedStoreId }) else {
++                showError(.requiredField, .requierdValid("Tienda"))
++                return
++            }
++
++            guard let lat = store.lat, let lon = store.lon,
++                  Double(lat) != nil, Double(lon) != nil else {
++                showError(.unexpectedResult, "La tienda \(store.name.capitalized) requiere cargar mapa")
++                return
++            }
++
++            callback(folio, units, viewType.registering(in: store))
+ 
+             self.remove()
+             
+         }
++
++        override func didRemoveFromDOM() {
++            $folio.removeAllListeners()
++            $units.removeAllListeners()
++            $selectedStoreId.removeAllListeners()
++            super.didRemoveFromDOM()
++        }
+     }
+ 
+ }
+ 
++extension CustAssetsComponents.InitiateAssetItemViewType {
++
++    var registrationStore: CustStore {
++        switch self {
++        case .store(let store), .warehose(let store):
++            return store
++        case .account(_, let store), .subAccount(_, let store):
++            return store
++        }
++    }
++
++    func registering(in store: CustStore) -> Self {
++        switch self {
++        case .store:
++            return .store(store)
++        case .warehose:
++            return .warehose(store)
++        case .account(let account, _):
++            return .account(account: account, store: store)
++        case .subAccount(let subAccount, _):
++            return .subAccount(subAccount: subAccount, store: store)
++        }
++    }
++}

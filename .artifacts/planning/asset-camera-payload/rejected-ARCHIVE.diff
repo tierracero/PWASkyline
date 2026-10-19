@@ -1,0 +1,20 @@
+--- before/ARCHIVE.before.md
++++ .agent/TASKS_ARCHIVE.md
+@@ -1,6 +1,17 @@
+ # Tasks Archive
+ 
+ Verified completed tasks live here.
++
++---
++
++## ASSET-CAMERA-PAYLOAD-001 — Include Camera Photos in Asset Creation
++
++- **Status**: Implemented; focused App compilation passed, live browser/mobile uploads unverified
++- **Completed**: 2026-10-09
++- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `WS-001`, `WS-002`, `SEC-001`
++- **Implementation**: Camera previews previously entered event routing and display order but not the upload registry read by create(). One helper now registers each capture in all three collections. Completion records the original file and readiness, and submission waits for pending captures. Removal/failure/cancellation clean the correct event and view keys; terminal IDs suppress duplicate/late capture events. Same-session/mounted-form guards and asset-item completion checks retain the existing nil-event-ID, multiple-take camera request. Local uploads, selected registration store, serial scanner, preview and single/batch request contracts remain intact.
++- **Verification**: Frontend parsing and the previously approved focused App build passed (`Build of target: 'App' complete! (58.09s)`). Reviewed two-photo payload membership, mixed uploads, readiness, cleanup, replay and lifecycle paths, plus the mobile destination and shared file contract. Task-relative diff, added-line whitespace, status/staging and unchanged dependency-pin checks passed. Evidence: `.artifacts/planning/asset-camera-payload/`.
++- **Limits**: No test suite, live camera/browser upload, server asset creation, commit or deployment was performed.
+ 
+ ---
+ 

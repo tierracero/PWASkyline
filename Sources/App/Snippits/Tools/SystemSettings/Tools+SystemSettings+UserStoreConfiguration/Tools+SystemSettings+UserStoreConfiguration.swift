@@ -340,7 +340,7 @@ extension ToolsView.SystemSettings {
                 
                 let view = StoreView(store: store)
                     .hidden(self.$selectedStore.map { $0?.id != id })
-                    .display(self.$selectedStore.map { ($0?.id != id) ? .none : .block })
+                    .display(self.$selectedStore.map { ($0?.id != id) ? .none : .flex })
                 
                 storeContainer.appendChild(view)
                 
@@ -394,6 +394,7 @@ extension ToolsView.SystemSettings {
                             
                             let view = StoreView(store: store)
                                 .hidden(self.$selectedStore.map{ store.id != self.selectedStore?.id })
+                                .display(self.$selectedStore.map { ($0?.id != store.id) ? .none : .flex })
                             
                             self.storeContainer.appendChild(view)
                             
@@ -474,6 +475,7 @@ extension ToolsView.SystemSettings {
                     
                     let view = StoreView(store: store)
                         .hidden(self.$selectedStore.map{ store.id != self.selectedStore?.id })
+                        .display(self.$selectedStore.map { ($0?.id != store.id) ? .none : .flex })
                     
                     self.storeContainer.appendChild(view)
                     

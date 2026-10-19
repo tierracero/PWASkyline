@@ -109,6 +109,7 @@ extension CustAssetsView {
             }
 
             loadingView.show()
+            
             API.custAssetsV1.createAssetLocation(
                 linkType: relationType,
                 linkedTo: relationId,

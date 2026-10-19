@@ -1,0 +1,16 @@
+warning: '--skip-update' option is deprecated and will be removed in a future release
+Fetching git@github.com:tierracero/MapKitCore.git
+Fetching git@github.com:tierracero/PowerMailCore.git from cache
+Fetched git@github.com:tierracero/PowerMailCore.git from cache (0.05s)
+[1/33] Fetching mapkitcore
+Fetched git@github.com:tierracero/MapKitCore.git from cache (1.23s)
+Creating working copy for git@github.com:tierracero/PowerMailCore.git
+Creating working copy for git@github.com:tierracero/MapKitCore.git
+Working copy of git@github.com:tierracero/MapKitCore.git resolved at main (57943c0)
+Working copy of git@github.com:tierracero/PowerMailCore.git resolved at main (3aa2409)
+error: 'tcfiresignal': Couldn’t check out revision ‘b19e06f11391d473a88b028d34db43432d490b36’:
+    fatal: unable to read tree (b19e06f11391d473a88b028d34db43432d490b36)
+error: 'tcfundamentals': Couldn’t check out revision ‘0791bad5ce2c95824be413b4a73313635a2975d8’:
+    fatal: unable to read tree (0791bad5ce2c95824be413b4a73313635a2975d8)
+[0/1] Planning build
+warning: 'pwaskyline': Invalid Resource 'tutorial': File not found.

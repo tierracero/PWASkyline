@@ -1,0 +1,31 @@
+/private/tmp/pwaskyline-trip-status-typecheck/ConfirmTripStatusUpdate.swift:458:29: error: type 'App' has no member 'custCatchChatConnID'
+456 |             API.custAPIV1.requestMobileCamara(
+457 |                 type: .useCamaraForAsset,
+458 |                 connid: App.custCatchChatConnID,
+    |                             `- error: type 'App' has no member 'custCatchChatConnID'
+459 |                 eventid: eventId,
+460 |                 relatedid: nil,
+
+/private/tmp/pwaskyline-trip-status-typecheck/ConfirmTripStatusUpdate.swift:528:39: error: type 'App' has no member 'custCatchChatConnID'
+526 |             data.append("to", destination.rawValue)
+527 |             data.append("fileName", name)
+528 |             data.append("connid", App.custCatchChatConnID)
+    |                                       `- error: type 'App' has no member 'custCatchChatConnID'
+529 |             data.append("remoteCamera", false.description)
+530 |             xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
+
+/private/tmp/pwaskyline-trip-status-typecheck/ConfirmTripStatusUpdate.swift:532:46: error: type 'App' has no member 'custCatchChatConnID'
+530 |             xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
+531 |             xhr.setRequestHeader("Accept", "application/json")
+532 |             xhr.setRequestHeader("WSId", App.custCatchChatConnID)
+    |                                              `- error: type 'App' has no member 'custCatchChatConnID'
+533 |             guard let header = try? JSONEncoder().encode(APIHeader(
+534 |                 AppID: thisAppID, AppToken: thisAppToken, url: custCatchUrl,
+
+/private/tmp/pwaskyline-trip-status-typecheck/ConfirmTripStatusUpdate.swift:579:55: error: type 'MediaDownloadType' has no member 'content'
+577 |             let files = completedFiles
+578 |             guard !files.isEmpty, viewer == nil else { return }
+579 |             let view = MediaViewer(relid: nil, type: .content, url: "", files: files, currentView: 0, allowsMediaActions: false)
+    |                                                       `- error: type 'MediaDownloadType' has no member 'content'
+580 |             viewer = view
+581 |             view.onDidRemoveFromDOM { [weak self] in self?.viewer = nil }

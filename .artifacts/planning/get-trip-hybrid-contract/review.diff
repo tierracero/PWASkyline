@@ -1,0 +1,118 @@
+--- before/.agent/SOURCE_MAP.md
++++ .agent/SOURCE_MAP.md
+@@ -18,6 +18,7 @@
+ | `Sources/App/App.swift` | `@main` Swift Web app lifecycle, service-worker registration, route table, and theme switching. |
+ | `Sources/App/SkylineWeb.swift` | Project version, environment flags, global app/session/cache variables. |
+ | `Sources/App/API/` | Client API wrapper namespaces and endpoint files. |
++| `Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+GetTrip.swift` | Typed trip detail POST wrapper accepting `HybridIdentifier` for UUID or folio lookup and decoding the shared response. |
+ | `Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+ChangeTripStatus.swift` | Typed trip status update POST wrapper accepting status, comment and per-merchandise media. |
+ | `Sources/App/API/CustSubAcctEndpoint/` | Shared subaccount create/load/update POST wrappers and account-scoped GET search exposed as `API.custSubAcctV1`. |
+ | `Sources/App/API/CustOrderEndpoint/CustOrder+RemoveChargeCTAM.swift`, `CustOrder+RemovePaymentCTAM.swift` | Typed order charge/payment deletion approval request wrappers. |
+--- before/.agent/TASKS.md
++++ .agent/TASKS.md
+@@ -4,7 +4,7 @@
+ 
+ ## TRIP-STATUS-EVIDENCE-001 — Trip status asset and evidence validation
+ 
+-- **Status**: Implemented; source audit and focused Swift frontend parsing passed. User-approved `swift build --target App --skip-update` stopped before compilation because the pinned TCFundamentals commit was unavailable. Browser/upload validation remains unrun.
++- **Status**: Implemented; source audit and focused Swift frontend parsing passed. The follow-up GetTrip contract task fetched the fixed pinned revisions and completed a user-approved `swift build --target App --disable-automatic-resolution` successfully. Browser/upload validation remains unrun.
+ - **Chunks/IDs**: `API-001`, `API-002`, `API-003`, `SWWEB-*`.
+ - **Scope**: `ConfirmTripStatusUpdate`, `TripControler+TripViewBeta`, `TripControler+CreateTripView`, `SearchComertialAsset`, the existing ChangeTripStatus wrapper, and affected architecture/source documentation.
+ - **Behavior**: Validate forward-only status transitions, cancellation comments, supported linked asset routes and unique snapshot evidence IDs/image filenames before submission. Refresh status notes after API success. Allow unavailable assets physically held by a subaccount to be picked up on a later trip while requiring active store/warehouse inventory.
+--- before/.agent/TASKS_ARCHIVE.md
++++ .agent/TASKS_ARCHIVE.md
+@@ -1,6 +1,17 @@
+ # Tasks Archive
+ 
+ Verified completed tasks live here.
++
++---
++
++## GET-TRIP-HYBRID-001 — GetTrip UUID/Folio Contract Usage
++
++- **Status**: Completed; focused App compilation passed
++- **Completed**: 2026-10-08
++- **Chunks/IDs**: `API-001`, `API-002`, `API-003`, `SWWEB-001`, `SWWEB-002`, `SWWEB-003`
++- **Implementation**: GetTrip wrapper and beta detail presenter accept shared `HybridIdentifier`. Existing trip-list/followup opens and post-status refreshes use `.id(UUID)`; the presenter also accepts `.folio(String)`. Shared response, transport/error behavior and UUID status callbacks are preserved.
++- **Validation evidence**: All four modified files passed syntax parsing. A limited compile-only check of the exact updated request/wrapper/presenter logic passed for both identifier cases. The user-approved `swift build --disable-sandbox --target App --jobs 4 --disable-automatic-resolution` succeeded after fetching the fixed pinned revisions; only existing warnings remained. Focused diff, whitespace, staging, lockfile and repository status checks passed.
++- **Scope**: No dependency pins, tests, browser/server execution, staging or commits. Evidence: `.artifacts/planning/get-trip-hybrid-contract/AUDIT.md` and `build-pinned.log`.
+ 
+ ---
+ 
+--- before/.agent/architecture/API_AND_BACKEND.md
++++ .agent/architecture/API_AND_BACKEND.md
+@@ -4,7 +4,8 @@
+ 
+ ## Verified Facts
+ 
+-- The trip `changeTripStatus` client wrapper sends the shared `ChangeTripStatusRequest(tripId:status:comment:media:)` to the existing authenticated POST route and decodes `APIResponse`. Media uses the shared `ChangeTripStatusMedia` records with merchandise item IDs and original filenames; no local DTO or backend wire key is introduced. Source and isolated type checks match the current local TCFireSignal contract; cached dependencies and full build resolution remain outdated.
++- The trip `getTrip` client wrapper accepts TCFundamentals `HybridIdentifier` and forwards it as the shared `GetTripRequest.tripId` on the existing authenticated POST route. `.id(UUID)` and `.folio(String)` are supported by the contract; the shared `GetTripItem`/`GetTripResponse` payload and decoding remain unchanged. Existing list/followup opens and post-status refreshes use `.id`.
++- The trip `changeTripStatus` client wrapper sends the shared `ChangeTripStatusRequest(tripId:status:comment:media:)` to the existing authenticated POST route and decodes `APIResponse`. Media uses the shared `ChangeTripStatusMedia` records with merchandise item IDs and original filenames; no local DTO or backend wire key is introduced. Source and isolated type checks match the current local TCFireSignal contract; the fetched pinned contract now matches that source.
+ - Client API wrappers live under `Sources/App/API/**`.
+ - The client `sincCustSettings` wrapper decodes an immutable reference-backed `SincCustSettingsSnapshot` with the same fields/keys/optionality as the shared `CustComponents.SincCustSettingsResponse`. This avoids passing/copying the whole settings aggregate by value through optional response callbacks on WASM; shared package definitions remain the wire-contract authority.
+ - `ManageSubCustomerAccountView` creates with the injected parent's UUID through `API.custSubAcctV1.create`, checking outer/create response statuses and the returned parent ID. Editing validates the source parent, uses `update` with the source UUID/status, then `load(.id)` to return the server's record after verifying its ID and parent. Both paths retain `longitud` and validate returned full address/coordinates when required.
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ .agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -4,7 +4,8 @@
+ 
+ ## Verified Facts
+ 
+-- `TripViewBeta` reserves a 35px status action row below its right-side data grid. Pending trips expose Iniciar Viaje and Cancelar Viaje; in-progress trips expose Completar Viaje and Cancelar Viaje; terminal states expose neither. Start/complete actions use the shared green crystal modifier and cancel uses red, with matching hover/focus accents and a dimmed disabled state. `ConfirmTripStatusUpdate` gathers the typed transition, a trimmed comment (required for cancellation), and `ChangeTripStatusMedia` grouped by fiscal merchandise item ID. Its source uses the existing unregistered `.asset` image-upload/camera pipeline, correlates each completion to a row/event, keeps the first completed image as avatar, and blocks confirmation until pending uploads/camera requests finish or are cancelled. Removal aborts local uploads and ignores late responses. Before presentation/submission, asset merchandise requires unique linked store/warehouse/subaccount origin and destination snapshots; media requires unique trip-merchandise IDs and safe image basenames. The server remains authoritative for actual asset state and tenant records. The beta `changeStatus` method submits the trip ID, requested status, comment and media through the typed wrapper. Status actions are disabled while the request is pending. Only a successful API response changes the local trip/status and calls the parent status callback; a guarded getTrip refresh loads the new status/comment notes, while failed requests retain the prior status. Responses from a changed session are ignored, while successful responses still notify the parent if the detail was closed. These facts were verified in source; browser/upload behavior remains unverified because the package build is blocked by dependency resolution.
++- `TripViewBeta.loadAndPresent` accepts `HybridIdentifier`, forwarding UUID or folio lookups through `getTrip` and constructing the detail from the returned response. Trip-list and followup selections pass `.id(item.id)`; status callbacks continue to use the loaded trip's concrete UUID.
++- `TripViewBeta` reserves a 35px status action row below its right-side data grid. Pending trips expose Iniciar Viaje and Cancelar Viaje; in-progress trips expose Completar Viaje and Cancelar Viaje; terminal states expose neither. Start/complete actions use the shared green crystal modifier and cancel uses red, with matching hover/focus accents and a dimmed disabled state. `ConfirmTripStatusUpdate` gathers the typed transition, a trimmed comment (required for cancellation), and `ChangeTripStatusMedia` grouped by fiscal merchandise item ID. Its source uses the existing unregistered `.asset` image-upload/camera pipeline, correlates each completion to a row/event, keeps the first completed image as avatar, and blocks confirmation until pending uploads/camera requests finish or are cancelled. Removal aborts local uploads and ignores late responses. Before presentation/submission, asset merchandise requires unique linked store/warehouse/subaccount origin and destination snapshots; media requires unique trip-merchandise IDs and safe image basenames. The server remains authoritative for actual asset state and tenant records. The beta `changeStatus` method submits the trip ID, requested status, comment and media through the typed wrapper. Status actions are disabled while the request is pending. Only a successful API response changes the local trip/status and calls the parent status callback; a guarded getTrip refresh loads the new status/comment notes, while failed requests retain the prior status. Responses from a changed session are ignored, while successful responses still notify the parent if the detail was closed. These facts were verified in source; browser/upload behavior remains unverified.
+ - `MediaViewer` honors `currentView` with a zero-index fallback, presents clickable `thump_` thumbnails and previous/next navigation for multiple files, and uses the selected file for downloads/rotations/deletion. Direct image source assignment avoids an older image-load callback replacing a newer selection. Each `MediaFile` can supply its own URL base; `allowsMediaActions: false` hides mutation/download actions for staged evidence while existing callers retain the default behavior.
+ - `Sources/App/App.swift` is the `@main` app entry point.
+ - The app registers `./service.js` during launch.
+--- before/Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+GetTrip.swift
++++ Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+GetTrip.swift
+@@ -6,7 +6,7 @@
+ extension CustCommercialTripsComponents {
+     
+     static func getTrip(
+-        tripId: UUID,
++        tripId: HybridIdentifier,
+         callback: @escaping ((_ resp: APIResponseGeneric<GetTripResponse>?) -> ())
+     ) {
+         sendPost(
+--- before/Sources/App/Snippits/FollowupControler/FollowupControler.swift
++++ Sources/App/Snippits/FollowupControler/FollowupControler.swift
+@@ -392,7 +392,7 @@
+             Div().class(.clear)
+         }
+         .onClick {
+-            TripViewBeta.loadAndPresent(tripId: item.id) { tripId, status in
++            TripViewBeta.loadAndPresent(tripId: .id(item.id)) { tripId, status in
+                 self.updateTripStatus(tripId: tripId, status: status)
+             }
+         }
+--- before/Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift
++++ Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift
+@@ -1127,7 +1127,7 @@
+             self?.status = newStatus
+             statusChanged(tripId, newStatus)
+             showSuccess(.operacionExitosa, "Estatus actualizado")
+-            API.custCommercialTrips.getTrip(tripId: tripId) { [weak self] refreshed in
++            API.custCommercialTrips.getTrip(tripId: .id(tripId)) { [weak self] refreshed in
+                 guard custCatchID == sessionId, let self, self.isInDOM,
+                       self.trip.status == newStatus, let refreshed, refreshed.status == .ok,
+                       let payload = refreshed.data, payload.trip.id == tripId,
+@@ -1701,7 +1701,7 @@
+ extension TripViewBeta {
+ 
+     static func loadAndPresent(
+-        tripId: UUID,
++        tripId: HybridIdentifier,
+         statusChangedCallback: @escaping (UUID, FiscalTripFollowupStatus) -> Void = { _, _ in }
+     ) {
+         loadingView.show()
+--- before/Sources/App/Snippits/TripControler/TripsControlerView.swift
++++ Sources/App/Snippits/TripControler/TripsControlerView.swift
+@@ -570,7 +570,7 @@
+         .custom("gap", "10px")
+         .padding(v: 9.px, h: 10.px)
+         .onClick {
+-            TripViewBeta.loadAndPresent(tripId: item.id) { tripId, status in
++            TripViewBeta.loadAndPresent(tripId: .id(item.id)) { tripId, status in
+                 self.updateTripStatus(tripId: tripId, status: status)
+             }
+         }

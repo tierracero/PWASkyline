@@ -1,0 +1,657 @@
+--- a/Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift
++++ b/Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift
+@@ -100,6 +100,8 @@
+ 
+     @State var destination: CustCommercialTripsComponents.TripLocation? = nil
+ 
++    @State private var additionalDestinations: [CustCommercialTripsComponents.TripLocation] = []
++
+     @State var balance: String = ""
+ 
+     @State var odometerInitial = ""
+@@ -203,10 +205,18 @@
+                 VGrid(.twoThirds) {
+ 
+                     VBox {
+-                        self.componentTitle(
+-                            "Ruta del viaje",
+-                            icons: ["icon_destination.png"]
+-                        )
++                        Div {
++                            self.componentTitle(
++                                "Ruta del viaje",
++                                icons: ["icon_destination.png"]
++                            )
++                            self.addDestinationButton
++                        }
++                        .display(.flex)
++                        .custom("align-items", "center")
++                        .custom("justify-content", "space-between")
++                        .custom("flex-wrap", "wrap")
++                        .custom("gap", "10px")
+ 
+                         self.routeGrid
+                     }
+@@ -325,26 +335,21 @@
+ 
+         }
+ 
+-        $origin.listen { origin in
++        $origin.listen { _ in
+             self.invalidateAssetSelection()
+             self.merchendise.removeAll { $0.merchandiseType == .commercialAsset }
+-            self.renderLocationSlot(
+-                origin,
+-                placementType: .origen,
+-                container: self.originLocationSlot
+-            )
+-        }
+-
+-        $destination.listen { destination in
+-            self.renderLocationSlot(
+-                destination,
+-                placementType: .destino,
+-                container: self.destinationLocationSlot
+-            )
+-        }
+-
+-        renderLocationSlot(origin, placementType: .origen, container: originLocationSlot)
+-        renderLocationSlot(destination, placementType: .destino, container: destinationLocationSlot)
++            self.renderRoute()
++        }
++
++        $destination.listen { _ in
++            self.renderRoute()
++        }
++
++        $additionalDestinations.listen { _ in
++            self.renderRoute()
++        }
++
++        renderRoute()
+ 
+         $merchendise.listen { merchendise in
+             self.mercaciaGrid.innerHTML = ""
+@@ -378,6 +383,7 @@
+         $fiscalProfileListener.removeAllListeners()
+         $origin.removeAllListeners()
+         $destination.removeAllListeners()
++        $additionalDestinations.removeAllListeners()
+         $balance.removeAllListeners()
+         $odometerInitial.removeAllListeners()
+         $odometerFinal.removeAllListeners()
+@@ -453,14 +459,59 @@
+         .display(self.$profiles.map{ ($0.count < 2) ? .none : .block })
+     }
+ 
++    private var selectedDestinations: [CustCommercialTripsComponents.TripLocation] {
++        [destination].compactMap { $0 } + additionalDestinations
++    }
++
+     private var selectedLocations: [CustCommercialTripsComponents.TripLocation] {
+-        [origin, destination].compactMap { $0 }
++        [origin].compactMap { $0 } + selectedDestinations
++    }
++
++    private var assetLocations: [CustCommercialTripsComponents.TripLocation] {
++        selectedLocations.filter { location in
++            guard location.locationId != nil else { return false }
++            switch location.locationType {
++            case .store, .warehouse, .subaccount: return true
++            default: return false
++            }
++        }
++    }
++
++    private var assetDestinations: [CustCommercialTripsComponents.TripLocation] {
++        assetLocations.filter { $0.placementType == .destino }
++    }
++
++    private lazy var addDestinationButton = USmallButton("Agregar Destino")
++        .class(Class(TCCrystalSurfaceClass.goodButton))
++        .custom("margin-left", "auto")
++        .display(.none)
++        .onClick {
++            self.selectLocation(.destino, appendingDestination: true)
++        }
++
++    private func renderRoute() {
++        let canAddDestination = origin != nil && destination != nil
++        addDestinationButton.hidden(!canAddDestination)
++        addDestinationButton.display(canAddDestination ? .inlineFlex : .none)
++        routeGrid.custom(
++            "grid-template-columns",
++            additionalDestinations.isEmpty ? "repeat(2, minmax(0, 1fr))" : "minmax(0, 1fr)"
++        )
++        renderLocationSlot(origin, placementType: .origen, container: originLocationSlot)
++        renderLocationSlot(destination, placementType: .destino, container: destinationLocationSlot)
++        additionalLocationSlots.innerHTML = ""
++        additionalDestinations.forEach { item in
++            let slot = Div().custom("min-width", "0")
++            renderLocationSlot(item, placementType: .destino, container: slot, isAdditional: true)
++            additionalLocationSlots.appendChild(slot)
++        }
+     }
+ 
+     private func renderLocationSlot(
+         _ item: CustCommercialTripsComponents.TripLocation?,
+         placementType: TipoUbicacion,
+-        container: Div
++        container: Div,
++        isAdditional: Bool = false
+     ) {
+         container.innerHTML = ""
+ 
+@@ -472,12 +523,16 @@
+         container.appendChild(
+             CartaPorteUbicacion(
+                 placement: fiscalLocationItem(from: item),
+-                canRemove: true,
++                canRemove: isAdditional || additionalDestinations.isEmpty,
+                 edit: { _ in
+                     self.manageLocationItem(item, isEditing: true)
+                 }
+             ) { _ in
+-                self.clearLocation(placementType, matching: item)
++                if isAdditional {
++                    self.removeAdditionalDestination(matching: item)
++                } else {
++                    self.clearLocation(placementType, matching: item)
++                }
+             }
+         )
+     }
+@@ -528,9 +583,13 @@
+     lazy var destinationLocationSlot = Div()
+         .custom("min-width", "0")
+ 
++    private lazy var additionalLocationSlots = Div()
++        .custom("display", "contents")
++
+     lazy var routeGrid = Div {
+         self.originLocationSlot
+         self.destinationLocationSlot
++        self.additionalLocationSlots
+     }
+         .custom("grid-template-columns", "repeat(2, minmax(0, 1fr))")
+         .custom("background", "var(--tc-beta-surface-deep)")
+@@ -1257,11 +1316,12 @@
+     }
+ 
+     /// origen, destino
+-    func manageDestination(_ placementType: TipoUbicacion) {
+-        let currentPlacementCount = placementType == .origen ? 0 : 1
+-
+-        addToDom(ManageLocationBase(currentPlacementCount: currentPlacementCount) { result in
+-            self.handleDestination(result)
++    func manageDestination(_ placementType: TipoUbicacion, appendingDestination: Bool = false) {
++        let currentPlacementCount = appendingDestination ? selectedLocations.count : (placementType == .origen ? 0 : 1)
++
++        addToDom(ManageLocationBase(currentPlacementCount: currentPlacementCount) { [weak self] result in
++            guard let self, self.isInDOM else { return }
++            self.handleDestination(result, appendingDestination: appendingDestination)
+         })
+     }
+ 
+@@ -1293,6 +1353,7 @@
+             } else {
+                 self.merchendise.append(result)
+             }
++            self.synchronizeMerchandiseRoute()
+         })
+     }
+ 
+@@ -1317,41 +1378,82 @@
+         }
+     }
+ 
+-    func addLocation(_ item: FiscalLocationBase) {
+-        setLocation(tripLocation(from: item))
+-    }
+-
+-    private func setLocation(_ item: CustCommercialTripsComponents.TripLocation) {
+-        switch item.placementType {
+-        case .origen:
+-            if isSameLocation(destination, as: item) {
+-                destination = nil
+-            }
+-            origin = item
+-
+-        case .destino:
+-            if isSameLocation(origin, as: item) {
+-                origin = nil
+-            }
+-            destination = item
+-        }
+-
+-        synchronizeMerchandiseRoute()
++    func addLocation(_ item: FiscalLocationBase, appendingDestination: Bool = false) {
++        setLocation(tripLocation(from: item), appendingDestination: appendingDestination)
++    }
++
++    private func setLocation(
++        _ item: CustCommercialTripsComponents.TripLocation,
++        appendingDestination: Bool = false,
++        replacing previous: CustCommercialTripsComponents.TripLocation? = nil
++    ) {
++        if let previous, !selectedLocations.contains(where: { isSameLocation($0, as: previous) }) {
++            return
++        }
++        if let previous, previous.placementType != item.placementType {
++            showError(.invalidField, "No se puede cambiar el tipo de una ubicación seleccionada.")
++            return
++        }
++
++        let additionalIndex = previous.flatMap { previous in
++            additionalDestinations.firstIndex { isSameLocation($0, as: previous) }
++        }
++        if appendingDestination || additionalIndex != nil || !additionalDestinations.isEmpty {
++            guard origin != nil, destination != nil else { return }
++            if appendingDestination || additionalIndex != nil {
++                guard item.placementType == .destino else { return }
++            }
++            let others = selectedLocations.filter { selected in
++                if let previous { return !isSameLocation(selected, as: previous) }
++                return true
++            }
++            guard !item.placementId.purgeSpaces.isEmpty,
++                  !others.contains(where: {
++                      isSameLocation($0, as: item) || $0.placementId.purgeSpaces == item.placementId.purgeSpaces
++                  }) else {
++                showError(.invalidField, "La ubicación ya está en la ruta o su referencia está duplicada.")
++                return
++            }
++        }
++
++        if let additionalIndex {
++            additionalDestinations[additionalIndex] = item
++        } else if appendingDestination {
++            additionalDestinations.append(item)
++        } else {
++            switch item.placementType {
++            case .origen:
++                if isSameLocation(destination, as: item) { destination = nil }
++                origin = item
++            case .destino:
++                if isSameLocation(origin, as: item) { origin = nil }
++                destination = item
++            }
++        }
++
++        synchronizeMerchandiseRoute(replacing: previous, with: item)
+     }
+ 
+     private func clearLocation(
+         _ placementType: TipoUbicacion,
+         matching item: CustCommercialTripsComponents.TripLocation
+     ) {
++        guard additionalDestinations.isEmpty else { return }
+         switch placementType {
+         case .origen:
+             guard isSameLocation(origin, as: item) else { return }
+             origin = nil
+-
+         case .destino:
+             guard isSameLocation(destination, as: item) else { return }
+             destination = nil
+         }
++    }
++
++    private func removeAdditionalDestination(matching item: CustCommercialTripsComponents.TripLocation) {
++        guard additionalDestinations.contains(where: { isSameLocation($0, as: item) }) else { return }
++        invalidateAssetSelection()
++        additionalDestinations.removeAll { isSameLocation($0, as: item) }
++        synchronizeMerchandiseRoute()
+     }
+ 
+     private func isSameLocation(
+@@ -1369,38 +1471,58 @@
+         return selected.placementId == item.placementId
+     }
+ 
+-    private func synchronizeMerchandiseRoute() {
++    private func synchronizeMerchandiseRoute(
++        replacing previous: CustCommercialTripsComponents.TripLocation? = nil,
++        with replacement: CustCommercialTripsComponents.TripLocation? = nil
++    ) {
+         guard let origin, let destination, !merchendise.isEmpty else { return }
+ 
+         var updatedMerchandise = merchendise
+-
+         for index in updatedMerchandise.indices {
++            let destinations = updatedMerchandise[index].merchandiseType == .commercialAsset
++                ? assetDestinations : selectedDestinations
++            let oldReference = updatedMerchandise[index].to
++            let reference = previous?.placementType == .destino && oldReference == previous?.placementId
++                ? replacement?.placementId ?? oldReference : oldReference
++            let selectedDestination = destinations.first { $0.placementId == reference }
++                ?? destinations.first ?? destination
+             updatedMerchandise[index].from = origin.placementId
+             updatedMerchandise[index].fromStoreName = origin.storeName
+-            updatedMerchandise[index].to = destination.placementId
+-            updatedMerchandise[index].toStoreName = destination.storeName
+-        }
+-
++            updatedMerchandise[index].to = selectedDestination.placementId
++            updatedMerchandise[index].toStoreName = selectedDestination.storeName
++        }
+         merchendise = updatedMerchandise
+     }
+ 
+     func manageLocationItem(
+         _ item: CustCommercialTripsComponents.TripLocation,
+-        isEditing: Bool = false
++        isEditing: Bool = false,
++        appendingDestination: Bool = false
+     ) {
+         addToDom(ManageLocationItem(
+             item: fiscalLocationItem(from: item),
+             isEditing: isEditing,
++            allowsDeletion: { [weak self] in
++                guard let self, self.isInDOM else { return false }
++                return self.additionalDestinations.isEmpty ||
++                    (!self.isSameLocation(self.origin, as: item) && !self.isSameLocation(self.destination, as: item))
++            },
+             onDelete: { [weak self] id in
+-                self?.handleDestination(.delete(id))
+-            }
+-        ) { updatedItem in
+-            self.setLocation(self.tripLocation(from: updatedItem))
++                guard let self, self.isInDOM else { return }
++                self.handleDestination(.delete(id))
++            }
++        ) { [weak self] updatedItem in
++            guard let self, self.isInDOM else { return }
++            self.setLocation(
++                self.tripLocation(from: updatedItem),
++                appendingDestination: appendingDestination,
++                replacing: isEditing ? item : nil
++            )
+         })
+     }
+ 
+-    func configureLocation(_ item: CustCommercialTripsComponents.TripLocation) {
+-        manageLocationItem(item)
++    func configureLocation(_ item: CustCommercialTripsComponents.TripLocation, appendingDestination: Bool = false) {
++        manageLocationItem(item, appendingDestination: appendingDestination)
+     }
+ 
+     private func tripLocation(
+@@ -1471,7 +1593,8 @@
+             state: item.state,
+             country: item.country,
+             zipCode: item.zipCode,
+-            position: item.placementType == .origen ? 0 : 1,
++            position: selectedLocations.firstIndex(where: { isSameLocation($0, as: item) })
++                ?? (item.placementType == .origen ? 0 : 1),
+             comertialTripControlId: nil,
+             distance: item.distance,
+             latitude: item.latitude,
+@@ -1525,19 +1648,22 @@
+         }
+     }
+ 
+-    func handleDestination(_ result: ManageLocationBase.CallbackType) {
++    func handleDestination(_ result: ManageLocationBase.CallbackType, appendingDestination: Bool = false) {
+         switch result {
+         case .create(let item):
+             upsertBaseLocation(item)
+-            addLocation(item)
++            addLocation(item, appendingDestination: appendingDestination)
+         case .update(let item):
+             upsertBaseLocation(item)
+ 
+             if let origin, origin.locationType == .location, origin.locationId == item.id {
+-                setLocation(tripLocation(from: item, existing: origin))
++                setLocation(tripLocation(from: item, existing: origin), replacing: origin)
+             }
+             else if let destination, destination.locationType == .location, destination.locationId == item.id {
+-                setLocation(tripLocation(from: item, existing: destination))
++                setLocation(tripLocation(from: item, existing: destination), replacing: destination)
++            }
++            else if let additional = additionalDestinations.first(where: { $0.locationType == .location && $0.locationId == item.id }) {
++                setLocation(tripLocation(from: item, existing: additional), replacing: additional)
+             }
+         case .delete(let id):
+             baseLocationsOrigin.removeAll { $0.id == id }
+@@ -1547,6 +1673,9 @@
+             }
+             if let destination, destination.locationType == .location, destination.locationId == id {
+                 clearLocation(.destino, matching: destination)
++            }
++            if let additional = additionalDestinations.first(where: { $0.locationType == .location && $0.locationId == id }) {
++                removeAdditionalDestination(matching: additional)
+             }
+         }
+     }
+@@ -1841,7 +1970,8 @@
+         ))
+     }
+ 
+-    func selectLocation(_ placementType: TipoUbicacion) {
++    func selectLocation(_ placementType: TipoUbicacion, appendingDestination: Bool = false) {
++        guard !appendingDestination || (origin != nil && destination != nil) else { return }
+ 
+         let isOrigin = placementType == .origen
+ 
+@@ -1851,11 +1981,13 @@
+             items: isOrigin ? baseLocationsOrigin : baseLocationsDestination,
+             titleForItem: { "\($0.placementId) \($0.storeName)" },
+             subtitleForItem: { "\($0.colonie) \($0.state)" },
+-            callback: { item in
+-                self.configureLocation(item)
++            callback: { [weak self] item in
++                guard let self, self.isInDOM else { return }
++                self.configureLocation(item, appendingDestination: appendingDestination)
+             },
+-            create: {
+-                self.manageDestination(placementType)
++            create: { [weak self] in
++                guard let self, self.isInDOM else { return }
++                self.manageDestination(placementType, appendingDestination: appendingDestination)
+             }
+         ))
+     }
+@@ -1956,7 +2088,7 @@
+             return
+         }
+ 
+-        guard let origin, let destination else {
++        guard origin != nil, destination != nil else {
+             showError(.requiredField, "Agregue Origen y Destino")
+             return
+         }
+@@ -1977,7 +2109,20 @@
+ 
+         let trailerIds = [trailerOne?.id, trailerTwo?.id].compactMap { $0 }
+ 
+-        let tripLocations = [origin, destination].compactMap { $0 }
++        let tripLocations = selectedLocations
++        let placementIds = tripLocations.map { $0.placementId.purgeSpaces }
++        guard placementIds.allSatisfy({ !$0.isEmpty }), Set(placementIds).count == placementIds.count else {
++            showError(.invalidField, "Cada ubicación de la ruta debe tener una referencia única.")
++            return
++        }
++        synchronizeMerchandiseRoute()
++        if let error = ConfirmTripStatusUpdate.assetRouteError(
++            merchandise: merchendise,
++            locations: tripLocations.map { fiscalLocationItem(from: $0) }
++        ) {
++            showError(.invalidField, error)
++            return
++        }
+ 
+         let tripMerchandise = merchendise.map {
+             CustCommercialTripsComponents.TripMerchandise(
+@@ -2069,7 +2214,7 @@
+     func searchAsset() {
+         
+         guard account.isConcessionaire, !isLoadingAssets else { return }
+-        guard let origin, let destination else {
++        guard let origin, destination != nil else {
+             showError(.requiredField, "Agregue Origen y Destino antes de buscar activos.")
+             return
+         }
+@@ -2077,14 +2222,8 @@
+             showError(.requiredField, "El origen debe estar vinculado a una tienda, bodega o subcuenta.")
+             return
+         }
+-        guard destination.locationId != nil else {
+-            showError(.requiredField, "El destino del activo debe estar vinculado a una tienda, bodega o subcuenta.")
+-            return
+-        }
+-        switch destination.locationType {
+-        case .store, .warehouse, .subaccount: break
+-        default:
+-            showError(.invalidField, "Los activos solo pueden viajar entre tiendas, bodegas y subcuentas.")
++        guard !assetDestinations.isEmpty else {
++            showError(.requiredField, "Agregue un destino del activo vinculado a una tienda, bodega o subcuenta.")
+             return
+         }
+ 
+@@ -2173,7 +2312,7 @@
+                 return
+             }
+             guard let asset = response.data?.item, asset.id == item.commercialAssetId,
+-                  let origin = self.origin, let destination = self.destination else {
++                  let origin = self.origin, let destination = self.assetDestinations.first else {
+                 showError(.unexpectedResult, .unexpenctedMissingPayload)
+                 return
+             }
+@@ -2207,7 +2346,7 @@
+                 toStoreName: destination.storeName
+             )
+             let editor = AddCartaPorteMerchendise(
+-                locations: self.selectedLocations.map { self.fiscalLocationItem(from: $0) },
++                locations: self.assetLocations.map { self.fiscalLocationItem(from: $0) },
+                 merchandise: merchandise,
+                 dismissAfterSave: true
+             ) { [weak self] result in
+--- a/Sources/App/Snippits/TripControler/TripControler+ManageLocationItem.swift
++++ b/Sources/App/Snippits/TripControler/TripControler+ManageLocationItem.swift
+@@ -70,6 +70,7 @@
+     
+     private let isEditing: Bool
+     private let onDelete: (UUID) -> Void
++    private let allowsDeletion: () -> Bool
+ 
+     private var callback: ((
+         _ placement: FiscalLocationItem
+@@ -78,12 +79,14 @@
+     init(
+         item: FiscalLocationItem,
+         isEditing: Bool = false,
++        allowsDeletion: @escaping () -> Bool = { true },
+         onDelete: @escaping (UUID) -> Void = { _ in },
+         callback: @escaping ((
+             _ placement: FiscalLocationItem
+         ) -> ())
+     ) {
+         self.isEditing = isEditing
++        self.allowsDeletion = allowsDeletion
+         self.onDelete = onDelete
+         self.callback = callback
+ 
+@@ -533,9 +536,9 @@
+                         Class(TCCrystalSurfaceClass.goodButton),
+                         Class(TCCrystalSurfaceClass.goodButtonRed)
+                     )
+-                    .hidden(self.$id.map { $0 == nil || self.locationType != .location || self.locationId == nil })
++                    .hidden(self.$id.map { $0 == nil || self.locationType != .location || self.locationId == nil || !self.allowsDeletion() })
+                     .display(self.$id.map {
+-                        $0 != nil && self.locationType == .location && self.locationId != nil ? .inlineFlex : .none
++                        $0 != nil && self.locationType == .location && self.locationId != nil && self.allowsDeletion() ? .inlineFlex : .none
+                     })
+                     .custom("margin-right", "auto")
+                     .disabled(self.$isDeleting)
+@@ -627,14 +630,14 @@
+     }
+     
+     func deleteItem() {
+-        guard id != nil, locationType == .location, let locationId, !isDeleting else { return }
++        guard allowsDeletion(), id != nil, locationType == .location, let locationId, !isDeleting else { return }
+ 
+         addToDom(ConfirmationView(
+             type: .yesNo,
+             title: "Eliminar Ubicacion",
+             message: "Confirme que desea eliminar esta ubicacion."
+         ) { [weak self] isConfirmed, _ in
+-            guard let self, self.isInDOM, isConfirmed, !self.isDeleting else { return }
++            guard let self, self.isInDOM, isConfirmed, !self.isDeleting, self.allowsDeletion() else { return }
+             let sessionId = custCatchID
+             self.isDeleting = true
+             loadingView.show()
+--- a/Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift
++++ b/Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift
+@@ -607,6 +607,11 @@
+         let orderedLocations = locations.sorted { lhs, rhs in
+             lhs.position < rhs.position
+         }
++
++        routeStopsView.custom(
++            "grid-template-columns",
++            orderedLocations.count > 2 ? "minmax(0, 1fr)" : "repeat(auto-fit, minmax(260px, 1fr))"
++        )
+ 
+         guard !orderedLocations.isEmpty else {
+             routeStopsView.appendChild(
+--- a/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ b/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -9,7 +9,7 @@
+ - `AssetItemView.dataColumn` edits the existing update contract fields: name, serial, current cost, section and subsection. Other item/custody metadata remains read-only and service-card activation stays separate. `Guardar Cambios` validates exact nonnegative cents and classification IDs, calls `updateAssettem` with the loaded item UUID, accepts a successful nil-note no-op response, and reloads authoritative details/notes by UUID. Current classification scope supplies catalog choices; failed catalog reads preserve existing IDs, and changing section clears its subsection. Mount/session/generation guards and disabled controls protect pending loads/saves. Source-audited; browser/build behavior remains unverified.
+ - Store configuration binds existing and newly created `StoreView` instances to `display: flex` when selected and `display: none` otherwise, preserving the theme’s bounded flex column so its card grid fills the available workspace height. `StoreView.usersContainers` retains `flex: 1 1 0`, an initial zero height, `min-height: 0`, and automatic overflow; the user list grows between its header and action and excess rows scroll. The supplied recording showed the prior block-display override leaving unused space below the cards. Loading and user-card interactions remain unchanged; source-audited, fixed browser rendering remains unverified.
+ - `CustAssetsAvatarUploader` accepts an optional `[MediaViewer.MediaFile]` image list, initializes the current avatar first, and shows at most five 12px selection dots beneath the preview. Selecting a dot changes the preview without changing the saved avatar; clicking the preview opens the existing MediaViewer with the full photo list at that image and media actions disabled. Asset-item detail supplies its existing photos and displays only the uploader preview, with no separate thumbnail grid below it. Its marked `isAvatar` photo uses the saved item avatar as its preview reference while retaining the original file/ID. Avatar matching and upload reconciliation compare image identities with recognized thump_/og_/wap_ prefixes and query/fragment suffixes removed, preserving host/directory identity and all render URLs; a matching photo is reused instead of adding a duplicate standalone avatar. Upload results and external avatar changes restore focus to the current avatar. Updated on 2026-10-14; source review only, browser/build behavior remains unverified.
+-- `ManageLocationItem` exposes a bottom-left red crystal Eliminar action for an existing editor ID linked to a saved `.location` source. It uses the linked `locationId`, not the generated editor UUID, with the existing `deleteLocation` confirmation/error flow. The endpoint cancels the saved location without deleting its database record. Only success closes the editor and notifies `CreateTripView` through its existing saved-location list/selection cleanup; pending deletion prevents duplicate calls and saving. The existing `removeLocation` trip-stop operation is not called. Browser/server behavior remains unverified.
++- `ManageLocationItem` exposes a bottom-left red crystal Eliminar action for an existing editor ID linked to a saved `.location` source. It uses the linked `locationId`, not the generated editor UUID, with the existing `deleteLocation` confirmation/error flow. The endpoint cancels the saved location without deleting its database record. Only success closes the editor and notifies `CreateTripView` through its existing saved-location list/selection cleanup; pending deletion prevents duplicate calls and saving. An optional live deletion-policy closure defaults to allowing deletion; trip creation denies deletion of its primary stops while additional destinations exist and rechecks before confirmation submission. The existing `removeLocation` trip-stop operation is not called. Browser/server behavior remains unverified.
+ - `CreateAssetItemView.create()` builds ordered image metadata from the existing upload registry, falling back to remote camera preview references by view ID. This includes uploaded camera files in `CreateAssetItemObject.images` while retaining the previous camera handlers, upload state and submission logic. Live browser/mobile behavior remains unverified.
+ - `InitiateAssetItemView` offers a required registration-store selector, defaulting to the embedded store and listing the existing cached stores. It validates the chosen store's existing numeric map prerequisite and returns a registration context that retains the original store/warehouse mode or customer/subcustomer ownership while replacing the physical store snapshot. `AssetView` forwards this context to single or batch creation; batch children retain it for every staged item. Both forms show the selected registration-store name, and existing create requests receive that same context. Browser/server behavior remains unverified.
+ - `AssetItemView` consumes TCFireSignal `CustCommercialAssetsItemKardexObject` entries from the existing typed Kardex wrapper. Event cards show resolved location type/name, actor username, note text, status, coordinates and evidence count. Evidence records open the existing `MediaViewer` in read-only mode using the permanent tenant `fileNet` URL from `ImagePickerTo.order`, matching shared trip/Kardex evidence storage even when a pinned asset-item helper still selects the CDN; stored image order and selected index are retained. Server display placeholders cover absent actors/notes under the current required-field contract. Source review is complete; browser behavior remains unverified.
+@@ -38,9 +38,9 @@
+ - `WorkViewControler` uses a controller-owned generation token for delayed formatted-code searches. Enter/NumpadEnter and ignored event keys do not schedule automatic searches; `searchFolio` entry and DOM removal invalidate earlier timers. Only the latest unchanged input may automatically submit, using its normalized code and clearing the field immediately. Empty submissions return before minimizing account views, and fallback results retain the submitted query instead of reading the later live field. The event paths were reviewed in source; browser/hardware-scanner behavior remains unverified.
+ - `CreateTripView.selectLocation` uses the dedicated `TripControlerAddLocation` picker with mutable `[FiscalLocationBase]` items and fiscal-base formatting callbacks. Selection returns a complete `CustCommercialTripsComponents.TripLocation` snapshot with `.location` source type and the base's linked ID. Its own `ViewType` supplies the origin/destination icon and title; merchandise uses its own picker, and the remaining Trip selections continue using `TripControlerAddElement<Item>`.
+ - `CreateTripView.addMerchendise` uses `TripControlerAddMerchandise` with the current `CustAcctSearch` account, a required `origin: CustCommercialTripsComponents.TripLocation` snapshot, and mutable `merchendises: [FiscalMercanciaBase]`. The picker owns merchandise formatting and preserves the base-selection and creation callbacks. `CreateTripView` owns the concessionaire-only Buscar Activo button, visible for store/warehouse/subaccount origins, and loads available inventory before presenting `SearchComertialAsset`.
+-- `SearchComertialAsset` accepts a parent `CustAcctSearch`, a supported `ListAssetItemsType`, and preloaded asset items. Inventory search remains local; its subaccount + Activo action loads account-scoped store architecture before opening `CustAssetsQuickDepartmentView`. That creation context projects matching account-search fields into `CustAcct`, uses empty/nil values or constructor defaults for unavailable fields, and passes the current physical store separately without updating the account. Store/warehouse items must match current location type/ID and owning account (including nil for unowned inventory); subaccount items must match `owningSubAccount`, even when current custody differs. It filters folio/name/serial locally and returns one concrete item. `CreateTripView` excludes already selected IDs, loads the parent asset's fiscal/weight metadata before opening the existing merchandise editor, and stores the result with `.commercialAsset` and the concrete item ID. Origin assignments remove all commercial-asset merchandise, close asset picker/editor views, and invalidate pending loads/results; ordinary merchandise remains. Destination changes synchronize the saved route. Removal also invalidates and cleans up the child flow.
++- `SearchComertialAsset` accepts a parent `CustAcctSearch`, a supported `ListAssetItemsType`, and preloaded asset items. Inventory search remains local; its subaccount + Activo action loads account-scoped store architecture before opening `CustAssetsQuickDepartmentView`. That creation context projects matching account-search fields into `CustAcct`, uses empty/nil values or constructor defaults for unavailable fields, and passes the current physical store separately without updating the account. Store/warehouse items must match current location type/ID and owning account (including nil for unowned inventory); subaccount items must match `owningSubAccount`, even when current custody differs. It filters folio/name/serial locally and returns one concrete item. `CreateTripView` excludes already selected IDs, loads the parent asset's fiscal/weight metadata before opening the existing merchandise editor, and stores the result with `.commercialAsset` and the concrete item ID. Origin assignments remove all commercial-asset merchandise, close asset picker/editor views, and invalidate pending loads/results; ordinary merchandise remains. Destination changes synchronize the saved route while preserving each still-valid item destination. Removing an extra stop invalidates pending asset selection/editor work and reconciles references. Removal also invalidates and cleans up the child flow.
+ - `SearchComertialAsset` fills its `SuperView` host with an absolute root at top/left zero and 100% width/height. This provides full-overlay bounds for its fixed `VPopUp` under the host's translated entrance animation; the existing fit-content panel and scrollable body keep the dialog viewport-bounded.
+-- `CreateTripView` stores origin/destination as `CustCommercialTripsComponents.TripLocation`. Local adapters preserve snapshot fields, source type, and optional source ID for the unchanged `CartaPorteUbicacion`, `ManageLocationItem`, and `AddCartaPorteMerchendise` consumers. Stop matching uses source type and linked ID, or placement ID for unlinked stops; saved-base updates/deletes affect only `.location` sources.
++- `CreateTripView` stores the origin, first destination and ordered additional destinations as shared `TripLocation` snapshots. After both primary stops exist, a right-aligned crystal Agregar Destino action reuses Seleccionar Destino and propagates append intent through saved locations, stores/subaccounts and base creation. Two stops retain the current grid; extra destinations switch it to a scrollable single-column list, and removing the last extra restores the grid. Primary stops cannot be removed while extras exist; card callbacks and a live `ManageLocationItem` deletion policy enforce the lock. Extra edits/removals and saved-base updates/deletions preserve ordering. Adapters retain snapshot fields/source IDs and derive positions from selected order; duplicate sources/references are rejected for additions. Submission sends all stops once in origin/first/extra order with unique nonempty references. Per-item destination choices survive route synchronization; edited references are remapped and removed choices fall back to an eligible remaining destination. Asset editors receive all selected linked store/warehouse/subaccount destinations, and creation reuses the existing linked-asset route validation. `TripViewBeta` recalculates its existing grid for up to two stops or a single column for more, using persisted position order. Source-audited; build/browser verification remains unrun.
+ - `TripControlerAddLocation` has a header split button: the main Agregar action and menu Agregar ubicación share the existing creation callback; the arrow reveals Seleccionar tienda and Buscar cliente alongside it. Menu options have decorative cyan outline SVG icons for location creation, store selection, and customer search. Store selection opens `SelectStore` and renders a `.store` trip snapshot; customer search opens `SearchSubCustomerView` with `requierFullAddress: true` and renders the selected/created/updated subaccount as a `.subaccount` snapshot. Menu visibility is local presentation state, with Escape and outside-click dismissal and scoped crystal styling.
+ - The picker's `renderLocation` overloads preserve store/subaccount address and coordinates. Store placement IDs use `storePrefix` plus the final UUID segment; subaccounts use `sa` plus the final UUID segment and fiscal identity from the injected parent account. Subaccounts must belong to that account. Successful rendering returns the snapshot and dismisses the picker; unrecognized subaccount address states report an error.
+ - Store selection checks nonempty street/colony/city/state/country/zip, a recognized state, and finite latitude/longitude within their geographic ranges before rendering. Incomplete stores open the prefilled `ConfirmAdddressLocationView` crystal modal. It reuses `ManualAddressSearch` and an independently owned map preview, validates all required fields, loads current store metadata/configuration before `saveStore`, reloads the saved record, refreshes store caches, and recalls `renderLocation` with that record. Confirmation/lookup cancellation leaves the picker available; picker removal dismisses confirmation and ignores late selection/profile results. The subaccount state's existing error path remains unchanged.
+--- a/.agent/architecture/API_AND_BACKEND.md
++++ b/.agent/architecture/API_AND_BACKEND.md
+@@ -3,6 +3,8 @@
+ Authoritative rules: `API-*`.
+ 
+ ## Verified Facts
++
++- Trip creation forwards all selected route stops through the existing shared `CreateTripRequest.locations: [TripLocation]`, ordered origin, first destination, then additional destinations. The existing server `makeLocationItems` enumerates request order into persisted snapshot positions. Each merchandise request retains its chosen destination reference; the client checks unique nonempty stop references and reuses linked-asset route validation before submission. No endpoint, wrapper, wire-key, shared-model or server change was needed. Source-audited; build/browser/server execution remains unverified.
+ 
+ - `deliverAssetItem` uses the authenticated trip POST route and shared TCFireSignal `DeliverAssetItemRequest`/`DeliverAssetItemResponse`. The request takes the concrete linked asset item UUID (`FiscalMercanciaItem.merchandiseId`), optional comment, original staged image filenames and optional destination section/subsection IDs (nil defaults). The response identifies the trip, linked asset and merchandise snapshot separately and supplies `deliverd`, trip status, remaining counters and auto-completion. The UI updates from a successful matching response then reloads authoritative trip/notes; no local DTO or wire-key correction replaces the shared spelling. This flow requires TCFireSignal with the delivery contract and TCFundamentals with backward-compatible `deliverd` decoding. Shared packages remain the sole payload/model authority.
+ - Asset-item editing reuses the existing authenticated `updateAssettem` POST wrapper and TCFireSignal `UpdateAssettemRequest` without contract changes. The client explicitly forwards section/subsection IDs (including intentional nils), current cost in exact Int64 cents, optional serial and name. It refreshes through `getAssetItem(.id)` after success. Existing `listStoreArchitecture` customer reads and `loadStore`/`getAssetsSection` store/warehouse reads supply owner-filtered classification choices. The companion SkylineServer fix now executes the item update and audit note inside one transaction; that backend change must be deployed for persistence.
+--- a/.agent/PROJECT_MEMORY.md
++++ b/.agent/PROJECT_MEMORY.md
+@@ -61,3 +61,5 @@
+ - 2026-10-14: Fixed duplicate asset avatar gallery insertion by reconciling original/thumbnail/render-variant identities, ignoring cache query/fragment suffixes while retaining host/directory. AssetItemView also associates its isAvatar record with the saved avatar preview, preserving the original media file/ID. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`; source audit only, no builds/tests or browser execution.
+ 
+ - 2026-10-15: Multi-item TripViewBeta adds per-asset Entregar actions and persisted deliverd markers. Delivery reuses the status popup evidence/comment flow and calls the new shared deliverAssetItem contract, applies confirmed item/status/auto-completion, notifies the dashboard and refreshes trip/notes with session/generation guards. See UI/API architecture and `.artifacts/planning/trip-item-delivery/`. The implementation requires dependency revisions containing the supplied delivery contracts; package pins were not changed in this task.
++
++- 2026-10-15: Trip creation supports ordered extra destinations through the existing destination picker. Route cards switch from two columns to one list after a third stop, returning to the grid when extras are removed. Origin/first destination removal is locked while extras remain, including editor deletion. Each asset/merchandise retains its valid chosen destination, all stops are submitted together, and TripViewBeta adapts by stop count. See the UI/API architecture chunks. Source audit only; builds/tests were not authorized and fixed browser rendering remains unverified.
+--- a/.agent/TASKS_ARCHIVE.md
++++ b/.agent/TASKS_ARCHIVE.md
+@@ -392,3 +392,15 @@
+ - **Verification**: Shared local request/response and mutable snapshot contracts reviewed, task-relative diff and whitespace checked, protected-file hashes and git status reviewed. Build permission was requested separately because AGENTS.md requires explicit confirmation; no build/test/browser delivery ran without approval. Repository package pins remain unchanged; cached contracts at implementation time do not include this new API/model field.
+ - **Evidence**: `.artifacts/planning/trip-item-delivery/plan.md`, `changes.diff`, `flow-review.md` and `audit.md`.
+ - **Commit**: Not created.
++
++---
++
++## TRIP-EXTRA-DESTINATIONS-001 — Ordered destinations and adaptive route layout
++
++- **Completed**: 2026-10-15.
++- **Status**: Implemented and source-audited; build/browser behavior remains unverified.
++- **Architecture IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `API-001`, `API-002`, `API-003`.
++- **Implementation**: Agregar Destino appears after origin/first destination selection and reuses Seleccionar Destino with explicit append intent, including saved-location/store/subaccount/base-creation paths. Extra stops switch the route to an ordered single-column scrollable list. Primary removal remains locked until extras are removed, including the location editor's guarded deletion. Additional edits/removals and saved-base updates/deletions are handled; selection adapters derive ordered positions. Per-item destination choices are preserved or reconciled to remaining eligible destinations; asset editors offer linked eligible stops. The unchanged createTrip request sends every stop once and applies unique-reference/linked-asset route checks. TripViewBeta uses grid/list presentation based on stop count on each render.
++- **Clarification**: The user explained destinations are individual choices when selecting asset items; all route stops belong to one trip and each item retains its own destination.
++- **Verification**: Reviewed the shared request and server snapshot-order mapping, complete baseline-relative patch, route mutation/visibility/removal/assignment/submission/refresh paths, whitespace and final tracked-file/status preservation. No builds, tests, compiler parsing, browser/server execution, staging, commit or deployment.
++- **Evidence**: `.artifacts/planning/trip-additional-destinations/plan.md`, `change.diff`, and `audit.md`.

@@ -1,0 +1,25 @@
+warning: '--skip-update' option is deprecated and will be removed in a future release
+warning: /Users/victorcantu/Library/org.swift.swiftpm/configuration is not accessible or not writable, disabling user-level cache features.
+warning: /Users/victorcantu/Library/org.swift.swiftpm/security is not accessible or not writable, disabling user-level cache features.
+warning: /Users/victorcantu/Library/Caches/org.swift.swiftpm is not accessible or not writable, disabling user-level cache features.
+warning: 'pwaskyline': failed storing manifest for 'pwaskyline' in cache: attempt to write a readonly database
+warning: 'languagepack': failed storing manifest for 'languagepack' in cache: attempt to write a readonly database
+warning: 'taecelapicore': failed storing manifest for 'taecelapicore' in cache: attempt to write a readonly database
+warning: 'tcfundamentals': failed storing manifest for 'tcfundamentals' in cache: attempt to write a readonly database
+warning: 'skylinedocumentationcore': failed storing manifest for 'skylinedocumentationcore' in cache: attempt to write a readonly database
+warning: 'tcsocialcore': failed storing manifest for 'tcsocialcore' in cache: attempt to write a readonly database
+warning: 'wawebapicore': failed storing manifest for 'wawebapicore' in cache: attempt to write a readonly database
+warning: 'tcfiresignal': failed storing manifest for 'tcfiresignal' in cache: attempt to write a readonly database
+warning: 'web': failed storing manifest for 'web' in cache: attempt to write a readonly database
+warning: 'siweapicore': failed storing manifest for 'siweapicore' in cache: attempt to write a readonly database
+warning: 'uikitplus': failed storing manifest for 'uikitplus' in cache: attempt to write a readonly database
+warning: 'swift-algorithms': failed storing manifest for 'swift-algorithms' in cache: attempt to write a readonly database
+warning: 'internetxapicore': failed storing manifest for 'internetxapicore' in cache: attempt to write a readonly database
+warning: 'javascriptkit': failed storing manifest for 'javascriptkit' in cache: attempt to write a readonly database
+warning: 'codyfire': failed storing manifest for 'codyfire' in cache: attempt to write a readonly database
+warning: 'starscream': failed storing manifest for 'starscream' in cache: attempt to write a readonly database
+warning: 'alamofire': failed storing manifest for 'alamofire' in cache: attempt to write a readonly database
+warning: 'swift-numerics': failed storing manifest for 'swift-numerics' in cache: attempt to write a readonly database
+warning: 'web': failed storing manifest for 'web' in cache: attempt to write a readonly database
+error: could not find the commit 25fd6294b7ccbca6a5542769e9dadbb709121988 in git@github.com:tierracero/TCFundamentals.git
+warning: 'pwaskyline': Invalid Resource 'tutorial': File not found.

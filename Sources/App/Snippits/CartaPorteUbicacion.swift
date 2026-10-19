@@ -63,11 +63,11 @@ class CartaPorteUbicacion: Div {
     lazy var bodyDiv = Div{
         
         Div{
-            Span("Tipo de ubicación")
+            Span("Tipo")
                 .marginRight(7.px)
                 .color(.gray)
             
-            Span("\(self.placement.placementType.description) / \(self.placement.locationType.description)")
+            Span("\(self.placement.placementType.description) / \(self.placement.locationType.description) \(self.placement.storeName)")
                 .color(.darkOrange)
 
             Span(self.placement.placementId)

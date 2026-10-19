@@ -15,6 +15,8 @@ extension CustAssetsView {
 
         var item: CustAssetsComponents.AssetsItemPayload
 
+        @State var serial: String
+
         @State var name: String
 
         /// Primary image for this concrete commercial asset item.
@@ -40,6 +42,7 @@ extension CustAssetsView {
             item: CustAssetsComponents.AssetsItemPayload
         ) {
             self.item = item
+            self.serial = item.serial ?? ""
             self.name = item.name
             self.avatar = item.avatar
             self.location = item.location
@@ -65,6 +68,10 @@ extension CustAssetsView {
                             Span(self.item.folio)
                             .marginRight(7.px)
                             
+                            Span(self.$serial)
+                            .marginRight(7.px)
+                            .hidden(self.$serial.map{ $0.isEmpty })
+
                             Span(self.$name)
                         }
                         .class(.oneLineText)
@@ -160,9 +167,11 @@ extension CustAssetsView {
         }
 
         private func load() {
-            let view = AssetItemView(assetItemId: item.id) { _ in
+            
+            let view = AssetItemView(itemId: .id(item.id)) { _ in
 
             }
+            
             addToDom(view)
         }
 

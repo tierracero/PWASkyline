@@ -1,0 +1,21 @@
+--- .artifacts/planning/trip-summary-status/archive.before.md	2026-10-09 00:30:06
++++ .agent/TASKS_ARCHIVE.md	2026-10-09 00:32:19
+@@ -4,6 +4,18 @@
+ 
+ ---
+ 
++## TRIP-SUMMARY-STATUS-001 — Current Trip Status in Beta Summary
++
++- **Status**: Implemented; focused App compilation passed, browser rendering unverified
++- **Completed**: 2026-10-09
++- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`
++- **Implementation**: Added Estatus immediately before Creado in the top trip summary, using the existing metric styling and shared Spanish status descriptions. A persistent value Div binds to the existing status state, reflecting successful API changes immediately and following server refreshes. Six explicit columns accommodate the account and five summary metrics.
++- **Validation evidence**: Swift frontend parsing and the previously user-approved focused App build passed (`Build of target: 'App' complete! (64.61s)`). Source review covered all four descriptions, initial state, API success/error, server refresh and removal cleanup. Baseline-relative diff/whitespace and repository status/staging checks passed; API, themes, dependencies and unrelated user edits are preserved.
++- **Limits**: No test suite or browser/server session was run. Evidence: `.artifacts/planning/trip-summary-status/AUDIT.md`.
++- **Commit**: Not created.
++
++---
++
+ ## WORK-FOLIO-SINGLE-001 — Prevent Duplicate Work Code Loads
+ 
+ - **Status**: Implemented; focused App compilation passed, browser/scanner behavior unverified

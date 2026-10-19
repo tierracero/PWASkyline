@@ -27,6 +27,8 @@ extension BudgetView {
         
         ///service, product, manual, rental
         var type: ChargeType
+
+        let billingType: BillingType
         
         /// Avanatr Image
         var avatar: String
@@ -94,6 +96,7 @@ extension BudgetView {
             model: String,
             name: String,
             storagePlace: String,
+            billingType: BillingType = .charge,
             callback: @escaping ((
               _ id: UUID
             ) -> ()),
@@ -105,12 +108,13 @@ extension BudgetView {
             self.budgetid = budgetid
             self.objectid = objectid
             self.type = type
+            self.billingType = billingType
             self.avatar = avatar
             self.uuids = uuids
             self.price = price
             self.units = units
             self.unitCost = unitCost
-            self.subTotal = (units / 100) * price
+            self.subTotal = billingType.signedAmount((units * price) / 100)
             self.costType = costType
             self.brand = brand
             self.model = model
@@ -148,7 +152,7 @@ extension BudgetView {
                             updateItem: { updatesUnits, updatedPrice in
                                 self.units = updatesUnits
                                 self.price = updatedPrice
-                                self.subTotal = (updatesUnits / 100) * updatedPrice
+                                self.subTotal = self.billingType.signedAmount((updatesUnits * updatedPrice) / 100)
                                 self.updateUnits()
                             },
                             deleteItem: {

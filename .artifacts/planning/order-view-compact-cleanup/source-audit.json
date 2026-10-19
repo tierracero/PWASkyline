@@ -1,0 +1,11 @@
+{
+  "status_selector_body_unchanged": true,
+  "duplicate_folio_removed": true,
+  "native_inspection_bindings": 10,
+  "rental_toggles_before": 2,
+  "rental_toggles_after": 2,
+  "diagnosis_action_classes": 2,
+  "unrelated_source_changes": [
+    "Sources/App/Snippits/StartServiceOrder.swift"
+  ]
+}

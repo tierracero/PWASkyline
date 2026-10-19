@@ -1127,7 +1127,7 @@ extension SalePointView {
                     
                     storeCostTotal += charge.cost
                     
-                    storePriceTotal += charge.price
+                    storePriceTotal += charge.billingType.signedAmount((charge.price * charge.cuant) / 100)
                     
                     productionTimeTotal += charge.productionTime
                     
@@ -1135,10 +1135,10 @@ extension SalePointView {
                         Tr{
                             Td(getDate(charge.createdAt).formatedLong)
                             Td(charge.name)
-                            Td("Cargo")
+                            Td(charge.billingType.description)
                             Td(charge.productionTime.toString)
                             Td(charge.cost.formatMoney)
-                            Td(charge.price.formatMoney)
+                            Td(charge.billingType.signedAmount((charge.price * charge.cuant) / 100).formatMoney)
                         }
                     )
                     
@@ -1742,17 +1742,17 @@ extension SalePointView {
                 
                 storeCostTotal += charge.cost
                 
-                storePriceTotal += charge.price
+                storePriceTotal += charge.billingType.signedAmount((charge.price * charge.cuant) / 100)
                 
                 productionTimeTotal += charge.productionTime
                 
                 tbody.appendChild(Tr{
                     Td(getDate(charge.createdAt).formatedLong)
                     Td(charge.name)
-                    Td("Cargo")
+                    Td(charge.billingType.description)
                     Td(charge.productionTime.toString)
                     Td(charge.cost.formatMoney)
-                    Td(charge.price.formatMoney)
+                    Td(charge.billingType.signedAmount((charge.price * charge.cuant) / 100).formatMoney)
                 })
                 
             }

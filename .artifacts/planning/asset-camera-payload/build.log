@@ -1,0 +1,1303 @@
+warning: '--skip-update' option is deprecated and will be removed in a future release
+warning: /Users/victorcantu/Library/org.swift.swiftpm/configuration is not accessible or not writable, disabling user-level cache features.
+warning: /Users/victorcantu/Library/org.swift.swiftpm/security is not accessible or not writable, disabling user-level cache features.
+warning: /Users/victorcantu/Library/Caches/org.swift.swiftpm is not accessible or not writable, disabling user-level cache features.
+warning: 'pwaskyline': failed storing manifest for 'pwaskyline' in cache: attempt to write a readonly database
+Building for debugging...
+warning: 'tcsocialcore': failed storing manifest for 'tcsocialcore' in cache: attempt to write a readonly database
+warning: 'skylinedocumentationcore': failed storing manifest for 'skylinedocumentationcore' in cache: attempt to write a readonly database
+warning: 'taecelapicore': failed storing manifest for 'taecelapicore' in cache: attempt to write a readonly database
+warning: 'powermailcore': failed storing manifest for 'powermailcore' in cache: attempt to write a readonly database
+warning: 'mapkitcore': failed storing manifest for 'mapkitcore' in cache: attempt to write a readonly database
+warning: 'languagepack': failed storing manifest for 'languagepack' in cache: attempt to write a readonly database
+warning: 'wawebapicore': failed storing manifest for 'wawebapicore' in cache: attempt to write a readonly database
+warning: 'tcfundamentals': failed storing manifest for 'tcfundamentals' in cache: attempt to write a readonly database
+warning: 'tcfiresignal': failed storing manifest for 'tcfiresignal' in cache: attempt to write a readonly database
+warning: 'web': failed storing manifest for 'web' in cache: attempt to write a readonly database
+warning: 'codyfire': failed storing manifest for 'codyfire' in cache: attempt to write a readonly database
+warning: 'starscream': failed storing manifest for 'starscream' in cache: attempt to write a readonly database
+warning: 'alamofire': failed storing manifest for 'alamofire' in cache: attempt to write a readonly database
+warning: 'uikitplus': failed storing manifest for 'uikitplus' in cache: attempt to write a readonly database
+warning: 'swift-algorithms': failed storing manifest for 'swift-algorithms' in cache: attempt to write a readonly database
+warning: 'swift-numerics': failed storing manifest for 'swift-numerics' in cache: attempt to write a readonly database
+warning: 'internetxapicore': failed storing manifest for 'internetxapicore' in cache: attempt to write a readonly database
+warning: 'siweapicore': failed storing manifest for 'siweapicore' in cache: attempt to write a readonly database
+warning: 'javascriptkit': failed storing manifest for 'javascriptkit' in cache: attempt to write a readonly database
+warning: 'pwaskyline': Invalid Resource 'tutorial': File not found.
+[0/2] Write sources
+[1/2] Write swift-version--58304C5D6DBC2206.txt
+[3/4] Compiling App CustAssets+CreateAssetItemView.swift
+[4/6] Compiling App CustAssets+CreateAssetMultipleItemView.swift
+[5/6] Compiling App CustAssets+AssetView.swift
+[6/6] Emitting module App
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/API/CustEndpoint/Customer+ClosePdvKartSaleAPI.swift:24:22: warning: 'SaleObjectItem' is deprecated: Use SoldObject instead [#DeprecatedDeclaration]
+22 |         comment: String,
+23 |         store: UUID,
+24 |         saleObject: [SaleObjectItem],
+   |                      `- warning: 'SaleObjectItem' is deprecated: Use SoldObject instead [#DeprecatedDeclaration]
+25 |         saleObjectService: [SaleObjectItem],
+26 |         saleObjectManual: [SaleObjectItem],
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/API/CustEndpoint/Customer+ClosePdvKartSaleAPI.swift:25:29: warning: 'SaleObjectItem' is deprecated: Use SoldObject instead [#DeprecatedDeclaration]
+23 |         store: UUID,
+24 |         saleObject: [SaleObjectItem],
+25 |         saleObjectService: [SaleObjectItem],
+   |                             `- warning: 'SaleObjectItem' is deprecated: Use SoldObject instead [#DeprecatedDeclaration]
+26 |         saleObjectManual: [SaleObjectItem],
+27 |         /// pdv, order, eSale, default
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/API/CustEndpoint/Customer+ClosePdvKartSaleAPI.swift:26:28: warning: 'SaleObjectItem' is deprecated: Use SoldObject instead [#DeprecatedDeclaration]
+24 |         saleObject: [SaleObjectItem],
+25 |         saleObjectService: [SaleObjectItem],
+26 |         saleObjectManual: [SaleObjectItem],
+   |                            `- warning: 'SaleObjectItem' is deprecated: Use SoldObject instead [#DeprecatedDeclaration]
+27 |         /// pdv, order, eSale, default
+28 |         saleType: CustPOCInventorySoldType,
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/API/CustEndpoint/Customer+ClosePdvKartSaleAPI.swift:37:59: warning: 'ClosePDVKartSaleResponse' is deprecated: DELETE methe replace with custPDV.closeSale [#DeprecatedDeclaration]
+35 |         lastFour: String,
+36 |         auth: String,
+37 |         callback: @escaping ( (_ resp: APIResponseGeneric<ClosePDVKartSaleResponse>?) -> () )
+   |                                                           `- warning: 'ClosePDVKartSaleResponse' is deprecated: DELETE methe replace with custPDV.closeSale [#DeprecatedDeclaration]
+38 |     ) {
+39 |         
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/API/CustOrderEndpoint/CustOrder+LoadFolio.swift:15:53: warning: 'LoadFolioResponse' is deprecated: DELETE, replace with loadOrder [#DeprecatedDeclaration]
+13 | 	static func loadFolio (
+14 | 		identifier: HybridIdentifier,
+15 | 		callback: @escaping ( (_ resp: APIResponseGeneric<LoadFolioResponse>?) -> () )
+   |                                                     `- warning: 'LoadFolioResponse' is deprecated: DELETE, replace with loadOrder [#DeprecatedDeclaration]
+16 | 	) {
+17 | 		
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/API/CustPDVEndpoint/CustPDV+CloseSale.swift:25:22: warning: 'SaleObjectItem' is deprecated: Use SoldObject instead [#DeprecatedDeclaration]
+23 |         comment: String,
+24 |         store: UUID,
+25 |         saleObject: [SaleObjectItem],
+   |                      `- warning: 'SaleObjectItem' is deprecated: Use SoldObject instead [#DeprecatedDeclaration]
+26 |         saleObjectService: [SaleObjectItem],
+27 |         saleObjectManual: [SaleObjectItem],
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/API/CustPDVEndpoint/CustPDV+CloseSale.swift:26:29: warning: 'SaleObjectItem' is deprecated: Use SoldObject instead [#DeprecatedDeclaration]
+24 |         store: UUID,
+25 |         saleObject: [SaleObjectItem],
+26 |         saleObjectService: [SaleObjectItem],
+   |                             `- warning: 'SaleObjectItem' is deprecated: Use SoldObject instead [#DeprecatedDeclaration]
+27 |         saleObjectManual: [SaleObjectItem],
+28 |         /// pdv, order, eSale, default
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/API/CustPDVEndpoint/CustPDV+CloseSale.swift:27:28: warning: 'SaleObjectItem' is deprecated: Use SoldObject instead [#DeprecatedDeclaration]
+25 |         saleObject: [SaleObjectItem],
+26 |         saleObjectService: [SaleObjectItem],
+27 |         saleObjectManual: [SaleObjectItem],
+   |                            `- warning: 'SaleObjectItem' is deprecated: Use SoldObject instead [#DeprecatedDeclaration]
+28 |         /// pdv, order, eSale, default
+29 |         saleType: CustPOCInventorySoldType,
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/API/CustPDVEndpoint/CustPDV+SendToConcession.swift:18:17: warning: 'SaleObjectItem' is deprecated: Use SoldObject instead [#DeprecatedDeclaration]
+16 |         storeId: UUID,
+17 |         accountId: UUID,
+18 |         items: [SaleObjectItem],
+   |                 `- warning: 'SaleObjectItem' is deprecated: Use SoldObject instead [#DeprecatedDeclaration]
+19 |         callback: @escaping ((
+20 |             _ resp: APIResponseGeneric<SendToConcessionResponse>?) -> ()
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Extentions/CustStore.swift:4:1: warning: extension declares a conformance of imported type 'CustStoreRef' to imported protocol 'ConvertibleToJSValue'; this will not behave correctly if the owners of 'TCFundamentals' introduce this conformance in the future
+ 2 | import Web
+ 3 | 
+ 4 | extension CustStoreRef: ConvertibleToJSValue {
+   | |- warning: extension declares a conformance of imported type 'CustStoreRef' to imported protocol 'ConvertibleToJSValue'; this will not behave correctly if the owners of 'TCFundamentals' introduce this conformance in the future
+   | `- note: add '@retroactive' to silence this warning
+ 5 |     
+ 6 |     public var jsValue: JavaScriptKit.JSValue {
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Extentions/GeoLocation.swift:28:1: warning: extension declares a conformance of imported type 'GeoLocation' to imported protocol 'ConvertibleToJSValue'; this will not behave correctly if the owners of 'TCFundamentals' introduce this conformance in the future
+26 | }
+27 | */
+28 | extension GeoLocation: ConvertibleToJSValue {
+   | |- warning: extension declares a conformance of imported type 'GeoLocation' to imported protocol 'ConvertibleToJSValue'; this will not behave correctly if the owners of 'TCFundamentals' introduce this conformance in the future
+   | `- note: add '@retroactive' to silence this warning
+29 |     
+30 |     public var jsValue: JavaScriptKit.JSValue {
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/AccountCreditActivationView.swift:1107:35: warning: value 'creditId' was defined but never used; consider replacing with boolean test [#no-usage]
+1105 |                     .float(.right)
+1106 |                     .onClick {
+1107 |                         guard let creditId = self.creditId else {
+     |                                   `- warning: value 'creditId' was defined but never used; consider replacing with boolean test [#no-usage]
+1108 |                             return
+1109 |                         }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/AddCartaPorte/AddCartaPorteUbicacion.swift:199:38: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+197 |                         }
+198 |                         else{
+199 |                             addToDom(ConfirmView(type: .yesNo, title: "Configuracion sin terminar", message: "No se ha ingresado salida y destino de viaje\n¿Desea salir?", callback: { isConfirmed, comment in
+    |                                      `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+200 |                                 if isConfirmed {
+201 |                                     self.remove()
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/BudgetManualChargeView.swift:187:33: warning: variable '_tax' was never mutated; consider changing to 'let' constant
+185 |                             }
+186 |                             
+187 |                             var _tax = Double(taxCalculator(
+    |                                 `- warning: variable '_tax' was never mutated; consider changing to 'let' constant
+188 |                                 trasladados: 160,
+189 |                                 cents: _price.toCents
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/BudgetView/Budget+HistoricItemPreView.swift:114:41: warning: 'sneekPeekLimit' is deprecated: This must be replace with poccess configurable option. [#DeprecatedDeclaration]
+112 |                         .float(.right)
+113 |                     
+114 |                     if custCatchHerk >= sneekPeekLimit {
+    |                                         `- warning: 'sneekPeekLimit' is deprecated: This must be replace with poccess configurable option. [#DeprecatedDeclaration]
+115 |                         Div{
+116 |                             H2(self.$budgetCost.map{ "\($0.formatMoney) CI" })
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/BudgetView/Budget+HistoricItemsView.swift:115:79: warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+113 |                             Div(item.manager?.folio ?? "N/A")
+114 |                                 .float(.left)
+115 |                             Div(getDate(item.manager?.createdAt).formatedLong ?? "N/A")
+    |                                                                               `- warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+116 |                                 .float(.right)
+117 |                             
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/BudgetView/BudgetView.swift:353:37: warning: 'sneekPeekLimit' is deprecated: This must be replace with poccess configurable option. [#DeprecatedDeclaration]
+ 351 |                     .float(.right)
+ 352 |                 
+ 353 |                 if custCatchHerk >= sneekPeekLimit {
+     |                                     `- warning: 'sneekPeekLimit' is deprecated: This must be replace with poccess configurable option. [#DeprecatedDeclaration]
+ 354 |                     Div{
+ 355 |                         H2(self.$budgetCost.map{ "\($0.formatMoney) CI" })
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/BudgetView/BudgetView.swift:550:38: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 548 |                         .onClick { _ in
+ 549 |                             
+ 550 |                             addToDom(ConfirmView(
+     |                                      `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 551 |                                 type: .yesNo,
+ 552 |                                 title: "Remover Presupuesto",
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/BudgetView/BudgetView.swift:746:34: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 744 |                     .float(.left)
+ 745 |                     .onClick { _ in
+ 746 |                         addToDom(ConfirmView(
+     |                                  `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 747 |                             type: .yesNo,
+ 748 |                             title: "Requerir Presupueto",
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/BudgetView/BudgetView.swift:755:45: warning: 'requestBudget(orderId:storeId:comment:callback:)' is deprecated: Replace by Cust+RequestTask [#DeprecatedDeclaration]
+ 753 |                             loadingView.show()
+ 754 |                             
+ 755 |                             API.custOrderV1.requestBudget(
+     |                                             `- warning: 'requestBudget(orderId:storeId:comment:callback:)' is deprecated: Replace by Cust+RequestTask [#DeprecatedDeclaration]
+ 756 |                                 orderId: self.orderid,
+ 757 |                                 storeId: custCatchStore,
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ConcessionConfirmationView.swift:109:53: warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+107 |                         .float(.left)
+108 |                     
+109 |                     Span(self.$accountFolio.map{ $0 ?? "S/F"})
+    |                                                     `- warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+110 |                 }
+111 |                 .fontSize(23.px)
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ConcessionConfirmationView.swift:121:52: warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+119 |                         .float(.left)
+120 |                     
+121 |                     Span(self.$accountName.map{ $0 ?? "Publico General" })
+    |                                                    `- warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+122 |                 }
+123 |                 .fontSize(23.px)
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/FiscAutotrasportTypeField.swift:222:17: warning: variable 'included' was never used; consider replacing with '_' or removing it [#no-usage]
+220 |            }
+221 |             
+222 |             var included: [String] = []
+    |                 `- warning: variable 'included' was never used; consider replacing with '_' or removing it [#no-usage]
+223 |             
+224 |             self.resultBox.innerHTML = ""
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/FiscDangerousMaterialField.swift:224:17: warning: variable 'included' was never used; consider replacing with '_' or removing it [#no-usage]
+222 |             }
+223 |             
+224 |             var included: [String] = []
+    |                 `- warning: variable 'included' was never used; consider replacing with '_' or removing it [#no-usage]
+225 |             
+226 |             self.resultBox.innerHTML = ""
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/FiscPackagingField.swift:223:17: warning: variable 'included' was never used; consider replacing with '_' or removing it [#no-usage]
+221 |             }
+222 |             
+223 |             var included: [String] = []
+    |                 `- warning: variable 'included' was never used; consider replacing with '_' or removing it [#no-usage]
+224 |             
+225 |             self.resultBox.innerHTML = ""
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/InventoryControlView.swift:617:18: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+615 |     func reciveMerch() {
+616 |         
+617 |         addToDom(ConfirmView(
+    |                  `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+618 |             type: .yesNo,
+619 |             title: "Recibir Mercancia",
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/InventoryControlView.swift:653:35: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+651 |                         self.receivedByName = "@\(custCatchUser.explode("@").first ?? custCatchUser)"
+652 |                         
+653 |                         addToDom( ConfirmView(type: .ok, title: "Inventario Aceptado", message: "PIN de confirmacion:\n\(self.pin)", callback: { isConfirmed, comment in
+    |                                   `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+654 |                             
+655 |                         }))
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ManagePOC/ManagePOC.swift:2285:46: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+2283 |                                 .float(.right)
+2284 |                                 .onClick {
+2285 |                                     addToDom(ConfirmView(type: .ok, title: "Modulo no activo", message: "Este modulo no esa activo contacte a Soprte TC para activar este modulo y compober su inventario", callback: { isConfirmed, comment in
+     |                                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+2286 |                                         
+2287 |                                     }))
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ManagePOC/ManagePOC.swift:4984:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+4982 |                 .width(18.px)
+4983 |                 .onClick({ _, event in
+4984 |                     addToDom(ConfirmView(type: .acceptDeny, title: "Eliminar Etoqueta", message: "Confirme el eliminar etiqueta.", callback: { isConfirmed, comment in
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+4985 |                         if isConfirmed {
+4986 |                             self.remmoveVendor(id: id)
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ManagePOC/ManagePOC.swift:5035:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+5033 |                 .width(18.px)
+5034 |                 .onClick({ _, event in
+5035 |                     addToDom(ConfirmView(type: .acceptDeny, title: "Eliminar Vendor", message: "Confirme el eliminar vendor.", callback: { isConfirmed, comment in
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+5036 |                         if isConfirmed {
+5037 |                             self.remmoveTag(tag: tag)
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/MoneyManager/AuditView/MoneyManager+Audit+PaymentRow.swift:77:38: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 75 |                         .height(18.px)
+ 76 |                         .onClick {
+ 77 |                             addToDom(ConfirmView(
+    |                                      `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 78 |                                 type: .aproveDeny,
+ 79 |                                 title: "Confirme Accion",
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/OrderRentalView.swift:161:37: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+159 |                                 
+160 |                                 addToDom(
+161 |                                     ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: PREPARADO", callback: { confirmed, _ in
+    |                                     `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+162 |                                     if confirmed {
+163 |                                         loadingView.show()
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/OrderRentalView.swift:205:46: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+203 |                                 /// Validad if user has permition to remove isReady flag
+204 |                                 if custCatchHerk >= configStoreProcessing.restrictOrderClosing {
+205 |                                     addToDom(ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: NO preparado", callback: { confirmed, _ in
+    |                                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+206 |                                         if confirmed {
+207 |                                             loadingView.show()
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/OrderRentalView.swift:301:46: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+299 |                                 else{
+300 |                                     
+301 |                                     addToDom(ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: ENTREGADO", callback: { confirmed, _ in
+    |                                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+302 |                                         if confirmed {
+303 |                                             loadingView.show()
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/OrderRentalView.swift:346:46: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+344 |                                 /// Validad if user has permition to remove isReady flag
+345 |                                 if custCatchHerk >= configStoreProcessing.restrictOrderClosing {
+346 |                                     addToDom(ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: NO entregado", callback: { confirmed, _ in
+    |                                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+347 |                                         if confirmed {
+348 |                                             loadingView.show()
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/OrderRowView.swift:179:84: warning: left side of nil coalescing operator '??' has non-optional type 'Color', so the right side is never used
+177 |             .custom("width", "calc(100% - 92px)")
+178 |             .class(.smallButtonBox)
+179 |             .border(width: .thin, style: .solid, color: self.$statusColor.map{  $0 ?? .white})
+    |                                                                                    `- warning: left side of nil coalescing operator '??' has non-optional type 'Color', so the right side is never used
+180 |             .backgroundColor(.init(r: 255, g: 255, b: 255, a: 0.77))
+181 |             
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/OrderView/OrderProject/OrderView+OrderProjectItemView.swift:129:52: warning: comparing non-optional value of type 'String' to 'nil' always returns false
+127 |                 
+128 |                 Div(self.$workedBy)
+129 |                     .hidden(self.$workedBy.map{ $0 == nil })
+    |                                                    `- warning: comparing non-optional value of type 'String' to 'nil' always returns false
+130 |                     .marginBottom(3.px)
+131 |                 
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/OrderView/OrderView.swift:176:34: warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+ 174 |     @State var hideContractContainer: Bool = true
+ 175 | 
+ 176 |     var chargesRefrence: [ UUID: OldChargeTrRow ] = [:]
+     |                                  `- warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+ 177 |     
+ 178 |     var rentalViewRefrence: [UUID:OrderRentalView] = [:]
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/OrderView/OrderView.swift:1922:34: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+1920 |                     .cursor(.pointer)
+1921 |                     .onClick({ div, event in
+1922 |                         addToDom(ConfirmView(type: .yesNo, title: "Adoptar Orden", message: "Confirme que va adoptar la orden", callback: { isConfirmed, _ in
+     |                                  `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+1923 |                             
+1924 |                             if isConfirmed {
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/OrderView/OrderView.swift:2736:22: warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+2734 | 
+2735 | 
+2736 |             let tr = OldChargeTrRow( 
+     |                      `- warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+2737 |                 isCharge: true,
+2738 |                 id: obj.id,
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/OrderView/OrderView.swift:2764:68: warning: left side of nil coalescing operator '??' has non-optional type 'Int64', so the right side is never used
+2762 |             if let _ = pocsRefrence[obj.pocId] {
+2763 |                 
+2764 |                 if let _ = pocsRefrence[obj.pocId]?[(obj.soldPrice ?? 0)] {
+     |                                                                    `- warning: left side of nil coalescing operator '??' has non-optional type 'Int64', so the right side is never used
+2765 |                     pocsRefrence[obj.pocId]?[(obj.soldPrice ?? 0)]?.append(obj)
+2766 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/OrderView/OrderView.swift:2765:61: warning: left side of nil coalescing operator '??' has non-optional type 'Int64', so the right side is never used
+2763 |                 
+2764 |                 if let _ = pocsRefrence[obj.pocId]?[(obj.soldPrice ?? 0)] {
+2765 |                     pocsRefrence[obj.pocId]?[(obj.soldPrice ?? 0)]?.append(obj)
+     |                                                             `- warning: left side of nil coalescing operator '??' has non-optional type 'Int64', so the right side is never used
+2766 |                 }
+2767 |                 else {
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/OrderView/OrderView.swift:2768:61: warning: left side of nil coalescing operator '??' has non-optional type 'Int64', so the right side is never used
+2766 |                 }
+2767 |                 else {
+2768 |                     pocsRefrence[obj.pocId]?[(obj.soldPrice ?? 0)] = [obj]
+     |                                                             `- warning: left side of nil coalescing operator '??' has non-optional type 'Int64', so the right side is never used
+2769 |                 }
+2770 |                 
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/OrderView/OrderView.swift:2773:59: warning: left side of nil coalescing operator '??' has non-optional type 'Int64', so the right side is never used
+2771 |             }
+2772 |             else {
+2773 |                 pocsRefrence[obj.pocId] = [(obj.soldPrice ?? 0) : [obj]]
+     |                                                           `- warning: left side of nil coalescing operator '??' has non-optional type 'Int64', so the right side is never used
+2774 |             }
+2775 |             
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/OrderView/OrderView.swift:2790:26: warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+2788 |                 chas += soldPrice
+2789 |                 
+2790 |                 let tr = OldChargeTrRow(pocs: items) { viewId in
+     |                          `- warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+2791 |                     self.editPoc(viewId: viewId, ids: items.map{ $0.itemId })
+2792 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/OrderView/OrderView.swift:2812:22: warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+2810 |             chas += obj.soldPrice
+2811 |             
+2812 |             let tr = OldChargeTrRow(
+     |                      `- warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+2813 |                 isCharge: true,
+2814 |                 id: obj.id,
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/OrderView/OrderView.swift:2838:22: warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+2836 |             pays += obj.cost
+2837 |             
+2838 |             let tr = OldChargeTrRow(
+     |                      `- warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+2839 |                 isCharge: false,
+2840 |                 id: obj.id,
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/OrderView/OrderView.swift:3170:19: warning: expression implicitly coerced from 'UUID?' to 'Any'
+3168 |         equipments.forEach { equipment in
+3169 |             
+3170 |             print(equipment.deliveredBy)
+     |                   |         |- note: provide a default value to avoid this warning
+     |                   |         |- note: force-unwrap the value to avoid this warning
+     |                   |         `- note: explicitly cast to 'Any' with 'as Any' to silence this warning
+     |                   `- warning: expression implicitly coerced from 'UUID?' to 'Any'
+3171 |             
+3172 |             if equipment.deliveredBy == nil {
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/POCInventoryControlView.swift:149:13: warning: initialization of immutable value 'view' was never used; consider replacing with assignment to '_' or removing it [#no-usage]
+147 |         }
+148 |         
+149 |         let view = Div{
+    |             `- warning: initialization of immutable value 'view' was never used; consider replacing with assignment to '_' or removing it [#no-usage]
+150 |             Div{
+151 |                 Label("Bodega")
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift:540:34: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 538 |                     
+ 539 |                     if dateParts.count != 3 {
+ 540 |                         addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "La fecha debe de tener el siguente formato:\nDD/MM/AAAA"))
+     |                                  `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 541 |                         return
+ 542 |                     }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift:545:34: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 543 |                     
+ 544 |                     guard let startDay = Int(dateParts[0]) else {
+ 545 |                         addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31"))
+     |                                  `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 546 |                         return
+ 547 |                     }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift:550:34: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 548 |                     
+ 549 |                     guard (startDay > 0 && startDay < 32) else {
+ 550 |                         addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31."))
+     |                                  `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 551 |                         return
+ 552 |                     }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift:555:34: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 553 |                     
+ 554 |                     guard let startMonth = Int(dateParts[1]) else {
+ 555 |                         addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+     |                                  `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 556 |                         return
+ 557 |                     }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift:560:34: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 558 |                     
+ 559 |                     guard (startMonth > 0 && startMonth < 13) else {
+ 560 |                         addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+     |                                  `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 561 |                         return
+ 562 |                     }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift:569:34: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 567 |                     
+ 568 |                     guard startYear >= (Date().year - 4) else {
+ 569 |                         addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Año invalido, ingrese un año igual o mayor que 4 años atras."))
+     |                                  `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 570 |                         return
+ 571 |                     }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift:589:34: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 587 |                     
+ 588 |                     if dateParts.count != 3 {
+ 589 |                         addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "La fecha debe de tener el siguente formato:\nDD/MM/AAAA"))
+     |                                  `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 590 |                         return
+ 591 |                     }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift:594:34: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 592 |                     
+ 593 |                     guard let endDay = Int(dateParts[0]) else {
+ 594 |                         addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31"))
+     |                                  `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 595 |                         return
+ 596 |                     }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift:599:34: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 597 |                     
+ 598 |                     guard (endDay > 0 && endDay < 32) else {
+ 599 |                         addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31."))
+     |                                  `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 600 |                         return
+ 601 |                     }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift:604:34: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 602 |                     
+ 603 |                     guard let endMonth = Int(dateParts[1]) else {
+ 604 |                         addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+     |                                  `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 605 |                         return
+ 606 |                     }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift:609:34: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 607 |                     
+ 608 |                     guard (endMonth > 0 && endMonth < 13) else {
+ 609 |                         addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+     |                                  `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 610 |                         return
+ 611 |                     }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift:618:34: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 616 |                     
+ 617 |                     guard endYear >= (Date().year - 4) else {
+ 618 |                         addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Año invalido, ingrese un año igual o mayor que 4 años atras."))
+     |                                  `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 619 |                         return
+ 620 |                     }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift:4336:25: warning: variable 'innerView' was never mutated; consider changing to 'let' constant
+4334 |                     @State var hideThisView = true
+4335 |                     
+4336 |                     var innerView = Div()
+     |                         `- warning: variable 'innerView' was never mutated; consider changing to 'let' constant
+4337 |                         .hidden($hideThisView)
+4338 |                     
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift:4393:21: warning: variable 'innerView' was never mutated; consider changing to 'let' constant
+4391 |                 @State var hideInactiveView = true
+4392 |                 
+4393 |                 var innerView = Div()
+     |                     `- warning: variable 'innerView' was never mutated; consider changing to 'let' constant
+4394 |                     .hidden($hideInactiveView)
+4395 |                 
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift:5657:21: warning: variable 'table' was never mutated; consider changing to 'let' constant
+5655 |                 self.resultDiv.appendChild(Div().height(3.px).clear(.both))
+5656 |                 
+5657 |                 var table = Table {
+     |                     `- warning: variable 'table' was never mutated; consider changing to 'let' constant
+5658 |                     THead{
+5659 |                         Tr{
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift:5675:21: warning: variable 'tableBody' was never mutated; consider changing to 'let' constant
+5673 |                 .color(.white)
+5674 |                 
+5675 |                 var tableBody = TBody().hidden($sectionAIsHidden)
+     |                     `- warning: variable 'tableBody' was never mutated; consider changing to 'let' constant
+5676 |                 
+5677 |                 let yearKeys = itemByDateRefrence.map{ $0.key }.sorted()
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Inventory.swift:5766:25: warning: variable 'tableBody' was never mutated; consider changing to 'let' constant
+5764 |                     @State var sectionBIsHidden = true
+5765 |                     
+5766 |                     var tableBody = TBody().hidden($sectionBIsHidden)
+     |                         `- warning: variable 'tableBody' was never mutated; consider changing to 'let' constant
+5767 |                     
+5768 |                     var conterRow = true
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+InventoryDetail.swift:109:33: warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+107 |             tableBody.appendChild(Tr{
+108 |                 ProductManagerView.AuditView.productManagerCell(pocId: self.poc.id)
+109 |                 Td(self.poc.upc ?? "N/D")
+    |                                 `- warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+110 |                 ProductManagerView.AuditView.productDescriptionCell(self.poc.name ?? "N/D")
+111 |                 Td(self.poc.brand ?? "N/D")
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+InventoryDetail.swift:110:83: warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+108 |                 ProductManagerView.AuditView.productManagerCell(pocId: self.poc.id)
+109 |                 Td(self.poc.upc ?? "N/D")
+110 |                 ProductManagerView.AuditView.productDescriptionCell(self.poc.name ?? "N/D")
+    |                                                                                   `- warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+111 |                 Td(self.poc.brand ?? "N/D")
+112 |                 Td(self.poc.model ?? "N/D")
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+InventoryDetail.swift:111:35: warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+109 |                 Td(self.poc.upc ?? "N/D")
+110 |                 ProductManagerView.AuditView.productDescriptionCell(self.poc.name ?? "N/D")
+111 |                 Td(self.poc.brand ?? "N/D")
+    |                                   `- warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+112 |                 Td(self.poc.model ?? "N/D")
+113 |                 Td(self.item.zeroDay?.toString ?? "---")
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+InventoryDetail.swift:112:35: warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+110 |                 ProductManagerView.AuditView.productDescriptionCell(self.poc.name ?? "N/D")
+111 |                 Td(self.poc.brand ?? "N/D")
+112 |                 Td(self.poc.model ?? "N/D")
+    |                                   `- warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+113 |                 Td(self.item.zeroDay?.toString ?? "---")
+114 |                 Td((self.item.currentStock ?? 0).toString)
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift:215:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+213 |                 
+214 |                 if dateParts.count != 3 {
+215 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "La fecha debe de tener el siguente formato:\nDD/MM/AAAA"))
+    |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+216 |                     return
+217 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift:220:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+218 |                 
+219 |                 guard let startDay = Int(dateParts[0]) else {
+220 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31"))
+    |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+221 |                     return
+222 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift:225:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+223 |                 
+224 |                 guard (startDay > 0 && startDay < 32) else {
+225 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31."))
+    |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+226 |                     return
+227 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift:230:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+228 |                 
+229 |                 guard let startMonth = Int(dateParts[1]) else {
+230 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+    |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+231 |                     return
+232 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift:235:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+233 |                 
+234 |                 guard (startMonth > 0 && startMonth < 13) else {
+235 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+    |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+236 |                     return
+237 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift:244:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+242 |                 
+243 |                 guard startYear >= (Date().year - 4) else {
+244 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Año invalido, ingrese un año igual o mayor que 4 años atras."))
+    |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+245 |                     return
+246 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift:264:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+262 |                 
+263 |                 if dateParts.count != 3 {
+264 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "La fecha debe de tener el siguente formato:\nDD/MM/AAAA"))
+    |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+265 |                     return
+266 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift:269:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+267 |                 
+268 |                 guard let endDay = Int(dateParts[0]) else {
+269 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31"))
+    |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+270 |                     return
+271 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift:274:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+272 |                 
+273 |                 guard (endDay > 0 && endDay < 32) else {
+274 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31."))
+    |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+275 |                     return
+276 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift:279:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+277 |                 
+278 |                 guard let endMonth = Int(dateParts[1]) else {
+279 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+    |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+280 |                     return
+281 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift:284:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+282 |                 
+283 |                 guard (endMonth > 0 && endMonth < 13) else {
+284 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+    |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+285 |                     return
+286 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Merms.swift:293:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+291 |                 
+292 |                 guard endYear >= (Date().year - 4) else {
+293 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Año invalido, ingrese un año igual o mayor que 4 años atras."))
+    |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+294 |                     return
+295 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift:345:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 343 |                 
+ 344 |                 if dateParts.count != 3 {
+ 345 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "La fecha debe de tener el siguente formato:\nDD/MM/AAAA"))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 346 |                     return
+ 347 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift:350:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 348 |                 
+ 349 |                 guard let startDay = Int(dateParts[0]) else {
+ 350 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31"))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 351 |                     return
+ 352 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift:355:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 353 |                 
+ 354 |                 guard (startDay > 0 && startDay < 32) else {
+ 355 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31."))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 356 |                     return
+ 357 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift:360:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 358 |                 
+ 359 |                 guard let startMonth = Int(dateParts[1]) else {
+ 360 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 361 |                     return
+ 362 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift:365:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 363 |                 
+ 364 |                 guard (startMonth > 0 && startMonth < 13) else {
+ 365 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 366 |                     return
+ 367 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift:374:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 372 |                 
+ 373 |                 guard startYear >= (Date().year - 4) else {
+ 374 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Año invalido, ingrese un año igual o mayor que 4 años atras."))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 375 |                     return
+ 376 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift:394:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 392 |                 
+ 393 |                 if dateParts.count != 3 {
+ 394 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "La fecha debe de tener el siguente formato:\nDD/MM/AAAA"))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 395 |                     return
+ 396 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift:399:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 397 |                 
+ 398 |                 guard let endDay = Int(dateParts[0]) else {
+ 399 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31"))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 400 |                     return
+ 401 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift:404:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 402 |                 
+ 403 |                 guard (endDay > 0 && endDay < 32) else {
+ 404 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31."))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 405 |                     return
+ 406 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift:409:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 407 |                 
+ 408 |                 guard let endMonth = Int(dateParts[1]) else {
+ 409 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 410 |                     return
+ 411 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift:414:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 412 |                 
+ 413 |                 guard (endMonth > 0 && endMonth < 13) else {
+ 414 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 415 |                     return
+ 416 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Products.swift:423:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 421 |                 
+ 422 |                 guard endYear >= (Date().year - 4) else {
+ 423 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Año invalido, ingrese un año igual o mayor que 4 años atras."))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 424 |                     return
+ 425 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Theme.swift:499:13: warning: variable 'container' was never mutated; consider changing to 'let' constant
+497 |         let maximum = max(items.map { max($0.value, 0) }.max() ?? 0, 1)
+498 | 
+499 |         var container = Div {
+    |             `- warning: variable 'container' was never mutated; consider changing to 'let' constant
+500 |             H3(title)
+501 |                 .color(.lightBlueText)
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift:276:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 274 |                 
+ 275 |                 if dateParts.count != 3 {
+ 276 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "La fecha debe de tener el siguente formato:\nDD/MM/AAAA"))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 277 |                     return
+ 278 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift:281:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 279 |                 
+ 280 |                 guard let startDay = Int(dateParts[0]) else {
+ 281 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31"))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 282 |                     return
+ 283 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift:286:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 284 |                 
+ 285 |                 guard (startDay > 0 && startDay < 32) else {
+ 286 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31."))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 287 |                     return
+ 288 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift:291:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 289 |                 
+ 290 |                 guard let startMonth = Int(dateParts[1]) else {
+ 291 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 292 |                     return
+ 293 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift:296:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 294 |                 
+ 295 |                 guard (startMonth > 0 && startMonth < 13) else {
+ 296 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 297 |                     return
+ 298 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift:305:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 303 |                 
+ 304 |                 guard startYear >= (Date().year - 4) else {
+ 305 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Año invalido, ingrese un año igual o mayor que 4 años atras."))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 306 |                     return
+ 307 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift:325:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 323 |                 
+ 324 |                 if dateParts.count != 3 {
+ 325 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "La fecha debe de tener el siguente formato:\nDD/MM/AAAA"))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 326 |                     return
+ 327 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift:330:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 328 |                 
+ 329 |                 guard let endDay = Int(dateParts[0]) else {
+ 330 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31"))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 331 |                     return
+ 332 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift:335:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 333 |                 
+ 334 |                 guard (endDay > 0 && endDay < 32) else {
+ 335 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31."))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 336 |                     return
+ 337 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift:340:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 338 |                 
+ 339 |                 guard let endMonth = Int(dateParts[1]) else {
+ 340 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 341 |                     return
+ 342 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift:345:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 343 |                 
+ 344 |                 guard (endMonth > 0 && endMonth < 13) else {
+ 345 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 346 |                     return
+ 347 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+Transfers.swift:354:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 352 |                 
+ 353 |                 guard endYear >= (Date().year - 4) else {
+ 354 |                     addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Año invalido, ingrese un año igual o mayor que 4 años atras."))
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 355 |                     return
+ 356 |                 }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductTransferReportView.swift:349:26: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 347 |             
+ 348 |             if dateParts.count != 3 {
+ 349 |                 addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "La fecha debe de tener el siguente formato:\nDD/MM/AAAA"))
+     |                          `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 350 |                 return
+ 351 |             }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductTransferReportView.swift:354:26: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 352 |             
+ 353 |             guard let startDay = Int(dateParts[0]) else {
+ 354 |                 addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31"))
+     |                          `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 355 |                 return
+ 356 |             }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductTransferReportView.swift:359:26: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 357 |             
+ 358 |             guard (startDay > 0 && startDay < 32) else {
+ 359 |                 addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31."))
+     |                          `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 360 |                 return
+ 361 |             }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductTransferReportView.swift:364:26: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 362 |             
+ 363 |             guard let startMonth = Int(dateParts[1]) else {
+ 364 |                 addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+     |                          `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 365 |                 return
+ 366 |             }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductTransferReportView.swift:369:26: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 367 |             
+ 368 |             guard (startMonth > 0 && startMonth < 13) else {
+ 369 |                 addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+     |                          `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 370 |                 return
+ 371 |             }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductTransferReportView.swift:378:26: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 376 |             
+ 377 |             guard startYear >= (Date().year - 4) else {
+ 378 |                 addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha inicial)", message: "Año invalido, ingrese un año igual o mayor que 4 años atras."))
+     |                          `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 379 |                 return
+ 380 |             }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductTransferReportView.swift:398:26: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 396 |             
+ 397 |             if dateParts.count != 3 {
+ 398 |                 addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "La fecha debe de tener el siguente formato:\nDD/MM/AAAA"))
+     |                          `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 399 |                 return
+ 400 |             }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductTransferReportView.swift:403:26: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 401 |             
+ 402 |             guard let endDay = Int(dateParts[0]) else {
+ 403 |                 addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31"))
+     |                          `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 404 |                 return
+ 405 |             }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductTransferReportView.swift:408:26: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 406 |             
+ 407 |             guard (endDay > 0 && endDay < 32) else {
+ 408 |                 addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Dia invalido, ingrese un dia valido entre 1 y el 31."))
+     |                          `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 409 |                 return
+ 410 |             }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductTransferReportView.swift:413:26: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 411 |             
+ 412 |             guard let endMonth = Int(dateParts[1]) else {
+ 413 |                 addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+     |                          `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 414 |                 return
+ 415 |             }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductTransferReportView.swift:418:26: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 416 |             
+ 417 |             guard (endMonth > 0 && endMonth < 13) else {
+ 418 |                 addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Mes invalido, ingrese un mes valido entre 1 y el 12."))
+     |                          `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 419 |                 return
+ 420 |             }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ProductTransferReportView.swift:427:26: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 425 |             
+ 426 |             guard endYear >= (Date().year - 4) else {
+ 427 |                 addToDom(ConfirmView(type: .ok, title: "Formato de fecha invalida (fecha final)", message: "Año invalido, ingrese un año igual o mayor que 4 años atras."))
+     |                          `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 428 |                 return
+ 429 |             }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ReactivateConfirmOrderRentalView.swift:108:36: warning: variable 'obj' was never mutated; consider changing to 'let' constant
+106 |                             var _reacts: [UUID:Bool] = [:]
+107 |                             
+108 |                             if var obj = self.equipments.first {
+    |                                    `- warning: variable 'obj' was never mutated; consider changing to 'let' constant
+109 |                                 _reacts[obj.id] = true
+110 |                             }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/Rewards/RewardsView.swift:359:23: warning: value 'categorie' was defined but never used; consider replacing with boolean test [#no-usage]
+357 |             self.categories = []
+358 |             
+359 |             guard let categorie = $0 else{
+    |                       `- warning: value 'categorie' was defined but never used; consider replacing with boolean test [#no-usage]
+360 |                 return
+361 |             }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/Rewards/RewardsView.swift:371:23: warning: value 'subCategorie' was defined but never used; consider replacing with boolean test [#no-usage]
+369 |             // self.subCategories = []
+370 |             
+371 |             guard let subCategorie = $0 else {
+    |                       `- warning: value 'subCategorie' was defined but never used; consider replacing with boolean test [#no-usage]
+372 |                 return
+373 |             }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/SalePoint/SalePoint+DetailView.swift:755:30: warning: 'KartItemView' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+ 753 |                     _revenue += thisPrice - thisCost
+ 754 |                     
+ 755 |                     let tr = KartItemView(
+     |                              `- warning: 'KartItemView' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+ 756 |                         id: charge.id,
+ 757 |                         cost: charge.cost,
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/SalePoint/SalePoint+DetailView.swift:793:25: warning: variable 'createdAt' was never mutated; consider changing to 'let' constant
+ 791 |                     }
+ 792 |                     
+ 793 |                     var createdAt = getDate(note.createdAt)
+     |                         `- warning: variable 'createdAt' was never mutated; consider changing to 'let' constant
+ 794 |                     
+ 795 |                     let dateString = "\(createdAt.formatedLong) \(createdAt.time)"
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/SalePoint/SalePoint+HistoryView.swift:1327:21: warning: variable 'tableCardex' was never mutated; consider changing to 'let' constant
+1325 |                 }
+1326 |                 
+1327 |                 var tableCardex = TBody()
+     |                     `- warning: variable 'tableCardex' was never mutated; consider changing to 'let' constant
+1328 |                 
+1329 |                 self.resultDiv.appendChild(
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/SalePoint/SalePoint+HistoryView.swift:1462:21: warning: variable 'timeTable' was never mutated; consider changing to 'let' constant
+1460 |                 }
+1461 |                 
+1462 |                 var timeTable = Table {
+     |                     `- warning: variable 'timeTable' was never mutated; consider changing to 'let' constant
+1463 |                     THead{
+1464 |                         Tr{
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/SalePoint/SalePointView.swift:207:35: warning: 'KartItemView' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+ 205 |                         let manualid = UUID()
+ 206 |                         
+ 207 |                         let row = KartItemView(
+     |                                   `- warning: 'KartItemView' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+ 208 |                             id: id,
+ 209 |                             cost: cost,
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/SearchProductVendor.swift:29:37: warning: cannot use struct 'POCVendor' here; 'TCFireSignal' was not imported by this file
+ 27 |         name: String,
+ 28 |         addVendor: @escaping ((
+ 29 |             _ vendor: API.custPOCV1.POCVendor
+    |                                     `- warning: cannot use struct 'POCVendor' here; 'TCFireSignal' was not imported by this file
+ 30 |         ) -> ())
+ 31 |     ) {
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/.build/checkouts/TCFireSignal/Sources/TCFireSignal/Components/CustPOCComponents/CustPOC+GetPOCAuditDep.swift:16:19: note: struct declared here
+14 | extension CustPOCComponents {
+15 |     
+16 |     public struct POCVendor: Payloadable {
+   |                   `- note: struct declared here
+17 |         
+18 |         public var pocid: UUID
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ServiceAccionView.swift:426:21: warning: initialization of immutable value 'perweek' was never used; consider replacing with assignment to '_' or removing it [#no-usage]
+424 |                 self.name = payload.name
+425 |                 
+426 |                 let perweek = (payload.workforceLevel.value.fromCents * 2880.toFloat)
+    |                     `- warning: initialization of immutable value 'perweek' was never used; consider replacing with assignment to '_' or removing it [#no-usage]
+427 |                 
+428 |                 self.workforceLevelListener = payload.workforceLevel.rawValue
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/SocialManagerAddProfileView.swift:506:27: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 504 |             
+ 505 |             guard let igpageid = payload.data?.request else {
+ 506 |                  addToDom(ConfirmView(
+     |                           `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 507 |                      type: .ok,
+ 508 |                      title: "\(name) sin perfiles IG Activos",
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/SocialManagerPostCommentRow.swift:418:13: warning: variable '_like' was never mutated; consider changing to 'let' constant
+416 |             .width(97.percent)
+417 |         
+418 |         var _like = 0
+    |             `- warning: variable '_like' was never mutated; consider changing to 'let' constant
+419 |         var _dislike = 0
+420 |         var _love = 0
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/SocialManagerPostCommentRow.swift:419:13: warning: variable '_dislike' was never mutated; consider changing to 'let' constant
+417 |         
+418 |         var _like = 0
+419 |         var _dislike = 0
+    |             `- warning: variable '_dislike' was never mutated; consider changing to 'let' constant
+420 |         var _love = 0
+421 |         var _care = 0
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/SocialManagerPostCommentRow.swift:420:13: warning: variable '_love' was never mutated; consider changing to 'let' constant
+418 |         var _like = 0
+419 |         var _dislike = 0
+420 |         var _love = 0
+    |             `- warning: variable '_love' was never mutated; consider changing to 'let' constant
+421 |         var _care = 0
+422 |         var _wow = 0
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/SocialManagerPostCommentRow.swift:421:13: warning: variable '_care' was never mutated; consider changing to 'let' constant
+419 |         var _dislike = 0
+420 |         var _love = 0
+421 |         var _care = 0
+    |             `- warning: variable '_care' was never mutated; consider changing to 'let' constant
+422 |         var _wow = 0
+423 |         var _haha = 0
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/SocialManagerPostCommentRow.swift:422:13: warning: variable '_wow' was never mutated; consider changing to 'let' constant
+420 |         var _love = 0
+421 |         var _care = 0
+422 |         var _wow = 0
+    |             `- warning: variable '_wow' was never mutated; consider changing to 'let' constant
+423 |         var _haha = 0
+424 |         var _sorry = 0
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/SocialManagerPostCommentRow.swift:423:13: warning: variable '_haha' was never mutated; consider changing to 'let' constant
+421 |         var _care = 0
+422 |         var _wow = 0
+423 |         var _haha = 0
+    |             `- warning: variable '_haha' was never mutated; consider changing to 'let' constant
+424 |         var _sorry = 0
+425 |         var _angry = 0
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/SocialManagerPostCommentRow.swift:424:13: warning: variable '_sorry' was never mutated; consider changing to 'let' constant
+422 |         var _wow = 0
+423 |         var _haha = 0
+424 |         var _sorry = 0
+    |             `- warning: variable '_sorry' was never mutated; consider changing to 'let' constant
+425 |         var _angry = 0
+426 |         var _other = 0
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/SocialManagerPostCommentRow.swift:425:13: warning: variable '_angry' was never mutated; consider changing to 'let' constant
+423 |         var _haha = 0
+424 |         var _sorry = 0
+425 |         var _angry = 0
+    |             `- warning: variable '_angry' was never mutated; consider changing to 'let' constant
+426 |         var _other = 0
+427 |         
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/SocialManagerPostCommentRow.swift:426:13: warning: variable '_other' was never mutated; consider changing to 'let' constant
+424 |         var _sorry = 0
+425 |         var _angry = 0
+426 |         var _other = 0
+    |             `- warning: variable '_other' was never mutated; consider changing to 'let' constant
+427 |         
+428 |         /*
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/StartRentalOrder.swift:81:34: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 79 |                     }
+ 80 |                     else {
+ 81 |                         addToDom(ConfirmView(
+    |                                  `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 82 |                             type: .yesNo,
+ 83 |                             title: "Confirme Salida",
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/StartServiceOrder.swift:782:32: warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+ 780 |     @State var equipments: [EquipmentObject] = []
+ 781 |     
+ 782 |     var payChargeRef: [ UUID : OldChargeTrRow ] = [:]
+     |                                `- warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+ 783 |     
+ 784 |     @State var customeScript: CustomerCustomeScript? = nil
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ToolFiscal/ToolFiscal+ViewManualSavedDocuments.swift:72:54: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 70 |                                         .height(18.px)
+ 71 |                                         .onClick { _, event in
+ 72 |                                             addToDom(ConfirmView(
+    |                                                      `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 73 |                                                 type: .yesNo,
+ 74 |                                                 title: "¿Eliminar Pre Factura?",
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ToolFiscal/ToolFiscal.swift:3957:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+3955 |                 if hasError {
+3956 |                     
+3957 |                     addToDom(ConfirmView(type: .ok, title: "Documento no soportado", message: "Hay un error al renderizar productos. reporte el folio de la venta Soporte TC", callback: { isConfirmed, comment in
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+3958 |                         self.remove()
+3959 |                     }) )
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ToolFiscal/ToolFiscal.swift:3992:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+3990 |                 else{
+3991 |                     
+3992 |                     addToDom(ConfirmView(type: .ok, title: "Documento no soportado", message: "Tiene mas un pago registrado en el folio, haga la factura manual.", callback: { isConfirmed, comment in
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+3993 |                         self.remove()
+3994 |                     }) )
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ToolFiscal/ToolFiscal.swift:4252:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+4250 |                 if hasError {
+4251 |                     
+4252 |                     addToDom(ConfirmView(type: .ok, title: "Documento no soportado", message: "Hay un error al renderizar productos. reporte el folio de la venta Soporte TC", callback: { isConfirmed, comment in
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+4253 |                         self.remove()
+4254 |                     }) )
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ToolFiscal/ToolFiscal.swift:4287:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+4285 |                 else{
+4286 |                     
+4287 |                     addToDom(ConfirmView(type: .ok, title: "Documento no soportado", message: "Tiene mas un pago registrado en el folio, haga la factura manual.", callback: { isConfirmed, comment in
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+4288 |                         self.remove()
+4289 |                     }) )
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ToolFiscal/ToolFiscal.swift:4297:37: warning: immutable value 'id' was never used; consider replacing with '_' or removing it [#no-usage]
+4295 |             }
+4296 |             
+4297 |         case .loadFiscalDoc(id: let id):
+     |                                     `- warning: immutable value 'id' was never used; consider replacing with '_' or removing it [#no-usage]
+4298 |             lockPrices = true
+4299 |         case .salePinGlobalSale(let payload):
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ToolFiscal/ToolFiscal.swift:4489:33: warning: immutable value 'id' was never used; consider replacing with '_' or removing it [#no-usage]
+4487 |             self.items = _items
+4488 |         
+4489 |         case .comertialTrip(let id, let balance, let cartaPorte ):
+     |                                 `- warning: immutable value 'id' was never used; consider replacing with '_' or removing it [#no-usage]
+4490 | 
+4491 |             let units:Int64 = 1 * 1000000
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ToolFiscal/ToolFiscalViewDocument.swift:536:56: warning: 'FiscalDocumentObject' is deprecated: In server migrate this to TCFoundation and delete this file [#DeprecatedDeclaration]
+ 534 |                 do {
+ 535 | 
+ 536 |                     let raw = try JSONDecoder().decode(FiscalDocumentObject.self, from: data)
+     |                                                        `- warning: 'FiscalDocumentObject' is deprecated: In server migrate this to TCFoundation and delete this file [#DeprecatedDeclaration]
+ 537 |                     
+ 538 |                     comment = raw.comment
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/ToolViewFiscalXMLDocument.swift:870:13: warning: variable 'url' was never mutated; consider changing to 'let' constant
+868 |         }
+869 |         
+870 |         var url = "https://verificacfdi.facturaelectronica.sat.gob.mx/default.aspx?" +
+    |             `- warning: variable 'url' was never mutated; consider changing to 'let' constant
+871 |         "&id=\(uuid.uuidString)" +
+872 |         "&re=\(document.emisor.rfc.uppercased())" +
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/Tools/SystemSettings/Tools+SystemSettings+SeviceOrder/Tools+SystemSettings+SeviceOrder+RewadsAddWelcomeGift.swift:99:17: warning: variable 'currentGifts' was never mutated; consider changing to 'let' constant
+ 97 |             top(0.px)
+ 98 |             
+ 99 |             var currentGifts = currentGifts.map{ $0.item }
+    |                 `- warning: variable 'currentGifts' was never mutated; consider changing to 'let' constant
+100 |             
+101 |             RewardsProgramWelcomeItems.Items.allCases.forEach { item in
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/Tools/WebPage/Tools+WebPage+MeetUsPage/Tools+WebPage+MeetUsPage+ProfileView.swift:432:47: warning: value 'id' was defined but never used; consider replacing with boolean test [#no-usage]
+430 |                                 .float(.left)
+431 |                                 .onClick {
+432 |                                     guard let id = self.id else {
+    |                                               `- warning: value 'id' was defined but never used; consider replacing with boolean test [#no-usage]
+433 |                                         return
+434 |                                     }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift:1206:41: warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+1204 |     private lazy var costTable = TBody()
+1205 | 
+1206 |     private var chargesRefrence: [UUID: OldChargeTrRow] = [:]
+     |                                         `- warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+1207 | 
+1208 |     private func renderCosts(_ costs: [CustGastosEgresos]) {
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/TripControler/TripControlerView.swift:695:30: warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 693 |                 .float(.left)
+ 694 |                 .onClick {
+ 695 |                     addToDom(ConfirmView(type: .yesNo, title: "Elimiar Carta Porte", message: "Confirme eliminacion de carta porte. Esta accion no se puede deshacer", callback: { isConfirmed, comment in
+     |                              `- warning: 'ConfirmView' is deprecated: Use ConfirmationView [#DeprecatedDeclaration]
+ 696 |                         if isConfirmed {
+ 697 |                             self.callback(nil)
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Structurs/FiscalDocumentObject.swift:42:11: warning: 'FiscalDocumentObject' is deprecated: In server migrate this to TCFoundation and delete this file [#DeprecatedDeclaration]
+ 40 |     var payment: UUID?
+ 41 | }
+ 42 | extension FiscalDocumentObject {
+    |           `- warning: 'FiscalDocumentObject' is deprecated: In server migrate this to TCFoundation and delete this file [#DeprecatedDeclaration]
+ 43 |     struct Emisor: Codable {
+ 44 |         var rfc: String
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Structurs/SalePointObject.swift:13:23: warning: 'KartItemView' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+11 | struct SalePointObject {
+12 |     let id: UUID
+13 |     let kartItemView: KartItemView
+   |                       `- warning: 'KartItemView' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+14 |     let data: SaleProductPDVObject
+15 | }
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/VirtualControlers/OrderCatchControler.swift:2910:13: warning: immutable value 'routeRefrence' was never used; consider replacing with '_' or removing it [#no-usage]
+2908 |         
+2909 |         /// [ CustOrderRoute.id : CustOrderRoute]
+2910 |         let routeRefrence: [ UUID : CustOrderRoute ] = Dictionary.init(uniqueKeysWithValues: routes.map{ ($0.id, $0) })
+     |             `- warning: immutable value 'routeRefrence' was never used; consider replacing with '_' or removing it [#no-usage]
+2911 |         
+2912 |         pending.forEach { order in
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+Build of target: 'App' complete! (58.09s)

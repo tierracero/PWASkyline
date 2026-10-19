@@ -81,6 +81,10 @@ extension CustAssetsView {
 
         @State private var name = ""
         @State private var serial = ""
+
+        private var serialScannerEventId: UUID?
+        private var serialScannerSessionId: UUID?
+        private var isRequestingSerialScanner = false
         
         @State private var serviceCard = ""
         @State private var acquisitionCost = "0.00"
@@ -155,6 +159,10 @@ extension CustAssetsView {
                         }
                         VGrid(.full) {
                             self.readOnly("Nombre de ubicación", self.viewType.relationName)
+                        }
+
+                        VGrid(.full) {
+                            self.readOnly("Tienda de registro", self.viewType.registrationStore.name)
                         }
 
                         VGrid(.full) {
@@ -258,8 +266,24 @@ extension CustAssetsView {
 
                     VGrid(.oneForth) {
                         UField("Número de serie", required: false) {
+
+                            Div {
+                                Img()
+                                    .src("/skyline/media/bar_qr_white.png")
+                                    .marginLeft(7.px)
+                                    .marginTop(7.px)
+                                    .height(20.px)
+                                    .cursor(.pointer)
+                                    .onClick {
+                                        self.addSeries()
+                                    }
+                            }
+                            .float(.right)
+
                             UTextField(self.$serial)
-                                .placeholder("Opcional")
+                            .custom("width", "calc(100% - 28px)")
+                            .placeholder("Opcional")
+                            
                         }
                     }
 
@@ -344,8 +368,9 @@ extension CustAssetsView {
             }
 
 
-            WebApp.current.wsevent.listen {
-                
+            WebApp.current.wsevent.listen { [weak self] in
+                guard let self, self.isInDOM else { return }
+
                 if $0.isEmpty { return }
                 
                 let (event, _) = self.ws.recive($0)
@@ -355,6 +380,22 @@ extension CustAssetsView {
                 }
                     
                 switch event {
+                case .requestMobileScannerComplete:
+                    guard let payload = self.ws.requestMobileScannerComplete($0),
+                          self.serialScannerEventId == payload.eventid,
+                          self.serialScannerSessionId == custCatchID else {
+                        return
+                    }
+
+                    self.resetSerialScanner()
+                    let text = payload.text.trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard !text.isEmpty else {
+                        showError(.invalidFormat, "No se detectó un número de serie. Intente escanear nuevamente.")
+                        return
+                    }
+
+                    self.serial = text
+
                 case .requestMobileCamaraComplete:
                     
                     if let payload = self.ws.requestMobileCamaraComplete($0) {
@@ -593,6 +634,55 @@ extension CustAssetsView {
             refreshSections()
         }
 
+
+
+        func addSeries() {
+            guard isInDOM, !isRequestingSerialScanner else { return }
+
+            let eventId = UUID()
+            let sessionId = custCatchID
+            serialScannerEventId = eventId
+            serialScannerSessionId = sessionId
+            isRequestingSerialScanner = true
+
+            API.custAPIV1.requestMobileCamara(
+                type: .scanner,
+                connid: custCatchChatConnID,
+                eventid: eventId,
+                relatedid: nil,
+                relatedfolio: "",
+                multipleTakes: false
+            ) { [weak self] response in
+                guard let self, self.isInDOM, self.serialScannerEventId == eventId else { return }
+
+                self.isRequestingSerialScanner = false
+                guard custCatchID == sessionId else {
+                    self.resetSerialScanner()
+                    return
+                }
+
+                guard let response else {
+                    self.resetSerialScanner()
+                    showError(.comunicationError, .serverConextionError)
+                    return
+                }
+
+                guard response.status == .ok else {
+                    self.resetSerialScanner()
+                    showError(.generalError, response.msg)
+                    return
+                }
+
+                showSuccess(.operacionExitosa, "Entre en la notificación en su móvil.")
+            }
+        }
+
+        private func resetSerialScanner() {
+            serialScannerEventId = nil
+            serialScannerSessionId = nil
+            isRequestingSerialScanner = false
+        }
+
         func addwarrantyCard() {
 
             let view = AddWarrantyCard(
@@ -608,6 +698,7 @@ extension CustAssetsView {
             addToDom(view)
             
         }
+        
         private func create() {
             name = name.purgeSpaces.purgeHtml
 
@@ -632,7 +723,9 @@ extension CustAssetsView {
             }
 
             let images: [CustAssetsComponents.CreateAssetItemFile] = imageOrder.compactMap { viewId in
-                guard let view = uploadFileControler[viewId], let fileName = view.file else {
+                guard let view = uploadFileControler[viewId]
+                    ?? imageRefrence.values.first(where: { $0.viewId == viewId }),
+                    let fileName = view.file else {
                     return nil
                 }
 
@@ -888,10 +981,38 @@ extension CustAssetsView {
             initialName rawName: String,
             completion: @escaping (AssetLocationPicker.PickerOption?) -> Void
         ) {
+
+
+        var storeType: CustCommercialAssetsLocationLinkedType {
+            switch viewType {
+            case .store(let store):
+                return store.storeType == .warehouse ? .warehose : .store
+            case .warehose(let store):
+                return store.storeType == .warehouse ? .warehose : .store
+            case .account(account: _, store: let store):
+                return store.storeType == .warehouse ? .warehose : .store
+            case .subAccount(subAccount: _, store: let store):
+                return store.storeType == .warehouse ? .warehose : .store
+            }
+        }
+        
+        var storeId: UUID {
+            switch viewType {
+            case .store(let store):
+                return store.id
+            case .warehose(let store):
+                return store.id
+            case .account(account: _, store: let store):
+                return store.id
+            case .subAccount(subAccount: _, store: let store):
+                return store.id
+            }
+        }
+
             addToDom(
                 LocationEditor(
-                    relationType: viewType.relationType,
-                    relationId: viewType.relationId,
+                    relationType: storeType,
+                    relationId: storeId,
                     initialName: rawName
                 ) { section in
                     self.sections = self.sections.filter { $0.id != section.id } + [section]
@@ -948,6 +1069,7 @@ extension CustAssetsView {
         }
 
         override func didRemoveFromDOM() {
+            resetSerialScanner()
             super.didRemoveFromDOM()
             $name.removeAllListeners()
             $serial.removeAllListeners()

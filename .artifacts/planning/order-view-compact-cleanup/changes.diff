@@ -1,0 +1,1162 @@
+--- before/.agent/PROJECT_MEMORY.md
++++ after/.agent/PROJECT_MEMORY.md
+@@ -65,3 +65,5 @@
+ - 2026-10-15: Trip creation supports ordered extra destinations through the existing destination picker. Route cards switch from two columns to one list after a third stop, returning to the grid when extras are removed. Origin/first destination removal is locked while extras remain, including editor deletion. Each asset/merchandise retains its valid chosen destination, all stops are submitted together, and TripViewBeta adapts by stop count. See the UI/API architecture chunks. Source audit only; builds/tests were not authorized and fixed browser rendering remains unverified.
+ 
+ - 2026-10-15: Reviewed and synchronized the exact already-pinned TCFireSignal 0ac424b and TCFundamentals 6a9d6ba commits. Current delivery and billingType consumers already match their contracts; no App source or package pin edits were needed. SwiftPM working copies were behind the pins and now match. The user-approved focused App build passed (150.95s); no tests or browser/server execution. Evidence: `.artifacts/planning/shared-package-sync/`.
++
++- 2026-10-15: OrderView screenshot cleanup moves the reactive highlighted folio to the outer toolbar and the compact status pill onto the priority/alert row. Equipment inspection uses bound native checkboxes, tag1/tag2 share a row, diagnosis/resolution actions have smaller text, and letter/contract/map headers use blue SVG icons with left-aligned address text. Existing business actions, disabled/permission state and inset shell remain intact. See UI architecture and `.artifacts/planning/order-view-compact-cleanup/`; runtime validation pending.
+--- before/.agent/TASKS_ARCHIVE.md
++++ after/.agent/TASKS_ARCHIVE.md
+@@ -414,3 +414,12 @@
+ - **Verification**: SwiftPM checkouts match both pinned revisions. User explicitly approved the focused App build; `swift build --target App --jobs 4 --disable-automatic-resolution` passed (150.95s), including the delivery wrapper/popup/trip view and current charge callers. The initial resolver's module-cache sandbox failure was resolved with workspace-owned cache paths. Source/contract review, protected hashes, task-relative documentation diff/whitespace and final status checks completed. No test suite or browser/server operations ran.
+ - **Evidence**: `.artifacts/planning/shared-package-sync/plan.md`, `contract-review.md`, `resolve-retry.log`, `build.log` and `audit.md`.
+ - **Commit**: Not created.
++
++
++## ORDER-VIEW-COMPACT-CLEANUP-001 — Apply seven screenshot layout changes
++
++- **Implemented**: 2026-10-15; source/diff audit complete. Builds/tests were not run without new confirmation; browser rendering remains unverified.
++- **Scope/IDs**: AccoutOverview toolbar, OrderView status/section headers, EquipmentView inspection/metadata and TCOrderViewTheme; SWWEB-001/002/003.
++- **Implementation**: Highlighted reactive toolbar folio replaces the side-panel duplicate. Existing status picker moves to priority/alert row with compact dimensions and unchanged tint/menu/actions. Ten inspection checkboxes replace sliders on existing bindings; Marca/Modelo share a row; diagnosis/resolution add text is smaller. Blue service-letter/contract/map SVGs clarify section headers and address text aligns left. Inset holder, corner icon and unrelated business flows are preserved.
++- **Verification**: Source/diff/whitespace and seven-request review; original status-selector body matches after whitespace normalization, ten checkbox bindings retain disabled state, and both rental toggles remain. Focused build permission requested separately under AGENTS.md; browser runtime unverified. Evidence: `.artifacts/planning/order-view-compact-cleanup/`.
++- **Commit**: Not created.
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -4,6 +4,7 @@
+ 
+ ## Verified Facts
+ 
++- OrderView compact presentation binds a highlighted folio to `AccoutOverview.$order` beside Cuenta / Órdenes and hides it outside a loaded order. The existing state-colored status selector/menu now sits on the priority/alert row in a 32px pill with 16px text; existing permissions, actions and hidden options remain intact. Equipment inspection uses ten native checkboxes bound to the original check/disabled states, while prepared/delivered rental controls are unchanged. Configurable tag1/tag2 (Marca/Modelo) share a responsive row; diagnosis/resolution add actions use 14px text. Service-letter/contract headers show decorative blue SVGs, and the address header has a blue map SVG with left-aligned text. The inset holder and floating corner icon stay unchanged. Source-audited; browser rendering and new build verification remain pending.
+ - `TripViewBeta` adds an Entrega column: only multi-item in-progress trips offer Entregar for undelivered linked commercial assets. `FiscalMercanciaItem.deliverd` supplies the Entregado marker on every trip size; canceled final movements use Movimiento finalizado. The delivery initializer of `ConfirmTripStatusUpdate` reuses one-item comments, local uploads, remote camera and gallery evidence, blocks confirmation during pending image uploads, and validates linked routes/unique safe filenames. The parent serializes status/delivery mutations and owns one popup, closes it on removal, checks session/trip/asset/snapshot response identities, then applies only the confirmed item flag and returned trip status (including auto-completion), notifies the dashboard/caller and refreshes trip/notes. Generation and confirmed-item checks reject stale refreshes. Optional destination section/subsection are omitted by this UI. App target compilation verified with the updated shared packages; browser/mobile/server behavior remains unverified.
+ - In order mode, `TCOrderViewTheme` scopes the `AccoutOverview` shell to the standalone `SalePointView` holder geometry: top 25px, left 40px, width `calc(100% - 100px)`, height `calc(100% - 70px)` and 24px rounded corners. The theme retains its existing zero shell padding and border-box sizing. Internal OrderView elements, toolbar/content rules and corner speech icon placement are unchanged. Source-audited; browser rendering remains unverified.
+ - `AssetItemView.dataColumn` edits the existing update contract fields: name, serial, current cost, section and subsection. Other item/custody metadata remains read-only and service-card activation stays separate. `Guardar Cambios` validates exact nonnegative cents and classification IDs, calls `updateAssettem` with the loaded item UUID, accepts a successful nil-note no-op response, and reloads authoritative details/notes by UUID. Current classification scope supplies catalog choices; failed catalog reads preserve existing IDs, and changing section clears its subsection. Mount/session/generation guards and disabled controls protect pending loads/saves. Source-audited; browser/build behavior remains unverified.
+--- before/Sources/App/Snippits/AccoutOverview.swift
++++ after/Sources/App/Snippits/AccoutOverview.swift
+@@ -732,6 +732,12 @@
+                     .hidden(self.$load.map { $0 != .order })
+                 
+                 self.orderButton
++
++                Div(self.$order.map { $0?.folio ?? "" })
++                    .class(Class(TCOrderViewClass.headerFolio))
++                    .class(.oneLineText)
++                    .hidden(self.$order.map { $0 == nil })
++                    .display(self.$load.map { $0 == .order ? .inlineFlex : .none })
+                 
+                 self.fiscalButton
+                 
+--- before/Sources/App/Snippits/OrderView/EquipmentView/OrderView+EquipmentView.swift
++++ after/Sources/App/Snippits/OrderView/EquipmentView/OrderView+EquipmentView.swift
+@@ -248,45 +248,45 @@
+             .height(100.px)
+             .hidden(self.$editMode.map{!$0})
+         
+-        lazy var checkTag1 = InputCheckbox().toggle(self.$_checkTag1, self.$isDisabled){ bool in
+-            self._checkTag1 = !bool
+-        }
+-        
+-        lazy var checkTag2 = InputCheckbox().toggle(self.$_checkTag2, self.$isDisabled){ bool in
+-            self._checkTag2 = !bool
+-        }
+-
+-        lazy var checkTag3 = InputCheckbox().toggle(self.$_checkTag3, self.$isDisabled){ bool in
+-            self._checkTag3 = !bool
+-        }
+-        
+-        lazy var checkTag4 = InputCheckbox().toggle(self.$_checkTag4, self.$isDisabled){ bool in
+-            self._checkTag4 = !bool
+-        }
+-        
+-        lazy var checkTag5 = InputCheckbox().toggle(self.$_checkTag5, self.$isDisabled){ bool in
+-            self._checkTag5 = !bool
+-        }
+-        
+-        lazy var checkTag6 = InputCheckbox().toggle(self.$_checkTag6, self.$isDisabled){ bool in
+-            self._checkTag6 = !bool
+-        }
+-        
+-        lazy var checkTag7 = InputCheckbox().toggle(self.$_checkTag7, self.$isDisabled){ bool in
+-            self._checkTag7 = !bool
+-        }
+-
+-        lazy var checkTag8 = InputCheckbox().toggle(self.$_checkTag8, self.$isDisabled){ bool in
+-            self._checkTag8 = !bool
+-        }
+-
+-        lazy var checkTag9 = InputCheckbox().toggle(self.$_checkTag9, self.$isDisabled){ bool in
+-            self._checkTag9 = !bool
+-        }
+-
+-        lazy var checkTag10 = InputCheckbox().toggle(self.$_checkTag10, self.$isDisabled){ bool in
+-            self._checkTag10 = !bool
+-        }
++        lazy var checkTag1 = InputCheckbox(self.$_checkTag1)
++            .disabled(self.$isDisabled)
++            .attribute("aria-label", configServiceTags.checkTag1Name)
++
++        lazy var checkTag2 = InputCheckbox(self.$_checkTag2)
++            .disabled(self.$isDisabled)
++            .attribute("aria-label", configServiceTags.checkTag2Name)
++
++        lazy var checkTag3 = InputCheckbox(self.$_checkTag3)
++            .disabled(self.$isDisabled)
++            .attribute("aria-label", configServiceTags.checkTag3Name)
++
++        lazy var checkTag4 = InputCheckbox(self.$_checkTag4)
++            .disabled(self.$isDisabled)
++            .attribute("aria-label", configServiceTags.checkTag4Name)
++
++        lazy var checkTag5 = InputCheckbox(self.$_checkTag5)
++            .disabled(self.$isDisabled)
++            .attribute("aria-label", configServiceTags.checkTag5Name)
++
++        lazy var checkTag6 = InputCheckbox(self.$_checkTag6)
++            .disabled(self.$isDisabled)
++            .attribute("aria-label", configServiceTags.checkTag6Name)
++
++        lazy var checkTag7 = InputCheckbox(self.$_checkTag7)
++            .disabled(self.$isDisabled)
++            .attribute("aria-label", configServiceTags.checkTag7Name)
++
++        lazy var checkTag8 = InputCheckbox(self.$_checkTag8)
++            .disabled(self.$isDisabled)
++            .attribute("aria-label", configServiceTags.checkTag8Name)
++
++        lazy var checkTag9 = InputCheckbox(self.$_checkTag9)
++            .disabled(self.$isDisabled)
++            .attribute("aria-label", configServiceTags.checkTag9Name)
++
++        lazy var checkTag10 = InputCheckbox(self.$_checkTag10)
++            .disabled(self.$isDisabled)
++            .attribute("aria-label", configServiceTags.checkTag10Name)
+ 
+         /**  `` /General Input Items `` */
+         
+@@ -327,40 +327,44 @@
+                 .marginTop(1.px)
+                 .hidden(!configServiceTags.secondIDTagRequiered)
+                 
+-                // Tag1
+                 Div {
+-                    Label(configServiceTags.tag1Name).color(.gray)
+-                        .color(.gray)
+-                        .fontSize(13.px)
++                    // Tag1
++                    Div {
++                        Label(configServiceTags.tag1Name).color(.gray)
++                            .color(.gray)
++                            .fontSize(13.px)
+                       
+-                    Div(self.$_tag1.map{ $0.isEmpty ? configServiceTags.tag1Placeholder : $0 })
+-                        .class(.textFiledBlackDarkReadMode, .oneLineText)
+-                        .color(self.$_tag1.map{ $0.isEmpty ? .grayContrast : .goldenRod })
+-                        .hidden(self.$editMode)
+-                    
+-                    self.tag1
+-                        .hidden(self.$editMode.map{ !$0 })
++                        Div(self.$_tag1.map{ $0.isEmpty ? configServiceTags.tag1Placeholder : $0 })
++                            .class(.textFiledBlackDarkReadMode, .oneLineText)
++                            .color(self.$_tag1.map{ $0.isEmpty ? .grayContrast : .goldenRod })
++                            .hidden(self.$editMode)
++
++                        self.tag1
++                            .hidden(self.$editMode.map{ !$0 })
++                    }
++                    .marginTop(1.px)
++                    .hidden(!configServiceTags.tag1)
++
++                    // Tag2
++                    Div {
++                        Label(configServiceTags.tag2Name).color(.gray)
++                            .color(.gray)
++                            .fontSize(13.px)
++
++                        Div(self.$_tag2.map{ $0.isEmpty ? configServiceTags.tag2Placeholder : $0 })
++                            .class(.textFiledBlackDarkReadMode, .oneLineText)
++                            .color(self.$_tag2.map{ $0.isEmpty ? .grayContrast : .goldenRod })
++                            .hidden(self.$editMode)
++
++                        self.tag2
++                            .hidden(self.$editMode.map{ !$0 })
++                    }
++                    .marginTop(1.px)
++                    .hidden(!configServiceTags.tag2)
+                 }
+-                .marginTop(1.px)
+-                .hidden(!configServiceTags.tag1)
+-                
+-                // Tag2
+-                Div {
+-                    Label(configServiceTags.tag2Name).color(.gray)
+-                        .color(.gray)
+-                        .fontSize(13.px)
+-                      
+-                    Div(self.$_tag2.map{ $0.isEmpty ? configServiceTags.tag2Placeholder : $0 })
+-                        .class(.textFiledBlackDarkReadMode, .oneLineText)
+-                        .color(self.$_tag2.map{ $0.isEmpty ? .grayContrast : .goldenRod })
+-                        .hidden(self.$editMode)
+-                    
+-                    self.tag2
+-                        .hidden(self.$editMode.map{ !$0 })
+-                }
+-                .marginTop(1.px)
+-                .hidden(!configServiceTags.tag2)
+-                
++                .class(Class(TCOrderViewClass.equipmentBrandModel))
++                .display(configServiceTags.tag1 || configServiceTags.tag2 ? .grid : .none)
++
+                 // Tag3
+                 Div {
+                     Label(configServiceTags.tag3Name).color(.gray)
+@@ -447,13 +451,13 @@
+                             Div{
+                                 self.checkTag1
+                             }
+-                            .width(70.px)
++                            .width(24.px)
+                             .float(.left)
+                             
+                             Div(configServiceTags.checkTag1Name)
+                                 .color(.white)
+                                 .class( .oneLineText)
+-                                .custom("width", "calc(100% - 70px)")
++                                .custom("width", "calc(100% - 24px)")
+                                 .float(.left)
+                         }
+                         .hidden(!configServiceTags.checkTag1)
+@@ -464,13 +468,13 @@
+                             Div{
+                                 self.checkTag2
+                             }
+-                            .width(70.px)
++                            .width(24.px)
+                             .float(.left)
+                             
+                             Div(configServiceTags.checkTag2Name)
+                                 .color(.white)
+                                 .class(.oneLineText)
+-                                .custom("width", "calc(100% - 70px)")
++                                .custom("width", "calc(100% - 24px)")
+                                 .float(.left)
+                             Div().class(.clear)
+                         }
+@@ -482,12 +486,12 @@
+                             Div{
+                                 self.checkTag3
+                             }
+-                            .width(70.px)
++                            .width(24.px)
+                             .float(.left)
+                             Div(configServiceTags.checkTag3Name)
+                                 .color(.white)
+                                 .class(.oneLineText)
+-                                .custom("width", "calc(100% - 70px)")
++                                .custom("width", "calc(100% - 24px)")
+                                 .float(.left)
+                             Div().class(.clear)
+                         }
+@@ -499,13 +503,13 @@
+                             Div{
+                                 self.checkTag4
+                             }
+-                            .width(70.px)
++                            .width(24.px)
+                             .float(.left)
+                             
+                             Div(configServiceTags.checkTag4Name)
+                                 .color(.white)
+                                 .class(.oneLineText)
+-                                .custom("width", "calc(100% - 70px)")
++                                .custom("width", "calc(100% - 24px)")
+                                 .float(.left)
+                             Div().class(.clear)
+                         }
+@@ -517,13 +521,13 @@
+                             Div{
+                                 self.checkTag5
+                             }
+-                            .width(70.px)
++                            .width(24.px)
+                             .float(.left)
+                             
+                             Div(configServiceTags.checkTag5Name)
+                                 .color(.white)
+                                 .class( .oneLineText)
+-                                .custom("width", "calc(100% - 70px)")
++                                .custom("width", "calc(100% - 24px)")
+                                 .float(.left)
+                             Div().class(.clear)
+                         }
+@@ -535,13 +539,13 @@
+                             Div{
+                                 self.checkTag6
+                             }
+-                            .width(70.px)
++                            .width(24.px)
+                             .float(.left)
+                             
+                             Div(configServiceTags.checkTag6Name)
+                                 .color(.white)
+                                 .class(.oneLineText)
+-                                .custom("width", "calc(100% - 70px)")
++                                .custom("width", "calc(100% - 24px)")
+                                 .float(.left)
+                             
+                             Div().class(.clear)
+@@ -553,13 +557,13 @@
+                             Div{
+                                 self.checkTag7
+                             }
+-                            .width(70.px)
++                            .width(24.px)
+                             .float(.left)
+ 
+                             Div(configServiceTags.checkTag7Name)
+                                 .color(.white)
+                                 .class(.oneLineText)
+-                                .custom("width", "calc(100% - 70px)")
++                                .custom("width", "calc(100% - 24px)")
+                                 .float(.left)
+ 
+                             Div().class(.clear)
+@@ -571,13 +575,13 @@
+                             Div{
+                                 self.checkTag8
+                             }
+-                            .width(70.px)
++                            .width(24.px)
+                             .float(.left)
+ 
+                             Div(configServiceTags.checkTag8Name)
+                                 .color(.white)
+                                 .class(.oneLineText)
+-                                .custom("width", "calc(100% - 70px)")
++                                .custom("width", "calc(100% - 24px)")
+                                 .float(.left)
+ 
+                             Div().class(.clear)
+@@ -589,13 +593,13 @@
+                             Div{
+                                 self.checkTag9
+                             }
+-                            .width(70.px)
++                            .width(24.px)
+                             .float(.left)
+ 
+                             Div(configServiceTags.checkTag9Name)
+                                 .color(.white)
+                                 .class(.oneLineText)
+-                                .custom("width", "calc(100% - 70px)")
++                                .custom("width", "calc(100% - 24px)")
+                                 .float(.left)
+ 
+                             Div().class(.clear)
+@@ -607,13 +611,13 @@
+                             Div{
+                                 self.checkTag10
+                             }
+-                            .width(70.px)
++                            .width(24.px)
+                             .float(.left)
+ 
+                             Div(configServiceTags.checkTag10Name)
+                                 .color(.white)
+                                 .class(.oneLineText)
+-                                .custom("width", "calc(100% - 70px)")
++                                .custom("width", "calc(100% - 24px)")
+                                 .float(.left)
+ 
+                             Div().class(.clear)
+@@ -645,6 +649,7 @@
+                                 .hidden(self.$diagnostic.map{ !$0.isEmpty })
+                                 .textAlign(.center)
+                                 .class(.uibtnLarge)
++                                .class(Class(TCOrderViewClass.diagnosisAction))
+                                 .width(100.percent)
+                                 .onClick {
+                                     addToDom(ConfirmationView(
+@@ -710,6 +715,7 @@
+                                 .hidden(self.$resolution.map{ !$0.isEmpty })
+                                 .textAlign(.center)
+                                 .class(.uibtnLarge)
++                                .class(Class(TCOrderViewClass.diagnosisAction))
+                                 .width(100.percent)
+                                 .onClick {
+                                     addToDom(ConfirmationView(
+--- before/Sources/App/Snippits/OrderView/OrderView.swift
++++ after/Sources/App/Snippits/OrderView/OrderView.swift
+@@ -308,6 +308,215 @@
+         }
+         .id(Id(stringLiteral: mapId))
+         .height(250.px)
++        .position(.relative)
++
++    private lazy var statusSelector = Div{
++
++        if custCatchHerk >= 2 {
++
++            Div{
++
++                Div(self.$status.map{ $0.description })
++                    .custom("width", "calc(100% - 38px)")
++                    .color(self.$status.map{ $0.color})
++                    .class(.oneLineText)
++                    .float(.left)
++
++                 Div{
++                     Img()
++                         .src(self.$statusMenuIsHidden.map{ $0 ? "/skyline/media/dropDown.png" : "/skyline/media/dropDownClose.png" })
++                         .class(.iconWhite)
++                         .opacity(0.8)
++                         .width(28.px)
++                 }
++                 .borderLeft(
++                    width: BorderWidthType.thin,
++                    style: .solid,
++                    color: self.$status.map { $0.color }
++                 )
++                 .hidden(self.$status.map{
++
++                     [
++                        CustFolioStatus.canceled,
++                        CustFolioStatus.finalize,
++                        CustFolioStatus.pendingSpare,
++                        CustFolioStatus.collection
++                     ].contains($0)
++
++                 })
++                 .paddingRight(3.px)
++                 .paddingLeft(7.px)
++                 .marginLeft(7.px)
++                 .float(.right)
++                 .width(28.px)
++
++                 Div().clear(.both)
++
++            }
++            .width(91.percent)
++            .backgroundColor(self.$status.map { $0.crystalTintColor })
++            .border(
++                width: .thin,
++                style: .solid,
++                color: self.$status.map { $0.color }
++            )
++            .class(.uibtn)
++            .class(Class(TCOrderViewClass.headerStatus))
++            .class(Class(TCOrderViewClass.statusControl))
++            .onClick {
++
++                if [
++                    CustFolioStatus.canceled,
++                    CustFolioStatus.finalize,
++                    CustFolioStatus.pendingSpare,
++                    CustFolioStatus.collection
++                ].contains(self.status) {
++                   return
++                }
++
++                self.statusMenuIsHidden = !self.statusMenuIsHidden
++            }
++
++            Div{
++
++                /// Pending
++                Div(CustFolioStatus.pending.description)
++                .hidden(self.$status.map{ $0 == .pending })
++                .color(CustFolioStatus.pending.color)
++                .class(.oneLineText)
++                .width(90.percent)
++                .marginTop(7.px)
++                .class(.uibtn)
++                .class(Class(TCOrderViewClass.statusOption))
++                .onClick { _, event in
++                    self.changeOrderStatus(.pending)
++                    self.statusMenuIsHidden = true
++                    event.stopPropagation()
++                }
++
++                /// Active
++                Div(CustFolioStatus.active.description)
++                .hidden(self.$status.map{ $0 == .active })
++                .color(CustFolioStatus.active.color)
++                .class(.oneLineText)
++                .width(90.percent)
++                .marginTop(7.px)
++                .class(.uibtn)
++                .class(Class(TCOrderViewClass.statusOption))
++                .onClick { _, event in
++                    self.changeOrderStatus(.active)
++                    self.statusMenuIsHidden = true
++                    event.stopPropagation()
++                }
++
++                /// Collections
++                Div(CustFolioStatus.saleWait.description)
++                .hidden(self.$status.map{ $0 == .saleWait })
++                .color(CustFolioStatus.saleWait.color)
++                .class(.oneLineText)
++                .width(90.percent)
++                .marginTop(7.px)
++                .class(.uibtn)
++                .class(Class(TCOrderViewClass.statusOption))
++                .onClick { _, event in
++                    self.changeOrderStatus(.saleWait)
++                    self.statusMenuIsHidden = true
++                    event.stopPropagation()
++                }
++
++                /// Archive
++                Div(CustFolioStatus.archive.description)
++                .hidden(self.$status.map{ $0 == .archive })
++                .color(CustFolioStatus.archive.color)
++                .class(.oneLineText)
++                .width(90.percent)
++                .marginTop(7.px)
++                .class(.uibtn)
++                .class(Class(TCOrderViewClass.statusOption))
++                .onClick { _, event in
++                    self.changeOrderStatus(.archive)
++                    self.statusMenuIsHidden = true
++                    event.stopPropagation()
++                }
++
++                /// Collections
++                Div(CustFolioStatus.collection.description)
++                .hidden(self.$status.map{ $0 == .collection })
++                .color(CustFolioStatus.collection.color)
++                .class(.oneLineText)
++                .width(90.percent)
++                .marginTop(7.px)
++                .class(.uibtn)
++                .class(Class(TCOrderViewClass.statusOption))
++                .onClick { _, event in
++                    self.changeOrderStatus(.collection)
++                    self.statusMenuIsHidden = true
++                    event.stopPropagation()
++                }
++
++                Div(CustFolioStatus.finalize.description)
++                .hidden(self.$status.map{ ($0 == .finalize  || $0 == .canceled) })
++                .color(CustFolioStatus.finalize.color)
++                .class(.oneLineText)
++                .width(90.percent)
++                .marginTop(7.px)
++                .class(.uibtn)
++                .class(Class(TCOrderViewClass.statusOption))
++                .onClick { _, event in
++                    self.changeOrderStatus(.finalize)
++                    self.statusMenuIsHidden = true
++                    event.stopPropagation()
++                }
++
++                Div(CustFolioStatus.canceled.description)
++                .hidden(self.$status.map{ ($0 == .finalize  || $0 == .canceled) })
++                .color(CustFolioStatus.canceled.color)
++                .class(.oneLineText)
++                .width(90.percent)
++                .marginTop(7.px)
++                .class(.uibtn)
++                .class(Class(TCOrderViewClass.statusOption))
++                .onClick { _, event in
++                    self.changeOrderStatus(.canceled)
++                    self.statusMenuIsHidden = true
++                    event.stopPropagation()
++                }
++
++
++                Div().height(12.px)
++            }
++            .class(Class(TCOrderViewClass.statusMenu))
++            .hidden(self.$statusMenuIsHidden)
++            .backgroundColor(.transparentBlack)
++            .position(.absolute)
++            .borderRadius(12.px)
++            .padding(all: 3.px)
++            .margin(all: 3.px)
++            .marginTop(7.px)
++            .width(200.px)
++            .zIndex(1)
++            .onClick { _, event in
++                event.stopPropagation()
++            }
++
++        }
++        else {
++
++            Div(self.$status.map{ $0.description })
++                .color(self.$status.map{ $0.color})
++                .backgroundColor(self.$status.map { $0.crystalTintColor })
++                .border(
++                    width: .thin,
++                    style: .solid,
++                    color: self.$status.map { $0.color }
++                )
++                .class(.oneLineText)
++                .class(Class(TCOrderViewClass.headerStatus))
++                .class(Class(TCOrderViewClass.statusControl))
++        }
++
++    }
++        .class(Class(TCOrderViewClass.statusHolder))
+         .position(.relative)
+ 
+     @DOM override var body: DOM.Content {
+@@ -835,245 +1044,12 @@
+                     
+                     }
+                    
++                    self.statusSelector
++
+                 }
+                 .class(Class(TCOrderViewClass.summaryHeaderActions))
+                 
+                 Div().clear(.both).height(3.px)
+-                
+-                Div{
+-                    
+-                    Div{
+-
+-                        Div().clear(.both).height(7.px)
+-                        
+-                        Span("Orden ·")
+-                            .marginRight(7.px)
+-                            .color(.gray)
+-                        
+-                        Span(self.order.folio)
+-                            .marginRight(7.px)
+-                            .color(.lightGray)
+-                        
+-                    }
+-                    .width(55.percent)
+-                    .fontSize(22.px)
+-                    .float(.left)
+-                    
+-                    Div{
+-                        
+-                        if custCatchHerk >= 2 {
+-                            
+-                            Div{
+-                                
+-                                Div(self.$status.map{ $0.description })
+-                                    .custom("width", "calc(100% - 38px)")
+-                                    .color(self.$status.map{ $0.color})
+-                                    .class(.oneLineText)
+-                                    .float(.left)
+-                                 
+-                                 Div{
+-                                     Img()
+-                                         .src(self.$statusMenuIsHidden.map{ $0 ? "/skyline/media/dropDown.png" : "/skyline/media/dropDownClose.png" })
+-                                         .class(.iconWhite)
+-                                         .opacity(0.8)
+-                                         .width(28.px)
+-                                 }
+-                                 .borderLeft(
+-                                    width: BorderWidthType.thin,
+-                                    style: .solid,
+-                                    color: self.$status.map { $0.color }
+-                                 )
+-                                 .hidden(self.$status.map{
+-                                    
+-                                     [
+-                                        CustFolioStatus.canceled,
+-                                        CustFolioStatus.finalize,
+-                                        CustFolioStatus.pendingSpare,
+-                                        CustFolioStatus.collection
+-                                     ].contains($0)
+-                                     
+-                                 })
+-                                 .paddingRight(3.px)
+-                                 .paddingLeft(7.px)
+-                                 .marginLeft(7.px)
+-                                 .float(.right)
+-                                 .width(28.px)
+-                                
+-                                 Div().clear(.both)
+-                                 
+-                            }
+-                            .width(91.percent)
+-                            .backgroundColor(self.$status.map { $0.crystalTintColor })
+-                            .border(
+-                                width: .thin,
+-                                style: .solid,
+-                                color: self.$status.map { $0.color }
+-                            )
+-                            .class(.uibtn)
+-                            .class(Class(TCOrderViewClass.headerStatus))
+-                            .class(Class(TCOrderViewClass.statusControl))
+-                            .onClick {
+-                                
+-                                if [
+-                                    CustFolioStatus.canceled,
+-                                    CustFolioStatus.finalize,
+-                                    CustFolioStatus.pendingSpare,
+-                                    CustFolioStatus.collection
+-                                ].contains(self.status) {
+-                                   return
+-                                }
+-                                
+-                                self.statusMenuIsHidden = !self.statusMenuIsHidden
+-                            }
+-                            
+-                            Div{
+-                                
+-                                /// Pending
+-                                Div(CustFolioStatus.pending.description)
+-                                .hidden(self.$status.map{ $0 == .pending })
+-                                .color(CustFolioStatus.pending.color)
+-                                .class(.oneLineText)
+-                                .width(90.percent)
+-                                .marginTop(7.px)
+-                                .class(.uibtn)
+-                                .class(Class(TCOrderViewClass.statusOption))
+-                                .onClick { _, event in
+-                                    self.changeOrderStatus(.pending)
+-                                    self.statusMenuIsHidden = true
+-                                    event.stopPropagation()
+-                                }
+-                                    
+-                                /// Active
+-                                Div(CustFolioStatus.active.description)
+-                                .hidden(self.$status.map{ $0 == .active })
+-                                .color(CustFolioStatus.active.color)
+-                                .class(.oneLineText)
+-                                .width(90.percent)
+-                                .marginTop(7.px)
+-                                .class(.uibtn)
+-                                .class(Class(TCOrderViewClass.statusOption))
+-                                .onClick { _, event in
+-                                    self.changeOrderStatus(.active)
+-                                    self.statusMenuIsHidden = true
+-                                    event.stopPropagation()
+-                                }
+-                                
+-                                /// Collections
+-                                Div(CustFolioStatus.saleWait.description)
+-                                .hidden(self.$status.map{ $0 == .saleWait })
+-                                .color(CustFolioStatus.saleWait.color)
+-                                .class(.oneLineText)
+-                                .width(90.percent)
+-                                .marginTop(7.px)
+-                                .class(.uibtn)
+-                                .class(Class(TCOrderViewClass.statusOption))
+-                                .onClick { _, event in
+-                                    self.changeOrderStatus(.saleWait)
+-                                    self.statusMenuIsHidden = true
+-                                    event.stopPropagation()
+-                                }
+-                                
+-                                /// Archive
+-                                Div(CustFolioStatus.archive.description)
+-                                .hidden(self.$status.map{ $0 == .archive })
+-                                .color(CustFolioStatus.archive.color)
+-                                .class(.oneLineText)
+-                                .width(90.percent)
+-                                .marginTop(7.px)
+-                                .class(.uibtn)
+-                                .class(Class(TCOrderViewClass.statusOption))
+-                                .onClick { _, event in
+-                                    self.changeOrderStatus(.archive)
+-                                    self.statusMenuIsHidden = true
+-                                    event.stopPropagation()
+-                                }
+-                                
+-                                /// Collections
+-                                Div(CustFolioStatus.collection.description)
+-                                .hidden(self.$status.map{ $0 == .collection })
+-                                .color(CustFolioStatus.collection.color)
+-                                .class(.oneLineText)
+-                                .width(90.percent)
+-                                .marginTop(7.px)
+-                                .class(.uibtn)
+-                                .class(Class(TCOrderViewClass.statusOption))
+-                                .onClick { _, event in
+-                                    self.changeOrderStatus(.collection)
+-                                    self.statusMenuIsHidden = true
+-                                    event.stopPropagation()
+-                                }
+-                                
+-                                Div(CustFolioStatus.finalize.description)
+-                                .hidden(self.$status.map{ ($0 == .finalize  || $0 == .canceled) })
+-                                .color(CustFolioStatus.finalize.color)
+-                                .class(.oneLineText)
+-                                .width(90.percent)
+-                                .marginTop(7.px)
+-                                .class(.uibtn)
+-                                .class(Class(TCOrderViewClass.statusOption))
+-                                .onClick { _, event in
+-                                    self.changeOrderStatus(.finalize)
+-                                    self.statusMenuIsHidden = true
+-                                    event.stopPropagation()
+-                                }
+-                                
+-                                Div(CustFolioStatus.canceled.description)
+-                                .hidden(self.$status.map{ ($0 == .finalize  || $0 == .canceled) })
+-                                .color(CustFolioStatus.canceled.color)
+-                                .class(.oneLineText)
+-                                .width(90.percent)
+-                                .marginTop(7.px)
+-                                .class(.uibtn)
+-                                .class(Class(TCOrderViewClass.statusOption))
+-                                .onClick { _, event in
+-                                    self.changeOrderStatus(.canceled)
+-                                    self.statusMenuIsHidden = true
+-                                    event.stopPropagation()
+-                                }
+-                                
+-                                
+-                                Div().height(12.px)
+-                            }
+-                            .class(Class(TCOrderViewClass.statusMenu))
+-                            .hidden(self.$statusMenuIsHidden)
+-                            .backgroundColor(.transparentBlack)
+-                            .position(.absolute)
+-                            .borderRadius(12.px)
+-                            .padding(all: 3.px)
+-                            .margin(all: 3.px)
+-                            .marginTop(7.px)
+-                            .width(200.px)
+-                            .zIndex(1)
+-                            .onClick { _, event in
+-                                event.stopPropagation()
+-                            }
+-                            
+-                        }
+-                        else {
+-                            
+-                            Div(self.$status.map{ $0.description })
+-                                .color(self.$status.map{ $0.color})
+-                                .backgroundColor(self.$status.map { $0.crystalTintColor })
+-                                .border(
+-                                    width: .thin,
+-                                    style: .solid,
+-                                    color: self.$status.map { $0.color }
+-                                )
+-                                .class(.oneLineText)
+-                                .class(Class(TCOrderViewClass.headerStatus))
+-                                .class(Class(TCOrderViewClass.statusControl))
+-                        }
+-                        
+-                    }
+-                    .width(45.percent)
+-                    .float(.left)
+-                    
+-                    Div().clear(.both)
+-                    
+-                }
+-                .class(Class(TCOrderViewClass.summaryIdentity))
+-                .marginBottom(7.px)
+-            
+                 Div().class(.clear)
+                 
+                 // Created At
+@@ -1606,7 +1582,15 @@
+                             .marginRight(7.px)
+                             .float(.right)
+ 
+-                        Span("Carta de Servicio")
++                        Span {
++                            Img()
++                                .src(TCOrderViewIcon.serviceLetter.source)
++                                .attribute("alt", "")
++                                .attribute("aria-hidden", "true")
++                                .class(Class(TCOrderViewClass.sectionIcon))
++                            Span("Carta de Servicio")
++                        }
++                        .class(Class(TCOrderViewClass.sectionTitle))
+                         .color(.yellowTC)
+                     }
+                     .class(Class(TCOrderViewClass.detailHeader))
+@@ -1652,7 +1636,15 @@
+                             .marginRight(7.px)
+                             .float(.right)
+ 
+-                            Span("Contratos")
++                            Span {
++                                Img()
++                                    .src(TCOrderViewIcon.contract.source)
++                                    .attribute("alt", "")
++                                    .attribute("aria-hidden", "true")
++                                    .class(Class(TCOrderViewClass.sectionIcon))
++                                Span("Contratos")
++                            }
++                            .class(Class(TCOrderViewClass.sectionTitle))
+                             .color(.yellowTC)
+                         }
+                         .class(Class(TCOrderViewClass.detailHeader))
+@@ -1682,11 +1674,11 @@
+                 Div {
+ 
+                     Img()
+-                        .float(.right)
+-                        .src("/skyline/media/zoom.png")
+-                        .class(.iconWhite)
++                        .src(TCOrderViewIcon.map.source)
++                        .attribute("alt", "")
++                        .attribute("aria-hidden", "true")
++                        .class(Class(TCOrderViewClass.sectionIcon))
+                         .height(24.px)
+-                        .padding(all: 3.px)
+                     
+                     H2("Dirección de servicio")
+                         .marginBottom(3.px)
+--- before/Sources/App/TierraCeroCustomUI/Theme/TCOrderViewTheme.swift
++++ after/Sources/App/TierraCeroCustomUI/Theme/TCOrderViewTheme.swift
+@@ -13,6 +13,8 @@
+     static let toolbar = "tc-order-toolbar"
+     static let content = "tc-order-content"
+     static let headerTitle = "tc-order-header-title"
++    static let headerFolio = "tc-order-header-folio"
++    static let statusHolder = "tc-order-status-holder"
+     static let headerStatus = "tc-order-header-status"
+     static let statusControl = "tc-order-status-control"
+     static let statusMenu = "tc-order-status-menu"
+@@ -42,7 +44,6 @@
+     static let chargesCard = "tc-order-charges-card"
+     static let summaryScroll = "tc-order-summary-scroll"
+     static let summaryHeaderActions = "tc-order-summary-actions"
+-    static let summaryIdentity = "tc-order-summary-identity"
+     static let rewardsCard = "tc-order-rewards-card"
+     static let surveysCard = "tc-order-surveys-card"
+     static let detailsStack = "tc-order-details-stack"
+@@ -58,8 +59,32 @@
+     static let equipmentDetails = "tc-order-equipment-details"
+     static let equipmentOverview = "tc-order-equipment-overview"
+     static let equipmentChecks = "tc-order-equipment-checks"
++    static let equipmentBrandModel = "tc-order-equipment-brand-model"
++    static let diagnosisAction = "tc-order-diagnosis-action"
+     static let equipmentDiagnosis = "tc-order-equipment-diagnosis"
+     static let equipmentWorkflow = "tc-order-equipment-workflow"
++    static let sectionIcon = "tc-order-section-icon"
++    static let sectionTitle = "tc-order-section-title"
++}
++
++enum TCOrderViewIcon {
++    case serviceLetter
++    case contract
++    case map
++
++    var source: String {
++        let shapes: String
++        switch self {
++        case .serviceLetter:
++            shapes = "<rect x='3' y='5' width='18' height='14' rx='2'/><path d='m3 6 9 7 9-7'/>"
++        case .contract:
++            shapes = "<path d='M14 2H5v20h14V7l-5-5Z M14 2v6h5 M8 12h7 M8 16h4 M11 20l3-3 2 2 4-4'/>"
++        case .map:
++            shapes = "<path d='m9 4-6 3v14l6-3 6 3 6-3V4l-6 3-6-3Z M9 4v14 M15 7v14'/>"
++        }
++        let svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgb(92,183,255)' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'>\(shapes)</svg>"
++        return "data:image/svg+xml;base64,\(Data(svg.utf8).base64EncodedString())"
++    }
+ }
+ 
+ /// Scoped Tierra Cero presentation for the production OrderView.
+@@ -179,12 +204,12 @@
+                 .custom("display", "inline-flex")
+                 .custom("align-items", "center")
+                 .custom("justify-content", "center")
+-                .custom("min-height", "56px")
+-                .custom("box-sizing", "border-box")
+-                .custom("margin-left", "14px")
+-                .custom("padding", "8px 20px")
++                .custom("min-height", "32px")
++                .custom("box-sizing", "border-box")
++                .custom("margin-left", "0")
++                .custom("padding", "3px 9px")
+                 .custom("border-radius", "999px")
+-                .custom("font-size", "26px")
++                .custom("font-size", "16px")
+                 .custom("font-weight", "700")
+                 .custom("line-height", "1")
+                 .custom("box-shadow", "inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 22px rgba(0, 0, 0, 0.16)")
+@@ -406,6 +431,10 @@
+             OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryHeaderActions)"))
+                 .custom("min-height", "34px")
+                 .custom("padding-bottom", "6px")
++                .custom("display", "flex")
++                .custom("align-items", "center")
++                .custom("flex-wrap", "wrap")
++                .custom("gap", "4px")
+ 
+             OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryHeaderActions) > img"))
+                 .custom("width", "32px !important")
+@@ -417,7 +446,7 @@
+             OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryHeaderActions) > img:nth-of-type(4)"))
+                 .custom("display", "none !important")
+ 
+-            OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryHeaderActions) .uibtn"))
++            OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryHeaderActions) > .uibtn:not(.\(TCOrderViewClass.statusControl))"))
+                 .custom("min-height", "30px")
+                 .custom("border", "1px solid var(--tc-order-border) !important")
+                 .custom("border-radius", "7px !important")
+@@ -426,33 +455,21 @@
+                 .custom("box-shadow", "none !important")
+                 .custom("font-size", "14px")
+ 
+-            OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryIdentity)"))
+-                .custom("padding", "8px 0 10px")
+-                .custom("border-bottom", "1px solid var(--tc-order-border-soft)")
+-                .custom("font-size", "18px")
+-
+-            OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryIdentity) .uibtn:not(.\(TCOrderViewClass.statusControl))"))
+-                .custom("border", "1px solid rgba(83, 198, 83, 0.30) !important")
+-                .custom("border-radius", "999px !important")
+-                .custom("background", "rgba(83, 198, 83, 0.08) !important")
+-                .custom("background-image", "none !important")
+-                .custom("box-shadow", "none !important")
+-
+-            OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryIdentity) .\(TCOrderViewClass.statusControl).uibtn"))
++            OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryHeaderActions) .\(TCOrderViewClass.statusHolder) .\(TCOrderViewClass.statusControl).uibtn"))
+                 .custom("display", "inline-flex !important")
+                 .custom("align-items", "center")
+                 .custom("justify-content", "center")
+-                .custom("gap", "9px")
++                .custom("gap", "6px")
+                 .custom("width", "auto !important")
+                 .custom("max-width", "100%")
+-                .custom("min-height", "48px")
+-                .custom("margin", "0 !important")
+-                .custom("padding", "3px 12px 3px 12px !important")
+-                .custom("box-sizing", "border-box")
+-                .custom("float", "right !important")
++                .custom("min-height", "32px")
++                .custom("margin", "0 !important")
++                .custom("padding", "3px 9px !important")
++                .custom("box-sizing", "border-box")
++                .custom("float", "none !important")
+                 .custom("border-radius", "999px !important")
+                 .custom("background-image", "none !important")
+-                .custom("font-size", "24px !important")
++                .custom("font-size", "16px !important")
+                 .custom("font-weight", "700")
+ 
+             OrderRule(Pointer("\(root) .\(TCOrderViewClass.statusControl) > div:first-child"))
+@@ -463,16 +480,16 @@
+             OrderRule(Pointer("\(root) .\(TCOrderViewClass.statusControl) > div:nth-child(2)"))
+                 .custom("display", "inline-flex")
+                 .custom("align-items", "center")
+-                .custom("width", "28px !important")
+-                .custom("height", "36px")
+-                .custom("margin", "0 !important")
+-                .custom("padding", "0 0 0 12px !important")
++                .custom("width", "18px !important")
++                .custom("height", "22px")
++                .custom("margin", "0 !important")
++                .custom("padding", "0 0 0 7px !important")
+                 .custom("box-sizing", "content-box")
+                 .custom("float", "none !important")
+ 
+             OrderRule(Pointer("\(root) .\(TCOrderViewClass.statusControl) > div:nth-child(2) img"))
+-                .custom("width", "28px !important")
+-                .custom("height", "28px !important")
++                .custom("width", "18px !important")
++                .custom("height", "18px !important")
+                 .custom("padding", "0 !important")
+                 .custom("opacity", "0.82 !important")
+ 
+@@ -481,7 +498,9 @@
+ 
+             OrderRule(Pointer("\(root) .\(TCOrderViewClass.statusMenu)"))
+                 .custom("width", "200px !important")
+-                .custom("margin", "6px 0 0 auto !important")
++                .custom("margin", "0 !important")
++                .custom("top", "calc(100% + 4px)")
++                .custom("right", "0")
+                 .custom("padding", "5px !important")
+                 .custom("box-sizing", "border-box")
+                 .custom("border", "1px solid var(--tc-order-border)")
+@@ -663,7 +682,7 @@
+ 
+             OrderRule(Pointer("\(root) .\(TCOrderViewClass.equipmentOverview)"))
+                 .custom("display", "grid")
+-                .custom("grid-template-columns", "minmax(240px, 58%) minmax(180px, 42%)")
++                .custom("grid-template-columns", "minmax(150px, 1fr) minmax(180px, 1.2fr)")
+                 .custom("gap", "10px")
+                 .custom("height", "calc(100% - 58px) !important")
+ 
+@@ -714,5 +733,84 @@
+                     .custom("grid-template-columns", "7fr 3fr")
+             }
+         }
++
++        WebApp.current.addStylesheet {
++            OrderRule(Pointer("\(root) .\(TCOrderViewClass.headerFolio)"))
++                .custom("order", "4")
++                .custom("align-items", "center")
++                .custom("max-width", "24%")
++                .custom("min-width", "0")
++                .custom("flex", "0 1 auto")
++                .custom("padding", "5px 10px")
++                .custom("margin-left", "8px")
++                .custom("border", "1px solid var(--tc-order-blue-soft)")
++                .custom("border-radius", "7px")
++                .custom("background", "rgba(22, 137, 232, 0.14)")
++                .custom("color", "var(--tc-order-blue-soft)")
++                .custom("font-size", "19px")
++                .custom("font-weight", "700")
++
++            OrderRule(Pointer("\(root) .\(TCOrderViewClass.statusHolder)"))
++                .custom("display", "flex")
++                .custom("align-items", "center")
++                .custom("margin-left", "auto")
++                .custom("min-width", "0")
++                .custom("max-width", "100%")
++
++            OrderRule(Pointer("\(root) .\(TCOrderViewClass.headerFolio)[hidden], \(root) .\(TCOrderViewClass.statusHolder) [hidden], \(root) .\(TCOrderViewClass.statusHolder) .\(TCOrderViewClass.statusOption)[hidden]"))
++                .custom("display", "none !important")
++
++            OrderRule(Pointer("\(root) .\(TCOrderViewClass.equipmentBrandModel)"))
++                .custom("grid-template-columns", "repeat(auto-fit, minmax(90px, 1fr))")
++                .custom("gap", "8px")
++
++            OrderRule(Pointer("\(root) .\(TCOrderViewClass.equipmentBrandModel) > div"))
++                .custom("min-width", "0")
++
++            OrderRule(Pointer("\(root) .\(TCOrderViewClass.equipmentChecks) > .oneHalf"))
++                .custom("width", "50% !important")
++                .custom("max-width", "50%")
++                .custom("box-sizing", "border-box")
++                .custom("min-height", "26px")
++                .custom("padding", "2px 0")
++
++            OrderRule(Pointer("\(root) .\(TCOrderViewClass.equipmentChecks) input[type='checkbox']"))
++                .custom("appearance", "auto")
++                .custom("accent-color", "var(--tc-order-blue-soft)")
++                .custom("width", "17px !important")
++                .custom("height", "17px !important")
++                .custom("padding", "0 !important")
++                .custom("margin", "0 !important")
++
++            OrderRule(Pointer("\(root) .\(TCOrderViewClass.equipmentDiagnosis) .\(TCOrderViewClass.diagnosisAction)"))
++                .custom("font-size", "14px !important")
++                .custom("line-height", "1.3")
++                .custom("min-height", "28px")
++                .custom("padding", "5px 7px !important")
++                .custom("box-sizing", "border-box")
++
++            OrderRule(Pointer("\(root) .\(TCOrderViewClass.sectionTitle)"))
++                .custom("display", "inline-flex")
++                .custom("align-items", "center")
++                .custom("gap", "8px")
++                .custom("min-width", "0")
++
++            OrderRule(Pointer("\(root) .\(TCOrderViewClass.sectionIcon)"))
++                .custom("width", "20px")
++                .custom("height", "20px")
++                .custom("flex", "0 0 auto")
++                .custom("object-fit", "contain")
++
++            OrderRule(Pointer("\(root) .\(TCOrderViewClass.addressHeader)"))
++                .custom("justify-content", "flex-start")
++                .custom("gap", "8px")
++                .custom("text-align", "left")
++
++            OrderRule(Pointer("\(root) .\(TCOrderViewClass.addressHeader) h2"))
++                .custom("flex", "1")
++                .custom("text-align", "left")
++                .custom("margin", "0 !important")
++        }
++
+     }
+ }

@@ -1,0 +1,224 @@
+--- before/Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+ChangeTripStatus.swift
++++ Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+ChangeTripStatus.swift
+@@ -8,6 +8,8 @@
+     static func changeTripStatus(
+         tripId: UUID,
+         status: FiscalTripFollowupStatus,
++        comment: String,
++        media: [ChangeTripStatusMedia],
+         callback: @escaping ((_ resp: APIResponse?) -> ())
+     ) {
+         sendPost(
+@@ -16,7 +18,9 @@
+             "changeTripStatus",
+             ChangeTripStatusRequest(
+                 tripId: tripId,
+-                status: status
++                status: status,
++                comment: comment,
++                media: media
+             )
+         ) { data in
+             
+--- before/Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift
++++ Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift
+@@ -42,6 +42,8 @@
+     @State var fiscalId: UUID?
+ 
+     @State private var status: FiscalTripFollowupStatus
++
++    @State private var isChangingStatus = false
+ 
+     @State var financialView:  FinancialView = .charges
+ 
+@@ -94,6 +96,7 @@
+             .custom("min-height", "35px")
+             .custom("padding", "4px 10px")
+             .custom("flex", "1")
++            .disabled(self.$isChangingStatus)
+             .onClick {
+                 self.confirmStatus(nextStatus)
+             }
+@@ -1046,12 +1049,21 @@
+ 
+ 
+     private func confirmStatus(_ nextStatus: FiscalTripFollowupStatus) {
+-        guard statusConfirmation == nil else { return }
++        guard isInDOM, !isChangingStatus, statusConfirmation == nil else { return }
++        guard ConfirmTripStatusUpdate.isValidTransition(current: trip.status, requested: nextStatus) else {
++            showError(.generalError, "El cambio de estatus solicitado no está disponible.")
++            return
++        }
++        if let error = ConfirmTripStatusUpdate.assetRouteError(merchandise: trip.merchandise, locations: trip.locations) {
++            showError(.generalError, error)
++            return
++        }
+ 
+         let view = ConfirmTripStatusUpdate(
+             currentStatus: trip.status,
+             nextStatus: nextStatus,
+-            merchandise: trip.merchandise
++            merchandise: trip.merchandise,
++            locations: trip.locations
+         ) { [weak self] newStatus, comment, media in
+             self?.changeStatus(newStatus, comment: comment, media: media)
+         }
+@@ -1067,8 +1079,56 @@
+         comment: String,
+         media: [CustCommercialTripsComponents.ChangeTripStatusMedia]
+     ) {
+-        // TODO: Forward trip.id, newStatus, comment and media once
+-        // API.custCommercialTrips.changeTripStatus supports the new contract.
++        guard isInDOM, !isChangingStatus, trip.status != newStatus else { return }
++
++        let comment = comment.trimmingCharacters(in: .whitespacesAndNewlines)
++        if let error = ConfirmTripStatusUpdate.validationError(
++            current: trip.status, requested: newStatus, comment: comment, media: media,
++            merchandise: trip.merchandise, locations: trip.locations
++        ) {
++            showError(.generalError, error)
++            return
++        }
++
++        let tripId = trip.id
++        let sessionId = custCatchID
++        let statusChanged = statusChangedCallback
++        isChangingStatus = true
++        loadingView.show()
++
++        API.custCommercialTrips.changeTripStatus(
++            tripId: tripId,
++            status: newStatus,
++            comment: comment,
++            media: media
++        ) { [weak self] response in
++            loadingView.hide()
++            self?.isChangingStatus = false
++            guard custCatchID == sessionId else { return }
++
++            guard let response else {
++                showError(.comunicationError, .serverConextionError)
++                return
++            }
++            guard response.status == .ok else {
++                showError(.generalError, response.msg)
++                return
++            }
++
++            self?.trip.status = newStatus
++            self?.status = newStatus
++            statusChanged(tripId, newStatus)
++            showSuccess(.operacionExitosa, "Estatus actualizado")
++            API.custCommercialTrips.getTrip(tripId: tripId) { [weak self] refreshed in
++                guard custCatchID == sessionId, let self, self.isInDOM,
++                      self.trip.status == newStatus, let refreshed, refreshed.status == .ok,
++                      let payload = refreshed.data, payload.trip.id == tripId,
++                      payload.trip.status == newStatus else { return }
++                self.trip = payload.trip
++                self.notes = payload.notes
++                self.renderTrip()
++            }
++        }
+     }
+ 
+     override func didRemoveFromDOM() {
+@@ -1076,6 +1136,7 @@
+         statusConfirmation?.remove()
+         statusConfirmation = nil
+         $status.removeAllListeners()
++        $isChangingStatus.removeAllListeners()
+     }
+ 
+     private func viewFiscalDocument(_ id: UUID) {
+--- before/.agent/architecture/API_AND_BACKEND.md
++++ .agent/architecture/API_AND_BACKEND.md
+@@ -4,6 +4,7 @@
+ 
+ ## Verified Facts
+ 
++- The trip `changeTripStatus` client wrapper sends the shared `ChangeTripStatusRequest(tripId:status:comment:media:)` to the existing authenticated POST route and decodes `APIResponse`. Media uses the shared `ChangeTripStatusMedia` records with merchandise item IDs and original filenames; no local DTO or backend wire key is introduced. Source and isolated type checks match the current local TCFireSignal contract; cached dependencies and full build resolution remain outdated.
+ - Client API wrappers live under `Sources/App/API/**`.
+ - The client `sincCustSettings` wrapper decodes an immutable reference-backed `SincCustSettingsSnapshot` with the same fields/keys/optionality as the shared `CustComponents.SincCustSettingsResponse`. This avoids passing/copying the whole settings aggregate by value through optional response callbacks on WASM; shared package definitions remain the wire-contract authority.
+ - `ManageSubCustomerAccountView` creates with the injected parent's UUID through `API.custSubAcctV1.create`, checking outer/create response statuses and the returned parent ID. Editing validates the source parent, uses `update` with the source UUID/status, then `load(.id)` to return the server's record after verifying its ID and parent. Both paths retain `longitud` and validate returned full address/coordinates when required.
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ .agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -4,7 +4,7 @@
+ 
+ ## Verified Facts
+ 
+-- `TripViewBeta` reserves a 35px status action row below its right-side data grid. Pending trips expose Iniciar Viaje and Cancelar Viaje; in-progress trips expose Completar Viaje and Cancelar Viaje; terminal states expose neither. `ConfirmTripStatusUpdate` gathers the typed transition, a trimmed comment (required for cancellation), and `ChangeTripStatusMedia` grouped by fiscal merchandise item ID. Its source uses the existing unregistered `.asset` image-upload/camera pipeline, correlates each completion to a row/event, keeps the first completed image as avatar, and blocks confirmation until pending uploads/camera requests finish or are cancelled. Removal aborts local uploads and ignores late responses. The beta `changeStatus` method is intentionally inert pending the API wrapper update; confirmation does not change server-owned status or call the status-changed callback. These facts were verified in source; browser/upload behavior remains unverified because the package build is blocked by dependency resolution.
++- `TripViewBeta` reserves a 35px status action row below its right-side data grid. Pending trips expose Iniciar Viaje and Cancelar Viaje; in-progress trips expose Completar Viaje and Cancelar Viaje; terminal states expose neither. `ConfirmTripStatusUpdate` gathers the typed transition, a trimmed comment (required for cancellation), and `ChangeTripStatusMedia` grouped by fiscal merchandise item ID. Its source uses the existing unregistered `.asset` image-upload/camera pipeline, correlates each completion to a row/event, keeps the first completed image as avatar, and blocks confirmation until pending uploads/camera requests finish or are cancelled. Removal aborts local uploads and ignores late responses. The beta `changeStatus` method submits the trip ID, requested status, comment and media through the typed wrapper. Status actions are disabled while the request is pending. Only a successful API response changes the local trip/status and calls the parent status callback; failed requests retain the prior status. Responses from a changed session are ignored, while successful responses still notify the parent if the detail was closed. These facts were verified in source; browser/upload behavior remains unverified because the package build is blocked by dependency resolution.
+ - `MediaViewer` honors `currentView` with a zero-index fallback, presents clickable `thump_` thumbnails and previous/next navigation for multiple files, and uses the selected file for downloads/rotations/deletion. Direct image source assignment avoids an older image-load callback replacing a newer selection. Each `MediaFile` can supply its own URL base; `allowsMediaActions: false` hides mutation/download actions for staged evidence while existing callers retain the default behavior.
+ - `Sources/App/App.swift` is the `@main` app entry point.
+ - The app registers `./service.js` during launch.
+--- before/.agent/SOURCE_MAP.md
++++ .agent/SOURCE_MAP.md
+@@ -18,6 +18,7 @@
+ | `Sources/App/App.swift` | `@main` Swift Web app lifecycle, service-worker registration, route table, and theme switching. |
+ | `Sources/App/SkylineWeb.swift` | Project version, environment flags, global app/session/cache variables. |
+ | `Sources/App/API/` | Client API wrapper namespaces and endpoint files. |
++| `Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+ChangeTripStatus.swift` | Typed trip status update POST wrapper accepting status, comment and per-merchandise media. |
+ | `Sources/App/API/CustSubAcctEndpoint/` | Shared subaccount create/load/update POST wrappers and account-scoped GET search exposed as `API.custSubAcctV1`. |
+ | `Sources/App/API/CustOrderEndpoint/CustOrder+RemoveChargeCTAM.swift`, `CustOrder+RemovePaymentCTAM.swift` | Typed order charge/payment deletion approval request wrappers. |
+ | `Sources/App/API/CustPOCEndpoint/CustPOC+AuditProductActivity.swift` | Typed client wrapper for the product creation, edit, image, and duplicate audit report. |
+@@ -36,7 +37,7 @@
+ | `Sources/App/Snippits/ManualAddressSearch.swift` | Crystal postal-address and coordinate lookup dialogs; returns the selected address or geocoder snapshot to its caller. |
+ | `Sources/App/Snippits/TripControler/TripControler+AddLocation.swift` | Dedicated fiscal-location picker; owns origin/destination presentation and location-typed callbacks, including prefilled confirmation and resumption for incomplete store addresses. |
+ | `Sources/App/Snippits/TripControler/TripControler+AddMerchandise.swift` | Account/origin-aware fiscal-merchandise base picker; preserves selection and creation callbacks. |
+-| `Sources/App/Snippits/TripControler/ConfirmTripStatusUpdate.swift`, `TripControler+TripViewBeta.swift` | Beta trip status actions and crystal confirmation form; gathers comments and per-merchandise image filenames for the pending API handoff. |
++| `Sources/App/Snippits/TripControler/ConfirmTripStatusUpdate.swift`, `TripControler+TripViewBeta.swift` | Beta trip status actions and crystal confirmation form; gathers comments and per-merchandise image filenames, submits the status update and synchronizes status after API success. |
+ | `Sources/App/Snippits/MediaViewer.swift` | Shared image/video viewer with selected-file navigation, bottom thumbnails, optional per-file URL bases and read-only presentation for staged trip evidence. |
+ | `Sources/App/Snippits/SearchComertialAsset.swift` | Trip commercial-asset picker over preloaded available inventory from a store, warehouse or subaccount origin; locally filters folio/name/serial. |
+ | `Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+FastAndFurios.swift` | Ranked product revenue velocity, sales velocity, volume, and weighted score report presentation. |
+--- before/.agent/MODULES.md
++++ .agent/MODULES.md
+@@ -26,7 +26,7 @@
+ - `ViewControlers/` — page controllers and top-level page flows.
+ - `Snippits/` — reusable UI components and feature views, including Product Manager audit report presentations, order report delivery tables and CSV exports, order charge/payment deletion approval and refresh, velocity scoring, the dedicated Trip location and account-aware merchandise pickers, preloaded commercial-asset selection through `SearchComertialAsset`, parent-scoped subaccount creation/editing through `ManageSubCustomerAccountView`, and store-address confirmation through `ConfirmAdddressLocationView`.
+ - `Styles/` — Swift Web CSS style declarations.
+-- Trip status confirmation is owned by `Snippits/TripControler/ConfirmTripStatusUpdate.swift`; the beta detail view presents it, and `Snippits/MediaViewer.swift` previews its merchandise image galleries. The beta status API handoff remains deferred.
++- Trip status confirmation is owned by `Snippits/TripControler/ConfirmTripStatusUpdate.swift`; the beta detail view presents it, and `Snippits/MediaViewer.swift` previews its merchandise image galleries. The beta detail submits its status/comment/media through `API/CustComertialTripsEndpoint/CustComertialTrips+ChangeTripStatus.swift` and updates its status and the parent list only after API success.
+ - `Functions/`, `Extentions/`, `Enums/`, `Structurs/`, `VirtualControlers/` — shared app helpers and runtime support. Error diagnostics are owned by `ErrorReportingControler`, its record/context types, the centralized POST transport, and the API decoding helper.
+ 
+ ## Service Target
+--- before/.agent/PROJECT_MEMORY.md
++++ .agent/PROJECT_MEMORY.md
+@@ -35,7 +35,7 @@
+ 
+ ## Authoritative References
+ 
+-- 2026-10-08: Trip beta status confirmation and shared media-gallery source integration are documented in `architecture/SWIFWEB_APP_ARCHITECTURE.md`. The beta API handoff is intentionally deferred; `ChangeTripStatusMedia` exists in the local TCFireSignal source but is absent from the repository's cached dependency. Build verification is blocked by the unavailable pinned TCFundamentals revision.
++- 2026-10-08: Trip beta status confirmation and shared media-gallery source integration are documented in `architecture/SWIFWEB_APP_ARCHITECTURE.md`. The beta API handoff now submits status/comment/media and synchronizes status only after success; `ChangeTripStatusMedia` exists in the local TCFireSignal source but is absent from the repository's cached dependency. Build verification is blocked by the unavailable pinned TCFundamentals revision.
+ - Product facts: `PRODUCT_SCOPE.md`.
+ - Architecture boundaries: `ARCH_INDEX.md` and `architecture/*.md`.
+ - Source layout: `SOURCE_MAP.md`.
+--- before/.agent/TASKS_ARCHIVE.md
++++ .agent/TASKS_ARCHIVE.md
+@@ -1,6 +1,18 @@
+ # Tasks Archive
+ 
+ Verified completed tasks live here.
++
++---
++
++## TRIP-STATUS-API-001 — Complete Beta Trip Status API Handoff
++
++- **Status**: Implemented; full build blocked by dependency resolution, live behavior unverified
++- **Completed**: 2026-10-08
++- **Chunks/IDs**: `API-001`, `API-002`, `SWWEB-003`, `SEC-001`
++- **Implementation**: The client wrapper encodes trip ID, status, comment and merchandise media using the updated shared request. Beta status actions disable during submission, retain status on errors, and update the trip and parent list only after an .ok response. Session changes suppress late responses. A successful response can still notify the parent after the detail closes.
++- **Validation evidence**: Both modified Swift files passed syntax parsing. An isolated compile-only type check of the exact shared DTOs, wrapper and changeStatus method passed with unrelated transport/presentation dependencies scaffolded. Focused diff/whitespace/status review passed. No live server mutation or test suite was run.
++- **Build**: The previously authorized focused App build was retried and still fails on unavailable pinned TCFundamentals revision `25fd6294b7ccbca6a5542769e9dadbb709121988`. Dependencies and lockfile were left unchanged. Evidence: `.artifacts/planning/trip-status-api/AUDIT.md`.
++- **Commit**: Not created.
+ 
+ ---
+ 
+@@ -9,7 +21,7 @@
+ - **Status**: Implemented; full build and browser/upload verification blocked or unperformed
+ - **Completed**: 2026-10-08
+ - **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`; API contracts and server status authority preserved
+-- **Implementation**: Added state-specific actions in the 35px right-side status grid, a two-column crystal confirmation form with required cancellation comments and merchandise image uploads/camera capture, and a shared viewer gallery with clickable thumbnails. The callback passes typed status/comment/media to an intentionally inert beta `changeStatus` method pending the user-owned API update.
++- **Implementation**: Added state-specific actions in the 35px right-side status grid, a two-column crystal confirmation form with required cancellation comments and merchandise image uploads/camera capture, and a shared viewer gallery with clickable thumbnails. The callback passes typed status/comment/media to beta `changeStatus`; the follow-up API integration is recorded in TRIP-STATUS-API-001.
+ - **Validation evidence**: All three Swift files passed syntax parsing; the confirmation/viewer passed a limited cached-module type check using the exact local media contract and temporary compatibility adjustments. Task-only diffs and focused whitespace/status checks passed; existing user changes were preserved.
+ - **Build/tests**: User authorized a focused build. `swift build --product App --jobs 4 --skip-update` ultimately failed dependency resolution on unavailable TCFundamentals revision `25fd6294b7ccbca6a5542769e9dadbb709121988`. Cached TCFireSignal also lacks `ChangeTripStatusMedia`. No test suite or browser/upload session was run. See `.artifacts/planning/trip-status-confirmation/AUDIT.md` for limitations and logs.
+ - **Commit**: Not created.

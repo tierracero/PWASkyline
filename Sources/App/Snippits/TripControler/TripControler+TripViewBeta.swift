@@ -41,7 +41,13 @@ final class TripViewBeta: Div {
 
     @State var fiscalId: UUID?
 
-    @State private var status: String
+    @State private var status: FiscalTripFollowupStatus
+
+    @State private var isChangingStatus = false
+
+    private let viewSessionId = custCatchID
+    private var mutationGeneration = UUID()
+    private var confirmationView: ConfirmTripStatusUpdate?
 
     @State var financialView:  FinancialView = .charges
 
@@ -64,7 +70,7 @@ final class TripViewBeta: Div {
         self.cost = response.trip.cost
         self.balance = response.trip.balance
         self.fiscalId = response.trip.fiscalId
-        self.status = response.trip.status.rawValue
+        self.status = response.trip.status
         self.statusChangedCallback = statusChangedCallback
         super.init()
     }
@@ -73,13 +79,34 @@ final class TripViewBeta: Div {
         fatalError("init() has not been implemented")
     }
 
-    private lazy var statusSelect = USelectField(self.$status)
-        .custom("width", "150px")
-        .custom("min-height", "30px")
-        .custom("padding", "5px 8px")
-        .onChange { _, select in
-            self.changeStatus(select.value)
-        }
+
+    private lazy var startTripButton = statusButton("Iniciar Viaje", nextStatus: .inProgress)
+        .class(Class(TCCrystalSurfaceClass.goodButtonGreen))
+        .hidden(self.$status.map { $0 != .pending })
+        .display(self.$status.map { $0 == .pending ? .inlineFlex : .none })
+
+    private lazy var completeTripButton = statusButton("Completar Viaje", nextStatus: .completed)
+        .class(Class(TCCrystalSurfaceClass.goodButtonGreen))
+        .hidden(self.$status.map { $0 != .inProgress })
+        .display(self.$status.map { $0 == .inProgress ? .inlineFlex : .none })
+
+    private lazy var cancelTripButton = statusButton("Cancelar Viaje", nextStatus: .cancelled)
+        .class(Class(TCCrystalSurfaceClass.goodButtonRed))
+        .hidden(self.$status.map { $0 == .completed || $0 == .cancelled })
+        .display(self.$status.map { $0 == .pending || $0 == .inProgress ? .inlineFlex : .none })
+
+    private func statusButton(_ title: String, nextStatus: FiscalTripFollowupStatus) -> USmallButton {
+        USmallButton(title)
+            .class(Class(TCCrystalSurfaceClass.goodButton))
+            .custom("height", "35px")
+            .custom("min-height", "35px")
+            .custom("padding", "4px 10px")
+            .custom("flex", "1")
+            .disabled(self.$isChangingStatus)
+            .onClick {
+                self.confirmStatus(nextStatus)
+            }
+    }
 
     private lazy var fiscalButton = USmallButton(
         self.$fiscalId.map { $0 == nil ? "Facturar" : "Ver Factura" }
@@ -96,6 +123,8 @@ final class TripViewBeta: Div {
 
     private lazy var summaryContent = Div()
 
+    private lazy var summaryStatusValue = Div(self.$status.map { $0.description })
+
     private lazy var routeStopsView = Div()
         .display(.grid)
         .custom("grid-template-columns", "repeat(auto-fit, minmax(260px, 1fr))")
@@ -103,7 +132,7 @@ final class TripViewBeta: Div {
         .marginTop(12.px)
 
     private lazy var merchandiseTableView = Div()
-        .custom("min-width", "900px")
+        .custom("min-width", "1060px")
 
     private lazy var summaryBox = VBox(.raised) {
         self.summaryContent
@@ -409,7 +438,6 @@ final class TripViewBeta: Div {
                     }
 
                 self.fiscalButton
-                self.statusSelect
             } onClose: {
                 self.remove()
             }
@@ -429,10 +457,40 @@ final class TripViewBeta: Div {
                 }
 
                 VGrid(.oneThird) {
-                    self.operatorBox
-                    self.vehicleBox
-                    self.complianceBox
+
+                    // data grid
+                    VGrid(.full) {
+                        self.operatorBox
+                        self.vehicleBox
+                        self.complianceBox
+                    }
+                    .custom("height", "calc(100% - 42px)")
+                    .custom("min-height", "0")
+                    .overflow(.auto)
+                    
+                    // status grid
+                    VGrid(.full) {
+
+                        self.cancelTripButton
+                        .float(.left)
+
+                        self.startTripButton
+                        .float(.right)
+                        
+                        self.completeTripButton
+                        .float(.right)
+                    }
+                    .custom("flex", "0 0 35px")
+                    .marginTop(7.px)
+                    .display(.block)
+                    .height(35.px)
+
                 }
+                .custom("display", "flex")
+                .custom("flex-direction", "column")
+                .custom("gap", "0")
+                .custom("min-height", "0")
+                .height(100.percent)
             }
         }
     }
@@ -449,13 +507,6 @@ final class TripViewBeta: Div {
         width(100.percent)
         height(100.percent)
 
-        FiscalTripFollowupStatus.allCases.forEach { status in
-            statusSelect.appendChild(
-                Option(status.description)
-                    .value(status.rawValue)
-            )
-        }
-
         $costs.listen {
             self.renderCosts($0)
         }
@@ -464,7 +515,7 @@ final class TripViewBeta: Div {
     }
 
     private func renderTrip() {
-        status = trip.status.rawValue
+        status = trip.status
         cost = trip.cost
         balance = trip.balance
         fiscalId = trip.fiscalId
@@ -500,6 +551,8 @@ final class TripViewBeta: Div {
                         .color(.gray)
                 }
 
+                self.summaryMetric("Estatus", self.summaryStatusValue)
+
                 self.summaryMetric("Creado", created)
 
                 self.summaryMetric("Actualizado", updated)
@@ -523,7 +576,7 @@ final class TripViewBeta: Div {
                 .custom("text-align", "right")
             }
             .display(.grid)
-            .custom("grid-template-columns", "minmax(240px, 1fr) auto auto auto")
+            .custom("grid-template-columns", "minmax(240px, 1fr) repeat(5, auto)")
             .custom("align-items", "center")
             .custom("gap", "24px")
             .custom("grid-auto-flow", "column")
@@ -531,12 +584,16 @@ final class TripViewBeta: Div {
     }
 
     private func summaryMetric(_ label: String, _ value: String) -> Div {
+        summaryMetric(label, Div(value))
+    }
+
+    private func summaryMetric(_ label: String, _ value: Div) -> Div {
         Div {
             Div(label)
                 .fontSize(14.px)
                 .color(.gray)
 
-            Div(value)
+            value
                 .marginTop(4.px)
                 .fontSize(15.px)
                 .color(.white)
@@ -550,6 +607,11 @@ final class TripViewBeta: Div {
         let orderedLocations = locations.sorted { lhs, rhs in
             lhs.position < rhs.position
         }
+
+        routeStopsView.custom(
+            "grid-template-columns",
+            orderedLocations.count > 2 ? "minmax(0, 1fr)" : "repeat(auto-fit, minmax(260px, 1fr))"
+        )
 
         guard !orderedLocations.isEmpty else {
             routeStopsView.appendChild(
@@ -677,7 +739,8 @@ final class TripViewBeta: Div {
                     "Código Fiscal",
                     "Unidad Fiscal",
                     "Embalaje",
-                    "Peligroso"
+                    "Peligroso",
+                    "Entrega"
                 ],
                 header: true
             )
@@ -695,17 +758,17 @@ final class TripViewBeta: Div {
                     "\(item.fiscUnit) \(item.fiscUnitName)",
                     item.packagingName.isEmpty ? "—" : item.packagingName,
                     item.isDangerousMatirial.rawValue
-                ])
+                ], item: item)
             )
         }
     }
 
-    private func merchandiseRow(_ values: [String], header: Bool = false) -> Div {
+    private func merchandiseRow(_ values: [String], header: Bool = false, item: FiscalMercanciaItem? = nil) -> Div {
         let row = Div()
             .display(.grid)
             .custom(
                 "grid-template-columns",
-                "1.35fr .42fr .48fr 1fr 1fr .95fr .9fr .75fr .58fr"
+                "1.35fr .42fr .48fr 1fr 1fr .95fr .9fr .75fr .58fr 140px"
             )
             .custom("gap", "8px")
             .custom("align-items", "center")
@@ -724,7 +787,35 @@ final class TripViewBeta: Div {
             )
         }
 
+        if let item {
+            row.appendChild(deliveryControl(for: item))
+        }
+
         return row
+    }
+
+    private func deliveryControl(for item: FiscalMercanciaItem) -> Div {
+        if item.deliverd {
+            return Div(trip.status == .cancelled ? "Movimiento finalizado" : "✓ Entregado")
+                .fontSize(13.px)
+                .fontWeight(.bold)
+                .color(trip.status == .cancelled ? .gray : .init(r: 83, g: 198, b: 83))
+        }
+
+        guard item.merchandiseType == .commercialAsset, item.merchandiseId != nil else {
+            return Div("—").color(.gray)
+        }
+        guard trip.merchandise.count > 1, trip.status == .inProgress else {
+            return Div("Pendiente").fontSize(13.px).color(.gray)
+        }
+
+        return Div {
+            USmallButton("Entregar")
+                .class(Class(TCCrystalSurfaceClass.goodButton))
+                .class(Class(TCCrystalSurfaceClass.goodButtonGreen))
+                .disabled(self.$isChangingStatus)
+                .onClick { self.confirmDelivery(item.id) }
+        }
     }
 
     private func renderOperator(_ item: CustCommercialTripOperador) {
@@ -747,8 +838,11 @@ final class TripViewBeta: Div {
         _ item: CustCommercialTripVehical,
         permit: CustCommercialTripPermit
     ) {
+
         vehicleBox.innerHTML = ""
+
         vehicleBox.appendChild(UTitle("Vehículo y permiso"))
+        
         vehicleBox.appendChild(
             tripAvatarImage(item.avatar)
                 .width(72.px)
@@ -1011,43 +1105,212 @@ final class TripViewBeta: Div {
     }
 
 
-    private func changeStatus(_ rawValue: String) {
-        guard let newStatus = FiscalTripFollowupStatus(rawValue: rawValue) else {
-            showError(.unexpectedResult, "Estatus de viaje invalido.")
+    private func confirmStatus(_ nextStatus: FiscalTripFollowupStatus) {
+        guard isInDOM, viewSessionId == custCatchID, !isChangingStatus, confirmationView == nil else { return }
+
+        guard ConfirmTripStatusUpdate.isValidTransition(current: trip.status, requested: nextStatus) else {
+            showError(.generalError, "El cambio de estatus solicitado no está disponible.")
+            return
+        }
+        if let error = ConfirmTripStatusUpdate.assetRouteError(merchandise: trip.merchandise, locations: trip.locations) {
+            showError(.generalError, error)
             return
         }
 
-        let currentStatus = trip.status
+        let view = ConfirmTripStatusUpdate(
+            currentStatus: trip.status,
+            nextStatus: nextStatus,
+            merchandise: trip.merchandise,
+            locations: trip.locations
+        ) { [weak self] newStatus, comment, media in
+            self?.changeStatus(newStatus, comment: comment, media: media)
+        }
 
-        guard currentStatus != newStatus else {
+        presentConfirmation(view)
+    }
+
+    private func presentConfirmation(_ view: ConfirmTripStatusUpdate) {
+        confirmationView = view
+        view.onDidRemoveFromDOM { [weak self, weak view] in
+            guard let self, self.confirmationView === view else { return }
+            self.confirmationView = nil
+        }
+        addToDom(view, presentation: .glass)
+    }
+
+    private func confirmDelivery(_ merchandiseItemId: UUID) {
+        guard isInDOM, viewSessionId == custCatchID, !isChangingStatus, confirmationView == nil,
+              trip.merchandise.count > 1,
+              let item = trip.merchandise.first(where: { $0.id == merchandiseItemId }) else { return }
+        if let error = ConfirmTripStatusUpdate.deliveryValidationError(
+            current: trip.status, item: item, files: [], locations: trip.locations
+        ) {
+            showError(.generalError, error)
             return
         }
 
+        presentConfirmation(ConfirmTripStatusUpdate(
+            deliveryItem: item,
+            currentStatus: trip.status,
+            locations: trip.locations
+        ) { [weak self] comment, files in
+            self?.deliverItem(merchandiseItemId, comment: comment, files: files)
+        })
+    }
+
+    private func deliverItem(_ merchandiseItemId: UUID, comment: String, files: [String]) {
+        guard isInDOM, viewSessionId == custCatchID, !isChangingStatus, trip.merchandise.count > 1,
+              let item = trip.merchandise.first(where: { $0.id == merchandiseItemId }),
+              let assetItemId = item.merchandiseId else { return }
+        guard trip.merchandise.filter({
+            $0.merchandiseType == .commercialAsset && $0.merchandiseId == assetItemId
+        }).count == 1 else {
+            showError(.generalError, "El activo está duplicado en la mercancía del viaje.")
+            return
+        }
+        if let error = ConfirmTripStatusUpdate.deliveryValidationError(
+            current: trip.status, item: item, files: files, locations: trip.locations
+        ) {
+            showError(.generalError, error)
+            return
+        }
+
+        let tripId = trip.id
+        let sessionId = viewSessionId
+        let generation = UUID()
+        mutationGeneration = generation
+        let statusChanged = statusChangedCallback
+        isChangingStatus = true
         loadingView.show()
 
-        API.custCommercialTrips.changeTripStatus(
-            tripId: trip.id,
-            status: newStatus
-        ) { resp in
+        API.custCommercialTrips.deliverAssetItem(
+            tripId: tripId,
+            assetItemId: assetItemId,
+            comment: comment.trimmingCharacters(in: .whitespacesAndNewlines),
+            files: files
+        ) { [weak self] response in
             loadingView.hide()
-
-            guard let resp else {
-                self.status = currentStatus.rawValue
+            self?.isChangingStatus = false
+            guard custCatchID == sessionId else { return }
+            guard let response else {
                 showError(.comunicationError, .serverConextionError)
                 return
             }
-
-            guard resp.status == .ok else {
-                self.status = currentStatus.rawValue
-                showError(.generalError, resp.msg)
+            guard response.status == .ok else {
+                showError(.generalError, response.msg)
+                return
+            }
+            guard let result = response.data, result.tripId == tripId,
+                  result.assetItemId == assetItemId, result.merchandiseItemId == merchandiseItemId,
+                  result.deliverd else {
+                showError(.unexpectedResult, "No se recibió la confirmación de entrega del activo seleccionado.")
                 return
             }
 
-            self.trip.status = newStatus
-            self.status = newStatus.rawValue
-            self.statusChangedCallback(self.trip.id, newStatus)
-            showSuccess(.operacionExitosa, "Estatus actualizado")
+            if let self, self.mutationGeneration == generation {
+                if let index = self.trip.merchandise.firstIndex(where: { $0.id == merchandiseItemId }) {
+                    self.trip.merchandise[index].deliverd = result.deliverd
+                }
+                self.trip.status = result.tripStatus
+                self.status = result.tripStatus
+                if self.isInDOM { self.renderTrip() }
+            }
+            TripsControlerView.notifyTripStatusChanged(tripId: tripId, status: result.tripStatus)
+            statusChanged(tripId, result.tripStatus)
+            showSuccess(.operacionExitosa, result.tripAutoCompleted
+                ? "Activo entregado. Viaje completado."
+                : "Activo entregado. Activos pendientes: \(result.remainingAssetItems).")
+            self?.refreshAfterMutation(
+                tripId: tripId, sessionId: sessionId, generation: generation,
+                expectedStatus: result.tripStatus, deliveredItemId: merchandiseItemId
+            )
         }
+    }
+
+    private func changeStatus(
+        _ newStatus: FiscalTripFollowupStatus,
+        comment: String,
+        media: [CustCommercialTripsComponents.ChangeTripStatusMedia]
+    ) {
+        guard isInDOM, viewSessionId == custCatchID, !isChangingStatus, trip.status != newStatus else { return }
+
+        let comment = comment.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let error = ConfirmTripStatusUpdate.validationError(
+            current: trip.status, requested: newStatus, comment: comment, media: media,
+            merchandise: trip.merchandise, locations: trip.locations
+        ) {
+            showError(.generalError, error)
+            return
+        }
+
+        let tripId = trip.id
+        let sessionId = custCatchID
+        let generation = UUID()
+        mutationGeneration = generation
+        let statusChanged = statusChangedCallback
+        isChangingStatus = true
+        loadingView.show()
+
+        API.custCommercialTrips.changeTripStatus(
+            tripId: tripId,
+            status: newStatus,
+            comment: comment,
+            media: media
+        ) { [weak self] response in
+            loadingView.hide()
+            self?.isChangingStatus = false
+            guard custCatchID == sessionId else { return }
+
+            guard let response else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+            guard response.status == .ok else {
+                showError(.generalError, response.msg)
+                return
+            }
+
+            self?.trip.status = newStatus
+            self?.status = newStatus
+            if let self, self.isInDOM { self.renderMerchandise(self.trip.merchandise) }
+            TripsControlerView.notifyTripStatusChanged(tripId: tripId, status: newStatus)
+            statusChanged(tripId, newStatus)
+            showSuccess(.operacionExitosa, "Estatus actualizado")
+            
+            self?.refreshAfterMutation(
+                tripId: tripId, sessionId: sessionId, generation: generation, expectedStatus: newStatus
+            )
+        }
+    }
+
+    private func refreshAfterMutation(
+        tripId: UUID, sessionId: UUID, generation: UUID,
+        expectedStatus: FiscalTripFollowupStatus, deliveredItemId: UUID? = nil
+    ) {
+        guard isInDOM, mutationGeneration == generation else { return }
+        API.custCommercialTrips.getTrip(tripId: .id(tripId)) { [weak self] refreshed in
+            guard custCatchID == sessionId, let self, self.isInDOM,
+                  self.mutationGeneration == generation, self.trip.status == expectedStatus,
+                  let refreshed, refreshed.status == .ok, let payload = refreshed.data,
+                  payload.trip.id == tripId, payload.trip.status == expectedStatus else { return }
+            if let deliveredItemId,
+               !payload.trip.merchandise.contains(where: { $0.id == deliveredItemId && $0.deliverd }) {
+                return
+            }
+            self.trip = payload.trip
+            self.notes = payload.notes
+            self.renderTrip()
+        }
+    }
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        mutationGeneration = UUID()
+        confirmationView?.remove()
+        confirmationView = nil
+        
+        $status.removeAllListeners()
+        $isChangingStatus.removeAllListeners()
     }
 
     private func viewFiscalDocument(_ id: UUID) {
@@ -1147,7 +1410,7 @@ final class TripViewBeta: Div {
                 name: charge.name,
                 cost: charge.cost,
                 cuant: charge.cuant,
-                price: charge.price,
+                price: charge.billingType.signedAmount(charge.price),
                 puerchaseOrder: false
             ) { viewId in
                 self.editCharge(
@@ -1424,18 +1687,14 @@ final class TripViewBeta: Div {
                     return
                 }
 
-                var price = soc.price
-
-                if codeType == .adjustment{
-                    price = (price * -1)
-                }
+                let billingType: BillingType = codeType == .adjustment ? .adjustment : soc.billingType
 
                     let tr = OldChargeTrRow(
                         isCharge: true,
                         id: id,
                         name: soc.description,
-                        cuant: 100,
-                        price: price,
+                        cuant: soc.units,
+                        price: billingType.signedAmount(soc.price),
                         puerchaseOrder: false
                     ) { viewId in
 
@@ -1455,10 +1714,11 @@ final class TripViewBeta: Div {
                     id: id,
                     codeid: soc.id,
                     type: (soc.id == nil) ? .manual : .service,
+                    billingType: billingType,
                     name: soc.description,
                     cost: soc.cost ?? 0,
                     cuant: soc.units,
-                    price: price,
+                    price: soc.price,
                     status: .unbilled
                 )
 
@@ -1581,7 +1841,7 @@ final class TripViewBeta: Div {
 
     private func calcBalance() {
         let chargesTotal = charges.reduce(Int64(0)) { total, charge in
-            total + ((charge.price * charge.cuant) / 100)
+            total + charge.billingType.signedAmount((charge.price * charge.cuant) / 100)
         } + pocs.reduce(Int64(0)) { total, item in
             total + (item.soldPrice ?? 0)
         }
@@ -1604,7 +1864,7 @@ final class TripViewBeta: Div {
 extension TripViewBeta {
 
     static func loadAndPresent(
-        tripId: UUID,
+        tripId: HybridIdentifier,
         statusChangedCallback: @escaping (UUID, FiscalTripFollowupStatus) -> Void = { _, _ in }
     ) {
         loadingView.show()

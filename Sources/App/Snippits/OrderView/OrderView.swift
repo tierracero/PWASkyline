@@ -47,7 +47,9 @@ class OrderView: Div {
     let orderRoute: CustOrderRoute?
     var loadFromCatch: Bool
     private var hasParsedOrderData = false
-    
+    private var consoleBootGeneration = 0
+    private var consoleBootCompleted = false
+
     init(
         accountView: AccoutOverview,
         order: CustOrderLoadFolioDetails,
@@ -173,6 +175,8 @@ class OrderView: Div {
 
     @State var hideContractContainer: Bool = true
 
+    @State var createAtDivColor: Color = .gray
+
     var chargesRefrence: [ UUID: OldChargeTrRow ] = [:]
     
     var rentalViewRefrence: [UUID:OrderRentalView] = [:]
@@ -193,8 +197,6 @@ class OrderView: Div {
     
     lazy var filesGrid =  Div()
         .id(Id(stringLiteral: "filesGrid\(self.order.id.uuidString)"))
-    
-    lazy var createAtDiv = Div()
     
     lazy var dueAtDiv = Div()
     
@@ -308,6 +310,215 @@ class OrderView: Div {
         }
         .id(Id(stringLiteral: mapId))
         .height(250.px)
+        .position(.relative)
+
+    private lazy var statusSelector = Div{
+
+        if custCatchHerk >= 2 {
+
+            Div{
+
+                Div(self.$status.map{ $0.description })
+                    .custom("width", "calc(100% - 38px)")
+                    .color(self.$status.map{ $0.color})
+                    .class(.oneLineText)
+                    .float(.left)
+
+                 Div{
+                     Img()
+                         .src(self.$statusMenuIsHidden.map{ $0 ? "/skyline/media/dropDown.png" : "/skyline/media/dropDownClose.png" })
+                         .class(.iconWhite)
+                         .opacity(0.8)
+                         .width(28.px)
+                 }
+                 .borderLeft(
+                    width: BorderWidthType.thin,
+                    style: .solid,
+                    color: self.$status.map { $0.color }
+                 )
+                 .hidden(self.$status.map{
+
+                     [
+                        CustFolioStatus.canceled,
+                        CustFolioStatus.finalize,
+                        CustFolioStatus.pendingSpare,
+                        CustFolioStatus.collection
+                     ].contains($0)
+
+                 })
+                 .paddingRight(3.px)
+                 .paddingLeft(7.px)
+                 .marginLeft(7.px)
+                 .float(.right)
+                 .width(28.px)
+
+                 Div().clear(.both)
+
+            }
+            .width(91.percent)
+            .backgroundColor(self.$status.map { $0.crystalTintColor })
+            .border(
+                width: .thin,
+                style: .solid,
+                color: self.$status.map { $0.color }
+            )
+            .class(.uibtn)
+            .class(Class(TCOrderViewClass.headerStatus))
+            .class(Class(TCOrderViewClass.statusControl))
+            .onClick {
+
+                if [
+                    CustFolioStatus.canceled,
+                    CustFolioStatus.finalize,
+                    CustFolioStatus.pendingSpare,
+                    CustFolioStatus.collection
+                ].contains(self.status) {
+                   return
+                }
+
+                self.statusMenuIsHidden = !self.statusMenuIsHidden
+            }
+
+            Div{
+
+                /// Pending
+                Div(CustFolioStatus.pending.description)
+                .hidden(self.$status.map{ $0 == .pending })
+                .color(CustFolioStatus.pending.color)
+                .class(.oneLineText)
+                .width(90.percent)
+                .marginTop(7.px)
+                .class(.uibtn)
+                .class(Class(TCOrderViewClass.statusOption))
+                .onClick { _, event in
+                    self.changeOrderStatus(.pending)
+                    self.statusMenuIsHidden = true
+                    event.stopPropagation()
+                }
+
+                /// Active
+                Div(CustFolioStatus.active.description)
+                .hidden(self.$status.map{ $0 == .active })
+                .color(CustFolioStatus.active.color)
+                .class(.oneLineText)
+                .width(90.percent)
+                .marginTop(7.px)
+                .class(.uibtn)
+                .class(Class(TCOrderViewClass.statusOption))
+                .onClick { _, event in
+                    self.changeOrderStatus(.active)
+                    self.statusMenuIsHidden = true
+                    event.stopPropagation()
+                }
+
+                /// Collections
+                Div(CustFolioStatus.saleWait.description)
+                .hidden(self.$status.map{ $0 == .saleWait })
+                .color(CustFolioStatus.saleWait.color)
+                .class(.oneLineText)
+                .width(90.percent)
+                .marginTop(7.px)
+                .class(.uibtn)
+                .class(Class(TCOrderViewClass.statusOption))
+                .onClick { _, event in
+                    self.changeOrderStatus(.saleWait)
+                    self.statusMenuIsHidden = true
+                    event.stopPropagation()
+                }
+
+                /// Archive
+                Div(CustFolioStatus.archive.description)
+                .hidden(self.$status.map{ $0 == .archive })
+                .color(CustFolioStatus.archive.color)
+                .class(.oneLineText)
+                .width(90.percent)
+                .marginTop(7.px)
+                .class(.uibtn)
+                .class(Class(TCOrderViewClass.statusOption))
+                .onClick { _, event in
+                    self.changeOrderStatus(.archive)
+                    self.statusMenuIsHidden = true
+                    event.stopPropagation()
+                }
+
+                /// Collections
+                Div(CustFolioStatus.collection.description)
+                .hidden(self.$status.map{ $0 == .collection })
+                .color(CustFolioStatus.collection.color)
+                .class(.oneLineText)
+                .width(90.percent)
+                .marginTop(7.px)
+                .class(.uibtn)
+                .class(Class(TCOrderViewClass.statusOption))
+                .onClick { _, event in
+                    self.changeOrderStatus(.collection)
+                    self.statusMenuIsHidden = true
+                    event.stopPropagation()
+                }
+
+                Div(CustFolioStatus.finalize.description)
+                .hidden(self.$status.map{ ($0 == .finalize  || $0 == .canceled) })
+                .color(CustFolioStatus.finalize.color)
+                .class(.oneLineText)
+                .width(90.percent)
+                .marginTop(7.px)
+                .class(.uibtn)
+                .class(Class(TCOrderViewClass.statusOption))
+                .onClick { _, event in
+                    self.changeOrderStatus(.finalize)
+                    self.statusMenuIsHidden = true
+                    event.stopPropagation()
+                }
+
+                Div(CustFolioStatus.canceled.description)
+                .hidden(self.$status.map{ ($0 == .finalize  || $0 == .canceled) })
+                .color(CustFolioStatus.canceled.color)
+                .class(.oneLineText)
+                .width(90.percent)
+                .marginTop(7.px)
+                .class(.uibtn)
+                .class(Class(TCOrderViewClass.statusOption))
+                .onClick { _, event in
+                    self.changeOrderStatus(.canceled)
+                    self.statusMenuIsHidden = true
+                    event.stopPropagation()
+                }
+
+
+                Div().height(12.px)
+            }
+            .class(Class(TCOrderViewClass.statusMenu))
+            .hidden(self.$statusMenuIsHidden)
+            .backgroundColor(.transparentBlack)
+            .position(.absolute)
+            .borderRadius(12.px)
+            .padding(all: 3.px)
+            .margin(all: 3.px)
+            .marginTop(7.px)
+            .width(200.px)
+            .zIndex(1)
+            .onClick { _, event in
+                event.stopPropagation()
+            }
+
+        }
+        else {
+
+            Div(self.$status.map{ $0.description })
+                .color(self.$status.map{ $0.color})
+                .backgroundColor(self.$status.map { $0.crystalTintColor })
+                .border(
+                    width: .thin,
+                    style: .solid,
+                    color: self.$status.map { $0.color }
+                )
+                .class(.oneLineText)
+                .class(Class(TCOrderViewClass.headerStatus))
+                .class(Class(TCOrderViewClass.statusControl))
+        }
+
+    }
+        .class(Class(TCOrderViewClass.statusHolder))
         .position(.relative)
 
     @DOM override var body: DOM.Content {
@@ -454,7 +665,7 @@ class OrderView: Div {
                         
                         THead {
                             Tr{
-                                Td().width(20.px)
+                                Td().width(35.px)
                                 Td("Unis").width(50.px)
                                 Td("Descripción")
                                 Td("CUni").width(70.px)
@@ -834,523 +1045,171 @@ class OrderView: Div {
                     
                     }
                    
+                    self.statusSelector
+
                 }
                 .class(Class(TCOrderViewClass.summaryHeaderActions))
                 
                 Div().clear(.both).height(3.px)
-                
-                Div{
-                    
-                    Div{
 
-                        Div().clear(.both).height(7.px)
-                        
-                        Span("Orden ·")
-                            .marginRight(7.px)
-                            .color(.gray)
-                        
-                        Span(self.order.folio)
-                            .marginRight(7.px)
-                            .color(.lightGray)
-                        
-                    }
-                    .width(55.percent)
-                    .fontSize(22.px)
-                    .float(.left)
-                    
-                    Div{
-                        
-                        if custCatchHerk >= 2 {
+                VGrid(.full) {
+
+                    VBox(.raised) {
+
+                        /// Name Mobile
+                        Div {
+                            H2("Cliente")
+                                .fontSize(16.px)
+                                .color(.white)
                             
                             Div{
                                 
-                                Div(self.$status.map{ $0.description })
-                                    .custom("width", "calc(100% - 38px)")
-                                    .color(self.$status.map{ $0.color})
+                                Img()
+                                    .src("/skyline/media/usernameIconWhite.svg")
+                                    .paddingRight(7.px)
+                                    .paddingTop( 3.px)
+                                    .height(22.px)
+                                    .float(.left)
+                                    .opacity(0.5)
+                                    .hidden(self.$editMode.map{$0})
+                                
+                                Div(self.$orderName)
+                                    .custom("width", "calc(100% - 30px)")
+                                    .hidden(self.$editMode.map{$0})
                                     .class(.oneLineText)
-                                    .float(.left)
-                                 
-                                 Div{
-                                     Img()
-                                         .src(self.$statusMenuIsHidden.map{ $0 ? "/skyline/media/dropDown.png" : "/skyline/media/dropDownClose.png" })
-                                         .class(.iconWhite)
-                                         .opacity(0.8)
-                                         .width(28.px)
-                                 }
-                                 .borderLeft(
-                                    width: BorderWidthType.thin,
-                                    style: .solid,
-                                    color: self.$status.map { $0.color }
-                                 )
-                                 .hidden(self.$status.map{
-                                    
-                                     [
-                                        CustFolioStatus.canceled,
-                                        CustFolioStatus.finalize,
-                                        CustFolioStatus.pendingSpare,
-                                        CustFolioStatus.collection
-                                     ].contains($0)
-                                     
-                                 })
-                                 .paddingRight(3.px)
-                                 .paddingLeft(7.px)
-                                 .marginLeft(7.px)
-                                 .float(.right)
-                                 .width(28.px)
-                                
-                                 Div().clear(.both)
-                                 
-                            }
-                            .width(91.percent)
-                            .backgroundColor(self.$status.map { $0.crystalTintColor })
-                            .border(
-                                width: .thin,
-                                style: .solid,
-                                color: self.$status.map { $0.color }
-                            )
-                            .class(.uibtn)
-                            .class(Class(TCOrderViewClass.headerStatus))
-                            .class(Class(TCOrderViewClass.statusControl))
-                            .onClick {
-                                
-                                if [
-                                    CustFolioStatus.canceled,
-                                    CustFolioStatus.finalize,
-                                    CustFolioStatus.pendingSpare,
-                                    CustFolioStatus.collection
-                                ].contains(self.status) {
-                                   return
-                                }
-                                
-                                self.statusMenuIsHidden = !self.statusMenuIsHidden
-                            }
-                            
-                            Div{
-                                
-                                /// Pending
-                                Div(CustFolioStatus.pending.description)
-                                .hidden(self.$status.map{ $0 == .pending })
-                                .color(CustFolioStatus.pending.color)
-                                .class(.oneLineText)
-                                .width(90.percent)
-                                .marginTop(7.px)
-                                .class(.uibtn)
-                                .class(Class(TCOrderViewClass.statusOption))
-                                .onClick { _, event in
-                                    self.changeOrderStatus(.pending)
-                                    self.statusMenuIsHidden = true
-                                    event.stopPropagation()
-                                }
-                                    
-                                /// Active
-                                Div(CustFolioStatus.active.description)
-                                .hidden(self.$status.map{ $0 == .active })
-                                .color(CustFolioStatus.active.color)
-                                .class(.oneLineText)
-                                .width(90.percent)
-                                .marginTop(7.px)
-                                .class(.uibtn)
-                                .class(Class(TCOrderViewClass.statusOption))
-                                .onClick { _, event in
-                                    self.changeOrderStatus(.active)
-                                    self.statusMenuIsHidden = true
-                                    event.stopPropagation()
-                                }
-                                
-                                /// Collections
-                                Div(CustFolioStatus.saleWait.description)
-                                .hidden(self.$status.map{ $0 == .saleWait })
-                                .color(CustFolioStatus.saleWait.color)
-                                .class(.oneLineText)
-                                .width(90.percent)
-                                .marginTop(7.px)
-                                .class(.uibtn)
-                                .class(Class(TCOrderViewClass.statusOption))
-                                .onClick { _, event in
-                                    self.changeOrderStatus(.saleWait)
-                                    self.statusMenuIsHidden = true
-                                    event.stopPropagation()
-                                }
-                                
-                                /// Archive
-                                Div(CustFolioStatus.archive.description)
-                                .hidden(self.$status.map{ $0 == .archive })
-                                .color(CustFolioStatus.archive.color)
-                                .class(.oneLineText)
-                                .width(90.percent)
-                                .marginTop(7.px)
-                                .class(.uibtn)
-                                .class(Class(TCOrderViewClass.statusOption))
-                                .onClick { _, event in
-                                    self.changeOrderStatus(.archive)
-                                    self.statusMenuIsHidden = true
-                                    event.stopPropagation()
-                                }
-                                
-                                /// Collections
-                                Div(CustFolioStatus.collection.description)
-                                .hidden(self.$status.map{ $0 == .collection })
-                                .color(CustFolioStatus.collection.color)
-                                .class(.oneLineText)
-                                .width(90.percent)
-                                .marginTop(7.px)
-                                .class(.uibtn)
-                                .class(Class(TCOrderViewClass.statusOption))
-                                .onClick { _, event in
-                                    self.changeOrderStatus(.collection)
-                                    self.statusMenuIsHidden = true
-                                    event.stopPropagation()
-                                }
-                                
-                                Div(CustFolioStatus.finalize.description)
-                                .hidden(self.$status.map{ ($0 == .finalize  || $0 == .canceled) })
-                                .color(CustFolioStatus.finalize.color)
-                                .class(.oneLineText)
-                                .width(90.percent)
-                                .marginTop(7.px)
-                                .class(.uibtn)
-                                .class(Class(TCOrderViewClass.statusOption))
-                                .onClick { _, event in
-                                    self.changeOrderStatus(.finalize)
-                                    self.statusMenuIsHidden = true
-                                    event.stopPropagation()
-                                }
-                                
-                                Div(CustFolioStatus.canceled.description)
-                                .hidden(self.$status.map{ ($0 == .finalize  || $0 == .canceled) })
-                                .color(CustFolioStatus.canceled.color)
-                                .class(.oneLineText)
-                                .width(90.percent)
-                                .marginTop(7.px)
-                                .class(.uibtn)
-                                .class(Class(TCOrderViewClass.statusOption))
-                                .onClick { _, event in
-                                    self.changeOrderStatus(.canceled)
-                                    self.statusMenuIsHidden = true
-                                    event.stopPropagation()
-                                }
-                                
-                                
-                                Div().height(12.px)
-                            }
-                            .class(Class(TCOrderViewClass.statusMenu))
-                            .hidden(self.$statusMenuIsHidden)
-                            .backgroundColor(.transparentBlack)
-                            .position(.absolute)
-                            .borderRadius(12.px)
-                            .padding(all: 3.px)
-                            .margin(all: 3.px)
-                            .marginTop(7.px)
-                            .width(200.px)
-                            .zIndex(1)
-                            .onClick { _, event in
-                                event.stopPropagation()
-                            }
-                            
-                        }
-                        else {
-                            
-                            Div(self.$status.map{ $0.description })
-                                .color(self.$status.map{ $0.color})
-                                .backgroundColor(self.$status.map { $0.crystalTintColor })
-                                .border(
-                                    width: .thin,
-                                    style: .solid,
-                                    color: self.$status.map { $0.color }
-                                )
-                                .class(.oneLineText)
-                                .class(Class(TCOrderViewClass.headerStatus))
-                                .class(Class(TCOrderViewClass.statusControl))
-                        }
-                        
-                    }
-                    .width(45.percent)
-                    .float(.left)
-                    
-                    Div().clear(.both)
-                    
-                }
-                .class(Class(TCOrderViewClass.summaryIdentity))
-                .marginBottom(7.px)
-            
-                Div().class(.clear)
-                
-                // Created At
-                Div{
-                    Div("Creado")
-                    .class(.oneThird)
-                    .color(.gray)
-                    
-                    self.createAtDiv
-                        .align(.right)
-                        .fontSize(26.px)
-                        .class(.twoThird)
-                }
-                
-                Div().class(.clear)
-                
-                // Date
-                Div{
-                    Div("Cita")
-                        .color(.white)
-                        .float(.left)
-                    
-                    // Request Date
-                    
-                    if self.order.type != .rental {
-                        
-                        self.dueAtDiv
-                            .float(.right)
-                            .cursor(.pointer)
-                            .hidden( self.$dueDate.map{$0 == nil ? true : false} )
-                            .onClick {
-                                self.orderDate()
-                            }
-                        
-                        Div{
-                            Span("Agregar Cita")
-                                .color(.skyBlue)
-                                .float(.right)
-                            
-                            Img()
-                                .src("/skyline/media/icon_calendar.png")
-                                .class(.iconWhite)
-                                .height(26.px)
-                                .float(.right)
-                                .paddingRight(12.px)
-                            
-                            Div().class(.clear)
-                        }
-                        .float(.right)
-                        .hidden( self.$dueDate.map{$0 != nil ? true : false} )
-                        .cursor(.pointer)
-                        .onClick {
-                            self.orderDate()
-                        }
-                    }
-                    else{
-                        self.dueAtDiv
-                            .float(.right)
-                    }
-                    
-                    Div().class(.clear)
-                }
-                .fontSize(26.px)
-                .align(.right)
-                
-                // OnWork User
-                Div{
-                    Div("Operador")
-                        .color(.white)
-                        .float(.left)
-                    
-                    Div{
-                        
-                        Div{
-                            Img()
-                                .src("/skyline/media/random.png")
-                                .cursor(.pointer)
-                                .marginTop(7.px)
-                                .height(26.px)
-                                .onClick {
-                                    
-                                    guard let store = self.order.store else {
-                                        print("Order has no store id")
-                                        return
-                                    }
-                                    
-                                    addToDom(SelectCustUsernameView(
-                                        type: .store(store),
-                                        ignore: [],
-                                        callback: { user in
-                                            
-                                            loadingView.show()
-                                            
-                                            API.custOrderV1.reassign(
-                                                orderid: self.order.id,
-                                                userid: user.id
-                                            ) { resp in
-                                                
-                                                loadingView.hide()
-                                                
-                                                guard let resp else {
-                                                    showError(.comunicationError, .serverConextionError)
-                                                    return
-                                                }
-                                                
-                                                guard resp.status == .ok else {
-                                                    showError(.generalError, resp.msg)
-                                                    return
-                                                }
-                                                
-                                                self.onWorkUser = user.id
-                                                
-                                                self.order.workedBy = user.id
-                                                
-                                                orderCatch[self.order.id]?.workedBy = user.id
-                                                
-                                            }
-                                            
-                                        })
-                                    )
-                                    
-                                    // reassign
-                                    
-                                }
-                        }
-                        .paddingRight(12.px)
-                        .float(.left)
-                        
-                        
-                        Span(self.$onWorkUsername)
-                    }
-                    .float(.right)
-                }
-                .hidden(self.$onWorkUser.map{ $0 == nil })
-                .fontSize(26.px)
-                
-                Div().class(.clear).height(7.px)
-                
-                /// Name Mobile
-                Div {
-                    H2("Contacto")
-                        .fontSize(16.px)
-                        .color(.gray)
-                    
-                    Div{
-                        
-                        Img()
-                            .src("/skyline/media/usernameIconWhite.svg")
-                            .height(22.px)
-                            .paddingTop( 3.px)
-                            .paddingRight(7.px)
-                            .float(.left)
-                            .opacity(0.5)
-                            .hidden(self.$editMode.map{$0})
-                        
-                        Span(self.$orderName)
-                            .hidden(self.$editMode.map{$0})
-                            .marginBottom(7.px)
-                            .color(.goldenRod)
-                            .fontSize(24.px)
-                            .float(.left)
-                        
-                        InputText(self.$orderName)
-                            .placeholder("Nombre")
-                            .custom("width","calc(100% - 45px)")
-                            .leftImage(img: "/skyline/media/usernameIconWhite.svg")
-                            .backgroundSize(h: 18.px, v: 18.px)
-                            .class(.textFiledBlackDark)
-                            .hidden(self.$editMode.map{!$0})
-                            .height(31.px)
-                    }
-                    .class(.oneTwo, .oneLineText)
-                    .paddingLeft(0.px)
-                    
-                    Div{
-                        
-                        Img()
-                            .cursor(.pointer)
-                            .src("/skyline/media/icon_mobile.png")
-                            .hidden(self.$editMode.map{$0})
-                            .class(.iconWhite)
-                            .paddingRight(7.px)
-                            .paddingTop( 3.px)
-                            .height(22.px)
-                            .float(.left)
-                        
-                        Span(self.$mobile)
-                            .hidden(self.$editMode.map{$0})
-                            .marginBottom(7.px)
-                            .color(.goldenRod)
-                            .fontSize(24.px)
-                            .float(.left)
-                        
-                        InputText(self.$mobile)
-                            .placeholder("834 123 1234")
-                            .custom("width","calc(100% - 52px)")
-                            .leftImage(img: "/skyline/media/icon_mobile_white.png")
-                            .backgroundSize(h: 18.px, v: 18.px)
-                            .class(.textFiledBlackDark)
-                            .hidden(self.$editMode.map{!$0})
-                            .height(31.px)
-                    }
-                    .class(.oneTwo, .oneLineText)
-                    .paddingRight(0.px)
-                }
-                .marginBottom(7.px)
-            
-                Div().class(.clear)
-                
-                /// Telephone Email
-                if !self.order.telephone.isEmpty || !self.order.email.isEmpty {
-                    Div {
-                        if !self.order.telephone.isEmpty {
-                            Div{
-                                
-                                Img()
-                                    .cursor(.pointer)
-                                    .src("/skyline/media/icon_telephone.png")
-                                    .class(.iconWhite)
-                                    .height(18.px)
-                                    .paddingTop( 3.px)
-                                    .paddingRight(7.px)
-                                    .float(.left)
-                                    .hidden(self.$editMode.map{$0})
-
-                                Span(self.$telephone)
-                                    .fontSize(20.px)
-                                    .float(.left)
-                                    .hidden(self.$editMode.map{$0})
                                     .marginBottom(7.px)
+                                    .color(.goldenRod)
+                                    .fontSize(22.px)
+                                    .float(.left)
                                 
-                                InputText(self.$telephone)
-                                    .placeholder("834 123 1234")
+                                InputText(self.$orderName)
+                                    .placeholder("Nombre")
                                     .custom("width","calc(100% - 45px)")
-                                    .leftImage(img: "/skyline/media/icon_telephone_white.svg")
+                                    .leftImage(img: "/skyline/media/usernameIconWhite.svg")
                                     .backgroundSize(h: 18.px, v: 18.px)
                                     .class(.textFiledBlackDark)
-                                    .hidden(self.$editMode.map{!$0})
                                     .height(31.px)
-                                
-                            }
-                            .class(.oneTwo, .oneLineText)
+                                    .hidden(self.$editMode.map{!$0})
 
-                        }
-                        if !self.order.email.isEmpty {
-                            Div{
-                                Img()
-                                    .cursor(.pointer)
-                                    .src("/skyline/media/icon_email.png")
-                                    .class(.iconWhite)
-                                    .height(18.px)
-                                    .paddingTop( 3.px)
-                                    .paddingRight(7.px)
-                                    .float(.left)
-                                    .hidden(self.$editMode.map{$0})
-                                    .marginBottom(7.px)
-                                
-                                Span(self.$email)
-                                    .fontSize(20.px)
-                                    .float(.left)
-                                    .hidden(self.$editMode.map{$0})
-                                    .marginBottom(7.px)
-                                
-                                InputText(self.$email)
-                                    .placeholder("Correo Electronico")
-                                    .custom("width","calc(100% - 52px)")
-                                    .leftImage(img: "/skyline/media/icon_email_white.svg")
-                                    .backgroundSize(h: 18.px, v: 18.px)
-                                    .class(.textFiledBlackDark)
-                                    .hidden(self.$editMode.map{!$0})
-                                    .height(31.px)
+                                Div().clear(.both)
                             }
                             .class(.oneTwo, .oneLineText)
+                            .paddingLeft(0.px)
+                            
+                            Div{
+                                
+                                Img()
+                                    .src("/skyline/media/icon_mobile.png")
+                                    .class(.iconWhite)
+                                    .paddingRight(7.px)
+                                    .paddingTop( 3.px)
+                                    .height(22.px)
+                                    .float(.left)
+                                    .opacity(0.5)
+                                    .hidden(self.$editMode.map{$0})
+                                
+                                Div(self.$mobile)
+                                    .custom("width", "calc(100% - 30px)")
+                                    .hidden(self.$editMode.map{$0})
+                                    .class(.oneLineText)
+                                    .marginBottom(7.px)
+                                    .color(.goldenRod)
+                                    .fontSize(22.px)
+                                    .float(.left)
+                                
+                                InputText(self.$mobile)
+                                    .leftImage(img: "/skyline/media/icon_mobile_white.png")
+                                    .custom("width","calc(100% - 52px)")
+                                    .backgroundSize(h: 18.px, v: 18.px)
+                                    .placeholder("834 123 1234")
+                                    .class(.textFiledBlackDark)
+                                    .height(31.px)
+                                    .hidden(self.$editMode.map{!$0})
+                            }
+                            .class(.oneTwo, .oneLineText)
+                            .paddingRight(0.px)
                         }
+                        .marginBottom(7.px)
+                    
+                        Div().class(.clear)
+                        
+                        /// Telephone Email
+                        if !self.order.telephone.isEmpty || !self.order.email.isEmpty {
+                            Div {
+                                if !self.order.telephone.isEmpty {
+                                    Div{
+                                        
+                                        Img()
+                                            .cursor(.pointer)
+                                            .src("/skyline/media/icon_telephone.png")
+                                            .paddingRight(7.px)
+                                            .paddingTop( 3.px)
+                                            .class(.iconWhite)
+                                            .height(18.px)
+                                            .float(.left)
+                                            .hidden(self.$editMode.map{$0})
+
+                                        Span(self.$telephone)
+                                            .marginBottom(7.px)
+                                            .fontSize(20.px)
+                                            .float(.left)
+                                            .hidden(self.$editMode.map{$0})
+                                        
+                                        InputText(self.$telephone)
+                                            .leftImage(img: "/skyline/media/icon_telephone_white.svg")
+                                            .custom("width","calc(100% - 45px)")
+                                            .backgroundSize(h: 18.px, v: 18.px)
+                                            .placeholder("834 123 1234")
+                                            .class(.textFiledBlackDark)
+                                            .height(31.px)
+                                            .hidden(self.$editMode.map{!$0})
+                                        
+                                    }
+                                    .class(.oneTwo, .oneLineText)
+
+                                }
+                                if !self.order.email.isEmpty {
+                                    Div{
+                                        Img()
+                                            .cursor(.pointer)
+                                            .src("/skyline/media/icon_email.png")
+                                            .class(.iconWhite)
+                                            .height(18.px)
+                                            .paddingTop( 3.px)
+                                            .paddingRight(7.px)
+                                            .float(.left)
+                                            .hidden(self.$editMode.map{$0})
+                                            .marginBottom(7.px)
+                                        
+                                        Span(self.$email)
+                                            .fontSize(20.px)
+                                            .float(.left)
+                                            .hidden(self.$editMode.map{$0})
+                                            .marginBottom(7.px)
+                                        
+                                        InputText(self.$email)
+                                            .placeholder("Correo Electronico")
+                                            .custom("width","calc(100% - 52px)")
+                                            .leftImage(img: "/skyline/media/icon_email_white.svg")
+                                            .backgroundSize(h: 18.px, v: 18.px)
+                                            .class(.textFiledBlackDark)
+                                            .hidden(self.$editMode.map{!$0})
+                                            .height(31.px)
+                                    }
+                                    .class(.oneTwo, .oneLineText)
+                                }
+                            }
+                            .marginBottom(7.px)
+                        }
+
+
                     }
-                    .marginBottom(7.px)
+                    .margin(all: 3.px)
                 }
-                
+                .backgroundColor(.init(r: 29, g: 32, b: 30))
+                .class(.roundDarkBlue)
+
+
                 if configStoreProcessing.rewardsPrograme != nil {
                     
                     Div().clear(.both).height(12.px)
@@ -1438,6 +1297,164 @@ class OrderView: Div {
                     
                 }
                 
+                Div().clear(.both).height(12.px)
+
+                Div {
+
+                    Div {
+
+                        Div("Creado")
+                        .fontSize(18.px)
+                        .color(.white)
+
+                        Div(getDate(self.order.createdAt).formatedLong)
+                            .color(self.$createAtDivColor)
+                            .class(.oneLineText)
+                            .fontSize(24.px)
+                            .align(.right)
+
+                    }
+                    .width(50.percent)
+                    .float(.left)
+
+                    Div {
+
+                        Div("Cita / Entrega")
+                        .fontSize(18.px)
+                        .align(.right)
+                        .color(.white)
+
+                        if self.order.type != .rental {
+                            
+                            self.dueAtDiv
+                                .class(.oneLineText)
+                                .cursor(.pointer)
+                                .fontSize(24.px)
+                                .float(.right)
+                                .hidden( self.$dueDate.map{$0 == nil ? true : false} )
+                                .onClick {
+                                    self.orderDate()
+                                }
+                            
+                            Div{
+                                Span("Agregar Cita")
+                                    .fontSize(24.px)
+                                    .color(.skyBlue)
+                                    .float(.right)
+                                
+                                Img()
+                                    .src("/skyline/media/icon_calendar.png")
+                                    .class(.iconWhite)
+                                    .height(26.px)
+                                    .float(.right)
+                                    .paddingRight(12.px)
+                                
+                                Div().class(.clear)
+                            }
+                            .class(.oneLineText)
+                            .cursor(.pointer)
+                            .float(.right)
+                            .hidden( self.$dueDate.map{$0 != nil ? true : false} )
+                            .onClick {
+                                self.orderDate()
+                            }
+                        }
+                        else{
+                            self.dueAtDiv
+                                .fontSize(24.px)
+                                .float(.right)
+                        }
+
+                    }
+                    .width(50.percent)
+                    .float(.left)
+                }
+
+                Div().clear(.both).height(12.px)
+                                
+                Div {
+
+                    Div {
+                        Div("Operador")
+                            .fontSize(18.px)
+                            .color(.white)
+                        
+                            Div{
+                                Img()
+                                    .src("/skyline/media/random.png")
+                                    .cursor(.pointer)
+                                    .marginTop(7.px)
+                                    .height(26.px)
+                                    .onClick {
+                                        
+                                        guard let store = self.order.store else {
+                                            print("Order has no store id")
+                                            return
+                                        }
+                                        
+                                        addToDom(SelectCustUsernameView(
+                                            type: .store(store),
+                                            ignore: [],
+                                            callback: { user in
+                                                
+                                                loadingView.show()
+                                                
+                                                API.custOrderV1.reassign(
+                                                    orderid: self.order.id,
+                                                    userid: user.id
+                                                ) { resp in
+                                                    
+                                                    loadingView.hide()
+                                                    
+                                                    guard let resp else {
+                                                        showError(.comunicationError, .serverConextionError)
+                                                        return
+                                                    }
+                                                    
+                                                    guard resp.status == .ok else {
+                                                        showError(.generalError, resp.msg)
+                                                        return
+                                                    }
+                                                    
+                                                    self.onWorkUser = user.id
+                                                    
+                                                    self.order.workedBy = user.id
+                                                    
+                                                    orderCatch[self.order.id]?.workedBy = user.id
+                                                    
+                                                }
+                                                
+                                            })
+                                        )
+                                        
+                                        // reassign
+                                        
+                                    }
+                            }
+                            .paddingRight(12.px)
+                            .float(.left)
+                        
+                        
+                        Div(self.$onWorkUsername)
+                        .custom("width", "calc(100% - 32px)")
+                        .cursor(.pointer)
+                        .fontSize(24.px)
+
+                    }
+                    .width(50.percent)
+                    .float(.left)
+
+                    Div {
+                    }
+                    .width(50.percent)
+                    .float(.left)
+
+                    Div().clear(.both)
+
+                }
+                
+                Div().clear(.both).height(12.px)
+
                 Div().clear(.both)
                 
                 if custCatchAccountType != .entrepreneur {    
@@ -1605,7 +1622,15 @@ class OrderView: Div {
                             .marginRight(7.px)
                             .float(.right)
 
-                        Span("Carta de Servicio")
+                        Span {
+                            Img()
+                                .src(TCOrderViewIcon.serviceLetter.source)
+                                .attribute("alt", "")
+                                .attribute("aria-hidden", "true")
+                                .class(Class(TCOrderViewClass.sectionIcon))
+                            Span("Carta de Servicio")
+                        }
+                        .class(Class(TCOrderViewClass.sectionTitle))
                         .color(.yellowTC)
                     }
                     .class(Class(TCOrderViewClass.detailHeader))
@@ -1651,7 +1676,15 @@ class OrderView: Div {
                             .marginRight(7.px)
                             .float(.right)
 
-                            Span("Contratos")
+                            Span {
+                                Img()
+                                    .src(TCOrderViewIcon.contract.source)
+                                    .attribute("alt", "")
+                                    .attribute("aria-hidden", "true")
+                                    .class(Class(TCOrderViewClass.sectionIcon))
+                                Span("Contratos")
+                            }
+                            .class(Class(TCOrderViewClass.sectionTitle))
                             .color(.yellowTC)
                         }
                         .class(Class(TCOrderViewClass.detailHeader))
@@ -1681,16 +1714,30 @@ class OrderView: Div {
                 Div {
 
                     Img()
-                        .float(.right)
-                        .src("/skyline/media/zoom.png")
-                        .class(.iconWhite)
+                        .src(TCOrderViewIcon.map.source)
+                        .attribute("alt", "")
+                        .attribute("aria-hidden", "true")
+                        .class(Class(TCOrderViewClass.sectionIcon))
                         .height(24.px)
-                        .padding(all: 3.px)
                     
                     H2("Dirección de servicio")
                         .marginBottom(3.px)
                         .fontSize(24.px)
                         .marginTop(7.px)
+
+                    Div {
+                        Img()
+                            .src(self.$requierServiceAddress.map {
+                                $0 ? "/skyline/media/dropDownClose.png" : "/skyline/media/dropDown.png"
+                            })
+                            .attribute("alt", "")
+                            .attribute("aria-hidden", "true")
+                            .class(.iconWhite)
+                            .width(18.px)
+                    }
+                    .paddingRight(3.px)
+                    .paddingLeft(7.px)
+                    .marginLeft(7.px)
 
                 }
                 .class(Class(TCOrderViewClass.addressHeader))
@@ -2070,7 +2117,6 @@ class OrderView: Div {
         .overflow(.auto)
         .float(.right)
         .color(.gray)
-        
     }
     
     func toggleOrderEditMode() {
@@ -2086,6 +2132,7 @@ class OrderView: Div {
         super.buildUI()
 
         self.class(Class(TCOrderViewClass.body))
+        self.attribute("aria-busy", true, .trueFalse)
         
         width(100.percent)
         height(100.percent)
@@ -2308,8 +2355,7 @@ class OrderView: Div {
             acctMinCatch[self.order.id]?.CardID = $0
         }
         
-        parseOrderData()
-        
+        // Hydrate after attachment so the console shell can paint first.
         if loadFromCatch {
             let orderId = order.id
             let modifiedAt = order.modifiedAt
@@ -2442,10 +2488,59 @@ class OrderView: Div {
     override func didAddToDOM() {
         super.didAddToDOM()
         
+        if consoleBootCompleted {
+            if let lat, let lon {
+                loadLocation(lat, lon)
+            }
+        }
+        else {
+            beginConsoleBoot()
+        }
+    }
+
+    private func beginConsoleBoot() {
+        consoleBootGeneration += 1
+        attribute("aria-busy", true, .trueFalse)
+        // MessageGrid owns its existing deferred first render.
+        messageGrid.notes = notes
+        hydrateConsoleSection(0, generation: consoleBootGeneration, sessionId: custCatchID)
+    }
+
+    private func hydrateConsoleSection(_ section: Int, generation: Int, sessionId: UUID) {
+        Dispatch.asyncAfter(0.025) { [weak self] in
+            guard let self, self.isInDOM,
+                  self.consoleBootGeneration == generation,
+                  custCatchID == sessionId else { return }
+
+            switch section {
+            case 0:
+                // MessageGrid retains ownership of its deferred first render.
+                self.parseOrderFiles()
+            case 1:
+                self.parseOrderCharges()
+            case 2:
+                self.parseOrderEquipment()
+            default:
+                self.parseOrderDetails()
+            }
+
+            if section < 3 {
+                self.hydrateConsoleSection(section + 1, generation: generation, sessionId: sessionId)
+            }
+            else {
+                self.finishConsoleBoot()
+            }
+        }
+    }
+
+    private func finishConsoleBoot() {
+        guard !consoleBootCompleted else { return }
+        consoleBootCompleted = true
+        attribute("aria-busy", false, .trueFalse)
+
         if let lat, let lon {
             loadLocation(lat, lon)
         }
-
     }
     
     func pickupEquipment(){
@@ -2705,7 +2800,21 @@ class OrderView: Div {
 
     }
     
-    func parseOrderData(){
+    func parseOrderData() {
+        // A server refresh supersedes any unfinished initial hydration.
+        if !consoleBootCompleted {
+            consoleBootGeneration += 1
+        }
+        parseOrderCharges()
+        // Explicit refreshes must reload notes even if they overtake first mount.
+        hasParsedOrderData = true
+        parseOrderFiles()
+        parseOrderEquipment()
+        parseOrderDetails()
+        finishConsoleBoot()
+    }
+
+    private func parseOrderCharges() {
         
         inAlert = order.alerted
         
@@ -2727,7 +2836,7 @@ class OrderView: Div {
 
         charges.forEach { obj in
             
-            let stotal = ((obj.price * obj.cuant) / 100)
+            let stotal = obj.billingType.signedAmount((obj.price * obj.cuant) / 100)
             
             total += stotal
             chas += stotal
@@ -2738,7 +2847,7 @@ class OrderView: Div {
                 id: obj.id,
                 name: obj.name,
                 cuant: obj.cuant,
-                price: obj.price,
+                price: obj.billingType.signedAmount(obj.price),
                 puerchaseOrder: false
             ) { viewId in
                 
@@ -2857,6 +2966,10 @@ class OrderView: Div {
             
         }
         
+
+    }
+
+    private func parseOrderFiles() {
         self.filesGrid.innerHTML = ""
         
         files.forEach { file in
@@ -2919,6 +3032,10 @@ class OrderView: Div {
 
         hasParsedOrderData = true
         
+
+    }
+
+    private func parseOrderEquipment() {
         equipmentViewRefrence.removeAll()
         equipmentView.innerHTML = ""
         
@@ -3163,6 +3280,10 @@ class OrderView: Div {
             break
         }
         
+
+    }
+
+    private func parseOrderDetails() {
         var _pendingPickups = 0
         
         equipments.forEach { equipment in
@@ -3198,8 +3319,6 @@ class OrderView: Div {
         
         requierServiceAddress = configContactTags.requierServiceAddress
         
-        var createAtDivColor: Color = .gray
-        
         switch orderTimeMesure(uts: order.createdAt, type: .createdAt).color {
         case .blue:
             break
@@ -3210,9 +3329,6 @@ class OrderView: Div {
         case .red:
             createAtDivColor = .red
         }
-        
-        self.createAtDiv = Div(getDate(order.createdAt).formatedLong)
-            .color(createAtDivColor)
         
         dueDate = order.dueDate
         
@@ -3636,18 +3752,14 @@ class OrderView: Div {
                     return
                 }
                 
-                var price = soc.price
-                
-                if codeType == .adjustment{
-                    price = (price * -1)
-                }
+                let billingType: BillingType = codeType == .adjustment ? .adjustment : soc.billingType
                 
                     let tr = OldChargeTrRow(
                         isCharge: true,
                         id: id,
                         name: soc.description,
-                        cuant: 100,
-                        price: price,
+                        cuant: soc.units,
+                        price: billingType.signedAmount(soc.price),
                         puerchaseOrder: false
                     ) { viewId in
                         
@@ -3667,10 +3779,11 @@ class OrderView: Div {
                     id: id,
                     codeid: soc.id,
                     type: (soc.id == nil) ? .manual : .service,
+                    billingType: billingType,
                     name: soc.description,
                     cost: soc.cost ?? 0,
                     cuant: soc.units,
-                    price: price,
+                    price: soc.price,
                     status: .unbilled
                 )
                 
@@ -3876,6 +3989,7 @@ class OrderView: Div {
                                 id: obj.id,
                                 codeid: obj.codeid,
                                 type: obj.type,
+                                billingType: obj.billingType,
                                 name: name,
                                 cost: cost,
                                 cuant: units,
@@ -3897,10 +4011,10 @@ class OrderView: Div {
                 
                 self.calcBalance()
                 
+                let billingType = _charges.first(where: { ids.contains($0.id) })?.billingType ?? .charge
                 self.chargesRefrence[viewId]?.name = name
-                self.chargesRefrence[viewId]?.cuantString = units.formatMoney
-                self.chargesRefrence[viewId]?.priceString = price.formatMoney
-                self.chargesRefrence[viewId]?.total = price.formatMoney
+                self.chargesRefrence[viewId]?.cuant = units
+                self.chargesRefrence[viewId]?.price = billingType.signedAmount(price)
                 
             },
             delete: { ids, name, amount in
@@ -4315,8 +4429,9 @@ class OrderView: Div {
         chas = 0
         
         charges.forEach { obj in
-            total += ((obj.price * obj.cuant) / 100)
-            chas += ((obj.price * obj.cuant) / 100)
+            let subtotal = obj.billingType.signedAmount((obj.price * obj.cuant) / 100)
+            total += subtotal
+            chas += subtotal
         }
         
         pocs.forEach { obj in
@@ -5276,6 +5391,7 @@ class OrderView: Div {
                     id: charge.id,
                     codeid: charge.SOC,
                     type: (charge.SOC == nil) ? .manual : .service,
+                    billingType: charge.type == .adjustment ? .adjustment : .charge,
                     name: charge.name,
                     cost: charge.cost,
                     cuant: charge.cuant,
@@ -5288,7 +5404,7 @@ class OrderView: Div {
             
             items.charges.forEach { obj in
                 
-                let stotal = ((obj.price * obj.cuant) / 100)
+                let stotal = obj.type.signedAmount((obj.price * obj.cuant) / 100)
                 
                 self.total += stotal
                 self.chas += stotal
@@ -5298,7 +5414,7 @@ class OrderView: Div {
                     id: obj.id,
                     name: obj.name,
                     cuant: obj.cuant,
-                    price: obj.price,
+                    price: obj.type.signedAmount(obj.price),
                     puerchaseOrder: false
                 ) { viewId in
                     self.editCharge(
@@ -6105,6 +6221,8 @@ class OrderView: Div {
 
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        consoleBootGeneration += 1
+        attribute("aria-busy", false, .trueFalse)
         $tasks.removeAllListeners()
         $pendingPickups.removeAllListeners()
         $lastCommunicationMethod.removeAllListeners()

@@ -6,7 +6,7 @@ import SkylineDocumentationCore
 extension CustCommercialTripsComponents {
     
     static func getTrip(
-        tripId: UUID,
+        tripId: HybridIdentifier,
         callback: @escaping ((_ resp: APIResponseGeneric<GetTripResponse>?) -> ())
     ) {
         sendPost(

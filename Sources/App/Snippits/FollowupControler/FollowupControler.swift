@@ -392,7 +392,7 @@ class FollowupControler: Div {
             Div().class(.clear)
         }
         .onClick {
-            TripViewBeta.loadAndPresent(tripId: item.id) { tripId, status in
+            TripViewBeta.loadAndPresent(tripId: .id(item.id)) { tripId, status in
                 self.updateTripStatus(tripId: tripId, status: status)
             }
         }

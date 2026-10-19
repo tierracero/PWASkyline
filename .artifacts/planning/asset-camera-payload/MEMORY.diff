@@ -1,0 +1,10 @@
+--- before/MEMORY.before.md
++++ .agent/PROJECT_MEMORY.md
+@@ -35,6 +35,7 @@
+ 
+ ## Authoritative References
+ 
++- 2026-10-09: The minimal asset-creation camera-image payload lookup is documented in `architecture/SWIFWEB_APP_ARCHITECTURE.md`; the previous camera and upload logic is retained.
+ - 2026-10-08: Trip beta status confirmation and shared media-gallery source integration are documented in `architecture/SWIFWEB_APP_ARCHITECTURE.md`. The beta API handoff now submits status/comment/media and synchronizes status only after success; `ChangeTripStatusMedia` exists in the local TCFireSignal source but is absent from the repository's cached dependency. Build verification is blocked by the unavailable pinned TCFundamentals revision.
+ - Product facts: `PRODUCT_SCOPE.md`.
+ - Architecture boundaries: `ARCH_INDEX.md` and `architecture/*.md`.

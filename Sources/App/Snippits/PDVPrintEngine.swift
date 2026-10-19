@@ -351,7 +351,7 @@ class PDVPrintEngine: Div {
         
         charges.forEach { obj in
             
-           let stotal = ((obj.price * (obj.cuant / 100)) )
+           let stotal = obj.billingType.signedAmount((obj.price * obj.cuant) / 100)
             
            granTotal += stotal
            
@@ -359,7 +359,7 @@ class PDVPrintEngine: Div {
                Tr {
                    Td(obj.name)
                    Td(obj.cuant.fromCents.toString)
-                   Td(obj.price.formatMoney)
+                   Td(obj.billingType.signedAmount(obj.price).formatMoney)
                    Td(stotal.formatMoney)
                }
            )

@@ -279,6 +279,8 @@ extension BudgetView {
             
             /// Services
             payload.saleObjectsSOC.forEach { item in
+
+                let billingType: BillingType = (item.custSOC.codeType == .adjustment) ? .adjustment : .charge
                 
                 let view = ItemPreView(
                     budgetid: manager.id,
@@ -286,10 +288,10 @@ extension BudgetView {
                     type: .service,
                     avatar: "",
                     uuids: [],
-                    price: item.unitPrice,
+                    price: billingType.signedAmount(item.unitPrice),
                     units: item.units,
                     unitCost: item.custSOC.cost,
-                    subTotal: (item.unitPrice * (item.units / 100)),
+                    subTotal: billingType.signedAmount((item.unitPrice * item.units) / 100),
                     costType: .cost_a,
                     brand: "",
                     model: "",
@@ -299,7 +301,7 @@ extension BudgetView {
                 
                 chargesGrid.appendChild(view)
                 
-                balance += ((item.units * item.unitPrice) / 100).fromCents
+                balance += billingType.signedAmount((item.units * item.unitPrice) / 100).fromCents
                 
                 budgetCost += ((item.units * item.custSOC.cost) / 100).fromCents
                 

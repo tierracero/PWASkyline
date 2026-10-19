@@ -1,0 +1,21 @@
+--- .artifacts/planning/asset-inventory-async-filter/archive.before.md	2026-10-09 01:16:17
++++ .agent/TASKS_ARCHIVE.md	2026-10-09 01:27:04
+@@ -4,6 +4,18 @@
+ 
+ ---
+ 
++## ASSET-INVENTORY-ASYNC-FILTER-001 — Progressive Asset Inventory and Local Search
++
++- **Status**: Implemented; focused App compilation passed, browser responsiveness unverified
++- **Completed**: 2026-10-09
++- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`
++- **Implementation**: Replaced full-payload inventory ForEach construction with one row per scheduled callback using the order-folio timing pattern. Item updates, debounced query changes and removal invalidate stale renders. AssetView's inventory header now filters normalized folio/optional serial/name locally while preserving the full items array/count. One persistent field/controller keeps subscriptions stable across reloads; reattachment restores the wrapper ownership cleared by Web removal. Empty inventory/no-match messages remain distinct.
++- **Validation evidence**: Both files passed frontend parsing. The previously user-approved final focused App build passed (`Build of target: 'App' complete! (79.28s)`). The missing already-pinned TCFireSignal revision was fetched into its cache; Package.resolved stayed byte-for-byte unchanged. Source traces covered initial/empty inventories, filtering/clearing, updates/appends, reload/removal and listener ownership. Task-relative diffs/whitespace, source snapshots and repository status/staging checks passed.
++- **Limits**: No test suite, browser performance run or server mutation was executed. Filtering and DOM clearing remain synchronous; expensive row construction yields between callbacks. Evidence: `.artifacts/planning/asset-inventory-async-filter/AUDIT.md` and `EVENT_REVIEW.md`.
++- **Commit**: Not created.
++
++---
++
+ ## TRIP-LIST-STATUS-SYNC-001 — Synchronize Beta Status Changes with Trip Dashboard
+ 
+ - **Status**: Implemented; focused App compilation passed, live browser behavior unverified

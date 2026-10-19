@@ -868,6 +868,10 @@ class ManagePOC: Div {
     @State var taxes: Tax = .init(trasladados: nil, retenidos: nil)
     
     var imageRefrence: [UUID:ImagePOCContainer] = [:]
+
+    private var remoteCameraRequested = false
+    private var remoteCameraEvents: Set<UUID> = []
+    private var finishedRemoteCameraEvents: Set<UUID> = []
     
     var vendors: [CustVendorsMin] = []
     
@@ -1205,41 +1209,15 @@ class ManagePOC: Div {
                                     
                                     loadingView.show()
                                     
-                                    let view: ImagePOCContainer = .init(
-                                        type: .img,
-                                        mediaid: nil,
-                                        pocid: self.pocid,
-                                        file: nil,
-                                        image: nil,
-                                        width: 0,
-                                        description: "",
-                                        height: 0,
-                                        selectedAvatar: self.$selectedAvatar
-                                    ) { viewid, mediaid, path, originalImage, originalWidth, originalHeight, isAvatar in
-                                        self.startEditImage(
-                                            viewid,
-                                            mediaid,
-                                            path,
-                                            originalImage,
-                                            originalWidth,
-                                            originalHeight,
-                                            isAvatar
-                                        )
-                                    } imAvatar: { name in
-                                        self.selectedAvatar = name
-                                    } removeMe: { viewid in
-                                        self.imageRefrence.removeValue(forKey: viewid)
-                                    }
-                                    
-                                    self.imageRefrence[view.viewid] = view
+                                    self.remoteCameraRequested = true
                                     
                                     API.custAPIV1.requestMobileCamara(
                                         type: .useCamaraForProduct,
                                         connid: custCatchChatConnID,
-                                        eventid: view.viewid,
+                                        eventid: nil,
                                         relatedid: self.pocid,
                                         relatedfolio: "",
-                                        multipleTakes: !self.editImage
+                                        multipleTakes: true
                                     ) { resp in
                                         
                                         loadingView.hide()
@@ -2879,7 +2857,9 @@ class ManagePOC: Div {
             }
         }
 
-        WebApp.current.wsevent.listen {
+        WebApp.current.wsevent.listen { [weak self] in
+
+            guard let self, self.isInDOM else { return }
             
             if $0.isEmpty { return }
             
@@ -2892,9 +2872,12 @@ class ManagePOC: Div {
             switch event {
             case .requestMobileCamaraComplete:
                 
-                if let payload = self.ws.requestMobileCamaraComplete($0) {
+                if let payload = self.ws.requestMobileCamaraComplete($0),
+                   payload.to == .product {
                     
-                    if let view = self.imageRefrence[payload.eventid] {
+                    if let view = self.remoteCameraImage(for: payload.eventid) {
+
+                        self.finishedRemoteCameraEvents.insert(payload.eventid)
                         
                         view.loadPercent = ""
                         
@@ -2908,7 +2891,7 @@ class ManagePOC: Div {
                         
                         view.image = payload.avatar
                         
-                        view.loadImage(payload.avatar, edit: self.editImage)
+                        view.loadImage(payload.avatar, edit: false)
                         
                         var hasAvatar = false
                         
@@ -2927,22 +2910,13 @@ class ManagePOC: Div {
             case .requestMobileCamaraFail:
                 if let payload = self.ws.requestMobileCamaraFail($0) {
                     
-                    if  let view = self.imageRefrence[payload.eventid] {
-                        self.imageRefrence.removeValue(forKey: view.viewid)
-                        view.remove()
-                    }
+                    self.removeRemoteCameraImage(for: payload.eventid)
                     
                 }
             case .requestMobileCamaraInitiate:
                 if let payload = self.ws.requestMobileCamaraInitiate($0) {
                     
-                    if  let view = self.imageRefrence[payload.eventid] {
-                        
-                        self.pocImageContainer.appendChild(view)
-                        
-                        _ = JSObject.global.scrollToBottom!("pocImageContainer")
-                        
-                    }
+                    _ = self.remoteCameraImage(for: payload.eventid)
                     
                 }
             case .requestMobileCamaraProgress:
@@ -2951,7 +2925,9 @@ class ManagePOC: Div {
                     return
                 }
                 
-                guard let view = self.imageRefrence[payload.eventid] else {
+                guard self.remoteCameraEvents.contains(payload.eventid),
+                      !self.finishedRemoteCameraEvents.contains(payload.eventid),
+                      let view = self.imageRefrence[payload.eventid] else {
                     return
                 }
                 
@@ -2961,21 +2937,14 @@ class ManagePOC: Div {
             case .requestMobileCamaraCancel:
                 if let payload = self.ws.requestMobileCamaraCancel($0) {
                     
-                    if  let view = self.imageRefrence[payload.eventid] {
-                        self.imageRefrence.removeValue(forKey: view.viewid)
-                        view.remove()
-                    }
+                    self.removeRemoteCameraImage(for: payload.eventid)
                     
                 }
             case .requestMobileCamaraSelected:
                 
                 if let payload = self.ws.requestMobileCamaraSelected($0) {
 
-                    guard let view = self.imageRefrence[payload.eventid] else {
-                        return
-                    }
-                    
-                    view.loadPercent = "Iniciando Carga..."
+                    _ = self.remoteCameraImage(for: payload.eventid)
                 }
 
             case .asyncFileUpload:
@@ -2994,7 +2963,7 @@ class ManagePOC: Div {
                         
                         view.height = payload.height
                         
-                        var edit = self.editImage
+                        var edit = self.editImage && !self.remoteCameraEvents.contains(payload.eventid)
                         
                         if payload.type != .image {
                             edit = false
@@ -3774,6 +3743,65 @@ class ManagePOC: Div {
         
     }
     
+    private func remoteCameraImage(for eventId: UUID) -> ImagePOCContainer? {
+        guard isInDOM, remoteCameraRequested,
+              !finishedRemoteCameraEvents.contains(eventId) else {
+            return nil
+        }
+
+        if let view = imageRefrence[eventId] {
+            return remoteCameraEvents.contains(eventId) ? view : nil
+        }
+
+        let view = ImagePOCContainer(
+            type: .img,
+            mediaid: nil,
+            pocid: pocid,
+            file: nil,
+            image: nil,
+            width: 0,
+            description: "",
+            height: 0,
+            selectedAvatar: $selectedAvatar,
+            callback: { [weak self] viewid, mediaid, path, originalImage, originalWidth, originalHeight, isAvatar in
+                guard let self, self.isInDOM else { return }
+                self.startEditImage(
+                    viewid,
+                    mediaid,
+                    path,
+                    originalImage,
+                    originalWidth,
+                    originalHeight,
+                    isAvatar
+                )
+            },
+            imAvatar: { [weak self] name in
+                self?.selectedAvatar = name
+            },
+            removeMe: { [weak self] viewid in
+                self?.finishedRemoteCameraEvents.insert(viewid)
+                self?.imageRefrence.removeValue(forKey: viewid)
+            }
+        )
+        // Keep remote routing, manual editing, and removal on the same identifier.
+        view.viewid = eventId
+        view.loadPercent = "Iniciando Carga..."
+        remoteCameraEvents.insert(eventId)
+        imageRefrence[eventId] = view
+        pocImageContainer.appendChild(view)
+        _ = JSObject.global.scrollToBottom!("pocImageContainer")
+        return view
+    }
+
+    private func removeRemoteCameraImage(for eventId: UUID) {
+        guard remoteCameraRequested,
+              !finishedRemoteCameraEvents.contains(eventId) else { return }
+        finishedRemoteCameraEvents.insert(eventId)
+        guard remoteCameraEvents.contains(eventId),
+              let view = imageRefrence.removeValue(forKey: eventId) else { return }
+        view.remove()
+    }
+
     func loadMedia(_ file: File) {
         
         let fileSize = (file.size / 1000 / 1000)
@@ -5142,6 +5170,9 @@ class ManagePOC: Div {
 
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        remoteCameraRequested = false
+        remoteCameraEvents.removeAll()
+        finishedRemoteCameraEvents.removeAll()
         $pocid.removeAllListeners()
         $titleText.removeAllListeners()
         $totalInventoryCount.removeAllListeners()

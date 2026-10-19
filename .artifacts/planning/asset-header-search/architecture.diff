@@ -1,0 +1,10 @@
+--- Architecture.before.md
++++ .agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -4,6 +4,7 @@
+ 
+ ## Verified Facts
+ 
++- `CustAssetsView` has an explicit header search using a crystal input and magnifying-glass button, shared by Enter/click. Formatted service-card and legacy QR codes use `getWarrantyCard(.code)`; only `.asset` cards with a linked `orderId` open the asset item by UUID, while other card types show an unsupported alert. Ordinary input opens the item by folio. Local pending state prevents duplicate card requests, and request/view/session guards ignore delayed results after removal or session change. Browser behavior remains unverified.
+ - `AssetView` owns a persistent inventory search field/controller. The local header filter matches normalized folio, optional serial and name, preserving the full items array and total count. `AssetInventoryController` builds one row per scheduled callback with the order-folio timing pattern, rather than a synchronous full-payload ForEach; item changes, debounced search changes and removal invalidate older render generations. Reattachment restores the inventory wrapper if recursive DOM removal cleared its ownership tree. Shared-state subscriptions capture the reused controller weakly; parent removal clears its owned item/search listeners. Empty inventory and no matching results use separate messages. Browser responsiveness remains unverified.
+ - `TripViewBeta.loadAndPresent` accepts `HybridIdentifier`, forwarding UUID or folio lookups through `getTrip` and constructing the detail from the returned response. Trip-list and followup selections pass `.id(item.id)`; status callbacks continue to use the loaded trip's concrete UUID.
+ - `TripViewBeta` shows an Estatus metric immediately before Creado in its top summary, using the shared Spanish status descriptions and existing metric styling. Its persistent value element binds to the existing status state, updating after API success and server refresh; the summary grid explicitly provides one account column and five metric columns. Browser rendering remains unverified.

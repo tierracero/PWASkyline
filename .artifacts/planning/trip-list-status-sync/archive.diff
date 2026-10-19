@@ -1,0 +1,21 @@
+--- .artifacts/planning/trip-list-status-sync/archive.before.md	2026-10-09 00:36:04
++++ .agent/TASKS_ARCHIVE.md	2026-10-09 00:39:30
+@@ -4,6 +4,18 @@
+ 
+ ---
+ 
++## TRIP-LIST-STATUS-SYNC-001 — Synchronize Beta Status Changes with Trip Dashboard
++
++- **Status**: Implemented; focused App compilation passed, live browser behavior unverified
++- **Completed**: 2026-10-09
++- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `STATE-001`, `SEC-001`
++- **Cause and implementation**: Work folio search supplied an empty beta status callback, and Followup updated only its own list. Successful same-session beta changes now notify the mounted trip dashboard independently of the caller callback. The dashboard owns a weak mount-scoped reference, updates matching trip status/cards/counters idempotently, and preserves acknowledgements made during an in-flight list request when that response arrives. Later requests remain server-authoritative; removal and session guards reject stale-view responses.
++- **Validation evidence**: Both files passed Swift frontend parsing. The previously user-approved focused App build passed (`Build of target: 'App' complete! (69.55s)`). Source traces reviewed each entry point, all valid status transitions, duplicate callbacks, failure/session changes, detail closure, list response races and dashboard removal/replacement. Task-relative diff/whitespace, source snapshots, repository status/staging and dependency-pin checks passed.
++- **Limits**: No test suite, browser or server mutation was run. Evidence: `.artifacts/planning/trip-list-status-sync/AUDIT.md` and `EVENT_REVIEW.md`.
++- **Commit**: Not created.
++
++---
++
+ ## TRIP-SUMMARY-STATUS-001 — Current Trip Status in Beta Summary
+ 
+ - **Status**: Implemented; focused App compilation passed, browser rendering unverified

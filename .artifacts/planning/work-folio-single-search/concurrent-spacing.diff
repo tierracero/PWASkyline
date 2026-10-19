@@ -1,0 +1,21 @@
+--- .artifacts/planning/work-folio-single-search/WorkViewControler.verified.swift	2026-10-09 00:28:15
++++ Sources/App/ViewControlers/WorkViewControler.swift	2026-10-09 00:26:01
+@@ -1108,14 +1108,18 @@
+                     InputText(self.$searchTerm)
+                         .placeholder(self.$serchPlaceHolder)
+                         .onKeyUp({ tf, event in
++
+                             guard event.code != "Enter", event.code != "NumpadEnter",
+                                   !ignoredKeys.contains(event.key) else {
+                                 return
+                             }
+ 
+                             self.folioSearchDebounceId = UUID()
++
+                             let debounceId = self.folioSearchDebounceId
++                            
+                             let inputText = tf.text
++                            
+                             let term = inputText.purgeSpaces
+                                 .replace(from: "'", to: "-")
+                                 .replace(from: "`", to: "-")

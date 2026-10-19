@@ -1,0 +1,21 @@
+--- TASKS_ARCHIVE.md.before
++++ .agent/TASKS_ARCHIVE.md
+@@ -1,6 +1,18 @@
+ # Tasks Archive
+ 
+ Verified completed tasks live here.
++
++---
++
++## ASSET-REGISTRATION-STORE-001 — Select the Asset Registration Store
++
++- **Status**: Implemented; focused App compilation passed, browser/server behavior unverified
++- **Completed**: 2026-10-09
++- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `API-001`, `API-002`
++- **Implementation**: Completed InitiateAssetItemView's store TODO with a required crystal selector defaulting to the embedded store. The initiation callback returns a context with the chosen physical store, preserving store/warehouse mode and customer/subcustomer records. AssetView forwards that context into both creation paths; batch children and both existing createAssettem calls retain it. Single/batch forms show the selected store. The existing map prerequisite now checks the chosen store instead of blocking selection on the old base store.
++- **Validation evidence**: All four sources passed final frontend parsing. The previously user-approved final focused App build passed (`Build of target: 'App' complete! (58.49s)`). Two missing already-pinned dependency revisions were restored to the cache and their contracts re-reviewed; Package.resolved stayed unchanged. An unsupported initial dropdown preset was corrected under a reviewed plan amendment using Option.selected. Source/contract traces covered four context cases, defaults/alternative stores, validation, native selection state, single/batch/staged propagation and classification scope. Task-relative diff/whitespace, status/staging and snapshots passed.
++- **Limits**: No test suite, live browser/server asset creation or deployment was executed. Evidence: `.artifacts/planning/asset-registration-store/AUDIT.md` and `FLOW_REVIEW.md`.
++- **Commit**: Not created.
+ 
+ ---
+ 

@@ -1,0 +1,21 @@
+--- .artifacts/planning/work-folio-single-search/TASKS_ARCHIVE.before.md	2026-10-09 00:18:40
++++ .agent/TASKS_ARCHIVE.md	2026-10-09 00:28:17
+@@ -4,6 +4,18 @@
+ 
+ ---
+ 
++## WORK-FOLIO-SINGLE-001 — Prevent Duplicate Work Code Loads
++
++- **Status**: Implemented; focused App compilation passed, browser/scanner behavior unverified
++- **Completed**: 2026-10-09
++- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`
++- **Cause and implementation**: The work input's key-up timer and onEnter subscriber both submitted formatted codes, while earlier timers remained eligible. A controller-owned generation token now invalidates older timers on subsequent edits, any search submission and DOM removal. Enter/NumpadEnter and ignored event keys do not schedule automatic searches. Automatic searches use the normalized snapshot and clear immediately; empty submissions do not minimize the result view, and fallback results retain the submitted term.
++- **Validation evidence**: Swift frontend parsing and the previously user-approved focused App build passed (`Build of target: 'App' complete! (142.10s)`). Reviewed actual Web/InputText subscriber behavior and source traces for Enter before/after automatic submission, click/mobile submission, ignored keys, input changes, normalized separators and removal. Authored-line whitespace and repository status/staging checks passed; concurrent blank-line spacing was preserved and the latest source parsed again. Lookup branches and dependency pins are unchanged.
++- **Limits**: No test suite, browser or hardware-scanner session was run. Evidence: `.artifacts/planning/work-folio-single-search/AUDIT.md` and `EVENT_REVIEW.md`.
++- **Commit**: Not created.
++
++---
++
+ ## TRIP-CAMERA-FLOW-001 — Nonblocking Trip Status Camera and Upload Flow
+ 
+ - **Status**: Implemented; focused App compilation passed, device/upload behavior unverified

@@ -1,0 +1,11 @@
+ M .agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+ M Sources/App/Snippits/AdvancesSearchViewControler.swift
+ M Sources/App/Snippits/BudgetConfirmationView.swift
+ M Sources/App/Snippits/CustRemoveFromConcessionView.swift
+ M Sources/App/Snippits/ImageEditor.swift
+ M Sources/App/Snippits/ManagePOC/ManagePOC.swift
+ M Sources/App/Snippits/SearchComertialAsset.swift
+ M Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift
+?? .artifacts/planning/manage-poc-remote-camera/
+?? .artifacts/planning/search-commercial-asset-account/
+?? Sources/App/Snippits/CustAssetsView/CustAssetsQuickDepartmentView.swift

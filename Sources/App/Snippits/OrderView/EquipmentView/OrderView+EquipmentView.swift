@@ -248,45 +248,45 @@ extension OrderView {
             .height(100.px)
             .hidden(self.$editMode.map{!$0})
         
-        lazy var checkTag1 = InputCheckbox().toggle(self.$_checkTag1, self.$isDisabled){ bool in
-            self._checkTag1 = !bool
-        }
-        
-        lazy var checkTag2 = InputCheckbox().toggle(self.$_checkTag2, self.$isDisabled){ bool in
-            self._checkTag2 = !bool
-        }
+        lazy var checkTag1 = InputCheckbox(self.$_checkTag1)
+            .disabled(self.$isDisabled)
+            .attribute("aria-label", configServiceTags.checkTag1Name)
 
-        lazy var checkTag3 = InputCheckbox().toggle(self.$_checkTag3, self.$isDisabled){ bool in
-            self._checkTag3 = !bool
-        }
-        
-        lazy var checkTag4 = InputCheckbox().toggle(self.$_checkTag4, self.$isDisabled){ bool in
-            self._checkTag4 = !bool
-        }
-        
-        lazy var checkTag5 = InputCheckbox().toggle(self.$_checkTag5, self.$isDisabled){ bool in
-            self._checkTag5 = !bool
-        }
-        
-        lazy var checkTag6 = InputCheckbox().toggle(self.$_checkTag6, self.$isDisabled){ bool in
-            self._checkTag6 = !bool
-        }
-        
-        lazy var checkTag7 = InputCheckbox().toggle(self.$_checkTag7, self.$isDisabled){ bool in
-            self._checkTag7 = !bool
-        }
+        lazy var checkTag2 = InputCheckbox(self.$_checkTag2)
+            .disabled(self.$isDisabled)
+            .attribute("aria-label", configServiceTags.checkTag2Name)
 
-        lazy var checkTag8 = InputCheckbox().toggle(self.$_checkTag8, self.$isDisabled){ bool in
-            self._checkTag8 = !bool
-        }
+        lazy var checkTag3 = InputCheckbox(self.$_checkTag3)
+            .disabled(self.$isDisabled)
+            .attribute("aria-label", configServiceTags.checkTag3Name)
 
-        lazy var checkTag9 = InputCheckbox().toggle(self.$_checkTag9, self.$isDisabled){ bool in
-            self._checkTag9 = !bool
-        }
+        lazy var checkTag4 = InputCheckbox(self.$_checkTag4)
+            .disabled(self.$isDisabled)
+            .attribute("aria-label", configServiceTags.checkTag4Name)
 
-        lazy var checkTag10 = InputCheckbox().toggle(self.$_checkTag10, self.$isDisabled){ bool in
-            self._checkTag10 = !bool
-        }
+        lazy var checkTag5 = InputCheckbox(self.$_checkTag5)
+            .disabled(self.$isDisabled)
+            .attribute("aria-label", configServiceTags.checkTag5Name)
+
+        lazy var checkTag6 = InputCheckbox(self.$_checkTag6)
+            .disabled(self.$isDisabled)
+            .attribute("aria-label", configServiceTags.checkTag6Name)
+
+        lazy var checkTag7 = InputCheckbox(self.$_checkTag7)
+            .disabled(self.$isDisabled)
+            .attribute("aria-label", configServiceTags.checkTag7Name)
+
+        lazy var checkTag8 = InputCheckbox(self.$_checkTag8)
+            .disabled(self.$isDisabled)
+            .attribute("aria-label", configServiceTags.checkTag8Name)
+
+        lazy var checkTag9 = InputCheckbox(self.$_checkTag9)
+            .disabled(self.$isDisabled)
+            .attribute("aria-label", configServiceTags.checkTag9Name)
+
+        lazy var checkTag10 = InputCheckbox(self.$_checkTag10)
+            .disabled(self.$isDisabled)
+            .attribute("aria-label", configServiceTags.checkTag10Name)
 
         /**  `` /General Input Items `` */
         
@@ -327,40 +327,44 @@ extension OrderView {
                 .marginTop(1.px)
                 .hidden(!configServiceTags.secondIDTagRequiered)
                 
-                // Tag1
                 Div {
-                    Label(configServiceTags.tag1Name).color(.gray)
-                        .color(.gray)
-                        .fontSize(13.px)
+                    // Tag1
+                    Div {
+                        Label(configServiceTags.tag1Name).color(.gray)
+                            .color(.gray)
+                            .fontSize(13.px)
                       
-                    Div(self.$_tag1.map{ $0.isEmpty ? configServiceTags.tag1Placeholder : $0 })
-                        .class(.textFiledBlackDarkReadMode, .oneLineText)
-                        .color(self.$_tag1.map{ $0.isEmpty ? .grayContrast : .goldenRod })
-                        .hidden(self.$editMode)
-                    
-                    self.tag1
-                        .hidden(self.$editMode.map{ !$0 })
+                        Div(self.$_tag1.map{ $0.isEmpty ? configServiceTags.tag1Placeholder : $0 })
+                            .class(.textFiledBlackDarkReadMode, .oneLineText)
+                            .color(self.$_tag1.map{ $0.isEmpty ? .grayContrast : .goldenRod })
+                            .hidden(self.$editMode)
+
+                        self.tag1
+                            .hidden(self.$editMode.map{ !$0 })
+                    }
+                    .marginTop(1.px)
+                    .hidden(!configServiceTags.tag1)
+
+                    // Tag2
+                    Div {
+                        Label(configServiceTags.tag2Name).color(.gray)
+                            .color(.gray)
+                            .fontSize(13.px)
+
+                        Div(self.$_tag2.map{ $0.isEmpty ? configServiceTags.tag2Placeholder : $0 })
+                            .class(.textFiledBlackDarkReadMode, .oneLineText)
+                            .color(self.$_tag2.map{ $0.isEmpty ? .grayContrast : .goldenRod })
+                            .hidden(self.$editMode)
+
+                        self.tag2
+                            .hidden(self.$editMode.map{ !$0 })
+                    }
+                    .marginTop(1.px)
+                    .hidden(!configServiceTags.tag2)
                 }
-                .marginTop(1.px)
-                .hidden(!configServiceTags.tag1)
-                
-                // Tag2
-                Div {
-                    Label(configServiceTags.tag2Name).color(.gray)
-                        .color(.gray)
-                        .fontSize(13.px)
-                      
-                    Div(self.$_tag2.map{ $0.isEmpty ? configServiceTags.tag2Placeholder : $0 })
-                        .class(.textFiledBlackDarkReadMode, .oneLineText)
-                        .color(self.$_tag2.map{ $0.isEmpty ? .grayContrast : .goldenRod })
-                        .hidden(self.$editMode)
-                    
-                    self.tag2
-                        .hidden(self.$editMode.map{ !$0 })
-                }
-                .marginTop(1.px)
-                .hidden(!configServiceTags.tag2)
-                
+                .class(Class(TCOrderViewClass.equipmentBrandModel))
+                .display(configServiceTags.tag1 || configServiceTags.tag2 ? .grid : .none)
+
                 // Tag3
                 Div {
                     Label(configServiceTags.tag3Name).color(.gray)
@@ -447,13 +451,13 @@ extension OrderView {
                             Div{
                                 self.checkTag1
                             }
-                            .width(70.px)
+                            .width(24.px)
                             .float(.left)
                             
                             Div(configServiceTags.checkTag1Name)
                                 .color(.white)
                                 .class( .oneLineText)
-                                .custom("width", "calc(100% - 70px)")
+                                .custom("width", "calc(100% - 24px)")
                                 .float(.left)
                         }
                         .hidden(!configServiceTags.checkTag1)
@@ -464,13 +468,13 @@ extension OrderView {
                             Div{
                                 self.checkTag2
                             }
-                            .width(70.px)
+                            .width(24.px)
                             .float(.left)
                             
                             Div(configServiceTags.checkTag2Name)
                                 .color(.white)
                                 .class(.oneLineText)
-                                .custom("width", "calc(100% - 70px)")
+                                .custom("width", "calc(100% - 24px)")
                                 .float(.left)
                             Div().class(.clear)
                         }
@@ -482,12 +486,12 @@ extension OrderView {
                             Div{
                                 self.checkTag3
                             }
-                            .width(70.px)
+                            .width(24.px)
                             .float(.left)
                             Div(configServiceTags.checkTag3Name)
                                 .color(.white)
                                 .class(.oneLineText)
-                                .custom("width", "calc(100% - 70px)")
+                                .custom("width", "calc(100% - 24px)")
                                 .float(.left)
                             Div().class(.clear)
                         }
@@ -499,13 +503,13 @@ extension OrderView {
                             Div{
                                 self.checkTag4
                             }
-                            .width(70.px)
+                            .width(24.px)
                             .float(.left)
                             
                             Div(configServiceTags.checkTag4Name)
                                 .color(.white)
                                 .class(.oneLineText)
-                                .custom("width", "calc(100% - 70px)")
+                                .custom("width", "calc(100% - 24px)")
                                 .float(.left)
                             Div().class(.clear)
                         }
@@ -517,13 +521,13 @@ extension OrderView {
                             Div{
                                 self.checkTag5
                             }
-                            .width(70.px)
+                            .width(24.px)
                             .float(.left)
                             
                             Div(configServiceTags.checkTag5Name)
                                 .color(.white)
                                 .class( .oneLineText)
-                                .custom("width", "calc(100% - 70px)")
+                                .custom("width", "calc(100% - 24px)")
                                 .float(.left)
                             Div().class(.clear)
                         }
@@ -535,13 +539,13 @@ extension OrderView {
                             Div{
                                 self.checkTag6
                             }
-                            .width(70.px)
+                            .width(24.px)
                             .float(.left)
                             
                             Div(configServiceTags.checkTag6Name)
                                 .color(.white)
                                 .class(.oneLineText)
-                                .custom("width", "calc(100% - 70px)")
+                                .custom("width", "calc(100% - 24px)")
                                 .float(.left)
                             
                             Div().class(.clear)
@@ -553,13 +557,13 @@ extension OrderView {
                             Div{
                                 self.checkTag7
                             }
-                            .width(70.px)
+                            .width(24.px)
                             .float(.left)
 
                             Div(configServiceTags.checkTag7Name)
                                 .color(.white)
                                 .class(.oneLineText)
-                                .custom("width", "calc(100% - 70px)")
+                                .custom("width", "calc(100% - 24px)")
                                 .float(.left)
 
                             Div().class(.clear)
@@ -571,13 +575,13 @@ extension OrderView {
                             Div{
                                 self.checkTag8
                             }
-                            .width(70.px)
+                            .width(24.px)
                             .float(.left)
 
                             Div(configServiceTags.checkTag8Name)
                                 .color(.white)
                                 .class(.oneLineText)
-                                .custom("width", "calc(100% - 70px)")
+                                .custom("width", "calc(100% - 24px)")
                                 .float(.left)
 
                             Div().class(.clear)
@@ -589,13 +593,13 @@ extension OrderView {
                             Div{
                                 self.checkTag9
                             }
-                            .width(70.px)
+                            .width(24.px)
                             .float(.left)
 
                             Div(configServiceTags.checkTag9Name)
                                 .color(.white)
                                 .class(.oneLineText)
-                                .custom("width", "calc(100% - 70px)")
+                                .custom("width", "calc(100% - 24px)")
                                 .float(.left)
 
                             Div().class(.clear)
@@ -607,13 +611,13 @@ extension OrderView {
                             Div{
                                 self.checkTag10
                             }
-                            .width(70.px)
+                            .width(24.px)
                             .float(.left)
 
                             Div(configServiceTags.checkTag10Name)
                                 .color(.white)
                                 .class(.oneLineText)
-                                .custom("width", "calc(100% - 70px)")
+                                .custom("width", "calc(100% - 24px)")
                                 .float(.left)
 
                             Div().class(.clear)
@@ -622,30 +626,15 @@ extension OrderView {
                         .class(.oneHalf)
                         
                         Div().class(.clear)
-                        
-                    }
-                    .class(Class(TCOrderViewClass.equipmentChecks))
-                    .height(100.percent)
-                    .width(60.percent)
-                    .float(.left)
-                    
-                    /// Description
-                    Div{
 
-                        Label("Descripcion")
-                        
-                        Div(self.$_descr)
-                            .hidden(self.$editMode.map{$0})
-                            .marginBottom(7.px)
-                            .color(.goldenRod)
-                            .fontSize(22.px)
-                        
+                        // MARK: DIO AND RES)
                         Div{
                             Div("+ Agregar Diagnostico")
-                                .hidden(self.$diagnostic.map{ !$0.isEmpty })
+                                .class(Class(TCOrderViewClass.diagnosisAction))
+                                .custom("width", "calc(100.0% - 23px)")
                                 .textAlign(.center)
                                 .class(.uibtnLarge)
-                                .width(100.percent)
+                                .hidden(self.$diagnostic.map{ !$0.isEmpty })
                                 .onClick {
                                     addToDom(ConfirmationView(
                                         type: .yesNo,
@@ -707,10 +696,12 @@ extension OrderView {
                         Div{
                             
                             Div("+ Agregar Resolucion")
-                                .hidden(self.$resolution.map{ !$0.isEmpty })
+                                .class(Class(TCOrderViewClass.diagnosisAction))
+                                .custom("width", "calc(100.0% - 23px)")
                                 .textAlign(.center)
                                 .class(.uibtnLarge)
-                                .width(100.percent)
+                                .hidden(self.$resolution.map{ !$0.isEmpty })
+
                                 .onClick {
                                     addToDom(ConfirmationView(
                                         type: .yesNo,
@@ -768,13 +759,6 @@ extension OrderView {
                         }
                         .hidden(self.$editMode.map{$0})
                         
-                        Span("Descripcion")
-                            .hidden(self.$editMode.map{!$0})
-                            .marginBottom(7.px)
-                            .color(.yellowTC)
-                        
-                        self.descr
-                        
                         Span("Diagnostico")
                             .hidden(self.$editMode.map{!$0})
                             .marginBottom(7.px)
@@ -790,6 +774,39 @@ extension OrderView {
                         self.resolutionTextArea
                         
                         
+                    }
+                    .class(Class(TCOrderViewClass.equipmentChecks))
+                    .height(100.percent)
+                    .width(60.percent)
+                    .overflow(.auto)
+                    .float(.left)
+                    
+                    /// Description
+                    Div{
+
+                        Div {
+
+                            Label("Descripcion")
+                            .color(.white)
+                            
+                            Div(self.$_descr)
+                                .hidden(self.$editMode.map{$0})
+                                .marginBottom(7.px)
+                                .color(.goldenRod)
+                                .fontSize(22.px)
+
+                            Span("Descripcion")
+                                .hidden(self.$editMode.map{!$0})
+                                .marginBottom(7.px)
+                                .color(.yellowTC)
+                            
+                            self.descr
+
+                        }
+                        .backgroundColor(.init(r: 29, g: 32, b: 30))
+                        .class(.roundDarkBlue)
+                        .height(98.percent)
+
                     }
                     .class(Class(TCOrderViewClass.equipmentDiagnosis))
                     .height(99.percent)
@@ -1812,6 +1829,7 @@ extension OrderView {
                 }
 
                 self.orderView.order.warrantyCards = warrantyCards
+                
                 OrderCatchControler.shared.updateParameter(
                     self.orderView.order.id,
                     .warrantyCards(warrantyCards)

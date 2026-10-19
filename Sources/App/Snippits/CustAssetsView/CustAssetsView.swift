@@ -43,6 +43,44 @@ final class CustAssetsView: Div {
 
     @State var assets: [CustCommercialAssets] = []
 
+    @State private var searchTerm = ""
+
+    @State private var isSearching = false
+
+    private var searchRequestId: UUID?
+
+    private lazy var searchField = UTextField(self.$searchTerm)
+        .placeholder("Folio o tarjeta de servicio")
+        .attribute("aria-label", "Buscar unidad por folio o tarjeta de servicio")
+        .width(250.px)
+        .custom("max-width", "100%")
+        .disabled(self.$isSearching)
+        .onEnter {
+            self.searchAssetItem()
+        }
+
+    private lazy var searchButton: USmallButton = {
+        let button = USmallButton()
+            .class(Class(TCCrystalSurfaceClass.goodButton))
+            .attribute("type", "button")
+            .attribute("aria-label", "Buscar unidad")
+            .attribute("title", "Buscar unidad")
+            .disabled(self.$isSearching)
+            .onClick {
+                self.searchAssetItem()
+            }
+
+        button.appendChild(
+            Img()
+                .src("/skyline/media/zoom.png")
+                .class(.iconWhite)
+                .width(20.px)
+                .height(20.px)
+                .attribute("aria-hidden", "true")
+        )
+        return button
+    }()
+
     private var pendingDepartmentLoads = 0
 
     private var departmentLoadToken = UUID()
@@ -179,7 +217,7 @@ final class CustAssetsView: Div {
             self.createCategory()
         }
 
-    private lazy var addAssetButton = USmallButton("+ Crear activo")
+    private lazy var addAssetButton: USmallButton = USmallButton("+ Crear activo")
         .display(.none)
         .onClick {
             self.createAsset()
@@ -190,12 +228,15 @@ final class CustAssetsView: Div {
         VPopUp(.semiFull) {
 
             VTitle("Control de Activos", icon: "commertial_assets_icon.png") {
-                USmallTitle("Activos \(self.viewType.relationType.description)")
+                self.searchField
+                self.searchButton
             } onClose: {
                 self.remove()
             }
 
             VBodyGrid {
+                
+                // MARK: Dep view
                 VGrid(.oneThird) {
                     VBox(.raised) {
                         Div {
@@ -222,6 +263,7 @@ final class CustAssetsView: Div {
                 .custom("grid-template-rows", "minmax(0, 1fr)")
                 .custom("align-content", "stretch")
 
+                // MARK: Item view
                 VGrid(.twoThirds) {
                     VBox {
 
@@ -331,6 +373,78 @@ final class CustAssetsView: Div {
         renderAssets()
     }
 
+    override func didRemoveFromDOM() {
+        searchRequestId = nil
+        isSearching = false
+        $searchTerm.removeAllListeners()
+        $isSearching.removeAllListeners()
+        super.didRemoveFromDOM()
+    }
+
+    private func searchAssetItem() {
+        guard isInDOM, !isSearching else { return }
+
+        let term = searchTerm.purgeSpaces
+        guard !term.isEmpty else { return }
+
+        let type = CustFolioSequenceTableType(rawValue: String(term.prefix(2)).lowercased())
+        let isServiceCard = term.count > 7 && term.contains("-")
+            && (type == .serviceCard || type == .qrCode)
+
+        guard isServiceCard else {
+            openAssetItem(.folio(term))
+            return
+        }
+
+        let requestId = UUID()
+        let sessionId = custCatchID
+        searchRequestId = requestId
+        isSearching = true
+
+        API.custOrderV1.getWarrantyCard(id: .code(term)) { [weak self] response in
+            guard let self, self.isInDOM, self.searchRequestId == requestId else { return }
+
+            self.searchRequestId = nil
+            self.isSearching = false
+            guard custCatchID == sessionId else { return }
+
+            guard let response else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+
+            guard response.status == .ok else {
+                showError(.generalError, response.msg)
+                return
+            }
+
+            guard let payload = response.data else {
+                showError(.unexpectedResult, .unexpenctedMissingPayload)
+                return
+            }
+
+            guard payload.card.type == .asset else {
+                showAlert(.alerta, "Esta tarjeta no es compatible. Solo se admiten tarjetas de activos.")
+                return
+            }
+
+            guard let itemId = payload.card.orderId else {
+                showError(.unexpectedResult, "Esta tarjeta no está activa o no tiene una unidad vinculada.")
+                return
+            }
+
+            self.openAssetItem(.id(itemId))
+        }
+    }
+
+    private func openAssetItem(_ itemId: HybridIdentifier) {
+        searchTerm = ""
+        let view = CustAssetsView.AssetItemView(itemId: itemId) { _ in
+
+        }
+        addToDom(view)
+    }
+
     private func loadDepartment(_ department: CustAssetDeps) {
         guard selectedDepartment?.id != department.id else { return }
 
@@ -406,6 +520,7 @@ final class CustAssetsView: Div {
             relationId: viewType.relationId,
             status: nil
         ) { response in
+
             if tracksDepartmentLoad {
                 if let departmentLoadToken,
                    self.departmentLoadToken == departmentLoadToken {
@@ -737,7 +852,5 @@ final class CustAssetsView: Div {
 }
 
 extension CustAssetsView {
-
     typealias InitiateAssetItemViewType = CustAssetsComponents.InitiateAssetItemViewType
-    
 }

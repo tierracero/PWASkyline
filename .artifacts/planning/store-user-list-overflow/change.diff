@@ -1,0 +1,48 @@
+--- a/Sources/App/Snippits/Tools/SystemSettings/Tools+SystemSettings+UserStoreConfiguration/Tools+SystemSettings+UserStoreConfiguration+StoreView/Tools+SystemSettings+UserStoreConfiguration+StoreView.swift
++++ b/Sources/App/Snippits/Tools/SystemSettings/Tools+SystemSettings+UserStoreConfiguration/Tools+SystemSettings+UserStoreConfiguration+StoreView/Tools+SystemSettings+UserStoreConfiguration+StoreView.swift
+@@ -44,6 +44,10 @@
+         
+         lazy var usersContainers = Div()
+             .class(Class(TCStoreUserConfigurationClass.userList))
++            .custom("flex", "1 1 0")
++            .height(0.px)
++            .minHeight(0.px)
++            .overflow(.auto)
+             
+         
+         @DOM override var body: DOM.Content {
+--- a/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ b/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -4,6 +4,7 @@
+ 
+ ## Verified Facts
+ 
++- Store configuration `StoreView.usersContainers` explicitly uses `flex: 1 1 0`, an initial zero height, `min-height: 0`, and automatic overflow inside the existing bounded flex card. The list grows into the space remaining below its header and above its action, allowing excess user rows to scroll. Loading and user-card interactions remain unchanged; source review only, browser rendering remains unverified.
+ - `CustAssetsAvatarUploader` accepts an optional `[MediaViewer.MediaFile]` image list, initializes the current avatar first, and shows at most four 12px selection dots beneath the preview. Selecting a dot changes the preview without changing the saved avatar; clicking the preview opens the existing MediaViewer at that image with media actions disabled. Asset-item detail supplies its existing photos. Upload results and external avatar changes restore focus to the current avatar. Reapplied on 2026-10-13 after accidental removal; source review only, browser/build behavior remains unverified.
+ - `ManageLocationItem` exposes a bottom-left red crystal Eliminar action for an existing editor ID linked to a saved `.location` source. It uses the linked `locationId`, not the generated editor UUID, with the existing `deleteLocation` confirmation/error flow. The endpoint cancels the saved location without deleting its database record. Only success closes the editor and notifies `CreateTripView` through its existing saved-location list/selection cleanup; pending deletion prevents duplicate calls and saving. The existing `removeLocation` trip-stop operation is not called. Browser/server behavior remains unverified.
+ - `CreateAssetItemView.create()` builds ordered image metadata from the existing upload registry, falling back to remote camera preview references by view ID. This includes uploaded camera files in `CreateAssetItemObject.images` while retaining the previous camera handlers, upload state and submission logic. Live browser/mobile behavior remains unverified.
+--- a/.agent/PROJECT_MEMORY.md
++++ b/.agent/PROJECT_MEMORY.md
+@@ -47,3 +47,5 @@
+ - 2026-10-07: `CustAcctPayments.downpayment` defaults false; only explicit selection marks an order payment as an anticipo. Full/quick shared payloads, `PaymentObject`, and order AddPayment requests decode missing flags as false. Existing tenants need the manual payment-column SQL before server deployment. Order reports and payment CSVs show general/downpayment subtotals and a combined total while retaining existing adjustment arithmetic.
+ 
+ - 2026-10-13: Restored the asset avatar gallery in the main checkout: avatar-first image initialization, up to four preview-selection dots, and selected-image MediaViewer opening. Existing title/upload layout and MediaViewer implementation were preserved. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`; source audit only, builds/tests were not authorized.
++
++- 2026-10-14: StoreView bounds `usersContainers` with a zero flex basis/height and automatic overflow so additional users can scroll within the existing card. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`. Source review only; no builds/tests or browser execution.
+--- a/.agent/TASKS_ARCHIVE.md
++++ b/.agent/TASKS_ARCHIVE.md
+@@ -312,3 +312,14 @@
+ - **Implementation**: Restored the optional image-list initializer, avatar-first ordering, up to four medium selection dots, and selected-image MediaViewer opening in `CustAssetsAvatarUploader`; reconnected the asset-item image list. Preserved the 22px upload icon, current layout, newer MediaViewer and unrelated pending user edits.
+ - **Validation**: Reviewed the baseline-relative patch, image/default/selection/upload handling, existing viewer selected-index support, and final git status. No builds, tests, full compilation, browser execution, staging or commit.
+ - **Evidence**: `.artifacts/planning/reapply-avatar-gallery/plan.md` and `reapplied.diff`.
++
++---
++
++## STORE-USERS-SCROLL-001 — Bound and scroll the store user list
++
++- **Completed**: 2026-10-14.
++- **Status**: Implemented and source-audited; browser/build behavior remains unverified.
++- **Architecture IDs**: `SWWEB-001`, `SWWEB-002`.
++- **Implementation**: Added explicit zero flex basis/height, zero minimum height and automatic overflow to `StoreView.usersContainers`, preserving its existing theme and all loading/card interactions.
++- **Verification**: Reviewed the surrounding bounded flex/grid layout and task-only diff; patch applicability and added-line whitespace checks passed. No build, test, full compilation, browser execution, staging or commit.
++- **Evidence**: `.artifacts/planning/store-user-list-overflow/plan.md`, `change.diff`, and `audit.md`.

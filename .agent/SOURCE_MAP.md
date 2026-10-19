@@ -18,6 +18,10 @@ Repository file map for PWASkyline.
 | `Sources/App/App.swift` | `@main` Swift Web app lifecycle, service-worker registration, route table, and theme switching. |
 | `Sources/App/SkylineWeb.swift` | Project version, environment flags, global app/session/cache variables. |
 | `Sources/App/API/` | Client API wrapper namespaces and endpoint files. |
+| `Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+GetTrip.swift` | Typed trip detail POST wrapper accepting `HybridIdentifier` for UUID or folio lookup and decoding the shared response. |
+| `Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+ChangeTripStatus.swift` | Typed trip status update POST wrapper accepting status, comment and per-merchandise media. |
+| `Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+DeliverAssetItem.swift` | Typed per-asset delivery POST wrapper using the shared delivery request/response, optional comment/evidence and destination classification IDs. |
+| `Sources/App/API/CustAssetsEndpoint/CustAssets+GetAssetsSection.swift` | Typed `getAssetsSection` POST wrapper retrieving store-scoped asset sections and subsections for single or batch asset-item entry. |
 | `Sources/App/API/CustSubAcctEndpoint/` | Shared subaccount create/load/update POST wrappers and account-scoped GET search exposed as `API.custSubAcctV1`. |
 | `Sources/App/API/CustOrderEndpoint/CustOrder+RemoveChargeCTAM.swift`, `CustOrder+RemovePaymentCTAM.swift` | Typed order charge/payment deletion approval request wrappers. |
 | `Sources/App/API/CustPOCEndpoint/CustPOC+AuditProductActivity.swift` | Typed client wrapper for the product creation, edit, image, and duplicate audit report. |
@@ -36,6 +40,8 @@ Repository file map for PWASkyline.
 | `Sources/App/Snippits/ManualAddressSearch.swift` | Crystal postal-address and coordinate lookup dialogs; returns the selected address or geocoder snapshot to its caller. |
 | `Sources/App/Snippits/TripControler/TripControler+AddLocation.swift` | Dedicated fiscal-location picker; owns origin/destination presentation and location-typed callbacks, including prefilled confirmation and resumption for incomplete store addresses. |
 | `Sources/App/Snippits/TripControler/TripControler+AddMerchandise.swift` | Account/origin-aware fiscal-merchandise base picker; preserves selection and creation callbacks. |
+| `Sources/App/Snippits/TripControler/ConfirmTripStatusUpdate.swift`, `TripControler+TripViewBeta.swift` | Beta trip status and per-asset delivery actions with a shared crystal confirmation form; validates transitions, comments, linked routes and evidence, marks confirmed deliveries, and refreshes trip/notes after API success. |
+| `Sources/App/Snippits/MediaViewer.swift` | Shared image/video viewer with selected-file navigation, bottom thumbnails, optional per-file URL bases and read-only presentation for staged trip evidence. |
 | `Sources/App/Snippits/SearchComertialAsset.swift` | Trip commercial-asset picker over preloaded available inventory from a store, warehouse or subaccount origin; locally filters folio/name/serial. |
 | `Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+FastAndFurios.swift` | Ranked product revenue velocity, sales velocity, volume, and weighted score report presentation. |
 | `Sources/App/Snippits/Tools/HistorySettings/Tools+HistorySettings+OrderProcessing/Tools+HistorySettings+OrderProcessing+Reports.swift` | Order report UI and CSV exports for created, closed, payment, and delivered-equipment sections; payments split into general payments and explicit downpayments with subtotals and a combined total. |
@@ -43,6 +49,7 @@ Repository file map for PWASkyline.
 | `Sources/App/TierraCeroCustomUI/` | Scoped Tierra Cero layout controls and feature themes, including the production OrderView presentation and persistent speech-recognition control. |
 | `Sources/App/Functions/` | Free functions and browser helpers, including centralized POST transport and API response decoding instrumentation. |
 | `Sources/App/Extentions/` | Project extensions for Web elements and value types. |
+| `Sources/App/Extentions/BillingType+SignedAmount.swift` | App-only charge-direction helper for billing-aware balances and displayed subtotals; adjustment negates the supplied amount. |
 | `Sources/App/Enums/` | App enums. |
 | `Sources/App/Structurs/` | App structs and payload objects. |
 

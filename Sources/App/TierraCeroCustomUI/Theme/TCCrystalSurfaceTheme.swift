@@ -159,6 +159,8 @@ enum TCCrystalSurfaceClass {
     static let auditModalPanel = "tc-audit-modal-panel"
     static let auditProductRow = "tc-audit-product-row"
     static let goodButton = "tc-good-button"
+    static let goodButtonGreen = "tc-good-button-green"
+    static let goodButtonRed = "tc-good-button-red"
     static let trip = "tc-crystal-trip"
     static let tripPicker = "tc-crystal-trip-picker"
     static let tripPickerPanel = "tc-crystal-trip-picker-panel"
@@ -220,6 +222,8 @@ enum TCCrystalSurfaceTheme {
         let highPriorityRoot = "\(root).\(TCCrystalSurfaceClass.highPriorityNote)"
         let historyTripProcessingRoot = "\(root).\(TCCrystalSurfaceClass.historyTripProcessing)"
         let tripRoot = "\(root).\(TCCrystalSurfaceClass.trip)"
+        let tripGreenButton = "\(tripRoot) .\(TCCrystalSurfaceClass.goodButton).\(TCCrystalSurfaceClass.goodButtonGreen)"
+        let tripRedButton = "\(tripRoot) .\(TCCrystalSurfaceClass.goodButton).\(TCCrystalSurfaceClass.goodButtonRed)"
         let tripPicker = "\(tripRoot).\(TCCrystalSurfaceClass.tripPicker)"
         let locationPicker = "\(tripPicker).\(TCCrystalSurfaceClass.tripLocationPicker)"
         let taskPanel = "\(root) .\(TCCrystalSurfaceClass.taskPanel)"
@@ -1025,6 +1029,34 @@ enum TCCrystalSurfaceTheme {
                 .custom("background", "linear-gradient(145deg, rgba(14, 57, 87, 0.92), rgba(5, 27, 48, 0.92)) !important")
                 .custom("color", "#edf7ff !important")
                 .custom("box-shadow", "inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 6px 16px rgba(0, 0, 0, 0.2)")
+
+            CSSRule(Pointer(tripGreenButton))
+                .custom("border-color", "rgba(83, 198, 83, 0.54) !important")
+                .custom("background", "linear-gradient(145deg, rgba(23, 91, 40, 0.9), rgba(12, 46, 26, 0.94)) !important")
+                .custom("color", "#b8efbb !important")
+
+            CSSRule(Pointer("\(tripGreenButton):not(:disabled):is(:hover, :focus-visible)"))
+                .custom("border-color", "rgba(83, 198, 83, 0.85) !important")
+                .custom("box-shadow", "inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 0 3px rgba(83, 198, 83, 0.12), 0 6px 16px rgba(0, 0, 0, 0.2)")
+
+            CSSRule(Pointer("\(tripGreenButton):focus-visible"))
+                .custom("outline", "2px solid rgba(83, 198, 83, 0.72) !important")
+
+            CSSRule(Pointer(tripRedButton))
+                .custom("border-color", "rgba(255, 112, 103, 0.54) !important")
+                .custom("background", "linear-gradient(145deg, rgba(91, 36, 40, 0.9), rgba(46, 19, 26, 0.94)) !important")
+                .custom("color", "#ffaaa4 !important")
+
+            CSSRule(Pointer("\(tripRedButton):not(:disabled):is(:hover, :focus-visible)"))
+                .custom("border-color", "rgba(255, 112, 103, 0.85) !important")
+                .custom("box-shadow", "inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 0 3px rgba(255, 112, 103, 0.12), 0 6px 16px rgba(0, 0, 0, 0.2)")
+
+            CSSRule(Pointer("\(tripRedButton):focus-visible"))
+                .custom("outline", "2px solid rgba(255, 112, 103, 0.72) !important")
+
+            CSSRule(Pointer("\(tripGreenButton):disabled, \(tripRedButton):disabled"))
+                .custom("opacity", "0.5")
+                .custom("cursor", "not-allowed")
 
             CSSRule(Pointer("\(tripRoot) .textFiledBlackDark"))
                 .custom("height", "30px !important")

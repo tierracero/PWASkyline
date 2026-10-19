@@ -13,6 +13,8 @@ enum TCOrderViewClass {
     static let toolbar = "tc-order-toolbar"
     static let content = "tc-order-content"
     static let headerTitle = "tc-order-header-title"
+    static let headerFolio = "tc-order-header-folio"
+    static let statusHolder = "tc-order-status-holder"
     static let headerStatus = "tc-order-header-status"
     static let statusControl = "tc-order-status-control"
     static let statusMenu = "tc-order-status-menu"
@@ -42,7 +44,6 @@ enum TCOrderViewClass {
     static let chargesCard = "tc-order-charges-card"
     static let summaryScroll = "tc-order-summary-scroll"
     static let summaryHeaderActions = "tc-order-summary-actions"
-    static let summaryIdentity = "tc-order-summary-identity"
     static let rewardsCard = "tc-order-rewards-card"
     static let surveysCard = "tc-order-surveys-card"
     static let detailsStack = "tc-order-details-stack"
@@ -58,8 +59,32 @@ enum TCOrderViewClass {
     static let equipmentDetails = "tc-order-equipment-details"
     static let equipmentOverview = "tc-order-equipment-overview"
     static let equipmentChecks = "tc-order-equipment-checks"
+    static let equipmentBrandModel = "tc-order-equipment-brand-model"
+    static let diagnosisAction = "tc-order-diagnosis-action"
     static let equipmentDiagnosis = "tc-order-equipment-diagnosis"
     static let equipmentWorkflow = "tc-order-equipment-workflow"
+    static let sectionIcon = "tc-order-section-icon"
+    static let sectionTitle = "tc-order-section-title"
+}
+
+enum TCOrderViewIcon {
+    case serviceLetter
+    case contract
+    case map
+
+    var source: String {
+        let shapes: String
+        switch self {
+        case .serviceLetter:
+            shapes = "<rect x='3' y='5' width='18' height='14' rx='2'/><path d='m3 6 9 7 9-7'/>"
+        case .contract:
+            shapes = "<path d='M14 2H5v20h14V7l-5-5Z M14 2v6h5 M8 12h7 M8 16h4 M11 20l3-3 2 2 4-4'/>"
+        case .map:
+            shapes = "<path d='m9 4-6 3v14l6-3 6 3 6-3V4l-6 3-6-3Z M9 4v14 M15 7v14'/>"
+        }
+        let svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgb(92,183,255)' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'>\(shapes)</svg>"
+        return "data:image/svg+xml;base64,\(Data(svg.utf8).base64EncodedString())"
+    }
 }
 
 /// Scoped Tierra Cero presentation for the production OrderView.
@@ -99,14 +124,14 @@ enum TCOrderViewTheme {
                 .custom("-webkit-backdrop-filter", "none")
 
             OrderRule(Pointer("\(root) .\(TCOrderViewClass.shell)"))
-                .custom("top", "0 !important")
-                .custom("left", "0 !important")
-                .custom("width", "100% !important")
-                .custom("height", "100% !important")
+                .custom("top", "25px !important")
+                .custom("left", "40px !important")
+                .custom("width", "calc(100% - 100px) !important")
+                .custom("height", "calc(100% - 70px) !important")
                 .custom("padding", "0 !important")
                 .custom("box-sizing", "border-box")
                 .custom("border", "1px solid var(--tc-order-border)")
-                .custom("border-radius", "0 !important")
+                .custom("border-radius", "24px !important")
                 .custom("background", "linear-gradient(145deg, rgba(8, 34, 57, 0.28), rgba(3, 17, 32, 0.18)) !important")
                 .custom("box-shadow", "0 18px 54px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04) !important")
                 .custom("backdrop-filter", "blur(8px) saturate(116%)")
@@ -179,12 +204,12 @@ enum TCOrderViewTheme {
                 .custom("display", "inline-flex")
                 .custom("align-items", "center")
                 .custom("justify-content", "center")
-                .custom("min-height", "56px")
+                .custom("min-height", "32px")
                 .custom("box-sizing", "border-box")
-                .custom("margin-left", "14px")
-                .custom("padding", "8px 20px")
+                .custom("margin-left", "0")
+                .custom("padding", "3px 9px")
                 .custom("border-radius", "999px")
-                .custom("font-size", "26px")
+                .custom("font-size", "16px")
                 .custom("font-weight", "700")
                 .custom("line-height", "1")
                 .custom("box-shadow", "inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 22px rgba(0, 0, 0, 0.16)")
@@ -406,6 +431,10 @@ enum TCOrderViewTheme {
             OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryHeaderActions)"))
                 .custom("min-height", "34px")
                 .custom("padding-bottom", "6px")
+                .custom("display", "flex")
+                .custom("align-items", "center")
+                .custom("flex-wrap", "wrap")
+                .custom("gap", "4px")
 
             OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryHeaderActions) > img"))
                 .custom("width", "32px !important")
@@ -417,7 +446,7 @@ enum TCOrderViewTheme {
             OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryHeaderActions) > img:nth-of-type(4)"))
                 .custom("display", "none !important")
 
-            OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryHeaderActions) .uibtn"))
+            OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryHeaderActions) > .uibtn:not(.\(TCOrderViewClass.statusControl))"))
                 .custom("min-height", "30px")
                 .custom("border", "1px solid var(--tc-order-border) !important")
                 .custom("border-radius", "7px !important")
@@ -426,33 +455,21 @@ enum TCOrderViewTheme {
                 .custom("box-shadow", "none !important")
                 .custom("font-size", "14px")
 
-            OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryIdentity)"))
-                .custom("padding", "8px 0 10px")
-                .custom("border-bottom", "1px solid var(--tc-order-border-soft)")
-                .custom("font-size", "18px")
-
-            OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryIdentity) .uibtn:not(.\(TCOrderViewClass.statusControl))"))
-                .custom("border", "1px solid rgba(83, 198, 83, 0.30) !important")
-                .custom("border-radius", "999px !important")
-                .custom("background", "rgba(83, 198, 83, 0.08) !important")
-                .custom("background-image", "none !important")
-                .custom("box-shadow", "none !important")
-
-            OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryIdentity) .\(TCOrderViewClass.statusControl).uibtn"))
+            OrderRule(Pointer("\(root) .\(TCOrderViewClass.summaryHeaderActions) .\(TCOrderViewClass.statusHolder) .\(TCOrderViewClass.statusControl).uibtn"))
                 .custom("display", "inline-flex !important")
                 .custom("align-items", "center")
                 .custom("justify-content", "center")
-                .custom("gap", "9px")
+                .custom("gap", "6px")
                 .custom("width", "auto !important")
                 .custom("max-width", "100%")
-                .custom("min-height", "48px")
+                .custom("min-height", "32px")
                 .custom("margin", "0 !important")
-                .custom("padding", "3px 12px 3px 12px !important")
+                .custom("padding", "3px 9px !important")
                 .custom("box-sizing", "border-box")
-                .custom("float", "right !important")
+                .custom("float", "none !important")
                 .custom("border-radius", "999px !important")
                 .custom("background-image", "none !important")
-                .custom("font-size", "24px !important")
+                .custom("font-size", "16px !important")
                 .custom("font-weight", "700")
 
             OrderRule(Pointer("\(root) .\(TCOrderViewClass.statusControl) > div:first-child"))
@@ -463,16 +480,16 @@ enum TCOrderViewTheme {
             OrderRule(Pointer("\(root) .\(TCOrderViewClass.statusControl) > div:nth-child(2)"))
                 .custom("display", "inline-flex")
                 .custom("align-items", "center")
-                .custom("width", "28px !important")
-                .custom("height", "36px")
+                .custom("width", "18px !important")
+                .custom("height", "22px")
                 .custom("margin", "0 !important")
-                .custom("padding", "0 0 0 12px !important")
+                .custom("padding", "0 0 0 7px !important")
                 .custom("box-sizing", "content-box")
                 .custom("float", "none !important")
 
             OrderRule(Pointer("\(root) .\(TCOrderViewClass.statusControl) > div:nth-child(2) img"))
-                .custom("width", "28px !important")
-                .custom("height", "28px !important")
+                .custom("width", "18px !important")
+                .custom("height", "18px !important")
                 .custom("padding", "0 !important")
                 .custom("opacity", "0.82 !important")
 
@@ -481,7 +498,9 @@ enum TCOrderViewTheme {
 
             OrderRule(Pointer("\(root) .\(TCOrderViewClass.statusMenu)"))
                 .custom("width", "200px !important")
-                .custom("margin", "6px 0 0 auto !important")
+                .custom("margin", "0 !important")
+                .custom("top", "calc(100% + 4px)")
+                .custom("right", "0")
                 .custom("padding", "5px !important")
                 .custom("box-sizing", "border-box")
                 .custom("border", "1px solid var(--tc-order-border)")
@@ -663,7 +682,7 @@ enum TCOrderViewTheme {
 
             OrderRule(Pointer("\(root) .\(TCOrderViewClass.equipmentOverview)"))
                 .custom("display", "grid")
-                .custom("grid-template-columns", "minmax(240px, 58%) minmax(180px, 42%)")
+                .custom("grid-template-columns", "minmax(150px, 1fr) minmax(180px, 1.2fr)")
                 .custom("gap", "10px")
                 .custom("height", "calc(100% - 58px) !important")
 
@@ -713,6 +732,103 @@ enum TCOrderViewTheme {
                 OrderRule(Pointer("\(root) .\(TCOrderViewClass.communicationsGrid)"))
                     .custom("grid-template-columns", "7fr 3fr")
             }
+        }
+
+        WebApp.current.addStylesheet {
+            OrderRule(Pointer("\(root) .\(TCOrderViewClass.headerFolio)"))
+                .custom("order", "4")
+                .custom("align-items", "center")
+                .custom("max-width", "24%")
+                .custom("min-width", "0")
+                .custom("flex", "0 1 auto")
+                .custom("padding", "5px 10px")
+                .custom("margin-left", "8px")
+                .custom("border", "1px solid var(--tc-order-blue-soft)")
+                .custom("border-radius", "7px")
+                .custom("background", "rgba(22, 137, 232, 0.14)")
+                .custom("color", "var(--tc-order-blue-soft)")
+                .custom("font-size", "19px")
+                .custom("font-weight", "700")
+
+            OrderRule(Pointer("\(root) .\(TCOrderViewClass.statusHolder)"))
+                .custom("display", "flex")
+                .custom("align-items", "center")
+                .custom("margin-left", "auto")
+                .custom("min-width", "0")
+                .custom("max-width", "100%")
+
+            OrderRule(Pointer("\(root) .\(TCOrderViewClass.headerFolio)[hidden], \(root) .\(TCOrderViewClass.statusHolder) [hidden], \(root) .\(TCOrderViewClass.statusHolder) .\(TCOrderViewClass.statusOption)[hidden]"))
+                .custom("display", "none !important")
+
+            OrderRule(Pointer("\(root) .\(TCOrderViewClass.equipmentBrandModel)"))
+                .custom("grid-template-columns", "repeat(auto-fit, minmax(90px, 1fr))")
+                .custom("gap", "8px")
+
+            OrderRule(Pointer("\(root) .\(TCOrderViewClass.equipmentBrandModel) > div"))
+                .custom("min-width", "0")
+
+            OrderRule(Pointer("\(root) .\(TCOrderViewClass.equipmentChecks) > .oneHalf"))
+                .custom("width", "50% !important")
+                .custom("max-width", "50%")
+                .custom("box-sizing", "border-box")
+                .custom("min-height", "26px")
+                .custom("padding", "2px 0")
+
+            OrderRule(Pointer("\(root) .\(TCOrderViewClass.equipmentChecks) input[type='checkbox']"))
+                .custom("appearance", "auto")
+                .custom("accent-color", "var(--tc-order-blue-soft)")
+                .custom("width", "17px !important")
+                .custom("height", "17px !important")
+                .custom("padding", "0 !important")
+                .custom("margin", "0 !important")
+
+            OrderRule(Pointer("\(root) .\(TCOrderViewClass.equipmentDiagnosis) .\(TCOrderViewClass.diagnosisAction)"))
+                .custom("font-size", "14px !important")
+                .custom("line-height", "1.3")
+                .custom("min-height", "28px")
+                .custom("padding", "5px 7px !important")
+                .custom("box-sizing", "border-box")
+
+            OrderRule(Pointer("\(root) .\(TCOrderViewClass.sectionTitle)"))
+                .custom("display", "inline-flex")
+                .custom("align-items", "center")
+                .custom("gap", "8px")
+                .custom("min-width", "0")
+
+            OrderRule(Pointer("\(root) .\(TCOrderViewClass.sectionIcon)"))
+                .custom("width", "20px")
+                .custom("height", "20px")
+                .custom("flex", "0 0 auto")
+                .custom("object-fit", "contain")
+
+            OrderRule(Pointer("\(root) .\(TCOrderViewClass.addressHeader)"))
+                .custom("justify-content", "flex-start")
+                .custom("gap", "8px")
+                .custom("text-align", "left")
+
+            OrderRule(Pointer("\(root) .\(TCOrderViewClass.addressHeader) h2"))
+                .custom("flex", "1")
+                .custom("text-align", "left")
+                .custom("margin", "0 !important")
+        }
+
+        installLoadingStyles(root: root)
+    }
+
+    private static func installLoadingStyles(root: String) {
+        let body = "\(root) .\(TCOrderViewClass.body)"
+        let cards = [
+            TCOrderViewClass.equipmentCard,
+            TCOrderViewClass.communicationsGrid,
+            TCOrderViewClass.chargesCard,
+            TCOrderViewClass.sideColumn
+        ]
+        let loadingCards = cards.map { "\(body)[aria-busy='true'] .\($0)" }.joined(separator: ", ")
+
+        WebApp.current.addStylesheet {
+            OrderRule(Pointer(loadingCards))
+                .custom("visibility", "hidden")
+                .custom("pointer-events", "none")
         }
     }
 }

@@ -39,13 +39,25 @@ extension ToolsView.SystemSettings {
         
         /// Order Procesing is active
         /// order, rental, date
-        var moduleProfile: [CustOrderProfiles] = []
+        var moduleProfile: [CustModuleProfiles] = []
         
         @State var moduleProfileOrder: Bool = false
         
         @State var moduleProfileRental: Bool = false
         
         @State var moduleProfileDate: Bool = false
+
+
+
+        
+        @State var moduleProfileAccount: Bool = false
+        
+        @State var moduleProfileFollowup: Bool = false
+        
+        @State var moduleProfileTrip: Bool = false
+
+        @State var moduleProfileCommertialAsset: Bool = false
+
         
         /// What view will be used in the sistem by default
         /// CustOrderGridView
@@ -368,6 +380,14 @@ extension ToolsView.SystemSettings {
         lazy var moduleProfileRentalCheckbox = InputCheckbox().toggle(self.$moduleProfileRental)
         
         lazy var moduleProfileDateCheckbox = InputCheckbox().toggle(self.$moduleProfileDate)
+
+        lazy var moduleProfileAccountCheckbox = InputCheckbox().toggle(self.$moduleProfileAccount)
+
+        lazy var moduleProfileFollowupCheckbox = InputCheckbox().toggle(self.$moduleProfileFollowup)
+
+        lazy var moduleProfileTripCheckbox = InputCheckbox().toggle(self.$moduleProfileTrip)
+
+        lazy var moduleProfileCommertialAssetCheckbox = InputCheckbox().toggle(self.$moduleProfileCommertialAsset)
         
         lazy var gridViewSelect = Select(self.$gridView)
             .class(.textFiledBlackDark)
@@ -1198,33 +1218,75 @@ extension ToolsView.SystemSettings {
                    
                 /// `Modulos Activos`
                 Div{
-                    Label("Modulos de ordens activos")
+                    Label("Modulos de trabajo activos")
                         .color(.white)
                     Div().clear(.both).height(3.px)
+                    
                     Div{
                         Div("Ordenes")
                             .marginBottom(3.px)
                             .color(.lightGray)
                         self.moduleProfileOrderCheckbox
                     }
-                    .width(33.percent)
+                    .width(25.percent)
                     .float(.left)
+
                     Div{
                         Div("Rentas")
                             .marginBottom(3.px)
                             .color(.lightGray)
                         self.moduleProfileRentalCheckbox
                     }
-                    .width(33.percent)
+                    .width(25.percent)
                     .float(.left)
+
                     Div{
                         Div("Citas")
                             .marginBottom(3.px)
                             .color(.lightGray)
                         self.moduleProfileDateCheckbox
                     }
-                    .width(33.percent)
+                    .width(25.percent)
                     .float(.left)
+
+                    Div{
+                        Div("Cuentas")
+                            .marginBottom(3.px)
+                            .color(.lightGray)
+                        self.moduleProfileAccountCheckbox
+                    }
+                    .width(25.percent)
+                    .float(.left)
+
+                    Div{
+                        Div("Seguiminetos")
+                            .marginBottom(3.px)
+                            .color(.lightGray)
+                        self.moduleProfileFollowupCheckbox
+                    }
+                    .width(25.percent)
+                    .float(.left)
+
+                    Div{
+                        Div("Viajes")
+                            .marginBottom(3.px)
+                            .color(.lightGray)
+                        self.moduleProfileTripCheckbox
+                    }
+                    .width(25.percent)
+                    .float(.left)
+
+                    Div{
+                        Div("Activos Comerciales")
+                            .marginBottom(3.px)
+                            .color(.lightGray)
+                        self.moduleProfileCommertialAssetCheckbox
+                    }
+                    .width(25.percent)
+                    .float(.left)
+
+
+
                 }
                 Div().clear(.both).height(7.px)
                 
@@ -3363,6 +3425,14 @@ extension ToolsView.SystemSettings {
             
             self.moduleProfileDate = configStoreProcessing.moduleProfile.contains(.date)
             
+            self.moduleProfileAccount = configStoreProcessing.moduleProfile.contains(.account)
+
+            self.moduleProfileFollowup = configStoreProcessing.moduleProfile.contains(.followup)
+
+            self.moduleProfileTrip = configStoreProcessing.moduleProfile.contains(.trip)
+
+            self.moduleProfileCommertialAsset = configStoreProcessing.moduleProfile.contains(.commertialAsset)
+            
             self.gridView = configStoreProcessing.gridView.rawValue
             
             self.accountMobileConfirmationMode = configStoreProcessing.accountMobileConfirmationMode.rawValue
@@ -3598,7 +3668,7 @@ extension ToolsView.SystemSettings {
         
         func saveData(){
             
-            var _moduleProfile: [CustOrderProfiles] = []
+            var _moduleProfile: [CustModuleProfiles] = []
             
             if moduleProfileOrder {
                 _moduleProfile.append(.order)
@@ -3611,7 +3681,28 @@ extension ToolsView.SystemSettings {
             if moduleProfileDate {
                 _moduleProfile.append(.date)
             }
-            
+             
+            if moduleProfileAccount {
+                _moduleProfile.append(.account)
+            }
+             
+            if moduleProfileFollowup {
+                _moduleProfile.append(.followup)
+            }
+             
+            if moduleProfileTrip {
+                _moduleProfile.append(.trip)
+            }
+             
+            if moduleProfileCommertialAsset {
+                _moduleProfile.append(.commertialAsset)
+            }
+             
+
+
+
+
+
             guard let gridView = CustOrderGridView(rawValue: gridView) else {
                 showError(.invalidField, "Error al establecer GRID VIEW. Contacte a Soporte TC")
                 return

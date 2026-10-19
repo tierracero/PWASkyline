@@ -1,0 +1,28 @@
+{
+  "Sources/App/Snippits/AccoutOverview.swift": {
+    "onclick_before": 21,
+    "onclick_after": 21,
+    "api_calls_unchanged": true
+  },
+  "Sources/App/Snippits/OrderView/EquipmentView/OrderView+EquipmentView.swift": {
+    "onclick_before": 8,
+    "onclick_after": 8,
+    "api_calls_unchanged": true
+  },
+  "Sources/App/Snippits/OrderView/OrderView.swift": {
+    "onclick_before": 46,
+    "onclick_after": 46,
+    "api_calls_unchanged": true
+  },
+  "Sources/App/TierraCeroCustomUI/Theme/TCOrderViewTheme.swift": {
+    "onclick_before": 0,
+    "onclick_after": 0,
+    "api_calls_unchanged": true
+  },
+  "task_added_trailing_whitespace": 0,
+  "externally_changed_protected_files": [
+    "Sources/App/Snippits/StartServiceOrder.swift"
+  ],
+  "status_added": [],
+  "status_removed": []
+}

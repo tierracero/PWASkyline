@@ -268,7 +268,8 @@ class SalePointView: Div {
                                             fiscCode: "",
                                             fiscUnit: "",
                                             preRegister: false
-                                        )
+                                        ),
+                                        billingType: item.billingType
                                     ))
                                     
                                     return
@@ -864,7 +865,7 @@ class SalePointView: Div {
         var balance: Int64 = 0
         
         self.kart.forEach { item in
-            balance += (item.data.unitPrice * (item.data.units / 100))
+            balance += item.billingType.signedAmount((item.data.unitPrice * item.data.units) / 100)
         }
         
         if let points = rewadsPoints?.toCents {
@@ -1938,7 +1939,7 @@ class SalePointView: Div {
                id: id,
                cost: soc.price,
                quant: (soc.units / 100),
-               price: soc.price,
+               price: soc.billingType.signedAmount(soc.price),
                data: .init(
                    t: .service,
                    i: soc.id ?? .init(),
@@ -1990,7 +1991,8 @@ class SalePointView: Div {
                        fiscCode: "",
                        fiscUnit: "",
                        preRegister: false
-                   )
+                   ),
+                   billingType: soc.billingType
                )
            )
            
@@ -2277,6 +2279,7 @@ class SalePointView: Div {
             }
             
             payload.saleObjectsSOC.forEach { item in
+                let billingType: BillingType = item.custSOC.codeType == .adjustment ? .adjustment : .charge
                 
                 let manualid = UUID()
                 
@@ -2284,7 +2287,7 @@ class SalePointView: Div {
                     id: item.custSOC.id,
                     cost: item.custSOC.cost,
                     quant: item.units / 100,
-                    price: item.unitPrice,
+                    price: billingType.signedAmount(item.unitPrice),
                     data: .init(
                         t: .service,
                         i: item.custSOC.id,
@@ -2343,7 +2346,8 @@ class SalePointView: Div {
                                         fiscCode: "",
                                         fiscUnit: "",
                                         preRegister: false
-                                    )
+                                    ),
+                                    billingType: item.billingType
                                 ))
                                 
                                 return
@@ -2382,7 +2386,8 @@ class SalePointView: Div {
                             fiscCode: "",
                             fiscUnit: "",
                             preRegister: false
-                        )
+                        ),
+                        billingType: billingType
                     )
                 )
                 
@@ -2457,7 +2462,8 @@ class SalePointView: Div {
                                         fiscCode: "",
                                         fiscUnit: "",
                                         preRegister: false
-                                    )
+                                    ),
+                                    billingType: item.billingType
                                 ))
                                 
                                 return

@@ -77,8 +77,9 @@ public class AccoutOverview: Div {
     lazy var orderView = Div{
         
     }
-        .width(100.percent)
         .height(100.percent)
+        .width(100.percent)
+        .overflow(.auto)
         .hidden(self.$load.map{$0 == .order ? false : true})
     
     lazy var fiscalView = Div{
@@ -156,7 +157,6 @@ public class AccoutOverview: Div {
         
         /// sendToMobile
         Div{
-            
             
             Img()
                 .src("/skyline/media/notificationIcon.png")
@@ -533,11 +533,10 @@ public class AccoutOverview: Div {
         Div{
             Img()
                 .src("/skyline/media/addBlueIcon.png")
-                .class(.iconWhite)
                 .marginLeft(7.px)
                 .height(18.px)
             
-            Span("Nueva orden")
+            Span("Orden")
         }
         .class(Class(TCOrderViewClass.newOrderAction))
         .class(.uibtn)
@@ -732,6 +731,14 @@ public class AccoutOverview: Div {
                     .hidden(self.$load.map { $0 != .order })
                 
                 self.orderButton
+
+                Div(self.$order.map { $0?.folio ?? "" })
+                    .class(Class(TCOrderViewClass.headerFolio))
+                    .class(.oneLineText)
+                    .fontSize(32.px)
+                    .color(.white)
+                    .hidden(self.$order.map { $0 == nil })
+                    .display(self.$load.map { $0 == .order ? .inlineFlex : .none })
                 
                 self.fiscalButton
                 
@@ -879,8 +886,6 @@ public class AccoutOverview: Div {
                 ))
                 
             }
-            
-            
             
         }
     }
@@ -1185,8 +1190,11 @@ public class AccoutOverview: Div {
             }
             
             let firstView = Div().class(.oneTwo)
+            .id(.init("firstViewOrder_\(callKey(12))"))
+                                
             let secondView = Div().class(.oneTwo)
-            
+            .id(.init("secondViewOrder_\(callKey(12))"))
+
             self.order = nil
             self.orderStatus = nil
             self.orderView.innerHTML = ""

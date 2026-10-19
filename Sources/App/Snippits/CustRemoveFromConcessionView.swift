@@ -880,8 +880,6 @@ class CustRemoveFromConcessionView: Div {
 
                                     var items: [CustPOCInventorySoldObject] = []
 
-                                    Console.clear()
-
                                     self.items.forEach { nitem in
                                         if item.id == nitem.id {
 

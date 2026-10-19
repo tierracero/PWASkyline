@@ -1,0 +1,109 @@
+--- baseline/CustAssets+AssetItemView.swift
++++ current/CustAssets+AssetItemView.swift
+@@ -582,7 +582,7 @@
+             }
+         }
+ 
+-        private func kardexEventView(_ event: CustCommercialAssetsItemKardex) -> Div {
++        private func kardexEventView(_ event: CustAssetsComponents.CustCommercialAssetsItemKardexObject) -> Div {
+             VBox(.raised) {
+                 Div {
+                     USubTitle(event.eventType.description)
+@@ -594,9 +594,10 @@
+                 }
+ 
+                 Div {
+-                    self.detail("Ubicación", event.toLinkType?.description)
+-                    self.detail("ID de ubicación", event.toLinkedTo?.uuidString.lowercased())
++                    self.detail("Tipo de ubicación", event.toLinkedTo?.description ?? event.toLinkType?.description)
++                    self.detail("Ubicación", event.toLinkedTo?.name)
+                     self.detail("Estado", event.toStatus?.description.capitalized)
++                    self.detail("Realizado por", event.performedByUser.username)
+                     self.detail("Archivos", event.images.isEmpty ? "—" : String(event.images.count))
+                 }
+                 .display(.grid)
+@@ -607,14 +608,78 @@
+                 Div {
+                     self.detail("Latitud", event.latitude.map { String($0) })
+                     self.detail("Longitud", event.longitude.map { String($0) })
+-                    self.detail("Nota", event.noteId?.uuidString.lowercased())
+                 }
+                 .display(.grid)
+                 .custom("grid-template-columns", "repeat(auto-fit, minmax(150px, 1fr))")
+                 .custom("gap", "6px")
+                 .marginTop(6.px)
++
++                if !event.noteId.activity.isEmpty {
++                    Div(event.noteId.activity)
++                        .custom("white-space", "pre-wrap")
++                        .custom("line-height", "1.45")
++                        .marginTop(8.px)
++                }
++
++                self.kardexMediaGrid(event.images)
+             }
+             .marginBottom(8.px)
++        }
++
++        private func kardexMediaGrid(_ images: [CustGeneralFiles]) -> Div {
++            guard !images.isEmpty else { return Div() }
++
++            let url = ImagePickerTo.assetItem.url(
++                url: custCatchUrl,
++                pDir: pDir,
++                isPreRegistration: false,
++                accountType: custCatchAccountType
++            )
++            let files = images.map {
++                MediaViewer.MediaFile(
++                    fileId: $0.id,
++                    file: $0.file,
++                    avatar: $0.avatar,
++                    type: $0.type,
++                    url: url
++                )
++            }
++            let grid = Div()
++                .display(.grid)
++                .custom("grid-template-columns", "repeat(auto-fit, minmax(90px, 1fr))")
++                .custom("gap", "6px")
++                .marginTop(10.px)
++
++            for (index, image) in images.enumerated() {
++                let name = image.avatar.isEmpty ? image.file : image.avatar
++                let source = name.hasPrefix("/") || name.hasPrefix("https://") || name.hasPrefix("http://") ? name : url + name
++                grid.appendChild(
++                    Img()
++                        .src(source)
++                        .attribute("alt", "Evidencia \(index + 1)")
++                        .width(100.percent)
++                        .height(92.px)
++                        .custom("object-fit", "contain")
++                        .custom("border", "1px solid rgba(66, 183, 245, 0.28)")
++                        .custom("border-radius", "8px")
++                        .cursor(.pointer)
++                        .onClick {
++                            addToDom(
++                                MediaViewer(
++                                    relid: nil,
++                                    type: .content,
++                                    url: url,
++                                    files: files,
++                                    currentView: index,
++                                    allowsMediaActions: false
++                                ),
++                                presentation: .interactive
++                            )
++                        }
++                )
++            }
++
++            return grid
+         }
+ 
+         private func detail(_ label: String, _ value: String?) -> Div {
+@@ -669,4 +734,4 @@
+         }
+ 
+     }
+-}+}

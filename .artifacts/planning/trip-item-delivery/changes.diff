@@ -1,0 +1,580 @@
+--- before/.agent/MODULES.md
++++ after/.agent/MODULES.md
+@@ -26,7 +26,7 @@
+ - `ViewControlers/` — page controllers and top-level page flows.
+ - `Snippits/` — reusable UI components and feature views, including Product Manager audit report presentations, order report delivery tables and CSV exports, order charge/payment deletion approval and refresh, velocity scoring, the dedicated Trip location and account-aware merchandise pickers, preloaded commercial-asset selection through `SearchComertialAsset`, parent-scoped subaccount creation/editing through `ManageSubCustomerAccountView`, and store-address confirmation through `ConfirmAdddressLocationView`.
+ - `Styles/` — Swift Web CSS style declarations.
+-- Trip status confirmation is owned by `Snippits/TripControler/ConfirmTripStatusUpdate.swift`; the beta detail view presents it, and `Snippits/MediaViewer.swift` previews its merchandise image galleries. The beta detail submits its status/comment/media through `API/CustComertialTripsEndpoint/CustComertialTrips+ChangeTripStatus.swift` and updates its status and the parent list only after API success.
++- Trip status confirmation is owned by `Snippits/TripControler/ConfirmTripStatusUpdate.swift`; the beta detail view presents it, and `Snippits/MediaViewer.swift` previews its merchandise image galleries. The beta detail submits its status/comment/media through `API/CustComertialTripsEndpoint/CustComertialTrips+ChangeTripStatus.swift` and updates its status and the parent list only after API success. The same popup has a one-asset delivery mode for multi-item trips, submitted through `API/CustComertialTripsEndpoint/CustComertialTrips+DeliverAssetItem.swift`; confirmed `deliverd` state and returned status drive row markers and trip auto-completion.
+ - `Functions/`, `Extentions/`, `Enums/`, `Structurs/`, `VirtualControlers/` — shared app helpers and runtime support. Error diagnostics are owned by `ErrorReportingControler`, its record/context types, the centralized POST transport, and the API decoding helper.
+ 
+ ## Service Target
+--- before/.agent/PROJECT_MEMORY.md
++++ after/.agent/PROJECT_MEMORY.md
+@@ -59,3 +59,5 @@
+ - 2026-10-14: Order mode now uses an inset rounded holder matching the standalone point-of-sale offsets/dimensions, replacing the theme's forced full-screen geometry. Only five shell declarations changed; internal order elements and the corner icon remain unchanged. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`; source audit only, no builds/tests or browser execution.
+ 
+ - 2026-10-14: Fixed duplicate asset avatar gallery insertion by reconciling original/thumbnail/render-variant identities, ignoring cache query/fragment suffixes while retaining host/directory. AssetItemView also associates its isAvatar record with the saved avatar preview, preserving the original media file/ID. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`; source audit only, no builds/tests or browser execution.
++
++- 2026-10-15: Multi-item TripViewBeta adds per-asset Entregar actions and persisted deliverd markers. Delivery reuses the status popup evidence/comment flow and calls the new shared deliverAssetItem contract, applies confirmed item/status/auto-completion, notifies the dashboard and refreshes trip/notes with session/generation guards. See UI/API architecture and `.artifacts/planning/trip-item-delivery/`. The implementation requires dependency revisions containing the supplied delivery contracts; package pins were not changed in this task.
+--- before/.agent/SOURCE_MAP.md
++++ after/.agent/SOURCE_MAP.md
+@@ -20,6 +20,7 @@
+ | `Sources/App/API/` | Client API wrapper namespaces and endpoint files. |
+ | `Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+GetTrip.swift` | Typed trip detail POST wrapper accepting `HybridIdentifier` for UUID or folio lookup and decoding the shared response. |
+ | `Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+ChangeTripStatus.swift` | Typed trip status update POST wrapper accepting status, comment and per-merchandise media. |
++| `Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+DeliverAssetItem.swift` | Typed per-asset delivery POST wrapper using the shared delivery request/response, optional comment/evidence and destination classification IDs. |
+ | `Sources/App/API/CustAssetsEndpoint/CustAssets+GetAssetsSection.swift` | Typed `getAssetsSection` POST wrapper retrieving store-scoped asset sections and subsections for single or batch asset-item entry. |
+ | `Sources/App/API/CustSubAcctEndpoint/` | Shared subaccount create/load/update POST wrappers and account-scoped GET search exposed as `API.custSubAcctV1`. |
+ | `Sources/App/API/CustOrderEndpoint/CustOrder+RemoveChargeCTAM.swift`, `CustOrder+RemovePaymentCTAM.swift` | Typed order charge/payment deletion approval request wrappers. |
+@@ -39,7 +40,7 @@
+ | `Sources/App/Snippits/ManualAddressSearch.swift` | Crystal postal-address and coordinate lookup dialogs; returns the selected address or geocoder snapshot to its caller. |
+ | `Sources/App/Snippits/TripControler/TripControler+AddLocation.swift` | Dedicated fiscal-location picker; owns origin/destination presentation and location-typed callbacks, including prefilled confirmation and resumption for incomplete store addresses. |
+ | `Sources/App/Snippits/TripControler/TripControler+AddMerchandise.swift` | Account/origin-aware fiscal-merchandise base picker; preserves selection and creation callbacks. |
+-| `Sources/App/Snippits/TripControler/ConfirmTripStatusUpdate.swift`, `TripControler+TripViewBeta.swift` | Beta trip status actions and crystal confirmation form; validates forward transitions, cancellation comments, linked asset routes and snapshot evidence, submits the update, and refreshes status/notes after API success. |
++| `Sources/App/Snippits/TripControler/ConfirmTripStatusUpdate.swift`, `TripControler+TripViewBeta.swift` | Beta trip status and per-asset delivery actions with a shared crystal confirmation form; validates transitions, comments, linked routes and evidence, marks confirmed deliveries, and refreshes trip/notes after API success. |
+ | `Sources/App/Snippits/MediaViewer.swift` | Shared image/video viewer with selected-file navigation, bottom thumbnails, optional per-file URL bases and read-only presentation for staged trip evidence. |
+ | `Sources/App/Snippits/SearchComertialAsset.swift` | Trip commercial-asset picker over preloaded available inventory from a store, warehouse or subaccount origin; locally filters folio/name/serial. |
+ | `Sources/App/Snippits/ProductManager/Audit/ProductManager+Audit+FastAndFurios.swift` | Ranked product revenue velocity, sales velocity, volume, and weighted score report presentation. |
+--- before/.agent/TASKS_ARCHIVE.md
++++ after/.agent/TASKS_ARCHIVE.md
+@@ -382,3 +382,13 @@
+ - **Implementation**: Match original and thump_/og_/wap_ image variants using a comparison-only identity that ignores query/fragment suffixes and retains host/directory. Reuse the matched MediaFile instead of prepending a duplicate avatar. The asset detail mapper explicitly associates its isAvatar photo with the nonempty saved avatar preview while preserving original file/ID. Five-dot cap and full selected-image gallery remain intact.
+ - **Verification**: Screenshot inspection, pinned file-contract/render-order review, source-case walkthrough and task-relative diff/whitespace/status audit. No builds/tests or browser execution without explicit confirmation; the supplied movie was not decoded locally. Evidence: `.artifacts/planning/asset-avatar-duplicate/`.
+ - **Commit**: Not created.
++
++
++## TRIP-ITEM-DELIVERY-001 — Deliver individual assets on multi-item trips
++
++- **Implemented**: 2026-10-15; source audit complete, compilation/runtime verification pending.
++- **Scope/IDs**: TripViewBeta, the delivery mode of ConfirmTripStatusUpdate, and CustComertialTrips+DeliverAssetItem wrapper; SWWEB-001/002/003, API-001/002/003, SEC-001.
++- **Implementation**: Per user confirmation, Entregar appears only on multi-item in-progress trips for undelivered linked commercial assets. Reuses the status popup's one-item comments, image upload, mobile camera and gallery. Submits the linked asset UUID through the shared contract, serializes mutations, validates matching response identities, marks only confirmed deliveries, adopts server status/auto-completion, notifies the dashboard/caller and refreshes trip/notes with generation/session guards. deliverd markers render for all trip sizes; canceled final movements use neutral wording. Optional destination classification parameters remain nil in this UI.
++- **Verification**: Shared local request/response and mutable snapshot contracts reviewed, task-relative diff and whitespace checked, protected-file hashes and git status reviewed. Build permission was requested separately because AGENTS.md requires explicit confirmation; no build/test/browser delivery ran without approval. Repository package pins remain unchanged; cached contracts at implementation time do not include this new API/model field.
++- **Evidence**: `.artifacts/planning/trip-item-delivery/plan.md`, `changes.diff`, `flow-review.md` and `audit.md`.
++- **Commit**: Not created.
+--- before/.agent/architecture/API_AND_BACKEND.md
++++ after/.agent/architecture/API_AND_BACKEND.md
+@@ -4,6 +4,7 @@
+ 
+ ## Verified Facts
+ 
++- `deliverAssetItem` uses the authenticated trip POST route and shared TCFireSignal `DeliverAssetItemRequest`/`DeliverAssetItemResponse`. The request takes the concrete linked asset item UUID (`FiscalMercanciaItem.merchandiseId`), optional comment, original staged image filenames and optional destination section/subsection IDs (nil defaults). The response identifies the trip, linked asset and merchandise snapshot separately and supplies `deliverd`, trip status, remaining counters and auto-completion. The UI updates from a successful matching response then reloads authoritative trip/notes; no local DTO or wire-key correction replaces the shared spelling. This flow requires TCFireSignal with the delivery contract and TCFundamentals with backward-compatible `deliverd` decoding. Shared packages remain the sole payload/model authority.
+ - Asset-item editing reuses the existing authenticated `updateAssettem` POST wrapper and TCFireSignal `UpdateAssettemRequest` without contract changes. The client explicitly forwards section/subsection IDs (including intentional nils), current cost in exact Int64 cents, optional serial and name. It refreshes through `getAssetItem(.id)` after success. Existing `listStoreArchitecture` customer reads and `loadStore`/`getAssetsSection` store/warehouse reads supply owner-filtered classification choices. The companion SkylineServer fix now executes the item update and audit note inside one transaction; that backend change must be deployed for persistence.
+ - The trip `getTrip` client wrapper accepts TCFundamentals `HybridIdentifier` and forwards it as the shared `GetTripRequest.tripId` on the existing authenticated POST route. `.id(UUID)` and `.folio(String)` are supported by the contract; the shared `GetTripItem`/`GetTripResponse` payload and decoding remain unchanged. Existing list/followup opens and post-status refreshes use `.id`.
+ - The trip `changeTripStatus` client wrapper sends the shared `ChangeTripStatusRequest(tripId:status:comment:media:)` to the existing authenticated POST route and decodes `APIResponse`. Media uses the shared `ChangeTripStatusMedia` records with merchandise item IDs and original filenames; no local DTO or backend wire key is introduced. Evidence uploads and staged previews use unregistered `.assetItem`/`iCatch`; the server copies accepted evidence once to tenant `fileNet` and links the same saved filename to the trip/merchandise and, for assets, Kardex metadata. Source and isolated type checks match the current local TCFireSignal contract; the fetched pinned contract now matches that source.
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -4,6 +4,7 @@
+ 
+ ## Verified Facts
+ 
++- `TripViewBeta` adds an Entrega column: only multi-item in-progress trips offer Entregar for undelivered linked commercial assets. `FiscalMercanciaItem.deliverd` supplies the Entregado marker on every trip size; canceled final movements use Movimiento finalizado. The delivery initializer of `ConfirmTripStatusUpdate` reuses one-item comments, local uploads, remote camera and gallery evidence, blocks confirmation during pending image uploads, and validates linked routes/unique safe filenames. The parent serializes status/delivery mutations and owns one popup, closes it on removal, checks session/trip/asset/snapshot response identities, then applies only the confirmed item flag and returned trip status (including auto-completion), notifies the dashboard/caller and refreshes trip/notes. Generation and confirmed-item checks reject stale refreshes. Optional destination section/subsection are omitted by this UI. Source-audited; build/browser verification requires the updated shared contracts.
+ - In order mode, `TCOrderViewTheme` scopes the `AccoutOverview` shell to the standalone `SalePointView` holder geometry: top 25px, left 40px, width `calc(100% - 100px)`, height `calc(100% - 70px)` and 24px rounded corners. The theme retains its existing zero shell padding and border-box sizing. Internal OrderView elements, toolbar/content rules and corner speech icon placement are unchanged. Source-audited; browser rendering remains unverified.
+ - `AssetItemView.dataColumn` edits the existing update contract fields: name, serial, current cost, section and subsection. Other item/custody metadata remains read-only and service-card activation stays separate. `Guardar Cambios` validates exact nonnegative cents and classification IDs, calls `updateAssettem` with the loaded item UUID, accepts a successful nil-note no-op response, and reloads authoritative details/notes by UUID. Current classification scope supplies catalog choices; failed catalog reads preserve existing IDs, and changing section clears its subsection. Mount/session/generation guards and disabled controls protect pending loads/saves. Source-audited; browser/build behavior remains unverified.
+ - Store configuration binds existing and newly created `StoreView` instances to `display: flex` when selected and `display: none` otherwise, preserving the theme’s bounded flex column so its card grid fills the available workspace height. `StoreView.usersContainers` retains `flex: 1 1 0`, an initial zero height, `min-height: 0`, and automatic overflow; the user list grows between its header and action and excess rows scroll. The supplied recording showed the prior block-display override leaving unused space below the cards. Loading and user-card interactions remain unchanged; source-audited, fixed browser rendering remains unverified.
+--- before/Sources/App/Snippits/TripControler/ConfirmTripStatusUpdate.swift
++++ after/Sources/App/Snippits/TripControler/ConfirmTripStatusUpdate.swift
+@@ -19,6 +19,8 @@
+     let nextStatus: FiscalTripFollowupStatus
+     public var merchandise: [FiscalMercanciaItem]
+     let locations: [FiscalLocationItem]
++    private let deliveryItem: FiscalMercanciaItem?
++    private let sessionId = custCatchID
+ 
+     private let callback: (
+         FiscalTripFollowupStatus, String, [CustCommercialTripsComponents.ChangeTripStatusMedia]
+@@ -43,15 +45,34 @@
+         self.nextStatus = nextStatus
+         self.merchandise = merchandise
+         self.locations = locations
++        self.deliveryItem = nil
+         self.callback = callback
+         super.init()
+     }
+ 
++    init(
++        deliveryItem: FiscalMercanciaItem,
++        currentStatus: FiscalTripFollowupStatus,
++        locations: [FiscalLocationItem],
++        callback: @escaping (String, [String]) -> Void
++    ) {
++        self.currentStatus = currentStatus
++        self.nextStatus = .completed
++        self.merchandise = [deliveryItem]
++        self.locations = locations
++        self.deliveryItem = deliveryItem
++        self.callback = { _, comment, media in
++            callback(comment, media.flatMap { $0.files })
++        }
++        super.init()
++    }
++
+     required init() {
+         fatalError("init() has not been implemented")
+     }
+ 
+     private var actionTitle: String {
++        if deliveryItem != nil { return "Entregar activo" }
+         switch nextStatus {
+         case .inProgress: return "Iniciar Viaje"
+         case .completed: return "Completar Viaje"
+@@ -61,7 +82,8 @@
+     }
+ 
+     private var isValidTransition: Bool {
+-        Self.isValidTransition(current: currentStatus, requested: nextStatus)
++        if deliveryItem != nil { return currentStatus == .inProgress }
++        return Self.isValidTransition(current: currentStatus, requested: nextStatus)
+     }
+ 
+     static func isValidTransition(current: FiscalTripFollowupStatus, requested: FiscalTripFollowupStatus) -> Bool {
+@@ -122,6 +144,24 @@
+         return nil
+     }
+ 
++    static func deliveryValidationError(
++        current: FiscalTripFollowupStatus,
++        item: FiscalMercanciaItem,
++        files: [String],
++        locations: [FiscalLocationItem]
++    ) -> String? {
++        guard current == .inProgress else { return "El viaje debe estar en progreso para entregar un activo." }
++        guard item.merchandiseType == .commercialAsset, item.merchandiseId != nil else {
++            return "La mercancía no tiene un activo vinculado para entregar."
++        }
++        guard !item.deliverd else { return "Este activo ya tiene su movimiento final registrado." }
++        if let error = assetRouteError(merchandise: [item], locations: locations) { return error }
++        guard Set(files).count == files.count, files.allSatisfy({ isValidImageName($0) }) else {
++            return "Las imágenes de entrega deben tener nombres válidos y no estar duplicadas."
++        }
++        return nil
++    }
++
+     private static func isValidImageName(_ name: String) -> Bool {
+         !name.isEmpty && name == name.trimmingCharacters(in: .whitespacesAndNewlines) &&
+         !name.contains("/") && !name.contains("\\") &&
+@@ -155,10 +195,20 @@
+             VBodyGrid {
+                 VGrid(.half) {
+                     VBox(.raised) {
+-                        UTitle("Cambio de estatus")
++                        UTitle(self.deliveryItem == nil ? "Cambio de estatus" : "Entrega de activo")
+ 
+                         self.statusCard("Estatus actual", self.currentStatus)
+-                        self.statusCard("Nuevo estatus", self.nextStatus)
++                        if let item = self.deliveryItem {
++                            UField("Activo", required: false) {
++                                USubTitle(item.description)
++                            }
++                            UField("Destino", required: false) {
++                                USubTitle("\(item.to) \(item.toStoreName)")
++                            }
++                            UMinorTitle("Se registrará únicamente la entrega de este activo.")
++                        } else {
++                            self.statusCard("Nuevo estatus", self.nextStatus)
++                        }
+ 
+                         UField("Comentarios", required: self.nextStatus == .cancelled) {
+                             self.commentField
+@@ -184,7 +234,7 @@
+ 
+                 VGrid(.half) {
+                     VBox(.raised) {
+-                        UTitle("Mercancía · \(self.merchandise.count)")
++                        UTitle(self.deliveryItem == nil ? "Mercancía · \(self.merchandise.count)" : "Evidencia de entrega")
+                         UMinorTitle("Adjunte imágenes o use la cámara remota. Toque la imagen para ver los adjuntos.")
+                         self.merchandiseList
+                     }
+@@ -222,7 +272,7 @@
+         }
+ 
+         WebApp.current.wsevent.listen { [weak self] message in
+-            guard let self, self.isInDOM, !message.isEmpty else { return }
++            guard let self, self.isInDOM, self.sessionId == custCatchID, !message.isEmpty else { return }
+             self.receiveMediaEvent(message)
+         }
+     }
+@@ -244,7 +294,11 @@
+     }
+ 
+     private func confirm() {
+-        guard isInDOM, !didConfirm else { return }
++        guard isInDOM, sessionId == custCatchID, !didConfirm else { return }
++        if deliveryItem != nil, rows.contains(where: { $0.hasPendingUploads }) {
++            showError(.generalError, "Espere a que terminen de cargar las imágenes antes de entregar el activo.")
++            return
++        }
+         guard isValidTransition else {
+             showError(.generalError, "El cambio de estatus solicitado no está disponible.")
+             return
+@@ -260,10 +314,18 @@
+             guard !files.isEmpty else { return nil }
+             return .init(merchandiseId: row.item.id, files: files)
+         }
+-        if let error = Self.validationError(
+-            current: currentStatus, requested: nextStatus, comment: comment, media: media,
+-            merchandise: merchandise, locations: locations
+-        ) {
++        let error: String?
++        if let item = deliveryItem {
++            error = Self.deliveryValidationError(
++                current: currentStatus, item: item, files: media.flatMap { $0.files }, locations: locations
++            )
++        } else {
++            error = Self.validationError(
++                current: currentStatus, requested: nextStatus, comment: comment, media: media,
++                merchandise: merchandise, locations: locations
++            )
++        }
++        if let error {
+             showError(.generalError, error)
+             return
+         }
+@@ -323,7 +385,7 @@
+     }
+ 
+     private func requestCamera(for row: MerchandiseRow) {
+-        guard isInDOM, row.isInDOM else { return }
++        guard isInDOM, sessionId == custCatchID, row.isInDOM else { return }
+         remoteCameraRow = row
+         API.custAPIV1.requestMobileCamara(
+             type: .useCamaraForAssetItem,
+@@ -333,7 +395,7 @@
+             relatedfolio: "",
+             multipleTakes: true
+         ) { [weak self, weak row] response in
+-            guard let self, self.isInDOM, let row, row.isInDOM,
++            guard let self, self.isInDOM, self.sessionId == custCatchID, let row, row.isInDOM,
+                   self.remoteCameraRow === row else { return }
+             guard let response else {
+                 showError(.generalError, "No se pudo solicitar la cámara remota.")
+@@ -383,6 +445,7 @@
+         @State private var imageCount = 0
+         @State private var progress = ""
+         var completedFiles: [MediaViewer.MediaFile] { order.compactMap { files[$0] } }
++        var hasPendingUploads: Bool { !pending.isEmpty }
+ 
+         init(item: FiscalMercanciaItem, onRequestCamera: @escaping (MerchandiseRow) -> Void) {
+             self.item = item
+--- before/Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift
++++ after/Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift
+@@ -44,6 +44,10 @@
+     @State private var status: FiscalTripFollowupStatus
+ 
+     @State private var isChangingStatus = false
++
++    private let viewSessionId = custCatchID
++    private var mutationGeneration = UUID()
++    private var confirmationView: ConfirmTripStatusUpdate?
+ 
+     @State var financialView:  FinancialView = .charges
+ 
+@@ -128,7 +132,7 @@
+         .marginTop(12.px)
+ 
+     private lazy var merchandiseTableView = Div()
+-        .custom("min-width", "900px")
++        .custom("min-width", "1060px")
+ 
+     private lazy var summaryBox = VBox(.raised) {
+         self.summaryContent
+@@ -730,7 +734,8 @@
+                     "Código Fiscal",
+                     "Unidad Fiscal",
+                     "Embalaje",
+-                    "Peligroso"
++                    "Peligroso",
++                    "Entrega"
+                 ],
+                 header: true
+             )
+@@ -748,17 +753,17 @@
+                     "\(item.fiscUnit) \(item.fiscUnitName)",
+                     item.packagingName.isEmpty ? "—" : item.packagingName,
+                     item.isDangerousMatirial.rawValue
+-                ])
++                ], item: item)
+             )
+         }
+     }
+ 
+-    private func merchandiseRow(_ values: [String], header: Bool = false) -> Div {
++    private func merchandiseRow(_ values: [String], header: Bool = false, item: FiscalMercanciaItem? = nil) -> Div {
+         let row = Div()
+             .display(.grid)
+             .custom(
+                 "grid-template-columns",
+-                "1.35fr .42fr .48fr 1fr 1fr .95fr .9fr .75fr .58fr"
++                "1.35fr .42fr .48fr 1fr 1fr .95fr .9fr .75fr .58fr 140px"
+             )
+             .custom("gap", "8px")
+             .custom("align-items", "center")
+@@ -777,7 +782,35 @@
+             )
+         }
+ 
++        if let item {
++            row.appendChild(deliveryControl(for: item))
++        }
++
+         return row
++    }
++
++    private func deliveryControl(for item: FiscalMercanciaItem) -> Div {
++        if item.deliverd {
++            return Div(trip.status == .cancelled ? "Movimiento finalizado" : "✓ Entregado")
++                .fontSize(13.px)
++                .fontWeight(.bold)
++                .color(trip.status == .cancelled ? .gray : .init(r: 83, g: 198, b: 83))
++        }
++
++        guard item.merchandiseType == .commercialAsset, item.merchandiseId != nil else {
++            return Div("—").color(.gray)
++        }
++        guard trip.merchandise.count > 1, trip.status == .inProgress else {
++            return Div("Pendiente").fontSize(13.px).color(.gray)
++        }
++
++        return Div {
++            USmallButton("Entregar")
++                .class(Class(TCCrystalSurfaceClass.goodButton))
++                .class(Class(TCCrystalSurfaceClass.goodButtonGreen))
++                .disabled(self.$isChangingStatus)
++                .onClick { self.confirmDelivery(item.id) }
++        }
+     }
+ 
+     private func renderOperator(_ item: CustCommercialTripOperador) {
+@@ -1065,6 +1098,7 @@
+ 
+ 
+     private func confirmStatus(_ nextStatus: FiscalTripFollowupStatus) {
++        guard isInDOM, viewSessionId == custCatchID, !isChangingStatus, confirmationView == nil else { return }
+ 
+         guard ConfirmTripStatusUpdate.isValidTransition(current: trip.status, requested: nextStatus) else {
+             showError(.generalError, "El cambio de estatus solicitado no está disponible.")
+@@ -1084,11 +1118,105 @@
+             self?.changeStatus(newStatus, comment: comment, media: media)
+         }
+ 
+-        view.onDidRemoveFromDOM { [weak self] in
+-
+-        }
+-
++        presentConfirmation(view)
++    }
++
++    private func presentConfirmation(_ view: ConfirmTripStatusUpdate) {
++        confirmationView = view
++        view.onDidRemoveFromDOM { [weak self, weak view] in
++            guard let self, self.confirmationView === view else { return }
++            self.confirmationView = nil
++        }
+         addToDom(view, presentation: .glass)
++    }
++
++    private func confirmDelivery(_ merchandiseItemId: UUID) {
++        guard isInDOM, viewSessionId == custCatchID, !isChangingStatus, confirmationView == nil,
++              trip.merchandise.count > 1,
++              let item = trip.merchandise.first(where: { $0.id == merchandiseItemId }) else { return }
++        if let error = ConfirmTripStatusUpdate.deliveryValidationError(
++            current: trip.status, item: item, files: [], locations: trip.locations
++        ) {
++            showError(.generalError, error)
++            return
++        }
++
++        presentConfirmation(ConfirmTripStatusUpdate(
++            deliveryItem: item,
++            currentStatus: trip.status,
++            locations: trip.locations
++        ) { [weak self] comment, files in
++            self?.deliverItem(merchandiseItemId, comment: comment, files: files)
++        })
++    }
++
++    private func deliverItem(_ merchandiseItemId: UUID, comment: String, files: [String]) {
++        guard isInDOM, viewSessionId == custCatchID, !isChangingStatus, trip.merchandise.count > 1,
++              let item = trip.merchandise.first(where: { $0.id == merchandiseItemId }),
++              let assetItemId = item.merchandiseId else { return }
++        guard trip.merchandise.filter({
++            $0.merchandiseType == .commercialAsset && $0.merchandiseId == assetItemId
++        }).count == 1 else {
++            showError(.generalError, "El activo está duplicado en la mercancía del viaje.")
++            return
++        }
++        if let error = ConfirmTripStatusUpdate.deliveryValidationError(
++            current: trip.status, item: item, files: files, locations: trip.locations
++        ) {
++            showError(.generalError, error)
++            return
++        }
++
++        let tripId = trip.id
++        let sessionId = viewSessionId
++        let generation = UUID()
++        mutationGeneration = generation
++        let statusChanged = statusChangedCallback
++        isChangingStatus = true
++        loadingView.show()
++
++        API.custCommercialTrips.deliverAssetItem(
++            tripId: tripId,
++            assetItemId: assetItemId,
++            comment: comment.trimmingCharacters(in: .whitespacesAndNewlines),
++            files: files
++        ) { [weak self] response in
++            loadingView.hide()
++            self?.isChangingStatus = false
++            guard custCatchID == sessionId else { return }
++            guard let response else {
++                showError(.comunicationError, .serverConextionError)
++                return
++            }
++            guard response.status == .ok else {
++                showError(.generalError, response.msg)
++                return
++            }
++            guard let result = response.data, result.tripId == tripId,
++                  result.assetItemId == assetItemId, result.merchandiseItemId == merchandiseItemId,
++                  result.deliverd else {
++                showError(.unexpectedResult, "No se recibió la confirmación de entrega del activo seleccionado.")
++                return
++            }
++
++            if let self, self.mutationGeneration == generation {
++                if let index = self.trip.merchandise.firstIndex(where: { $0.id == merchandiseItemId }) {
++                    self.trip.merchandise[index].deliverd = result.deliverd
++                }
++                self.trip.status = result.tripStatus
++                self.status = result.tripStatus
++                if self.isInDOM { self.renderTrip() }
++            }
++            TripsControlerView.notifyTripStatusChanged(tripId: tripId, status: result.tripStatus)
++            statusChanged(tripId, result.tripStatus)
++            showSuccess(.operacionExitosa, result.tripAutoCompleted
++                ? "Activo entregado. Viaje completado."
++                : "Activo entregado. Activos pendientes: \(result.remainingAssetItems).")
++            self?.refreshAfterMutation(
++                tripId: tripId, sessionId: sessionId, generation: generation,
++                expectedStatus: result.tripStatus, deliveredItemId: merchandiseItemId
++            )
++        }
+     }
+ 
+     private func changeStatus(
+@@ -1096,7 +1224,7 @@
+         comment: String,
+         media: [CustCommercialTripsComponents.ChangeTripStatusMedia]
+     ) {
+-        guard isInDOM, !isChangingStatus, trip.status != newStatus else { return }
++        guard isInDOM, viewSessionId == custCatchID, !isChangingStatus, trip.status != newStatus else { return }
+ 
+         let comment = comment.trimmingCharacters(in: .whitespacesAndNewlines)
+         if let error = ConfirmTripStatusUpdate.validationError(
+@@ -1109,6 +1237,8 @@
+ 
+         let tripId = trip.id
+         let sessionId = custCatchID
++        let generation = UUID()
++        mutationGeneration = generation
+         let statusChanged = statusChangedCallback
+         isChangingStatus = true
+         loadingView.show()
+@@ -1134,24 +1264,42 @@
+ 
+             self?.trip.status = newStatus
+             self?.status = newStatus
++            if let self, self.isInDOM { self.renderMerchandise(self.trip.merchandise) }
+             TripsControlerView.notifyTripStatusChanged(tripId: tripId, status: newStatus)
+             statusChanged(tripId, newStatus)
+             showSuccess(.operacionExitosa, "Estatus actualizado")
+             
+-            API.custCommercialTrips.getTrip(tripId: .id(tripId)) { [weak self] refreshed in
+-                guard custCatchID == sessionId, let self, self.isInDOM,
+-                      self.trip.status == newStatus, let refreshed, refreshed.status == .ok,
+-                      let payload = refreshed.data, payload.trip.id == tripId,
+-                      payload.trip.status == newStatus else { return }
+-                self.trip = payload.trip
+-                self.notes = payload.notes
+-                self.renderTrip()
+-            }
++            self?.refreshAfterMutation(
++                tripId: tripId, sessionId: sessionId, generation: generation, expectedStatus: newStatus
++            )
++        }
++    }
++
++    private func refreshAfterMutation(
++        tripId: UUID, sessionId: UUID, generation: UUID,
++        expectedStatus: FiscalTripFollowupStatus, deliveredItemId: UUID? = nil
++    ) {
++        guard isInDOM, mutationGeneration == generation else { return }
++        API.custCommercialTrips.getTrip(tripId: .id(tripId)) { [weak self] refreshed in
++            guard custCatchID == sessionId, let self, self.isInDOM,
++                  self.mutationGeneration == generation, self.trip.status == expectedStatus,
++                  let refreshed, refreshed.status == .ok, let payload = refreshed.data,
++                  payload.trip.id == tripId, payload.trip.status == expectedStatus else { return }
++            if let deliveredItemId,
++               !payload.trip.merchandise.contains(where: { $0.id == deliveredItemId && $0.deliverd }) {
++                return
++            }
++            self.trip = payload.trip
++            self.notes = payload.notes
++            self.renderTrip()
+         }
+     }
+ 
+     override func didRemoveFromDOM() {
+         super.didRemoveFromDOM()
++        mutationGeneration = UUID()
++        confirmationView?.remove()
++        confirmationView = nil
+         
+         $status.removeAllListeners()
+         $isChangingStatus.removeAllListeners()
+--- /dev/null
++++ Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+DeliverAssetItem.swift
+@@ -0,0 +1,42 @@
++import Foundation
++import TCFundamentals
++import TCFireSignal
++
++extension CustCommercialTripsComponents {
++
++    static func deliverAssetItem(
++        tripId: UUID,
++        assetItemId: UUID,
++        comment: String? = nil,
++        files: [String] = [],
++        destinationSectionId: UUID? = nil,
++        destinationSubSectionId: UUID? = nil,
++        callback: @escaping (APIResponseGeneric<DeliverAssetItemResponse>?) -> Void
++    ) {
++        sendPost(
++            rout,
++            version,
++            "deliverAssetItem",
++            DeliverAssetItemRequest(
++                tripId: tripId,
++                assetItemId: assetItemId,
++                comment: comment,
++                files: files,
++                destinationSectionId: destinationSectionId,
++                destinationSubSectionId: destinationSubSectionId
++            )
++        ) { data in
++            guard let data else {
++                callback(nil)
++                return
++            }
++
++            do {
++                callback(try decodeAPIResponse(APIResponseGeneric<DeliverAssetItemResponse>.self, from: data))
++            }
++            catch {
++                callback(nil)
++            }
++        }
++    }
++}

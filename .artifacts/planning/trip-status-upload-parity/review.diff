@@ -1,0 +1,296 @@
+--- before/.agent/TASKS_ARCHIVE.md
++++ .agent/TASKS_ARCHIVE.md
+@@ -1,6 +1,18 @@
+ # Tasks Archive
+ 
+ Verified completed tasks live here.
++
++---
++
++## TRIP-CAMERA-FLOW-001 — Nonblocking Trip Status Camera and Upload Flow
++
++- **Status**: Implemented; focused App compilation passed, device/upload behavior unverified
++- **Completed**: 2026-10-08
++- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `WS-001`, `WS-002`, `SEC-001`
++- **Implementation**: ConfirmTripStatusUpdate requests the asset camera with `eventid:nil`/multiple captures and no request-time placeholder, cameraEventId, isCameraPending or cancel-camera control. New capture IDs bind to the latest requested merchandise row; existing owners and terminal IDs survive row switches and duplicate/delayed events. Confirmation stays available and includes only completed images. Per-file local uploads, counters, first completed avatar and MediaViewer gallery remain intact.
++- **Validation evidence**: Swift frontend parsing and the previously user-approved focused App build passed (`Build of target: 'App' complete! (69.48s)`). Source traces reviewed capture duplication, row switching, cancellation/late completion, HTTP/WebSocket races, completion order and removal. Baseline-relative diff/whitespace/status/staging checks passed; ManagePOC, MediaViewer and dependency pins were unchanged.
++- **Limits**: No test suite or browser/mobile/server upload session was run. Selected/initiate messages carry only event ID, so new unassigned captures follow the latest requested merchandise row. Evidence: `.artifacts/planning/trip-status-upload-parity/AUDIT.md` and `EVENT_REVIEW.md`.
++- **Commit**: Not created.
+ 
+ ---
+ 
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ .agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -5,7 +5,7 @@
+ ## Verified Facts
+ 
+ - `TripViewBeta.loadAndPresent` accepts `HybridIdentifier`, forwarding UUID or folio lookups through `getTrip` and constructing the detail from the returned response. Trip-list and followup selections pass `.id(item.id)`; status callbacks continue to use the loaded trip's concrete UUID.
+-- `TripViewBeta` reserves a 35px status action row below its right-side data grid. Pending trips expose Iniciar Viaje and Cancelar Viaje; in-progress trips expose Completar Viaje and Cancelar Viaje; terminal states expose neither. Start/complete actions use the shared green crystal modifier and cancel uses red, with matching hover/focus accents and a dimmed disabled state. `ConfirmTripStatusUpdate` gathers the typed transition, a trimmed comment (required for cancellation), and `ChangeTripStatusMedia` grouped by fiscal merchandise item ID. Its source uses the existing unregistered `.asset` image-upload/camera pipeline, correlates each completion to a row/event, keeps the first completed image as avatar, and blocks confirmation until pending uploads/camera requests finish or are cancelled. Removal aborts local uploads and ignores late responses. Before presentation/submission, asset merchandise requires unique linked store/warehouse/subaccount origin and destination snapshots; media requires unique trip-merchandise IDs and safe image basenames. The server remains authoritative for actual asset state and tenant records. The beta `changeStatus` method submits the trip ID, requested status, comment and media through the typed wrapper. Status actions are disabled while the request is pending. Only a successful API response changes the local trip/status and calls the parent status callback; a guarded getTrip refresh loads the new status/comment notes, while failed requests retain the prior status. Responses from a changed session are ignored, while successful responses still notify the parent if the detail was closed. These facts were verified in source; browser/upload behavior remains unverified.
++- `TripViewBeta` reserves a 35px status action row below its right-side data grid. Pending trips expose Iniciar Viaje and Cancelar Viaje; in-progress trips expose Completar Viaje and Cancelar Viaje; terminal states expose neither. Start/complete actions use the shared green crystal modifier and cancel uses red, with matching hover/focus accents and a dimmed disabled state. `ConfirmTripStatusUpdate` gathers the typed transition, a trimmed comment (required for cancellation), and `ChangeTripStatusMedia` grouped by fiscal merchandise item ID. Its source uses the existing unregistered `.asset` image-upload/camera pipeline with per-file XHR progress/status checks. Camera requests use `eventid: nil` and `multipleTakes: true`, with no request-time upload placeholder or camera-pending controls. New selected/initiate capture IDs attach to the most recently requested merchandise row; IDs already assigned keep their original row and terminal IDs cannot be revived by duplicate or delayed events. Confirmation remains available and snapshots only completed images; each row retains its numbered completed-file count, first completed image avatar and existing MediaViewer gallery. Removal aborts pending local uploads and ignores late responses. Before presentation/submission, asset merchandise requires unique linked store/warehouse/subaccount origin and destination snapshots; media requires unique trip-merchandise IDs and safe image basenames. The server remains authoritative for actual asset state and tenant records. The beta `changeStatus` method submits the trip ID, requested status, comment and media through the typed wrapper. Status actions are disabled while the request is pending. Only a successful API response changes the local trip/status and calls the parent status callback; a guarded getTrip refresh loads the new status/comment notes, while failed requests retain the prior status. Responses from a changed session are ignored, while successful responses still notify the parent if the detail was closed. These facts were verified in source; browser/upload behavior remains unverified.
+ - `MediaViewer` honors `currentView` with a zero-index fallback, presents clickable `thump_` thumbnails and previous/next navigation for multiple files, and uses the selected file for downloads/rotations/deletion. Direct image source assignment avoids an older image-load callback replacing a newer selection. Each `MediaFile` can supply its own URL base; `allowsMediaActions: false` hides mutation/download actions for staged evidence while existing callers retain the default behavior.
+ - `Sources/App/App.swift` is the `@main` app entry point.
+ - The app registers `./service.js` during launch.
+--- before/Sources/App/Snippits/TripControler/ConfirmTripStatusUpdate.swift
++++ Sources/App/Snippits/TripControler/ConfirmTripStatusUpdate.swift
+@@ -24,6 +24,7 @@
+         FiscalTripFollowupStatus, String, [CustCommercialTripsComponents.ChangeTripStatusMedia]
+     ) -> Void
+     private var rows: [MerchandiseRow] = []
++    private weak var remoteCameraRow: MerchandiseRow?
+     private var didConfirm = false
+     private let ws = WS()
+ 
+@@ -209,7 +210,11 @@
+         width(100.percent)
+         height(100.percent)
+ 
+-        rows = merchandise.map { MerchandiseRow(item: $0) }
++        rows = merchandise.map { item in
++            MerchandiseRow(item: item) { [weak self] row in
++                self?.requestCamera(for: row)
++            }
++        }
+         if rows.isEmpty {
+             merchandiseList.appendChild(UMinorTitle("Este viaje no tiene mercancía."))
+         } else {
+@@ -250,11 +255,6 @@
+             commentField.focus()
+             return
+         }
+-        guard !rows.contains(where: { $0.hasPendingUploads }) else {
+-            showError(.generalError, "Espere a que terminen las imágenes o cancele la solicitud de cámara pendiente.")
+-            return
+-        }
+-
+         let media: [CustCommercialTripsComponents.ChangeTripStatusMedia] = rows.compactMap { row in
+             let files = row.completedFiles.map { $0.file }
+             guard !files.isEmpty else { return nil }
+@@ -285,32 +285,71 @@
+             guard let payload = ws.asyncFileUpdate(message) else { return }
+             row(for: payload.eventId)?.setProgress(payload.message, eventId: payload.eventId)
+         case .requestMobileCamaraComplete:
+-            guard let payload = ws.requestMobileCamaraComplete(message) else { return }
+-            row(for: payload.eventid)?.complete(
++            guard let payload = ws.requestMobileCamaraComplete(message), payload.to == .asset else { return }
++            remoteCameraRow(for: payload.eventid)?.complete(
+                 eventId: payload.eventid, type: payload.type,
+                 file: payload.file, avatar: payload.avatar, url: payload.url
+             )
++        case .requestMobileCamaraSelected:
++            guard let payload = ws.requestMobileCamaraSelected(message) else { return }
++            _ = remoteCameraRow(for: payload.eventid)
++        case .requestMobileCamaraInitiate:
++            guard let payload = ws.requestMobileCamaraInitiate(message) else { return }
++            _ = remoteCameraRow(for: payload.eventid)
+         case .requestMobileCamaraProgress:
+             guard let payload = ws.requestMobileCamaraProgress(message) else { return }
+-            row(for: payload.eventid)?.setProgress("\(payload.percent)%", eventId: payload.eventid)
++            remoteCameraRow(for: payload.eventid)?.setProgress("\(payload.percent)%", eventId: payload.eventid)
+         case .requestMobileCamaraFail:
+             guard let payload = ws.requestMobileCamaraFail(message),
+-                  let row = row(for: payload.eventid) else { return }
++                  let row = remoteCameraRow(for: payload.eventid) else { return }
+             row.fail(eventId: payload.eventid, message: payload.error)
+         case .requestMobileCamaraCancel:
+             guard let payload = ws.requestMobileCamaraCancel(message) else { return }
+-            row(for: payload.eventid)?.fail(eventId: payload.eventid)
++            remoteCameraRow(for: payload.eventid)?.fail(eventId: payload.eventid)
+         default:
+             break
+         }
+     }
+ 
+     private func row(for eventId: UUID) -> MerchandiseRow? {
+-        rows.first { $0.contains(eventId) }
++        rows.first { $0.owns(eventId) }
++    }
++
++    private func remoteCameraRow(for eventId: UUID) -> MerchandiseRow? {
++        // Once a capture is assigned, switching the camera target cannot move it.
++        guard let row = row(for: eventId) ?? remoteCameraRow,
++              row.beginRemoteCapture(eventId) else { return nil }
++        return row
++    }
++
++    private func requestCamera(for row: MerchandiseRow) {
++        guard isInDOM, row.isInDOM else { return }
++        remoteCameraRow = row
++        API.custAPIV1.requestMobileCamara(
++            type: .useCamaraForAsset,
++            connid: custCatchChatConnID,
++            eventid: nil,
++            relatedid: nil,
++            relatedfolio: "",
++            multipleTakes: true
++        ) { [weak self, weak row] response in
++            guard let self, self.isInDOM, let row, row.isInDOM,
++                  self.remoteCameraRow === row else { return }
++            guard let response else {
++                showError(.generalError, "No se pudo solicitar la cámara remota.")
++                return
++            }
++            guard response.status == .ok else {
++                showError(.generalError, response.msg)
++                return
++            }
++            showSuccess(.operacionExitosa, "Entre en la notificación en su móvil.")
++        }
+     }
+ 
+     override func didRemoveFromDOM() {
+         super.didRemoveFromDOM()
++        remoteCameraRow = nil
+         rows.forEach { $0.stopUploads() }
+         $comment.removeAllListeners()
+     }
+@@ -330,20 +369,20 @@
+         private var pending: [UUID: String] = [:]
+         private var files: [UUID: MediaViewer.MediaFile] = [:]
+         private var requests: [UUID: XMLHttpRequest] = [:]
+-        private var cameraEventId: UUID?
++        private var remoteCameraEvents: Set<UUID> = []
++        private var finishedEvents: Set<UUID> = []
+         private var avatarEventId: UUID?
+         private var viewer: MediaViewer?
++        private let onRequestCamera: (MerchandiseRow) -> Void
+ 
+         @State private var avatar = "/skyline/media/tierraceroRoundLogoWhite.svg"
+         @State private var imageCount = 0
+         @State private var progress = ""
+-        @State private var isCameraPending = false
+-
+-        var hasPendingUploads: Bool { !pending.isEmpty }
+         var completedFiles: [MediaViewer.MediaFile] { order.compactMap { files[$0] } }
+ 
+-        init(item: FiscalMercanciaItem) {
++        init(item: FiscalMercanciaItem, onRequestCamera: @escaping (MerchandiseRow) -> Void) {
+             self.item = item
++            self.onRequestCamera = onRequestCamera
+             super.init()
+         }
+ 
+@@ -391,16 +430,6 @@
+                     .color(ConfirmTripStatusUpdate.accent)
+                     .marginTop(5.px)
+                     .hidden(self.$progress.map { $0.isEmpty })
+-                Button("Cancelar cámara")
+-                    .class(Class(TCCrystalSurfaceClass.goodButton))
+-                    .hidden(self.$isCameraPending.map { !$0 })
+-                    .display(self.$isCameraPending.map { $0 ? .inlineFlex : .none })
+-                    .marginTop(5.px)
+-                    .onClick {
+-                        if let eventId = self.cameraEventId {
+-                            self.fail(eventId: eventId)
+-                        }
+-                    }
+             }
+             .custom("flex", "1")
+             .custom("min-width", "0")
+@@ -449,7 +478,7 @@
+                     .attribute("alt", "Cámara remota")
+                     .attribute("title", "Cámara remota")
+                     .cursor(.pointer)
+-                    .onClick { self.requestCamera() }
++                    .onClick { self.onRequestCamera(self) }
+             }
+             .custom("display", "flex")
+             .custom("flex-direction", "column")
+@@ -459,6 +488,18 @@
+         }
+ 
+         func contains(_ eventId: UUID) -> Bool { pending[eventId] != nil }
++
++        func owns(_ eventId: UUID) -> Bool {
++            contains(eventId) || files[eventId] != nil || finishedEvents.contains(eventId)
++        }
++
++        func beginRemoteCapture(_ eventId: UUID) -> Bool {
++            guard isInDOM, !finishedEvents.contains(eventId) else { return false }
++            if contains(eventId) { return remoteCameraEvents.contains(eventId) }
++            remoteCameraEvents.insert(eventId)
++            begin(eventId, message: "0%")
++            return true
++        }
+ 
+         private func begin(_ eventId: UUID, message: String) {
+             order.append(eventId)
+@@ -485,25 +526,19 @@
+             } else {
+                 order.removeAll { $0 == eventId }
+             }
++            finishedEvents.insert(eventId)
+             pending.removeValue(forKey: eventId)
+             requests.removeValue(forKey: eventId)
+-            if cameraEventId == eventId {
+-                cameraEventId = nil
+-                isCameraPending = false
+-            }
+             refresh()
+         }
+ 
+         func fail(eventId: UUID, message: String? = nil) {
+             guard contains(eventId) else { return }
++            finishedEvents.insert(eventId)
+             pending.removeValue(forKey: eventId)
+             order.removeAll { $0 == eventId }
+             let request = requests.removeValue(forKey: eventId)
+             request?.abort()
+-            if cameraEventId == eventId {
+-                cameraEventId = nil
+-                isCameraPending = false
+-            }
+             refresh()
+             if isInDOM, let message {
+                 showError(.generalError, message)
+@@ -522,33 +557,6 @@
+                 avatar = name.hasPrefix("http") || name.hasPrefix("/") ? name : (first.url ?? "") + name
+             }
+             progress = order.compactMap { pending[$0] }.joined(separator: " · ")
+-        }
+-
+-        private func requestCamera() {
+-            guard isInDOM, cameraEventId == nil else { return }
+-            let eventId = UUID()
+-            cameraEventId = eventId
+-            isCameraPending = true
+-            begin(eventId, message: "Esperando cámara remota…")
+-            API.custAPIV1.requestMobileCamara(
+-                type: .useCamaraForAsset,
+-                connid: custCatchChatConnID,
+-                eventid: eventId,
+-                relatedid: nil,
+-                relatedfolio: "",
+-                multipleTakes: false
+-            ) { [weak self] response in
+-                guard let self, self.isInDOM, self.contains(eventId) else { return }
+-                guard let response else {
+-                    self.fail(eventId: eventId, message: "No se pudo solicitar la cámara remota.")
+-                    return
+-                }
+-                guard response.status == .ok else {
+-                    self.fail(eventId: eventId, message: response.msg)
+-                    return
+-                }
+-                showSuccess(.operacionExitosa, "Entre en la notificación en su móvil.")
+-            }
+         }
+ 
+         private func upload(_ file: File) {
+@@ -661,8 +669,7 @@
+ 
+         func stopUploads() {
+             pending.removeAll()
+-            cameraEventId = nil
+-            isCameraPending = false
++            remoteCameraEvents.removeAll()
+             let active = Array(requests.values)
+             requests.removeAll()
+             active.forEach { $0.abort() }
+@@ -677,7 +684,6 @@
+             $avatar.removeAllListeners()
+             $imageCount.removeAllListeners()
+             $progress.removeAllListeners()
+-            $isCameraPending.removeAllListeners()
+         }
+     }
+ }

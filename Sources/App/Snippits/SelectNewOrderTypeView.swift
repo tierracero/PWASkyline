@@ -13,10 +13,10 @@ class SelectNewOrderTypeView: Div {
     
     override class var name: String { "div" }
     
-    private var callback: ((_ orderType: CustOrderProfiles?) -> ())
+    private var callback: ((_ orderType: CustModuleProfiles?) -> ())
     
     init(
-        callback: @escaping ((_ orderType: CustOrderProfiles?) -> ())
+        callback: @escaping ((_ orderType: CustModuleProfiles?) -> ())
     ) {
         self.callback = callback
         
@@ -62,7 +62,7 @@ class SelectNewOrderTypeView: Div {
         icon: String,
         title: String,
         subtitle: String,
-        orderType: CustOrderProfiles
+        orderType: CustModuleProfiles
     ) -> VGrid {
         let showsMultipleTypes = configStoreProcessing.moduleProfile.contains(.rental) &&
             configStoreProcessing.moduleProfile.contains(.order)
@@ -144,7 +144,7 @@ class SelectNewOrderTypeView: Div {
         //SkylineApp.current.$keyUp.removeAllListeners()
     }
 
-    private func selectOrderType(_ orderType: CustOrderProfiles) {
+    private func selectOrderType(_ orderType: CustModuleProfiles) {
         self.callback(orderType)
         self.remove()
     }

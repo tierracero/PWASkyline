@@ -1,0 +1,20 @@
+--- before/ARCHIVE.before.md
++++ .agent/TASKS_ARCHIVE.md
+@@ -1,6 +1,17 @@
+ # Tasks Archive
+ 
+ Verified completed tasks live here.
++
++---
++
++## TRIP-LOCATION-ITEM-DELETE-001 — Cancel a Saved Location from the Trip Editor
++
++- **Completed**: 2026-10-09
++- **Status**: Implemented; focused App build passed, browser/server behavior unverified.
++- **Scope/IDs**: `ManageLocationItem`, its `CreateTripView` caller; `SWWEB-001/002/003`, `API-001/002/003`, `SEC-001`.
++- **Implementation**: Added a bottom-left red crystal Eliminar button for saved `.location` entries. User confirmed saved-location cancellation; the action sends the linked `locationId`, retaining the database record through the existing `deleteLocation` endpoint. Existing confirmation/error conventions and pending-call protection are used. Only API success invokes the optional deletion callback, closes the editor and applies existing local picker/selection cleanup. No `removeLocation` call was added.
++- **Verification**: Changed sources parsed successfully. The previously approved focused App build passed (`Build of target: 'App' complete! (94.33s)`) after restoring the exact two revisions already pinned in Package.resolved. Source/contract/flow and task-relative diff/whitespace/status/staging checks passed; dependency pins and unrelated user work preserved. Evidence: `.artifacts/planning/trip-location-item-delete/`.
++- **Limits**: No real cancellation, browser session, test suite, commit or deployment was executed.
+ 
+ ---
+ 

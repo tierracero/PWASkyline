@@ -469,21 +469,10 @@ class ImageEditor: Div {
     
     override func didAddToDOM() {
         
-        Console.clear()
-        
-        print("🟢  001")
-        
         /// Set placeholder image
         let gridWidth = getElementWidth("imageEditorThumpDiv")
         
         let gridHeight = getElementHeight("imageEditorThumpDiv")
-        
-        print("🟢  002")
-        
-        print("gridWidth")
-        print(gridWidth)
-        print("gridHeight")
-        print(gridHeight)
         
         self.relativeWidth = gridHeight
         

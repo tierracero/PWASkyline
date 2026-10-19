@@ -1,0 +1,105 @@
+--- before/ManageLocationItem.before.swift
++++ Sources/App/Snippits/TripControler/TripControler+ManageLocationItem.swift
+@@ -69,6 +69,7 @@
+     override class var name: String { "div" }
+     
+     private let isEditing: Bool
++    private let onDelete: (UUID) -> Void
+ 
+     private var callback: ((
+         _ placement: FiscalLocationItem
+@@ -77,11 +78,13 @@
+     init(
+         item: FiscalLocationItem,
+         isEditing: Bool = false,
++        onDelete: @escaping (UUID) -> Void = { _ in },
+         callback: @escaping ((
+             _ placement: FiscalLocationItem
+         ) -> ())
+     ) {
+         self.isEditing = isEditing
++        self.onDelete = onDelete
+         self.callback = callback
+ 
+         self.id = item.id
+@@ -119,6 +122,7 @@
+     }
+ 
+     @State var id: UUID? = nil
++    @State private var isDeleting = false
+ 
+     var position: Int = 0
+ 
+@@ -524,6 +528,21 @@
+             */
+ 
+             Div{
++                USmallButton("Eliminar")
++                    .class(
++                        Class(TCCrystalSurfaceClass.goodButton),
++                        Class(TCCrystalSurfaceClass.goodButtonRed)
++                    )
++                    .hidden(self.$id.map { $0 == nil || self.locationType != .location || self.locationId == nil })
++                    .display(self.$id.map {
++                        $0 != nil && self.locationType == .location && self.locationId != nil ? .inlineFlex : .none
++                    })
++                    .custom("margin-right", "auto")
++                    .disabled(self.$isDeleting)
++                    .onClick {
++                        self.deleteItem()
++                    }
++
+                 Div(self.isEditing ? "Guardar Cambios" : "Agregar Ubicacion")
+                     .class(.uibtnLargeOrange)
+                     .onClick {
+@@ -586,6 +605,7 @@
+     override func didRemoveFromDOM() {
+         super.didRemoveFromDOM()
+         $id.removeAllListeners()
++        $isDeleting.removeAllListeners()
+         $isHomeItem.removeAllListeners()
+         $hasDestination.removeAllListeners()
+         $placementId.removeAllListeners()
+@@ -606,7 +626,42 @@
+         $distance.removeAllListeners()
+     }
+     
++    func deleteItem() {
++        guard id != nil, locationType == .location, let locationId, !isDeleting else { return }
++
++        addToDom(ConfirmationView(
++            type: .yesNo,
++            title: "Eliminar Ubicacion",
++            message: "Confirme que desea eliminar esta ubicacion."
++        ) { [weak self] isConfirmed, _ in
++            guard let self, self.isInDOM, isConfirmed, !self.isDeleting else { return }
++            let sessionId = custCatchID
++            self.isDeleting = true
++            loadingView.show()
++
++            API.custCommercialTrips.deleteLocation(locationId: locationId) { [weak self] resp in
++                loadingView.hide()
++                guard let self, custCatchID == sessionId else { return }
++                self.isDeleting = false
++
++                guard let resp else {
++                    showError(.comunicationError, .serverConextionError)
++                    return
++                }
++
++                guard resp.status == .ok else {
++                    showError(.generalError, resp.msg)
++                    return
++                }
++
++                self.onDelete(locationId)
++                self.remove()
++            }
++        })
++    }
++
+     func addPlace() {
++        guard !isDeleting else { return }
+         guard !storeName.purgeSpaces.isEmpty else {
+             showError(.requiredField, "Nombre de la tienda")
+             storeNameField.select()

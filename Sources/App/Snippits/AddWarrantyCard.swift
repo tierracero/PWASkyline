@@ -1,5 +1,5 @@
 //
-//  OrderView+EquipmentView+AddWarrantyCard.swift
+//  AddWarrantyCard.swift
 //
 //
 //  Created by Victor Cantu on 10/19/23.
@@ -14,7 +14,7 @@ class AddWarrantyCard: Div {
     
     override class var name: String { "div" }
 
-    var viewId: UUID { .init() }
+    let viewId: UUID  = .init()
     
     /// order, asset, preload
     let loadType: LoadType
@@ -166,6 +166,11 @@ class AddWarrantyCard: Div {
                 if let payload = WS().requestMobileScannerComplete($0) {
                     
                     guard self.viewId == payload.eventid else {
+
+
+                        print("🔴  AddWarrantyCard | requestMobileScannerComplete view missmatch")
+                        print(self.viewId.uuidString + " VS " + payload.eventid.uuidString)
+
                         return
                     }
 
@@ -174,7 +179,7 @@ class AddWarrantyCard: Div {
                     // searchFolio
                     let text = payload.text
 
-                    print(text)
+                    print("code: \(text)")
 
                     if text.contains("/c/") {
                         
@@ -244,7 +249,7 @@ class AddWarrantyCard: Div {
 
     func requstWarrantyCad(term: String) {
 
-        if !term.hasPrefix("qr-") {
+        if !term.hasPrefix("qr-") && !term.contains("-") {
             cardCode = "qr-\(term)"
             return
         }   
@@ -342,6 +347,7 @@ class AddWarrantyCard: Div {
     }
 
     func requestMobileScanner() {
+        
         API.custAPIV1.requestMobileCamara(
             type: .scanner,
             connid: custCatchChatConnID,

@@ -1,0 +1,117 @@
+--- .artifacts/planning/trip-list-status-sync/TripsControlerView.before.swift	2026-10-09 00:36:04
++++ Sources/App/Snippits/TripControler/TripsControlerView.swift	2026-10-09 00:36:50
+@@ -24,6 +24,8 @@
+     
+     override class var name: String { "div" }
+ 
++    private static weak var mountedView: TripsControlerView?
++
+     init(
+         items: [CustCommercialTripControlQuick],
+         lastTripsRequestExecutedAt: TimeInterval = Date().timeIntervalSince1970
+@@ -72,6 +74,8 @@
+     private var isMounted = false
+ 
+     private var tripsRequestIsInFlight = false
++
++    private var tripStatusChangesDuringRequest: [UUID: FiscalTripFollowupStatus] = [:]
+ 
+     private lazy var pendingItemsView = ForEach(self.$pendingGridItems) { item in
+         self.tripCard(item.item, accent: "#ff9f1a")
+@@ -374,7 +378,9 @@
+     ) {
+         guard !tripsRequestIsInFlight else { return }
+ 
++        let sessionId = custCatchID
+         tripsRequestIsInFlight = true
++        tripStatusChangesDuringRequest.removeAll()
+         selectedTripsType = type
+         self.tripTypeMenuViewIsHidden = true
+         self.selectedTripsTypeLabel = label
+@@ -389,11 +395,15 @@
+             type: type
+         ) { resp in
+             self.tripsRequestIsInFlight = false
++            let statusChanges = self.tripStatusChangesDuringRequest
++            self.tripStatusChangesDuringRequest.removeAll()
+ 
+             if showLoadingView {
+                 loadingView.hide()
+             }
+ 
++            guard self.isMounted, custCatchID == sessionId else { return }
++
+             guard let resp = resp else {
+                 if showLoadingView {
+                     showError(.comunicationError, .serverConextionError)
+@@ -415,7 +425,12 @@
+                 return
+             }
+ 
+-            self.processItems(payload.items)
++            self.processItems(payload.items.map { item in
++                guard let status = statusChanges[item.id] else { return item }
++                var updatedItem = item
++                updatedItem.status = status
++                return updatedItem
++            })
+         }
+     }
+ 
+@@ -578,20 +593,29 @@
+         .custom("border-left", "6px solid \(accent)")
+     }
+ 
+-    func updateTripStatus(
++    static func notifyTripStatusChanged(
+         tripId: UUID,
+         status: FiscalTripFollowupStatus
+     ) {
+-        items = items.map { item in
+-            guard item.id == tripId else {
+-                return item
+-            }
++        mountedView?.updateTripStatus(tripId: tripId, status: status)
++    }
+ 
+-            var updatedItem = item
+-            updatedItem.status = status
+-            return updatedItem
++    func updateTripStatus(
++        tripId: UUID,
++        status: FiscalTripFollowupStatus
++    ) {
++        guard isMounted else { return }
++
++        if tripsRequestIsInFlight {
++            tripStatusChangesDuringRequest[tripId] = status
+         }
+ 
++        guard let index = items.firstIndex(where: { $0.id == tripId }),
++              items[index].status != status else { return }
++
++        var updatedItems = items
++        updatedItems[index].status = status
++        items = updatedItems
+         processItems()
+     }
+ 
+@@ -727,6 +751,7 @@
+         super.didAddToDOM()
+ 
+         isMounted = true
++        Self.mountedView = self
+         scheduleNextTripsRefresh()
+     }
+ 
+@@ -734,6 +759,10 @@
+         super.didRemoveFromDOM()
+ 
+         isMounted = false
++        if Self.mountedView === self {
++            Self.mountedView = nil
++        }
++        tripStatusChangesDuringRequest.removeAll()
+         refreshScheduleVersion += 1
+ 
+         $items.removeAllListeners()

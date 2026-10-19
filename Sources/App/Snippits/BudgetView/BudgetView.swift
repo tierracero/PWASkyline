@@ -1194,7 +1194,8 @@ class BudgetView: Div {
                     brand: "",
                     model: "",
                     name: soc.description,
-                    storagePlace: "Servicio"
+                    storagePlace: "Servicio",
+                    billingType: soc.billingType
                 ){ id in
                 
                     self.itemRefrence[id]?.remove()
@@ -1224,7 +1225,7 @@ class BudgetView: Div {
         var cost: Int64 = 0
         
         itemRefrence.forEach { id, item in
-            bal += ((item.units * item.price) / 100)
+            bal += item.billingType.signedAmount((item.units * item.price) / 100)
             
             cost += ((item.units * item.unitCost) / 100)
             
@@ -1500,7 +1501,8 @@ class BudgetView: Div {
                     brand: "",
                     model: "",
                     name: item.custSOC.name,
-                    storagePlace: "Servicio"
+                    storagePlace: "Servicio",
+                    billingType: item.custSOC.codeType == .adjustment ? .adjustment : .charge
                 ){ id in
                 
                     self.itemRefrence[id]?.remove()

@@ -22,6 +22,8 @@ class MediaViewer: Div {
     let url: String
     
     let files: [MediaFile]
+
+    private let allowsMediaActions: Bool
     
     /// What media will be the initial loaded
     var currentView: Int
@@ -38,7 +40,8 @@ class MediaViewer: Div {
         files: [MediaFile],
         currentView: Int,
         deleteCallback: ((
-        ) -> ())? = nil
+        ) -> ())? = nil,
+        allowsMediaActions: Bool = true
     ) {
         self.relid = relid
         self.type = type
@@ -46,6 +49,7 @@ class MediaViewer: Div {
         self.files = files
         self.currentView = currentView
         self.deleteCallback = deleteCallback
+        self.allowsMediaActions = allowsMediaActions
     }
     
     required init() {
@@ -56,16 +60,33 @@ class MediaViewer: Div {
     
     lazy var image = Img()
         .src("skyline/media/tierraceroRoundLogoWhite.svg")
-        .maxHeight(80.percent)
-        .marginTop(5.percent)
-        .height(80.percent)
+        .maxHeight(100.percent)
+        .maxWidth(100.percent)
+        .custom("object-fit", "contain")
     
     lazy var video = Video()
         .poster("skyline/media/tierraceroRoundLogoWhite.svg")
-        .maxHeight(80.percent)
-        .marginTop(5.percent)
-        .height(80.percent)
+        .maxHeight(100.percent)
+        .maxWidth(100.percent)
         .controls(true)
+
+    private var showsMediaActions: Bool { allowsMediaActions && type != .product }
+
+    private var thumbnailButtons: [Button] = []
+
+    private lazy var thumbnails = Div()
+        .custom("display", "flex")
+        .custom("align-items", "center")
+        .custom("gap", "8px")
+        .custom("padding", "8px 12px")
+        .custom("box-sizing", "border-box")
+        .custom("background", "rgba(0, 0, 0, 0.65)")
+        .overflow(.auto)
+        .position(.absolute)
+        .height(86.px)
+        .width(100.percent)
+        .bottom(showsMediaActions ? 50.px : 0.px)
+        .left(0.px)
     
     @DOM override var body: DOM.Content {
         
@@ -76,7 +97,12 @@ class MediaViewer: Div {
             self.video
                 .hidden(self.$currentType.map{ $0 != .video })
         }
-        .height(100.percent)
+        .custom("display", "flex")
+        .custom("align-items", "center")
+        .custom("justify-content", "center")
+        .custom("height", "calc(100% - \(70 + (files.count > 1 ? 86 : 0) + (showsMediaActions ? 50 : 0))px)")
+        .position(.absolute)
+        .top(70.px)
         .width(100.percent)
         .align(.center)
         
@@ -97,7 +123,29 @@ class MediaViewer: Div {
         .top(0.px)
         .right(0.px)
         
-        if type != .product {
+        if files.count > 1 {
+            self.thumbnails
+
+            Button("‹")
+                .attribute("aria-label", "Imagen anterior")
+                .position(.absolute)
+                .top(50.percent)
+                .left(12.px)
+                .fontSize(32.px)
+                .cursor(.pointer)
+                .onClick { self.selectFile((self.currentView + self.files.count - 1) % self.files.count) }
+
+            Button("›")
+                .attribute("aria-label", "Imagen siguiente")
+                .position(.absolute)
+                .top(50.percent)
+                .right(12.px)
+                .fontSize(32.px)
+                .cursor(.pointer)
+                .onClick { self.selectFile((self.currentView + 1) % self.files.count) }
+        }
+
+        if showsMediaActions {
             
             Div{
                 Div{
@@ -183,48 +231,83 @@ class MediaViewer: Div {
         .left(0.px)
         .top(0.px)
         
-        if url.isEmpty {
+        guard !files.isEmpty else {
             self.remove()
             return
         }
-        
-        guard let file = files.first else {
-            print("🔴 file")
-            return
+        renderThumbnails()
+        selectFile(files.indices.contains(currentView) ? currentView : 0)
+    }
+
+    private func mediaSource(_ name: String, file: MediaFile) -> String {
+        if name.hasPrefix("https://") || name.hasPrefix("http://") || name.hasPrefix("/") {
+            return name
         }
-        
-        self.file = file
-        
-        print("🟢  file")
-        
-        currentType = file.type
-        
-        print("currentType \(currentType)")
-        
-        if file.type == .image {
-            self.image.load("\(url)\(file.file)")
+        return (file.url ?? url) + name
+    }
+
+    private func thumbnailName(_ file: MediaFile) -> String {
+        let name = file.avatar.isEmpty ? file.file : file.avatar
+        // Preserve URL separators and suffixes instead of normalizing a filesystem path.
+        let pathEnd = name.firstIndex { $0 == "?" || $0 == "#" } ?? name.endIndex
+        let path = name[..<pathEnd]
+        let filenameStart = path.lastIndex(of: "/").map { name.index(after: $0) } ?? name.startIndex
+        guard !name[filenameStart..<pathEnd].hasPrefix("thump_") else { return name }
+        return String(name[..<filenameStart]) + "thump_" + String(name[filenameStart...])
+    }
+
+    private func renderThumbnails() {
+        thumbnails.innerHTML = ""
+        thumbnailButtons.removeAll()
+        for (index, file) in files.enumerated() {
+            let button = Button {
+                Img()
+                    .src(self.mediaSource(self.thumbnailName(file), file: file))
+                    .attribute("alt", "Archivo \(index + 1)")
+                    .width(64.px)
+                    .height(64.px)
+                    .custom("object-fit", "cover")
+            }
+                .attribute("aria-label", "Ver archivo \(index + 1)")
+                .attribute("aria-pressed", "false")
+                .custom("border", "2px solid #252c3b")
+                .custom("padding", "0")
+                .custom("flex", "0 0 auto")
+                .custom("margin-left", index == 0 ? "auto" : "0")
+                .custom("margin-right", index == files.count - 1 ? "auto" : "0")
+                .custom("border-radius", "6px")
+                .overflow(.hidden)
+                .cursor(.pointer)
+                .onClick { self.selectFile(index) }
+            thumbnailButtons.append(button)
+            thumbnails.appendChild(button)
         }
-        else if file.type == .video {
-            
-            print("🟡 \(url)\(file.avatar)")
-            
-            let _ = Img()
-                .src("\(url)\(file.avatar)")
-                .onLoad {
-            
-                    print("🟢 \(self.url)\(file.avatar)")
-                    
-                    self.video.poster("\(self.url)\(file.avatar)")
-                    
-                    self.video.src("\(self.url)\(file.file)")
-                    
-                }
-            
+    }
+
+    private func selectFile(_ index: Int) {
+        guard files.indices.contains(index) else { return }
+        // Clearing the video source also stops playback before changing items.
+        video.src("")
+        let selected = files[index]
+        currentView = index
+        for (buttonIndex, button) in thumbnailButtons.enumerated() {
+            button.attribute("aria-pressed", buttonIndex == index ? "true" : "false")
+            button.custom("border", buttonIndex == index ? "2px solid #24b9e8" : "2px solid #252c3b")
         }
-        
+        file = selected
+        currentType = selected.type
+        if selected.type == .image {
+            // Assign directly so a slower previous image cannot replace a
+            // newer selection through Img.load's temporary-image callback.
+            image.src(mediaSource(selected.file, file: selected))
+        } else if selected.type == .video {
+            video.poster(mediaSource(selected.avatar, file: selected))
+            video.src(mediaSource(selected.file, file: selected))
+        }
     }
     
     func downloadMedia(size: MediaDownloadSize){
+        guard showsMediaActions else { return }
         
         guard let file else {
             showError(.generalError, "No se ha selecionado archivo para descargar.")
@@ -242,6 +325,7 @@ class MediaViewer: Div {
     }
     
     func rotateClockwise(){
+        guard showsMediaActions else { return }
         
         guard let file else {
             showError(.generalError, "No se ha selecionado archivo para descargar.")
@@ -252,6 +336,8 @@ class MediaViewer: Div {
             showError(.generalError, "No se ha localizado el id relacionado.")
             return
         }
+
+        let selectedIndex = currentView
         
         loadingView.show()
         
@@ -277,11 +363,13 @@ class MediaViewer: Div {
                 showError(.unexpectedResult, "No se obtuvo payload de data")
                 return
             }
+
+            guard self.isInDOM, self.currentView == selectedIndex else { return }
             
             self.file = file
             
             if self.currentType == .image {
-                self.image.load("\(payload.url)\(payload.fileName)")
+                self.image.src("\(payload.url)\(payload.fileName)")
             }
             else if self.currentType == .video {
                 
@@ -290,6 +378,7 @@ class MediaViewer: Div {
                 let _ = Img()
                     .src("\(payload.url)\(avatar)")
                     .onLoad {
+                        guard self.isInDOM, self.currentView == selectedIndex else { return }
                         
                         self.video.poster("\(payload.url)\(avatar)")
                         
@@ -302,6 +391,7 @@ class MediaViewer: Div {
     }
     
     func rotateCounterClockwise(){
+        guard showsMediaActions else { return }
         
         guard let file else {
             showError(.generalError, "No se ha selecionado archivo para descargar.")
@@ -312,6 +402,8 @@ class MediaViewer: Div {
             showError(.generalError, "No se ha localizado el id relacionado.")
             return
         }
+
+        let selectedIndex = currentView
         
         loadingView.show()
         
@@ -337,11 +429,13 @@ class MediaViewer: Div {
                 showError(.unexpectedResult, "No se obtuvo payload de data")
                 return
             }
+
+            guard self.isInDOM, self.currentView == selectedIndex else { return }
             
             self.file = file
             
             if self.currentType == .image {
-                self.image.load("\(payload.url)\(payload.fileName)")
+                self.image.src("\(payload.url)\(payload.fileName)")
             }
             else if self.currentType == .video {
                 
@@ -350,6 +444,7 @@ class MediaViewer: Div {
                 let _ = Img()
                     .src("\(payload.url)\(avatar)")
                     .onLoad {
+                        guard self.isInDOM, self.currentView == selectedIndex else { return }
                         
                         self.video.poster("\(payload.url)\(avatar)")
                         
@@ -363,6 +458,7 @@ class MediaViewer: Div {
     }
     
     func deleteMedia(){
+        guard showsMediaActions else { return }
         
         switch type {
         case .orderChat:
@@ -373,7 +469,7 @@ class MediaViewer: Div {
                 return
             }
             
-            guard let fileId = files.first?.fileId else {
+            guard let fileId = file?.fileId else {
                 return
             }
             
@@ -423,6 +519,8 @@ class MediaViewer: Div {
     
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        video.src("")
+        thumbnailButtons.removeAll()
         $currentType.removeAllListeners()
     }
 
@@ -439,17 +537,21 @@ extension MediaViewer {
         public var avatar: String
         
         public var type: FileTypes
+
+        public var url: String?
         
         public init(
             fileId: UUID?,
             file: String,
             avatar: String,
-            type: FileTypes
+            type: FileTypes,
+            url: String? = nil
         ) {
             self.fileId = fileId
             self.file = file
             self.avatar = avatar
             self.type = type
+            self.url = url
         }
     }
 

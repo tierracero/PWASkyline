@@ -1,0 +1,47 @@
+--- .artifacts/planning/trip-summary-status/TripViewBeta.before.swift	2026-10-09 00:30:06
++++ Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift	2026-10-09 00:30:21
+@@ -120,6 +120,8 @@
+ 
+     private lazy var summaryContent = Div()
+ 
++    private lazy var summaryStatusValue = Div(self.$status.map { $0.description })
++
+     private lazy var routeStopsView = Div()
+         .display(.grid)
+         .custom("grid-template-columns", "repeat(auto-fit, minmax(260px, 1fr))")
+@@ -545,6 +547,8 @@
+                         .marginTop(4.px)
+                         .color(.gray)
+                 }
++
++                self.summaryMetric("Estatus", self.summaryStatusValue)
+ 
+                 self.summaryMetric("Creado", created)
+ 
+@@ -569,7 +573,7 @@
+                 .custom("text-align", "right")
+             }
+             .display(.grid)
+-            .custom("grid-template-columns", "minmax(240px, 1fr) auto auto auto")
++            .custom("grid-template-columns", "minmax(240px, 1fr) repeat(5, auto)")
+             .custom("align-items", "center")
+             .custom("gap", "24px")
+             .custom("grid-auto-flow", "column")
+@@ -577,12 +581,16 @@
+     }
+ 
+     private func summaryMetric(_ label: String, _ value: String) -> Div {
++        summaryMetric(label, Div(value))
++    }
++
++    private func summaryMetric(_ label: String, _ value: Div) -> Div {
+         Div {
+             Div(label)
+                 .fontSize(14.px)
+                 .color(.gray)
+ 
+-            Div(value)
++            value
+                 .marginTop(4.px)
+                 .fontSize(15.px)
+                 .color(.white)

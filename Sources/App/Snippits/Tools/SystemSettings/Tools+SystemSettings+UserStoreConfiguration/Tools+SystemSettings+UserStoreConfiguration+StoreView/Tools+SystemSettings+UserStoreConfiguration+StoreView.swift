@@ -44,6 +44,11 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
         
         lazy var usersContainers = Div()
             .class(Class(TCStoreUserConfigurationClass.userList))
+            .custom("flex", "1 1 0")
+            .height(0.px)
+            .minHeight(0.px)
+            .overflow(.auto)
+            
         
         @DOM override var body: DOM.Content {
             Div {

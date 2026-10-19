@@ -1,0 +1,89 @@
+/private/tmp/pwaskyline-trip-status-typecheck/TripControler+TripViewBeta.swift:1128:41: warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+1126 |     private lazy var costTable = TBody()
+1127 | 
+1128 |     private var chargesRefrence: [UUID: OldChargeTrRow] = [:]
+     |                                         `- warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+1129 | 
+1130 |     private func renderCosts(_ costs: [CustGastosEgresos]) {
+
+/private/tmp/pwaskyline-trip-status-typecheck/TripControler+TripViewBeta.swift:1173:23: warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+1171 | 
+1172 |         charges.forEach { charge in
+1173 |             let row = OldChargeTrRow(
+     |                       `- warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+1174 |                 isCharge: true,
+1175 |                 id: charge.id,
+
+/private/tmp/pwaskyline-trip-status-typecheck/TripControler+TripViewBeta.swift:1197:70: warning: left side of nil coalescing operator '??' has non-optional type 'Int64', so the right side is never used
+1195 | 
+1196 |         pocs.forEach { item in
+1197 |             groupedProducts[item.pocId, default: [:]][item.soldPrice ?? 0, default: []]
+     |                                                                      `- warning: left side of nil coalescing operator '??' has non-optional type 'Int64', so the right side is never used
+1198 |                 .append(item)
+1199 |         }
+
+/private/tmp/pwaskyline-trip-status-typecheck/TripControler+TripViewBeta.swift:1203:27: warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+1201 |         groupedProducts.values.forEach { prices in
+1202 |             prices.values.forEach { items in
+1203 |                 let row = OldChargeTrRow(pocs: items) { viewId in
+     |                           `- warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+1204 |                     self.editPoc(
+1205 |                         viewId: viewId,
+
+/private/tmp/pwaskyline-trip-status-typecheck/TripControler+TripViewBeta.swift:1217:23: warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+1215 | 
+1216 |         payments.forEach { payment in
+1217 |             let row = OldChargeTrRow(
+     |                       `- warning: 'OldChargeTrRow' is deprecated: Uee FinaceTrRow insted [#DeprecatedDeclaration]
+1218 |                 isCharge: false,
+1219 |                 id: payment.id,
+
+/private/tmp/pwaskyline-trip-status-typecheck/TripControler+TripViewBeta.swift:1264:50: error: extra arguments at positions #6, #8 in call
+1262 |         }
+1263 | 
+1264 |         let addChargeFormView = AddChargeFormView(
+     |                                                  `- error: extra arguments at positions #6, #8 in call
+1265 |             accountId: self.account.id,
+1266 |             allowManualCharges: true,
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/AddChargeFormView.swift:45:25: note: 'init(accountId:allowManualCharges:allowWarrantyCharges:socCanLoadAction:costType:currentSOCMasters:addPoc:addSoc:addItem:)' declared here
+ 43 |     ) -> ())
+ 44 | 
+ 45 |     private var addItem: ((
+    |                         `- note: 'init(accountId:allowManualCharges:allowWarrantyCharges:socCanLoadAction:costType:currentSOCMasters:addPoc:addSoc:addItem:)' declared here
+ 46 |         _ item: SearchChargeResponse,
+ 47 |         _ warenty: SoldObjectWarenty?
+
+/private/tmp/pwaskyline-trip-status-typecheck/TripControler+TripViewBeta.swift:1270:41: error: missing argument for parameter 'addPoc' in call
+1268 |             socCanLoadAction: true,
+1269 |             costType: self.account.costType,
+1270 |             authorizationContext: .order,
+     |                                         `- error: missing argument for parameter 'addPoc' in call
+1271 |             currentSOCMasters: socIds
+1272 |         ){ id, isWarenty, internalWarenty in
+
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/AddChargeFormView.swift:45:25: note: 'init(accountId:allowManualCharges:allowWarrantyCharges:socCanLoadAction:costType:currentSOCMasters:addPoc:addSoc:addItem:)' declared here
+ 43 |     ) -> ())
+ 44 | 
+ 45 |     private var addItem: ((
+    |                         `- note: 'init(accountId:allowManualCharges:allowWarrantyCharges:socCanLoadAction:costType:currentSOCMasters:addPoc:addSoc:addItem:)' declared here
+ 46 |         _ item: SearchChargeResponse,
+ 47 |         _ warenty: SoldObjectWarenty?
+
+/private/tmp/pwaskyline-trip-status-typecheck/TripControler+TripViewBeta.swift:1270:36: error: cannot infer contextual base in reference to member 'order'
+1268 |             socCanLoadAction: true,
+1269 |             costType: self.account.costType,
+1270 |             authorizationContext: .order,
+     |                                    `- error: cannot infer contextual base in reference to member 'order'
+1271 |             currentSOCMasters: socIds
+1272 |         ){ id, isWarenty, internalWarenty in
+
+/private/tmp/pwaskyline-trip-status-typecheck/TripControler+TripViewBeta.swift:1615:37: warning: left side of nil coalescing operator '??' has non-optional type 'Int64', so the right side is never used
+1613 |             total + ((charge.price * charge.cuant) / 100)
+1614 |         } + pocs.reduce(Int64(0)) { total, item in
+1615 |             total + (item.soldPrice ?? 0)
+     |                                     `- warning: left side of nil coalescing operator '??' has non-optional type 'Int64', so the right side is never used
+1616 |         }
+1617 | 
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>

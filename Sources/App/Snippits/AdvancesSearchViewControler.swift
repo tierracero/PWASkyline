@@ -1229,12 +1229,6 @@ class AdvancesSearchViewControler: Div {
                 return
             }
             
-            Console.clear()
-            
-            print(range.startAt)
-            
-            print(range.endAt)
-            
             let startAt = getDate(range.startAt)
             
             let endAt = getDate(range.endAt)

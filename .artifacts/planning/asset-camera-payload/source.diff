@@ -1,0 +1,13 @@
+--- before/CreateAssetItemView.before.swift
++++ Sources/App/Snippits/CustAssetsView/CustAssets+CreateAssetItemView.swift
+@@ -723,7 +723,9 @@
+             }
+ 
+             let images: [CustAssetsComponents.CreateAssetItemFile] = imageOrder.compactMap { viewId in
+-                guard let view = uploadFileControler[viewId], let fileName = view.file else {
++                guard let view = uploadFileControler[viewId]
++                    ?? imageRefrence.values.first(where: { $0.viewId == viewId }),
++                    let fileName = view.file else {
+                     return nil
+                 }
+ 

@@ -13,31 +13,32 @@ extension CustAssetsView {
 
         override class var name: String { "div" }
 
-        @State var items: State<[CustAssetsComponents.AssetsItemPayload]>
+        let items: State<[CustAssetsComponents.AssetsItemPayload]>
 
-        private lazy var list = Div{
+        private let searchTerm: State<String>
 
-            emptyState("No hay unidades registradas para este activo.").custom("height", "calc(100% - 45px)")
-            .hidden(self.items.map{ !$0.isEmpty })
-            .display(self.items.map{ !$0.isEmpty ? .none : .block })
+        private var renderId = UUID()
 
-            ForEach(self.items)  { item in
-                AssetInventoryItemController(item: item)
-            }
-            .hidden(self.items.map{ $0.isEmpty })
-            .display(self.items.map{ $0.isEmpty ? .none : .block })
-
-        }
+        private lazy var list = Div()
             .id(.init("cust_asset_grid_\(callKey(7))"))
             .custom("height", "calc(100% - 7px)")
             .custom("gap", "8px")
             .display(.block)
 
         init(
-            items: State<[CustAssetsComponents.AssetsItemPayload]>
+            items: State<[CustAssetsComponents.AssetsItemPayload]>,
+            searchTerm: State<String> = State(wrappedValue: "")
         ) {
             self.items = items
+            self.searchTerm = searchTerm
             super.init()
+
+            items.listen { [weak self] _ in
+                self?.scheduleRender(after: 0.01)
+            }
+            searchTerm.listen { [weak self] _ in
+                self?.scheduleRender(after: 0.2)
+            }
         }
 
         required init() {
@@ -45,6 +46,10 @@ extension CustAssetsView {
         }
 
         @DOM override var body: DOM.Content {
+            inventoryContent()
+        }
+
+        private func inventoryContent() -> Div {
             Div {
                 Div{
                     self.list
@@ -59,7 +64,61 @@ extension CustAssetsView {
 
         override func didAddToDOM() {
             super.didAddToDOM()
-            
+            if list.superview == nil {
+                innerHTML = ""
+                appendChild(inventoryContent())
+            }
+            scheduleRender(after: 0.01)
+        }
+
+        private func scheduleRender(after delay: Double) {
+            renderId = UUID()
+            let scheduledId = renderId
+            guard isInDOM else { return }
+
+            Dispatch.asyncAfter(delay) { [weak self] in
+                guard let self, self.isInDOM, self.renderId == scheduledId else { return }
+                self.renderRows(renderId: scheduledId)
+            }
+        }
+
+        private func renderRows(renderId: UUID) {
+            list.innerHTML = ""
+            let allItems = items.wrappedValue
+            let query = searchTerm.wrappedValue.purgeSpaces.pseudo
+            let matches = allItems.filter {
+                query.isEmpty || [$0.folio, ($0.serial ?? ""), $0.name]
+                    .joined(separator: " ").pseudo.contains(query)
+            }
+
+            guard !matches.isEmpty else {
+                list.appendChild(emptyState(allItems.isEmpty
+                    ? "No hay unidades registradas para este activo."
+                    : "No hay unidades que coincidan con la búsqueda.")
+                    .custom("height", "calc(100% - 45px)"))
+                return
+            }
+
+            appendRow(matches, index: 0, renderId: renderId)
+        }
+
+        private func appendRow(
+            _ rows: [CustAssetsComponents.AssetsItemPayload],
+            index: Int,
+            renderId: UUID
+        ) {
+            guard isInDOM, self.renderId == renderId, rows.indices.contains(index) else { return }
+
+            Dispatch.asyncAfter(index == 0 ? 0.01 : 0.03) { [weak self] in
+                guard let self, self.isInDOM, self.renderId == renderId else { return }
+                self.list.appendChild(AssetInventoryItemController(item: rows[index]))
+                self.appendRow(rows, index: index + 1, renderId: renderId)
+            }
+        }
+
+        override func didRemoveFromDOM() {
+            renderId = UUID()
+            super.didRemoveFromDOM()
         }
 
         func addItems(_ newItems: [CustAssetsComponents.AssetsItemPayload]) {

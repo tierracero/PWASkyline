@@ -21,6 +21,14 @@ final class CustAssetsAvatarUploader: Div {
     
     private let itemId: UUID?
 
+    private var availableImages: [MediaViewer.MediaFile]
+
+    private var images: [MediaViewer.MediaFile] = []
+
+    private var selectedImageIndex = 0
+
+    @State private var selectedImageSource = ""
+
     @State private var uploadPercent: String? = nil
 
     private lazy var fileLoader = InputFile()
@@ -28,21 +36,33 @@ final class CustAssetsAvatarUploader: Div {
         .hidden(true)
 
     private lazy var avatarImage = Img()
-        .src(self.avatar.map { self.source(for: $0) })
+        .src(self.$selectedImageSource)
+        .attribute("alt", "Imagen del activo")
         .width(100.percent)
         .height(100.percent)
         .objectFit(.contain)
         .cursor(.pointer)
+        .onClick { self.openMediaViewer() }
+
+    private lazy var imageDots = Div()
+        .display(.flex)
+        .custom("justify-content", "center")
+        .custom("gap", "10px")
+        .width(148.px)
+        .custom("max-width", "100%")
 
     init(
         avatar: State<String>,
         destination: ImagePickerTo,
-        itemId: UUID? = nil
+        itemId: UUID? = nil,
+        images: [MediaViewer.MediaFile] = []
     ) {
         self.avatar = avatar
         self.destination = destination
         self.itemId = itemId
+        self.availableImages = images.filter { $0.type == .image && !$0.file.purgeSpaces.isEmpty }
         super.init()
+        refreshImages()
     }
 
     required init() {
@@ -52,21 +72,28 @@ final class CustAssetsAvatarUploader: Div {
     @DOM override var body: DOM.Content {
         self.fileLoader
 
-        Div("Avatar")
-            .fontWeight(.bold)
-
         Div {
-            self.avatarImage
 
             Img()
                 .src("/skyline/media/upload2.png")
-                .height(30.px)
-                .position(.absolute)
-                .right(6.px)
-                .bottom(6.px)
                 .cursor(.pointer)
+                .float(.right)
+                .height(22.px)
+                .onClick {
+                    self.fileLoader.click()
+                }
+
+            Div("Avatar")
+                .fontWeight(.bold)
+
+        }
+
+        Div {
+
+            self.avatarImage
 
             Div {
+
                 Table {
                     Tr {
                         Td(self.$uploadPercent.map { $0 ?? "" })
@@ -78,13 +105,15 @@ final class CustAssetsAvatarUploader: Div {
                 }
                 .height(100.percent)
                 .width(100.percent)
+
             }
             .backgroundColor(.init(r: 0, g: 0, b: 0, a: 0.58))
             .borderRadius(all: 12.percent)
             .position(.absolute)
             .height(100.percent)
             .width(100.percent)
-            .overflow(.hidden)            
+            .overflow(.hidden)
+            .align(.center)       
             .left(0.px)
             .top(0.px)
             .hidden(self.$uploadPercent.map { $0 == nil })
@@ -100,9 +129,8 @@ final class CustAssetsAvatarUploader: Div {
         .display(.flex)
         .height(148.px)
         .width(148.px)
-        .onClick {
-            self.fileLoader.click()
-        }
+
+        self.imageDots
     }
 
     override func buildUI() {
@@ -116,7 +144,13 @@ final class CustAssetsAvatarUploader: Div {
             $0.forEach { self.loadMedia($0) }
         }
 
-        WebApp.current.wsevent.listen {
+        avatar.listen { [weak self] _ in
+            guard let self, self.isInDOM else { return }
+            self.refreshImages()
+        }
+
+        WebApp.current.wsevent.listen { [weak self] in
+            guard let self, self.isInDOM else { return }
             
             guard !$0.isEmpty else { return }
 
@@ -133,7 +167,7 @@ final class CustAssetsAvatarUploader: Div {
                 }
 
                 self.uploadPercent = nil
-                self.avatar.wrappedValue = payload.avatar
+                self.updateAvatar(payload.avatar, fileName: payload.fileName)
 
             case .asyncFileUpdate:
                 guard let payload = self.ws.asyncFileUpdate($0),
@@ -153,6 +187,7 @@ final class CustAssetsAvatarUploader: Div {
         super.didRemoveFromDOM()
         fileLoader.$files.removeAllListeners()
         $uploadPercent.removeAllListeners()
+        $selectedImageSource.removeAllListeners()
     }
 
     private func loadMedia(_ file: File) {
@@ -161,9 +196,129 @@ final class CustAssetsAvatarUploader: Div {
             eventId: viewId,
             id: itemId,
             to: destination,
-            progress: { self.uploadPercent = $0 },
-            completed: { self.avatar.wrappedValue = $0 }
+            progress: { [weak self] value in
+                guard let self, self.isInDOM else { return }
+                self.uploadPercent = value
+            },
+            completed: { [weak self] value in
+                guard let self, self.isInDOM else { return }
+                self.updateAvatar(value)
+            }
         )
+    }
+
+    private func updateAvatar(_ value: String, fileName: String? = nil) {
+        if let fileName, !fileName.purgeSpaces.isEmpty {
+            let uploadedIdentity = imageIdentity(for: fileName)
+            availableImages.removeAll {
+                self.imageIdentity(for: $0.file) == uploadedIdentity ||
+                self.imageIdentity(for: $0.avatar) == uploadedIdentity
+            }
+            availableImages.insert(
+                .init(fileId: nil, file: fileName, avatar: value, type: .image),
+                at: 0
+            )
+        }
+        avatar.wrappedValue = value
+        refreshImages()
+    }
+
+    private func refreshImages() {
+        images = availableImages
+        let avatarName = avatar.wrappedValue.purgeSpaces
+
+        if !avatarName.isEmpty {
+            let avatarIdentity = imageIdentity(for: avatarName)
+            if let index = images.firstIndex(where: {
+                imageIdentity(for: $0.file) == avatarIdentity ||
+                imageIdentity(for: $0.avatar) == avatarIdentity
+            }) {
+                let avatarImage = images.remove(at: index)
+                images.insert(avatarImage, at: 0)
+            } else {
+                images.insert(
+                    .init(fileId: nil, file: avatarName, avatar: avatarName, type: .image),
+                    at: 0
+                )
+            }
+        }
+
+        selectedImageIndex = 0
+        selectedImageSource = images.first.map {
+            source(for: $0.avatar.isEmpty ? $0.file : $0.avatar)
+        } ?? source(for: "")
+        renderDots()
+    }
+
+    private func selectImage(at index: Int) {
+        guard images.indices.contains(index) else { return }
+        selectedImageIndex = index
+        let image = images[index]
+        selectedImageSource = source(for: image.avatar.isEmpty ? image.file : image.avatar)
+        renderDots()
+    }
+
+    private func renderDots() {
+        imageDots.innerHTML = ""
+        for (index, _) in images.prefix(5).enumerated() {
+            let isSelected = index == selectedImageIndex
+            imageDots.appendChild(
+                Button()
+                    .attribute("type", "button")
+                    .attribute("aria-label", "Ver imagen \(index + 1)")
+                    .attribute("aria-pressed", isSelected ? "true" : "false")
+                    .width(12.px)
+                    .height(12.px)
+                    .padding(all: 0.px)
+                    .borderRadius(all: 50.percent)
+                    .backgroundColor(isSelected ? .init(r: 36, g: 185, b: 232) : .init(r: 37, g: 44, b: 59))
+                    .custom("border", "1px solid rgba(102, 184, 236, 0.55)")
+                    .cursor(.pointer)
+                    .onClick { self.selectImage(at: index) }
+            )
+        }
+    }
+
+    private func openMediaViewer() {
+        guard uploadPercent == nil, images.indices.contains(selectedImageIndex) else { return }
+        let files = images.map {
+            MediaViewer.MediaFile(
+                fileId: $0.fileId,
+                file: source(for: $0.file),
+                avatar: source(for: $0.avatar.isEmpty ? $0.file : $0.avatar),
+                type: $0.type
+            )
+        }
+        addToDom(
+            MediaViewer(
+                relid: itemId,
+                type: .content,
+                url: "",
+                files: files,
+                currentView: selectedImageIndex,
+                allowsMediaActions: false
+            ),
+            presentation: .interactive
+        )
+    }
+
+    private func imageIdentity(for value: String) -> String {
+        guard !value.purgeSpaces.isEmpty else { return "" }
+        let resolved = source(for: value)
+        let pathEnd = resolved.firstIndex { $0 == "?" || $0 == "#" } ?? resolved.endIndex
+        let path = resolved[..<pathEnd]
+        let filenameStart = path.lastIndex(of: "/").map { resolved.index(after: $0) } ?? resolved.startIndex
+        var filename = String(path[filenameStart...])
+
+        // Render variants belong to the same photo; keep its directory identity.
+        for prefix in ["thump_", "og_", "wap_"] {
+            if filename.hasPrefix(prefix) {
+                filename.removeFirst(prefix.count)
+                break
+            }
+        }
+
+        return String(path[..<filenameStart]) + filename
     }
 
     private func source(for value: String) -> String {

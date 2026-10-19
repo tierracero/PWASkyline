@@ -24,6 +24,8 @@ class TripsControlerView: Div {
     
     override class var name: String { "div" }
 
+    private static weak var mountedView: TripsControlerView?
+
     init(
         items: [CustCommercialTripControlQuick],
         lastTripsRequestExecutedAt: TimeInterval = Date().timeIntervalSince1970
@@ -72,6 +74,8 @@ class TripsControlerView: Div {
     private var isMounted = false
 
     private var tripsRequestIsInFlight = false
+
+    private var tripStatusChangesDuringRequest: [UUID: FiscalTripFollowupStatus] = [:]
 
     private lazy var pendingItemsView = ForEach(self.$pendingGridItems) { item in
         self.tripCard(item.item, accent: "#ff9f1a")
@@ -374,7 +378,9 @@ class TripsControlerView: Div {
     ) {
         guard !tripsRequestIsInFlight else { return }
 
+        let sessionId = custCatchID
         tripsRequestIsInFlight = true
+        tripStatusChangesDuringRequest.removeAll()
         selectedTripsType = type
         self.tripTypeMenuViewIsHidden = true
         self.selectedTripsTypeLabel = label
@@ -389,10 +395,14 @@ class TripsControlerView: Div {
             type: type
         ) { resp in
             self.tripsRequestIsInFlight = false
+            let statusChanges = self.tripStatusChangesDuringRequest
+            self.tripStatusChangesDuringRequest.removeAll()
 
             if showLoadingView {
                 loadingView.hide()
             }
+
+            guard self.isMounted, custCatchID == sessionId else { return }
 
             guard let resp = resp else {
                 if showLoadingView {
@@ -415,7 +425,12 @@ class TripsControlerView: Div {
                 return
             }
 
-            self.processItems(payload.items)
+            self.processItems(payload.items.map { item in
+                guard let status = statusChanges[item.id] else { return item }
+                var updatedItem = item
+                updatedItem.status = status
+                return updatedItem
+            })
         }
     }
 
@@ -570,7 +585,7 @@ class TripsControlerView: Div {
         .custom("gap", "10px")
         .padding(v: 9.px, h: 10.px)
         .onClick {
-            TripViewBeta.loadAndPresent(tripId: item.id) { tripId, status in
+            TripViewBeta.loadAndPresent(tripId: .id(item.id)) { tripId, status in
                 self.updateTripStatus(tripId: tripId, status: status)
             }
         }
@@ -578,20 +593,29 @@ class TripsControlerView: Div {
         .custom("border-left", "6px solid \(accent)")
     }
 
+    static func notifyTripStatusChanged(
+        tripId: UUID,
+        status: FiscalTripFollowupStatus
+    ) {
+        mountedView?.updateTripStatus(tripId: tripId, status: status)
+    }
+
     func updateTripStatus(
         tripId: UUID,
         status: FiscalTripFollowupStatus
     ) {
-        items = items.map { item in
-            guard item.id == tripId else {
-                return item
-            }
+        guard isMounted else { return }
 
-            var updatedItem = item
-            updatedItem.status = status
-            return updatedItem
+        if tripsRequestIsInFlight {
+            tripStatusChangesDuringRequest[tripId] = status
         }
 
+        guard let index = items.firstIndex(where: { $0.id == tripId }),
+              items[index].status != status else { return }
+
+        var updatedItems = items
+        updatedItems[index].status = status
+        items = updatedItems
         processItems()
     }
 
@@ -727,6 +751,7 @@ class TripsControlerView: Div {
         super.didAddToDOM()
 
         isMounted = true
+        Self.mountedView = self
         scheduleNextTripsRefresh()
     }
 
@@ -734,6 +759,10 @@ class TripsControlerView: Div {
         super.didRemoveFromDOM()
 
         isMounted = false
+        if Self.mountedView === self {
+            Self.mountedView = nil
+        }
+        tripStatusChangesDuringRequest.removeAll()
         refreshScheduleVersion += 1
 
         $items.removeAllListeners()

@@ -1,0 +1,33 @@
+import Foundation
+import TCFundamentals
+import TCFireSignal
+
+extension CustAssetsComponents {
+
+    static func getAssetItem(
+        itemId: MultipleIdentifier,
+        callback: @escaping ((_ resp: APIResponseGeneric<GetAssetItemResponse>?) -> ())
+    ) {
+        sendPost(
+            rout,
+            version,
+            "getAssetItem",
+            GetAssetItemRequest(itemId: itemId)
+        ) { data in
+            guard let data else {
+                callback(nil)
+                return
+            }
+
+            do {
+                callback(try decodeAPIResponse(
+                    APIResponseGeneric<GetAssetItemResponse>.self,
+                    from: data
+                ))
+            }
+            catch {
+                callback(nil)
+            }
+        }
+    }
+}

@@ -1,0 +1,27 @@
+warning: '--skip-update' option is deprecated and will be removed in a future release
+warning: /Users/victorcantu/Library/org.swift.swiftpm/configuration is not accessible or not writable, disabling user-level cache features.
+warning: /Users/victorcantu/Library/org.swift.swiftpm/security is not accessible or not writable, disabling user-level cache features.
+warning: /Users/victorcantu/Library/Caches/org.swift.swiftpm is not accessible or not writable, disabling user-level cache features.
+warning: 'pwaskyline': failed storing manifest for 'pwaskyline' in cache: attempt to write a readonly database
+Fetching git@github.com:tierracero/MapKitCore.git
+Fetching git@github.com:tierracero/PowerMailCore.git
+error: 'mapkitcore': Failed to clone repository git@github.com:tierracero/MapKitCore.git:
+    Cloning into bare repository '/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/.build/repositories/MapKitCore-f0d4b685'...
+    ssh: Could not resolve hostname github.com: -65563
+fatal: Could not read from remote repository.
+    Please make sure you have the correct access rights
+    and the repository exists.
+error: 'powermailcore': Failed to clone repository git@github.com:tierracero/PowerMailCore.git:
+    Cloning into bare repository '/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/.build/repositories/PowerMailCore-bc955f9a'...
+    ssh: Could not resolve hostname github.com: -65563
+fatal: Could not read from remote repository.
+    Please make sure you have the correct access rights
+    and the repository exists.
+Creating working copy for https://github.com/apple/swift-nio-zlib-support.git
+Creating working copy for https://github.com/swifweb/web
+Working copy of https://github.com/apple/swift-nio-zlib-support.git resolved at 1.0.0
+Working copy of https://github.com/swifweb/web resolved at 2.0.0-nightly.11
+error: 'tcfundamentals': Couldn’t check out revision ‘0791bad5ce2c95824be413b4a73313635a2975d8’:
+    fatal: unable to read tree (0791bad5ce2c95824be413b4a73313635a2975d8)
+error: 'tcfiresignal': Couldn’t check out revision ‘b19e06f11391d473a88b028d34db43432d490b36’:
+    fatal: unable to read tree (b19e06f11391d473a88b028d34db43432d490b36)

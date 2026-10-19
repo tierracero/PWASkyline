@@ -76,6 +76,11 @@ html[data-tc-modal-backdrop-blur="off"] [data-add-to-dom-super-view="true"] {
     -webkit-backdrop-filter: none !important;
 }
 
+/* Keep SuperView contrast independent of blur when performance mode is off. */
+html[data-tc-performance-mode="off"] body [data-add-to-dom-super-view="true"] {
+    background: rgba(0, 0, 0, 0.7) !important;
+}
+
 /* Without blur, darken the veil and content separately so underlying UI
    remains visible without competing with the foreground text. */
 html[data-tc-performance-mode="on"][data-tc-performance-mode="on"][data-tc-performance-mode="on"][data-tc-performance-mode="on"][data-tc-performance-mode="on"][data-tc-performance-mode="on"] body :is(

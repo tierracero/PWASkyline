@@ -1,0 +1,42 @@
+ M .agent/MODULES.md
+ M .agent/PROJECT_MEMORY.md
+ M .agent/SOURCE_MAP.md
+ M .agent/TASKS.md
+ M .agent/TASKS_ARCHIVE.md
+ M .agent/architecture/API_AND_BACKEND.md
+ M .agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+ M Sources/App/API/CustAssetsEndpoint/CustAssets+GetAssettem.swift
+ M Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+ChangeTripStatus.swift
+ M Sources/App/API/CustComertialTripsEndpoint/CustComertialTrips+GetTrip.swift
+ M Sources/App/SkylineWeb.swift
+ M Sources/App/Snippits/AdvancesSearchViewControler.swift
+ M Sources/App/Snippits/BudgetConfirmationView.swift
+ M Sources/App/Snippits/CartaPorteMerchendise.swift
+ M Sources/App/Snippits/CustAssetsView/CustAssets+AssetInventoryItemController.swift
+ M Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemView.swift
+ M Sources/App/Snippits/CustAssetsView/CustAssets+CreateAssetItemView.swift
+ M Sources/App/Snippits/CustRemoveFromConcessionView.swift
+ M Sources/App/Snippits/FollowupControler/FollowupControler.swift
+ M Sources/App/Snippits/ImageEditor.swift
+ M Sources/App/Snippits/ManagePOC/ManagePOC.swift
+ M Sources/App/Snippits/MediaViewer.swift
+ D Sources/App/Snippits/OrderView/EquipmentView/OrderView+EquipmentView+AddWarrantyCard.swift
+ M Sources/App/Snippits/OrderView/EquipmentView/OrderView+EquipmentView.swift
+ M Sources/App/Snippits/SearchComertialAsset.swift
+ M Sources/App/Snippits/TripControler/TripControler+CreateTripView.swift
+ M Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift
+ M Sources/App/Snippits/TripControler/TripsControlerView.swift
+ M Sources/App/TierraCeroCustomUI/Theme/TCCrystalSurfaceTheme.swift
+ M Sources/App/ViewControlers/WorkViewControler.swift
+?? .artifacts/planning/get-asset-item-contract/
+?? .artifacts/planning/get-asset-item-hybrid-contract/
+?? .artifacts/planning/get-trip-hybrid-contract/
+?? .artifacts/planning/manage-poc-remote-camera/
+?? .artifacts/planning/search-commercial-asset-account/
+?? .artifacts/planning/trip-status-api/
+?? .artifacts/planning/trip-status-button-colors/
+?? .artifacts/planning/trip-status-confirmation/
+?? .artifacts/planning/trip-status-upload-parity/
+?? Sources/App/Snippits/AddWarrantyCard.swift
+?? Sources/App/Snippits/CustAssetsView/CustAssetsQuickDepartmentView.swift
+?? Sources/App/Snippits/TripControler/ConfirmTripStatusUpdate.swift

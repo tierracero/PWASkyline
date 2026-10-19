@@ -1,0 +1,110 @@
+--- CreateAssetItemView.before.swift
++++ Sources/App/Snippits/CustAssetsView/CustAssets+CreateAssetItemView.swift
+@@ -81,6 +81,10 @@
+ 
+         @State private var name = ""
+         @State private var serial = ""
++
++        private var serialScannerEventId: UUID?
++        private var serialScannerSessionId: UUID?
++        private var isRequestingSerialScanner = false
+         
+         @State private var serviceCard = ""
+         @State private var acquisitionCost = "0.00"
+@@ -359,8 +363,9 @@
+             }
+ 
+ 
+-            WebApp.current.wsevent.listen {
+-                
++            WebApp.current.wsevent.listen { [weak self] in
++                guard let self, self.isInDOM else { return }
++
+                 if $0.isEmpty { return }
+                 
+                 let (event, _) = self.ws.recive($0)
+@@ -370,6 +375,22 @@
+                 }
+                     
+                 switch event {
++                case .requestMobileScannerComplete:
++                    guard let payload = self.ws.requestMobileScannerComplete($0),
++                          self.serialScannerEventId == payload.eventid,
++                          self.serialScannerSessionId == custCatchID else {
++                        return
++                    }
++
++                    self.resetSerialScanner()
++                    let text = payload.text.trimmingCharacters(in: .whitespacesAndNewlines)
++                    guard !text.isEmpty else {
++                        showError(.invalidFormat, "No se detectó un número de serie. Intente escanear nuevamente.")
++                        return
++                    }
++
++                    self.serial = text
++
+                 case .requestMobileCamaraComplete:
+                     
+                     if let payload = self.ws.requestMobileCamaraComplete($0) {
+@@ -611,9 +632,50 @@
+ 
+ 
+         func addSeries() {
+-
+-            /// addSeries
+-            
++            guard isInDOM, !isRequestingSerialScanner else { return }
++
++            let eventId = UUID()
++            let sessionId = custCatchID
++            serialScannerEventId = eventId
++            serialScannerSessionId = sessionId
++            isRequestingSerialScanner = true
++
++            API.custAPIV1.requestMobileCamara(
++                type: .scanner,
++                connid: custCatchChatConnID,
++                eventid: eventId,
++                relatedid: nil,
++                relatedfolio: "",
++                multipleTakes: false
++            ) { [weak self] response in
++                guard let self, self.isInDOM, self.serialScannerEventId == eventId else { return }
++
++                self.isRequestingSerialScanner = false
++                guard custCatchID == sessionId else {
++                    self.resetSerialScanner()
++                    return
++                }
++
++                guard let response else {
++                    self.resetSerialScanner()
++                    showError(.comunicationError, .serverConextionError)
++                    return
++                }
++
++                guard response.status == .ok else {
++                    self.resetSerialScanner()
++                    showError(.generalError, response.msg)
++                    return
++                }
++
++                showSuccess(.operacionExitosa, "Entre en la notificación en su móvil.")
++            }
++        }
++
++        private func resetSerialScanner() {
++            serialScannerEventId = nil
++            serialScannerSessionId = nil
++            isRequestingSerialScanner = false
+         }
+ 
+         func addwarrantyCard() {
+@@ -972,6 +1034,7 @@
+         }
+ 
+         override func didRemoveFromDOM() {
++            resetSerialScanner()
+             super.didRemoveFromDOM()
+             $name.removeAllListeners()
+             $serial.removeAllListeners()

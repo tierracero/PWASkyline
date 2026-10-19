@@ -4,7 +4,10 @@ import TCFireSignal
 import Web
 
 final class SearchComertialAsset: Div {
+
     override class var name: String { "div" }
+
+    let account: CustAcctSearch
 
     /// store, warehose, account, subAccount
     let currentLocation: CustAssetsComponents.ListAssetItemsType
@@ -19,6 +22,7 @@ final class SearchComertialAsset: Div {
 
     // The caller loads available inventory before presenting this view.
     init?(
+        account: CustAcctSearch,
         currentLocation: CustAssetsComponents.ListAssetItemsType,
         items: [CustCommercialAssetsItem],
         callback: @escaping (CustCommercialAssetsItem) -> Void
@@ -35,10 +39,14 @@ final class SearchComertialAsset: Div {
                 $0.currentLocation == .warehouse && $0.currentLocationId == id && $0.owningAccount == account
             }
         case .subAccount(let id):
-            scopedItems = items.filter { $0.owningSubAccount == id }
+            scopedItems = items.filter {
+                $0.currentLocation == .subaccount && $0.currentLocationId == id &&
+                $0.owningAccount == account.id && $0.status == .unavailable
+            }
         default:
             return nil
         }
+        self.account = account
         self.currentLocation = currentLocation
         self.items = scopedItems
         self.callback = callback
@@ -63,7 +71,11 @@ final class SearchComertialAsset: Div {
             VTitle("Buscar Activo", icon: "icon_merchandise.png") {
                 
                 if self.currentLocation == .subAccount {
-                    Button()
+                     USmallButton("+ Activo")
+                        .onClick {
+                            self.createAsset()
+                        }
+
                 }
 
             } onClose: {
@@ -143,5 +155,85 @@ final class SearchComertialAsset: Div {
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
         $term.removeAllListeners()
+    }
+
+    func createAsset () { 
+
+        loadingView.show()
+
+        API.custAssetsV1.listStoreArchitecture(
+            relationId: account.id
+        ) { response in
+            
+            loadingView.hide()
+
+            guard let response else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+
+            guard response.status == .ok else {
+                showError(.generalError, response.msg)
+                return
+            }
+
+            guard let payload = response.data else {
+                showError(.unexpectedResult, .unexpenctedMissingPayload)
+                return
+            }
+
+            guard let store: CustStore = stores[custCatchStore] else {
+                showError(.unexpectedResult, "No se localizo tienda propia")
+                return
+            }
+            
+            addToDom(CustAssetsView.CustAssetsQuickDepartmentView(
+                viewType: .account(account: .init(
+                    id: self.account.id,
+                    folio: self.account.folio,
+                    businessName: self.account.businessName,
+                    costType: self.account.costType,
+                    type: self.account.type,
+                    store: nil,
+                    firstName: self.account.firstName,
+                    secondName: "",
+                    lastName: self.account.lastName,
+                    secondLastName: "",
+                    sexo: nil,
+                    birthDay: nil,
+                    birthMonth: nil,
+                    birthYear: nil,
+                    telephone: "",
+                    mcc: self.account.mcc,
+                    mobile: self.account.mobile,
+                    email: self.account.email,
+                    street: self.account.street,
+                    colony: self.account.colony,
+                    city: self.account.city,
+                    state: self.account.state,
+                    country: self.account.country,
+                    zip: self.account.zip,
+                    autoPaySpei: self.account.autoPaySpei,
+                    autoPayOxxo: self.account.autoPayOxxo,
+                    fiscalProfile: self.account.fiscalProfile,
+                    fiscalRazon: self.account.fiscalRazon,
+                    fiscalRfc: self.account.fiscalRfc,
+                    fiscalRegime: self.account.fiscalRegime,
+                    fiscalZip: self.account.fiscalZip,
+                    cfdiUse: self.account.cfdiUse,
+                    crstatus: self.account.crstatus,
+                    isConcessionaire: self.account.isConcessionaire,
+                    CardID: self.account.CardID,
+                    rewardsLevel: self.account.rewardsLevel,
+                    lat: "",
+                    lon: "",
+                    avatar: nil
+                ), store: store),
+                departments: payload.departments,
+                sections: payload.locations,
+                subSections: payload.subLocations
+            ))
+
+        }
     }
 }

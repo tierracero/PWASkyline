@@ -1,0 +1,6153 @@
+//
+//  OrderView.swift
+//
+//
+//  Created by Victor Cantu on 4/23/22.
+//
+
+import Foundation
+import TCFundamentals
+import TCFireSignal
+import Web
+import XMLHttpRequest
+
+struct LoadFileBase64Response: Codable {
+
+    let result: String
+    
+    let name: String
+    
+    init(
+        result: String,
+        name: String
+    ) {
+        self.result = result
+        self.name = name
+    }
+}
+
+class OrderView: Div {
+    
+    override class var name: String { "div" }
+    
+    var accountView: AccoutOverview
+    var order: CustOrderLoadFolioDetails
+    var notes: [CustOrderLoadFolioNotes]
+    var payments: [CustOrderLoadFolioPayments]
+    var charges: [CustOrderLoadFolioCharges]
+    var pocs: [CustPOCInventoryOrderView]
+    var files: [CustOrderLoadFolioFiles]
+    var contracts: [CustPageContent]
+    var equipments: [CustOrderLoadFolioEquipments]
+    var rentals: [CustPOCRentalsMin]
+    var transferOrder: CustTranferManager?
+    var orderHighPriorityNote: [HighPriorityNote]
+    var accountHighPriorityNote: [HighPriorityNote]
+    @State var tasks: [CustTaskAuthorizationManagerQuick]
+    let orderRoute: CustOrderRoute?
+    var loadFromCatch: Bool
+    private var hasParsedOrderData = false
+    
+    init(
+        accountView: AccoutOverview,
+        order: CustOrderLoadFolioDetails,
+        notes: [CustOrderLoadFolioNotes],
+        payments: [CustOrderLoadFolioPayments],
+        charges: [CustOrderLoadFolioCharges],
+        pocs: [CustPOCInventoryOrderView],
+        files: [CustOrderLoadFolioFiles],
+        contracts: [CustPageContent],
+        equipments: [CustOrderLoadFolioEquipments],
+        rentals: [CustPOCRentalsMin],
+        transferOrder: CustTranferManager?,
+        orderHighPriorityNote: [HighPriorityNote],
+        accountHighPriorityNote: [HighPriorityNote],
+        tasks: [CustTaskAuthorizationManagerQuick],
+        orderRoute: CustOrderRoute?,
+        loadFromCatch: Bool
+    ) {
+        self.accountView = accountView
+        self.order = order
+        self.notes = notes
+        self.payments = payments
+        self.charges = charges
+        self.pocs = pocs
+        self.files = files
+        self.contracts = contracts
+        self.equipments = equipments
+        self.rentals = rentals
+        self.transferOrder = transferOrder
+        self.orderHighPriorityNote = orderHighPriorityNote
+        self.accountHighPriorityNote = accountHighPriorityNote
+        self.tasks = tasks
+        self.orderRoute = orderRoute
+        self.loadFromCatch = loadFromCatch
+    }
+    
+    required init() {
+        fatalError("init() has not been implemented")
+    }
+    
+    let ws = WS()
+    
+    var smsTokens: [String] = []
+    
+    /// Equipment Id : isReady
+    var equipmentReadyStatusRefrence: [UUID:State<Bool>] = [:]
+    
+    /// Equipment Id : isPickedUp
+    var equipmentPickedStatusRefrence: [UUID:State<Bool>] = [:]
+    
+    @State var pendingPickups = 0
+    
+    @State var lastCommunicationMethod: MessagingCommunicationMethods? = nil
+    
+    /// Order Due / Date
+    @State var dueDate: Int64?  = nil
+    
+    @State var budgetIcon = "/skyline/media/icon_list.png"
+    
+    @State var budgetStatus: CustBudgetManagerStatus? = nil
+    
+    @State var inAlert: Bool = false
+    
+    @State var isHighPriority: Bool = false
+    
+    @State var orderProject: UUID? = nil
+    
+    @State var statusMenuIsHidden: Bool = true
+    
+    /// Order Status
+    @State var status: CustFolioStatus = .sideStatus
+    
+    /// If has multiple equipments this will controll current tap and equipment view
+    @State var currentEquipment: UUID? = nil
+    
+    /// Finance
+    var pays: Int64 = 0
+    var chas: Int64 = 0
+    var total: Int64 = 0
+    
+    @State var tpays = "$0.00"
+    @State var tchars = "$0.00"
+    @State var ttotal = "$0.00"
+    
+    ///  Name & Address
+    @State var orderName = ""
+    @State var mobile = ""
+    @State var telephone = ""
+    @State var email = ""
+    
+    @State var streetHolderIsHidden = true
+    @State var colonyHolderIsHidden = true
+    @State var cityHolderIsHidden = true
+    @State var stateHolderIsHidden = true
+    @State var countryHolderIsHidden = true
+    @State var ziptHolderIsHidden = true
+    
+    @State var street = ""
+    @State var colony = ""
+    @State var city = ""
+    @State var state = ""
+    @State var country = ""
+    @State var zip = ""
+    
+    @State var lat: Double? = nil
+    @State var lon: Double? = nil
+    
+    @State var contratc: String? = nil
+    
+    @State var editMode: Bool = false
+    
+    @State var requierServiceAddress: Bool = false
+    
+    @State var onWorkUser: UUID? = nil
+    
+    @State var onWorkUsername = ""
+
+    @State var currentLocation: AppleMap.Coordinate? = nil
+    
+    @State var orderContract: [CustomerCustomeScript] = []
+
+    @State var hideServiceLetterContainer: Bool = true
+
+    @State var hideContractContainer: Bool = true
+
+    var chargesRefrence: [ UUID: OldChargeTrRow ] = [:]
+    
+    var rentalViewRefrence: [UUID:OrderRentalView] = [:]
+    
+    var equipmentViewRefrence: [UUID:EquipmentView] = [:]
+    
+    var fileViewCatch: [UUID:OrderImageView] = [:]
+    
+    lazy var fiscalView = Div()
+    
+    lazy var chargesTable = TBody()
+    
+    lazy var equipmentView = Div()
+        .class(Class(TCOrderViewClass.equipmentCard))
+        .backgroundColor(r: 22, g: 25, b: 30)
+        .padding(v: 0.px, h: 7.px)
+        .borderRadius(12.px)
+    
+    lazy var filesGrid =  Div()
+        .id(Id(stringLiteral: "filesGrid\(self.order.id.uuidString)"))
+    
+    lazy var createAtDiv = Div()
+    
+    lazy var dueAtDiv = Div()
+    
+    lazy var messageGrid = MessageGrid(
+        style: .dark,
+        orderid: self.order.id,
+        accountid: self.order.custAcct,
+        folio: self.order.folio,
+        name: self.order.name,
+        mobile: self.order.mobile,
+        notes: self.notes,
+        lastCommunicationMethod: self.$lastCommunicationMethod,
+        deferInitialLoad: true,
+        callback: { note in
+            
+        })
+    
+    lazy var messageGridDiv = Div{
+        self.messageGrid
+    }
+        .class(Class(TCOrderViewClass.notesCard))
+        .custom("height", "calc(100% - 30px)")
+        .width(70.percent)
+    
+    lazy var filesGridDiv = Div{
+        Div{
+            
+            self.fileLoader
+                .hidden(true)
+            
+            Img()
+                .onClick{ self.fileLoader.click() }
+                .src("/skyline/media/add.png")
+                .cursor(.pointer)
+                .float(.right)
+                .height(24.px)
+            
+            Img()
+                .src("/skyline/media/download2.png")
+                .float(.right)
+                .height(24.px)
+                .marginRight(12.px)
+            
+            H3("Archivos")
+                .color(.gray)
+        }
+        .marginTop(5.px)
+        
+        self.filesGrid
+            .custom("height", "calc(100% - 25px)")
+            .class(.roundGrayBlackDark)
+            .marginTop(7.px)
+            .overflow(.auto)
+        
+    }
+    .class(Class(TCOrderViewClass.filesCard))
+    .float(.right)
+    .width(30.percent)
+    .custom("height", "calc(100% - 33px)")
+
+    lazy var fileLoader: InputFile = InputFile()
+        .id(Id(stringLiteral: "fileLoader\(self.order.id)"))
+        .accept(["image/png", "image/gif", "image/jpeg", "application/pdf", "video/*", "video", "pages", "numbers", "key"])
+    
+    let mapId = "map_" + callKey(32)
+
+    lazy var mapContainer = Div{
+            Img()
+                .src("/skyline/media/orderMapRequest.jpeg")
+                .custom("height","calc(100% - 14px)")
+                .custom("width","calc(100% - 14px)")
+                .borderRadius(all: 12.px)
+                .objectFit(.cover)
+                .margin(all:7.px)
+                .opacity(0.5)
+                
+            Div{
+                Table{
+                    Tr{
+                        Td{
+                            Div("🗺️  Cargar Mapa")
+                            .class(.uibtnLargeOrange)
+                            .onClick {
+                                self.loadMap()
+                            }
+
+                            Div().clear(.both).height(12.px)
+
+                            Div("Busqueda Manual").color(.gray)
+                            .class(.uibtnLargeOrange)
+                            .onClick {
+                                self.searchAddressManualy()
+                            }
+                        }
+                        .verticalAlign(.middle)
+                        .align(.center)
+                    }
+                }
+                .height(100.percent)
+                .width(100.percent)
+            }
+            .height(100.percent)
+            .width(100.percent)
+            .position(.absolute)
+            .left(0.px)
+            .top(0.px)
+            .display(.flex)
+            .custom("justify-content", "center")
+            .custom("align-items", "center")
+    
+        }
+        .id(Id(stringLiteral: mapId))
+        .height(250.px)
+        .position(.relative)
+
+    @DOM override var body: DOM.Content {
+        
+        Div{
+            
+            /// Equipments
+            self.equipmentView
+            .height(37.percent)
+            .overflow(.auto)
+            
+            /// Notes and files
+            Div{
+                /// Notes
+                self.messageGridDiv
+                
+                /// Files
+                self.filesGridDiv
+            }
+            .class(Class(TCOrderViewClass.communicationsGrid))
+            .height(40.percent)
+            .marginRight(3.px)
+            .marginLeft(3.px)
+            .overflow(.auto)
+            
+            /// Charges Grid
+            Div{
+                Div{
+                    
+                    /// Payment
+                    Div{
+                        
+                        Div{
+                            Img()
+                                .src("/skyline/media/coin.png")
+                                .marginLeft(7.px)
+                                .marginTop(3.px)
+                                .height(20.px)
+                        }
+                        .float(.left)
+                        
+                        Span("Pago")
+                    }
+                    .class(.uibtn)
+                    .float(.right)
+                    .onClick {
+                        
+                        let pv = AddPaymentFormView (
+                            accountId: self.order.custAcct,
+                            cardId: self.accountView.cardId,
+                            currentBalance: self.total
+                        ) { code, description, amount, provider, lastFour, auth, uts, downpayment in
+                            
+                            loadingView.show()
+                            
+                            if code == .dineroElectronico {
+                                self.proccessPaymentWithPoints(amount.fromCents)
+                            }
+                            else {
+                                self.proccessPayment(code, description, amount.fromCents, provider, lastFour, auth, uts, downpayment)
+                            }
+                            
+                        }
+                        
+                        addToDom(pv)
+                        
+                        if self.total <= 0 {
+                            pv.paymentDescription.select()
+                        }
+                        else {
+                            pv.paymentInput.select()
+                        }
+                    }
+                    
+                    /// charge
+                    
+                    Div{
+                        
+                        Div{
+                            Img()
+                                .src("/skyline/media/price.png")
+                                .marginLeft(7.px)
+                                .marginTop(3.px)
+                                .height(20.px)
+                        }
+                        .float(.left)
+                        
+                        Span("Cargo")
+                    }
+                    .class(.uibtn)
+                    .float(.right)
+                    .onClick { _ in
+                        self.addCharge()
+                    }
+                    
+                    if self.order.type == .folio {
+                        /// Budget
+                        Div{
+                            
+                            Div{
+                                Img()
+                                    .src(self.$budgetIcon)
+                                    .marginLeft(7.px)
+                                    .marginTop(3.px)
+                                    .height(20.px)
+                            }
+                            .float(.left)
+                            
+                            Span("Presupuesto")
+                        }
+                        .class(.uibtn)
+                        .float(.right)
+                        .onClick {
+                            self.openOrderBudget()
+                        }
+                    }
+                    
+                    H2("Cargos y pagos")
+                        .float(.left)
+                        .color(.gray)
+                    /*
+                    Div{
+                        
+                        Img()
+                            .src("/skyline/media/maximizeWindow.png")
+                            .class(.iconWhite)
+                            .marginLeft(7.px)
+                            .cursor(.pointer)
+                            .marginTop(7.px)
+                            .height(18.px)
+                            
+                    }
+                    .float(.left)
+                    */
+                    
+                    Div().clear(.both)
+                }
+                
+                Div().class(.clear).height(3.px)
+                
+                Div{
+
+                    Table {
+                        
+                        THead {
+                            Tr{
+                                Td().width(25.px)
+                                Td().width(20.px)
+                                Td("Unis").width(50.px)
+                                Td("Descripción")
+                                Td("CUni").width(70.px)
+                                Td("STotal").width(70.px)
+                            }
+                            .color(.lightGray)
+                        }
+
+                        self.chargesTable
+                        
+                    }
+                    .width(100.percent)
+                    .fontSize(18.px)
+                    
+                }
+                .custom("width", "calc(100% - 240px)")
+                .custom("height", "calc(100% - 46px)")
+                .class(.roundGrayBlackDark)
+                .padding(all: 3.px)
+                .overflow(.auto)
+                .float(.left)
+                
+                Div{
+                    Div{
+                        Span("T. Cargos")
+                            .fontSize(14.px)
+                            .color(.white)
+                        Div().class(.clear).marginTop(7.px)
+                        
+                        
+                        Span("T. Pagos")
+                            .fontSize(14.px)
+                            .color(.white)
+                        Div().class(.clear).marginTop(7.px)
+                        
+                        Span("Balance")
+                            .fontSize(14.px)
+                            .fontWeight(.bolder)
+                            .color(.white)
+                        Div().class(.clear).marginTop(7.px)
+                        
+                    }
+                    .align(.right)
+                    .class(.oneHalf)
+                    .padding(all: 3.px)
+                    
+                    Div{
+                        Span(self.$tchars)
+                            .color(.gray)
+                        Div().class(.clear).marginTop(7.px)
+
+                        Span(self.$tpays)
+                            .color(.gray)
+                        Div().class(.clear).marginTop(7.px)
+
+                        Span(self.$ttotal)
+                            .fontWeight(.bolder)
+                            .color(.lightGray)
+                        Div().class(.clear).marginTop(7.px)
+                    }
+                    .align(.left)
+                    .class(.oneHalf)
+                    .padding(all: 3.px)
+                    
+                    Div().clear(.both)
+                    
+                    /// Fiscal Document
+                    self.fiscalView
+                    .hidden(self.$status.map { ( $0 == .finalize || $0 == .canceled || $0 == .archive ) ? false : true })
+                    
+                }
+                .float(.right)
+                .fontSize(16.px)
+                .width(220.px)
+                
+            }
+            .class(Class(TCOrderViewClass.chargesCard))
+            .height(23.percent)
+            .marginRight(3.px)
+            .overflow(.hidden)
+            .marginLeft(3.px)
+            .overflow(.auto)
+        
+        }
+        .class(Class(TCOrderViewClass.mainColumn))
+        .boxShadow(h: 1.px, v: 1.px, blur: 7.px, color: .black)
+        .class(.roundGrayBlackDark, .twoThird)
+        .custom("height", "calc(100% - 3px)")
+        .padding(all: 0.px)
+        
+        Div {
+
+            /// Content View
+            Div{
+                
+                Div{
+                
+                    Div{
+                        
+                        Img()
+                            .src("/skyline/media/icons_alert.png")
+                            .cursor(.pointer)
+                            .float(.right)
+                            .height(32.px)
+                        
+                        H4("Tareas Pendientes")
+                            .color(.yellowTC)
+                    }
+                    
+                    Div().clear(.both).height(3.px)
+                    
+                    ForEach(self.$tasks) { task in
+                        TaskView(task: task) { taskId in
+                            
+                            var newTasks: [CustTaskAuthorizationManagerQuick] = []
+                            
+                            if let tasks = tasksCatch[self.order.id] {
+                                tasks.forEach { task in
+                                    if task.id == taskId {
+                                        return
+                                    }
+                                    newTasks.append(task)
+                                }
+                            }
+                            
+                            tasksCatch[self.order.id] = newTasks
+                            self.tasks = newTasks
+                        }
+                    }
+                    
+                    
+                    Div().clear(.both).height(7.px)
+                }
+                .hidden(self.$tasks.map{ $0.isEmpty })
+                .paddingRight(7.px)
+                
+                Div{
+                    
+                    Img()
+                        .src(self.$isHighPriority.map{ $0 ? "/skyline/media/icons_high_priority.png" : "/skyline/media/icons_high_priority_off.png" })
+                        .padding(all: 7.px)
+                        .paddingRight(0.px)
+                        .cursor(.pointer)
+                        .height(32.px)
+                        .onClick {
+                            
+                            guard custCatchHerk >= 2 else {
+                                return
+                            }
+                            
+                            var title = "Marcar como Alta Prioridad"
+                            
+                            if self.isHighPriority {
+                                title = "Remover Alta Prioridad"
+                            }
+                            
+                            addToDom(
+                                
+                                ConfirmationView(
+                                    type: .acceptDeny,
+                                    title: title,
+                                    message: "Confirme e ingrese el motivo del cambio.",
+                                    comments: .requiredExemptFromHerk(4)
+                                ) { isConfirmed, comment in
+                                    
+                                    if isConfirmed {
+                                        
+                                        loadingView.show()
+                                        
+                                        API.custOrderV1.highPrioritize(
+                                            orderId: self.order.id,
+                                            reason: comment,
+                                            state: !self.isHighPriority
+                                        ) { resp in
+                                            
+                                            loadingView.hide()
+                                            
+                                            guard let resp else {
+                                                showError(.comunicationError, .serverConextionError)
+                                                return
+                                            }
+                                            
+                                            guard resp.status == .ok else {
+                                                showError(.generalError, resp.msg)
+                                                return
+                                            }
+                                            
+                                            OrderCatchControler.shared.updateParameter(self.order.id, .hightPriorityStatus(!self.isHighPriority))
+                                            
+                                            self.order.highPriority = !self.isHighPriority
+                                            
+                                            self.isHighPriority = !self.isHighPriority
+                                            
+                                        }
+                                    }
+                                    
+                                }
+                            )
+                            
+                        }
+                    
+                    Img()
+                        .src(self.$inAlert.map{ $0 ? "/skyline/media/icons_alert.png" : "/skyline/media/icons_alert_off.png" })
+                        .padding(all: 7.px)
+                        .paddingRight(0.px)
+                        .cursor(.pointer)
+                        .height(32.px)
+                        .onClick {
+                            
+                            var title = "Marcar con alerta"
+                            
+                            if self.inAlert {
+                                title = "Remover alerta"
+                            }
+                            
+                            addToDom(
+                                
+                                ConfirmationView(
+                                    type: .acceptDeny,
+                                    title: title,
+                                    message: "Confirme e ingrese el motivo del cambio.",
+                                    comments: .requiredExemptFromHerk(4)
+                                ) { isConfirmed, comment in
+                                    
+                                    if isConfirmed {
+                                        
+                                        loadingView.show()
+                                        
+                                        API.custOrderV1.alerted(
+                                            orderId: self.order.id,
+                                            reason: comment,
+                                            state: !self.inAlert
+                                        ) { resp in
+                                            
+                                            loadingView.hide()
+                                            
+                                            guard let resp else {
+                                                showError(.comunicationError, .serverConextionError)
+                                                return
+                                            }
+                                            
+                                            guard resp.status == .ok else {
+                                                showError(.generalError, resp.msg)
+                                                return
+                                            }
+                                            
+                                            OrderCatchControler.shared.updateParameter(self.order.id, .alertStatus(!self.inAlert))
+                                            
+                                            self.order.alerted = !self.inAlert
+                                            
+                                            self.inAlert = !self.inAlert
+                                            
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                    
+                    Img()
+                        .float(.right)
+                        .cursor(.pointer)
+                        .src("/skyline/media/cross.png")
+                        .height(32.px)
+                        .padding(all: 7.px)
+                        .paddingRight(0.px)
+                        .hidden(self.$editMode.map{!$0})
+                        .onClick { img, event in
+                            self.orderName = self.order.name
+                            self.mobile = self.order.mobile
+                            self.email = self.order.email
+                            self.telephone = self.order.telephone
+                            self.street = self.order.street
+                            self.colony = self.order.colony
+                            self.city = self.order.city
+                            self.state = self.order.state
+                            self.country = self.order.country
+                            self.zip = self.order.zip
+                            self.editMode = false
+                        }
+                    
+                          
+                    Img()
+                        .float(.right)
+                        .cursor(.pointer)
+                        .src(self.$editMode.map{ $0 ? "/skyline/media/diskette.png" : "/skyline/media/pencil.png" })
+                        .height(32.px)
+                        .padding(all: 7.px)
+                        .onClick { img, event in
+                            
+                            if self.editMode {
+                                self.saveOrderDetails()
+                                return
+                            }
+                            self.editMode = true
+                        }
+
+                    if custCatchAccountType != .entrepreneur {
+
+                        /*                    
+                        Div{
+                            Div{
+                                Img()
+                                    .src("/skyline/media/add.png")
+                                    .marginLeft(3.px)
+                                    .marginTop(7.px)
+                                    .height(20.px)
+                            }
+                            .float(.left)
+                            
+                            Span("Proyecto")
+                        }
+                        .hidden(self.$orderProject.map{ $0 != nil })
+                        .class(.uibtn)
+                        .float(.right)
+                        .onClick {
+                            self.addOrderProject()
+                        }
+                        */
+                        
+                        Div{
+                            Div{
+                                Img()
+                                    .src("/skyline/media/star_yellow.png")
+                                    .marginLeft(3.px)
+                                    .marginTop(7.px)
+                                    .height(20.px)
+                            }
+                            .float(.left)
+                            
+                            Span("Ver Proyecto")
+                            
+                        }
+                        .hidden(self.$orderProject.map{ $0 == nil })
+                        .class(.uibtn)
+                        .float(.right)
+                        .onClick {
+                            
+                            guard let orderProject = self.orderProject else {
+                                showError(.unexpectedResult, "No selocalizo id del proyecto")
+                                return
+                            }
+                            
+                            API.custOrderV1.loadOrderProject(
+                                projetcId: orderProject,
+                                orderId: self.order.id
+                            ) { resp in
+                                
+                                loadingView.hide()
+                                
+                                guard let resp else {
+                                    showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
+                                    return
+                                }
+                                
+                                guard resp.status == .ok else {
+                                    showError(.generalError, resp.msg)
+                                    return
+                                }
+                                
+                                guard let payload = resp.data else {
+                                    showError(.unexpectedResult, .unexpenctedMissingPayload)
+                                    return
+                                }
+                                
+                                let view = OrderProject(
+                                    project: payload.project,
+                                    items: payload.items,
+                                    charges: payload.charges
+                                )
+                                
+                                addToDom(view)
+                                
+                                
+                            }
+                            
+                        }
+                    
+                    }
+                   
+                }
+                .class(Class(TCOrderViewClass.summaryHeaderActions))
+                
+                Div().clear(.both).height(3.px)
+                
+                Div{
+                    
+                    Div{
+
+                        Div().clear(.both).height(7.px)
+                        
+                        Span("Orden ·")
+                            .marginRight(7.px)
+                            .color(.gray)
+                        
+                        Span(self.order.folio)
+                            .marginRight(7.px)
+                            .color(.lightGray)
+                        
+                    }
+                    .width(55.percent)
+                    .fontSize(22.px)
+                    .float(.left)
+                    
+                    Div{
+                        
+                        if custCatchHerk >= 2 {
+                            
+                            Div{
+                                
+                                Div(self.$status.map{ $0.description })
+                                    .custom("width", "calc(100% - 38px)")
+                                    .color(self.$status.map{ $0.color})
+                                    .class(.oneLineText)
+                                    .float(.left)
+                                 
+                                 Div{
+                                     Img()
+                                         .src(self.$statusMenuIsHidden.map{ $0 ? "/skyline/media/dropDown.png" : "/skyline/media/dropDownClose.png" })
+                                         .class(.iconWhite)
+                                         .opacity(0.8)
+                                         .width(28.px)
+                                 }
+                                 .borderLeft(
+                                    width: BorderWidthType.thin,
+                                    style: .solid,
+                                    color: self.$status.map { $0.color }
+                                 )
+                                 .hidden(self.$status.map{
+                                    
+                                     [
+                                        CustFolioStatus.canceled,
+                                        CustFolioStatus.finalize,
+                                        CustFolioStatus.pendingSpare,
+                                        CustFolioStatus.collection
+                                     ].contains($0)
+                                     
+                                 })
+                                 .paddingRight(3.px)
+                                 .paddingLeft(7.px)
+                                 .marginLeft(7.px)
+                                 .float(.right)
+                                 .width(28.px)
+                                
+                                 Div().clear(.both)
+                                 
+                            }
+                            .width(91.percent)
+                            .backgroundColor(self.$status.map { $0.crystalTintColor })
+                            .border(
+                                width: .thin,
+                                style: .solid,
+                                color: self.$status.map { $0.color }
+                            )
+                            .class(.uibtn)
+                            .class(Class(TCOrderViewClass.headerStatus))
+                            .class(Class(TCOrderViewClass.statusControl))
+                            .onClick {
+                                
+                                if [
+                                    CustFolioStatus.canceled,
+                                    CustFolioStatus.finalize,
+                                    CustFolioStatus.pendingSpare,
+                                    CustFolioStatus.collection
+                                ].contains(self.status) {
+                                   return
+                                }
+                                
+                                self.statusMenuIsHidden = !self.statusMenuIsHidden
+                            }
+                            
+                            Div{
+                                
+                                /// Pending
+                                Div(CustFolioStatus.pending.description)
+                                .hidden(self.$status.map{ $0 == .pending })
+                                .color(CustFolioStatus.pending.color)
+                                .class(.oneLineText)
+                                .width(90.percent)
+                                .marginTop(7.px)
+                                .class(.uibtn)
+                                .class(Class(TCOrderViewClass.statusOption))
+                                .onClick { _, event in
+                                    self.changeOrderStatus(.pending)
+                                    self.statusMenuIsHidden = true
+                                    event.stopPropagation()
+                                }
+                                    
+                                /// Active
+                                Div(CustFolioStatus.active.description)
+                                .hidden(self.$status.map{ $0 == .active })
+                                .color(CustFolioStatus.active.color)
+                                .class(.oneLineText)
+                                .width(90.percent)
+                                .marginTop(7.px)
+                                .class(.uibtn)
+                                .class(Class(TCOrderViewClass.statusOption))
+                                .onClick { _, event in
+                                    self.changeOrderStatus(.active)
+                                    self.statusMenuIsHidden = true
+                                    event.stopPropagation()
+                                }
+                                
+                                /// Collections
+                                Div(CustFolioStatus.saleWait.description)
+                                .hidden(self.$status.map{ $0 == .saleWait })
+                                .color(CustFolioStatus.saleWait.color)
+                                .class(.oneLineText)
+                                .width(90.percent)
+                                .marginTop(7.px)
+                                .class(.uibtn)
+                                .class(Class(TCOrderViewClass.statusOption))
+                                .onClick { _, event in
+                                    self.changeOrderStatus(.saleWait)
+                                    self.statusMenuIsHidden = true
+                                    event.stopPropagation()
+                                }
+                                
+                                /// Archive
+                                Div(CustFolioStatus.archive.description)
+                                .hidden(self.$status.map{ $0 == .archive })
+                                .color(CustFolioStatus.archive.color)
+                                .class(.oneLineText)
+                                .width(90.percent)
+                                .marginTop(7.px)
+                                .class(.uibtn)
+                                .class(Class(TCOrderViewClass.statusOption))
+                                .onClick { _, event in
+                                    self.changeOrderStatus(.archive)
+                                    self.statusMenuIsHidden = true
+                                    event.stopPropagation()
+                                }
+                                
+                                /// Collections
+                                Div(CustFolioStatus.collection.description)
+                                .hidden(self.$status.map{ $0 == .collection })
+                                .color(CustFolioStatus.collection.color)
+                                .class(.oneLineText)
+                                .width(90.percent)
+                                .marginTop(7.px)
+                                .class(.uibtn)
+                                .class(Class(TCOrderViewClass.statusOption))
+                                .onClick { _, event in
+                                    self.changeOrderStatus(.collection)
+                                    self.statusMenuIsHidden = true
+                                    event.stopPropagation()
+                                }
+                                
+                                Div(CustFolioStatus.finalize.description)
+                                .hidden(self.$status.map{ ($0 == .finalize  || $0 == .canceled) })
+                                .color(CustFolioStatus.finalize.color)
+                                .class(.oneLineText)
+                                .width(90.percent)
+                                .marginTop(7.px)
+                                .class(.uibtn)
+                                .class(Class(TCOrderViewClass.statusOption))
+                                .onClick { _, event in
+                                    self.changeOrderStatus(.finalize)
+                                    self.statusMenuIsHidden = true
+                                    event.stopPropagation()
+                                }
+                                
+                                Div(CustFolioStatus.canceled.description)
+                                .hidden(self.$status.map{ ($0 == .finalize  || $0 == .canceled) })
+                                .color(CustFolioStatus.canceled.color)
+                                .class(.oneLineText)
+                                .width(90.percent)
+                                .marginTop(7.px)
+                                .class(.uibtn)
+                                .class(Class(TCOrderViewClass.statusOption))
+                                .onClick { _, event in
+                                    self.changeOrderStatus(.canceled)
+                                    self.statusMenuIsHidden = true
+                                    event.stopPropagation()
+                                }
+                                
+                                
+                                Div().height(12.px)
+                            }
+                            .class(Class(TCOrderViewClass.statusMenu))
+                            .hidden(self.$statusMenuIsHidden)
+                            .backgroundColor(.transparentBlack)
+                            .position(.absolute)
+                            .borderRadius(12.px)
+                            .padding(all: 3.px)
+                            .margin(all: 3.px)
+                            .marginTop(7.px)
+                            .width(200.px)
+                            .zIndex(1)
+                            .onClick { _, event in
+                                event.stopPropagation()
+                            }
+                            
+                        }
+                        else {
+                            
+                            Div(self.$status.map{ $0.description })
+                                .color(self.$status.map{ $0.color})
+                                .backgroundColor(self.$status.map { $0.crystalTintColor })
+                                .border(
+                                    width: .thin,
+                                    style: .solid,
+                                    color: self.$status.map { $0.color }
+                                )
+                                .class(.oneLineText)
+                                .class(Class(TCOrderViewClass.headerStatus))
+                                .class(Class(TCOrderViewClass.statusControl))
+                        }
+                        
+                    }
+                    .width(45.percent)
+                    .float(.left)
+                    
+                    Div().clear(.both)
+                    
+                }
+                .class(Class(TCOrderViewClass.summaryIdentity))
+                .marginBottom(7.px)
+            
+                Div().class(.clear)
+                
+                // Created At
+                Div{
+                    Div("Creado")
+                    .class(.oneThird)
+                    .color(.gray)
+                    
+                    self.createAtDiv
+                        .align(.right)
+                        .fontSize(26.px)
+                        .class(.twoThird)
+                }
+                
+                Div().class(.clear)
+                
+                // Date
+                Div{
+                    Div("Cita")
+                        .color(.white)
+                        .float(.left)
+                    
+                    // Request Date
+                    
+                    if self.order.type != .rental {
+                        
+                        self.dueAtDiv
+                            .float(.right)
+                            .cursor(.pointer)
+                            .hidden( self.$dueDate.map{$0 == nil ? true : false} )
+                            .onClick {
+                                self.orderDate()
+                            }
+                        
+                        Div{
+                            Span("Agregar Cita")
+                                .color(.skyBlue)
+                                .float(.right)
+                            
+                            Img()
+                                .src("/skyline/media/icon_calendar.png")
+                                .class(.iconWhite)
+                                .height(26.px)
+                                .float(.right)
+                                .paddingRight(12.px)
+                            
+                            Div().class(.clear)
+                        }
+                        .float(.right)
+                        .hidden( self.$dueDate.map{$0 != nil ? true : false} )
+                        .cursor(.pointer)
+                        .onClick {
+                            self.orderDate()
+                        }
+                    }
+                    else{
+                        self.dueAtDiv
+                            .float(.right)
+                    }
+                    
+                    Div().class(.clear)
+                }
+                .fontSize(26.px)
+                .align(.right)
+                
+                // OnWork User
+                Div{
+                    Div("Operador")
+                        .color(.white)
+                        .float(.left)
+                    
+                    Div{
+                        
+                        Div{
+                            Img()
+                                .src("/skyline/media/random.png")
+                                .cursor(.pointer)
+                                .marginTop(7.px)
+                                .height(26.px)
+                                .onClick {
+                                    
+                                    guard let store = self.order.store else {
+                                        print("Order has no store id")
+                                        return
+                                    }
+                                    
+                                    addToDom(SelectCustUsernameView(
+                                        type: .store(store),
+                                        ignore: [],
+                                        callback: { user in
+                                            
+                                            loadingView.show()
+                                            
+                                            API.custOrderV1.reassign(
+                                                orderid: self.order.id,
+                                                userid: user.id
+                                            ) { resp in
+                                                
+                                                loadingView.hide()
+                                                
+                                                guard let resp else {
+                                                    showError(.comunicationError, .serverConextionError)
+                                                    return
+                                                }
+                                                
+                                                guard resp.status == .ok else {
+                                                    showError(.generalError, resp.msg)
+                                                    return
+                                                }
+                                                
+                                                self.onWorkUser = user.id
+                                                
+                                                self.order.workedBy = user.id
+                                                
+                                                orderCatch[self.order.id]?.workedBy = user.id
+                                                
+                                            }
+                                            
+                                        })
+                                    )
+                                    
+                                    // reassign
+                                    
+                                }
+                        }
+                        .paddingRight(12.px)
+                        .float(.left)
+                        
+                        
+                        Span(self.$onWorkUsername)
+                    }
+                    .float(.right)
+                }
+                .hidden(self.$onWorkUser.map{ $0 == nil })
+                .fontSize(26.px)
+                
+                Div().class(.clear).height(7.px)
+                
+                /// Name Mobile
+                Div {
+                    H2("Contacto")
+                        .fontSize(16.px)
+                        .color(.gray)
+                    
+                    Div{
+                        
+                        Img()
+                            .src("/skyline/media/usernameIconWhite.svg")
+                            .height(22.px)
+                            .paddingTop( 3.px)
+                            .paddingRight(7.px)
+                            .float(.left)
+                            .opacity(0.5)
+                            .hidden(self.$editMode.map{$0})
+                        
+                        Span(self.$orderName)
+                            .hidden(self.$editMode.map{$0})
+                            .marginBottom(7.px)
+                            .color(.goldenRod)
+                            .fontSize(24.px)
+                            .float(.left)
+                        
+                        InputText(self.$orderName)
+                            .placeholder("Nombre")
+                            .custom("width","calc(100% - 45px)")
+                            .leftImage(img: "/skyline/media/usernameIconWhite.svg")
+                            .backgroundSize(h: 18.px, v: 18.px)
+                            .class(.textFiledBlackDark)
+                            .hidden(self.$editMode.map{!$0})
+                            .height(31.px)
+                    }
+                    .class(.oneTwo, .oneLineText)
+                    .paddingLeft(0.px)
+                    
+                    Div{
+                        
+                        Img()
+                            .cursor(.pointer)
+                            .src("/skyline/media/icon_mobile.png")
+                            .hidden(self.$editMode.map{$0})
+                            .class(.iconWhite)
+                            .paddingRight(7.px)
+                            .paddingTop( 3.px)
+                            .height(22.px)
+                            .float(.left)
+                        
+                        Span(self.$mobile)
+                            .hidden(self.$editMode.map{$0})
+                            .marginBottom(7.px)
+                            .color(.goldenRod)
+                            .fontSize(24.px)
+                            .float(.left)
+                        
+                        InputText(self.$mobile)
+                            .placeholder("834 123 1234")
+                            .custom("width","calc(100% - 52px)")
+                            .leftImage(img: "/skyline/media/icon_mobile_white.png")
+                            .backgroundSize(h: 18.px, v: 18.px)
+                            .class(.textFiledBlackDark)
+                            .hidden(self.$editMode.map{!$0})
+                            .height(31.px)
+                    }
+                    .class(.oneTwo, .oneLineText)
+                    .paddingRight(0.px)
+                }
+                .marginBottom(7.px)
+            
+                Div().class(.clear)
+                
+                /// Telephone Email
+                if !self.order.telephone.isEmpty || !self.order.email.isEmpty {
+                    Div {
+                        if !self.order.telephone.isEmpty {
+                            Div{
+                                
+                                Img()
+                                    .cursor(.pointer)
+                                    .src("/skyline/media/icon_telephone.png")
+                                    .class(.iconWhite)
+                                    .height(18.px)
+                                    .paddingTop( 3.px)
+                                    .paddingRight(7.px)
+                                    .float(.left)
+                                    .hidden(self.$editMode.map{$0})
+
+                                Span(self.$telephone)
+                                    .fontSize(20.px)
+                                    .float(.left)
+                                    .hidden(self.$editMode.map{$0})
+                                    .marginBottom(7.px)
+                                
+                                InputText(self.$telephone)
+                                    .placeholder("834 123 1234")
+                                    .custom("width","calc(100% - 45px)")
+                                    .leftImage(img: "/skyline/media/icon_telephone_white.svg")
+                                    .backgroundSize(h: 18.px, v: 18.px)
+                                    .class(.textFiledBlackDark)
+                                    .hidden(self.$editMode.map{!$0})
+                                    .height(31.px)
+                                
+                            }
+                            .class(.oneTwo, .oneLineText)
+
+                        }
+                        if !self.order.email.isEmpty {
+                            Div{
+                                Img()
+                                    .cursor(.pointer)
+                                    .src("/skyline/media/icon_email.png")
+                                    .class(.iconWhite)
+                                    .height(18.px)
+                                    .paddingTop( 3.px)
+                                    .paddingRight(7.px)
+                                    .float(.left)
+                                    .hidden(self.$editMode.map{$0})
+                                    .marginBottom(7.px)
+                                
+                                Span(self.$email)
+                                    .fontSize(20.px)
+                                    .float(.left)
+                                    .hidden(self.$editMode.map{$0})
+                                    .marginBottom(7.px)
+                                
+                                InputText(self.$email)
+                                    .placeholder("Correo Electronico")
+                                    .custom("width","calc(100% - 52px)")
+                                    .leftImage(img: "/skyline/media/icon_email_white.svg")
+                                    .backgroundSize(h: 18.px, v: 18.px)
+                                    .class(.textFiledBlackDark)
+                                    .hidden(self.$editMode.map{!$0})
+                                    .height(31.px)
+                            }
+                            .class(.oneTwo, .oneLineText)
+                        }
+                    }
+                    .marginBottom(7.px)
+                }
+                
+                if configStoreProcessing.rewardsPrograme != nil {
+                    
+                    Div().clear(.both).height(12.px)
+                    
+                    Div{
+                        Div{
+                            
+                            Img()
+                                .src("/skyline/media/activate_rewards_2.png")
+                                .custom("width", "calc(100% - 24px)")
+                        }
+                        .width(50.percent)
+                        .float(.left)
+                        Div{
+                            
+                            Div{
+                                Img()
+                                    .float(.right)
+                                    .cursor(.pointer)
+                                    .src("/skyline/media/add.png")
+                                    .height(18.px)
+                                    .padding(all: 3.px)
+                                    .paddingRight(0.px)
+                                    .onClick { img, event in
+                                        self.addLoyaltyCard(isRequiered: true) {
+                                            /// No callback necesary
+                                        }
+                                    }
+                                
+                                Div("Tarjeta de Lealtad")
+                                    .class(.oneLineText)
+                                    .color(.darkOrange)
+                                    .fontSize(18.px)
+                            }
+                            
+                            Div().class(.clear)
+                            
+                            Div("Tarjeta de Puntos")
+                                .class(.oneLineText, .textFiledBlackDark)
+                                .color(Color(r: 81, g: 85, b: 94) )
+                                .cursor(.pointer)
+                                .fontSize(24.px)
+                                .height(32.px)
+                                .onClick {
+                                    self.addLoyaltyCard(isRequiered: true){
+                                        /// No callback is requiered
+                                    }
+                                }
+                            
+                        }
+                        .width(50.percent)
+                        .float(.left)
+                        
+                    }
+                    .class(Class(TCOrderViewClass.rewardsCard))
+                    .hidden(self.accountView.$cardId.map{ !$0.isEmpty })
+                    
+                    Div{
+                        Div{
+                            Div("Tarjeta de Lealtad")
+                                .class(.oneLineText)
+                                .color(.darkOrange)
+                                .fontSize(18.px)
+                        }
+                        .width(50.percent)
+                        .float(.left)
+                        Div{
+                            
+                            Div(self.accountView.$cardId.map{ $0 })
+                                .class(.oneLineText, .textFiledBlackDark)
+                                .color(.lightGray)
+                                .cursor(.default)
+                                .fontSize(24.px)
+                                .height(32.px)
+                                
+                        }
+                        .width(50.percent)
+                        .float(.left)
+                        
+                    }
+                    .class(Class(TCOrderViewClass.rewardsCard))
+                    .hidden(self.accountView.$cardId.map{ $0.isEmpty })
+                
+                    Div().clear(.both).height(5.px)
+                    
+                }
+                
+                Div().clear(.both)
+                
+                if custCatchAccountType != .entrepreneur {    
+                    Div{
+                        Div{
+                            Span("Encuestas Administración")
+                                .fontSize(16.px)
+                            Div().class(.clear).marginTop(7.px)
+                            Div{
+                                /// First Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.yellowContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                /// Second Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.grayContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                /// Third Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.grayContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                /// Fourth Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.grayContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                /// Fivth Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.grayContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                Div().clear(.both)
+                                
+                            }
+                        }
+                        .class(.oneHalf)
+                        .borderRight(width: .thin, style: .solid, color: .gray)
+                        
+                        Div{
+                            
+                            Span("Encuestas Técnico")
+                                .fontSize(16.px)
+                            Div().class(.clear).marginTop(7.px)
+                            Div{
+                                /// First Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.yellowContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                /// Second Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.grayContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                /// Third Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.grayContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                /// Fourth Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.grayContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                /// Fifth Point
+                                Div{
+                                    Div()
+                                        .backgroundColor(.grayContrast)
+                                        .borderRadius(all: 9.px)
+                                        .width(18.px)
+                                        .height(18.px)
+                                }
+                                .width(20.percent)
+                                .align(.center)
+                                .float(.left)
+                                
+                                Div().clear(.both)
+                            }
+                        }
+                        .class(.oneHalf)
+                        
+                        Div().clear(.both)
+                    }
+                    .class(Class(TCOrderViewClass.surveysCard))
+                }
+
+                Div().class(.clear).marginTop(12.px)
+                
+                Div {
+                    
+                    Div {
+                          Div {
+                                Img()
+                                    .src("/skyline/media/add.png")
+                                    .marginTop(7.px)
+                                    .cursor(.pointer)
+                                    .height(24.px)
+                            }
+                            .marginRight(7.px)
+                            .float(.right)
+
+                        Span("Carta de Servicio")
+                        .color(.yellowTC)
+                    }
+                    .class(Class(TCOrderViewClass.detailHeader))
+                    .cursor(.pointer)
+                    .onClick {
+                        self.hideServiceLetterContainer = !self.hideServiceLetterContainer
+                    }
+
+                    Div().clear(.both).height(3.px)
+                    
+                    Div{
+                        Span("-- No hay Carta de Servicio")
+                            .hidden(self.$contratc.map{ $0 != nil })
+                            .color(.gray)
+                    }
+                    .class(Class(TCOrderViewClass.detailBody))
+                    .hidden(self.$hideServiceLetterContainer)
+                    .align(.center)
+                     
+                    //orderContract
+
+                    // {"valueNinePlaceholder":"","valueSevenIO":"textField","valueThree":{"custome":{"_0":"Fecha del primer pago"}},"valueFourPlaceholder":"DD\/MM\/AAAA","valueTwelveIO":"instruction","valueTwelvePlaceholder":"","valueFifteen":{"inactive":{}},"valueFiveIO":"textArea","valueFourteenPlaceholder":"","valueFourteen":{"inactive":{}},"valueFour":{"custome":{"_0":"Fecha del ultimo pago"}},"customerAddress":"order","contractId":"871A7F2E-63A5-4A08-9EA8-B04FFF3F7933","valueSixIO":"textField","valueFourIO":"textArea","valueFourteenIO":"instruction","valueThirteenIO":"instruction","valueTwo":{"custome":{"_0":"Inicion de contrato"}},"valueEight":{"custome":{"_0":"Mensualidad"}},"customerInformation":"account","valueOnePlaceholder":"¿Cuanto meses va a durar el contrato?","valueOne":{"custome":{"_0":"Plazos del contrato"}},"valueOneIO":"textField","valueThirteen":{"inactive":{}},"valueSevenPlaceholder":"0.00","valueFivePlaceholder":"Ponga un concepto por linea","valueEightIO":"textField","valueSixPlaceholder":"0.00","valueSeven":{"custome":{"_0":"Anticipo"}},"valueEightPlaceholder":"0.00","valueNine":{"inactive":{}},"valueTwoPlaceholder":"DD\/MM\/AAAA","valueSix":{"custome":{"_0":"Valor total del Proyecto"}},"valueThreePlaceholder":"DD\/MM\/AAAA","valueTwoIO":"textField","valueThreeIO":"textField","valueNineIO":"instruction","valueFive":{"custome":{"_0":"Descrición del producto"}},"valueTenIO":"instruction","valueTenPlaceholder":"","valueTen":{"inactive":{}},"valueElevenIO":"instruction","valueElevenPlaceholder":"","valueEleven":{"inactive":{}},"valueTwelve":{"inactive":{}},"valueThirteenPlaceholder":"","valueFifteenPlaceholder":"","valueFifteenIO":"instruction"}
+
+                    Div().clear(.both).height(7.px)
+
+                    Div {
+                        Div {
+                            Div {
+                                Img()
+                                    .src("/skyline/media/add.png")
+                                    .marginTop(7.px)
+                                    .cursor(.pointer)
+                                    .height(24.px)
+                                    .onClick {
+                                        addToDom(SelectCustContractView(
+                                            orderContract: self.orderContract,
+                                            callback: { contract in
+                                                self.loadContractMetaData(contract)
+                                            }
+                                        ))
+                                    }
+                            }
+                            .marginRight(7.px)
+                            .float(.right)
+
+                            Span("Contratos")
+                            .color(.yellowTC)
+                        }
+                        .class(Class(TCOrderViewClass.detailHeader))
+                        .cursor(.pointer)
+                        .onClick {
+                            self.hideContractContainer = !self.hideContractContainer
+                        }
+
+                        Div().clear(.both).height(3.px)
+
+                        Div {
+                            
+                        }
+                        .class(Class(TCOrderViewClass.detailBody))
+                        .hidden(self.$hideContractContainer)
+                        .class(.roundDarkBlue)
+
+                    }
+                    .class(Class(TCOrderViewClass.detailSection))
+                    .hidden(self.$orderContract.map{ $0.isEmpty })
+                    
+                }
+                .class(Class(TCOrderViewClass.detailsStack))
+                
+                Div().class(.clear).marginTop(12.px)
+                
+                Div {
+
+                    Img()
+                        .float(.right)
+                        .src("/skyline/media/zoom.png")
+                        .class(.iconWhite)
+                        .height(24.px)
+                        .padding(all: 3.px)
+                    
+                    H2("Dirección de servicio")
+                        .marginBottom(3.px)
+                        .fontSize(24.px)
+                        .marginTop(7.px)
+
+                }
+                .class(Class(TCOrderViewClass.addressHeader))
+                .cursor(.pointer)
+                .onClick { self.requierServiceAddress = !self.requierServiceAddress }
+                
+                Div().class(.clear)
+                
+                Div{
+
+                    if custCatchAccountType != .entrepreneur {
+                        self.mapContainer
+                        
+                        Div().class(.clear).marginBottom(7.px)
+                    }
+                    /// street
+                    Div {
+                        
+                        Span(self.$street)
+                            .color(.lightGray)
+                            .fontSize(22.px)
+                            .float(.left)
+                            .hidden(self.$editMode.map{$0})
+                            .marginBottom(7.px)
+                        
+                        Span("Calle y Numero")
+                            .color(.rgb(81, 85,94))
+                            .fontSize(22.px)
+                            .float(.left)
+                            .hidden(self.$streetHolderIsHidden.map{$0})
+                            .marginBottom(7.px)
+                        
+                        InputText(self.$street)
+                            .placeholder("Calle y Numero")
+                            .custom("width","calc(100% - 18px)")
+                            .class(.textFiledBlackDark)
+                            .hidden(self.$editMode.map{!$0})
+                            .height(31.px)
+                        
+                    }
+                    .paddingLeft(0.px)
+                    
+                    Div().class(.clear)
+                    
+                    /// city colony
+                    Div {
+                        Div{
+                            Span(self.$colony)
+                                .color(.lightGray)
+                                .fontSize(22.px)
+                                .float(.left)
+                                .hidden(self.$editMode.map{$0})
+                                .marginBottom(7.px)
+                            
+                            Span("Colonia")
+                                .color(.rgb( 81, 85, 94))
+                                .fontSize(22.px)
+                                .float(.left)
+                                .hidden(self.$colonyHolderIsHidden.map{$0})
+                                .marginBottom(7.px)
+                            
+                            InputText(self.$colony)
+                                .placeholder("Colonia")
+                                .custom("width","calc(100% - 18px)")
+                                .class(.textFiledBlackDark)
+                                .hidden(self.$editMode.map{!$0})
+                                .height(31.px)
+                        }
+                        .class(.oneTwo, .oneLineText)
+                        .paddingLeft(0.px)
+                        
+                        Div{
+                            Span(self.$city)
+                                .color(.lightGray)
+                                .fontSize(22.px)
+                                .float(.left)
+                                .hidden(self.$editMode.map{$0})
+                                .marginBottom(7.px)
+                            
+                            Span("Cudiad")
+                                .color(.rgb( 81, 85, 94))
+                                .fontSize(22.px)
+                                .float(.left)
+                                .hidden(self.$cityHolderIsHidden.map{$0})
+                                .marginBottom(7.px)
+                            
+                            InputText(self.$city)
+                                .placeholder("Cuidad")
+                                .custom("width","calc(100% - 18px)")
+                                .class(.textFiledBlackDark)
+                                .hidden(self.$editMode.map{!$0})
+                                .height(31.px)
+                        }
+                        .class(.oneTwo, .oneLineText)
+                        .paddingRight(0.px)
+                    }
+                    .marginBottom(7.px)
+                    
+                    Div().class(.clear)
+                    
+                    ///state country zip
+                    Div {
+                        Div{
+                            Span(self.$state)
+                                .color(.lightGray)
+                                .fontSize(22.px)
+                                .float(.left)
+                                .hidden(self.$editMode.map{$0})
+                                .marginBottom(7.px)
+                            
+                            Span("Estado")
+                                .color(.rgb( 81, 85, 94))
+                                .fontSize(22.px)
+                                .float(.left)
+                                .hidden(self.$stateHolderIsHidden.map{$0})
+                                .marginBottom(7.px)
+                            
+                            InputText(self.$state)
+                                .placeholder("Estado")
+                                .custom("width","calc(100% - 18px)")
+                                .class(.textFiledBlackDark)
+                                .hidden(self.$editMode.map{!$0})
+                                .height(31.px)
+                        }
+                        .width(33.percent)
+                        .float(.left)
+                        
+                        Div{
+                            Span(self.$country)
+                                .color(.lightGray)
+                                .fontSize(22.px)
+                                .float(.left)
+                                .hidden(self.$editMode.map{$0})
+                                .marginBottom(7.px)
+                            
+                            Span("Pais")
+                                .color(.rgb( 81, 85, 94))
+                                .fontSize(22.px)
+                                .float(.left)
+                                .hidden(self.$countryHolderIsHidden.map{$0})
+                                .marginBottom(7.px)
+                            
+                            InputText(self.$country)
+                                .placeholder("Pais")
+                                .custom("width","calc(100% - 18px)")
+                                .class(.textFiledBlackDark)
+                                .hidden(self.$editMode.map{!$0})
+                                .height(31.px)
+                        }
+                        .width(33.percent)
+                        .float(.left)
+                        
+                        Div{
+                            Span(self.$zip)
+                                .color(.lightGray)
+                                .fontSize(22.px)
+                                .float(.left)
+                                .hidden(self.$editMode.map{$0})
+                                .marginBottom(7.px)
+                            
+                            Span("CP")
+                                .color(.rgb( 81, 85, 94))
+                                .fontSize(22.px)
+                                .float(.left)
+                                .hidden(self.$ziptHolderIsHidden.map{$0})
+                                .marginBottom(7.px)
+                            
+                            InputText(self.$zip)
+                                .placeholder("C.P.")
+                                .custom("width","calc(100% - 18px)")
+                                .class(.textFiledBlackDark)
+                                .hidden(self.$editMode.map{!$0})
+                                .height(31.px)
+                        }
+                        .width(33.percent)
+                        .float(.left)
+                    }
+                    
+                    Div().class(.clear)
+                        .marginBottom(7.px)
+                }
+                .class(Class(TCOrderViewClass.addressBody))
+                .boxShadow(h: 2.px, v: 2.px, blur: 3.px, color: .grayBlackDark)
+                .class(.roundGrayBlackDark)
+                .hidden(self.$requierServiceAddress.map{!$0})
+                
+                Div().class(.clear).marginTop(24.px)
+                
+            }
+            .class(Class(TCOrderViewClass.summaryScroll))
+            .custom("height", "calc(100% - 95px)") 
+            .marginBottom(7.px)
+            .overflow(.auto)
+            
+            /// Status View
+            Div {
+
+                /// pending
+                Div {
+                    
+                    Img()
+                        .src("/skyline/media/icon_print.png")
+                        .margin(all: 7.px)
+                        .class(.iconWhite)
+                        .cursor(.pointer)
+                        .height(35.px)
+                        .float(.right)
+                        .onClick {
+                            self.printOrder()
+                        }
+                    
+                    Div{
+                        CustFolioStatus.pending.whiteIcon128
+                            .class(.iconWhite)
+                            .marginRight(7.px)
+                            .height(28.px)
+                        
+                        Span("Adoptar")
+                            .fontSize(28.px)
+                            .color(.black)
+                        
+                    }
+                    .backgroundColor(CustFolioStatus.pending.color)
+                    .padding(all: 7.px)
+                    .width(50.percent)
+                    .borderRadius(all: 12.px)
+                    .cursor(.pointer)
+                    .onClick({ div, event in
+                        addToDom(ConfirmView(type: .yesNo, title: "Adoptar Orden", message: "Confirme que va adoptar la orden", callback: { isConfirmed, _ in
+                            
+                            if isConfirmed {
+                                
+                                loadingView.show()
+                                
+                                API.custOrderV1.adopt(id: self.order.id) { resp in
+                                    
+                                    loadingView.hide()
+                                    
+                                    guard let resp = resp else {
+                                        showError(.comunicationError, .serverConextionError)
+                                        return
+                                    }
+                                    
+                                    guard resp.status == .ok else{
+                                        showError(.generalError, resp.msg)
+                                        return
+                                    }
+                                    
+                                    self.onWorkUser = custCatchID
+                                    self.status = .active
+                                    
+                                }
+                                
+                            }
+                            
+                        }))
+                    })
+                }
+                .padding(all: 7.px)
+                .align(.center)
+                .hidden(self.$status.map{ $0 == .pending ? false : true  })
+                
+                /// active
+                Div {
+                    
+                    Div{
+                        Img()
+                            .src("/skyline/media/cross.png")
+                            .height(17.px)
+                            .marginRight(5.px)
+                        
+                        Span(configServiceTags.typeOfServiceObject.negativeTag)
+                            .fontSize(15.px)
+                    }
+                    .marginRight(7.px)
+                    .float(.right)
+                    .class(.uibtn)
+                    .custom("white-space", "nowrap")
+                    .custom("flex-shrink", "0")
+                    .onClick {
+                        self.initiateOrderCancelation()
+                    }
+
+                    Div{
+                        
+                        Img()
+                            .src("/skyline/media/checkmark.png")
+                            .height(17.px)
+                            .marginRight(5.px)
+                        
+                        Span(configServiceTags.typeOfServiceObject.positiveTag)
+                            .fontSize(15.px)
+                    }
+                    .float(.left)
+                    .class(.uibtn)
+                    .custom("white-space", "nowrap")
+                    .custom("flex-shrink", "0")
+                    .onClick {
+                        self.initiateOrderFinalization(force: false)
+                    }
+                    
+                    
+                }
+                .paddingTop(7.px)
+                .width(100.percent)
+                .custom("box-sizing", "border-box")
+                .custom("gap", "7px")
+                .hidden(self.$status.map { ( $0 == .pendingSpare || $0 == .active ) ? false : true })
+                .display(self.$status.map { ( $0 == .pendingSpare || $0 == .active ) ? .flex : .none })
+                
+                /// cnx fini
+                Div {
+                    
+                    Div{
+                        
+                        Img()
+                            .src("/skyline/media/icon_pending_pickup@128.png")
+                            .marginRight(7.px)
+                            .height(24.px)
+                        
+                        Span("Entregar")
+                            .fontSize(24.px)
+                    }
+                    .hidden(self.$pendingPickups.map{ $0 <= 0 })
+                    .float(.left)
+                    .class(.uibtn)
+                    .onClick {
+                        self.pickupEquipment()
+                    }
+                    
+                    /// Reactivate
+                    Div{
+                        
+                        Img()
+                            .src("/skyline/media/round.png")
+                            .height(24.px)
+                            .marginRight(7.px)
+                        
+                        Span("Reactivar")
+                            .fontSize(24.px)
+                    }
+                    .float(.right)
+                    .class(.uibtn)
+                    .onClick {
+                        self.reactivate()
+                    }
+                    
+                    Div().clear(.both)
+                    
+                }
+                .paddingTop(7.px)
+                .width(100.percent)
+                .custom("box-sizing", "border-box")
+                .custom("gap", "7px")
+                .hidden(self.$status.map { ( $0 == .finalize || $0 == .canceled || $0 == .archive ) ? false : true })
+                .display(self.$status.map { ( $0 == .finalize || $0 == .canceled || $0 == .archive ) ? .flex : .none })
+                
+                
+                Div().clear(.both)
+                
+            }
+            .class(Class(TCOrderViewClass.outcomeBar))
+            .boxShadow(h: 1.px, v: 1.px, blur: 7.px, color: .black)
+            .borderRadius(12.px)
+            .marginRight(7.px)
+            .marginLeft(7.px)
+            .overflow(.auto)
+            .height(85.px)
+            
+        }
+        .class(Class(TCOrderViewClass.sideColumn))
+        //.custom("height", "calc(100% - 10px)")
+        .custom("width", "calc(34% - 7px)")
+        .height(100.percent)
+        .marginLeft(3.px)
+        .fontSize(24.px)
+        .overflow(.auto)
+        .float(.right)
+        .color(.gray)
+        
+    }
+    
+    func toggleOrderEditMode() {
+        if editMode {
+            saveOrderDetails()
+            return
+        }
+
+        editMode = true
+    }
+
+    override func buildUI() {
+        super.buildUI()
+
+        self.class(Class(TCOrderViewClass.body))
+        
+        width(100.percent)
+        height(100.percent)
+        
+        WebApp.shared.skyline.customeScripts.forEach { script in
+            if script.type == .orderContract {
+
+                switch script.relType {
+                case .general:
+                    orderContract.append(script)
+                case .customer(let id):
+                    if id == order.custAcct {
+                        orderContract.append(script)
+                    }
+                case .vendor:
+                    break
+                }
+
+            }
+        }
+
+
+        dueAtDiv = Div{
+            
+            Span(self.$dueDate.map{ ($0 == nil) ? "" : "\(getDate($0!).formatedShort) \(getDate($0!).time)"} )
+                .float(.right)
+            
+            Img()
+                .src("/skyline/media/icon_calendar.png")
+                .class(.iconWhite)
+                .height(26.px)
+                .float(.right)
+                .paddingRight(12.px)
+            
+            Div().class(.clear)
+            
+        }
+        .color(self.$dueDate.map {
+            
+            var divcolor: Color = .white
+            
+            guard let dd = $0 else {
+                return divcolor
+            }
+            
+            switch orderTimeMesure(uts: dd, type: .date).color {
+            case .blue:
+                break
+            case .green:
+                divcolor = .green
+            case .orange:
+                divcolor = .orange
+            case .red:
+                divcolor = .red
+            }
+            
+            return divcolor
+        })
+        
+        $status.listen {
+            self.accountView.orderStatus = $0
+            self.statusMenuIsHidden = true
+            OrderCatchControler.shared.updateParameter(self.order.id, .orderStatus($0))
+        }
+        
+        $budgetStatus.listen {
+            switch $0 {
+            case .budgetRequested:
+                self.budgetIcon = "/skyline/media/icon_budgets_required.png"
+            case .preparing, .pendingAproval:
+                self.budgetIcon = "/skyline/media/icon_budgets_inprogress.png"
+            case .prepared:
+                self.budgetIcon = "/skyline/media/icon_budgets_ready.png"
+            case .approved, .canceled, nil:
+                self.budgetIcon = "/skyline/media/icon_budgets_add_white.png"
+                self.order.budget = nil
+                self.order.budgetRequest = nil
+            }
+        }
+        
+        $editMode.listen {
+            
+            /// Edit mode on
+            if $0 {
+                self.streetHolderIsHidden = true
+                self.colonyHolderIsHidden = true
+                self.cityHolderIsHidden = true
+                self.stateHolderIsHidden = true
+                self.countryHolderIsHidden = true
+                self.ziptHolderIsHidden = true
+            }
+            /// Edit mode off
+            else{
+                
+                self.streetHolderIsHidden = !self.street.isEmpty
+                self.colonyHolderIsHidden = !self.colony.isEmpty
+                self.cityHolderIsHidden = !self.city.isEmpty
+                self.stateHolderIsHidden = !self.state.isEmpty
+                self.countryHolderIsHidden = !self.country.isEmpty
+                self.ziptHolderIsHidden = !self.zip.isEmpty
+                
+            }
+            
+        }
+        
+        $street.listen {
+            if $0.isEmpty {
+                if self.editMode {
+                    self.streetHolderIsHidden = true
+                }
+                else{
+                    self.streetHolderIsHidden = false
+                }
+            }
+            else{
+                self.streetHolderIsHidden = true
+            }
+        }
+        
+        $colony.listen {
+            if $0.isEmpty {
+                if self.editMode {
+                    self.colonyHolderIsHidden = true
+                }
+                else{
+                    self.colonyHolderIsHidden = false
+                }
+            }
+            else{
+                self.colonyHolderIsHidden = true
+            }
+        }
+        
+        $city.listen {
+            if $0.isEmpty {
+                if self.editMode {
+                    self.cityHolderIsHidden = true
+                }
+                else{
+                    self.cityHolderIsHidden = false
+                }
+            }
+            else{
+                self.cityHolderIsHidden = true
+            }
+        }
+        
+        $state.listen {
+            if $0.isEmpty {
+                if self.editMode {
+                    self.stateHolderIsHidden = true
+                }
+                else{
+                    self.stateHolderIsHidden = false
+                }
+            }
+            else{
+                self.stateHolderIsHidden = true
+            }
+        }
+        
+        $country.listen {
+            if $0.isEmpty {
+                if self.editMode {
+                    self.countryHolderIsHidden = true
+                }
+                else{
+                    self.countryHolderIsHidden = false
+                }
+            }
+            else{
+                self.countryHolderIsHidden = true
+            }
+        }
+        
+        $zip.listen {
+            if $0.isEmpty {
+                if self.editMode {
+                    self.ziptHolderIsHidden = true
+                }
+                else{
+                    self.ziptHolderIsHidden = false
+                }
+            }
+            else{
+                self.ziptHolderIsHidden = true
+            }
+        }
+        
+        $onWorkUser.listen {
+            
+            if let userid = $0 {
+                
+                getUserRefrence(id: .id(userid)) { user in
+                    
+                    guard let user else {
+                        self.onWorkUsername = String(userid.uuidString.suffix(12))
+                        return
+                    }
+                    
+                    if user.username.contains("@") {
+                        self.onWorkUsername = "@\(user.username.explode("@").first ?? "")"
+                    }
+                    else {
+                        self.onWorkUsername = String("\(user.firstName) \(user.lastName)".prefix(20))
+                    }
+                    
+                }
+            }
+            
+        }
+        
+        fileLoader.$files.listen {
+            $0.forEach { file in
+                self.loadMedia(file)
+            }
+        }
+        
+        accountView.$cardId.listen {
+            acctMinCatch[self.order.id]?.CardID = $0
+        }
+        
+        parseOrderData()
+        
+        if loadFromCatch {
+            let orderId = order.id
+            let modifiedAt = order.modifiedAt
+
+            API.custOrderV1.loadOrder(
+                identifier: .id(orderId),
+                modifiedAt: modifiedAt
+            ){ [weak self] resp in
+                
+                guard let resp else {
+                    showError(.comunicationError, .serverConextionError)
+                    return
+                }
+                
+                guard resp.status == .ok else {
+                    showError(.generalError, resp.msg)
+                    return
+                }
+                
+                guard let payload = resp.data else {
+                    showError(.unexpectedResult, .unexpectedError("DATA"))
+                    return
+                }
+                
+                switch payload {
+                case .isUpdated:
+                    break
+                case .load(let loadOrderResponse):
+                    
+                    /// Order Detail Catch
+                    acctMinCatch[orderId] = loadOrderResponse.account
+                    orderCatch[orderId] = loadOrderResponse.order
+                    notesCatch[orderId] = loadOrderResponse.notes
+                    paymentsCatch[orderId] = loadOrderResponse.payments
+                    chargesCatch[orderId] = loadOrderResponse.charges
+                    pocsCatch[orderId] = loadOrderResponse.pocs
+                    filesCatch[orderId] = loadOrderResponse.files
+                    contractsCatch[orderId] = loadOrderResponse.contracts
+                    equipmentsCatch[orderId] = loadOrderResponse.equipments
+                    rentalsCatch[orderId] = loadOrderResponse.rentals
+                    if let transferOrder = loadOrderResponse.transferOrder {
+                        transferOrderCatch[orderId] = transferOrder
+                    }
+                    if let route = loadOrderResponse.route {
+                        custOrderRouteCatch[orderId] = route
+                    }
+                    
+                    // Keep the cached content interactive while refreshed data is
+                    // applied in a later browser turn.
+                    Dispatch.asyncAfter(0.05) { [weak self] in
+                        guard let self, self.isInDOM else {
+                            return
+                        }
+
+                        self.accountView.acctType = loadOrderResponse.account.type
+                        self.accountView.cardId = loadOrderResponse.account.CardID
+
+                        self.order = loadOrderResponse.order
+                        self.notes = loadOrderResponse.notes
+                        self.payments = loadOrderResponse.payments
+                        self.charges = loadOrderResponse.charges
+                        self.pocs = loadOrderResponse.pocs
+                        self.files = loadOrderResponse.files
+                        self.contracts = loadOrderResponse.contracts
+                        self.equipments = loadOrderResponse.equipments
+                        self.rentals = loadOrderResponse.rentals
+                        self.transferOrder = loadOrderResponse.transferOrder
+
+                        self.parseOrderData()
+                    }
+                    
+                }
+                
+            }
+        }
+        
+        WebApp.current.wsevent.listen { [weak self] value in
+
+            guard let self else { return }
+            if value.isEmpty { return }
+
+            let (event, _) = self.ws.recive(value)
+            
+            guard let event else {
+                return
+            }
+            
+            switch event {
+            case .wsLocationUpdate:
+                if let payload = self.ws.locationUpdate(value) {
+                    if payload.order == self.order.id {
+
+                        guard let lat = Double(payload.lat), let lon = Double(payload.lon) else {
+                            return
+                        }
+
+                        self.loadLocation(lat, lon)
+
+                    }
+                }
+            case .asyncFileUpload:
+                if let payload = self.ws.asyncFileUpload(value) {
+                    
+                    if let view = self.fileViewCatch[payload.eventid] {
+                        
+                        view.loadPercent = ""
+                        
+                        view.url = "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(payload.fileName)"
+                        
+                        view.custom("background-image", "url('\("https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(payload.fileName)")')")
+                        
+                    }
+                }
+            case .asyncFileUpdate:
+                if let payload = self.ws.asyncFileUpdate(value) {
+                    
+                    if let view = self.fileViewCatch[payload.eventId] {
+                        
+                        view.loadPercent = payload.message
+                        
+                    }
+                }
+            default:
+                break
+            }
+        }
+        
+    }
+    
+    override func didAddToDOM() {
+        super.didAddToDOM()
+        
+        if let lat, let lon {
+            loadLocation(lat, lon)
+        }
+
+    }
+    
+    func pickupEquipment(){
+     
+        if equipments.count > 1 {
+            print("🗳️ Multiple Equipments")
+            if pendingPickups == 1 {
+                
+                print("🗳️ pendingPickups 1")
+                
+                var equipment: CustOrderLoadFolioEquipments? = nil
+                
+                equipments.forEach { item in
+                    if item.deliveredBy == nil {
+                        equipment = item
+                    }
+                }
+                
+                guard let equipment else {
+                    showError(.unexpectedResult, "Error 001 Contacta a Soporte TC")
+                    return
+                }
+                
+                pickupEquipment(equipment: equipment, force: false)
+                
+                return
+                
+            }
+            
+            let view = PickupEquipmentsView(
+                equipmentPickedStatusRefrence: equipmentPickedStatusRefrence,
+                equipments: equipments,
+                accountid: self.order.custAcct,
+                orderid: self.order.id,
+                orderFolio: self.order.folio
+            ) { equipment, callback in
+                
+                self.pickupEquipment(equipment: equipment, force: false)
+                
+            }
+            
+            addToDom(view)
+            
+        }
+        else {
+            
+            print("🗳️ Single Equipments")
+            
+            guard let equipment = equipments.first else {
+                return
+            }
+            
+            pickupEquipment(equipment: equipment, force: false)
+            
+        }
+        
+    }
+    
+    func pickupEquipment(equipment: CustOrderLoadFolioEquipments, force: Bool) {
+        
+        var tt = 0
+        
+        equipments.forEach { eq in
+            if eq.deliveredBy == nil {
+                tt += 1
+            }
+        }
+        
+        /// Has reward progame and it not forced
+        if let orderCloseInscriptionMode = configStoreProcessing.rewardsPrograme?.orderCloseInscriptionMode, !force {
+            /// Last equipmet to pickUp
+            
+            if tt == 1 {
+                
+                switch orderCloseInscriptionMode {
+                case .required, .recomended:
+                    if self.accountView.cardId.isEmpty {
+                        
+                        if orderCloseInscriptionMode == .required {
+                            showError(.generalError, "Se requiere que incriba al cliente en el sistema de recompensas")
+                        }
+                        
+                        self.addLoyaltyCard(isRequiered: orderCloseInscriptionMode == .required ){
+                            self.pickupEquipment(equipment: equipment, force: true)
+                        }
+                        
+                        return
+                    }
+                case .notrequired:
+                    break
+                case .optional:
+                    break
+                }
+            }
+        }
+        
+        guard let state = equipmentPickedStatusRefrence[equipment.id] else {
+            return
+        }
+        
+        loadingView.show()
+        
+        API.custOrderV1.equipmentPickedStatus(
+            accountid: self.order.custAcct,
+            orderid: self.order.id,
+            orderFolio: self.order.folio,
+            equipmentid: equipment.id,
+            name: "\(equipment.tag1) \(equipment.tag2) \(equipment.tag3)",
+            pickedUp: true
+        ) { resp in
+            
+            loadingView.hide()
+            
+            guard let resp else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+            
+            guard resp.status == .ok else{
+                showError(.generalError, resp.msg)
+                return
+            }
+            
+            state.wrappedValue = true
+            
+            var cc = 0
+            
+            equipmentsCatch[self.order.id]?.forEach({ eq in
+                if eq.id  == equipment.id {
+                    equipmentsCatch[self.order.id]![cc].deliveredBy = custCatchID
+                }
+                cc += 1
+            })
+            
+            cc = 0
+            self.equipments.forEach { eq in
+                if eq.id  == equipment.id {
+                    self.equipments[cc].deliveredBy = custCatchID
+                }
+                cc += 1
+            }
+        }
+    }
+    
+    func addLoyaltyCard(isRequiered: Bool, callback: @escaping (() -> ()) ){
+        
+        guard self.accountView.acctType == .personal else {
+            showError(.generalError, "Lo sentimos las cuentas \(self.accountView.acctType.description) aun no es soportado.")
+            return
+        }
+        
+        let _callback = isRequiered ? nil : callback
+        
+        addToDom(AccountView.RequestSiweCard(
+            accountId: self.order.custAcct,
+            cc: .mexico,
+            mobile: self.order.mobile,
+            callback: { token, cardId, _ in
+                
+                self.smsTokens.append(token)
+                
+                addToDom(AccountView.ConfimeSiweCard(
+                    custAcct: self.order.custAcct,
+                    cc: .mexico,
+                    mobile: self.order.mobile,
+                    tokens: self.smsTokens,
+                    cardId: cardId,
+                    callback: { cardId in
+                        
+                        acctMinCatch[self.order.id]?.CardID = cardId
+                        
+                        self.accountView.cardId = cardId
+                        
+                        callback()
+                        
+                    }
+                ))
+                
+            },
+            bypassProgram: _callback
+        ))
+    }
+    
+    func printOrder(){
+
+        if configStore.print.button == .direct {
+            printOrderDirect()
+        }
+        else {
+            
+            let view = PrintPreView(order: self.order) {
+                self.printOrderDirect()
+            } sendDocument: {
+
+
+                loadingView.show()
+
+                API.custOrderV1.sendServiceOrder(orderId: self.order.id) { resp in
+
+                    loadingView.hide()
+
+                    guard let resp else {
+                        showError(.comunicationError, .serverConextionError)
+                        return
+                    }
+                    
+                    guard resp.status == .ok else {
+                        showError(.generalError, resp.msg)
+                        return
+                    }
+
+                    // TODO: ADD NOTE FROM PAYLOAD RESPONSE 
+
+                    showSuccess(.operacionExitosa, "Recibo Enviado")
+
+                }
+            
+            }
+
+            addToDom(view)
+
+        }
+
+    }
+    
+    func printOrderDirect(){
+
+        if configStore.print.document == .pdf {
+            showSuccess(.operacionExitosa, "Descargando...")
+            
+            let url = printServiceOrder(orderid: self.order.id)
+            
+            _ = JSObject.global.goToURL!(url)
+            
+            return
+        }
+        
+        let printBody = OrderPrintEngine( 
+            order: self.order,
+            notes: self.notes,
+            payments: self.payments,
+            charges: self.charges,
+            pocs: self.pocs,
+            files: self.files,
+            equipments: self.equipments,
+            rentals:self.rentals,
+            transferOrder: self.transferOrder
+        ).innerHTML
+
+        _ = JSObject.global.renderPrint!(
+            custCatchUrl,
+            self.order.folio,
+            self.order.deepLinkCode,
+            String(self.order.mobile.suffix(4)),
+            printBody
+        )
+
+    }
+    
+    func parseOrderData(){
+        
+        inAlert = order.alerted
+        
+        isHighPriority = order.highPriority
+        
+        orderProject = order.project
+        
+        status = order.status
+        
+        budgetStatus = order.budget
+        
+        chargesTable.innerHTML = ""
+        
+        chargesRefrence.removeAll()
+        
+        total = 0
+        chas = 0
+        pays = 0
+
+        charges.forEach { obj in
+            
+            let stotal = ((obj.price * obj.cuant) / 100)
+            
+            total += stotal
+            chas += stotal
+
+
+            let tr = OldChargeTrRow( 
+                isCharge: true,
+                id: obj.id,
+                name: obj.name,
+                cuant: obj.cuant,
+                price: obj.price,
+                puerchaseOrder: false
+            ) { viewId in
+                
+                self.editCharge(
+                    viewId: viewId,
+                    ids: [obj.id],
+                    type: obj.type
+                )
+                
+            }.color(.gray)
+            
+            chargesRefrence[tr.viewId] = tr
+            
+            chargesTable.appendChild (tr)
+        }
+        
+        var pocsRefrence: [UUID: [Int64 : [CustPOCInventoryOrderView]]] = [:]
+        
+        pocs.forEach { obj in
+            
+            if let _ = pocsRefrence[obj.pocId] {
+                
+                if let _ = pocsRefrence[obj.pocId]?[(obj.soldPrice ?? 0)] {
+                    pocsRefrence[obj.pocId]?[(obj.soldPrice ?? 0)]?.append(obj)
+                }
+                else {
+                    pocsRefrence[obj.pocId]?[(obj.soldPrice ?? 0)] = [obj]
+                }
+                
+            }
+            else {
+                pocsRefrence[obj.pocId] = [(obj.soldPrice ?? 0) : [obj]]
+            }
+            
+        }
+        
+        pocsRefrence.forEach { pocId, priceRefrence in
+        
+            priceRefrence.forEach { price, items in
+            
+
+            
+                let soldPrice = price * items.count.toInt64
+                
+                total += soldPrice
+                
+                chas += soldPrice
+                
+                let tr = OldChargeTrRow(pocs: items) { viewId in
+                    self.editPoc(viewId: viewId, ids: items.map{ $0.itemId })
+                }
+                    .color(.gray)
+                
+                chargesRefrence[tr.viewId] = tr
+                
+                chargesTable.appendChild(tr)
+                
+                
+            }
+            
+            //let soldPrice = items.map{ ($0.soldPrice ?? 0) }.reduce(0, +)
+            
+        }
+        
+        rentals.forEach { obj in
+            
+            total += obj.soldPrice
+            
+            chas += obj.soldPrice
+            
+            let tr = OldChargeTrRow(
+                isCharge: true,
+                id: obj.id,
+                name: "\(obj.name.prefix(50)) \(obj.ecoNumber)",
+                cuant: 100.toInt64,
+                price: obj.soldPrice,
+                puerchaseOrder: false
+            ) { viewId in
+                self.editRental(
+                    viewId: viewId,
+                    itemId: obj.id
+                )
+            }.color(.gray)
+            
+            chargesRefrence[tr.viewId] = tr
+            
+            chargesTable.appendChild (tr)
+            
+        }
+        
+        payments.forEach { obj in
+            
+            total -= obj.cost
+            
+            pays += obj.cost
+            
+            let tr = OldChargeTrRow(
+                isCharge: false,
+                id: obj.id,
+                name: obj.description,
+                cuant: 100.toInt64,
+                price: obj.cost,
+                puerchaseOrder: false
+            ) { viewId in
+                /// Payments cant be edited
+                self.removePayment(
+                    id: viewId,
+                    name: obj.description,
+                    amount: obj.cost
+                )
+            }.color(.gray)
+            
+            chargesRefrence[tr.viewId] = tr
+            
+            chargesTable.appendChild (tr)
+            
+        }
+        
+        self.filesGrid.innerHTML = ""
+        
+        files.forEach { file in
+            
+            let view = OrderImageView(
+                id: file.id,
+                name: file.file,
+                url: "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/thump_\(file.avatar)"
+            ) { id, name in
+                
+                addToDom(MediaViewer(
+                    relid: self.order.id,
+                    type: .orderFile,
+                    url: "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/",
+                    files: [
+                        .init(
+                            fileId: file.id,
+                            file: file.file,
+                            avatar: file.avatar,
+                            type: file.type
+                        )
+                    ],
+                    currentView: 0
+                ){ //Delete callback
+                    var files: [CustOrderLoadFolioFiles] = []
+                    
+                    self.files.forEach { parse in
+                        if parse.id == file.id {
+                            return
+                        }
+                        files.append(parse)
+                    }
+                    
+                    self.files = files
+                    
+                    filesCatch[self.order.id] = self.files
+                    
+                    self.fileViewCatch.forEach { viewId, fileView in
+                        
+                        if fileView.id == id {
+                            fileView.remove()
+                        }
+                        
+                    }
+                })
+            }
+            
+            self.filesGrid.appendChild(view)
+            
+            self.fileViewCatch[view.viewId] = view
+            
+        }
+        
+        let messages = messageGrid
+        messages.notes = notes
+
+        if hasParsedOrderData {
+            messages.loadMessages()
+        }
+
+        hasParsedOrderData = true
+        
+        equipmentViewRefrence.removeAll()
+        equipmentView.innerHTML = ""
+        
+        self.pendingPickups = self.equipments.count
+        
+        switch order.type {
+        case .folio:
+            
+            if equipments.count > 1 {
+                /// currentEquipment
+                
+                let eqTabBtns = Div()
+                    .height(35.px)
+                
+                let eqBody = Div()
+                    .overflow(.auto)
+                    .custom("height", "calc(100% - 40px)")
+                
+                equipments.forEach { eq in
+                    
+                    var count = 0
+                    
+                    var name = ""
+                    
+                    if !eq.tag1.isEmpty {
+                        name = eq.tag1
+                        count += 1
+                    }
+                    
+                    if !eq.tag3.isEmpty {
+                        name += " \(eq.tag3)"
+                        count += 1
+                    }
+                    
+                    if !eq.tag2.isEmpty {
+                        name += " \(eq.tag2)"
+                        count += 1
+                    }
+                    
+                    if count < 3 && !eq.tag4.isEmpty{
+                        name += " \(eq.tag4)"
+                        count += 3
+                    }
+                    
+                    eqTabBtns.appendChild(
+                        
+                        H2(name)
+                            .backgroundColor(self.$currentEquipment.map{ ($0 == eq.id) ? .black : .transparent})
+                            .borderTopRightRadius(12.px)
+                            .borderTopLeftRadius(12.px)
+                            .marginRight(12.px)
+                            .padding(all:7.px)
+                            .cursor(.pointer)
+                            .fontSize(18.px)
+                            .color(.white)
+                            .float(.left)
+                            .onClick {
+                                if self.currentEquipment == eq.id { return }
+                                self.currentEquipment = eq.id
+                            }
+                        
+                    )
+                }
+                
+                equipments.forEach { eq in
+                    
+                    @State var isReady = false
+                    
+                    equipmentReadyStatusRefrence[eq.id] = $isReady
+                    
+                    @State var isPicked = false
+                    
+                    equipmentPickedStatusRefrence[eq.id] = $isPicked
+                    
+                    $isPicked.listen{
+                        
+                        print("🟡 pendingPickups \(self.pendingPickups)")
+                        
+                        print("🟢 State changed \($0.description)")
+                        
+                        if $0 {
+                            self.pendingPickups -= 1
+                        }
+                        else {
+                            self.pendingPickups += 1
+                        }
+                        
+                        print("🟢 pendingPickups \(self.pendingPickups)")
+                        
+                    }
+                    
+                    let view = EquipmentView(
+                        orderView: self,
+                        status: $status,
+                        isReady: $isReady,
+                        isPicked: $isPicked,
+                        equipment: eq,
+                        hideControls: false
+                    ).hidden($currentEquipment.map{$0 == eq.id ? false : true })
+                    
+                    equipmentViewRefrence[eq.id] = view
+                    
+                    eqBody.appendChild(view)
+                    
+                    
+                }
+                
+                equipmentView.appendChild(eqTabBtns)
+                equipmentView.appendChild(Div().class(.clear))
+                equipmentView.appendChild(eqBody)
+                
+                currentEquipment = equipments.first?.id
+            }
+            else{
+                
+                if let eq = equipments.first {
+                    
+                    @State var isReady = false
+                    
+                    equipmentReadyStatusRefrence[eq.id] = $isReady
+                    
+                    @State var isPicked = false
+                    
+                    equipmentPickedStatusRefrence[eq.id] = $isPicked
+                    
+                    $isPicked.listen{
+                        
+                        print("🟡 pendingPickups \(self.pendingPickups)")
+                        
+                        print("🟢 State changed \($0.description)")
+                        
+                        if $0 {
+                            self.pendingPickups -= 1
+                        }
+                        else {
+                            self.pendingPickups += 1
+                        }
+                        
+                        print("🟢 pendingPickups \(self.pendingPickups)")
+                        
+                    }
+                    
+                    let view = EquipmentView(
+                        orderView: self,
+                        status: $status,
+                        isReady: $isReady,
+                        isPicked: $isPicked,
+                        equipment: eq,
+                        hideControls: false
+                    ).hidden($currentEquipment.map{$0 == eq.id ? false : true })
+                    
+                    equipmentViewRefrence[eq.id] = view
+                    
+                    equipmentView.appendChild(view)
+                    
+                    currentEquipment = eq.id
+                    
+                }
+                
+            }
+            
+        case .date:
+            break
+        case .sale:
+            break
+        case .rental:
+            
+            if rentals.count > 1 {
+                /// currentEquipment
+                let eqTabBtns = Div()
+                    .height(35.px)
+                
+                let eqBody = Div()
+                    .overflow(.auto)
+                    .custom("height", "calc(100% - 40px)")
+                
+                self.rentals.forEach { rental in
+                    eqTabBtns.appendChild(
+                        Div(rental.ecoNumber)
+                            .cursor(.pointer)
+                            .float(.left)
+                            .padding(all: 2.px)
+                            .margin(all: 2.px)
+                            .fontWeight($currentEquipment.map{$0 == rental.id ? .bolder : .normal})
+                            .color($currentEquipment.map{$0 == rental.id ? .lightBlueText : .white})
+                            .borderBottom(width: .thin, style: .solid, color: $currentEquipment.map{$0 == rental.id ? .lightBlueText : .transparent})
+                            .onClick {
+                                if self.currentEquipment == rental.id { return }
+                                self.currentEquipment = rental.id
+                            }
+                    )
+                }
+                
+                self.rentals.forEach { rental in
+                    
+                    let view = OrderRentalView(
+                        orderView: self,
+                        status: $status,
+                        rental: rental,
+                        hideControls: false
+                    )
+                        .hidden($currentEquipment.map{$0 == rental.id ? false : true })
+                    
+                    self.rentalViewRefrence[rental.id] = view
+                    
+                    eqBody.appendChild(view)
+                }
+                
+                equipmentView.appendChild(eqTabBtns)
+                equipmentView.appendChild(Div().class(.clear))
+                equipmentView.appendChild(eqBody)
+                
+                currentEquipment = rentals.first?.id
+                
+            }
+            else{
+                if let rental = rentals.first {
+                    
+                    let view = OrderRentalView(
+                        orderView: self,
+                        status: $status,
+                        rental: rental,
+                        hideControls: false
+                    ).hidden($currentEquipment.map{$0 == rental.id ? false : true })
+                    
+                    rentalViewRefrence[rental.id] = view
+                    
+                    equipmentView.appendChild(view)
+                    
+                    currentEquipment = rental.id
+                    
+                }
+            }
+            
+        case .mercadoLibre:
+            break
+        case .claroShop:
+            break
+        case .amazon:
+            break
+        case .ebay:
+            break
+        }
+        
+        var _pendingPickups = 0
+        
+        equipments.forEach { equipment in
+            
+            print(equipment.deliveredBy)
+            
+            if equipment.deliveredBy == nil {
+                _pendingPickups += 1
+            }
+        }
+        
+        self.pendingPickups = _pendingPickups
+        
+        onWorkUser = order.workedBy
+        
+        orderName = order.name
+        mobile = order.mobile
+        telephone = order.telephone
+        email = order.email
+        
+        street = order.street
+        colony = order.colony
+        city = order.city
+        state = order.state
+        country = order.country
+        zip = order.zip
+        
+        lat = Double(order.lat)
+        
+        lon = Double(order.lon)
+        
+        contratc = order.contract
+        
+        requierServiceAddress = configContactTags.requierServiceAddress
+        
+        var createAtDivColor: Color = .gray
+        
+        switch orderTimeMesure(uts: order.createdAt, type: .createdAt).color {
+        case .blue:
+            break
+        case .green:
+            createAtDivColor = .green
+        case .orange:
+            createAtDivColor = .orange
+        case .red:
+            createAtDivColor = .red
+        }
+        
+        self.createAtDiv = Div(getDate(order.createdAt).formatedLong)
+            .color(createAtDivColor)
+        
+        dueDate = order.dueDate
+        
+        lastCommunicationMethod = order.lastCommunicationMethod
+        
+        calcBalance()
+        
+        messageGrid.isPopup = true
+        
+        messageGrid.maximizeMsgView.onClick {
+            self.messageGrid.isPopup = false
+            
+            var messageViewPopup = Div()
+            
+            messageViewPopup = Div{
+                Div{
+                    
+                    Img()
+                        .closeButton(.uiView1)
+                        .onClick{
+                            self.messageGrid.isPopup = true
+                            
+                            self.messageGridDiv.appendChild( self.messageGrid )
+                            
+                            _ = JSObject.global.scrollToBottom!("message_grid_\(self.messageGrid.orderid.uuidString.lowercased())")
+                            
+                            messageViewPopup.remove()
+                            
+                        }
+                    
+                    H1("Enviar Comentario")
+                        .color(.lightBlueText)
+                    
+                    Div()
+                        .class(.clear)
+                    
+                    Div{
+                        self.messageGrid
+                    }
+                    .custom("height", "calc(100% - 45px)")
+                    
+                }
+                    .padding(all: 12.px)
+                    .width(50.percent)
+                    .height(80.percent)
+                    .position(.absolute)
+                    .left(25.percent)
+                    .top(10.percent)
+                    .backgroundColor(.grayBlack)
+                    .borderRadius(all: 24.px)
+            }
+            .class(.transparantBlackBackGround)
+            .height(100.percent)
+            .position(.absolute)
+            .width(100.percent)
+            .top(0.px)
+            .left(0.px)
+            .onClick { clic, event in
+                event.stopPropagation()
+            }
+            
+            addToDom(messageViewPopup)
+            
+            self.messageGrid.messageInput.select()
+            
+            _ = JSObject.global.scrollToBottom!("message_grid_\(self.messageGrid.orderid.uuidString.lowercased())")
+            
+        }
+        
+        fiscalView.innerHTML = ""
+        
+        if let fiscaldoc = order.fiscalDocumentID {
+            
+            fiscalView.appendChild(Div{
+                Img()
+                    .src("/skyline/media/attachment.png")
+                    .height(24.px)
+                    .marginRight(7.px)
+                
+                Span("Factura")
+                    .fontSize(24.px)
+            }
+            .class(.uibtn)
+            .onClick {
+                
+                loadingView.show()
+
+                API.fiscalV1.loadDocument(docid: fiscaldoc) { resp in
+
+                    loadingView.hide()
+
+                    guard let resp else {
+                        showError(.comunicationError, .serverConextionError)
+                        return
+                    }
+
+                    guard resp.status == .ok else {
+                        showError(.generalError, resp.msg)
+                        return
+                    }
+
+                    guard let payload = resp.data else {
+                        showError(.unexpectedResult, "No se obtuvo payload de data.")
+                        return
+                    }
+
+                    let view = ToolFiscalViewDocument(
+                        type: payload.type,
+                        doc: payload.doc,
+                        reldocs: payload.reldocs,
+                        account: payload.account
+                    ) {
+                        /// Document canceled
+                        
+                        self.fiscalView.innerHTML = ""
+                        
+                        self.fiscalView.appendChild(Div{
+                            Img()
+                                .src("/skyline/media/money_bag.png")
+                                .height(24.px)
+                                .marginRight(7.px)
+                            
+                            Span("Facturar")
+                                .fontSize(24.px)
+                        }
+                            .marginLeft(0)
+                            .class(.uibtn)
+                            .onClick {
+                                self.facturar()
+                            })
+                        
+                    }
+                    
+                    addToDom(view)
+
+                }
+            
+            })
+            
+        }
+        else{
+            fiscalView.appendChild(Div{
+                Img()
+                    .src("/skyline/media/money_bag.png")
+                    .height(24.px)
+                    .marginRight(7.px)
+                
+                Span("Facturar")
+                    .fontSize(24.px)
+            }
+            .class(.uibtn)
+            .marginLeft(0)
+            .onClick {
+                self.facturar()
+            })
+        }
+        
+        orderHighPriorityNote.forEach { note in
+            
+            if accountView.shownHighPriorityNotes.contains(note.id) {
+                return
+            }
+            
+            accountView.shownHighPriorityNotes.append(note.id)
+            
+            Dispatch.asyncAfter(0.5) {
+                addToDom(ViewHighPriorityNote(
+                    type: .order,
+                    note: note,
+                    folio: self.order.folio,
+                    name: self.order.name
+                ))
+            }
+        }
+        
+        accountHighPriorityNote.forEach { note in
+            
+            if accountView.shownHighPriorityNotes.contains(note.id) {
+                return
+            }
+            
+            accountView.shownHighPriorityNotes.append(note.id)
+            
+            Dispatch.asyncAfter(0.5) {
+                addToDom(ViewHighPriorityNote(
+                    type: .account,
+                    note: note,
+                    folio: self.accountView.account?.folio,
+                    name: self.accountView.account?.firstName
+                ))
+            }
+        }
+        
+    }
+    
+/*
+        /// POC Data
+        _ poc: CustPOC,
+        _ cost: Int64,
+        _ costType: CustAcctCostTypes,
+        _ units: Int64,
+        _ items: [CustPOCInventoryMin],
+        _ storeid: UUID,
+        _ isWarenty: Bool,
+        _ internalWarenty: Bool?,
+        _ generateRepositionOrder: Bool?,
+        _ soldObjectFrom: SoldObjectFrom
+*/
+
+    func addCharge() {
+
+        var socIds: [UUID] = []
+        
+        self.charges.forEach { charge in
+            
+            guard charge.type == .service else {
+                return
+            }
+            
+            guard let id = charge.codeid else {
+                return
+            }
+            
+            socIds.append(id)
+        }
+        
+        let addChargeFormView = AddChargeFormView(
+            accountId: self.order.custAcct,
+            allowManualCharges: true,
+            allowWarrantyCharges: true,
+            socCanLoadAction: true,
+            costType: self.accountView.account?.costType ?? .cost_a, 
+            authorizationContext: .order,
+            currentSOCMasters: socIds
+        ){ id, isWarenty, internalWarenty in
+            
+            let view = ConfirmProductViewNew(
+                accountId: self.order.custAcct,
+                costType: .cost_a,
+                authorizationContext: .order,
+                pocid: id,
+                selectedInventoryIDs: [],
+                blockPurchaseOrders: false,
+                isWarenty: isWarenty,
+                internalWarenty: internalWarenty
+            ) { poc, price, costType, units, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
+                
+                /// internal, external
+                var warenty: SoldObjectWarenty? = nil
+
+                if isWarenty, let internalWarenty {
+                    warenty = internalWarenty ? .internal : .external
+                }
+
+                guard let storeid = self.order.store else {
+                    showError(.generalError, "No se localizo tenda para venta")
+                    return
+                }
+
+                loadingView.show()
+                                                
+                API.custOrderV1.addCharge(
+                    orderId: self.order.id,
+                    item: .product(.init(
+                        description: "\(poc.upc) \(poc.name) \(poc.model)".purgeSpaces,
+                        pocId: poc.id,
+                        from: soldObjectFrom,
+                        units: units,
+                        price: price,
+                        warenty: warenty
+                    ))
+                ) { resp in
+                            
+                    loadingView.hide()
+                    
+                    guard let resp else {
+                        showError(.comunicationError, .serverConextionError)
+                        return
+                    }
+
+                    guard resp.status == .ok else {
+                        showError(.generalError, resp.msg)
+                        return
+                    }
+
+                    guard let payload = resp.data else {
+                        showError(.generalError, .unexpenctedMissingPayload)
+                        return
+                    }
+                
+                    var pocs:[CustPOCInventoryOrderView] = []
+                    
+                    payload.chargeIds.forEach { id in
+
+                        pocs.append(.init(
+                            itemId: id,
+                            id: id,
+                            POC: poc.id,
+                            soldType: .order,
+                            custStore: storeid,
+                            custStoreBodegas: nil,
+                            custStoreSecciones: nil,
+                            comision: 0,
+                            points: 0,
+                            premierPoints: 0,
+                            series: "",
+                            warentSelfTo: nil,
+                            warentFabricTo: nil,
+                            soldPrice: price,
+                            pocId: poc.id,
+                            upc: poc.upc,
+                            name: poc.name,
+                            brand: poc.brand,
+                            model: poc.model,
+                            status: .sold
+                        ))
+
+                    }
+                    
+                    let tr = OldChargeTrRow(pocs: pocs) { viewId in
+                        self.editPoc(viewId: viewId, ids: payload.chargeIds )
+                    }
+                        .color(.gray)
+                    
+                    self.chargesRefrence[tr.viewId] = tr
+                    
+                    self.chargesTable.appendChild(tr)
+                
+                    payload.chargeIds.forEach { id in
+                        
+                        let obj: CustPOCInventoryOrderView = .init(
+                          itemId: id,
+                            id: id,
+                            POC: poc.id,
+                            soldType: .order,
+                            custStore: storeid,
+                            custStoreBodegas: nil,
+                            custStoreSecciones: nil,
+                            comision: 0,
+                            points: 0,
+                            premierPoints: 0,
+                            series: "",
+                            warentSelfTo: nil,
+                            warentFabricTo: nil,
+                            soldPrice: price,
+                            pocId: poc.id,
+                            upc: poc.upc,
+                            name: poc.name,
+                            brand: poc.brand,
+                            model: poc.model,
+                            status: .sold
+                        )
+                        
+                        pocsCatch[self.order.id]?.append(obj)
+                        
+                        self.pocs.append(obj)
+                        
+                    }
+                    
+                    if payload.chargeIds.isEmpty {
+                        showSuccess(.operacionExitosa, "Producto agregado, refreque el folio para ver los cambios")
+                    }
+                    
+                    self.calcBalance()
+                    
+                }
+
+            }
+            
+            addToDom(view)
+            
+        }
+        addSoc: { soc, codeType, isWarenty, internalWarenty in
+            
+            //service, product, manual, payment
+            var type: API.custOrderV1.AddChargeType = .manual(.init(
+                fiscCode: soc.fiscCode,
+                fiscUnit: soc.fiscUnit,
+                description: soc.description,
+                units: soc.units.fromCents.toInt,
+                price: soc.price,
+                cost: soc.cost
+            ))
+            
+            if let socId = soc.id {
+                //showAlert(.alerta, "Contacte a Soporte TC ya que el protocolo completo aun no es soportado.")
+                type = .service(.init(
+                    id: socId,
+                    units: soc.units.fromCents.toInt,
+                    price: soc.price
+                ))
+
+            }
+            
+            loadingView.show()
+            
+            API.custOrderV1.addCharge(
+                    orderId: self.order.id,
+                    item: type
+            ) { resp in
+                
+                loadingView.hide()
+                
+                guard let resp else {
+                    showError(.comunicationError, .serverConextionError)
+                    return
+                }
+                
+                guard resp.status == .ok else {
+                    showError(.generalError, resp.msg)
+                    return
+                }
+
+                guard let id = resp.id else {
+                    showError(.generalError, "No se pudo obtenr id del producto")
+                    return
+                }
+                
+                guard let payload = resp.data else {
+                    showError(.unexpectedResult, .unexpenctedMissingPayload)
+                    return
+                }
+                
+                var price = soc.price
+                
+                if codeType == .adjustment{
+                    price = (price * -1)
+                }
+                
+                    let tr = OldChargeTrRow(
+                        isCharge: true,
+                        id: id,
+                        name: soc.description,
+                        cuant: 100,
+                        price: price,
+                        puerchaseOrder: false
+                    ) { viewId in
+                        
+                        self.editCharge(
+                        viewId: viewId,
+                        ids: [id],
+                        type: (soc.id == nil) ? .manual : .service
+                        )
+                        
+                    }.color(.gray)
+                    
+                self.chargesRefrence[tr.viewId] = tr
+                    
+                self.chargesTable.appendChild (tr)
+                    
+                let obj: CustOrderLoadFolioCharges = .init(
+                    id: id,
+                    codeid: soc.id,
+                    type: (soc.id == nil) ? .manual : .service,
+                    billingType: codeType == .adjustment ? .adjustment : .charge,
+                    name: soc.description,
+                    cost: soc.cost ?? 0,
+                    cuant: soc.units,
+                    price: price,
+                    status: .unbilled
+                )
+                
+                chargesCatch[self.order.id]?.append(obj)
+                
+                self.charges.append(obj)
+                
+                self.calcBalance()
+                
+                payload.addedEfects.forEach { efect in
+                    
+                    switch efect {
+                    case .mediaContatacLocation:
+                        break
+                    case .highPriority:
+                        OrderCatchControler.shared.updateParameter(self.order.id, .hightPriorityStatus(true))
+                        self.order.highPriority = true
+                        self.isHighPriority = true
+                    }
+                    
+                }
+            }
+            
+        }
+        addItem: { item, warenty in
+
+            loadingView.show()
+
+            API.custAPIV1.pocInventoryDetails(
+                id: item.i
+            ) { resp in
+
+                loadingView.hide()
+                
+                guard let resp = resp else {
+                    showError(.comunicationError, .serverConextionError)
+                    return
+                }
+                
+                guard resp.status == .ok else {
+                    showError(.generalError, resp.msg)
+                    return
+                }
+                
+                guard let payload = resp.data else {
+                    showError( .unexpectedResult, .unexpenctedMissingPayload)
+                    return
+                }
+
+                loadingView.show()
+
+                let view = ConfirmProductItemView(
+                    poc: item,
+                    item: payload.prod,
+                    warenty: warenty
+                ) { item in
+                    
+                    API.custOrderV1.addCharge(
+                        orderId: self.order.id,
+                        item: .product(item)
+                    ) { resp in
+
+                        loadingView.hide()
+                        
+                        guard let resp = resp else {
+                            showError(.comunicationError, .serverConextionError)
+                            return
+                        }
+                        
+                        guard resp.status == .ok else {
+                            showError(.generalError, resp.msg)
+                            return
+                        }
+                        
+                        guard let payload = resp.data else {
+                            showError( .unexpectedResult, .unexpenctedMissingPayload)
+                            return
+                        }
+
+                    }
+
+                }
+
+                addToDom(view)
+                           
+            }
+        }
+        addToDom(addChargeFormView)
+        
+        addChargeFormView.searchTermInput.select()
+        
+    }
+
+
+    // MARK: Charges Modification
+    func removeCharge(viewId: UUID, id: UUID, name: String, amount: Int64) {
+        addToDom(
+            ConfirmView(
+                type: .yesNo,
+                title: "Eliminar Cargo",
+                message: "Confirme eliminacion de:\n\(name) $\(amount.formatMoney)",
+                callback: { confirmed, _ in
+                    guard confirmed else { return }
+
+                    if custCatchHerk < configStoreProcessing.restrictDeleteCharges {
+                        addToDom(CustTaskAuthRequestWaitView(
+                            removeChargeFrom: self.order.id,
+                            chargeId: id
+                        ) { authorized in
+                            if authorized {
+                                self.refreshAfterCTAMRemoval()
+                            }
+                        })
+                        return
+                    }
+
+                    loadingView.show()
+                    
+                    API.custOrderV1.removeCharge(
+                        orderId: self.order.id,
+                        orderFolio: self.order.folio,
+                        chargeId: id
+                    ) { resp in
+                        
+                        loadingView.hide()
+                        
+                        guard let resp else {
+                            showError(.comunicationError, .serverConextionError)
+                            return
+                        }
+                        
+                        guard resp.status == .ok  else {
+                            showError(.generalError, resp.msg)
+                            return
+                        }
+
+                        guard let payload = resp.data else {
+                            showError(.unexpectedResult, .unexpenctedMissingPayload)
+                            return
+                        }
+                        
+                        guard payload.auth else {
+                            showAlert(.alerta, "Se ha solicitado remover el cargo")
+                            return
+                        }
+                        
+                        var _charges: [CustOrderLoadFolioCharges] = []
+                        
+                        if let tr = self.chargesRefrence[viewId] {
+                            tr.remove()
+                            self.chargesRefrence.removeValue(forKey: viewId)
+                        }
+                        
+                        self.charges.forEach { obj in
+                            if obj.id == id {
+                                return
+                            }
+                            _charges.append(obj)
+                        }
+                        
+                        self.charges = _charges
+                        
+                        chargesCatch[self.order.id] = _charges
+                        
+                        self.calcBalance()
+                        
+                        payload.removedEfects.forEach { efect in
+                            
+                            switch efect {
+                            case .mediaContatacLocation:
+                                break
+                            case .highPriority:
+                                OrderCatchControler.shared.updateParameter(self.order.id, .hightPriorityStatus(false))
+                                self.order.highPriority = false
+                                self.isHighPriority = false
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                })
+        )
+    }
+    
+    func editCharge(viewId: UUID, ids: [UUID], type: ChargeType) {
+        
+        addToDom(EditChargePOCView(
+            type: type,
+            viewId: viewId,
+            ids: ids,
+            orderId: self.order.id,
+            callback: { ids, units, cost, price, name, fiscCode, fiscUnit in
+                
+                var _charges: [CustOrderLoadFolioCharges] = []
+                
+                self.charges.forEach { obj in
+                    
+                    if ids.contains(obj.id) {
+                        
+                        _charges.append(
+                            .init(
+                                id: obj.id,
+                                codeid: obj.codeid,
+                                type: obj.type,
+                                billingType: obj.billingType,
+                                name: name,
+                                cost: cost,
+                                cuant: units,
+                                price: price,
+                                status: obj.status
+                            )
+                        )
+                        
+                        return
+                    }
+                    
+                    _charges.append(obj)
+                    
+                }
+                
+                self.charges = _charges
+
+                chargesCatch[self.order.id] = _charges
+                
+                self.calcBalance()
+                
+                self.chargesRefrence[viewId]?.name = name
+                self.chargesRefrence[viewId]?.cuantString = units.formatMoney
+                self.chargesRefrence[viewId]?.priceString = price.formatMoney
+                self.chargesRefrence[viewId]?.total = price.formatMoney
+                
+            },
+            delete: { ids, name, amount in
+                
+                guard let id = ids.first else {
+                    return
+                }
+                
+                self.removeCharge(
+                    viewId: viewId,
+                    id: id,
+                    name: name,
+                    amount: amount
+                )
+            }
+        ))
+    }
+    
+    // MARK: POCs Modification
+    func removePoc(viewId: UUID, ids: [UUID], name: String, amount: Int64) {
+        addToDom(
+            ConfirmView(
+                type: .yesNo,
+                title: "Eliminar Producto",
+                message: "Confirme eliminacion de:\n\(name) $\(amount.formatMoney)",
+                callback: { confirmed, _ in
+                    
+                    loadingView.show()
+                    
+                    API.custOrderV1.removePoc(
+                        orderId: self.order.id,
+                        orderFolio: self.order.folio,
+                        ids: ids
+                    ) { resp in
+                        
+                        loadingView.hide()
+                        
+                        guard let resp = resp else {
+                            showError(.comunicationError, .serverConextionError)
+                            return
+                        }
+                        
+                        guard resp.status == .ok  else {
+                            showError(.generalError, resp.msg)
+                            return
+                        }
+
+                        var _pocs: [CustPOCInventoryOrderView] = []
+                        
+                        if let tr = self.chargesRefrence[viewId] {
+                            tr.remove()
+                            self.chargesRefrence.removeValue(forKey: viewId)
+                        }
+                        
+                        self.pocs.forEach { obj in
+                            
+                            if ids.contains(obj.itemId) {
+                                return
+                            }
+                            _pocs.append(obj)
+                        }
+                        
+                        self.pocs = _pocs
+                        
+                        pocsCatch[self.order.id] = _pocs
+                        
+                        self.calcBalance()
+                        
+                    }
+                })
+        )
+    }
+
+    func refreshAfterCTAMRemoval() {
+        let orderId = order.id
+        loadingView.show()
+
+        API.custOrderV1.loadOrder(identifier: .id(orderId), modifiedAt: nil) { [weak self] resp in
+            loadingView.hide()
+
+            guard let self, self.isInDOM else { return }
+
+            guard let resp, resp.status == .ok else {
+                showError(.generalError, resp?.msg ?? "No se pudo actualizar la orden.")
+                return
+            }
+
+            guard let payload = resp.data else {
+                showError(.unexpectedResult, .unexpenctedMissingPayload)
+                return
+            }
+
+            guard case .load(let data) = payload else {
+                showError(.unexpectedResult, .unexpenctedMissingPayload)
+                return
+            }
+
+            acctMinCatch[orderId] = data.account
+            orderCatch[orderId] = data.order
+            notesCatch[orderId] = data.notes
+            paymentsCatch[orderId] = data.payments
+            chargesCatch[orderId] = data.charges
+            pocsCatch[orderId] = data.pocs
+            filesCatch[orderId] = data.files
+            contractsCatch[orderId] = data.contracts
+            equipmentsCatch[orderId] = data.equipments
+            rentalsCatch[orderId] = data.rentals
+            if let transferOrder = data.transferOrder {
+                transferOrderCatch[orderId] = transferOrder
+            }
+            if let route = data.route {
+                custOrderRouteCatch[orderId] = route
+            }
+
+            Dispatch.asyncAfter(0.05) { [weak self] in
+                guard let self, self.isInDOM else { return }
+
+                self.accountView.acctType = data.account.type
+                self.accountView.cardId = data.account.CardID
+                self.order = data.order
+                self.notes = data.notes
+                self.payments = data.payments
+                self.charges = data.charges
+                self.pocs = data.pocs
+                self.files = data.files
+                self.contracts = data.contracts
+                self.equipments = data.equipments
+                self.rentals = data.rentals
+                self.transferOrder = data.transferOrder
+                self.parseOrderData()
+            }
+        }
+    }
+    
+    func editPoc(viewId: UUID, ids: [UUID]) {
+        
+        addToDom(EditChargePOCView(
+            type: .product,
+            viewId: viewId,
+            ids: ids,
+            orderId: self.order.id,
+            callback: { id, _ , _, price, name, _, _ in
+                
+                var _pocs: [CustPOCInventoryOrderView] = []
+                
+                self.pocs.forEach { obj in
+                    
+                    if ids.contains(obj.itemId) {
+                        _pocs.append(
+                            .init(
+                                itemId: obj.itemId,
+                                id: obj.id,
+                                POC: obj.pocId,
+                                soldType: obj.soldType,
+                                custStore: obj.custStore,
+                                custStoreBodegas: obj.custStoreBodegas,
+                                custStoreSecciones: obj.custStoreSecciones,
+                                comision: obj.comision,
+                                points: obj.points,
+                                premierPoints: obj.premierPoints,
+                                series: obj.series,
+                                warentSelfTo: obj.warentSelfTo,
+                                warentFabricTo: obj.warentFabricTo,
+                                soldPrice: price,
+                                pocId: obj.pocId,
+                                upc: obj.upc,
+                                name: name,
+                                brand: obj.brand,
+                                model: obj.model,
+                                status: obj.status
+                            )
+                        )
+                        return
+                    }
+                    
+                    _pocs.append(obj)
+                    
+                }
+                
+                self.pocs = _pocs
+                
+                pocsCatch[self.order.id] = _pocs
+                
+                self.calcBalance()
+                
+                self.chargesRefrence[viewId]?.name = name
+                self.chargesRefrence[viewId]?.priceString = price.formatMoney
+                self.chargesRefrence[viewId]?.total = price.formatMoney
+            },
+            delete: { ids, name, price in
+                self.removePoc(
+                    viewId: viewId,
+                    ids: ids,
+                    name: name,
+                    amount: price
+                )
+            }
+        ))
+    }
+    
+    func removeRental(id: UUID, name: String, amount: Int64) {
+        addToDom(
+            ConfirmView(
+                type: .yesNo,
+                title: "Eliminar Cargo de Renta",
+                message: "Confirme eliminacion de:\n\(name) $\(amount.formatMoney)",
+                callback: { confirmed, _ in
+                    
+                    loadingView.show()
+                    
+                    API.custOrderV1.removeRental(
+                        orderId: self.order.id,
+                        orderFolio: self.order.folio,
+                        itemId: id
+                    ) { resp in
+                        
+                        loadingView.hide()
+                        
+                        guard let resp = resp else {
+                            showError(.comunicationError, .serverConextionError)
+                            return
+                        }
+                        
+                        guard resp.status == .ok  else {
+                            showError(.generalError, resp.msg)
+                            return
+                        }
+
+                        var _rentals: [CustPOCRentalsMin] = []
+                        
+                        if let tr = self.chargesRefrence[id] {
+                            tr.remove()
+                            self.chargesRefrence.removeValue(forKey: id)
+                        }
+                        
+                        self.rentals.forEach { obj in
+                            if obj.id == id {
+                                return
+                            }
+                            _rentals.append(obj)
+                        }
+                        
+                        self.rentals = _rentals
+                        
+                        rentalsCatch[self.order.id] = _rentals
+                        
+                        self.calcBalance()
+                        
+                    }
+                    
+                })
+        )
+    }
+    
+    func editRental(viewId: UUID, itemId: UUID) {
+        /*
+        addToDom(EditChargePOCView(
+            type: .rental,
+            viewId: viewId,
+            ids: [itemId],
+            orderId: self.order.id,
+            callback: { viewId, _, cost, price, name, fiscCode, fiscUnit in
+                
+                guard let view = self.chargesRefrence[viewId] else {
+                    showError(.generalError, "No localizo cargo a remover")
+                    return
+                }
+                
+                guard let id = view.id else {
+                    showError(.generalError, "No localizo id cargo a remover")
+                    return
+                }
+                
+                var _rentals: [CustPOCRentalsMin] = []
+                
+                self.rentals.forEach { obj in
+                    if obj.id == id {
+                        _rentals.append(
+                            .init(
+                                id: id,
+                                startAt: obj.startAt,
+                                endAt: obj.endAt,
+                                workedBy: obj.workedBy,
+                                deliveredBy: obj.deliveredBy,
+                                custPOCRental: obj.custPOCRental,
+                                custPOCRentalInventory: obj.custPOCRentalInventory,
+                                name: name,
+                                description: obj.description,
+                                ecoNumber: obj.ecoNumber,
+                                soldPrice: price,
+                                deliveryType: obj.deliveryType,
+                                deliveryId: obj.deliveryId,
+                                status: obj.status
+                            )
+                        )
+                        return
+                    }
+                    _rentals.append(obj)
+                }
+                
+                self.rentals = _rentals
+                
+                rentalsCatch[self.order.id] = _rentals
+                
+                self.calcBalance()
+                
+                self.chargesRefrence[id]?.name = name
+                self.chargesRefrence[id]?.priceString = price.formatMoney
+                self.chargesRefrence[id]?.total = price.formatMoney
+                
+            },
+            delete: { id, name, price in
+                
+                self.removeRental(id: id, name: name, amount: price)
+                
+            }
+        ))
+         */
+    }
+    
+    func removePayment(id: UUID, name: String, amount: Int64) {
+        
+        guard let view = chargesRefrence[id] else {
+            showError(.generalError, "No localizo cargo a remover")
+            return
+        }
+        
+        guard let id = view.id else {
+            showError(.generalError, "No localizo id cargo a remover")
+            return
+        }
+        
+        addToDom(
+            ConfirmView(
+                type: .yesNo,
+                title: "Eliminar Pago",
+                message: "Confirme eliminacion de:\n\(name) $\(amount.formatMoney)",
+                callback: { confirmed, _ in
+                    guard confirmed else { return }
+
+                    if custCatchHerk < configStoreProcessing.restrictDeletePayments {
+                        addToDom(CustTaskAuthRequestWaitView(
+                            removePaymentFrom: self.order.id,
+                            paymentId: id
+                        ) { authorized in
+                            if authorized {
+                                self.refreshAfterCTAMRemoval()
+                            }
+                        })
+                        return
+                    }
+
+                    loadingView.show()
+                    
+                    API.custOrderV1.removePayment(
+                        orderId: self.order.id,
+                        orderFolio: self.order.folio,
+                        paymentId: id
+                    ) { resp in
+                        
+                        loadingView.hide()
+                        
+                        guard let resp else {
+                            showError(.comunicationError, .serverConextionError)
+                            return
+                        }
+                        
+                        guard resp.status == .ok  else {
+                            showError(.generalError, resp.msg)
+                            return
+                        }
+
+                        guard let payload = resp.data else {
+                            showError(.unexpectedResult, .unexpenctedMissingPayload)
+                            return
+                        }
+
+                        guard payload.auth else {
+                            showAlert(.alerta, "Se ha solicitado remover el pago")
+                            return
+                        }
+                        
+                        var _payments: [CustOrderLoadFolioPayments] = []
+                        
+                        if let tr = self.chargesRefrence[view.viewId] {
+                            tr.remove()
+                            self.chargesRefrence.removeValue(forKey: view.viewId)
+                        }
+                        
+                        self.payments.forEach { obj in
+                            if obj.id == id {
+                                return
+                            }
+                            _payments.append(obj)
+                        }
+                        
+                        self.payments = _payments
+                        
+                        paymentsCatch[self.order.id] = _payments
+                        
+                        self.calcBalance()
+                    }
+                    
+                })
+        )
+    }
+    
+    func calcBalance(){
+        
+        total = 0
+        pays = 0
+        chas = 0
+        
+        charges.forEach { obj in
+            total += ((obj.price * obj.cuant) / 100)
+            chas += ((obj.price * obj.cuant) / 100)
+        }
+        
+        pocs.forEach { obj in
+            total += (obj.soldPrice ?? 0)
+            chas += (obj.soldPrice ?? 0)
+        }
+        
+        rentals.forEach { obj in
+            total += obj.soldPrice
+            chas += obj.soldPrice
+        }
+        
+        payments.forEach { obj in
+            total -= obj.cost
+            pays += obj.cost
+        }
+        
+        self.tpays = pays.formatMoney
+        self.tchars = chas.formatMoney
+        self.ttotal = total.formatMoney
+        
+    }
+    
+    func orderDate(){
+    
+        let invalidStatus: [CustFolioStatus] = [
+            .canceled,
+            .finalize,
+            .collection,
+            .archive
+        ]
+        
+        if invalidStatus.contains(self.order.status) {
+            return
+        }
+        
+        var selectedDateStamp = ""
+        
+        if let due = self.order.dueDate {
+            let uts = getDate(due)
+            selectedDateStamp = "\(uts.year)/\(uts.month)/\(uts.day)"
+        }
+        
+        addToDom(
+            
+            SelectCalendarDate(
+                type: .folio,
+                selectedDateStamp: selectedDateStamp,
+                currentSelectedDates: []
+            ) { _, uts, _ in
+                
+                loadingView.show()
+                
+                API.custOrderV1.update(
+                    orderid: self.order.id,
+                    uts: Int64(uts),
+                    sendComm: true,
+                    lastCommunicationMethod: nil) { resp in
+                        
+                        loadingView.hide()
+                        
+                        guard let resp = resp else {
+                            showError(.comunicationError, .serverConextionError)
+                            return
+                        }
+                        
+                        guard resp.status == .ok else{
+                            showError(.generalError, resp.msg)
+                            return
+                        }
+                        
+                        showSuccess(.operacionExitosa, "Cita Actualizada")
+                        
+                        self.order.dueDate = Int64(uts)
+                        
+                        self.dueDate = Int64(uts)
+
+                        if let _ = orderCatch[self.order.id] {
+                            orderCatch[self.order.id]!.dueDate = Int64(uts)
+                        }
+                    }
+            }
+        )
+        
+    }
+    
+    func saveOrderDetails(){
+        
+        if self.orderName.isEmpty {
+            showError(.generalError, .requierdValid("nombre"))
+            return
+        }
+        
+        if self.mobile.isEmpty {
+            showError(.generalError, .requierdValid("movil"))
+            return
+        }
+        
+        let (isValid, reason) = isValidPhone(self.mobile)
+        
+        if !isValid {
+            showError(.invalidFormat, reason)
+            return
+        }
+        
+        if !self.telephone.isEmpty {
+            let (isValid, reason) = isValidPhone(self.telephone)
+            if !isValid {
+                showError(.invalidFormat, reason)
+                return
+            }
+        }
+        
+        if !self.email.isEmpty {
+            if !isValidEmail(self.email) {
+                showError(.invalidFormat, "Ingrese un correo valido")
+                return
+            }
+        }
+        
+        loadingView.hide()
+        
+        API.custOrderV1.saveOrderDetail(
+            orderid: self.order.id,
+            name: self.orderName,
+            mobile: self.mobile,
+            telephone: self.telephone,
+            email: self.email,
+            street: self.street,
+            colony: self.colony,
+            city: self.city,
+            state: self.state,
+            country: self.country,
+            zip: self.zip
+        ) { resp in
+            
+            guard let resp = resp else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+            
+            guard resp.status == .ok else{
+                showError(.generalError, resp.msg)
+                return
+            }
+
+            self.editMode = false
+            showSuccess(.operacionExitosa, "Datos Actulizados")
+            
+            if let _ = orderCatch[self.order.id] {
+                self.order.name = self.orderName
+                orderCatch[self.order.id]!.name = self.orderName
+                
+                self.order.mobile = self.mobile
+                orderCatch[self.order.id]!.mobile = self.mobile
+                
+                self.order.telephone = self.telephone
+                orderCatch[self.order.id]!.telephone = self.telephone
+                
+                self.order.email = self.email
+                orderCatch[self.order.id]!.email = self.email
+                
+                self.order.street = self.street
+                orderCatch[self.order.id]!.street = self.street
+                
+                self.order.colony = self.colony
+                orderCatch[self.order.id]!.colony = self.colony
+                
+                self.order.city = self.city
+                orderCatch[self.order.id]!.city = self.city
+                
+                self.order.state = self.state
+                orderCatch[self.order.id]!.state = self.state
+                
+                self.order.country = self.country
+                orderCatch[self.order.id]!.country = self.country
+                
+                self.order.zip = self.zip
+                orderCatch[self.order.id]!.zip = self.zip
+            }
+            
+        }
+    }
+    
+    func finilizeOrder(){
+        
+        let equipments: [API.custOrderV1.FinalizeEquipment] = self.equipments.map {
+            .init(
+                id: $0.id,
+                description: "\($0.tag1) \($0.tag2) \($0.tag3)".purgeSpaces,
+                status: $0.status,
+                workedBy: $0.workedBy,
+                deliveredBy: $0.deliveredBy
+            )
+        }
+        
+        let rentals: [API.custOrderV1.RentalEquipment] = self.rentals.map {
+            .init(
+                id: $0.id,
+                custPOCRental: $0.custPOCRental,
+                name: $0.name,
+                description: $0.description,
+                ecoNumber: $0.ecoNumber,
+                workedBy: $0.workedBy,
+                deliveredBy: $0.deliveredBy
+            )
+        }
+        
+        loadingView.show()
+        
+        API.custOrderV1.finalize(
+            orderid: self.order.id,
+            equipments: equipments,
+            rentals: rentals, 
+            sendComm: true,
+            lastCommunicationMethod: lastCommunicationMethod
+        ) { resp in
+            
+            loadingView.hide()
+            
+            guard let resp else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+            
+            guard resp.status == .ok else {
+                showError(.generalError, resp.msg)
+                return
+            }
+
+            guard let data = resp.data else  {
+                showError(.generalError, "Un expected missing payload")
+                return
+            }
+
+            self.status = data.status
+            
+            orderCatch[self.order.id]?.status = data.status
+            orderCatch[self.order.id]?.modifiedAt = data.modifiedAt
+            equipmentsCatch[self.order.id] = self.equipments
+            rentalsCatch[self.order.id] = self.rentals
+            notesCatch[self.order.id]?.append(contentsOf: data.notes)
+            
+            if data.sentToCredit {
+                // TODO: no se que XD
+            }
+            
+        }
+    }
+    
+    func cancelOrder(){
+    
+        let equipments: [API.custOrderV1.FinalizeEquipment] = self.equipments.map {
+            .init(
+                id: $0.id,
+                description: "\($0.tag1) \($0.tag2) \($0.tag3)".purgeSpaces,
+                status: $0.status,
+                workedBy: $0.workedBy,
+                deliveredBy: $0.deliveredBy
+            )
+        }
+        
+        let rentals: [API.custOrderV1.RentalEquipment] = self.rentals.map {
+            .init(
+                id: $0.id,
+                custPOCRental: $0.custPOCRental,
+                name: $0.name,
+                description: $0.description,
+                ecoNumber: $0.ecoNumber,
+                workedBy: $0.workedBy,
+                deliveredBy: $0.deliveredBy
+            )
+        }
+        
+        loadingView.show()
+        
+        API.custOrderV1.cancel(orderid: self.order.id, equipments: equipments, rentals: rentals, sendComm: true, lastCommunicationMethod: lastCommunicationMethod) { resp in
+            
+            loadingView.hide()
+            
+            guard let resp = resp else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+            
+            guard resp.status == .ok else {
+                showError(.generalError, resp.msg)
+                return
+            }
+
+            guard let data = resp.data else {
+                showError(.generalError, .unexpenctedMissingPayload)
+                return
+            }
+            
+            self.status  = .finalize
+            
+            orderCatch[self.order.id]?.status = .finalize
+            orderCatch[self.order.id]?.modifiedAt = data.modifiedAt
+            equipmentsCatch[self.order.id] = self.equipments
+            rentalsCatch[self.order.id] = self.rentals
+            notesCatch[self.order.id]?.append(contentsOf: data.notes)
+            
+            if data.sentToCredit {
+                // TODO: no se que XD
+            }
+            
+        }
+        
+    }
+    
+    func finilizeOrderService(_ pendingPickup: Bool){
+        
+    }
+    
+    func finilizeOrderRental(_ pendingPickup: Bool, rentals: [CustPOCRentalsMin], orderView: OrderView){
+        
+    }
+    
+    func initiateOrderCancelation(){
+        switch self.order.type {
+        case .folio:
+            
+            addToDom(CancelationConfirmView( type: self.order.type, rentals: self.rentals, equipments: self.equipments){ rentals, equipments in
+                
+                self.equipments = equipments
+                
+                equipments.forEach { eq in
+                    
+                    self.equipmentViewRefrence[eq.id]?.workedBy = eq.workedBy
+                    if let _ = eq.workedBy {
+                        self.equipmentViewRefrence[eq.id]?.isReady.wrappedValue = true
+                        self.equipmentReadyStatusRefrence[eq.id]?.wrappedValue = true
+                    }
+                    else{
+                        self.equipmentViewRefrence[eq.id]?.isReady.wrappedValue = false
+                        self.equipmentReadyStatusRefrence[eq.id]?.wrappedValue = false
+                    }
+                    
+                    self.equipmentViewRefrence[eq.id]?.deliveredBy = eq.deliveredBy
+                    if let _ = eq.deliveredBy {
+                        self.equipmentViewRefrence[eq.id]?.isPicked.wrappedValue = true
+                        self.equipmentPickedStatusRefrence[eq.id]?.wrappedValue = true
+                    }
+                    else{
+                        self.equipmentViewRefrence[eq.id]?.isPicked.wrappedValue = false
+                        self.equipmentPickedStatusRefrence[eq.id]?.wrappedValue = false
+                    }
+                    
+                }
+                
+                self.cancelOrder()
+            })
+        case .date:
+            break
+        case .sale:
+            break
+        case .rental:
+            
+            addToDom(CancelationConfirmView( type: self.order.type, rentals: self.rentals, equipments: self.equipments){ rentals, equipments in
+                
+                self.rentals = rentals
+                
+                rentals.forEach { rental in
+                    
+                    self.rentalViewRefrence[rental.id]?.workedBy = rental.workedBy
+                    if let _ = rental.workedBy {
+                        self.rentalViewRefrence[rental.id]?.isReady = true
+                    }
+                    else{
+                        self.rentalViewRefrence[rental.id]?.isReady = false
+                    }
+                    
+                    self.rentalViewRefrence[rental.id]?.deliveredBy = rental.deliveredBy
+                    if let _ = rental.deliveredBy {
+                        self.rentalViewRefrence[rental.id]?.$isPicked.wrappedValue = true
+                    }
+                    else{
+                        self.rentalViewRefrence[rental.id]?.$isPicked.wrappedValue = false
+                    }
+                    
+                }
+                
+                self.cancelOrder()
+            })
+            
+        case .mercadoLibre:
+            break
+        case .claroShop:
+            break
+        case .amazon:
+            break
+        case .ebay:
+            break
+        }
+    }
+    
+    /// This function will evaluate what type of an order we are dealing with and if has multiple elements (equipments, retals, items, etc...) and use a direct confirmation of multiple object view.
+    func initiateOrderFinalization(force: Bool, equipments: [CustOrderLoadFolioEquipments]? = nil, rentals: [CustPOCRentalsMin]? = nil){
+        
+        print("🐼 001")
+        
+        if let equipments {
+            
+            self.equipments = equipments
+            
+            equipments.forEach { eq in
+                
+                self.equipmentViewRefrence[eq.id]?.workedBy = eq.workedBy
+                if let _ = eq.workedBy {
+                    self.equipmentViewRefrence[eq.id]?.isReady.wrappedValue = true
+                }
+                else{
+                    self.equipmentViewRefrence[eq.id]?.isReady.wrappedValue = false
+                }
+                
+                self.equipmentViewRefrence[eq.id]?.deliveredBy = eq.deliveredBy
+                if let _ = eq.deliveredBy {
+                    self.equipmentViewRefrence[eq.id]?.isPicked.wrappedValue = true
+                }
+                else{
+                    self.equipmentViewRefrence[eq.id]?.isPicked.wrappedValue = false
+                }
+                
+            }
+            
+            self.finilizeOrder()
+            
+            return
+        }
+        print("🐼 002")
+        
+        print(self.order.type.rawValue)
+        
+        switch self.order.type {
+        case .folio:
+        
+            print("🐼 003")
+            
+            addToDom(FinalizeConfirmView(
+                type: self.order.type,
+                rentals: self.rentals,
+                equipments: self.equipments
+            ){ rentals, equipments in
+                
+                var pickedUp = true
+                
+                /// Parcong to find final picked up state
+                equipments.forEach { eq in
+                    if eq.deliveredBy == nil {
+                        pickedUp = false
+                    }
+                }
+                
+                if pickedUp && self.accountView.acctType == .personal {
+                    
+                    if let orderCloseInscriptionMode = configStoreProcessing.rewardsPrograme?.orderCloseInscriptionMode {
+                        
+                        print("⭐️ orderCloseInscriptionMode: \(orderCloseInscriptionMode.description)")
+                        
+                        switch orderCloseInscriptionMode {
+                        case .required, .recomended:
+                            if self.accountView.cardId.isEmpty {
+                                
+                                if orderCloseInscriptionMode == .required {
+                                    showError(.generalError, "Se requiere que incriba al cliente en el sistema de recompensas")
+                                }
+                                
+                                self.addLoyaltyCard(isRequiered: orderCloseInscriptionMode == .required) {
+                                    self.initiateOrderFinalization(force: true, equipments: equipments, rentals: rentals)
+                                }
+                                
+                                return
+                            }
+                        case .notrequired:
+                            break
+                        case .optional:
+                            break
+                        }
+                        
+                    }
+                    
+                }
+                
+                self.equipments = equipments
+                
+                equipments.forEach { eq in
+                    
+                    self.equipmentViewRefrence[eq.id]?.workedBy = eq.workedBy
+                    if let _ = eq.workedBy {
+                        self.equipmentViewRefrence[eq.id]?.isReady.wrappedValue = true
+                    }
+                    else{
+                        self.equipmentViewRefrence[eq.id]?.isReady.wrappedValue = false
+                    }
+                    
+                    self.equipmentViewRefrence[eq.id]?.deliveredBy = eq.deliveredBy
+                    if let _ = eq.deliveredBy {
+                        self.equipmentViewRefrence[eq.id]?.isPicked.wrappedValue = true
+                    }
+                    else{
+                        self.equipmentViewRefrence[eq.id]?.isPicked.wrappedValue = false
+                    }
+                    
+                }
+                
+                self.finilizeOrder()
+                
+            })
+            
+        case .date:
+            break
+        case .sale:
+            
+            self.finilizeOrder()
+            
+        case .rental:
+            
+            addToDom(FinalizeConfirmView( type: self.order.type, rentals: self.rentals, equipments: self.equipments){ rentals, equipments in
+                
+                var pickedUp = true
+                
+                self.rentals = rentals
+                
+                rentals.forEach { rental in
+                    
+                    self.rentalViewRefrence[rental.id]?.workedBy = rental.workedBy
+                    if let _ = rental.workedBy {
+                        self.rentalViewRefrence[rental.id]?.isReady = true
+                    }
+                    else{
+                        self.rentalViewRefrence[rental.id]?.isReady = false
+                    }
+                    
+                    self.rentalViewRefrence[rental.id]?.deliveredBy = rental.deliveredBy
+                    if let _ = rental.deliveredBy {
+                        self.rentalViewRefrence[rental.id]?.$isPicked.wrappedValue = true
+                    }
+                    else{
+                        self.rentalViewRefrence[rental.id]?.$isPicked.wrappedValue = false
+                        pickedUp = false
+                    }
+                    
+                }
+                
+                if pickedUp {
+                    
+                    if let orderCloseInscriptionMode = configStoreProcessing.rewardsPrograme?.orderCloseInscriptionMode {
+                        
+                        switch orderCloseInscriptionMode {
+                        case .required, .recomended:
+                            if self.accountView.cardId.isEmpty {
+                                
+                                if orderCloseInscriptionMode == .required {
+                                    showError(.generalError, "Se requiere que incriba al cliente en el sistema de recompensas")
+                                }
+                                
+                                self.addLoyaltyCard( isRequiered: orderCloseInscriptionMode == .required){
+                                    self.finilizeOrder()
+                                }
+                                
+                                return
+                            }
+                        case .notrequired:
+                            break
+                        case .optional:
+                            break
+                        }
+                        
+                    }
+                }
+                
+                self.finilizeOrder()
+            })
+            
+        case .mercadoLibre:
+            break
+        case .claroShop:
+            break
+        case .amazon:
+            break
+        case .ebay:
+            break
+        }
+    }
+    
+    func facturar(){
+        
+        loadingView.show()
+        
+        API.custAccountV1.load(id: .id(self.order.custAcct)) { resp in
+            
+            guard let resp else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+            
+            guard resp.status == .ok else{
+                showError(.generalError, "No se obtuvo datos de la cuenta.")
+                return
+            }
+            
+            guard let account = resp.data?.custAcct else {
+                showError(.unexpectedResult, "No se localizo cuenta")
+                return
+            }
+            
+            let view = ToolFiscal(
+                loadType: .order(id: self.order.id),
+                folio: self.order.folio,
+                callback: { id, folio, pdf, xml in
+                    
+                    self.fiscalView.innerHTML = ""
+                    
+                    self.fiscalView.appendChild(Div{
+                        Img()
+                            .src("/skyline/media/attachment.png")
+                            .height(24.px)
+                            .marginRight(7.px)
+                        
+                        Span("Factura")
+                            .fontSize(24.px)
+                    }
+                    .class(.uibtn)
+                    .onClick {
+                        
+                        loadingView.show()
+
+                        API.fiscalV1.loadDocument(docid: id) { resp in
+
+                            loadingView.hide()
+
+                            guard let resp else {
+                                showError(.comunicationError, .serverConextionError)
+                                return
+                            }
+
+                            guard resp.status == .ok else {
+                                showError(.generalError, resp.msg)
+                                return
+                            }
+
+                            guard let payload = resp.data else {
+                                showError(.unexpectedResult, "No se obtuvo payload de data.")
+                                return
+                            }
+
+                            let view = ToolFiscalViewDocument(
+                                type: payload.type,
+                                doc: payload.doc,
+                                reldocs: payload.reldocs,
+                                account: payload.account
+                            ) {
+                                /// Document canceled
+                                
+                                self.fiscalView.innerHTML = ""
+                                
+                                self.fiscalView.appendChild(Div{
+                                    Img()
+                                        .src("/skyline/media/money_bag.png")
+                                        .height(24.px)
+                                        .marginRight(7.px)
+                                    
+                                    Span("Facturar")
+                                        .fontSize(24.px)
+                                }
+                                    .marginLeft(0)
+                                    .class(.uibtn)
+                                    .onClick {
+                                        self.facturar()
+                                    })
+                                
+                            }
+                            
+                            addToDom(view)
+
+                        }
+                    
+                    })
+                    
+                })
+            
+            view.reciver = .init(
+                id: account.id,
+                folio: account.folio,
+                businessName: account.businessName,
+                firstName: account.firstName,
+                lastName: account.lastName,
+                mcc: account.mcc,
+                mobile: account.mobile,
+                email: account.email,
+                autoPaySpei: account.autoPaySpei,
+                autoPayOxxo: account.autoPayOxxo,
+                fiscalProfile: account.fiscalProfile,
+                fiscalRazon: account.fiscalRazon,
+                fiscalRfc: account.fiscalRfc,
+                fiscalRegime: account.fiscalRegime,
+                fiscalZip: account.fiscalZip,
+                cfdiUse: account.cfdiUse,
+                fiscalPOCFirstName: account.fiscalPOCFirstName,
+                fiscalPOCLastName: account.fiscalPOCLastName,
+                fmcc: account.fmcc,
+                fiscalPOCMobile: account.fiscalPOCMobile,
+                fiscalPOCMobileValidaded: account.fiscalPOCMailValidaded,
+                fiscalPOCMail: account.fiscalPOCMail,
+                fiscalPOCMailValidaded: account.fiscalPOCMailValidaded,
+                crstatus: account.crstatus, 
+                isConcessionaire: account.isConcessionaire
+            )
+            
+            addToDom(view)
+        }
+        
+    }
+    
+    func reactivate(){
+        
+        if custCatchHerk < configStoreProcessing.restrictOrderClosing {
+            showAlert(.alerta, "No tiene permiso para reactivar orden.")
+            return
+        }
+        
+        switch self.order.type {
+        case .folio:
+            addToDom(ReactivateConfirmOrderRentalView(type: self.order.type, rentals: self.rentals, equipments: self.equipments){ reacts in
+                self.reactivateAct(reacts)
+            })
+        case .date:
+            break
+        case .sale:
+            break
+        case .rental:
+            addToDom(ReactivateConfirmOrderRentalView(type: self.order.type, rentals: self.rentals, equipments: self.equipments){ reacts in
+                self.reactivateAct(reacts)
+            })
+            
+        case .mercadoLibre:
+            break
+        case .claroShop:
+            break
+        case .amazon:
+            break
+        case .ebay:
+            break
+        }
+        
+    }
+    
+    func reactivateAct(_ payload: [UUID: Bool]){
+        
+        var objs: [API.custOrderV1.ReactivateObject] = []
+        
+        var ids: [UUID] = []
+        
+        payload.forEach { id, react in
+            if react {
+                ids.append(id)
+            }
+        }
+        
+        switch self.order.type {
+        case .folio:
+            self.equipments.forEach { obj in
+                if ids.contains(obj.id) {
+                    objs.append(.init(id: obj.id, description: "\(obj.tag1) \(obj.tag2) \(obj.tag3)".purgeSpaces))
+                }
+            }
+        case .date:
+            break
+        case .sale:
+            break
+        case .rental:
+            
+            self.rentals.forEach { obj in
+                if ids.contains(obj.id) {
+                    objs.append(.init(id: obj.id, description: "\(obj.ecoNumber) \(obj.name)"))
+                }
+            }
+            
+        case .mercadoLibre:
+            break
+        case .claroShop:
+            break
+        case .amazon:
+            break
+        case .ebay:
+            break
+        }
+        
+        loadingView.show()
+        
+        API.custOrderV1.reactivate(ids: objs, orderid: self.order.id, sendComm: true) { resp in
+            
+            loadingView.hide()
+            
+            guard let resp = resp else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+            
+            guard resp.status == .ok else {
+                showError(.generalError, resp.msg)
+                return
+            }
+            
+            switch self.order.type {
+            case .folio:
+                
+                var cc = 0
+                
+                self.equipments.forEach { obj in
+                    
+                    if ids.contains(obj.id) {
+                        self.equipments[cc].deliveredBy = nil
+                    }
+                    
+                    if let _ = self.equipmentViewRefrence[obj.id] {
+                        self.equipmentViewRefrence[obj.id]?.deliveredBy = nil
+                        self.equipmentViewRefrence[obj.id]?.isPicked.wrappedValue = false
+                    }
+                    
+                    cc += 1
+                }
+                
+            case .date:
+                break
+            case .sale:
+                break
+            case .rental:
+                
+                var cc = 0
+                
+                self.rentals.forEach { obj in
+                    
+                    if ids.contains(obj.id) {
+                        self.rentals[cc].deliveredBy = nil
+                    }
+                    
+                    if let _ = self.rentalViewRefrence[obj.id] {
+                        self.rentalViewRefrence[obj.id]?.deliveredBy = nil
+                        self.rentalViewRefrence[obj.id]?.isPicked = false
+                    }
+                    
+                    cc += 1
+                }
+                
+            case .mercadoLibre:
+                break
+            case .claroShop:
+                break
+            case .amazon:
+                break
+            case .ebay:
+                break
+            }
+            
+            self.status = .active
+            
+            self.order.status = .active
+            
+            orderCatch[self.order.id]?.status = .active
+            
+            orderCatch[self.order.id]?.modifiedAt = getNow()
+            
+        }
+    }
+    
+    // folio cambiado a finalizado, error en desarollo de logica TIM:24rnlaCm7  vcantu01
+    func changeOrderStatus(_ newStatus: CustFolioStatus) {
+        
+        switch newStatus {
+        case .pending:
+            break
+        case .active:
+            break
+        case .pendingSpare:
+            showError(.generalError, "Funcion no sopotada")
+            return
+        case .canceled:
+            guard custCatchHerk > 3 else {
+                showError(.generalError, "No tiene permiso para realizar este cambio")
+                return
+            }
+        case .finalize:
+            guard custCatchHerk > 3 else {
+                showError(.generalError, "No tiene permiso para realizar este cambio")
+                return
+            }
+        case .archive:
+            break
+        case .collection:
+            break
+        case .sideStatus:
+            if self.status != .archive {
+                showError(.generalError, "Funcion no sopotada")
+                return
+            }
+            return
+        case .saleWait:
+            break
+        }
+        
+        if let _ = order.transferManagement {
+            showError(.generalError, "Funcion no sopotada")
+        }
+    
+        let confirm = ChangeStatusView(
+            status: newStatus,
+            folio: self.order.folio,
+            name: self.order.name
+        ) { reason, dueDate in
+            
+            loadingView.show()
+            
+            API.custOrderV1.changeStatus(
+                orderId: self.order.id,
+                reason: reason,
+                status: newStatus,
+                dueDate: dueDate
+            ) { resp in
+                
+                loadingView.hide()
+                
+                guard let resp = resp else {
+                    showError(.comunicationError, .serverConextionError)
+                    return
+                }
+                
+                guard resp.status == .ok else {
+                    showError(.generalError, resp.msg)
+                    return
+                }
+                
+                self.status = newStatus
+                
+                self.order.status = newStatus
+                
+            }
+        }
+        
+        addToDom(confirm)
+    }
+    
+    func openOrderBudget(){
+        
+        addToDom(BudgetView(
+            accountId: order.custAcct,
+            budgetStatus: self.$budgetStatus,
+            costType: self.accountView.account?.costType ?? .cost_a,
+            orderid: self.order.id,
+            customerName: orderName,
+            customerMobile: mobile
+        ){ items in
+            
+            items.charges.forEach { charge in
+                self.charges.append(.init(
+                    id: charge.id,
+                    codeid: charge.SOC,
+                    type: (charge.SOC == nil) ? .manual : .service,
+                    billingType: charge.type == .adjustment ? .adjustment : .charge,
+                    name: charge.name,
+                    cost: charge.cost,
+                    cuant: charge.cuant,
+                    price: charge.price,
+                    status: charge.status
+                ))
+            }
+            
+            self.pocs.append(contentsOf: items.pocs)
+            
+            items.charges.forEach { obj in
+                
+                let stotal = ((obj.price * obj.cuant) / 100)
+                
+                self.total += stotal
+                self.chas += stotal
+                
+                let tr = OldChargeTrRow(
+                    isCharge: true,
+                    id: obj.id,
+                    name: obj.name,
+                    cuant: obj.cuant,
+                    price: obj.price,
+                    puerchaseOrder: false
+                ) { viewId in
+                    self.editCharge(
+                        viewId: viewId, 
+                        ids: [obj.id],
+                        type: (obj.SOC == nil) ? .manual : .service
+                    )
+                }.color(.gray)
+                
+                self.chargesRefrence[tr.viewId] = tr
+                
+                self.chargesTable.appendChild (tr)
+            }
+            
+            var pocsRefrence: [UUID: [Int64 : [CustPOCInventoryOrderView]]] = [:]
+            
+            items.pocs.forEach { obj in
+                
+                if let _ = pocsRefrence[obj.pocId] {
+                    
+                    if let _ = pocsRefrence[obj.pocId]?[(obj.soldPrice ?? 0)] {
+                        pocsRefrence[obj.pocId]?[(obj.soldPrice ?? 0)]?.append(obj)
+                    }
+                    else {
+                        pocsRefrence[obj.pocId]?[(obj.soldPrice ?? 0)] = [obj]
+                    }
+                    
+                }
+                else {
+                    pocsRefrence[obj.pocId] = [(obj.soldPrice ?? 0) : [obj]]
+                }
+                
+            }
+            
+            pocsRefrence.forEach { pocId, priceRefrence in
+            
+                priceRefrence.forEach { price, items in
+                
+                    let soldPrice = price * items.count.toInt64
+                    
+                    self.total += soldPrice
+                    
+                    self.chas += soldPrice
+                    
+                    let tr = OldChargeTrRow(pocs: items) { viewId in
+                        self.editPoc(viewId: viewId, ids: items.map{ $0.itemId })
+                    }
+                        .color(.gray)
+                    
+                    self.chargesRefrence[tr.viewId] = tr
+                    
+                    self.chargesTable.appendChild(tr)
+                    
+                }
+            }
+            
+            self.calcBalance()
+            
+        } addNote: { note in
+            self.messageGrid.reciveMessage(note: note)
+        })
+    }
+    
+    func loadMedia(_ file: File) {
+
+        // let fileSize = (file.size / 1000 / 1000)
+
+        // if file.type.contains("video") || file.type.contains("image") {
+        //     if  fileSize > 30 {
+        //         showError(.generalError, "No se pueden subir archivoa de mas de 30 mb")
+
+        //         return 
+        //     }
+        // }
+
+        let xhr = XMLHttpRequest()
+        
+        let view = OrderImageView(
+            id: nil,
+            name: "",
+            url: "skyline/media/tierraceroRoundLogoWhite.svg"
+        ) { id, name in
+
+        }
+
+        fileViewCatch[view.viewId] = view
+        
+        xhr.onLoadStart {
+            self.filesGrid.appendChild(view)
+            _ = JSObject.global.scrollToBottom!("filesGrid\(self.order.id.uuidString)")
+        }
+        
+        xhr.onError { jsValue in
+            showError(.comunicationError, .serverConextionError)
+            view.remove()
+        }
+        
+        xhr.onLoadEnd {
+            
+            view.loadPercent = ""
+            
+            guard let responseText = xhr.responseText else {
+                showError(.generalError, .serverConextionError + " 001")
+                view.remove()
+                return
+            }
+            
+            guard let data = responseText.data(using: .utf8) else {
+                showError(.generalError, .serverConextionError + " 002")
+                view.remove()
+                return
+            }
+            
+            do {
+                
+                let resp = try JSONDecoder().decode(APIResponseGeneric<API.custAPIV1.UploadManagerResponse>.self, from: data)
+                
+                guard resp.status == .ok else {
+                    showError(.generalError, resp.msg)
+                    view.remove()
+                    return
+                }
+                
+                guard let mode = resp.data else {
+                    showError(.generalError, "No se pudo cargar datos")
+                    view.remove()
+                    return
+                }
+                
+                switch mode {
+                case .processing(let payload):
+                    
+                    view.id = payload.id
+                    
+                case .processed(let payload):
+                    
+                    if let id = payload.mediaid {
+                        view.id = id
+                    }
+                    
+                    switch payload.type {
+                    case .image:
+                        view.url = "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(payload.fileName)"
+                        view.custom("background-image", "url('\("https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(payload.fileName)")')")
+                    case .video:
+                        //view.poster = "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(payload.fileName)"
+                        //view.videoSrc = "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/thump_\(payload.fileName)"
+                        view.url = "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(payload.fileName)"
+                        view.custom("background-image", "url('\("https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(payload.fileName)")')")
+                    case .audio:
+                        break
+                    case .pdf:
+                        break
+                    case .doc, .pages, .numbers, .keynote, .xml:
+                        view.url = "https://\(custCatchUrl)\(skylineUrlPatch)/fileNet/\(payload.fileName)"
+                    case .ptt:
+                        break
+                    case .general:
+                        break
+                    }
+                    
+                }
+                
+            } catch {
+                showError(.generalError, .serverConextionError + " 003")
+                return
+            }
+            
+        }
+        
+        xhr.upload.addEventListener("progress", options: EventListenerAddOptions.init(capture: false, once: false, passive: false, mozSystemGroup: false)) { _event in
+            let event = ProgressEvent(_event.jsEvent)
+            view.loadPercent = ((Double(event.loaded) / Double(event.total)) * 100).toInt.toString
+        }
+        
+        xhr.onProgress { event in
+            print("⭐️  002")
+            print(event)
+        }
+        
+        let formData = FormData()
+        
+        let fileName = safeFileName(name: file.name, to: .order, folio: self.order.folio)
+        
+        formData.append("file", file, filename: fileName)
+        
+        xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
+        // xhr.open(method: "POST", url: "http://localhost:8800/api/cust/v1/uploadManager")
+        
+
+        formData.append("eventid", view.viewId.uuidString)
+
+        formData.append("to", ImagePickerTo.order.rawValue)
+
+        formData.append("id", self.order.id.uuidString)
+
+        formData.append("folio", self.order.folio)
+        
+        formData.append("fileName", fileName)
+
+        formData.append("connid", custCatchChatConnID)
+        
+        formData.append("remoteCamera", false.description)
+        
+        xhr.setRequestHeader("Accept", "application/json")
+        xhr.setRequestHeader("WSId", custCatchChatConnID)
+        
+        if let jsonData = try? JSONEncoder().encode(APIHeader(
+            AppID: thisAppID,
+            AppToken: thisAppToken,
+            url: custCatchUrl,
+            user: custCatchUser,
+            mid: custCatchMid,
+            key: custCatchKey,
+            token: custCatchToken,
+            tcon: .web, 
+            applicationType: custCatchAccountType.sessionType
+        )){
+            if let str = String(data: jsonData, encoding: .utf8) {
+                let utf8str = str.data(using: .utf8)
+                if let base64Encoded = utf8str?.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0)) {
+                    xhr.setRequestHeader("Authorization", base64Encoded)
+                }
+            }
+        }
+        
+        xhr.send(formData)
+        
+    }
+
+    func loadLocation(_ lat: Double,_ lon: Double){
+
+            self.mapContainer.innerHTML = ""
+            
+            loadingView.show()
+            
+            API.v1.jwt { token in
+                
+                guard let token else {
+                    loadingView.hide()
+                    showError(.comunicationError, "No se pudo cargar token")
+                    return
+                }
+
+                loadingView.hide()
+
+                // "Arroyo Carrizal, Luis Echeverria, 87060 Victoria, Tamps., México
+                let _ = JSObject.global.initiateSingleMapCord!(self.mapId, token, lat, lon,  JSClosure { args in
+                    
+                    print("🗺️  processMapUpdate")
+
+                    print(args)
+
+                    print("🟢  0001 ")
+                    
+                    print(args)
+                    
+                    if let payload = args.first?.string {
+                        print("🟢  0002 ")
+                        self.processMapUpdate(payload)
+                    }
+                    
+                    print("🟢  0003 ")
+                    
+                    return .undefined
+                }.jsValue)
+
+            }
+        }
+
+
+    func loadLocation(token: String, _ lat: String,_ lon: String){
+
+            self.mapContainer.innerHTML = ""
+            
+            // "Arroyo Carrizal, Luis Echeverria, 87060 Victoria, Tamps., México
+            let _ = JSObject.global.initiateSingleMapCord!(self.mapId, token, lat, lon,  JSClosure { args in
+
+
+                print(args)
+
+                /*
+                guard let data = json.data(using: .utf8) else {
+                    showError(.unexpectedResult, "No se pudo crear data de hilo")
+                    return
+                }
+                
+                do {
+                    
+                    let payload = try JSONDecoder().decode([AppleMap].self, from: data)
+                    
+                    if payload.isEmpty {
+                        showError(.generalError, "no hay resultado")
+                        return
+                    }
+                    
+                    if payload.count > 1 {
+
+                            let view = MapMultipleAddressSelector(linkedLocations: payload) { item in
+                                self.addLocation(latitude: item.coordinate.latitude, longitude: item.coordinate.longitude)
+                            }
+
+                            addToDom(view)
+
+                            return
+                    }
+
+                    guard let location = payload.first else {
+                        return
+                    }
+
+                    self.addLocation(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+                    
+                } catch {
+                    showError(.unexpectedResult, "No se pudo decodificar data inicial de mapa")
+                    return
+                }
+                */
+                return .undefined
+
+            }.jsValue)
+        }
+
+    func proccessPayment(_ code: FiscalPaymentCodes, _ description: String, _ amount: Float, _ provider: String, _ lastFour: String, _ auth: String, _ uts: Int64?, _ downpayment: Bool){
+        
+        print("⚠️ API.custOrderV1.addPayment")
+
+        API.custOrderV1.addPayment(
+            orderid: order.id,
+            storeId: custCatchStore,
+            fiscCode: code,
+            description: description,
+            cost: amount,
+            provider: provider,
+            lastFour: lastFour,
+            auth: auth,
+            downpayment: downpayment
+        ) { resp in
+
+            Console.clear()
+            
+            print("🟢 API.custOrderV1.addPayment")
+            
+            loadingView.hide()
+            
+            guard let resp else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+
+            guard resp.status == .ok else {
+                showError(.generalError, resp.msg)
+                return
+            }
+            
+            guard let payload = resp.data else {
+                showError(.generalError, resp.msg)
+                return
+            }
+            
+            let obj: CustOrderLoadFolioPayments = .init(
+                id: payload.payment.id,
+                folio: payload.payment.folio,
+                type: .payment,
+                cost: amount.toCents,
+                ref: "",
+                description: description,
+                auth: auth,
+                status: .unbilled
+            )
+            
+            let tr = OldChargeTrRow(
+                isCharge: false,
+                id: obj.id,
+                name: obj.description,
+                cuant: 100.toInt64,
+                price: obj.cost,
+                puerchaseOrder: false
+                
+            ) { viewId in
+                /// Payments cant be edited
+                self.removePayment(
+                    id: viewId,
+                    name: obj.description,
+                    amount: obj.cost
+                )
+            }.color(.gray)
+            
+            self.chargesRefrence[tr.viewId] = tr
+            
+            self.chargesTable.appendChild (tr)
+            
+            paymentsCatch[self.order.id]?.append(obj)
+            
+            self.payments.append(obj)
+            
+            self.calcBalance()
+            
+            self.status = payload.status
+
+            print("⚠️ PaymentReciptFormView")
+
+            let view = PaymentReciptFormView(
+                order: self.order,
+                payment: payload.payment,
+                oldbalance: payload.oldbalance,
+                newbalance: payload.newbalance,
+                status: payload.status
+            )
+
+            addToDom(view)
+
+        }
+    }
+    
+    func proccessPaymentWithPoints( _ amount: Float){
+
+        if accountView.cardId.isEmpty {
+            showError(.generalError, "No se activado una tarjeta de recompensas.")
+        }
+        
+        loadingView.show()
+        
+        API.rewardsV1.payWithPoints(
+            cardId: accountView.cardId,
+            points: amount.toInt,
+            relationType: .order,
+            relationId: self.order.id
+        ) { resp in
+            
+            loadingView.hide()
+            
+            guard let resp else {
+                showError(.comunicationError, "No se pudo comunicar con el servir para obtener usuario")
+                return
+            }
+            
+            guard resp.status == .ok else {
+                showError(.generalError, resp.msg)
+                return
+            }
+            
+            guard let payload = resp.data else {
+                showError(.unexpectedResult, .unexpenctedMissingPayload)
+                return
+            }
+            
+            let obj: CustOrderLoadFolioPayments = .init(
+                id: payload.paymentId,
+                folio: payload.paymentFolio,
+                type: .adjustment,
+                cost: amount.toCents,
+                ref: "",
+                description: "Pago con Puntos de Recompensa",
+                auth: "",
+                status: BillingStatus.unbilled
+            )
+            
+            let tr = OldChargeTrRow(
+                isCharge: false,
+                id: obj.id,
+                name: obj.description,
+                cuant: 100.toInt64,
+                price: obj.cost,
+                puerchaseOrder: false
+            ) { viewId in
+                /// Payments cant be edited
+                self.removePayment(
+                    id: viewId,
+                    name: obj.description,
+                    amount: obj.cost
+                )
+            }.color(.gray)
+            
+            self.chargesRefrence[tr.viewId] = tr
+            
+            self.chargesTable.appendChild (tr)
+            
+            paymentsCatch[self.order.id]?.append(obj)
+            
+            self.payments.append(obj)
+            
+            self.calcBalance()
+            
+            self.status = payload.status ?? .active
+            
+        }
+    }
+    
+    func addOrderProject(){
+        
+        let view = AddOrderProject(
+            accountId: self.order.custAcct,
+            orderId: self.order.id,
+            storeId: self.order.store ?? custCatchStore
+        ) { id in
+            self.orderProject = id
+        }
+        
+        addToDom(view)
+        
+    }
+
+    func loadMap(){
+        
+        print("🟡 init map")
+        
+        if street.isEmpty {
+            showError(.requiredField, "Ingese Calle y Numero")
+            return
+        }
+        
+        if colony.isEmpty {
+            showError(.requiredField, "Ingrese Colonia")
+            return
+        }
+
+        if city.isEmpty {
+            showError(.requiredField, "Ingrese Cuidad")
+            return
+        }
+
+        if state.isEmpty {
+            showError(.requiredField, "Ingrese Estado")
+            return
+        }
+
+        if zip.isEmpty {
+            showError(.requiredField, "Ingrese Codigo Postal")
+            return
+        }
+
+        if country.isEmpty {
+            showError(.requiredField, "Ingrese Pais")
+            return
+        }
+        
+        loadingView.show()
+        
+        API.v1.jwt { token in
+            
+            guard let token else {
+                loadingView.hide()
+                showError(.comunicationError, "No se pudo cargar token")
+                return
+            }
+
+            loadingView.hide()
+
+            self.mapContainer.innerHTML = ""
+            
+            // "Arroyo Carrizal, Luis Echeverria, 87060 Victoria, Tamps., México
+            let _ = JSObject.global.initiateSingleMap!(self.mapId, token, "\(self.street), \(self.colony), \(self.zip) \(self.city), \(self.state), \(self.country)", JSOneshotClosure { args in
+
+                print("🗺️  processMapResponse")
+                
+                print(args)
+
+                if let payload = args.first?.string {
+                    self.processMapResponse(payload)
+                }
+                
+                return .undefined
+
+            }.jsValue, JSClosure { args in
+                
+                print("🗺️  processMapUpdate")
+
+                print(args)
+
+                print("🟢  0001 ")
+                
+                print(args)
+                
+                if let payload = args.first?.string {
+                    print("🟢  0002 ")
+                    self.processMapUpdate(payload)
+                }
+                
+                print("🟢  0003 ")
+                
+                return .undefined
+            }.jsValue)
+        }
+    }
+
+    func processMapResponse(_ json: String ){
+        
+        guard let data = json.data(using: .utf8) else {
+            showError(.unexpectedResult, "No se pudo crear data de hilo")
+            return
+        }
+        
+        do {
+            
+            let payload = try JSONDecoder().decode([AppleMap].self, from: data)
+            
+            if payload.isEmpty {
+                showError(.generalError, "no hay resultado")
+                return
+            }
+            
+            if payload.count > 1 {
+
+                    let view = MapMultipleAddressSelector(linkedLocations: payload) { item in
+                        self.addLocation(latitude: item.coordinate.latitude, longitude: item.coordinate.longitude)
+                    }
+
+                    addToDom(view)
+
+                    return
+            }
+
+            guard let location = payload.first else {
+                return
+            }
+
+            self.addLocation(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+            
+        } catch {
+            showError(.unexpectedResult, "No se pudo decodificar data inicial de mapa")
+            return
+        }
+        
+        
+    }
+        
+    func processMapUpdate(_ json: String){
+        
+            guard let data = json.data(using: .utf8) else {
+                showError(.unexpectedResult, "No se pudo crear data de hilo")
+                return
+            }
+                
+            do {
+
+                currentLocation = try JSONDecoder().decode(AppleMap.Coordinate.self, from: data)
+
+                guard let latitude = currentLocation?.latitude else {
+                    return
+                }
+
+                guard let longitude = currentLocation?.longitude else {
+                    return
+                }
+
+                if self.lat != latitude || self.lon != longitude {
+
+                    self.lat = latitude
+                    
+                    self.lon = longitude
+
+                    API.custOrderV1.addLocation(
+                        latitude: latitude,
+                        longitude: longitude,
+                        orderId: self.order.id
+                    ) { resp in
+
+                        print(resp )
+
+                    }
+
+                }
+
+            }
+            catch {
+                showError(.unexpectedResult, "No se pudo decodificar data de cordenadas de mapa.")
+                return
+            }
+    }
+
+    func addLocation(latitude: Double? = nil, longitude: Double? = nil){
+        
+        guard let latitude else {
+            print("🔴 FAIL TO GET  LAT")
+            return
+        }
+        
+        guard let longitude else {
+            print("🔴 FAIL TO GET  LON")
+            return
+        }
+        
+        print("🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  🟢  ")
+        
+        self.lat = latitude
+        
+        self.lon = longitude
+
+        self.loadLocation(latitude, longitude)
+        
+    }
+
+
+    func searchAddressManualy() {
+
+        guard let country = Countries(rawValue: self.country), country == .mexico else {
+            showError(.invalidField, "Lo sentimos este servicio solo esta disponible para Mexico. Es posible que necesite corregir su ortografia o haga un ingreso manual.")
+            return
+        }
+        
+        let view = ManualAddressSearch(.byCountry(.mexico)) { response in
+            
+            switch response {
+            case .address(let address):
+
+                self.colony =  address.settlement
+                
+                self.city = address.city
+                
+                self.state = address.state
+                
+                self.zip = address.zip
+                
+                self.country = address.country.description
+
+                print("")
+
+            case .coordinates(let coordinate):
+                
+                if self.street.isEmpty {
+                    self.street = coordinate.street
+                }
+
+                self.colony =  coordinate.settlement
+                
+                self.city = coordinate.city
+                
+                self.state = coordinate.state
+                
+                self.zip = coordinate.zip
+                
+                self.country = coordinate.country.description
+                
+                API.custOrderV1.addLocation(
+                    latitude: coordinate.latitude,
+                    longitude: coordinate.longitude,
+                    orderId: self.order.id
+                ) { resp in
+
+                    print(resp )
+
+                }
+
+                API.custOrderV1.saveOrderDetail(
+                    orderid: self.order.id,
+                    name: self.orderName,
+                    mobile: self.mobile,
+                    telephone: self.telephone,
+                    email: self.email,
+                    street: self.street,
+                    colony: self.colony,
+                    city: self.city,
+                    state: self.state,
+                    country: self.country,
+                    zip: self.zip
+                ) { resp in
+
+                }
+
+                self.loadLocation(coordinate.latitude, coordinate.longitude)
+                
+            }
+            
+        }
+        
+        addToDom(view)
+                                
+    }
+
+    func loadContractMetaData (_ contract: CustomerCustomeScript) {
+        
+        guard let metaData = contract.meta.data(using: .utf8) else {
+            showError(.generalError, "No se pudo leer la configuracion del contrato")
+            return
+        }
+
+        guard let equipment = self.equipments.first else {
+            showError(.generalError, "No se pudo localizar el equipo del contrato")
+            return
+        }
+        
+        do {
+
+            let configuration = try JSONDecoder().decode(CustContractRelationConfiguration.self, from: metaData)
+            
+            addToDom(CreateCustContractView(
+                orderId: self.order.id,
+                contractName: contract.name,
+                configuration: configuration,
+                equipment: equipment
+             ) { fileName in
+                self.contratc = fileName
+                self.order.contract = fileName
+            })
+        }
+        catch {
+            showError(.generalError, "No se pudo cargar la configuracion del contrato")
+            print(error)
+        }
+    }
+
+
+
+    override func didRemoveFromDOM() {
+        super.didRemoveFromDOM()
+        $tasks.removeAllListeners()
+        $pendingPickups.removeAllListeners()
+        $lastCommunicationMethod.removeAllListeners()
+        $dueDate.removeAllListeners()
+        $budgetIcon.removeAllListeners()
+        $budgetStatus.removeAllListeners()
+        $inAlert.removeAllListeners()
+        $isHighPriority.removeAllListeners()
+        $orderProject.removeAllListeners()
+        $statusMenuIsHidden.removeAllListeners()
+        $status.removeAllListeners()
+        $currentEquipment.removeAllListeners()
+        $tpays.removeAllListeners()
+        $tchars.removeAllListeners()
+        $ttotal.removeAllListeners()
+        $orderName.removeAllListeners()
+        $mobile.removeAllListeners()
+        $telephone.removeAllListeners()
+        $email.removeAllListeners()
+        $streetHolderIsHidden.removeAllListeners()
+        $colonyHolderIsHidden.removeAllListeners()
+        $cityHolderIsHidden.removeAllListeners()
+        $stateHolderIsHidden.removeAllListeners()
+        $countryHolderIsHidden.removeAllListeners()
+        $ziptHolderIsHidden.removeAllListeners()
+        $street.removeAllListeners()
+        $colony.removeAllListeners()
+        $city.removeAllListeners()
+        $state.removeAllListeners()
+        $country.removeAllListeners()
+        $zip.removeAllListeners()
+        $lat.removeAllListeners()
+        $lon.removeAllListeners()
+        $contratc.removeAllListeners()
+        $editMode.removeAllListeners()
+        $requierServiceAddress.removeAllListeners()
+        $onWorkUser.removeAllListeners()
+        $onWorkUsername.removeAllListeners()
+        $currentLocation.removeAllListeners()
+        $orderContract.removeAllListeners()
+    }
+}

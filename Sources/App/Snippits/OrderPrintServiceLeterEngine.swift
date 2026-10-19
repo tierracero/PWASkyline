@@ -266,14 +266,14 @@ class OrderPrintServiceLeterEngine: Div {
         }
         
         charges.forEach { obj in
-            let stotal = ((obj.price * obj.cuant) / 100)
+            let stotal = obj.billingType.signedAmount((obj.price * obj.cuant) / 100)
             total += stotal
             
             chargesData.appendChild(
                 Tr{
                     Td(obj.cuant.fromCents.toString)
                     Td(obj.name)
-                    Td(obj.price.formatMoney)
+                    Td(obj.billingType.signedAmount(obj.price).formatMoney)
                     Td(stotal.formatMoney)
                 }
             )

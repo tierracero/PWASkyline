@@ -5,14 +5,14 @@ import TCFireSignal
 extension CustAssetsComponents {
 
     static func getAssetItem(
-        assetItemId: UUID,
+        itemId: HybridIdentifier,
         callback: @escaping ((_ resp: APIResponseGeneric<GetAssetItemResponse>?) -> ())
     ) {
         sendPost(
             rout,
             version,
-            "GetAssetItem",
-            GetAssetItemRequest(assetItemId: assetItemId)
+            "getAssetItem",
+            GetAssetItemRequest(itemId: itemId)
         ) { data in
             guard let data else {
                 callback(nil)

@@ -1,0 +1,11 @@
+--- before/Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemView.swift
++++ after/Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemView.swift
+@@ -629,7 +629,7 @@
+         private func kardexMediaGrid(_ images: [CustGeneralFiles]) -> Div {
+             guard !images.isEmpty else { return Div() }
+ 
+-            let url = ImagePickerTo.assetItem.url(
++            let url = ImagePickerTo.order.url(
+                 url: custCatchUrl,
+                 pDir: pDir,
+                 isPreRegistration: false,

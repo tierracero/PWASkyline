@@ -4,6 +4,189 @@ Verified completed tasks live here.
 
 ---
 
+## TRIP-LOCATION-ITEM-DELETE-001 — Cancel a Saved Location from the Trip Editor
+
+- **Completed**: 2026-10-09
+- **Status**: Implemented; focused App build passed, browser/server behavior unverified.
+- **Scope/IDs**: `ManageLocationItem`, its `CreateTripView` caller; `SWWEB-001/002/003`, `API-001/002/003`, `SEC-001`.
+- **Implementation**: Added a bottom-left red crystal Eliminar button for saved `.location` entries. User confirmed saved-location cancellation; the action sends the linked `locationId`, retaining the database record through the existing `deleteLocation` endpoint. Existing confirmation/error conventions and pending-call protection are used. Only API success invokes the optional deletion callback, closes the editor and applies existing local picker/selection cleanup. No `removeLocation` call was added.
+- **Verification**: Changed sources parsed successfully. The previously approved focused App build passed (`Build of target: 'App' complete! (94.33s)`) after restoring the exact two revisions already pinned in Package.resolved. Source/contract/flow and task-relative diff/whitespace/status/staging checks passed; dependency pins and unrelated user work preserved. Evidence: `.artifacts/planning/trip-location-item-delete/`.
+- **Limits**: No real cancellation, browser session, test suite, commit or deployment was executed.
+
+---
+
+## ASSET-CAMERA-PAYLOAD-001 — Include Camera Photos in Asset Creation
+
+- **Completed**: 2026-10-09
+- **Scope**: `CreateAssetItemView.create()` image payload lookup; `SWWEB-001/003`.
+- **Implementation**: At the user's request, reverted the broader camera changes. The sole source change falls back from the existing upload registry to `imageRefrence` by ordered view ID when building `items[].images`. Existing camera handlers, state, readiness checks, removal behavior and upload logic are retained.
+- **Verification**: Frontend parsing and the previously approved focused App build passed (`Build of target: 'App' complete! (58.02s)`). The diff against the original task snapshot contains only the payload lookup; status/staging and dependency pins are unchanged.
+- **Evidence**: Minimal task-relative diff and validation recorded in `.artifacts/planning/asset-camera-payload/`; no live camera upload, server mutation or commit.
+
+---
+
+## ASSET-REGISTRATION-STORE-001 — Select the Asset Registration Store
+
+- **Status**: Implemented; focused App compilation passed, browser/server behavior unverified
+- **Completed**: 2026-10-09
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `API-001`, `API-002`
+- **Implementation**: Completed InitiateAssetItemView's store TODO with a required crystal selector defaulting to the embedded store. The initiation callback returns a context with the chosen physical store, preserving store/warehouse mode and customer/subcustomer records. AssetView forwards that context into both creation paths; batch children and both existing createAssettem calls retain it. Single/batch forms show the selected store. The existing map prerequisite now checks the chosen store instead of blocking selection on the old base store.
+- **Validation evidence**: All four sources passed final frontend parsing. The previously user-approved final focused App build passed (`Build of target: 'App' complete! (58.49s)`). Two missing already-pinned dependency revisions were restored to the cache and their contracts re-reviewed; Package.resolved stayed unchanged. An unsupported initial dropdown preset was corrected under a reviewed plan amendment using Option.selected. Source/contract traces covered four context cases, defaults/alternative stores, validation, native selection state, single/batch/staged propagation and classification scope. Task-relative diff/whitespace, status/staging and snapshots passed.
+- **Limits**: No test suite, live browser/server asset creation or deployment was executed. Evidence: `.artifacts/planning/asset-registration-store/AUDIT.md` and `FLOW_REVIEW.md`.
+- **Commit**: Not created.
+
+---
+
+
+
+## API-TRIP-STATUS-FILENET-001 — Store trip-status evidence once in fileNet
+
+- **Date**: 2026-10-09
+- **Status**: Implemented; source/path/diff audit passed. No build, test or live upload/database check ran without explicit permission.
+- **Architecture**: Server API-002/API-003/DATA-002/DATA-003/SEC-003; PWA API-002/SWWEB-001/SWWEB-003.
+- **Implementation**: ChangeTripStatus reads staged asset-item evidence from `/var/www/(sitio)/iCatch/`, saves each original and available og_/thump_/wap_ variants once to `/mnt/volume1/sites/(sitio)/fileNet/`, and shares each saved filename between trip/merchandise CustFiles and commercial-asset CustGeneralFiles/Kardex metadata. Removed the second copy that collided after the shared assetItem path changed to fileNet. Kardex viewing explicitly uses the order/fileNet URL, covering older pinned helpers that still resolve assetItem to CDN. Filename validation, off-event-loop I/O, staged originals and failed-transaction cleanup are retained.
+- **Verification**: Read the current shared and pinned path/URL definitions, PWA upload/status/preview/wrapper flow, server copy variants/cleanup and both metadata links; reviewed regular-merchandise/asset/no-media/failure cases and task-relative diffs. Whitespace and final status reviewed; existing PWA edits/dependency pins preserved. Evidence: `.artifacts/planning/trip-status-filenet/`.
+- **Commit**: Not created.
+
+## API-ASSET-KARDEX-RESPONSE-001 — Resolved asset-item history response
+
+- **Date**: 2026-10-09
+- **Status**: Implemented; source/contract/diff review complete. Compilation awaits separate user confirmation; live database/browser checks were not run.
+- **Architecture**: API-001/API-002/API-003; server DATA-002/DATA-003/SEC-003; PWA SWWEB-001/SWWEB-002/SWWEB-003.
+- **Implementation**: Server batch-loads related rows from the authenticated tenant and maps every persisted page event into TCFireSignal's response object, preserving event/image order, filters, pagination and integrity metadata. Missing notes/users use response-only placeholders to satisfy the current required contract; no history is dropped or fake record persisted. PWA shows location names, actor usernames, note content and read-only evidence; its existing typed API wrapper already decodes the new response.
+- **Verification**: Shared constructor and projection reviewed field by field; all five location cases, empty ID sets and absent relations traced. Task-relative added-line whitespace/diff/status review passed; unrelated transition-service and PWA edits were preserved. Evidence: `.artifacts/planning/asset-item-kardex-response/`.
+- **Commit**: Not created.
+
+## ASSET-SERIAL-SCANNER-001 — Mobile Scanner for Asset Serial Entry
+
+- **Status**: Implemented; focused App compilation passed, browser/mobile behavior unverified
+- **Completed**: 2026-10-09
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `WS-001`, `WS-002`, `SEC-001`
+- **Implementation**: Completed CreateAssetItemView.addSeries with Work's mobile scanner request arguments and a per-request correlation UUID. The existing serial icon now requests the scanner; a matching same-session requestMobileScannerComplete event fills the bound serial, trimming outer whitespace without applying folio/URL transformations. Initiation guards, consumed/superseded IDs and removal/session checks prevent duplicate or late results. The WS subscription captures the form weakly and ignores detached views. Manual entry, explicit submission and existing media/warranty flows remain.
+- **Validation evidence**: Frontend parsing and the previously user-approved focused App build passed (`Build of target: 'App' complete! (234.96s)`). Source traces reviewed acknowledgements/errors, empty/manual serials, duplicate requests/events, overlapping forms, superseded scans, completion-before-acknowledgement and removal/session changes. Task-relative source/doc diff, added-line whitespace, status/staging and unchanged dependency-pin checks passed; preexisting user edits are preserved.
+- **Limits**: No test suite, live mobile scanner/notification session, server asset mutation or deployment was executed. Evidence: `.artifacts/planning/asset-serial-mobile-scanner/AUDIT.md` and `EVENT_REVIEW.md`.
+- **Commit**: Not created.
+
+---
+
+## ASSET-HEADER-SEARCH-001 — Search Asset Units by Folio or Service Card
+
+- **Status**: Implemented; focused App compilation passed, browser behavior unverified
+- **Completed**: 2026-10-09
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `SEC-001`
+- **Implementation**: Completed CustAssetsView's header TODO with a crystal search field and magnifying-glass button; Enter/click share one explicit handler. Formatted service/legacy QR cards load through getWarrantyCard(.code), accept only .asset cards and open their linked orderId as an asset item UUID. Other card types show an unsupported alert; missing links use the existing error presentation. Ordinary input opens by .folio. Local pending controls prevent duplicate card requests, while request/removal/session guards reject delayed results.
+- **Validation evidence**: Frontend parsing and the previously user-approved focused App build passed (`Build of target: 'App' complete! (101.27s)`). Source traces covered empty/plain input, each card/error path, repeated submission, removal and session changes. Task-relative source/doc diff, added-line whitespace, status/staging and unchanged dependency-pin checks passed; preexisting user edits are preserved.
+- **Limits**: No test suite, live browser/scanner run or server mutation was executed. Evidence: `.artifacts/planning/asset-header-search/AUDIT.md` and `EVENT_REVIEW.md`.
+- **Commit**: Not created.
+
+---
+
+## ASSET-INVENTORY-ASYNC-FILTER-001 — Progressive Asset Inventory and Local Search
+
+- **Status**: Implemented; focused App compilation passed, browser responsiveness unverified
+- **Completed**: 2026-10-09
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`
+- **Implementation**: Replaced full-payload inventory ForEach construction with one row per scheduled callback using the order-folio timing pattern. Item updates, debounced query changes and removal invalidate stale renders. AssetView's inventory header now filters normalized folio/optional serial/name locally while preserving the full items array/count. One persistent field/controller keeps subscriptions stable across reloads; reattachment restores the wrapper ownership cleared by Web removal. Empty inventory/no-match messages remain distinct.
+- **Validation evidence**: Both files passed frontend parsing. The previously user-approved final focused App build passed (`Build of target: 'App' complete! (79.28s)`). The missing already-pinned TCFireSignal revision was fetched into its cache; Package.resolved stayed byte-for-byte unchanged. Source traces covered initial/empty inventories, filtering/clearing, updates/appends, reload/removal and listener ownership. Task-relative diffs/whitespace, source snapshots and repository status/staging checks passed.
+- **Limits**: No test suite, browser performance run or server mutation was executed. Filtering and DOM clearing remain synchronous; expensive row construction yields between callbacks. Evidence: `.artifacts/planning/asset-inventory-async-filter/AUDIT.md` and `EVENT_REVIEW.md`.
+- **Commit**: Not created.
+
+---
+
+## TRIP-LIST-STATUS-SYNC-001 — Synchronize Beta Status Changes with Trip Dashboard
+
+- **Status**: Implemented; focused App compilation passed, live browser behavior unverified
+- **Completed**: 2026-10-09
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `STATE-001`, `SEC-001`
+- **Cause and implementation**: Work folio search supplied an empty beta status callback, and Followup updated only its own list. Successful same-session beta changes now notify the mounted trip dashboard independently of the caller callback. The dashboard owns a weak mount-scoped reference, updates matching trip status/cards/counters idempotently, and preserves acknowledgements made during an in-flight list request when that response arrives. Later requests remain server-authoritative; removal and session guards reject stale-view responses.
+- **Validation evidence**: Both files passed Swift frontend parsing. The previously user-approved focused App build passed (`Build of target: 'App' complete! (69.55s)`). Source traces reviewed each entry point, all valid status transitions, duplicate callbacks, failure/session changes, detail closure, list response races and dashboard removal/replacement. Task-relative diff/whitespace, source snapshots, repository status/staging and dependency-pin checks passed.
+- **Limits**: No test suite, browser or server mutation was run. Evidence: `.artifacts/planning/trip-list-status-sync/AUDIT.md` and `EVENT_REVIEW.md`.
+- **Commit**: Not created.
+
+---
+
+## TRIP-SUMMARY-STATUS-001 — Current Trip Status in Beta Summary
+
+- **Status**: Implemented; focused App compilation passed, browser rendering unverified
+- **Completed**: 2026-10-09
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`
+- **Implementation**: Added Estatus immediately before Creado in the top trip summary, using the existing metric styling and shared Spanish status descriptions. A persistent value Div binds to the existing status state, reflecting successful API changes immediately and following server refreshes. Six explicit columns accommodate the account and five summary metrics.
+- **Validation evidence**: Swift frontend parsing and the previously user-approved focused App build passed (`Build of target: 'App' complete! (64.61s)`). Source review covered all four descriptions, initial state, API success/error, server refresh and removal cleanup. Baseline-relative diff/whitespace and repository status/staging checks passed; API, themes, dependencies and unrelated user edits are preserved.
+- **Limits**: No test suite or browser/server session was run. Evidence: `.artifacts/planning/trip-summary-status/AUDIT.md`.
+- **Commit**: Not created.
+
+---
+
+## WORK-FOLIO-SINGLE-001 — Prevent Duplicate Work Code Loads
+
+- **Status**: Implemented; focused App compilation passed, browser/scanner behavior unverified
+- **Completed**: 2026-10-09
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`
+- **Cause and implementation**: The work input's key-up timer and onEnter subscriber both submitted formatted codes, while earlier timers remained eligible. A controller-owned generation token now invalidates older timers on subsequent edits, any search submission and DOM removal. Enter/NumpadEnter and ignored event keys do not schedule automatic searches. Automatic searches use the normalized snapshot and clear immediately; empty submissions do not minimize the result view, and fallback results retain the submitted term.
+- **Validation evidence**: Swift frontend parsing and the previously user-approved focused App build passed (`Build of target: 'App' complete! (142.10s)`). Reviewed actual Web/InputText subscriber behavior and source traces for Enter before/after automatic submission, click/mobile submission, ignored keys, input changes, normalized separators and removal. Authored-line whitespace and repository status/staging checks passed; concurrent blank-line spacing was preserved and the latest source parsed again. Lookup branches and dependency pins are unchanged.
+- **Limits**: No test suite, browser or hardware-scanner session was run. Evidence: `.artifacts/planning/work-folio-single-search/AUDIT.md` and `EVENT_REVIEW.md`.
+- **Commit**: Not created.
+
+---
+
+## TRIP-CAMERA-FLOW-001 — Nonblocking Trip Status Camera and Upload Flow
+
+- **Status**: Implemented; focused App compilation passed, device/upload behavior unverified
+- **Completed**: 2026-10-08
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `WS-001`, `WS-002`, `SEC-001`
+- **Implementation**: ConfirmTripStatusUpdate requests the asset camera with `eventid:nil`/multiple captures and no request-time placeholder, cameraEventId, isCameraPending or cancel-camera control. New capture IDs bind to the latest requested merchandise row; existing owners and terminal IDs survive row switches and duplicate/delayed events. Confirmation stays available and includes only completed images. Per-file local uploads, counters, first completed avatar and MediaViewer gallery remain intact.
+- **Validation evidence**: Swift frontend parsing and the previously user-approved focused App build passed (`Build of target: 'App' complete! (69.48s)`). Source traces reviewed capture duplication, row switching, cancellation/late completion, HTTP/WebSocket races, completion order and removal. Baseline-relative diff/whitespace/status/staging checks passed; ManagePOC, MediaViewer and dependency pins were unchanged.
+- **Limits**: No test suite or browser/mobile/server upload session was run. Selected/initiate messages carry only event ID, so new unassigned captures follow the latest requested merchandise row. Evidence: `.artifacts/planning/trip-status-upload-parity/AUDIT.md` and `EVENT_REVIEW.md`.
+- **Commit**: Not created.
+
+---
+
+## GET-TRIP-HYBRID-001 — GetTrip UUID/Folio Contract Usage
+
+- **Status**: Completed; focused App compilation passed
+- **Completed**: 2026-10-08
+- **Chunks/IDs**: `API-001`, `API-002`, `API-003`, `SWWEB-001`, `SWWEB-002`, `SWWEB-003`
+- **Implementation**: GetTrip wrapper and beta detail presenter accept shared `HybridIdentifier`. Existing trip-list/followup opens and post-status refreshes use `.id(UUID)`; the presenter also accepts `.folio(String)`. Shared response, transport/error behavior and UUID status callbacks are preserved.
+- **Validation evidence**: All four modified files passed syntax parsing. A limited compile-only check of the exact updated request/wrapper/presenter logic passed for both identifier cases. The user-approved `swift build --disable-sandbox --target App --jobs 4 --disable-automatic-resolution` succeeded after fetching the fixed pinned revisions; only existing warnings remained. Focused diff, whitespace, staging, lockfile and repository status checks passed.
+- **Scope**: No dependency pins, tests, browser/server execution, staging or commits. Evidence: `.artifacts/planning/get-trip-hybrid-contract/AUDIT.md` and `build-pinned.log`.
+
+---
+
+## TRIP-STATUS-COLORS-001 — Crystal Trip Action Colors
+
+- **Status**: Implemented and source-audited; browser rendering unverified
+- **Completed**: 2026-10-08
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`
+- **Implementation**: Start/complete use green crystal button modifiers; cancel uses the existing red crystal palette. Trip-scoped selectors override the blue control defaults and supply matching hover/focus accents and disabled dimming. Status visibility, callbacks and 35px sizing are preserved.
+- **Validation evidence**: Both Swift files passed frontend syntax parsing. Baseline-relative source diff, added-line whitespace, CSS cascade and repository status were reviewed. No repeated package build or tests were run; the earlier approved App build remains blocked by the unavailable pinned TCFundamentals revision. Evidence: `.artifacts/planning/trip-status-button-colors/AUDIT.md`.
+- **Commit**: Not created.
+
+---
+
+## TRIP-STATUS-API-001 — Complete Beta Trip Status API Handoff
+
+- **Status**: Implemented; full build blocked by dependency resolution, live behavior unverified
+- **Completed**: 2026-10-08
+- **Chunks/IDs**: `API-001`, `API-002`, `SWWEB-003`, `SEC-001`
+- **Implementation**: The client wrapper encodes trip ID, status, comment and merchandise media using the updated shared request. Beta status actions disable during submission, retain status on errors, and update the trip and parent list only after an .ok response. Session changes suppress late responses. A successful response can still notify the parent after the detail closes.
+- **Validation evidence**: Both modified Swift files passed syntax parsing. An isolated compile-only type check of the exact shared DTOs, wrapper and changeStatus method passed with unrelated transport/presentation dependencies scaffolded. Focused diff/whitespace/status review passed. No live server mutation or test suite was run.
+- **Build**: The previously authorized focused App build was retried and still fails on unavailable pinned TCFundamentals revision `25fd6294b7ccbca6a5542769e9dadbb709121988`. Dependencies and lockfile were left unchanged. Evidence: `.artifacts/planning/trip-status-api/AUDIT.md`.
+- **Commit**: Not created.
+
+---
+
+## TRIP-STATUS-CONFIRM-001 — Beta Trip Status Confirmation and Merchandise Images
+
+- **Status**: Implemented; full build and browser/upload verification blocked or unperformed
+- **Completed**: 2026-10-08
+- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`; API contracts and server status authority preserved
+- **Implementation**: Added state-specific actions in the 35px right-side status grid, a two-column crystal confirmation form with required cancellation comments and merchandise image uploads/camera capture, and a shared viewer gallery with clickable thumbnails. The callback passes typed status/comment/media to beta `changeStatus`; the follow-up API integration is recorded in TRIP-STATUS-API-001.
+- **Validation evidence**: All three Swift files passed syntax parsing; the confirmation/viewer passed a limited cached-module type check using the exact local media contract and temporary compatibility adjustments. Task-only diffs and focused whitespace/status checks passed; existing user changes were preserved.
+- **Build/tests**: User authorized a focused build. `swift build --product App --jobs 4 --skip-update` ultimately failed dependency resolution on unavailable TCFundamentals revision `25fd6294b7ccbca6a5542769e9dadbb709121988`. Cached TCFireSignal also lacks `ChangeTripStatusMedia`. No test suite or browser/upload session was run. See `.artifacts/planning/trip-status-confirmation/AUDIT.md` for limitations and logs.
+- **Commit**: Not created.
+
+---
+
 ## CARTA-PORTE-ICONS-001 — Merchandise Attachment/Camera Icons
 
 - **Status**: Implemented; static source/asset review only, compilation/runtime unverified
@@ -118,3 +301,294 @@ Verified completed tasks live here.
 - **Deployment**: Run SkylineServer `Scripts/Database/AddCustAcctPaymentsDownpayment.sql` for each existing tenant before deploying the coordinated shared/server/PWA changes. No database command was executed.
 - **Evidence**: SkylineServer `.artifacts/planning/downpayment/audit.md` records exact files and non-build checks. Four payload field/key/decoder sets match; all eight form callbacks adopt the flag; baseline-relative whitespace checks pass for every changed source file. Existing unrelated staged/unstaged work was preserved.
 - **Git**: No staging or commit was performed by this agent. Shared package statuses became clean through external Git activity during the session.
+
+---
+
+## ASSET-AVATAR-GALLERY-RESTORE-001 — Reapply the avatar-first image gallery
+
+- **Completed**: 2026-10-13.
+- **Status**: Restored and source-audited; browser/build behavior remains unverified.
+- **Architecture IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`.
+- **Implementation**: Restored the optional image-list initializer, avatar-first ordering, up to four medium selection dots, and selected-image MediaViewer opening in `CustAssetsAvatarUploader`; reconnected the asset-item image list. Preserved the 22px upload icon, current layout, newer MediaViewer and unrelated pending user edits.
+- **Validation**: Reviewed the baseline-relative patch, image/default/selection/upload handling, existing viewer selected-index support, and final git status. No builds, tests, full compilation, browser execution, staging or commit.
+- **Evidence**: `.artifacts/planning/reapply-avatar-gallery/plan.md` and `reapplied.diff`.
+
+---
+
+## STORE-USERS-SCROLL-001 — Bound and scroll the store user list
+
+- **Completed**: 2026-10-14.
+- **Status**: Implemented and source-audited; browser/build behavior remains unverified.
+- **Architecture IDs**: `SWWEB-001`, `SWWEB-002`.
+- **Implementation**: Added explicit zero flex basis/height, zero minimum height and automatic overflow to `StoreView.usersContainers`, preserving its existing theme and all loading/card interactions.
+- **Verification**: Reviewed the surrounding bounded flex/grid layout and task-only diff; patch applicability and added-line whitespace checks passed. No build, test, full compilation, browser execution, staging or commit.
+- **Evidence**: `.artifacts/planning/store-user-list-overflow/plan.md`, `change.diff`, and `audit.md`.
+
+---
+
+## ASSET-ITEM-EDIT-001 — Edit supported asset-item details
+
+- **Completed**: 2026-10-14.
+- **Status**: Implemented and source-audited; browser/build behavior remains unverified.
+- **Architecture IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `API-001`, `API-002`.
+- **Implementation**: Editable name, serial, current cost, section/subsection controls and a crystal Guardar Cambios action in dataColumn. Loads scoped hierarchy options while preserving existing IDs on failure; validates exact cents and selected parent/child IDs; sends the loaded UUID through the existing wrapper and refreshes authoritative details/notes. The user confirmed other metadata stays read-only. Existing gallery, map, Kardex and service-card flows are preserved.
+- **Dependency**: Deploy the companion SkylineServer updateAssettem persistence/transaction fix. No shared contract, wrapper or migration changes were needed.
+- **Verification**: Reviewed request/response and server mappings, scoped catalogs, initialization/change/failure/no-op/removal/session paths, exact-cent parsing and focused diff/status. No build/test/full compile, browser/database execution, staging, commit or deployment.
+- **Evidence**: `.artifacts/planning/asset-item-editing/plan.md`, `change.diff`, and `audit.md`.
+
+---
+
+## STORE-USERS-SPACE-001 — Fill the store workspace while retaining user scroll
+
+- **Completed**: 2026-10-14.
+- **Status**: Implemented and source-audited; fixed browser/build behavior remains unverified.
+- **Architecture IDs**: `SWWEB-001`, `SWWEB-002`.
+- **Implementation**: Changed the parent selected-store display binding from block to flex and added matching none/flex visibility to both new-store creation paths. The existing bounded card grid can now fill the workspace; usersContainers retains its scroll sizing and user actions/loading are unchanged.
+- **Verification**: Inspected the supplied recording, traced the CSS/inline-display mismatch, reviewed the task-only diff and final status/content preservation. No builds, tests, full compilation, live-browser execution, staging or commit.
+- **Evidence**: `.artifacts/planning/store-user-list-spacing/plan.md`, `change.diff`, and `audit.md`.
+
+
+## ASSET-AVATAR-SINGLE-PREVIEW-001 — Single asset photo preview with five dots
+
+- **Completed**: 2026-10-14
+- **Scope/IDs**: `CustAssetsAvatarUploader`, `AssetItemView.mediaColumn`; `SWWEB-001/002/003`.
+- **Implementation**: Removed the separate lower thumbnail grid and its unused private helpers. Raised the uploader's preview dot limit to five. Existing dot selection updates only the preview; clicking it opens the full associated image list in MediaViewer at the selected image. Existing upload controls and shared viewer remain unchanged.
+- **Verification**: Source-flow and task-relative diff/whitespace/status review; builds/tests and live browser execution were not run without user confirmation. Evidence: `.artifacts/planning/asset-avatar-single-preview/`.
+- **Commit**: Not created.
+
+
+## MEDIA-VIEWER-THUMBNAIL-URL-001 — Preserve thumbnail URL schemes and center icons
+
+- **Completed**: 2026-10-14
+- **Scope/IDs**: `MediaViewer.thumbnailName`, thumbnail strip/button styles; `SWWEB-001/002/003`.
+- **Implementation**: Replaced NSString filesystem normalization with filename-boundary string insertion, preserving https:// and original query/fragment text while avoiding duplicate thump_ prefixes. Added vertical icon alignment and first/last auto outer margins to horizontally center fitting thumbnail groups while keeping overflowing items accessible.
+- **Verification**: Source-flow and baseline-relative diff/whitespace/status review. No builds/tests or browser execution without user confirmation. Evidence: `.artifacts/planning/media-viewer-thumbnail-url/`.
+- **Commit**: Not created.
+
+
+## ORDER-VIEW-INSET-HOLDER-001 — Match point-of-sale holder geometry
+
+- **Completed**: 2026-10-14
+- **Scope/IDs**: `TCOrderViewTheme` shell geometry; `SWWEB-001/002/003`.
+- **Implementation**: Replaced order-mode full-screen shell overrides with the standalone SalePointView offsets/dimensions (top 25px, left 40px, width minus 100px, height minus 70px) and 24px corners. Existing zero padding and border-box sizing are preserved; internal order controls and the corner icon are unchanged.
+- **Verification**: Five-declaration source diff, protected-source hashes, task-added whitespace and git status reviewed. Builds/tests and browser rendering were not run without user confirmation. Evidence: `.artifacts/planning/order-view-inset-holder/`.
+- **Commit**: Not created.
+
+
+## ASSET-AVATAR-DUPLICATE-001 — Reuse the avatar's existing photo entry
+
+- **Completed**: 2026-10-14
+- **Scope/IDs**: `CustAssetsAvatarUploader` avatar/upload reconciliation and `AssetItemView` MediaFile mapping; `SWWEB-001/002/003`.
+- **Implementation**: Match original and thump_/og_/wap_ image variants using a comparison-only identity that ignores query/fragment suffixes and retains host/directory. Reuse the matched MediaFile instead of prepending a duplicate avatar. The asset detail mapper explicitly associates its isAvatar photo with the nonempty saved avatar preview while preserving original file/ID. Five-dot cap and full selected-image gallery remain intact.
+- **Verification**: Screenshot inspection, pinned file-contract/render-order review, source-case walkthrough and task-relative diff/whitespace/status audit. No builds/tests or browser execution without explicit confirmation; the supplied movie was not decoded locally. Evidence: `.artifacts/planning/asset-avatar-duplicate/`.
+- **Commit**: Not created.
+
+
+## TRIP-ITEM-DELIVERY-001 — Deliver individual assets on multi-item trips
+
+- **Implemented**: 2026-10-15; source audit complete. Follow-up focused App compilation passed with the synchronized shared packages; runtime verification remains pending.
+- **Scope/IDs**: TripViewBeta, the delivery mode of ConfirmTripStatusUpdate, and CustComertialTrips+DeliverAssetItem wrapper; SWWEB-001/002/003, API-001/002/003, SEC-001.
+- **Implementation**: Per user confirmation, Entregar appears only on multi-item in-progress trips for undelivered linked commercial assets. Reuses the status popup's one-item comments, image upload, mobile camera and gallery. Submits the linked asset UUID through the shared contract, serializes mutations, validates matching response identities, marks only confirmed deliveries, adopts server status/auto-completion, notifies the dashboard/caller and refreshes trip/notes with generation/session guards. deliverd markers render for all trip sizes; canceled final movements use neutral wording. Optional destination classification parameters remain nil in this UI.
+- **Verification**: Shared local request/response and mutable snapshot contracts reviewed, task-relative diff and whitespace checked, protected-file hashes and git status reviewed. Build permission was requested separately because AGENTS.md requires explicit confirmation; no build/test/browser delivery ran without approval. Repository package pins remain unchanged; cached contracts at implementation time do not include this new API/model field.
+- **Evidence**: `.artifacts/planning/trip-item-delivery/plan.md`, `changes.diff`, `flow-review.md` and `audit.md`.
+- **Commit**: Not created.
+
+---
+
+## TRIP-EXTRA-DESTINATIONS-001 — Ordered destinations and adaptive route layout
+
+- **Completed**: 2026-10-15.
+- **Status**: Implemented and source-audited; build/browser behavior remains unverified.
+- **Architecture IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`, `API-001`, `API-002`, `API-003`.
+- **Implementation**: Agregar Destino appears after origin/first destination selection and reuses Seleccionar Destino with explicit append intent, including saved-location/store/subaccount/base-creation paths. Extra stops switch the route to an ordered single-column scrollable list. Primary removal remains locked until extras are removed, including the location editor's guarded deletion. Additional edits/removals and saved-base updates/deletions are handled; selection adapters derive ordered positions. Per-item destination choices are preserved or reconciled to remaining eligible destinations; asset editors offer linked eligible stops. The unchanged createTrip request sends every stop once and applies unique-reference/linked-asset route checks. TripViewBeta uses grid/list presentation based on stop count on each render.
+- **Clarification**: The user explained destinations are individual choices when selecting asset items; all route stops belong to one trip and each item retains its own destination.
+- **Verification**: Reviewed the shared request and server snapshot-order mapping, complete baseline-relative patch, route mutation/visibility/removal/assignment/submission/refresh paths, whitespace and final tracked-file/status preservation. No builds, tests, compiler parsing, browser/server execution, staging, commit or deployment.
+- **Evidence**: `.artifacts/planning/trip-additional-destinations/plan.md`, `change.diff`, and `audit.md`.
+
+
+## SHARED-PACKAGE-SYNC-001 — Review latest shared contracts and synchronize dependencies
+
+- **Completed**: 2026-10-15
+- **Scope/IDs**: TCFireSignal 0ac424b, TCFundamentals 6a9d6ba and their existing App consumers; API-001/002/003, SWWEB-001/003.
+- **Implementation**: Existing Package.resolved already pinned the clean local package heads, and App delivery/billingType call sites already matched. Imported the exact pinned commit objects from the local repositories into SwiftPM caches, then resolved using only the existing resolved file. No App source, package manifest, pins, shared package source or unrelated dependency version changed.
+- **Verification**: SwiftPM checkouts match both pinned revisions. User explicitly approved the focused App build; `swift build --target App --jobs 4 --disable-automatic-resolution` passed (150.95s), including the delivery wrapper/popup/trip view and current charge callers. The initial resolver's module-cache sandbox failure was resolved with workspace-owned cache paths. Source/contract review, protected hashes, task-relative documentation diff/whitespace and final status checks completed. No test suite or browser/server operations ran.
+- **Evidence**: `.artifacts/planning/shared-package-sync/plan.md`, `contract-review.md`, `resolve-retry.log`, `build.log` and `audit.md`.
+- **Commit**: Not created.
+
+
+## ORDER-VIEW-COMPACT-CLEANUP-001 — Apply seven screenshot layout changes
+
+- **Implemented**: 2026-10-15; source/diff audit complete. Approved App build reported no errors in the four layout sources, but failed in concurrent budget/point-of-sale charge changes; browser rendering remains unverified.
+- **Scope/IDs**: AccoutOverview toolbar, OrderView status/section headers, EquipmentView inspection/metadata and TCOrderViewTheme; SWWEB-001/002/003.
+- **Implementation**: Highlighted reactive toolbar folio replaces the side-panel duplicate. Existing status picker moves to priority/alert row with compact dimensions and unchanged tint/menu/actions. Ten inspection checkboxes replace sliders on existing bindings; Marca/Modelo share a row; diagnosis/resolution add text is smaller. Blue service-letter/contract/map SVGs clarify section headers and address text aligns left. Inset holder, corner icon and unrelated business flows are preserved.
+- **Verification**: Source/diff/whitespace and seven-request review; original status-selector body matches after whitespace normalization, ten checkbox bindings retain disabled state, and both rental toggles remain. User approved the focused App build, which exited 1 on missing LoadBudgetObjectSOCDecoder.codeType in three unrelated budget/point-of-sale callers; those files and dependency pins were left intact. No layout-source diagnostics were reported. Browser runtime unverified. Evidence: `.artifacts/planning/order-view-compact-cleanup/`, including build.log and build-errors.txt.
+- **Commit**: Not created.
+
+---
+
+## CHARGE-BALANCE-ADJUSTMENTS-001 — Respect counter-charges in balance calculations
+
+- **Completed**: 2026-10-15.
+- **Status**: Implemented and source-audited; build/browser behavior remains unverified.
+- **Architecture IDs**: SWWEB-001, SWWEB-002, SWWEB-003, API-001, API-002, API-003.
+- **Implementation**: App-only BillingType.signedAmount applies adjustment-subtract/other-add to billing-aware order/trip calculations, load/render paths, SOC budget imports, edits, receipts and sales summaries. Locally appended records keep raw prices/classification and sign only displayed/derived values. Forms propagate actual SOC adjustment classification; budget ItemView and SalePointObject retain local direction for new/loaded/copied service entries. Budget/cart balances, edited budget lines and historic service previews apply it. The user's corrected StartServiceOrder.calcBalance is preserved verbatim; its pre-charge row follows the same billingType.
+- **Scope**: Product/rental/project/payment-only calculations have no new inferred classification. Aggregate order-report DTOs omit BillingType; fiscal document generation, server/shared models and API payloads remain unchanged.
+- **Verification**: Reviewed shared model ownership, complete baseline-relative patch, signed/raw append/edit/reload paths, remaining eligible charge formulas, added-line whitespace, reverse patch applicability, original reference-function preservation and tracked-file/status preservation. No builds, tests, compiler parsing, browser/server execution, staging, commit or deployment.
+- **Evidence**: .artifacts/planning/charge-balance-adjustments/plan.md, change.diff, flow-review.md and audit.md.
+
+## ORDER-ADDRESS-CHEVRON-001 — Service address open/close indicator
+
+- **Completed**: 2026-10-16
+- **Scope/IDs**: OrderView address header; SWWEB-001/002/003.
+- **Implementation**: Reuses Imprimir dropdown/close images and divider, bound to requierServiceAddress. The existing header click and body visibility binding remain unchanged.
+- **Verification**: Task-relative diff, asset existence, state/handler trace, whitespace and git status reviewed. No new build/test was authorized for this follow-up; browser rendering unverified. Evidence: `.artifacts/planning/order-service-address-chevron/`.
+
+---
+
+## ORDER-CONSOLE-BOOT-001 — Animate Initial Order Loading
+
+- **Date**: 2026-10-16
+- **Status**: Implemented; source-audited, compilation and browser rendering unverified.
+- **Scope**: OrderView and TCOrderViewTheme; SWWEB-001/002/003.
+- **Implementation**: Mount-first hydration yields between files, charges, equipment and details. Existing cards reveal in a short cyan console sequence with a segmented reticle, fine corner brackets and real section progress. Explicit refresh cancels incomplete startup and keeps its previous parsing order without replaying boot. Deferred callbacks are weak, mount/session/generation guarded, and invalidated on removal; map loading follows hydrated coordinates. Reduced-motion and performance-mode rules suppress motion.
+- **Evidence**: Original parse statements preserved in order across four private helpers; task-relative diff and status/hash audit under .artifacts/planning/order-console-boot/ in the chat worktree. Existing financial formulas, row handlers and unrelated edits retained.
+- **Limits**: No build or tests run because AGENTS.md requires explicit confirmation. No live browser validation, commit, generated output or deployment.
+
+
+## ORDER-CONSOLE-BOOT-002 — Remove the Screen Sweep
+
+- **Date**: 2026-10-16
+- **Scope/IDs**: TCOrderViewTheme; SWWEB-001/002/003.
+- **Implementation**: Removed the body-wide sweep pseudo-element and its keyframes. Refined the local loading HUD with counter-rotating segmented rings, fine frame brackets, calibration ticks and short frame assembly, guided by the supplied YouTube references. Extended performance/reduced-motion fallbacks to the new decoration. OrderView async hydration and business behavior are unchanged.
+- **Verification**: Task-relative source/diff/whitespace/status/hash review; no build, tests or live App rendering. AGENTS.md requires explicit confirmation before build/test commands.
+- **Evidence**: .artifacts/planning/order-console-no-sweep/ in the chat worktree.
+
+
+## ORDER-CONSOLE-BOOT-003 — Keep Only the Enlarged Circle
+
+- **Date**: 2026-10-17
+- **Scope/IDs**: OrderView.swift and TCOrderViewTheme.swift; SWWEB-001/002/003.
+- **Implementation**: The loading overlay now contains only the segmented circle, enlarged from 64px to 144px with proportionate rings. Removed the square panel, visible labels/folio/status, progress bar and decorative brackets/ticks, plus their unused DOM properties, class constants, styles and frame keyframes. A nonvisual accessible status remains. Async hydration, data logic, lifecycle guards, entrance/fade timing and motion fallbacks are preserved.
+- **Verification**: Source/diff/whitespace/status/hash audit; no build/tests/Swift parsing or live App rendering because new build/test confirmation was not supplied.
+- **Evidence**: .artifacts/planning/order-console-circle-only/ in the chat worktree.
+
+
+## ORDER-CONSOLE-BOOT-004 — Slow and Soften the Loader
+
+- **Date**: 2026-10-17
+- **Scope/IDs**: TCOrderViewTheme and OrderView decorative cleanup; SWWEB-001/002/003.
+- **Implementation**: Doubled visual durations/stagger delays, applied 50% opacity only to the circle/rings, and explicitly removed loading-overlay background/shadow/backdrop filtering. Decorative cleanup moves to 1.8s so it follows the final 1.6s card entrance. Actual hydration, readiness, interaction and business logic are unchanged.
+- **Verification**: Task-relative source/diff/whitespace/status/hash review; no build/tests/Swift parsing or live App rendering because new build/test confirmation was not supplied.
+- **Evidence**: .artifacts/planning/order-console-slower-alpha/ in the chat worktree.
+
+
+## ORDER-CONSOLE-BOOT-005 — Assemble, Zoom and Fade the Circle
+
+- **Date**: 2026-10-17
+- **Scope/IDs**: OrderView loader wrapper/cleanup and TCOrderViewTheme; SWWEB-001/002/003.
+- **Implementation**: Circle zoom/fade entry and staggered inner/outer ring assembly hand off to slow counter-rotation. A separate invisible motion wrapper owns readiness-triggered zoom/fade exit, avoiding cancellation of the entry/build when data becomes ready. Exit delay exceeds the longest assembly; cleanup at 2.1s follows exit completion. Retained circle-only presentation, 144px size, 50% alpha, clear background and all quiet-mode/accessibility behavior.
+- **Verification**: Source/diff/whitespace/status/hash and timing/animation-ownership review; no builds/tests/Swift parser or live App rendering because explicit build/test confirmation was not supplied.
+- **Evidence**: .artifacts/planning/order-circle-assembly-zoom/ in the chat worktree.
+
+- Reference refinement: supplied FujiXerox Launch Gambit opening (0–5s) guides a luminous core/fine tick rim and a stronger 1.55-scale exit. The hand and background are excluded; all effects remain local to the circle.
+
+
+## ORDER-CONSOLE-BOOT-006 — Complete the Circle in Half a Second
+
+- **Date**: 2026-10-17
+- **Scope/IDs**: TCOrderViewTheme and OrderView decorative cleanup; SWWEB-001/002/003.
+- **Implementation**: Compressed entry/assembly/rotation and moved wrapper exit to a fixed base-rule timeline: 320ms delay + 180ms fade/zoom = 500ms total. Readiness does not restart or extend the circle. Sped content entry to 240ms with 40/80/120ms offsets; cleanup at 550ms after readiness follows all visual completion. Actual data loading, readiness and business logic are unchanged.
+- **Verification**: Source/diff/whitespace/status/hash and fixed timeline/quiet-mode review. No builds/tests/Swift parser or live App rendering because explicit build/test confirmation was not supplied.
+- **Evidence**: .artifacts/planning/order-circle-half-second/ in the chat worktree.
+
+
+## ORDER-CONSOLE-BOOT-007 — Honor Performance Mode Throughout Startup
+
+- **Date**: 2026-10-17
+- **Scope/IDs**: TCOrderViewTheme; SWWEB-001/002/003.
+- **Implementation**: Performance mode hides the complete order loader in all boot states and disables ready-card animation/transition with explicit opacity/transform restoration. Existing circle-layer suppression stays intact. The existing settings checkbox, persisted setting and live html flag supply the policy; no new setting or JS changes.
+- **Verification**: Traced checkbox -> Swift setting -> JS apply -> html flag -> scoped CSS. Reviewed task-relative source/diff/whitespace/status/hash. Normal animation, reduced-motion rule and OrderView data/lifecycle source preserved.
+- **Limits**: No builds/tests/Swift parser or live App rendering; explicit build/test confirmation required by AGENTS.md.
+- **Evidence**: .artifacts/planning/order-performance-animation-off/ in the chat worktree.
+
+
+## ORDER-CONSOLE-BOOT-008 — Reveal the Circle After Initial Hydration
+
+- **Date**: 2026-10-17
+- **Scope/IDs**: TCOrderViewTheme visibility selector and OrderView timing comment; SWWEB-001/002/003.
+- **Runtime finding**: Existing local Chrome session reports performance mode off and reduced motion false. Read-only close/reopen observation showed circle wrapper opacity zero while still loading and at the first ready sample: the fixed timeline elapsed during initial DOM hydration.
+- **Implementation**: Overlay remains display:none during loading and first displays in ready state, starting all existing circle effects together for 500ms after the initial build. The 550ms cleanup, durations/keyframes, quiet-mode overrides and actual loading/data behavior are unchanged.
+- **Verification**: Runtime reproduction plus focused source/diff/whitespace/status/hash audit. No build/tests/Swift parser or post-fix live App rendering: explicit build/test confirmation required by AGENTS.md.
+- **Evidence**: .artifacts/planning/order-circle-visible-ready/ in the chat worktree.
+
+## SUPERVIEW-OFF-CONTRAST-001 — Darken SuperView with performance mode off
+
+- **Date**: 2026-10-17
+- **Status**: Implemented; source/diff audit only. Builds/tests and live rendering unverified.
+- **Scope/IDs**: visualPerformance.js SuperView-only CSS; SWWEB-002/003 and existing PWA-001/002/003 resource boundary.
+- **Implementation**: The existing live off-mode flag gives SuperView hosts a 70% translucent black background, including crystal hosts. Existing blur settings, inner surfaces, animations, lifecycle and on-mode treatment are preserved.
+- **Verification**: Reviewed selector specificity, off/on exclusivity and the task-relative diff; tracked-file hashes/status preserve unrelated edits. No generated-public refresh, build/test, commit or deployment. Evidence: `.artifacts/planning/superview-off-mode-contrast/` in the attached chat worktree.
+
+## ORDER-CIRCLE-WIDE-INWARD-001 — Start wide and contract the order animation
+
+- **Date**: 2026-10-17
+- **Status**: Implemented; source/diff audit only. Builds/tests and live rendering unverified.
+- **Scope/IDs**: TCOrderViewTheme circle keyframes; SWWEB-001/002/003.
+- **Implementation**: Circle entry begins at 1.8 scale and contracts to 1; ring assembly contracts from 1.35 to 1; exit shrinks from 1 to 0.55 with its existing fade. All timing, opacity, rotations, readiness, hydration and motion suppression are preserved.
+- **Verification**: Reviewed the three transform-only source substitutions, whitespace, file hashes and status. No builds/tests/compiler or generated-output refresh. Evidence: `.artifacts/planning/order-circle-wide-inward/` in the attached chat worktree.
+
+## ORDER-CIRCLE-GREEN-START-001 — Enlarge circle start to the supplied green outline
+
+- **Date**: 2026-10-17
+- **Status**: Implemented; source/diff audit only. Builds/tests and live rendering unverified.
+- **Scope/IDs**: TCOrderViewTheme entry keyframe; SWWEB-001/002/003.
+- **Implementation**: Starts at scale 4, approximately 688px across the outer ring, and fades to 50% opacity there by the 20% entry keyframe before contracting inward. Existing center, final size, 500ms timeline, rotation, exit, readiness and motion suppression remain unchanged.
+- **Verification**: Inspected the supplied image, estimated outline dimensions, reviewed the focused keyframe diff, whitespace, tracked-file hashes and git status. No build/test/compiler, output refresh or live-render verification. Evidence: `.artifacts/planning/order-circle-green-start/` in the attached chat worktree.
+
+## ORDER-CIRCLE-FADE-20MS-001 — Start fade-out at 0.02 seconds
+
+- **Date**: 2026-10-17
+- **Status**: Implemented; source/diff audit only. Builds/tests and live rendering unverified.
+- **Scope/IDs**: TCOrderViewTheme motion-wrapper timing; SWWEB-001/002/003.
+- **Implementation**: Exit fade/scale now begins after 20ms and runs for 480ms, retaining 500ms total. Existing starting size, fade-in, keyframes, hydration/readiness, cleanup and motion suppression are unchanged.
+- **Verification**: Reviewed one source timing declaration, whitespace, candidate equality, hashes and status. No build/test/compiler or generated output refresh. Evidence: `.artifacts/planning/order-circle-fade-at-20ms/` in the attached chat worktree.
+
+## ORDER-CIRCLE-WIDER-MUTED-001 — Widen and desaturate the order circle
+
+- **Date**: 2026-10-17
+- **Status**: Implemented; source/diff audit only. Builds/tests and live rendering unverified.
+- **Scope/IDs**: TCOrderViewTheme circle-only geometry/palette; SWWEB-001/002/003.
+- **Implementation**: Initial/20% entry scale increases from 4 to 5. Motion-wrapper palette uses muted RGB 91/130/166 and 146/181/207 for existing blue tokens and explicit border/glow/tick channels, preserving alpha and avoiding a new filter. Outside order colors are unchanged.
+- **Verification**: Source/diff, whitespace, candidate equality, hashes/status reviewed. The 20ms exit delay, 480ms fade duration, entry/exit endpoints, rotation and quiet-mode rules remain intact. No build/test/compiler or output refresh. Evidence: `.artifacts/planning/order-circle-wider-muted/` in the attached chat worktree.
+
+## ORDER-CIRCLE-FADE-BEFORE-CENTER-001 — Disappear before completing contraction
+
+- **Date**: 2026-10-17
+- **Status**: Implemented; source/diff audit only. Builds/tests and live rendering unverified.
+- **Scope/IDs**: TCOrderViewTheme circle timing/intermediate scale; SWWEB-001/002/003.
+- **Implementation**: Fade-out starts at 20ms and completes at 300ms. Circle contraction spans 500ms with ease-in/out and passes scale 2.2 at 75%, so it becomes invisible while still wider than its compact center. Wide start, muted palette, opacity endpoints, assembly, readiness/hydration, cleanup and motion suppression remain intact.
+- **Verification**: Reviewed the three source substitutions and monotonic scale bound (child at least 2.2 times wrapper at least 0.55 = 1.21 through 300ms), whitespace, candidate equality, hashes and status. No build/test/compiler or output refresh. Evidence: `.artifacts/planning/order-circle-fade-before-center/` in the attached chat worktree.
+
+## ORDER-CIRCLE-LIGHT-100MS-001 — Lighten the circle and disappear at 0.1 seconds
+
+- **Date**: 2026-10-17
+- **Status**: Implemented; source/diff audit only. Builds/tests and live rendering unverified.
+- **Scope/IDs**: TCOrderViewTheme circle-only styling/timing; SWWEB-001/002/003.
+- **Implementation**: Exit fades for 80ms after the existing 20ms delay, becoming invisible at 100ms. Wide fade-in reaches 50% at 20ms (4% of the contraction timeline). Strokes become 0.5px/1px/1px, ticks narrow, and glows shrink with lower alpha. Initial width, muted palette, hydration/readiness, content animation, cleanup and motion suppression remain unchanged.
+- **Verification**: Reviewed focused source substitutions, timing arithmetic, whitespace, candidate equality, tracked-file hashes and status. No build/test/compiler or output refresh. Evidence: `.artifacts/planning/order-circle-light-100ms/` in the attached chat worktree.
+
+## ORDER-CIRCLE-900MS-001 — Extend the animation preview to 0.9 seconds
+
+- **Date**: 2026-10-17
+- **Status**: Implemented; source/diff audit only. Builds/tests and live rendering unverified.
+- **Scope/IDs**: TCOrderViewTheme circle timing and OrderView decorative cleanup; SWWEB-001/002/003.
+- **Implementation**: Fade starts at 20ms and ends at 900ms. Contraction spans 1200ms to preserve disappearance before compact center; host cleanup runs at 950ms. Thin strokes, muted colors, initial width, ring assembly, content animation, hydration/readiness and motion suppression are preserved.
+- **Verification**: Reviewed focused timing changes, the 900ms fade/950ms cleanup ordering, scale bound, whitespace, candidate equality, tracked-file hashes and status. No build/test/compiler or output refresh. Evidence: `.artifacts/planning/order-circle-900ms/` in the attached chat worktree.
+
+## ORDER-ANIMATION-REMOVE-001 — Remove order-opening animation completely
+
+- **Date**: 2026-10-17
+- **Status**: Implemented; source/diff audit only. Builds/tests and live rendering unverified.
+- **Scope/IDs**: OrderView decorative UI and TCOrderViewTheme boot styles; SWWEB-001/002/003.
+- **Implementation**: Removed circle DOM/classes, boot presentation attributes, ring/zoom/fade/keyframes, panel entrance motion and the decorative cleanup callback. Loading cards retain their hidden/uninteractive state through existing aria-busy, then appear immediately. Async hydration, readiness, refresh cancellation, session/generation/mount guards, parsing/map behavior and unrelated styling remain intact.
+- **Verification**: Reviewed removed references and task-relative diff; hydration/parsing preservation comparison, whitespace, candidate equality, tracked-file hashes/status. No build/test/compiler, generated output refresh or deployment. Evidence: `.artifacts/planning/order-animation-remove/` in the attached chat worktree.

@@ -18,15 +18,15 @@ extension CustAssetsView {
             case kardex
         }
 
-        let assetItemId: UUID
+        let itemId: HybridIdentifier
 
         let onLoaded: ((CustCommercialAssetsItem) -> Void)?
 
         init(
-            assetItemId: UUID,
+            itemId: HybridIdentifier,
             onLoaded: ((CustCommercialAssetsItem) -> Void)? = nil
         ) {
-            self.assetItemId = assetItemId
+            self.itemId = itemId
             self.onLoaded = onLoaded
             super.init()
         }
@@ -35,11 +35,38 @@ extension CustAssetsView {
             fatalError("init() has not been implemented")
         }
 
+        var assetItemId: UUID?
+
         @State private var title = "Cargando unidad…"
 
         @State private var activeTab: ItemTab = .map
 
         @State private var avatar = ""
+
+        @State private var serviceCard = ""
+
+        @State private var itemName = ""
+        @State private var serial = ""
+        @State private var currentCost = "0.00"
+        @State private var selectedSectionId = ""
+        @State private var selectedSubSectionId = ""
+        @State private var isBusy = false
+
+        private var loadedPayload: CustAssetsComponents.GetAssetItemResponse?
+        private var sections: [CustCommercialAssetsSection] = []
+        private var subSections: [CustCommercialAssetsSubSection] = []
+        private var editorGeneration = UUID()
+        private var isLoadingItem = false
+        private var isSaving = false
+        private var isHydratingEditor = false
+
+        private lazy var sectionSelect = USelectField(self.$selectedSectionId)
+            .width(100.percent)
+            .disabled(self.$isBusy)
+
+        private lazy var subSectionSelect = USelectField(self.$selectedSubSectionId)
+            .width(100.percent)
+            .disabled(self.$isBusy)
 
         @State private var noteCount = 0
 
@@ -106,6 +133,12 @@ extension CustAssetsView {
             height(100.percent)
             left(0.px)
             top(0.px)
+
+            $selectedSectionId.listen { [weak self] _ in
+                guard let self, self.isInDOM, !self.isHydratingEditor else { return }
+                self.selectedSubSectionId = ""
+                self.refreshSubSectionOptions()
+            }
         }
 
         override func didAddToDOM() {
@@ -114,35 +147,71 @@ extension CustAssetsView {
         }
 
         func load() {
+            guard isInDOM, !isLoadingItem, !isSaving else { return }
+            isLoadingItem = true
+            isBusy = true
+            editorGeneration = UUID()
+            let generation = editorGeneration
+            let sessionId = custCatchID
+            let identifier: HybridIdentifier = assetItemId.map { .id($0) } ?? itemId
 
             loadingView.show()
 
-            API.custAssetsV1.getAssetItem(assetItemId: assetItemId) { response in
+            API.custAssetsV1.getAssetItem(itemId: identifier) { [weak self] response in
                 loadingView.hide()
+                guard let self, self.acceptsEditor(generation, sessionId: sessionId) else { return }
+                self.isLoadingItem = false
 
                 guard let response else {
+                    self.isBusy = false
                     showError(.comunicationError, .serverConextionError)
-                    self.renderError("No fue posible consultar la unidad.")
+                    if self.loadedPayload == nil {
+                        self.renderError("No fue posible consultar la unidad.")
+                    }
                     return
                 }
 
                 guard response.status == .ok else {
+                    self.isBusy = false
                     showError(.generalError, response.msg)
-                    self.renderError(response.msg)
+                    if self.loadedPayload == nil {
+                        self.renderError(response.msg)
+                    }
                     return
                 }
 
                 guard let payload = response.data else {
+                    self.isBusy = false
                     showError(.unexpectedResult, .unexpenctedMissingPayload)
-                    self.renderError("El servidor no devolvió el detalle de la unidad.")
+                    if self.loadedPayload == nil {
+                        self.renderError("El servidor no devolvió el detalle de la unidad.")
+                    }
                     return
                 }
-
+                self.assetItemId = payload.item.id
+                self.loadedPayload = payload
+                self.isHydratingEditor = true
+                self.itemName = payload.item.name
+                self.serial = payload.item.serial ?? ""
+                let cost = payload.item.currentCost
+                let cents = cost.magnitude % 100
+                self.currentCost = "\(cost < 0 ? "-" : "")\(cost.magnitude / 100).\(cents < 10 ? "0" : "")\(cents)"
+                self.selectedSectionId = payload.item.section?.uuidString ?? ""
+                self.selectedSubSectionId = payload.item.subSection?.uuidString ?? ""
+                self.isHydratingEditor = false
+                self.sections = payload.section.map { [$0] } ?? []
+                self.subSections = payload.subSection.map { [$0] } ?? []
+                self.refreshSectionOptions()
                 self.title = "Activo \(payload.department?.assetType.description ?? "N/D") | \(payload.item.name)"
                 self.avatar = payload.item.avatar ?? ""
+                self.serviceCard = payload.item.serviceCard.last ?? ""
                 self.status = payload.item.status
                 self.render(payload)
                 self.onLoaded?(payload.item)
+                self.loadLocationOptions(payload, generation: generation, sessionId: sessionId)
+                if self.acceptsEditor(generation, sessionId: sessionId), self.activeTab == .kardex {
+                    self.loadKardex()
+                }
             }
         }
 
@@ -206,11 +275,18 @@ extension CustAssetsView {
                         CustAssetsAvatarUploader(
                             avatar: self.$avatar,
                             destination: .assetItem,
-                            itemId: payload.item.id
+                            itemId: payload.item.id,
+                            images: payload.images.map {
+                                .init(
+                                    fileId: $0.id,
+                                    file: $0.file,
+                                    avatar: $0.isAvatar && !self.avatar.purgeSpaces.isEmpty ? self.avatar : $0.avatar,
+                                    type: $0.type
+                                )
+                            }
                         )
                         .marginTop(8.px)
 
-                        self.mediaGrid(payload.images)
                     }
                 }
 
@@ -221,30 +297,6 @@ extension CustAssetsView {
                     self.readOnlyField("Estado", payload.item.status.description.capitalized)
                 }
 
-                VGrid(.full) {
-                    VBox(.raised) {
-                        UTitle("Estado general")
-
-                        VGrid(.full) {
-                            VGrid(.half) {
-                                self.readOnlyField("Costo de adquisición", payload.item.acquisitionCost.formatMoney)
-                            }
-
-                            VGrid(.half) {
-                                self.readOnlyField("Costo actual", payload.item.currentCost.formatMoney)
-                            }
-
-                            VGrid(.half) {
-                                self.readOnlyField("Serie", payload.item.serial)
-                            }
-
-                            VGrid(.half) {
-                                self.readOnlyField("Folio", payload.item.folio)
-                            }
-                        }
-                        .marginTop(10.px)
-                    }
-                }
             }
         }
 
@@ -252,63 +304,34 @@ extension CustAssetsView {
             let item = payload.item
 
             return VBox(.raised) {
-                UTitle("Datos de la unidad")
 
-                VGrid(.full) {
+                UTitle("Datos de la unidad") 
+
+                VGrid(.full) { 
                     VGrid(.oneForth) {
                         self.readOnlyField("Folio", item.folio)
                     }
 
                     VGrid(.oneForth) {
-                        self.readOnlyField("Nombre", item.name)
-                    }
-
-                    VGrid(.oneForth) {
-                        self.readOnlyField("Serie", item.serial)
-                    }
-
-                    VGrid(.oneForth) {
-
-                        UField("Estado", required: false) {
-                        // 
-                    
-                            Div{
-                                
-                                Div{
-                                    Span(self.$status.map{ $0.description })
-                                    .margin(all: 3.px)
-                                }
-                                    .custom("width", "calc(100% - 38px)")
-                                    .class(.oneLineText)
-                                    .color(.white)
-                                    .float(.left)
-                                 
-                                 Div{
-                                     Img()
-                                         .src("/skyline/media/dropDown.png")
-                                         .class(.iconWhite)
-                                         .opacity(0.8)
-                                         .width(18.px)
-                                         .marginTop(3.px)
-                                 }
-                                 .borderLeft(
-                                    width: BorderWidthType.thin,
-                                    style: .solid,
-                                    color: .white
-                                 )
-                                 .paddingRight(3.px)
-                                 .paddingLeft(7.px)
-                                 .marginLeft(7.px)
-                                 .float(.right)
-                                 .width(18.px)
-                                
-                                 Div().clear(.both)
-                                 
-                            }
-                            .class(.uibtn)
-                            .width(150.px)
-
+                        UField("Nombre", required: true) {
+                            UTextField(self.$itemName)
+                                .width(100.percent)
+                                .disabled(self.$isBusy)
                         }
+                    }
+
+                    VGrid(.oneForth) {
+                        UField("Serie", required: false) {
+                            UTextField(self.$serial)
+                                .placeholder("Opcional")
+                                .width(100.percent)
+                                .disabled(self.$isBusy)
+                        }
+                    }
+
+                    VGrid(.oneForth) {
+
+                        self.readOnlyField("Estado", item.status.description)
 
                     }
 
@@ -317,10 +340,26 @@ extension CustAssetsView {
                     }
 
                     VGrid(.oneForth) {
-                        self.readOnlyField(
-                            "Tarjetas de servicio",
-                            item.serviceCard.isEmpty ? nil : item.serviceCard.joined(separator: ", ")
-                        )
+
+                        UField( "Tarjetas de servicio", required: false) {
+
+                            Div {
+                                Img()
+                                    .src("/skyline/media/bar_qr_white.png")
+                                    .marginLeft(7.px)
+                                    .marginTop(7.px)
+                                    .height(20.px)
+                                    .cursor(.pointer)
+                                    .onClick {
+                                        self.addwarrantyCard()
+                                    }
+                            }
+                            .float(.right)
+
+                            USubTitle(self.$serviceCard.map{ $0.isEmpty ? "--" :  $0 })
+                                .class(.oneLineText)
+                        }
+
                     }
 
                     VGrid(.oneForth) {
@@ -332,16 +371,269 @@ extension CustAssetsView {
                     }
 
                     VGrid(.oneForth) {
-                        self.readOnlyField("Ubicación", payload.section?.name)
+                        UField("Ubicación", required: false) {
+                            self.sectionSelect
+                        }
                     }
 
                     VGrid(.oneForth) {
-                        self.readOnlyField("Sección", payload.subSection?.name)
+                        UField("Sección", required: false) {
+                            self.subSectionSelect
+                        }
                     }
+
+
+                    VGrid(.oneForth) {
+                        self.readOnlyField("Costo de adquisición", payload.item.acquisitionCost.formatMoney)
+                    }
+
+                    VGrid(.oneForth) {
+                        UField("Costo actual", required: true) {
+                            UTextField(self.$currentCost)
+                                .placeholder("0.00")
+                                .width(100.percent)
+                                .disabled(self.$isBusy)
+                        }
+                    }
+
 
                 }
                 .marginTop(10.px)
+
+                Div {
+                    ULargeButton("Guardar Cambios")
+                        .class(Class(TCCrystalSurfaceClass.goodButton))
+                        .disabled(self.$isBusy)
+                        .onClick { self.saveChanges() }
+                }
+                .display(.flex)
+                .custom("justify-content", "flex-end")
+                .marginTop(10.px)
             }
+        }
+
+        private func acceptsEditor(_ generation: UUID, sessionId: UUID) -> Bool {
+            isInDOM && editorGeneration == generation && custCatchID == sessionId
+        }
+
+        private func refreshSectionOptions() {
+            sectionSelect.innerHTML = ""
+            sectionSelect.appendChild(Option("Sin ubicación").value("").selected(selectedSectionId.isEmpty))
+            for section in sections {
+                sectionSelect.appendChild(
+                    Option(section.name).value(section.id.uuidString).selected(section.id.uuidString == selectedSectionId)
+                )
+            }
+            if !selectedSectionId.isEmpty, !sections.contains(where: { $0.id.uuidString == selectedSectionId }) {
+                sectionSelect.appendChild(
+                    Option(loadedPayload?.section?.name ?? "Ubicación actual")
+                        .value(selectedSectionId).selected(true)
+                )
+            }
+            refreshSubSectionOptions()
+        }
+
+        private func refreshSubSectionOptions() {
+            let available = subSections.filter { $0.commercialAssetsLocationId.uuidString == selectedSectionId }
+            subSectionSelect.innerHTML = ""
+            subSectionSelect.appendChild(Option("Sin sección").value("").selected(selectedSubSectionId.isEmpty))
+            for section in available {
+                subSectionSelect.appendChild(
+                    Option(section.name).value(section.id.uuidString).selected(section.id.uuidString == selectedSubSectionId)
+                )
+            }
+            if !selectedSubSectionId.isEmpty, !available.contains(where: { $0.id.uuidString == selectedSubSectionId }) {
+                subSectionSelect.appendChild(
+                    Option(loadedPayload?.subSection?.name ?? "Sección actual")
+                        .value(selectedSubSectionId).selected(true)
+                )
+            }
+        }
+
+        private func loadLocationOptions(
+            _ payload: CustAssetsComponents.GetAssetItemResponse,
+            generation: UUID,
+            sessionId: UUID
+        ) {
+            guard acceptsEditor(generation, sessionId: sessionId) else { return }
+            let scope: (CustCommercialAssetsLocationLinkedType, UUID)
+            if let section = payload.section {
+                scope = (section.linkType, section.linkedTo)
+            } else if let section = payload.subSection {
+                scope = (section.linkType, section.linkedTo)
+            } else {
+                switch payload.location {
+                case .store(let store): scope = (.store, store.id)
+                case .warehouse(let store): scope = (.warehose, store.id)
+                case .account(let account): scope = (.customer, account.id)
+                case .subaccount(let account): scope = (.customer, account.custAcct)
+                case .user:
+                    isBusy = false
+                    return
+                }
+            }
+
+            if scope.0 == .customer {
+                API.custAssetsV1.listStoreArchitecture(relationId: scope.1) { [weak self] response in
+                    guard let self, self.acceptsEditor(generation, sessionId: sessionId) else { return }
+                    guard let response else {
+                        self.isBusy = false
+                        showError(.comunicationError, .serverConextionError)
+                        return
+                    }
+                    guard response.status == .ok else {
+                        self.isBusy = false
+                        showError(.generalError, response.msg)
+                        return
+                    }
+                    guard let data = response.data else {
+                        self.isBusy = false
+                        showError(.unexpectedResult, .unexpenctedMissingPayload)
+                        return
+                    }
+                    self.applyLocationOptions(data.locations, subSections: data.subLocations, scope: scope)
+                }
+                return
+            }
+
+            API.custAPIV1.loadStore(storeId: scope.1) { [weak self] response in
+                guard let self, self.acceptsEditor(generation, sessionId: sessionId) else { return }
+                guard let response else {
+                    self.isBusy = false
+                    showError(.comunicationError, .serverConextionError)
+                    return
+                }
+                guard response.status == .ok else {
+                    self.isBusy = false
+                    showError(.generalError, response.msg)
+                    return
+                }
+                guard let store = response.data?.store, store.id == scope.1 else {
+                    self.isBusy = false
+                    showError(.unexpectedResult, .unexpenctedMissingPayload)
+                    return
+                }
+                let type: CustAssetsComponents.InitiateAssetItemViewType = scope.0 == .warehose ? .warehose(store) : .store(store)
+                API.custAssetsV1.getAssetsSection(type: type) { [weak self] response in
+                    guard let self, self.acceptsEditor(generation, sessionId: sessionId) else { return }
+                    guard let response else {
+                        self.isBusy = false
+                        showError(.comunicationError, .serverConextionError)
+                        return
+                    }
+                    guard response.status == .ok else {
+                        self.isBusy = false
+                        showError(.generalError, response.msg)
+                        return
+                    }
+                    guard let data = response.data else {
+                        self.isBusy = false
+                        showError(.unexpectedResult, .unexpenctedMissingPayload)
+                        return
+                    }
+                    self.applyLocationOptions(data.sections, subSections: data.subSections, scope: scope)
+                }
+            }
+        }
+
+        private func applyLocationOptions(
+            _ sections: [CustCommercialAssetsSection],
+            subSections: [CustCommercialAssetsSubSection],
+            scope: (CustCommercialAssetsLocationLinkedType, UUID)
+        ) {
+            self.sections = sections.filter { $0.linkType == scope.0 && $0.linkedTo == scope.1 }
+            let sectionIds = Set(self.sections.map { $0.id })
+            self.subSections = subSections.filter {
+                $0.linkType == scope.0 && $0.linkedTo == scope.1 && sectionIds.contains($0.commercialAssetsLocationId)
+            }
+            refreshSectionOptions()
+            isBusy = false
+        }
+
+        private func saveChanges() {
+            guard isInDOM, !isBusy, let payload = loadedPayload else { return }
+            let name = itemName.purgeSpaces.purgeHtml
+            guard !name.isEmpty else {
+                showError(.requiredField, .requierdValid("Nombre"))
+                return
+            }
+            guard let cost = parseCurrentCost() else {
+                showError(.generalError, "Ingrese un costo actual válido, sin negativos y con hasta dos decimales.")
+                return
+            }
+            let section = UUID(uuidString: selectedSectionId)
+            let subSection = UUID(uuidString: selectedSubSectionId)
+            guard selectedSectionId.isEmpty || section != nil,
+                  selectedSubSectionId.isEmpty || subSection != nil else {
+                showError(.requiredField, .requierdValid("Ubicación / Sección"))
+                return
+            }
+            if section != payload.item.section || subSection != payload.item.subSection {
+                guard section == nil || sections.contains(where: { $0.id == section }),
+                      subSection == nil || subSections.contains(where: {
+                          $0.id == subSection && $0.commercialAssetsLocationId == section
+                      }) else {
+                    showError(.requiredField, .requierdValid("Ubicación / Sección"))
+                    return
+                }
+            }
+            guard subSection == nil || section != nil else {
+                showError(.requiredField, .requierdValid("Ubicación"))
+                return
+            }
+
+            let normalizedSerial = serial.purgeSpaces.purgeHtml
+            let generation = editorGeneration
+            let sessionId = custCatchID
+            isBusy = true
+            isSaving = true
+            loadingView.show()
+            API.custAssetsV1.updateAssettem(
+                assetItemId: payload.item.id,
+                section: section,
+                subSection: subSection,
+                currentCost: cost,
+                serial: normalizedSerial.isEmpty ? nil : normalizedSerial,
+                name: name
+            ) { [weak self] response in
+                loadingView.hide()
+                guard let self, self.acceptsEditor(generation, sessionId: sessionId) else { return }
+                self.isSaving = false
+                guard let response else {
+                    self.isBusy = false
+                    showError(.comunicationError, .serverConextionError)
+                    return
+                }
+                guard response.status == .ok else {
+                    self.isBusy = false
+                    showError(.generalError, response.msg)
+                    return
+                }
+                // Successful no-op updates intentionally have no audit-note payload.
+                showSuccess(.operacionExitosa, "Unidad actualizada")
+                self.load()
+            }
+        }
+
+        private func parseCurrentCost() -> Int64? {
+            let value = currentCost.trimmingCharacters(in: .whitespacesAndNewlines)
+                .replace(from: ",", to: "").replace(from: "$", to: "")
+            let parts = value.split(separator: ".", omittingEmptySubsequences: false)
+            guard !value.isEmpty, parts.count <= 2, parts.contains(where: { !$0.isEmpty }) else { return nil }
+            let whole = parts[0].isEmpty ? "0" : String(parts[0])
+            let fraction = parts.count == 2 ? String(parts[1]) : ""
+            guard whole.allSatisfy({ $0 >= "0" && $0 <= "9" }),
+                  fraction.count <= 2,
+                  fraction.allSatisfy({ $0 >= "0" && $0 <= "9" }),
+                  let units = Int64(whole),
+                  let fractionalUnits = Int64(fraction.isEmpty ? "0" : fraction) else {
+                return nil
+            }
+            let cents = fraction.count == 1 ? fractionalUnits * 10 : fractionalUnits
+            let scaled = units.multipliedReportingOverflow(by: 100)
+            guard !scaled.overflow else { return nil }
+            let total = scaled.partialValue.addingReportingOverflow(cents)
+            return total.overflow ? nil : total.partialValue
         }
 
         private func activityColumn() -> Div {
@@ -380,32 +672,6 @@ extension CustAssetsView {
             .custom("min-height", "0")
             .height(100.percent)
             .display(.grid)
-        }
-
-        private func mediaGrid(_ images: [CustFiles]) -> Div {
-            guard !images.isEmpty else {
-                return Div()
-            }
-
-            let grid = Div()
-                .display(.grid)
-                .custom("grid-template-columns", "repeat(auto-fit, minmax(90px, 1fr))")
-                .custom("gap", "6px")
-                .marginTop(10.px)
-
-            images.forEach { image in
-                grid.appendChild(
-                    Img()
-                        .src(self.imageSource(image))
-                        .width(100.percent)
-                        .height(92.px)
-                        .custom("object-fit", "contain")
-                        .custom("border", "1px solid rgba(66, 183, 245, 0.28)")
-                        .custom("border-radius", "8px")
-                )
-            }
-
-            return grid
         }
 
         private func renderNotes(_ notes: [CustGeneralNotes]) {
@@ -459,28 +725,6 @@ extension CustAssetsView {
             }
         }
 
-        private func imageSource(_ image: CustFiles) -> String {
-            let value = image.avatar.isEmpty ? image.file : image.avatar
-            let normalized = value.purgeSpaces
-
-            guard !normalized.isEmpty else {
-                return "/skyline/media/tierraceroRoundLogoWhite.svg"
-            }
-
-            guard !normalized.hasPrefix("/") &&
-                    !normalized.hasPrefix("http://") &&
-                    !normalized.hasPrefix("https://") else {
-                return normalized
-            }
-
-            return ImagePickerTo.assetItem.url(
-                url: custCatchUrl,
-                pDir: pDir,
-                isPreRegistration: false,
-                accountType: custCatchAccountType
-            ) + normalized
-        }
-
         private func loadMap(_ item: CustCommercialAssetsItem) {
             mapContainer.innerHTML = ""
 
@@ -510,12 +754,22 @@ extension CustAssetsView {
         }
 
         private func loadKardex() {
+
+            guard let assetItemId else {
+                showAlert(.alerta, "No se ha cargado id del activo")
+                return
+            }
+
             guard !kardexLoaded else { return }
+
             kardexLoaded = true
+
             kardexGrid.innerHTML = ""
+
             kardexGrid.appendChild(UMinorTitle("Cargando kardex…"))
 
             API.custAssetsV1.getAssetItemKardex(assetItemId: assetItemId) { response in
+
                 self.kardexGrid.innerHTML = ""
 
                 guard let response else {
@@ -551,7 +805,7 @@ extension CustAssetsView {
             }
         }
 
-        private func kardexEventView(_ event: CustCommercialAssetsItemKardex) -> Div {
+        private func kardexEventView(_ event: CustAssetsComponents.CustCommercialAssetsItemKardexObject) -> Div {
             VBox(.raised) {
                 Div {
                     USubTitle(event.eventType.description)
@@ -563,9 +817,10 @@ extension CustAssetsView {
                 }
 
                 Div {
-                    self.detail("Ubicación", event.toLinkType?.description)
-                    self.detail("ID de ubicación", event.toLinkedTo?.uuidString.lowercased())
+                    self.detail("Tipo de ubicación", event.toLinkedTo?.description ?? event.toLinkType?.description)
+                    self.detail("Ubicación", event.toLinkedTo?.name)
                     self.detail("Estado", event.toStatus?.description.capitalized)
+                    self.detail("Realizado por", event.performedByUser.username)
                     self.detail("Archivos", event.images.isEmpty ? "—" : String(event.images.count))
                 }
                 .display(.grid)
@@ -576,14 +831,78 @@ extension CustAssetsView {
                 Div {
                     self.detail("Latitud", event.latitude.map { String($0) })
                     self.detail("Longitud", event.longitude.map { String($0) })
-                    self.detail("Nota", event.noteId?.uuidString.lowercased())
                 }
                 .display(.grid)
                 .custom("grid-template-columns", "repeat(auto-fit, minmax(150px, 1fr))")
                 .custom("gap", "6px")
                 .marginTop(6.px)
+
+                if !event.noteId.activity.isEmpty {
+                    Div(event.noteId.activity)
+                        .custom("white-space", "pre-wrap")
+                        .custom("line-height", "1.45")
+                        .marginTop(8.px)
+                }
+
+                self.kardexMediaGrid(event.images)
             }
             .marginBottom(8.px)
+        }
+
+        private func kardexMediaGrid(_ images: [CustGeneralFiles]) -> Div {
+            guard !images.isEmpty else { return Div() }
+
+            let url = ImagePickerTo.order.url(
+                url: custCatchUrl,
+                pDir: pDir,
+                isPreRegistration: false,
+                accountType: custCatchAccountType
+            )
+            let files = images.map {
+                MediaViewer.MediaFile(
+                    fileId: $0.id,
+                    file: $0.file,
+                    avatar: $0.avatar,
+                    type: $0.type,
+                    url: url
+                )
+            }
+            let grid = Div()
+                .display(.grid)
+                .custom("grid-template-columns", "repeat(auto-fit, minmax(90px, 1fr))")
+                .custom("gap", "6px")
+                .marginTop(10.px)
+
+            for (index, image) in images.enumerated() {
+                let name = image.avatar.isEmpty ? image.file : image.avatar
+                let source = name.hasPrefix("/") || name.hasPrefix("https://") || name.hasPrefix("http://") ? name : url + name
+                grid.appendChild(
+                    Img()
+                        .src(source)
+                        .attribute("alt", "Evidencia \(index + 1)")
+                        .width(100.percent)
+                        .height(92.px)
+                        .custom("object-fit", "contain")
+                        .custom("border", "1px solid rgba(66, 183, 245, 0.28)")
+                        .custom("border-radius", "8px")
+                        .cursor(.pointer)
+                        .onClick {
+                            addToDom(
+                                MediaViewer(
+                                    relid: nil,
+                                    type: .content,
+                                    url: url,
+                                    files: files,
+                                    currentView: index,
+                                    allowsMediaActions: false
+                                ),
+                                presentation: .interactive
+                            )
+                        }
+                )
+            }
+
+            return grid
         }
 
         private func detail(_ label: String, _ value: String?) -> Div {
@@ -611,11 +930,38 @@ extension CustAssetsView {
             )
         }
 
+        func addwarrantyCard() {
+
+            guard let assetItemId else {
+                showAlert(.alerta, "No se ha cargado id del activo")
+                return
+            }
+
+            let view = AddWarrantyCard(
+                loadType:.asset(assetId: assetItemId)
+            ) { cardCode in
+            
+                self.serviceCard = cardCode
+
+            }
+
+            addToDom(view)
+            
+        }
+        
         override func didRemoveFromDOM() {
             super.didRemoveFromDOM()
             $title.removeAllListeners()
             $activeTab.removeAllListeners()
             $avatar.removeAllListeners()
+            $itemName.removeAllListeners()
+            $serial.removeAllListeners()
+            $currentCost.removeAllListeners()
+            $selectedSectionId.removeAllListeners()
+            $selectedSubSectionId.removeAllListeners()
+            $isBusy.removeAllListeners()
+            editorGeneration = UUID()
         }
+
     }
 }

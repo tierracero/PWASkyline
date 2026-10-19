@@ -539,13 +539,13 @@ class OrderPrintEngine: Div {
         else {
             
             charges.forEach { obj in
-                let stotal = ((obj.price * obj.cuant) / 100)
+                let stotal = obj.billingType.signedAmount((obj.price * obj.cuant) / 100)
                 total += stotal
                 chargesOne.appendChild(
                     Tr{
                         Td(obj.cuant.fromCents.toString)
                         Td(obj.name)
-                        Td(obj.price.formatMoney)
+                        Td(obj.billingType.signedAmount(obj.price).formatMoney)
                         Td(stotal.formatMoney)
                     }
                 )
@@ -553,7 +553,7 @@ class OrderPrintEngine: Div {
                     Tr{
                         Td(obj.cuant.fromCents.toString)
                         Td(obj.name)
-                        Td(obj.price.formatMoney)
+                        Td(obj.billingType.signedAmount(obj.price).formatMoney)
                         Td(stotal.formatMoney)
                     }
                 )

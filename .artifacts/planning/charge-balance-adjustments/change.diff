@@ -1,0 +1,671 @@
+--- /dev/null
++++ b/Sources/App/Extentions/BillingType+SignedAmount.swift
+@@ -0,0 +1,9 @@
++import TCFundamentals
++
++extension BillingType {
++
++    /// Applies the billing direction without changing the stored price or quantity.
++    func signedAmount(_ amount: Int64) -> Int64 {
++        self == .adjustment ? -amount : amount
++    }
++}
+--- a/Sources/App/Snippits/OrderView/OrderView.swift
++++ b/Sources/App/Snippits/OrderView/OrderView.swift
+@@ -2720,7 +2720,7 @@
+ 
+         charges.forEach { obj in
+             
+-            let stotal = ((obj.price * obj.cuant) / 100)
++            let stotal = obj.billingType.signedAmount((obj.price * obj.cuant) / 100)
+             
+             total += stotal
+             chas += stotal
+@@ -2731,7 +2731,7 @@
+                 id: obj.id,
+                 name: obj.name,
+                 cuant: obj.cuant,
+-                price: obj.price,
++                price: obj.billingType.signedAmount(obj.price),
+                 puerchaseOrder: false
+             ) { viewId in
+                 
+@@ -3629,18 +3629,14 @@
+                     return
+                 }
+                 
+-                var price = soc.price
+-                
+-                if codeType == .adjustment{
+-                    price = (price * -1)
+-                }
++                let billingType: BillingType = codeType == .adjustment ? .adjustment : soc.billingType
+                 
+                     let tr = OldChargeTrRow(
+                         isCharge: true,
+                         id: id,
+                         name: soc.description,
+-                        cuant: 100,
+-                        price: price,
++                        cuant: soc.units,
++                        price: billingType.signedAmount(soc.price),
+                         puerchaseOrder: false
+                     ) { viewId in
+                         
+@@ -3660,11 +3656,11 @@
+                     id: id,
+                     codeid: soc.id,
+                     type: (soc.id == nil) ? .manual : .service,
+-                    billingType: codeType == .adjustment ? .adjustment : .charge,
++                    billingType: billingType,
+                     name: soc.description,
+                     cost: soc.cost ?? 0,
+                     cuant: soc.units,
+-                    price: price,
++                    price: soc.price,
+                     status: .unbilled
+                 )
+                 
+@@ -3892,10 +3888,10 @@
+                 
+                 self.calcBalance()
+                 
++                let billingType = _charges.first(where: { ids.contains($0.id) })?.billingType ?? .charge
+                 self.chargesRefrence[viewId]?.name = name
+-                self.chargesRefrence[viewId]?.cuantString = units.formatMoney
+-                self.chargesRefrence[viewId]?.priceString = price.formatMoney
+-                self.chargesRefrence[viewId]?.total = price.formatMoney
++                self.chargesRefrence[viewId]?.cuant = units
++                self.chargesRefrence[viewId]?.price = billingType.signedAmount(price)
+                 
+             },
+             delete: { ids, name, amount in
+@@ -4310,8 +4306,9 @@
+         chas = 0
+         
+         charges.forEach { obj in
+-            total += ((obj.price * obj.cuant) / 100)
+-            chas += ((obj.price * obj.cuant) / 100)
++            let subtotal = obj.billingType.signedAmount((obj.price * obj.cuant) / 100)
++            total += subtotal
++            chas += subtotal
+         }
+         
+         pocs.forEach { obj in
+@@ -5284,7 +5281,7 @@
+             
+             items.charges.forEach { obj in
+                 
+-                let stotal = ((obj.price * obj.cuant) / 100)
++                let stotal = obj.type.signedAmount((obj.price * obj.cuant) / 100)
+                 
+                 self.total += stotal
+                 self.chas += stotal
+@@ -5294,7 +5291,7 @@
+                     id: obj.id,
+                     name: obj.name,
+                     cuant: obj.cuant,
+-                    price: obj.price,
++                    price: obj.type.signedAmount(obj.price),
+                     puerchaseOrder: false
+                 ) { viewId in
+                     self.editCharge(
+--- a/Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift
++++ b/Sources/App/Snippits/TripControler/TripControler+TripViewBeta.swift
+@@ -1407,7 +1407,7 @@
+                 name: charge.name,
+                 cost: charge.cost,
+                 cuant: charge.cuant,
+-                price: charge.price,
++                price: charge.billingType.signedAmount(charge.price),
+                 puerchaseOrder: false
+             ) { viewId in
+                 self.editCharge(
+@@ -1684,18 +1684,14 @@
+                     return
+                 }
+ 
+-                var price = soc.price
+-
+-                if codeType == .adjustment{
+-                    price = (price * -1)
+-                }
++                let billingType: BillingType = codeType == .adjustment ? .adjustment : soc.billingType
+ 
+                     let tr = OldChargeTrRow(
+                         isCharge: true,
+                         id: id,
+                         name: soc.description,
+-                        cuant: 100,
+-                        price: price,
++                        cuant: soc.units,
++                        price: billingType.signedAmount(soc.price),
+                         puerchaseOrder: false
+                     ) { viewId in
+ 
+@@ -1715,11 +1711,11 @@
+                     id: id,
+                     codeid: soc.id,
+                     type: (soc.id == nil) ? .manual : .service,
+-                    billingType: codeType == .adjustment ? .adjustment : .charge,
++                    billingType: billingType,
+                     name: soc.description,
+                     cost: soc.cost ?? 0,
+                     cuant: soc.units,
+-                    price: price,
++                    price: soc.price,
+                     status: .unbilled
+                 )
+ 
+@@ -1842,7 +1838,7 @@
+ 
+     private func calcBalance() {
+         let chargesTotal = charges.reduce(Int64(0)) { total, charge in
+-            total + ((charge.price * charge.cuant) / 100)
++            total + charge.billingType.signedAmount((charge.price * charge.cuant) / 100)
+         } + pocs.reduce(Int64(0)) { total, item in
+             total + (item.soldPrice ?? 0)
+         }
+--- a/Sources/App/Snippits/StartServiceOrder.swift
++++ b/Sources/App/Snippits/StartServiceOrder.swift
+@@ -4056,11 +4056,7 @@
+             
+             let id = soc.refid
+             
+-            var price = soc.price
+-            
+-            if codeType == .adjustment{
+-                price = (price * -1)
+-            }
++            let price = soc.billingType.signedAmount(soc.price)
+             
+             let tr = OldChargeTrRow(
+                 preCharge: true,
+--- a/Sources/App/Snippits/AddChargeFormView.swift
++++ b/Sources/App/Snippits/AddChargeFormView.swift
+@@ -885,7 +885,7 @@
+                 price: priceFloat.toCents,
+                 description: self.name,
+                 type: self.chargeType,
+-                billingType: self.billingType,
++                billingType: self.codeType == .adjustment ? .adjustment : self.billingType,
+                 cost: Float(costFloat ?? 0).toCents,
+                 productionTime: self.productionTime,
+                 ids: [],
+--- a/Sources/App/Snippits/OrderPrintEngine.swift
++++ b/Sources/App/Snippits/OrderPrintEngine.swift
+@@ -539,13 +539,13 @@
+         else {
+             
+             charges.forEach { obj in
+-                let stotal = ((obj.price * obj.cuant) / 100)
++                let stotal = obj.billingType.signedAmount((obj.price * obj.cuant) / 100)
+                 total += stotal
+                 chargesOne.appendChild(
+                     Tr{
+                         Td(obj.cuant.fromCents.toString)
+                         Td(obj.name)
+-                        Td(obj.price.formatMoney)
++                        Td(obj.billingType.signedAmount(obj.price).formatMoney)
+                         Td(stotal.formatMoney)
+                     }
+                 )
+@@ -553,7 +553,7 @@
+                     Tr{
+                         Td(obj.cuant.fromCents.toString)
+                         Td(obj.name)
+-                        Td(obj.price.formatMoney)
++                        Td(obj.billingType.signedAmount(obj.price).formatMoney)
+                         Td(stotal.formatMoney)
+                     }
+                 )
+--- a/Sources/App/Snippits/OrderPrintChargesEngine.swift
++++ b/Sources/App/Snippits/OrderPrintChargesEngine.swift
+@@ -262,14 +262,14 @@
+         }
+         
+         charges.forEach { obj in
+-            let stotal = ((obj.price * obj.cuant) / 100)
++            let stotal = obj.billingType.signedAmount((obj.price * obj.cuant) / 100)
+             total += stotal
+             
+             chargesData.appendChild(
+                 Tr{
+                     Td(obj.cuant.fromCents.toString)
+                     Td(obj.name)
+-                    Td(obj.price.formatMoney)
++                    Td(obj.billingType.signedAmount(obj.price).formatMoney)
+                     Td(stotal.formatMoney)
+                 }
+             )
+--- a/Sources/App/Snippits/OrderPrintServiceLeterEngine.swift
++++ b/Sources/App/Snippits/OrderPrintServiceLeterEngine.swift
+@@ -266,14 +266,14 @@
+         }
+         
+         charges.forEach { obj in
+-            let stotal = ((obj.price * obj.cuant) / 100)
++            let stotal = obj.billingType.signedAmount((obj.price * obj.cuant) / 100)
+             total += stotal
+             
+             chargesData.appendChild(
+                 Tr{
+                     Td(obj.cuant.fromCents.toString)
+                     Td(obj.name)
+-                    Td(obj.price.formatMoney)
++                    Td(obj.billingType.signedAmount(obj.price).formatMoney)
+                     Td(stotal.formatMoney)
+                 }
+             )
+--- a/Sources/App/Snippits/PDVPrintEngine.swift
++++ b/Sources/App/Snippits/PDVPrintEngine.swift
+@@ -351,7 +351,7 @@
+         
+         charges.forEach { obj in
+             
+-           let stotal = ((obj.price * (obj.cuant / 100)) )
++           let stotal = obj.billingType.signedAmount((obj.price * obj.cuant) / 100)
+             
+            granTotal += stotal
+            
+@@ -359,7 +359,7 @@
+                Tr {
+                    Td(obj.name)
+                    Td(obj.cuant.fromCents.toString)
+-                   Td(obj.price.formatMoney)
++                   Td(obj.billingType.signedAmount(obj.price).formatMoney)
+                    Td(stotal.formatMoney)
+                }
+            )
+--- a/Sources/App/Snippits/SalePoint/SalePoint+DetailView.swift
++++ b/Sources/App/Snippits/SalePoint/SalePoint+DetailView.swift
+@@ -746,7 +746,7 @@
+                     
+                     let thisCost = charge.cost * (charge.cuant / 100)
+                     
+-                    let thisPrice = charge.price * (charge.cuant / 100)
++                    let thisPrice = charge.billingType.signedAmount((charge.price * charge.cuant) / 100)
+                     
+                     _cost += thisCost
+                     
+@@ -756,7 +756,7 @@
+                         id: charge.id,
+                         cost: charge.cost,
+                         quant: charge.cuant / 100,
+-                        price: charge.price,
++                        price: charge.billingType.signedAmount(charge.price),
+                         data: .init(
+                             t: (charge.SOC == nil) ? .manual : .service ,
+                             i: charge.SOC ?? charge.id,
+--- a/Sources/App/Snippits/SalePoint/SalePoint+HistoryView.swift
++++ b/Sources/App/Snippits/SalePoint/SalePoint+HistoryView.swift
+@@ -1127,7 +1127,7 @@
+                     
+                     storeCostTotal += charge.cost
+                     
+-                    storePriceTotal += charge.price
++                    storePriceTotal += charge.billingType.signedAmount((charge.price * charge.cuant) / 100)
+                     
+                     productionTimeTotal += charge.productionTime
+                     
+@@ -1135,10 +1135,10 @@
+                         Tr{
+                             Td(getDate(charge.createdAt).formatedLong)
+                             Td(charge.name)
+-                            Td("Cargo")
++                            Td(charge.billingType.description)
+                             Td(charge.productionTime.toString)
+                             Td(charge.cost.formatMoney)
+-                            Td(charge.price.formatMoney)
++                            Td(charge.billingType.signedAmount((charge.price * charge.cuant) / 100).formatMoney)
+                         }
+                     )
+                     
+@@ -1742,17 +1742,17 @@
+                 
+                 storeCostTotal += charge.cost
+                 
+-                storePriceTotal += charge.price
++                storePriceTotal += charge.billingType.signedAmount((charge.price * charge.cuant) / 100)
+                 
+                 productionTimeTotal += charge.productionTime
+                 
+                 tbody.appendChild(Tr{
+                     Td(getDate(charge.createdAt).formatedLong)
+                     Td(charge.name)
+-                    Td("Cargo")
++                    Td(charge.billingType.description)
+                     Td(charge.productionTime.toString)
+                     Td(charge.cost.formatMoney)
+-                    Td(charge.price.formatMoney)
++                    Td(charge.billingType.signedAmount((charge.price * charge.cuant) / 100).formatMoney)
+                 })
+                 
+             }
+--- a/Sources/App/Snippits/BudgetSOCView.swift
++++ b/Sources/App/Snippits/BudgetSOCView.swift
+@@ -88,6 +88,8 @@
+     
+     ///product, service, manual
+     var chargeType: ChargeType = .manual
++
++    private var billingType: BillingType = .charge
+     
+     /// the UUID If its a POC or SOC
+     @State var chargeId: UUID? = nil
+@@ -510,6 +512,7 @@
+                 return
+             }
+             
++            self.billingType = soc.codeType == .adjustment ? .adjustment : .charge
+             self.fiscCode = soc.fiscCode
+             
+             self.fiscUnit = soc.fiscUnit
+@@ -620,7 +623,7 @@
+                 price: priceFloat.toCents,
+                 description: self.name,
+                 type: self.chargeType,
+-                billingType: .charge,
++                billingType: self.billingType,
+                 cost: Float(costFloat ?? 0).toCents,
+                 productionTime: self.productionTime,
+                 ids: [],
+--- a/Sources/App/Snippits/AddServiceFormView.swift
++++ b/Sources/App/Snippits/AddServiceFormView.swift
+@@ -90,6 +90,8 @@
+     
+     ///product, service, manual
+     var chargeType: ChargeType = .service
++
++    private var billingType: BillingType = .charge
+     
+     /// the UUID If its a POC or SOC
+     @State var chargeId: UUID? = nil
+@@ -639,6 +641,7 @@
+                 return
+             }
+             
++            self.billingType = soc.codeType == .adjustment ? .adjustment : .charge
+             self.fiscCode = soc.fiscCode
+             
+             self.fiscUnit = soc.fiscUnit
+@@ -760,7 +763,7 @@
+                 price: priceFloat.toCents,
+                 description: self.name,
+                 type: self.chargeType,
+-                billingType: .charge,
++                billingType: self.billingType,
+                 cost: costFloat.toCents,
+                 productionTime: self.productionTime,
+                 ids: [],
+--- a/Sources/App/Snippits/BudgetView/Budget+ItemView.swift
++++ b/Sources/App/Snippits/BudgetView/Budget+ItemView.swift
+@@ -27,6 +27,8 @@
+         
+         ///service, product, manual, rental
+         var type: ChargeType
++
++        let billingType: BillingType
+         
+         /// Avanatr Image
+         var avatar: String
+@@ -94,6 +96,7 @@
+             model: String,
+             name: String,
+             storagePlace: String,
++            billingType: BillingType = .charge,
+             callback: @escaping ((
+               _ id: UUID
+             ) -> ()),
+@@ -105,12 +108,13 @@
+             self.budgetid = budgetid
+             self.objectid = objectid
+             self.type = type
++            self.billingType = billingType
+             self.avatar = avatar
+             self.uuids = uuids
+             self.price = price
+             self.units = units
+             self.unitCost = unitCost
+-            self.subTotal = (units / 100) * price
++            self.subTotal = billingType.signedAmount((units * price) / 100)
+             self.costType = costType
+             self.brand = brand
+             self.model = model
+@@ -148,7 +152,7 @@
+                             updateItem: { updatesUnits, updatedPrice in
+                                 self.units = updatesUnits
+                                 self.price = updatedPrice
+-                                self.subTotal = (updatesUnits / 100) * updatedPrice
++                                self.subTotal = self.billingType.signedAmount((updatesUnits * updatedPrice) / 100)
+                                 self.updateUnits()
+                             },
+                             deleteItem: {
+--- a/Sources/App/Snippits/BudgetView/BudgetView.swift
++++ b/Sources/App/Snippits/BudgetView/BudgetView.swift
+@@ -1194,7 +1194,8 @@
+                     brand: "",
+                     model: "",
+                     name: soc.description,
+-                    storagePlace: "Servicio"
++                    storagePlace: "Servicio",
++                    billingType: soc.billingType
+                 ){ id in
+                 
+                     self.itemRefrence[id]?.remove()
+@@ -1224,7 +1225,7 @@
+         var cost: Int64 = 0
+         
+         itemRefrence.forEach { id, item in
+-            bal += ((item.units * item.price) / 100)
++            bal += item.billingType.signedAmount((item.units * item.price) / 100)
+             
+             cost += ((item.units * item.unitCost) / 100)
+             
+@@ -1500,7 +1501,8 @@
+                     brand: "",
+                     model: "",
+                     name: item.custSOC.name,
+-                    storagePlace: "Servicio"
++                    storagePlace: "Servicio",
++                    billingType: item.custSOC.codeType == .adjustment ? .adjustment : .charge
+                 ){ id in
+                 
+                     self.itemRefrence[id]?.remove()
+--- a/Sources/App/Snippits/BudgetView/Budget+HistoricItemPreView.swift
++++ b/Sources/App/Snippits/BudgetView/Budget+HistoricItemPreView.swift
+@@ -279,6 +279,7 @@
+             
+             /// Services
+             payload.saleObjectsSOC.forEach { item in
++                let billingType: BillingType = item.custSOC.codeType == .adjustment ? .adjustment : .charge
+                 
+                 let view = ItemPreView(
+                     budgetid: manager.id,
+@@ -286,10 +287,10 @@
+                     type: .service,
+                     avatar: "",
+                     uuids: [],
+-                    price: item.unitPrice,
++                    price: billingType.signedAmount(item.unitPrice),
+                     units: item.units,
+                     unitCost: item.custSOC.cost,
+-                    subTotal: (item.unitPrice * (item.units / 100)),
++                    subTotal: billingType.signedAmount((item.unitPrice * item.units) / 100),
+                     costType: .cost_a,
+                     brand: "",
+                     model: "",
+@@ -299,7 +300,7 @@
+                 
+                 chargesGrid.appendChild(view)
+                 
+-                balance += ((item.units * item.unitPrice) / 100).fromCents
++                balance += billingType.signedAmount((item.units * item.unitPrice) / 100).fromCents
+                 
+                 budgetCost += ((item.units * item.custSOC.cost) / 100).fromCents
+                 
+--- a/Sources/App/Structurs/SalePointObject.swift
++++ b/Sources/App/Structurs/SalePointObject.swift
+@@ -12,4 +12,17 @@
+     let id: UUID
+     let kartItemView: KartItemView
+     let data: SaleProductPDVObject
++    let billingType: BillingType
++
++    init(
++        id: UUID,
++        kartItemView: KartItemView,
++        data: SaleProductPDVObject,
++        billingType: BillingType = .charge
++    ) {
++        self.id = id
++        self.kartItemView = kartItemView
++        self.data = data
++        self.billingType = billingType
++    }
+ }
+--- a/Sources/App/Snippits/SalePoint/SalePointView.swift
++++ b/Sources/App/Snippits/SalePoint/SalePointView.swift
+@@ -268,7 +268,8 @@
+                                             fiscCode: "",
+                                             fiscUnit: "",
+                                             preRegister: false
+-                                        )
++                                        ),
++                                        billingType: item.billingType
+                                     ))
+                                     
+                                     return
+@@ -864,7 +865,7 @@
+         var balance: Int64 = 0
+         
+         self.kart.forEach { item in
+-            balance += (item.data.unitPrice * (item.data.units / 100))
++            balance += item.billingType.signedAmount((item.data.unitPrice * item.data.units) / 100)
+         }
+         
+         if let points = rewadsPoints?.toCents {
+@@ -1938,7 +1939,7 @@
+                id: id,
+                cost: soc.price,
+                quant: (soc.units / 100),
+-               price: soc.price,
++               price: soc.billingType.signedAmount(soc.price),
+                data: .init(
+                    t: .service,
+                    i: soc.id ?? .init(),
+@@ -1990,7 +1991,8 @@
+                        fiscCode: "",
+                        fiscUnit: "",
+                        preRegister: false
+-                   )
++                   ),
++                   billingType: soc.billingType
+                )
+            )
+            
+@@ -2277,6 +2279,7 @@
+             }
+             
+             payload.saleObjectsSOC.forEach { item in
++                let billingType: BillingType = item.custSOC.codeType == .adjustment ? .adjustment : .charge
+                 
+                 let manualid = UUID()
+                 
+@@ -2284,7 +2287,7 @@
+                     id: item.custSOC.id,
+                     cost: item.custSOC.cost,
+                     quant: item.units / 100,
+-                    price: item.unitPrice,
++                    price: billingType.signedAmount(item.unitPrice),
+                     data: .init(
+                         t: .service,
+                         i: item.custSOC.id,
+@@ -2343,7 +2346,8 @@
+                                         fiscCode: "",
+                                         fiscUnit: "",
+                                         preRegister: false
+-                                    )
++                                    ),
++                                    billingType: item.billingType
+                                 ))
+                                 
+                                 return
+@@ -2382,7 +2386,8 @@
+                             fiscCode: "",
+                             fiscUnit: "",
+                             preRegister: false
+-                        )
++                        ),
++                        billingType: billingType
+                     )
+                 )
+                 
+@@ -2457,7 +2462,8 @@
+                                         fiscCode: "",
+                                         fiscUnit: "",
+                                         preRegister: false
+-                                    )
++                                    ),
++                                    billingType: item.billingType
+                                 ))
+                                 
+                                 return
+--- a/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ b/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -3,6 +3,8 @@
+ Authoritative rules: `SWWEB-*`.
+ 
+ ## Verified Facts
++
++- Billing-aware balances and displayed charge lines use App's BillingType.signedAmount: adjustment subtracts the quantity-scaled subtotal; other billing types add it. Initial order loading, refresh, SOC budget import, charge edits, trip balances, order/POS prints and sales detail/history summaries share this direction. Locally appended order/trip records retain raw prices; only calculation/display values are signed, preventing double negation. Charge/service/budget forms preserve adjustment classification from the actual SOC code. Budget ItemView and SalePointObject retain local billingType with charge defaults; new/loaded service rows derive it from ChargeObject or the loaded CustSOC, cart copies preserve it, and budget/cart/edited/historic totals apply it. Shared payload prices remain raw. The user's corrected StartServiceOrder.calcBalance is unchanged. Product/rental/payment-only values and report DTOs without a discriminator are not reclassified. Source-audited; builds/tests/browser verification remains unrun for this change.
+ 
+ - OrderView compact presentation binds a highlighted folio to `AccoutOverview.$order` beside Cuenta / Órdenes and hides it outside a loaded order. The existing state-colored status selector/menu now sits on the priority/alert row in a 32px pill with 16px text; existing permissions, actions and hidden options remain intact. Equipment inspection uses ten native checkboxes bound to the original check/disabled states, while prepared/delivered rental controls are unchanged. Configurable tag1/tag2 (Marca/Modelo) share a responsive row; diagnosis/resolution add actions use 14px text. Service-letter/contract headers show decorative blue SVGs, and the address header has a blue map SVG with left-aligned text. The inset holder and floating corner icon stay unchanged. Source-audited; browser rendering and new build verification remain pending.
+ - `TripViewBeta` adds an Entrega column: only multi-item in-progress trips offer Entregar for undelivered linked commercial assets. `FiscalMercanciaItem.deliverd` supplies the Entregado marker on every trip size; canceled final movements use Movimiento finalizado. The delivery initializer of `ConfirmTripStatusUpdate` reuses one-item comments, local uploads, remote camera and gallery evidence, blocks confirmation during pending image uploads, and validates linked routes/unique safe filenames. The parent serializes status/delivery mutations and owns one popup, closes it on removal, checks session/trip/asset/snapshot response identities, then applies only the confirmed item flag and returned trip status (including auto-completion), notifies the dashboard/caller and refreshes trip/notes. Generation and confirmed-item checks reject stale refreshes. Optional destination section/subsection are omitted by this UI. App target compilation verified with the updated shared packages; browser/mobile/server behavior remains unverified.
+--- a/.agent/architecture/API_AND_BACKEND.md
++++ b/.agent/architecture/API_AND_BACKEND.md
+@@ -6,7 +6,7 @@
+ 
+ - `CustAcctCharges` and `CustAcctChargesQuick` use the shared `billingType` stored field and initializer label. TCFireSignal responses and PWA account, sale and fiscal views consume those shared values directly; no local charge DTO duplicates the field. Deploy matching shared models, server and clients together after the existing-tenant `CustAcctCharges.type` to `billingType` column rollout. Separate SOC charge projections retain their `type: BillingType` response key through server query aliases. App target compilation verified against the synchronized shared packages; browser/database execution remains unverified.
+ 
+-- Shared summary charge records distinguish `type: ChargeType` from `billingType: BillingType`; the SOC projection exposes its billing classification as `type: BillingType`. Locally appended service/manual charges use the existing adjustment code type to set adjustment or charge; charge editing retains the source billingType, and approved-budget conversion reads SOC.type using the established adjustment-versus-charge mapping. TCFundamentals owns the models. `CustOrderCreateCharges` and `CustOrderLoadFolioCharges` expose `public var billingType` and matching initializer labels; both decode the earlier chargeType key and encode billingType. `ChargeObject` also encodes/decodes billingType separately from its type identity. SOC decoding accepts the earlier chargeType key and defaults a missing classification to charge. App target compilation verified; browser behavior remains unverified.
++- Shared summary charge records distinguish `type: ChargeType` from `billingType: BillingType`; the SOC projection exposes its billing classification as `type: BillingType`. Locally appended service/manual charges retain raw source prices and use the adjustment code type or explicit ChargeObject.billingType to retain their billing direction; charge editing retains the source billingType, and approved-budget conversion reads SOC.type using the established adjustment-versus-charge mapping. TCFundamentals owns the models. `CustOrderCreateCharges` and `CustOrderLoadFolioCharges` expose `public var billingType` and matching initializer labels; both decode the earlier chargeType key and encode billingType. `ChargeObject` also encodes/decodes billingType separately from its type identity. SOC decoding accepts the earlier chargeType key and defaults a missing classification to charge. App target compilation was verified for shared-field synchronization; the later App signed-balance changes are source-audited only, with build/browser behavior unverified.
+ 
+ - Trip creation forwards all selected route stops through the existing shared `CreateTripRequest.locations: [TripLocation]`, ordered origin, first destination, then additional destinations. The existing server `makeLocationItems` enumerates request order into persisted snapshot positions. Each merchandise request retains its chosen destination reference; the client checks unique nonempty stop references and reuses linked-asset route validation before submission. No endpoint, wrapper, wire-key, shared-model or server change was needed. Source-audited; build/browser/server execution remains unverified.
+ 
+--- a/.agent/PROJECT_MEMORY.md
++++ b/.agent/PROJECT_MEMORY.md
+@@ -67,3 +67,5 @@
+ - 2026-10-15: Reviewed and synchronized the exact already-pinned TCFireSignal 0ac424b and TCFundamentals 6a9d6ba commits. Current delivery and billingType consumers already match their contracts; no App source or package pin edits were needed. SwiftPM working copies were behind the pins and now match. The user-approved focused App build passed (150.95s); no tests or browser/server execution. Evidence: `.artifacts/planning/shared-package-sync/`.
+ 
+ - 2026-10-15: OrderView screenshot cleanup moves the reactive highlighted folio to the outer toolbar and the compact status pill onto the priority/alert row. Equipment inspection uses bound native checkboxes, tag1/tag2 share a row, diagnosis/resolution actions have smaller text, and letter/contract/map headers use blue SVG icons with left-aligned address text. Existing business actions, disabled/permission state and inset shell remain intact. See UI architecture and `.artifacts/planning/order-view-compact-cleanup/`; runtime validation pending.
++
++- 2026-10-15: Counter-charge subtraction now follows BillingType.adjustment across billing-aware order/trip/budget/cart calculations, budget imports/edits/historic previews, receipts and sales summaries. The App-only signedAmount helper centralizes direction; locally appended records keep raw prices to avoid double negation. Budget/cart service wrappers retain actual SOC classification locally without a shared contract change. Preserved the user's StartServiceOrder.calcBalance verbatim. Source audit only; builds/tests were not authorized and browser behavior remains unverified. See UI/API architecture and .artifacts/planning/charge-balance-adjustments/.
+--- a/.agent/SOURCE_MAP.md
++++ b/.agent/SOURCE_MAP.md
+@@ -49,6 +49,7 @@
+ | `Sources/App/TierraCeroCustomUI/` | Scoped Tierra Cero layout controls and feature themes, including the production OrderView presentation and persistent speech-recognition control. |
+ | `Sources/App/Functions/` | Free functions and browser helpers, including centralized POST transport and API response decoding instrumentation. |
+ | `Sources/App/Extentions/` | Project extensions for Web elements and value types. |
++| `Sources/App/Extentions/BillingType+SignedAmount.swift` | App-only charge-direction helper for billing-aware balances and displayed subtotals; adjustment negates the supplied amount. |
+ | `Sources/App/Enums/` | App enums. |
+ | `Sources/App/Structurs/` | App structs and payload objects. |
+ 
+--- a/.agent/TASKS_ARCHIVE.md
++++ b/.agent/TASKS_ARCHIVE.md
+@@ -423,3 +423,15 @@
+ - **Implementation**: Highlighted reactive toolbar folio replaces the side-panel duplicate. Existing status picker moves to priority/alert row with compact dimensions and unchanged tint/menu/actions. Ten inspection checkboxes replace sliders on existing bindings; Marca/Modelo share a row; diagnosis/resolution add text is smaller. Blue service-letter/contract/map SVGs clarify section headers and address text aligns left. Inset holder, corner icon and unrelated business flows are preserved.
+ - **Verification**: Source/diff/whitespace and seven-request review; original status-selector body matches after whitespace normalization, ten checkbox bindings retain disabled state, and both rental toggles remain. Focused build permission requested separately under AGENTS.md; browser runtime unverified. Evidence: `.artifacts/planning/order-view-compact-cleanup/`.
+ - **Commit**: Not created.
++
++---
++
++## CHARGE-BALANCE-ADJUSTMENTS-001 — Respect counter-charges in balance calculations
++
++- **Completed**: 2026-10-15.
++- **Status**: Implemented and source-audited; build/browser behavior remains unverified.
++- **Architecture IDs**: SWWEB-001, SWWEB-002, SWWEB-003, API-001, API-002, API-003.
++- **Implementation**: App-only BillingType.signedAmount applies adjustment-subtract/other-add to billing-aware order/trip calculations, load/render paths, SOC budget imports, edits, receipts and sales summaries. Locally appended records keep raw prices/classification and sign only displayed/derived values. Forms propagate actual SOC adjustment classification; budget ItemView and SalePointObject retain local direction for new/loaded/copied service entries. Budget/cart balances, edited budget lines and historic service previews apply it. The user's corrected StartServiceOrder.calcBalance is preserved verbatim; its pre-charge row follows the same billingType.
++- **Scope**: Product/rental/project/payment-only calculations have no new inferred classification. Aggregate order-report DTOs omit BillingType; fiscal document generation, server/shared models and API payloads remain unchanged.
++- **Verification**: Reviewed shared model ownership, complete baseline-relative patch, signed/raw append/edit/reload paths, remaining eligible charge formulas, added-line whitespace, reverse patch applicability, original reference-function preservation and tracked-file/status preservation. No builds, tests, compiler parsing, browser/server execution, staging, commit or deployment.
++- **Evidence**: .artifacts/planning/charge-balance-adjustments/plan.md, change.diff, flow-review.md and audit.md.

@@ -23,7 +23,7 @@ class CreateNewCustomerDataView: Div {
     let custType: CreateNewCusomerType
     
     /// order, rental, date, account
-    let orderType: CustOrderProfiles?
+    let orderType: CustModuleProfiles?
     
     private var callback: ((
         _ custAcct: CustAcctSearch
@@ -32,7 +32,7 @@ class CreateNewCustomerDataView: Div {
     init(
         acctType: CustAcctTypes,
         custType: CreateNewCusomerType,
-        orderType: CustOrderProfiles?,
+        orderType: CustModuleProfiles?,
         searchTerm: String,
         callback: @escaping ((
             _ custAcct: CustAcctSearch
@@ -1552,7 +1552,7 @@ class CreateNewCustomerDataView: Div {
             case .rental:
                 mobileIsRequierd = configStoreProcessing.rentalMobileConfirmationMode
                 idIsRequierd = configStoreProcessing.rentalIdConfirmationMode
-            case .date, .followup:
+            case .date:
                 mobileIsRequierd = configStoreProcessing.dateMobileConfirmationMode
                 idIsRequierd = configStoreProcessing.dateIdConfirmationMode
             case .account:
@@ -1561,6 +1561,9 @@ class CreateNewCustomerDataView: Div {
             case .followup:
                 mobileIsRequierd = configStoreProcessing.accountMobileConfirmationMode
                 idIsRequierd = configStoreProcessing.accountIdConfirmationMode
+            case .trip, .commertialAsset:
+                mobileIsRequierd = .notrequired
+                idIsRequierd = .notrequired
             }
         }
         

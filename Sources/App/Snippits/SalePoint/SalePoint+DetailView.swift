@@ -746,7 +746,7 @@ extension SalePointView {
                     
                     let thisCost = charge.cost * (charge.cuant / 100)
                     
-                    let thisPrice = charge.price * (charge.cuant / 100)
+                    let thisPrice = charge.billingType.signedAmount((charge.price * charge.cuant) / 100)
                     
                     _cost += thisCost
                     
@@ -756,7 +756,7 @@ extension SalePointView {
                         id: charge.id,
                         cost: charge.cost,
                         quant: charge.cuant / 100,
-                        price: charge.price,
+                        price: charge.billingType.signedAmount(charge.price),
                         data: .init(
                             t: (charge.SOC == nil) ? .manual : .service ,
                             i: charge.SOC ?? charge.id,

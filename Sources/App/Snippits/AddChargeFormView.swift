@@ -135,6 +135,8 @@ class AddChargeFormView: Div {
     
     ///product, service, manual
     var chargeType: ChargeType = .manual
+
+    var billingType: BillingType = .charge
     
     /// the UUID If its a POC or SOC
     @State var chargeId: UUID? = nil
@@ -883,6 +885,7 @@ class AddChargeFormView: Div {
                 price: priceFloat.toCents,
                 description: self.name,
                 type: self.chargeType,
+                billingType: self.codeType == .adjustment ? .adjustment : self.billingType,
                 cost: Float(costFloat ?? 0).toCents,
                 productionTime: self.productionTime,
                 ids: [],

@@ -128,6 +128,8 @@ class WorkViewControler: PageController {
     @State var jsIsLoaded = false
     
     @State var searchTerm = ""
+
+    private var folioSearchDebounceId = UUID()
     
     @State var WSToken = ""
     
@@ -1106,28 +1108,35 @@ class WorkViewControler: PageController {
                     InputText(self.$searchTerm)
                         .placeholder(self.$serchPlaceHolder)
                         .onKeyUp({ tf, event in
-                            var _term = tf.text.purgeSpaces
 
-                            Dispatch.asyncAfter(0.37) {
-                                if _term == tf.text {
-                                    _term = _term.replace(from: "'", to: "-").replace(from: "`", to: "-")
-                                    if _term.count > 8 && _term.contains("-") {
+                            guard event.code != "Enter", event.code != "NumpadEnter",
+                                  !ignoredKeys.contains(event.key) else {
+                                return
+                            }
 
-                                        if ignoredKeys.contains(tf.text) {
-                                            return
-                                        }
+                            self.folioSearchDebounceId = UUID()
 
-                                        if _term.hasPrefix("qr-") {
-                                            return
-                                        }
+                            let debounceId = self.folioSearchDebounceId
+                            
+                            let inputText = tf.text
+                            
+                            let term = inputText.purgeSpaces
+                                .replace(from: "'", to: "-")
+                                .replace(from: "`", to: "-")
 
-                                        self.searchFolio(false)
+                            guard term.count > 8, term.contains("-"), !term.hasPrefix("qr-") else {
+                                return
+                            }
 
-                                        Dispatch.asyncAfter(0.25) {
-                                            self.searchTerm = ""
-                                        }
-                                    }
+                            Dispatch.asyncAfter(0.37) { [weak self, weak tf] in
+                                guard let self, let tf, self.isInDOM,
+                                      self.folioSearchDebounceId == debounceId,
+                                      tf.text == inputText else {
+                                    return
                                 }
+
+                                self.searchFolio(false, term)
+                                self.searchTerm = ""
                             }
                         })
                         .onEnter {
@@ -2421,6 +2430,7 @@ class WorkViewControler: PageController {
     }
 
     override func didRemoveFromDOM() {
+        folioSearchDebounceId = UUID()
         communicationRefreshId = UUID()
         communicationController.shutdown()
         speechRecognitionControl.shutdown()
@@ -2748,7 +2758,7 @@ class WorkViewControler: PageController {
     
     /// Start New Service Order
     /// - Parameter orderType: order, rental, date
-    func newOrderSearchCustomer(_ orderType: CustOrderProfiles){
+    func newOrderSearchCustomer(_ orderType: CustModuleProfiles){
         
         let seachBox = SearchCustomerView { term, results in
             
@@ -2953,6 +2963,8 @@ class WorkViewControler: PageController {
                                     loadAccountView(id: .id(custAcct.id))
                                 case .followup:
                                     self.startFollowup(custAcct, custAcct.highPriorityNotes)
+                                case .trip, .commertialAsset:
+                                    break
                                 }
                             }
 
@@ -3134,11 +3146,16 @@ class WorkViewControler: PageController {
                     case .date:
                         break
                     case .account:
-                        loadAccountView(id: .id(custAcct.id))
-                    case .followup:
 
-                    /// CustAcctSearch
+                        loadAccountView(id: .id(custAcct.id))
+
+                    case .followup:
+                    
                         self.startFollowup(custAcct, custAcct.highPriorityNotes)
+                    case .trip:
+                        break
+                    case .commertialAsset:
+                        break
                     }
                 }
                 else{
@@ -3308,7 +3325,7 @@ class WorkViewControler: PageController {
                             break
                         case .account:
                             loadAccountView(id: .id(custAcct.id))
-                        case .followup:
+                        case .followup, .commertialAsset, .trip:
                             break
                         }
                     }
@@ -3488,6 +3505,8 @@ class WorkViewControler: PageController {
     }
     
     func searchFolio(_ advancedSearch: Bool,_ _term: String? = nil){
+
+        folioSearchDebounceId = UUID()
         
         var term = searchTerm.purgeSpaces
         
@@ -3495,11 +3514,11 @@ class WorkViewControler: PageController {
             term  = _term
         }
         
-        minimizeAccountViews()
-        
         if term.isEmpty {
             return
         }
+
+        minimizeAccountViews()
         
         if term.count > 7 && term.contains("-") {
            
@@ -3683,7 +3702,7 @@ class WorkViewControler: PageController {
                 case .manualInventory:
                     showAlert(.alerta, "\(type.description) aun no es soportado")
                     
-                case .qrCode:
+                case .qrCode, .serviceCard:
 
                     loadingView.show()
                     
@@ -3707,94 +3726,21 @@ class WorkViewControler: PageController {
                             return
                         }
                         
-                        // let type = payload.card.type
+                        let type = payload.card.type
 
-                        guard let id: UUID = payload.card.orderId else {
-                            loadingView.hide()
-                            showError(.unexpectedResult, "Esta tarejeta no esta activa")
-                            return
-                        }
-                            
-                        API.custOrderV1.loadOrder(identifier: .id(id), modifiedAt: nil) { resp in
-                            
-                            loadingView.hide()
-                            
-                            guard let resp = resp else {
-                                showError(.comunicationError, .serverConextionError)
-                                return
-                            }
 
-                            guard resp.status == .ok else{
-                                showError(.generalError, resp.msg)
-                                return
-                            }
-                            
-                            guard let payload = resp.data else {
-                                showError(.unexpectedResult, .payloadDecodError)
-                                return
-                            }
-                            
-                            switch payload {
-                            case .isUpdated:
-                                break
-                            case .load(let loadOrderResponse):
-                                minimizeAccountViews()
-                                
-                                let id: UUID = loadOrderResponse.order.id
-                                
-                                /// Order Detail Catch
-                                acctMinCatch[id] = loadOrderResponse.account
-                                orderCatch[id] = loadOrderResponse.order
-                                notesCatch[id] = loadOrderResponse.notes
-                                paymentsCatch[id] = loadOrderResponse.payments
-                                chargesCatch[id] = loadOrderResponse.charges
-                                pocsCatch[id] = loadOrderResponse.pocs
-                                filesCatch[id] = loadOrderResponse.files
-                                contractsCatch[id] = loadOrderResponse.contracts
-                                equipmentsCatch[id] = loadOrderResponse.equipments
-                                rentalsCatch[id] = loadOrderResponse.rentals
-                                orderHighPriorityNoteCatch[id] = loadOrderResponse.orderHighPriorityNote
-                                tasksCatch[id] = loadOrderResponse.tasks
-                                accountHighPriorityNoteCatch[id] = loadOrderResponse.accountHighPriorityNote
-                                
-                                if let transferOrder = loadOrderResponse.transferOrder {
-                                    transferOrderCatch[id] = transferOrder
-                                }
-                                
-                                if let route = loadOrderResponse.route {
-                                    custOrderRouteCatch[id] = route
-                                }
-                                
-                                let accoutOverview = AccoutOverview (
-                                    id: .id(loadOrderResponse.order.custAcct)
-                                )
-                                
-                                accoutOverview.loadOrder(
-                                    account: loadOrderResponse.account,
-                                    order: loadOrderResponse.order,
-                                    notes: loadOrderResponse.notes,
-                                    payments: loadOrderResponse.payments,
-                                    charges: loadOrderResponse.charges,
-                                    pocs: loadOrderResponse.pocs,
-                                    files: loadOrderResponse.files,
-                                    contracts: loadOrderResponse.contracts,
-                                    equipments: loadOrderResponse.equipments,
-                                    rentals: loadOrderResponse.rentals,
-                                    transferOrder: loadOrderResponse.transferOrder,
-                                    orderHighPriorityNote: loadOrderResponse.orderHighPriorityNote,
-                                    accountHighPriorityNote: loadOrderResponse.accountHighPriorityNote,
-                                    tasks: loadOrderResponse.tasks,
-                                    orderRoute: loadOrderResponse.route,
-                                    loadFromCatch: false
-                                )
-                                
-                                addToDom(accoutOverview)
-                                
-                                minViewAcctRefrence[loadOrderResponse.order.custAcct] = accoutOverview
-                                
-                            }
+
+                        // scRM-26B713I
+                        print("TYPE: \(type)")
+
+                        switch type {
+                            case .folio:
+                            self.procesCodeCardOrder(payload.card.orderId)
+                            case .asset:
+                            self.procesCodeCardAsset(payload.card.orderId)
+                            default:
+                            break
                         }
-                        
 
 
                     }
@@ -3806,9 +3752,44 @@ class WorkViewControler: PageController {
                 case .followup: 
                     break
                 case .comertialTrip:
+
+                    loadingView.show()
+
+                    API.custCommercialTrips.getTrip(tripId: .folio(term)) { resp in
+                        loadingView.hide()
+
+                        guard let resp else {
+                            showError(.comunicationError, .serverConextionError)
+                            return
+                        }
+
+                        guard resp.status == .ok else {
+                            showError(.generalError, resp.msg)
+                            return
+                        }
+
+                        guard let payload = resp.data else {
+                            showError(.unexpectedResult, .unexpenctedMissingPayload)
+                            return
+                        }
+
+                        addToDom(TripViewBeta(
+                            trip: payload
+                        ) { _, _ in
+
+                        })
+                    }
+
+                case .assetDocument:
                     showAlert(.alerta, "\(type.description) aun no es soportado")
-                case .assetDocument, .asset:
-                    showAlert(.alerta, "\(type.description) aun no es soportado")
+                case .asset:
+                    // aun no es soportado
+                    let view = CustAssetsView.AssetItemView(itemId: .folio(term)) { _ in
+
+                    }
+                    
+                    addToDom(view)
+
                 }
                 
                 return
@@ -3922,7 +3903,7 @@ class WorkViewControler: PageController {
             }
             
             addToDom(AdvancesSearchViewControler(
-                searchTerm: self.searchTerm,
+                searchTerm: term,
                 orders: orders,
                 accounts: accounts
             ))
@@ -4353,6 +4334,112 @@ class WorkViewControler: PageController {
             OrderCatchControler.shared.macroViewType = .tripView
         }
 
+    }
+
+    func procesCodeCardAsset(_ assetId: UUID?) {
+
+        guard let assetId else {
+            loadingView.hide()
+            showError(.unexpectedResult, "Esta tarejeta no esta activa")
+            return
+        }
+
+                // aun no es soportado
+        let view: CustAssetsView.AssetItemView = CustAssetsView.AssetItemView(itemId: .id(assetId)) { _ in
+
+        }
+        
+        addToDom(view)
+        
+    }
+
+    func procesCodeCardOrder(_ orderId: UUID?) {
+
+        guard let orderId else {
+            loadingView.hide()
+            showError(.unexpectedResult, "Esta tarejeta no esta activa")
+            return
+        }
+            
+                        API.custOrderV1.loadOrder(identifier: .id(orderId), modifiedAt: nil) { resp in
+                            
+                            loadingView.hide()
+                            
+                            guard let resp = resp else {
+                                showError(.comunicationError, .serverConextionError)
+                                return
+                            }
+
+                            guard resp.status == .ok else{
+                                showError(.generalError, resp.msg)
+                                return
+                            }
+                            
+                            guard let payload = resp.data else {
+                                showError(.unexpectedResult, .payloadDecodError)
+                                return
+                            }
+                            
+                            switch payload {
+                            case .isUpdated:
+                                break
+                            case .load(let loadOrderResponse):
+                                minimizeAccountViews()
+                                
+                                let id: UUID = loadOrderResponse.order.id
+                                
+                                /// Order Detail Catch
+                                acctMinCatch[id] = loadOrderResponse.account
+                                orderCatch[id] = loadOrderResponse.order
+                                notesCatch[id] = loadOrderResponse.notes
+                                paymentsCatch[id] = loadOrderResponse.payments
+                                chargesCatch[id] = loadOrderResponse.charges
+                                pocsCatch[id] = loadOrderResponse.pocs
+                                filesCatch[id] = loadOrderResponse.files
+                                contractsCatch[id] = loadOrderResponse.contracts
+                                equipmentsCatch[id] = loadOrderResponse.equipments
+                                rentalsCatch[id] = loadOrderResponse.rentals
+                                orderHighPriorityNoteCatch[id] = loadOrderResponse.orderHighPriorityNote
+                                tasksCatch[id] = loadOrderResponse.tasks
+                                accountHighPriorityNoteCatch[id] = loadOrderResponse.accountHighPriorityNote
+                                
+                                if let transferOrder = loadOrderResponse.transferOrder {
+                                    transferOrderCatch[id] = transferOrder
+                                }
+                                
+                                if let route = loadOrderResponse.route {
+                                    custOrderRouteCatch[id] = route
+                                }
+                                
+                                let accoutOverview = AccoutOverview (
+                                    id: .id(loadOrderResponse.order.custAcct)
+                                )
+                                
+                                accoutOverview.loadOrder(
+                                    account: loadOrderResponse.account,
+                                    order: loadOrderResponse.order,
+                                    notes: loadOrderResponse.notes,
+                                    payments: loadOrderResponse.payments,
+                                    charges: loadOrderResponse.charges,
+                                    pocs: loadOrderResponse.pocs,
+                                    files: loadOrderResponse.files,
+                                    contracts: loadOrderResponse.contracts,
+                                    equipments: loadOrderResponse.equipments,
+                                    rentals: loadOrderResponse.rentals,
+                                    transferOrder: loadOrderResponse.transferOrder,
+                                    orderHighPriorityNote: loadOrderResponse.orderHighPriorityNote,
+                                    accountHighPriorityNote: loadOrderResponse.accountHighPriorityNote,
+                                    tasks: loadOrderResponse.tasks,
+                                    orderRoute: loadOrderResponse.route,
+                                    loadFromCatch: false
+                                )
+                                
+                                addToDom(accoutOverview)
+                                
+                                minViewAcctRefrence[loadOrderResponse.order.custAcct] = accoutOverview
+                                
+                            }
+                        }
     }
 
 }

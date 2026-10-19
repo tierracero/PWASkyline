@@ -1,0 +1,20 @@
+--- tasks-archive.before.md
++++ .agent/TASKS_ARCHIVE.md
+@@ -1,6 +1,17 @@
+ # Tasks Archive
+ 
+ Verified completed tasks live here.
++
++---
++
++## TRIP-STATUS-COLORS-001 — Crystal Trip Action Colors
++
++- **Status**: Implemented and source-audited; browser rendering unverified
++- **Completed**: 2026-10-08
++- **Chunks/IDs**: `SWWEB-001`, `SWWEB-002`, `SWWEB-003`
++- **Implementation**: Start/complete use green crystal button modifiers; cancel uses the existing red crystal palette. Trip-scoped selectors override the blue control defaults and supply matching hover/focus accents and disabled dimming. Status visibility, callbacks and 35px sizing are preserved.
++- **Validation evidence**: Both Swift files passed frontend syntax parsing. Baseline-relative source diff, added-line whitespace, CSS cascade and repository status were reviewed. No repeated package build or tests were run; the earlier approved App build remains blocked by the unavailable pinned TCFundamentals revision. Evidence: `.artifacts/planning/trip-status-button-colors/AUDIT.md`.
++- **Commit**: Not created.
+ 
+ ---
+ 

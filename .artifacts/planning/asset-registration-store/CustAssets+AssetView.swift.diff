@@ -1,0 +1,65 @@
+--- CustAssets+AssetView.swift.before
++++ Sources/App/Snippits/CustAssetsView/CustAssets+AssetView.swift
+@@ -734,37 +734,6 @@
+ 
+         func createAsset() {
+ 
+-            switch viewType {
+-                case .account(_, let store):
+-                
+-                guard let lat: String = store.lat, let lon: String = store.lon, let _ = Double(lat), let _ = Double(lon) else {
+-                    showError(.unexpectedResult, "Tu tienda base \(store.name.capitalized), requeire cargar mapa")
+-                    return
+-                }
+-
+-                case .subAccount(_, let store):
+-                
+-                guard let lat: String = store.lat, let lon: String = store.lon, let _ = Double(lat), let _ = Double(lon) else {
+-                    showError(.unexpectedResult, "Tu tienda base \(store.name.capitalized), requeire cargar mapa")
+-                    return
+-                }
+-
+-                case .store(let store):
+-                
+-                guard let lat: String = store.lat, let lon: String = store.lon, let _ = Double(lat), let _ = Double(lon) else {
+-                    showError(.unexpectedResult, "La tienda \(store.name.capitalized), requeire cargar mapa")
+-                    return
+-                }
+-                
+-                case .warehose(let store):
+-                
+-                guard let lat: String = store.lat, let lon: String = store.lon, let _ = Double(lat), let _ = Double(lon) else {
+-                    showError(.unexpectedResult, "La tienda \(store.name.capitalized), requeire cargar mapa")
+-                    return
+-                }
+-                
+-            }
+-
+             guard let currentAsset else {
+                 showError(.unexpectedResult, "El activo aún no está disponible.")
+                 return
+@@ -777,13 +746,13 @@
+ 
+             addToDom(InitiateAssetItemView(
+                 viewType: viewType
+-            ){ folio, units in
++            ){ folio, units, registrationType in
+ 
+                 if units == 1 {
+                     addToDom(
+                         CreateAssetItemView(
+                             createType: .singleItem,
+-                            viewType: self.viewType,
++                            viewType: registrationType,
+                             purchasFiscalDocumentFolio: folio,
+                             asset: currentAsset,
+                             department: department,
+@@ -811,7 +780,7 @@
+                 else {
+                     let view = CreateAssetMultipleItemView(
+                         requestedUnits: units,
+-                        viewType: self.viewType,
++                        viewType: registrationType,
+                         purchasFiscalDocumentFolio: folio,
+                         asset: currentAsset,
+                         department: department,

@@ -1,0 +1,6 @@
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/BudgetView/Budget+HistoricItemPreView.swift:282:61: error: value of type 'LoadBudgetObjectSOCDecoder' has no member 'codeType'
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/BudgetView/Budget+HistoricItemPreView.swift:282:74: error: cannot infer contextual base in reference to member 'adjustment'
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/BudgetView/BudgetView.swift:1505:47: error: value of type 'LoadBudgetObjectSOCDecoder' has no member 'codeType'
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/BudgetView/BudgetView.swift:1505:60: error: cannot infer contextual base in reference to member 'adjustment'
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/SalePoint/SalePointView.swift:2282:61: error: value of type 'LoadBudgetObjectSOCDecoder' has no member 'codeType'
+/Users/victorcantu/Development/SwifWeb2.0/PWASkyline/Sources/App/Snippits/SalePoint/SalePointView.swift:2282:74: error: cannot infer contextual base in reference to member 'adjustment'

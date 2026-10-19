@@ -100,6 +100,8 @@ class CreateTripView: Div {
 
     @State var destination: CustCommercialTripsComponents.TripLocation? = nil
 
+    @State private var additionalDestinations: [CustCommercialTripsComponents.TripLocation] = []
+
     @State var balance: String = ""
 
     @State var odometerInitial = ""
@@ -203,10 +205,18 @@ class CreateTripView: Div {
                 VGrid(.twoThirds) {
 
                     VBox {
-                        self.componentTitle(
-                            "Ruta del viaje",
-                            icons: ["icon_destination.png"]
-                        )
+                        Div {
+                            self.componentTitle(
+                                "Ruta del viaje",
+                                icons: ["icon_destination.png"]
+                            )
+                            self.addDestinationButton
+                        }
+                        .display(.flex)
+                        .custom("align-items", "center")
+                        .custom("justify-content", "space-between")
+                        .custom("flex-wrap", "wrap")
+                        .custom("gap", "10px")
 
                         self.routeGrid
                     }
@@ -325,26 +335,21 @@ class CreateTripView: Div {
 
         }
 
-        $origin.listen { origin in
+        $origin.listen { _ in
             self.invalidateAssetSelection()
             self.merchendise.removeAll { $0.merchandiseType == .commercialAsset }
-            self.renderLocationSlot(
-                origin,
-                placementType: .origen,
-                container: self.originLocationSlot
-            )
+            self.renderRoute()
         }
 
-        $destination.listen { destination in
-            self.renderLocationSlot(
-                destination,
-                placementType: .destino,
-                container: self.destinationLocationSlot
-            )
+        $destination.listen { _ in
+            self.renderRoute()
         }
 
-        renderLocationSlot(origin, placementType: .origen, container: originLocationSlot)
-        renderLocationSlot(destination, placementType: .destino, container: destinationLocationSlot)
+        $additionalDestinations.listen { _ in
+            self.renderRoute()
+        }
+
+        renderRoute()
 
         $merchendise.listen { merchendise in
             self.mercaciaGrid.innerHTML = ""
@@ -378,6 +383,7 @@ class CreateTripView: Div {
         $fiscalProfileListener.removeAllListeners()
         $origin.removeAllListeners()
         $destination.removeAllListeners()
+        $additionalDestinations.removeAllListeners()
         $balance.removeAllListeners()
         $odometerInitial.removeAllListeners()
         $odometerFinal.removeAllListeners()
@@ -453,14 +459,59 @@ class CreateTripView: Div {
         .display(self.$profiles.map{ ($0.count < 2) ? .none : .block })
     }
 
+    private var selectedDestinations: [CustCommercialTripsComponents.TripLocation] {
+        [destination].compactMap { $0 } + additionalDestinations
+    }
+
     private var selectedLocations: [CustCommercialTripsComponents.TripLocation] {
-        [origin, destination].compactMap { $0 }
+        [origin].compactMap { $0 } + selectedDestinations
+    }
+
+    private var assetLocations: [CustCommercialTripsComponents.TripLocation] {
+        selectedLocations.filter { location in
+            guard location.locationId != nil else { return false }
+            switch location.locationType {
+            case .store, .warehouse, .subaccount: return true
+            default: return false
+            }
+        }
+    }
+
+    private var assetDestinations: [CustCommercialTripsComponents.TripLocation] {
+        assetLocations.filter { $0.placementType == .destino }
+    }
+
+    private lazy var addDestinationButton = USmallButton("Agregar Destino")
+        .class(Class(TCCrystalSurfaceClass.goodButton))
+        .custom("margin-left", "auto")
+        .display(.none)
+        .onClick {
+            self.selectLocation(.destino, appendingDestination: true)
+        }
+
+    private func renderRoute() {
+        let canAddDestination = origin != nil && destination != nil
+        addDestinationButton.hidden(!canAddDestination)
+        addDestinationButton.display(canAddDestination ? .inlineFlex : .none)
+        routeGrid.custom(
+            "grid-template-columns",
+            additionalDestinations.isEmpty ? "repeat(2, minmax(0, 1fr))" : "minmax(0, 1fr)"
+        )
+        renderLocationSlot(origin, placementType: .origen, container: originLocationSlot)
+        renderLocationSlot(destination, placementType: .destino, container: destinationLocationSlot)
+        additionalLocationSlots.innerHTML = ""
+        additionalDestinations.forEach { item in
+            let slot = Div().custom("min-width", "0")
+            renderLocationSlot(item, placementType: .destino, container: slot, isAdditional: true)
+            additionalLocationSlots.appendChild(slot)
+        }
     }
 
     private func renderLocationSlot(
         _ item: CustCommercialTripsComponents.TripLocation?,
         placementType: TipoUbicacion,
-        container: Div
+        container: Div,
+        isAdditional: Bool = false
     ) {
         container.innerHTML = ""
 
@@ -472,12 +523,16 @@ class CreateTripView: Div {
         container.appendChild(
             CartaPorteUbicacion(
                 placement: fiscalLocationItem(from: item),
-                canRemove: true,
+                canRemove: isAdditional || additionalDestinations.isEmpty,
                 edit: { _ in
                     self.manageLocationItem(item, isEditing: true)
                 }
             ) { _ in
-                self.clearLocation(placementType, matching: item)
+                if isAdditional {
+                    self.removeAdditionalDestination(matching: item)
+                } else {
+                    self.clearLocation(placementType, matching: item)
+                }
             }
         )
     }
@@ -528,9 +583,13 @@ class CreateTripView: Div {
     lazy var destinationLocationSlot = Div()
         .custom("min-width", "0")
 
+    private lazy var additionalLocationSlots = Div()
+        .custom("display", "contents")
+
     lazy var routeGrid = Div {
         self.originLocationSlot
         self.destinationLocationSlot
+        self.additionalLocationSlots
     }
         .custom("grid-template-columns", "repeat(2, minmax(0, 1fr))")
         .custom("background", "var(--tc-beta-surface-deep)")
@@ -1257,11 +1316,12 @@ class CreateTripView: Div {
     }
 
     /// origen, destino
-    func manageDestination(_ placementType: TipoUbicacion) {
-        let currentPlacementCount = placementType == .origen ? 0 : 1
+    func manageDestination(_ placementType: TipoUbicacion, appendingDestination: Bool = false) {
+        let currentPlacementCount = appendingDestination ? selectedLocations.count : (placementType == .origen ? 0 : 1)
 
-        addToDom(ManageLocationBase(currentPlacementCount: currentPlacementCount) { result in
-            self.handleDestination(result)
+        addToDom(ManageLocationBase(currentPlacementCount: currentPlacementCount) { [weak self] result in
+            guard let self, self.isInDOM else { return }
+            self.handleDestination(result, appendingDestination: appendingDestination)
         })
     }
 
@@ -1293,6 +1353,7 @@ class CreateTripView: Div {
             } else {
                 self.merchendise.append(result)
             }
+            self.synchronizeMerchandiseRoute()
         })
     }
 
@@ -1317,41 +1378,82 @@ class CreateTripView: Div {
         }
     }
 
-    func addLocation(_ item: FiscalLocationBase) {
-        setLocation(tripLocation(from: item))
+    func addLocation(_ item: FiscalLocationBase, appendingDestination: Bool = false) {
+        setLocation(tripLocation(from: item), appendingDestination: appendingDestination)
     }
 
-    private func setLocation(_ item: CustCommercialTripsComponents.TripLocation) {
-        switch item.placementType {
-        case .origen:
-            if isSameLocation(destination, as: item) {
-                destination = nil
-            }
-            origin = item
-
-        case .destino:
-            if isSameLocation(origin, as: item) {
-                origin = nil
-            }
-            destination = item
+    private func setLocation(
+        _ item: CustCommercialTripsComponents.TripLocation,
+        appendingDestination: Bool = false,
+        replacing previous: CustCommercialTripsComponents.TripLocation? = nil
+    ) {
+        if let previous, !selectedLocations.contains(where: { isSameLocation($0, as: previous) }) {
+            return
+        }
+        if let previous, previous.placementType != item.placementType {
+            showError(.invalidField, "No se puede cambiar el tipo de una ubicación seleccionada.")
+            return
         }
 
-        synchronizeMerchandiseRoute()
+        let additionalIndex = previous.flatMap { previous in
+            additionalDestinations.firstIndex { isSameLocation($0, as: previous) }
+        }
+        if appendingDestination || additionalIndex != nil || !additionalDestinations.isEmpty {
+            guard origin != nil, destination != nil else { return }
+            if appendingDestination || additionalIndex != nil {
+                guard item.placementType == .destino else { return }
+            }
+            let others = selectedLocations.filter { selected in
+                if let previous { return !isSameLocation(selected, as: previous) }
+                return true
+            }
+            guard !item.placementId.purgeSpaces.isEmpty,
+                  !others.contains(where: {
+                      isSameLocation($0, as: item) || $0.placementId.purgeSpaces == item.placementId.purgeSpaces
+                  }) else {
+                showError(.invalidField, "La ubicación ya está en la ruta o su referencia está duplicada.")
+                return
+            }
+        }
+
+        if let additionalIndex {
+            additionalDestinations[additionalIndex] = item
+        } else if appendingDestination {
+            additionalDestinations.append(item)
+        } else {
+            switch item.placementType {
+            case .origen:
+                if isSameLocation(destination, as: item) { destination = nil }
+                origin = item
+            case .destino:
+                if isSameLocation(origin, as: item) { origin = nil }
+                destination = item
+            }
+        }
+
+        synchronizeMerchandiseRoute(replacing: previous, with: item)
     }
 
     private func clearLocation(
         _ placementType: TipoUbicacion,
         matching item: CustCommercialTripsComponents.TripLocation
     ) {
+        guard additionalDestinations.isEmpty else { return }
         switch placementType {
         case .origen:
             guard isSameLocation(origin, as: item) else { return }
             origin = nil
-
         case .destino:
             guard isSameLocation(destination, as: item) else { return }
             destination = nil
         }
+    }
+
+    private func removeAdditionalDestination(matching item: CustCommercialTripsComponents.TripLocation) {
+        guard additionalDestinations.contains(where: { isSameLocation($0, as: item) }) else { return }
+        invalidateAssetSelection()
+        additionalDestinations.removeAll { isSameLocation($0, as: item) }
+        synchronizeMerchandiseRoute()
     }
 
     private func isSameLocation(
@@ -1369,32 +1471,58 @@ class CreateTripView: Div {
         return selected.placementId == item.placementId
     }
 
-    private func synchronizeMerchandiseRoute() {
+    private func synchronizeMerchandiseRoute(
+        replacing previous: CustCommercialTripsComponents.TripLocation? = nil,
+        with replacement: CustCommercialTripsComponents.TripLocation? = nil
+    ) {
         guard let origin, let destination, !merchendise.isEmpty else { return }
 
         var updatedMerchandise = merchendise
-
         for index in updatedMerchandise.indices {
+            let destinations = updatedMerchandise[index].merchandiseType == .commercialAsset
+                ? assetDestinations : selectedDestinations
+            let oldReference = updatedMerchandise[index].to
+            let reference = previous?.placementType == .destino && oldReference == previous?.placementId
+                ? replacement?.placementId ?? oldReference : oldReference
+            let selectedDestination = destinations.first { $0.placementId == reference }
+                ?? destinations.first ?? destination
             updatedMerchandise[index].from = origin.placementId
             updatedMerchandise[index].fromStoreName = origin.storeName
-            updatedMerchandise[index].to = destination.placementId
-            updatedMerchandise[index].toStoreName = destination.storeName
+            updatedMerchandise[index].to = selectedDestination.placementId
+            updatedMerchandise[index].toStoreName = selectedDestination.storeName
         }
-
         merchendise = updatedMerchandise
     }
 
     func manageLocationItem(
         _ item: CustCommercialTripsComponents.TripLocation,
-        isEditing: Bool = false
+        isEditing: Bool = false,
+        appendingDestination: Bool = false
     ) {
-        addToDom(ManageLocationItem(item: fiscalLocationItem(from: item), isEditing: isEditing) { updatedItem in
-            self.setLocation(self.tripLocation(from: updatedItem))
+        addToDom(ManageLocationItem(
+            item: fiscalLocationItem(from: item),
+            isEditing: isEditing,
+            allowsDeletion: { [weak self] in
+                guard let self, self.isInDOM else { return false }
+                return self.additionalDestinations.isEmpty ||
+                    (!self.isSameLocation(self.origin, as: item) && !self.isSameLocation(self.destination, as: item))
+            },
+            onDelete: { [weak self] id in
+                guard let self, self.isInDOM else { return }
+                self.handleDestination(.delete(id))
+            }
+        ) { [weak self] updatedItem in
+            guard let self, self.isInDOM else { return }
+            self.setLocation(
+                self.tripLocation(from: updatedItem),
+                appendingDestination: appendingDestination,
+                replacing: isEditing ? item : nil
+            )
         })
     }
 
-    func configureLocation(_ item: CustCommercialTripsComponents.TripLocation) {
-        manageLocationItem(item)
+    func configureLocation(_ item: CustCommercialTripsComponents.TripLocation, appendingDestination: Bool = false) {
+        manageLocationItem(item, appendingDestination: appendingDestination)
     }
 
     private func tripLocation(
@@ -1465,7 +1593,8 @@ class CreateTripView: Div {
             state: item.state,
             country: item.country,
             zipCode: item.zipCode,
-            position: item.placementType == .origen ? 0 : 1,
+            position: selectedLocations.firstIndex(where: { isSameLocation($0, as: item) })
+                ?? (item.placementType == .origen ? 0 : 1),
             comertialTripControlId: nil,
             distance: item.distance,
             latitude: item.latitude,
@@ -1519,19 +1648,22 @@ class CreateTripView: Div {
         }
     }
 
-    func handleDestination(_ result: ManageLocationBase.CallbackType) {
+    func handleDestination(_ result: ManageLocationBase.CallbackType, appendingDestination: Bool = false) {
         switch result {
         case .create(let item):
             upsertBaseLocation(item)
-            addLocation(item)
+            addLocation(item, appendingDestination: appendingDestination)
         case .update(let item):
             upsertBaseLocation(item)
 
             if let origin, origin.locationType == .location, origin.locationId == item.id {
-                setLocation(tripLocation(from: item, existing: origin))
+                setLocation(tripLocation(from: item, existing: origin), replacing: origin)
             }
             else if let destination, destination.locationType == .location, destination.locationId == item.id {
-                setLocation(tripLocation(from: item, existing: destination))
+                setLocation(tripLocation(from: item, existing: destination), replacing: destination)
+            }
+            else if let additional = additionalDestinations.first(where: { $0.locationType == .location && $0.locationId == item.id }) {
+                setLocation(tripLocation(from: item, existing: additional), replacing: additional)
             }
         case .delete(let id):
             baseLocationsOrigin.removeAll { $0.id == id }
@@ -1541,6 +1673,9 @@ class CreateTripView: Div {
             }
             if let destination, destination.locationType == .location, destination.locationId == id {
                 clearLocation(.destino, matching: destination)
+            }
+            if let additional = additionalDestinations.first(where: { $0.locationType == .location && $0.locationId == id }) {
+                removeAdditionalDestination(matching: additional)
             }
         }
     }
@@ -1835,7 +1970,8 @@ class CreateTripView: Div {
         ))
     }
 
-    func selectLocation(_ placementType: TipoUbicacion) {
+    func selectLocation(_ placementType: TipoUbicacion, appendingDestination: Bool = false) {
+        guard !appendingDestination || (origin != nil && destination != nil) else { return }
 
         let isOrigin = placementType == .origen
 
@@ -1845,11 +1981,13 @@ class CreateTripView: Div {
             items: isOrigin ? baseLocationsOrigin : baseLocationsDestination,
             titleForItem: { "\($0.placementId) \($0.storeName)" },
             subtitleForItem: { "\($0.colonie) \($0.state)" },
-            callback: { item in
-                self.configureLocation(item)
+            callback: { [weak self] item in
+                guard let self, self.isInDOM else { return }
+                self.configureLocation(item, appendingDestination: appendingDestination)
             },
-            create: {
-                self.manageDestination(placementType)
+            create: { [weak self] in
+                guard let self, self.isInDOM else { return }
+                self.manageDestination(placementType, appendingDestination: appendingDestination)
             }
         ))
     }
@@ -1950,7 +2088,7 @@ class CreateTripView: Div {
             return
         }
 
-        guard let origin, let destination else {
+        guard origin != nil, destination != nil else {
             showError(.requiredField, "Agregue Origen y Destino")
             return
         }
@@ -1971,7 +2109,20 @@ class CreateTripView: Div {
 
         let trailerIds = [trailerOne?.id, trailerTwo?.id].compactMap { $0 }
 
-        let tripLocations = [origin, destination].compactMap { $0 }
+        let tripLocations = selectedLocations
+        let placementIds = tripLocations.map { $0.placementId.purgeSpaces }
+        guard placementIds.allSatisfy({ !$0.isEmpty }), Set(placementIds).count == placementIds.count else {
+            showError(.invalidField, "Cada ubicación de la ruta debe tener una referencia única.")
+            return
+        }
+        synchronizeMerchandiseRoute()
+        if let error = ConfirmTripStatusUpdate.assetRouteError(
+            merchandise: merchendise,
+            locations: tripLocations.map { fiscalLocationItem(from: $0) }
+        ) {
+            showError(.invalidField, error)
+            return
+        }
 
         let tripMerchandise = merchendise.map {
             CustCommercialTripsComponents.TripMerchandise(
@@ -2061,6 +2212,7 @@ class CreateTripView: Div {
     }
 
     func searchAsset() {
+        
         guard account.isConcessionaire, !isLoadingAssets else { return }
         guard let origin, destination != nil else {
             showError(.requiredField, "Agregue Origen y Destino antes de buscar activos.")
@@ -2068,6 +2220,10 @@ class CreateTripView: Div {
         }
         guard let locationId = origin.locationId else {
             showError(.requiredField, "El origen debe estar vinculado a una tienda, bodega o subcuenta.")
+            return
+        }
+        guard !assetDestinations.isEmpty else {
+            showError(.requiredField, "Agregue un destino del activo vinculado a una tienda, bodega o subcuenta.")
             return
         }
 
@@ -2080,6 +2236,11 @@ class CreateTripView: Div {
             showError(.invalidField, "Solo se pueden buscar activos en una tienda, bodega o subcuenta.")
             return
         }
+        let expectedStatus: CustCommercialAssetsItemStatus = origin.locationType == .subaccount ? .unavailable : .active
+        // Subaccount ownership and physical custody can differ after a trip.
+        // Load the account inventory, then match its authoritative physical origin.
+        let requestLocation: CustAssetsComponents.ListAssetItemsType = origin.locationType == .subaccount
+            ? .account(account: account.id, storeId: nil, loadSubAccounts: nil) : currentLocation
 
         assetPicker?.remove()
         assetPicker = nil
@@ -2090,10 +2251,10 @@ class CreateTripView: Div {
         isLoadingAssets = true
         loadingView.show()
         API.custAssetsV1.listAssetItems(
-            currentLocation: currentLocation,
+            currentLocation: requestLocation,
             departmentId: nil,
             categorieId: nil,
-            status: .available
+            status: .status(status: expectedStatus)
         ) { [weak self] response in
             guard let self, self.isInDOM, self.assetSearchRequest == request else { return }
             self.finishLoadingAssets()
@@ -2111,8 +2272,12 @@ class CreateTripView: Div {
             }
             let selectedIds = Set(self.merchendise.filter { $0.merchandiseType == .commercialAsset }.compactMap { $0.merchandiseId })
             guard let picker = SearchComertialAsset(
+                account: self.account,
                 currentLocation: currentLocation,
-                items: payload.items.filter { !selectedIds.contains($0.id) },
+                items: payload.items.filter {
+                    !selectedIds.contains($0.id) && $0.status == expectedStatus &&
+                    $0.currentLocation.rawValue == origin.locationType.rawValue && $0.currentLocationId == locationId
+                },
                 callback: { [weak self] item in
                     guard let self, self.isInDOM, self.assetSearchRequest == request else { return }
                     self.assetPicker = nil
@@ -2126,6 +2291,13 @@ class CreateTripView: Div {
 
     private func configureCommercialAsset(_ item: CustCommercialAssetsItem, request: Int) {
         guard !merchendise.contains(where: { $0.merchandiseType == .commercialAsset && $0.merchandiseId == item.id }) else { return }
+        guard let origin, let locationId = origin.locationId,
+              item.currentLocation.rawValue == origin.locationType.rawValue,
+              item.currentLocationId == locationId,
+              item.status == (origin.locationType == .subaccount ? .unavailable : .active) else {
+            showError(.invalidField, "El activo no está disponible en el origen seleccionado.")
+            return
+        }
         isLoadingAssets = true
         loadingView.show()
         API.custAssetsV1.getAsset(assetId: item.commercialAssetId) { [weak self] response in
@@ -2140,7 +2312,7 @@ class CreateTripView: Div {
                 return
             }
             guard let asset = response.data?.item, asset.id == item.commercialAssetId,
-                  let origin = self.origin, let destination = self.destination else {
+                  let origin = self.origin, let destination = self.assetDestinations.first else {
                 showError(.unexpectedResult, .unexpenctedMissingPayload)
                 return
             }
@@ -2174,7 +2346,7 @@ class CreateTripView: Div {
                 toStoreName: destination.storeName
             )
             let editor = AddCartaPorteMerchendise(
-                locations: self.selectedLocations.map { self.fiscalLocationItem(from: $0) },
+                locations: self.assetLocations.map { self.fiscalLocationItem(from: $0) },
                 merchandise: merchandise,
                 dismissAfterSave: true
             ) { [weak self] result in

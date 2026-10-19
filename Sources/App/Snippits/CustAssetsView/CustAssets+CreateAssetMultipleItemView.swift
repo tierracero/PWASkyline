@@ -108,6 +108,7 @@ extension CustAssetsView {
 
                             self.informationRow("Tipo de ubicación", self.viewType.description)
                             self.informationRow("Ubicación", self.viewType.relationName)
+                            self.informationRow("Tienda de registro", self.viewType.registrationStore.name)
                             self.informationRow(
                                 "Folio de compra",
                                 self.purchasFiscalDocumentFolio.isEmpty
