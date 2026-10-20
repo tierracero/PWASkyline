@@ -437,37 +437,49 @@ class WorkViewControler: PageController {
 
     lazy var startupOverlay = Div {
         Div()
-            .class(Class(TCWorkDashboardClass.startupScan))
+            .class(Class(TCWorkDashboardClass.startupSideFrames))
 
         Div {
-            Div {
-                Div()
-                    .class(Class(TCWorkDashboardClass.startupRing))
-
-                Img()
-                    .src("/skyline/media/tierraceroRoundLogoWhite.svg")
-            }
-            .class(Class(TCWorkDashboardClass.startupEmblem))
-
-            Div("SKYLINE CONTROL")
-                .class(Class(TCWorkDashboardClass.startupTitle))
-
-            Div("SECUENCIA DE INICIO")
-                .class(Class(TCWorkDashboardClass.startupCopy))
+            Div("TC / SYSTEM BOOT — 02 / WORK")
+                .class(Class(TCWorkDashboardClass.startupHeader))
 
             Div {
-                self.startupStatus(.core)
-                self.startupStatus(.communications)
-                self.startupStatus(.workModules)
+                Div {
+                    Div()
+                        .class(Class(TCWorkDashboardClass.startupRing))
+
+                    Img()
+                        .src("/skyline/media/tierraceroRoundLogoWhite.svg")
+                }
+                .class(Class(TCWorkDashboardClass.startupEmblem))
+
+                Div("SKYLINE CONTROL")
+                    .class(Class(TCWorkDashboardClass.startupTitle))
+
+                Div("SECUENCIA DE INICIO")
+                    .class(Class(TCWorkDashboardClass.startupCopy))
+
+                Div {
+                    self.startupStatus(.core)
+                    self.startupStatus(.communications)
+                    self.startupStatus(.workModules)
+                }
+                .class(Class(TCWorkDashboardClass.startupStatuses))
             }
-            .class(Class(TCWorkDashboardClass.startupStatuses))
+            .class(Class(TCWorkDashboardClass.startupCore))
 
             Div {
-                self.startupProgressFill
+                Div {
+                    self.startupProgressFill
+                }
+                .class(Class(TCWorkDashboardClass.startupProgress))
+
+                Div("SKYLINE / TIERRA CERO — SYS. INIT")
+                    .class(Class(TCWorkDashboardClass.startupFooterCopy))
             }
-            .class(Class(TCWorkDashboardClass.startupProgress))
+            .class(Class(TCWorkDashboardClass.startupFooter))
         }
-        .class(Class(TCWorkDashboardClass.startupCore))
+        .class(Class(TCWorkDashboardClass.startupAssembly))
     }
     .class(Class(TCWorkDashboardClass.startupOverlay))
     .attribute("aria-hidden", "true")
@@ -1043,7 +1055,9 @@ class WorkViewControler: PageController {
                         
                         self.newOrderInProccess = true
                         
-                        if configStoreProcessing.moduleProfile.count == 1 {
+                        let mods = configStoreProcessing.moduleProfile.filter{ $0 == .rental || $0 == .order }
+                        
+                        if mods.count == 1 {
                             if let orderType = configStoreProcessing.moduleProfile.first {
                                 self.newOrderInProccess = false
                                 self.newOrderSearchCustomer(orderType)

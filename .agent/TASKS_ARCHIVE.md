@@ -601,3 +601,76 @@ Verified completed tasks live here.
 - **Scope/IDs**: OrderView decorative UI and TCOrderViewTheme boot styles; SWWEB-001/002/003.
 - **Implementation**: Removed circle DOM/classes, boot presentation attributes, ring/zoom/fade/keyframes, panel entrance motion and the decorative cleanup callback. Loading cards retain their hidden/uninteractive state through existing aria-busy, then appear immediately. Async hydration, readiness, refresh cancellation, session/generation/mount guards, parsing/map behavior and unrelated styling remain intact.
 - **Verification**: Reviewed removed references and task-relative diff; hydration/parsing preservation comparison, whitespace, candidate equality, tracked-file hashes/status. No build/test/compiler, generated output refresh or deployment. Evidence: `.artifacts/planning/order-animation-remove/` in the attached chat worktree.
+
+## COMMUNICATION-RECIPIENT-PICKER-001 — Group recipients in two columns and use the user picker
+
+- **Date**: 2026-10-19
+- **Status**: Implemented; source/diff audit only. Builds/tests and live rendering unverified.
+- **Scope/IDs**: CommunicationProfile layout/recipient editor and shared selector default; SWWEB-001/002/003, SEC-001/STATE-001.
+- **Implementation**: Seven existing notification families become header/body cards in two columns, with one-column fallback below 900px. Each event shows saved usernames as removable chips; Agregar usuario opens SelectCustUsernameView for all company users. Cached IDs are excluded, case-insensitive duplicate additions are rejected, and DOM/session guards plus owned picker cleanup protect local edits. The shared selector defaults to the first eligible option. Empty arrays still clear recipients through the unchanged Guardar Cambios/saveCommunicationProfile flow.
+- **Verification**: Reviewed source/diff, event/key-path/save preservation, empty/add/duplicate/remove/cancel/stale callback flows, selector exclusion/default, scoped styles, whitespace, candidate equality, tracked-file hashes and status. No builds/tests/compiler, actual configuration save, notification dispatch, generated output refresh or commit. Evidence: `.artifacts/planning/communication-recipient-picker/` in the attached chat worktree.
+
+## TRIP-CONFIRMATION-GLASS-BACKDROP-001 — Remove the black trip-confirmation backdrop
+
+- **Date**: 2026-10-19
+- **Status**: Implemented; source/diff audit only. Builds/tests and post-fix rendering unverified.
+- **Scope/IDs**: ConfirmTripStatusUpdate backdrop only; SWWEB-001/002/003.
+- **Implementation**: Its owned SuperView receives a light 18% tinted glass veil with inline priority; the VPopUp overlay is transparent and has no additional backdrop blur. Existing crystal panel/card surfaces, host blur/performance policy, global dialog settings, validation, upload/camera/media and status/delivery behavior are unchanged. The user's concurrent TripViewBeta edits are preserved.
+- **Verification**: Supplied screenshot inspected; read-only local computed-style evidence confirms 70% host and 18% popup layers in performance-off mode. Source/inline-priority/lifecycle and preservation diff, whitespace, candidate equality, tracked hashes/status reviewed. No build/test/compiler, generated refresh, setting toggle, upload or trip mutation. Evidence: `.artifacts/planning/trip-confirmation-glass-backdrop/` in the attached chat worktree.
+
+## BACKDROP-DARKENING-PERFORMANCE-ONLY-001 — Darken backgrounds only in performance mode
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff audit only. Builds/tests and post-refresh rendering unverified.
+- **Scope/IDs**: visualPerformance.js backdrop override and ConfirmTripStatusUpdate host exception; SWWEB-001/002/003 and existing PWA resource boundary.
+- **Implementation**: Removed the off-mode 70% SuperView override. Existing on-only 65% veil/85% shell overrides retain extra contrast when blur is disabled; off restores normal glass/theme colors. Removed the trip dialog's unconditional inline 18% host exception so it follows the same mode policy; its inner popup remains transparent/unblurred.
+- **Verification**: Screenshot/source/cascade review, source preservation comparisons, whitespace, candidate equality, tracked-file hashes/status. All current user edits preserved. No build/test/compiler, generated refresh, mode toggle, trip/account mutation or commit. Evidence: `.artifacts/planning/backdrop-darkening-performance-only/` in the attached chat worktree.
+
+## PDV-SERIAL-INVENTORY-SEARCH-001 — Open the exact inventory item from a serial search
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff audit only. Builds/tests and live behavior unverified.
+- **Scope/IDs**: SalePointView inventory search and optional exact-item ConfirmProductView mode; SWWEB-001/002/003, existing API/SEC/state boundaries.
+- **Cause**: Both .inventory result branches were empty; the search was cleared without opening anything. Result.i is the inventory ID, not the catalog POC ID. Generic product confirmation otherwise picks first eligible stock.
+- **Implementation**: Auto-single/clicked matches resolve pocInventoryDetails, then open the existing product confirmation with parent POC, concrete stock ID and physical store. Exact mode filters available store/concession stock, requires one match, locks quantity/source and displays serial; it rejects duplicates/unavailable/context-changed selections instead of substituting units. Nil-default callers and existing product metadata/pricing/cart math stay unchanged.
+- **Verification**: Reviewed shared/wrapper contracts, caller compatibility, single/multiple/store/concession/duplicate/unavailable/stale flows, preserved cart logic, focused diff, whitespace, candidate equality and hashes/status. No build/test/compiler, live sale/cart action, API mutation, generated refresh or commit. Evidence: `.artifacts/planning/pdv-serial-inventory-search/` in the attached chat worktree.
+
+## SYSTEM-STARTUP-CONSOLE-001 — Assemble the initial system console
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff and standalone HTML presentation reviewed. Builds/tests and live App startup unverified.
+- **Scope/IDs**: WebSources initial loader, Work startup overlay markup and scoped dashboard startup theme; SWWEB-001/002/003 and PWA-001/002/003.
+- **Implementation**: Original lightweight CSS/DOM angular side frames and console assembly around Tierra Cero branding, real progress and the existing Work readiness checks, following the user-supplied Gundam demo. Replaces large rotating orbits and Work sweep/ring. Keeps all readiness/auth/routing/data/completion logic and resource hints; no forced duration, dependency, copied reference code/assets or order-opening animation. The browser loader buffers early progress/error events and targets only its own nodes; performance/reduced-motion modes render it statically. Existing Work-overlay motion suppression remains intact.
+- **Verification**: Manually reviewed isolated source HTML at desktop/360px widths, determinate/indeterminate/error and performance presentation. Swift markup/theme reviewed with preserved non-startup logic comparison, focused diff, whitespace, candidate equality and tracked-file hashes/status. No build/test/compiler, generated output refresh, deployment or commit. Evidence: `.artifacts/planning/system-startup-console/` in the attached chat worktree.
+
+## ORDER-PANEL-CONSTRUCTION-001 — Construct the order interface in place
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff and isolated HTML presentation reviewed. Builds/tests and live App rendering unverified.
+- **Scope/IDs**: OrderView initial presentation lifecycle and TCOrderViewTheme loading styles; SWWEB-001/002/003.
+- **Implementation**: Existing equipment, notes, files, charges, summary and outcome panels expand from thin perspective frames, then reveal their direct children in a short sequence (580ms per panel, delays 0–280ms). No overlay, HUD, logo, extra nodes, asset or dependency. Actual aria-busy/readiness gates the sequence; the initial presentation class is removed after 950ms with weak/mount/session/generation guards and cleared on refresh/removal. Performance, disabled startup effects and reduced-motion disable all construction; hydration visibility remains intact.
+- **Verification**: Reviewed source preservation of all hydration/parsing/financial/map logic, selector/cascade/timing/quiet-mode/refresh/removal paths, focused diff, whitespace, candidate equality, tracked hashes/status. Manually inspected a source-derived standalone HTML preview of construction and completed/performance presentation using demonstration data. No build/test/compiler, live order action, generated refresh, deployment or commit. Evidence: `.artifacts/planning/order-panel-construction/` in the attached chat worktree.
+
+## STARTUP-HIGHLIGHTED-ADDITIONS-001 — Preserve original startup and add transparent rails
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff and isolated desktop/narrow previews reviewed. Builds/tests and live App rendering unverified.
+- **Scope/IDs**: main.html presentation, Work startup markup/theme, existing UI/PWA resource boundary; SWWEB-001/002/003 and PWA-001/002/003.
+- **Implementation**: Viewed the supplied local recording and restored original blue counter-rotating orbits/logo/drifting background, plus the original Work ring/card/checks. Adds only transparent top identifier/bracket and bottom actual progress/footer/bracket per orange highlights. Removes replacement side wings and extra browser-loader center titles, adds no scan, and uses responsive sizing. Current real progress/error/early-event/removal/readiness/completion logic and separate order construction are preserved. Quiet modes stop browser rings/background pseudo-elements and retain existing Work suppression.
+- **Verification**: Original animation-rule comparison, unchanged nonpresentation/source/bootstrap contracts, focused diff, whitespace, candidate equality, tracked hashes/status. Manual isolated desktop/360px previews; computed added-section colors transparent with no shadow/filter; performance mode stops orbit and background animations. No build/test/compiler, live App action, generated refresh, deployment or commit. Evidence: `.artifacts/planning/startup-highlighted-additions/` in the attached chat worktree.
+
+## MAIN-STARTUP-90VW-001 — Widen only the initial browser startup
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff audit only, builds/tests and live rendering unverified.
+- **Scope/IDs**: main.html startup composition width and owning PWA facts; PWA-003.
+- **Implementation**: The startup stage uses 90vw with no flex shrinking and centered 5vw gutters; removed fixed wrapper horizontal padding. The original ring sizes/proportions/cycles, transparent bands, callbacks and all Work/order presentation remain unchanged.
+- **Verification**: Reviewed the two CSS declarations, full source preservation comparison, task-relative whitespace, guarded candidate application, tracked hashes/status. No build/test/compiler, generated refresh, deployment or commit. Evidence: `.artifacts/planning/main-startup-90vw/` in the attached chat worktree.
+
+## WORK-STARTUP-BLUE-SIDE-FRAMES-001 — Add glowing blue system startup side frames
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff and isolated presentation reviewed. Builds/tests and live App rendering unverified.
+- **Scope/IDs**: Work startup decorative markup and scoped theme; SWWEB-001/002/003.
+- **Implementation**: One noninteractive decoration supplies two angled side frames with bright cyan-blue edges, soft glow, transparent fills and faint technical lines. Existing startupRoot removal expands them behind the central assembly; narrow viewports (<=900px) hide them. Central ring/card, header/footer, real status/progress lifecycle and existing quiet-mode overlay suppression are preserved. main.html and order construction unchanged.
+- **Verification**: Manually reviewed source-derived desktop preview and computed transparent pane/blue edge/glow styles, source preservation comparisons, selector/builder/lifecycle/quiet-mode review, focused diff, whitespace, guarded application, candidate equality and tracked hashes/status. No build/test/compiler, actual sign-in/startup, generated refresh, deployment or commit. Evidence: `.artifacts/planning/work-startup-blue-side-frames/` in the attached chat worktree.

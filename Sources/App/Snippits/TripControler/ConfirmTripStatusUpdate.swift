@@ -248,6 +248,10 @@ final class ConfirmTripStatusUpdate: Div {
             }
             .custom("align-content", "stretch")
         }
+        // SuperView owns the workspace veil; avoid darkening and blurring it twice.
+        .custom("background", "transparent !important")
+        .custom("backdrop-filter", "none !important")
+        .custom("-webkit-backdrop-filter", "none !important")
     }
 
     override func buildUI() {

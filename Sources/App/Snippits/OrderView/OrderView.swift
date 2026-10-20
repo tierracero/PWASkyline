@@ -2132,6 +2132,7 @@ class OrderView: Div {
         super.buildUI()
 
         self.class(Class(TCOrderViewClass.body))
+        self.class(Class(TCOrderViewClass.constructing))
         self.attribute("aria-busy", true, .trueFalse)
         
         width(100.percent)
@@ -2538,6 +2539,16 @@ class OrderView: Div {
         consoleBootCompleted = true
         attribute("aria-busy", false, .trueFalse)
 
+        // The real panels construct in place after hydration; no loading overlay.
+        let generation = consoleBootGeneration
+        let sessionId = custCatchID
+        Dispatch.asyncAfter(0.95) { [weak self] in
+            guard let self, self.isInDOM,
+                  self.consoleBootGeneration == generation,
+                  custCatchID == sessionId else { return }
+            self.removeClass(Class(TCOrderViewClass.constructing))
+        }
+
         if let lat, let lon {
             loadLocation(lat, lon)
         }
@@ -2802,6 +2813,7 @@ class OrderView: Div {
     
     func parseOrderData() {
         // A server refresh supersedes any unfinished initial hydration.
+        removeClass(Class(TCOrderViewClass.constructing))
         if !consoleBootCompleted {
             consoleBootGeneration += 1
         }
@@ -6221,6 +6233,7 @@ class OrderView: Div {
 
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
+        removeClass(Class(TCOrderViewClass.constructing))
         consoleBootGeneration += 1
         attribute("aria-busy", false, .trueFalse)
         $tasks.removeAllListeners()

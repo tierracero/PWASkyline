@@ -73,19 +73,19 @@ class PaymentConfirmationView: Div {
         fatalError("init() has not been implemented")
     }
     
-    /*
-    lazy var itemGrid = Table{
-        Tr {
-            Td().width(50)
-            Td("Marca").width(200)
-            Td("Modelo / Nombre")
-            Td("Units").width(100)
-            Td("C. Uni").width(100)
-            Td("S. Total").width(100)
+    var customeScripts: [CustomerCustomeScript] = []
+
+    @State var customeScriptListener: String = ""
+    
+    lazy var customeScriptSelect = Select(self.$customeScriptListener)
+        .custom("width","calc(100% - 24px)")
+        .class(.textFiledBlackDark)
+        .height(31.px)
+        .body {
+            Option("Seleccioen Opción")
+            .value("")
         }
-    }
-        .width(100.percent)
-    */
+    
     
     lazy var fiscalDiv = Div{
         
@@ -104,6 +104,8 @@ class PaymentConfirmationView: Div {
         }
         
     }
+    .width(45.percent)
+    .float(.left)
     
     @DOM override var body: DOM.Content {
         
@@ -131,59 +133,86 @@ class PaymentConfirmationView: Div {
                     .width(128.px)
                 
                 Div().clear(.both)
-
+ // 
                 Div{
-                    Strong("Imprimir")
-                        .fontSize(24.px)
-                        .color(.highlighBlue)
-                }
-                .cursor(.pointer)
-                    .class(.smallButtonBox)
-                    .margin(all: 24.px)
-                    .onClick {
-                        
-                        if configStore.printPdv.document == .miniprinter {
-                            
-                            self.printTicket()
-                            
-                        }
-                        else{
-                            
-                            let url = baseAPIUrl("https://tierracero.com/dev/skyline/api.php") +
-                            "&ie=printPDVSale&id=" + self.saleId.uuidString
-                            
-                            print(url)
-                            
-                            _ = JSObject.global.goToURL!(url)
-                            
-                        }
-                        
+
+                    Div{
+                        self.customeScriptSelect
                     }
-                
-                Div().clear(.both)
+                    .hidden(self.customeScripts.isEmpty)
+                    .width(45.percent)
+                    .float(.left)
 
-                Div{
-                    
-                    Img()
-                    .src("/skyline/media/whatsapp.png")
-                    .marginRight(12.px)
-                    .height(24.px)
-                    .width(24.px)
-                    
-                    Strong("Enviar")
-                        .fontSize(24.px)
-                        .color(.highlighBlue)
-                }
-                .cursor(.pointer)
+                    Div {
+                        Strong("Imprimir")
+                            .fontSize(24.px)
+                            .color(.highlighBlue)
+                    }
+                    .cursor(.pointer)
+                        .class(.smallButtonBox)
+                        .width(45.percent)
+                        .float(.left)
+                        .onClick {
+
+                            if !self.customeScriptListener.isEmpty {
+
+                                guard let id = UUID(uuidString: self.customeScriptListener) else {
+                                    showError(.generalError, "No se obtuvo id del script.")
+                                    return
+                                }
+                                
+                                self.customePrint(scriptId: id, folio: self.saleFolio)
+
+                                return
+
+                            } 
+                            
+                            if configStore.printPdv.document == .miniprinter {
+                                
+                                self.printTicket()
+                                
+                            }
+                            else{
+                                
+                                let url = baseAPIUrl("https://tierracero.com/dev/skyline/api.php") +
+                                "&ie=printPDVSale&id=" + self.saleId.uuidString
+                                
+                                print(url)
+                                
+                                _ = JSObject.global.goToURL!(url)
+                                
+                            }
+                            
+                        }
+
+                    Div {
+                        
+                        Img()
+                        .src("/skyline/media/whatsapp.png")
+                        .marginRight(12.px)
+                        .height(24.px)
+                        .width(24.px)
+                        
+                        Strong("Enviar")
+                            .fontSize(24.px)
+                            .color(.highlighBlue)
+                    }
                     .class(.smallButtonBox)
-                    .margin(all: 24.px)
+                    .width(45.percent)
+                    .cursor(.pointer)
+                    .float(.left)
                     .onClick {
                         self.sendSaleByMessage()    
                     }
+
+                    self.fiscalDiv
+
+                    Div().clear(.both)
+
+                }
                 
                 Div().clear(.both)
 
-                self.fiscalDiv
                 
             }
             .align(.center)
@@ -317,6 +346,19 @@ class PaymentConfirmationView: Div {
                 
             }
             
+        }
+
+        WebApp.shared.skyline.customeScripts.forEach { script in
+
+            if script.type == .saleCreated {
+                customeScripts.append(script)
+
+                customeScriptSelect.appendChild(
+                    Option(script.name)
+                        .value(script.id.uuidString)
+                )
+            }
+
         }
 
     }
@@ -637,9 +679,8 @@ class PaymentConfirmationView: Div {
 
         }
 
-    addToDom(view)
+        addToDom(view)
         
-
     }
 
     func searchAccount(){
@@ -684,8 +725,42 @@ class PaymentConfirmationView: Div {
         
     }
 
+    func customePrint(scriptId: UUID, folio: String) {
 
+            API.custAPIV1.customePrintEngine(
+                storeId: custCatchStore,
+                scriptId: scriptId,
+                fileName: "venta_\(folio).pdf",
+                payload: .saleCreated(saleId)
+            ) { resp in
 
+                loadingView.hide()
+
+                guard let resp else {
+                    showError(.comunicationError, .serverConextionError)
+                    return
+                }
+                
+                guard resp.status == .ok else {
+                    showError(.generalError, "No se obtuvo datos de la cuenta.")
+                    return
+                }
+                
+                guard let payload = resp.data else {
+                    showError(.unexpectedResult, .unexpectedMissingPayload)
+                    return
+                }
+
+                let url = baseAPIUrl("https://api.tierracero.co/cust/v1/customePrintDownloader") +
+                "&file=" + payload.fileName
+                
+                print(url)
+
+                _ = JSObject.global.goToURL!(url)
+
+            }
+            
+    }
 
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
@@ -697,3 +772,7 @@ class PaymentConfirmationView: Div {
         $accountMobile.removeAllListeners()
     }
 }
+
+
+
+// {"fileName":"venta_sabo01-5003_1792511438.pdf","configGeneral":{"docuGoodbye":"despues de 30 dias no nos hacemos responsables por aparatos que no sean reclamados en su momento A","thirdPDFBg":"","docuWelcome":"Gracias por tu enorme confianza, recuerda darnos un like en facebook.com\/TierraCero Recuerda ver bien el diseño ya que autorizado e impreso no podrá haber devoluciones.","followUpMail":"default","techPDFBg":"","defaultEmail":"no-responder@tierracero.com","autoFileOrderDays":30,"sendSMSSale":true,"autoCalculatePrepareDays":2,"autoCalculateAverage":90,"autoCalculateSaleUnits":6,"pdfColor":"azul","thirdPage":true,"docuMail":"Gracias por tu enorme confianza, recuerda darnos un like en facebook.com\/TierraCero Recuerda ver bien el diseño ya que autorizado e impreso no podrá haber devoluciones.","autoCalculateOfDates":true,"sendSecondaryMail":false,"custPDFBg":"","autoCalculateOrderUnits":6,"promoPage":true,"autoCalculateAdminUnits":6,"autoCalculateRentalUnits":6,"autoFileOrder":true,"sendSMSNewOrder":true,"sendSMSWaitingForReplacement":true,"pdfType":"customerCopy","promoPDFBg":"","sendSMSContinieFRomReplacement":true,"docuThirdTerm":"","sendSMSFinishedOrder":true,"docuSecondTerm":"","imageWaterMark":"","docuMoreTerm":true,"docuFirstTerm":""},"configContactTags":{"requireInstituteTag":true,"salesContact":"1B277792-CD7F-4D3B-B534-F8AA078BEE4D","requirePhysicalAddress":false,"instituteTag":"none","requierMailingAddrees":false,"customerType":"customer","requierServiceAddress":false,"sendNewBusinessAccountComunication":true,"operationalContact":"1B277792-CD7F-4D3B-B534-F8AA078BEE4D","finacialContact":"1B277792-CD7F-4D3B-B534-F8AA078BEE4D"},"cardex":[],"logos":{"logoIndexIcon":{"objectType":"logoIndexIcon","file":"iconjgjvobkog320190919.png","lang":"Spanish","modifiedAt":1601863351,"isAvatar":true,"description":"","id":"544283F6-36E8-486C-B664-704177D9DCD2","createdAt":1601863351,"avatar":"iconjgjvobkog320190919.png","files":"[\"iconjgjvobkog320190919.png\"]","type":"img","height":799,"descr_en":"","width":797},"logoIndexWhiteTrans":{"objectType":"logoIndexWhiteTrans","file":"logo_black_trans2me-bwek8-20190919.png","lang":"Spanish","modifiedAt":1601863351,"isAvatar":true,"description":"","id":"5B3BF29F-73F9-4C8E-8297-0CB696C6B2F9","createdAt":1601863351,"avatar":"logo_black_trans2me-bwek8-20190919.png","files":"[\"logo_black_trans2me-bwek8-20190919.png\"]","type":"img","height":129,"descr_en":"","width":808},"logoIndexMain":{"objectType":"logoIndexMain","file":"logo_black8gwi-xk7w220190919.png","lang":"Spanish","modifiedAt":1601863351,"isAvatar":true,"description":"","id":"CC8258C3-0C0E-4E7D-BA08-6514F3F8ABDA","createdAt":1601863351,"avatar":"logo_black8gwi-xk7w220190919.png","files":"[\"logo_black8gwi-xk7w220190919.png\"]","type":"img","height":119,"descr_en":"","width":751},"logoIndexBlack":{"objectType":"logoIndexBlack","file":"logo_whiteif7wz-sglb20190919.png","lang":"Spanish","modifiedAt":1601863351,"isAvatar":true,"description":"","id":"6DF99DA7-11E0-43F2-B863-C0C8E475D1D6","createdAt":1601863351,"avatar":"logo_whiteif7wz-sglb20190919.png","files":"[\"logo_whiteif7wz-sglb20190919.png\"]","type":"img","height":120,"descr_en":"","width":751},"logoIndexBlackTrans":{"objectType":"logoIndexBlackTrans","file":"logo_white_transux_nccisqc20190919.png","lang":"Spanish","modifiedAt":1601863351,"isAvatar":true,"description":"","id":"40553385-B4B6-490C-8684-D3558804C277","createdAt":1601863351,"avatar":"logo_white_transux_nccisqc20190919.png","files":"[\"logo_white_transux_nccisqc20190919.png\"]","type":"img","height":119,"descr_en":"","width":751},"logoIndexWhite":{"objectType":"logoIndexWhite","file":"logo_black_nsahyztp220190919.png","lang":"Spanish","modifiedAt":1601863351,"isAvatar":true,"description":"","id":"F743A14F-593D-4402-8EA6-E1290AFC2132","createdAt":1601863351,"avatar":"logo_black_nsahyztp220190919.png","files":"[\"logo_black_nsahyztp220190919.png\"]","type":"img","height":119,"descr_en":"","width":751}},"commissions":[{"createdBy":"1B277792-CD7F-4D3B-B534-F8AA078BEE4D","rel":"87024841-5E9D-4D76-9FAA-DA3CE64F621B","type":"poc","groop":"5ADAC259-ECC6-41D8-AFA1-4530F27BEEFB","createdAt":1792511415,"payableAt":1792511415,"owner":"1B277792-CD7F-4D3B-B534-F8AA078BEE4D","modifiedAt":1792511415,"store":"4BD7A2F9-F304-4543-A1C8-57B3C1EB83AA","id":"8F0338EE-74A0-4297-935E-F611EC4F9378","status":"unpaid","saleType":"pos","amount":588,"saleRelacion":"2CD9DEFB-C1DE-42C8-A0A6-0BC31A803F18"}],"pocs":{"87024841-5E9D-4D76-9FAA-DA3CE64F621B":{"reqSeries":true,"tagTwo":"Bbbb","status":"active","pseudoName":"camion ejemplo modelo4a q25-4-lypdpkyl","inCredit":false,"name":"Camion","pricecr":1000,"pricec":4900,"tagOne":"Aaa","pricea":5900,"fiscCode":"60131001","id":"87024841-5E9D-4D76-9FAA-DA3CE64F621B","pseudoModel":"Q25-4-LYPDPKYL","upc":"102030A","fiscUnit":"H87","cost":1000,"priceb":5900,"brand":"Ejemplo","avatar":"unnamed_1744421171.jpg","tagThree":"Ccc","model":"MODELO4A"}},"charges":[],"store":{"id":"4BD7A2F9-F304-4543-A1C8-57B3C1EB83AA","schedulec":"","telephone":"33180000077","city":"victoria","lon":"-99.18412284849258","email":"nomail@uahoo.cpm","schedulea":"","state":"tamaulipas","zip":"87060","status":"active","custUsername":"1B277792-CD7F-4D3B-B534-F8AA078BEE4D","scheduleb":"","isPublic":false,"mobile":"","modifiedAt":1790873686,"balance":0,"name":"Coca Cola","mainStore":false,"colony":"luis echeveria","storePrefix":"bo01","isFiscalable":false,"country":"mexico","storeType":"warehouse","createdAt":1789499846,"lat":"23.711529920472767","street":"Arroyo Carizal m12 l 230"},"inventory":{"43FBCFD3-A69B-4CD4-9062-69DACCC45B29":{"soldAt":1792511415,"soldType":"pdv","modifiedAt":1792511415,"warentSelfTo":1835711415,"series":"","premierPoints":0,"warentFabricTo":3140351415,"POC":"87024841-5E9D-4D76-9FAA-DA3CE64F621B","fiscCode":"60131001","id":"43FBCFD3-A69B-4CD4-9062-69DACCC45B29","custFolio":"2CD9DEFB-C1DE-42C8-A0A6-0BC31A803F18","cost":1000,"fiscUnit":"H87","custStoreBodegas":"CF529CF8-14BA-4DBA-B5A8-62674AC417D5","comision":0,"custStore":"4BD7A2F9-F304-4543-A1C8-57B3C1EB83AA","custStoreSecciones":"B280B707-E112-4FE6-B5D7-42CA321316CA","points":0,"taxes":"{\"trasladado\":{\"iva\":{\"code\":\"002\",\"amount\":0.16}}}","soldPrice":5900}},"account":{"sms":150,"street":"C. Rio Carrizal","deposit":200,"oriSEO":false,"identificationNumber":"pend","oriApps":false,"lastName":"Cantu","curp":"","modifiedAt":1696946368,"agent":"7E8EAC9D-3F10-4A8A-B372-788321DDE73A","status":"active","mobile":"4939598690","folio":"79086","city":"Ciudad Victoria","lon":"","fiscType":0,"nombreNegocio":"Tierra Cero","mrc":98,"razonSocial":"Victor Alejandro Cantu Martinez","sitio":"tierrace_tcs_tierracero_com","fiscContactFirstName":"","title":"","zip":"Tamaulipas","genContactFirstName":"","genContactLastName":"","colony":"Col. Luis Echeverria","fiscContactLastName":"","balance":10,"asl":300,"secondLastName":"Martinez","subType":"","pwa":"base","genContactMobile":"","genContactTitle":"","typeOfDevelopment":"general","reqFiscal":false,"credits":99,"store":"1E29B564-A982-4200-84BF-5CA4E0A65999","pin":"2872","payCode":"","accountType":"buisness","username":"vcantu01@tierracero.com","url":"tierracero.com","rfc":"CAMV840323AJ6","typeOfTechnology":"appSwiftPhp","lat":"","pDir":"kviU","firstName":"Victor","country":"Mexico","accountsType":"buisness","identification":"votersCard","id":"026C9814-DB27-4E65-9FB8-D2C62B65E888","rfc_personal":"CAMV840323","fiscal":"5486D349-241E-4360-BFFB-9489D7FCCDF1","vip":false,"email":"alex_mar@msn.com","createdAt":1368936000,"nss":"","oriDesighn":false,"sexo":"male","mode":"serviceOrder","fiscContactMobile":"","telephone":"4939598690","password":"","secondName":"Victor","idFront":"","subdomain":"tierracero.com","state":"84060","type":"Servicios","fiscContactTitle":"","storage":0,"idBack":"","billDate":25,"customerValue":10,"payDate":1492041599},"type":"saleCreated","custPOCInventory":[{"soldAt":1792511415,"soldType":"pdv","modifiedAt":1792511415,"warentSelfTo":1835711415,"series":"","premierPoints":0,"warentFabricTo":3140351415,"POC":"87024841-5E9D-4D76-9FAA-DA3CE64F621B","fiscCode":"60131001","id":"43FBCFD3-A69B-4CD4-9062-69DACCC45B29","custFolio":"2CD9DEFB-C1DE-42C8-A0A6-0BC31A803F18","cost":1000,"fiscUnit":"H87","custStoreBodegas":"CF529CF8-14BA-4DBA-B5A8-62674AC417D5","comision":0,"custStore":"4BD7A2F9-F304-4543-A1C8-57B3C1EB83AA","custStoreSecciones":"B280B707-E112-4FE6-B5D7-42CA321316CA","points":0,"taxes":"{\"trasladado\":{\"iva\":{\"code\":\"002\",\"amount\":0.16}}}","soldPrice":5900}],"configStore":{"print":{"button":"direct","document":"letter","image":"none","lineBreak":0},"operationType":"internal","schedule":{"sunday":{"type":"followed","start":830,"lucheEnd":1500,"workDay":true,"lucheStart":1400,"end":1900},"tuesday":{"type":"followed","start":830,"lucheEnd":1500,"workDay":true,"lucheStart":1400,"end":1900},"friday":{"type":"followed","start":830,"lucheEnd":1500,"workDay":true,"lucheStart":1400,"end":1900},"saturday":{"type":"followed","start":830,"lucheEnd":1500,"workDay":true,"lucheStart":1400,"end":1900},"wednesday":{"type":"followed","start":830,"lucheEnd":1500,"workDay":true,"lucheStart":1400,"end":1900},"monday":{"type":"followed","start":830,"lucheEnd":1500,"workDay":true,"lucheStart":1400,"end":1900},"thursday":{"type":"followed","start":830,"lucheEnd":1500,"workDay":true,"lucheStart":1400,"end":1900}},"printPdv":{"button":"direct","document":"letter","image":"none","lineBreak":0},"priceModifierOrder":0,"priceModifierPdv":0,"lockedInventory":true},"custSale":{"saleType":"pos","custAcct":"9C232055-432D-4397-83A6-36EDF0425308","comments":"","total":5900,"balance":0,"status":"unbilled","modifiedAt":1792511415,"alerted":false,"pickupOrder":[],"id":"2CD9DEFB-C1DE-42C8-A0A6-0BC31A803F18","createdAt":1792511415,"folio":"sabo01-5003","createdBy":"1B277792-CD7F-4D3B-B534-F8AA078BEE4D","fiscalDocumentStatus":"unrequest","custStore":"4BD7A2F9-F304-4543-A1C8-57B3C1EB83AA","highPriority":false,"fiscalDocumentBalance":0,"pendingPickup":false}}

@@ -23,6 +23,7 @@ class ConfirmProductView: Div {
     let pocid: UUID
     
     let selectedInventoryIDs: [UUID]
+    private let inventoryId: UUID?
     
     let blockMultipleStores: Bool
     
@@ -59,6 +60,7 @@ class ConfirmProductView: Div {
         isWarenty: Bool = false,
         internalWarenty: Bool? = nil,
         storeId: UUID? = nil,
+        inventoryId: UUID? = nil,
         callback: @escaping ((
             _ poc: CustPOC,
             _ cost: Int64,
@@ -77,6 +79,7 @@ class ConfirmProductView: Div {
         self.authorizationContext = authorizationContext
         self.pocid = pocid
         self.selectedInventoryIDs = selectedInventoryIDs
+        self.inventoryId = inventoryId
         self.callback = callback
         self.blockMultipleStores = blockMultipleStores
         self.blockPurchaseOrders = blockPurchaseOrders
@@ -676,9 +679,36 @@ class ConfirmProductView: Div {
             
             let poc = payload.poc
             
-            let inventory = payload.inventory
+            var inventory = payload.inventory
             
-            let inConcession = payload.inConcession
+            var inConcession = payload.inConcession
+
+            if let inventoryId = self.inventoryId {
+                guard payload.poc.id == self.pocid, !self.selectedInventoryIDs.contains(inventoryId) else {
+                    showError(.invalidField, "El artículo solicitado ya fue seleccionado o no corresponde al producto")
+                    self.remove()
+                    return
+                }
+                inventory = inventory.map { stock in
+                    var matchingStock = stock
+                    matchingStock.inventory = stock.inventory.filter { $0.id == inventoryId }
+                    return matchingStock
+                }.filter { !$0.inventory.isEmpty }
+                inConcession = inConcession.filter { $0.id == inventoryId }
+
+                let availableCount = inventory.reduce(0) { $0 + $1.inventory.count } + inConcession.count
+                guard availableCount == 1 else {
+                    showError(.generalError, "El artículo solicitado ya no está disponible para esta venta")
+                    self.remove()
+                    return
+                }
+                self.cuant = "1"
+                self.quantFieldIsDisabeld = true
+                self.storeSelect.disabled(true)
+                if let matchingStore = inventory.first?.store.id {
+                    self.storeid = matchingStore
+                }
+            }
             
             self.poc = poc
             
@@ -748,7 +778,7 @@ class ConfirmProductView: Div {
                 )
             }
             
-            if !payload.inConcession.isEmpty {
+            if !inConcession.isEmpty {
                 self.storeSelect.appendChild(
                     Option("En Concession")
                         .value("concession")
@@ -955,6 +985,10 @@ class ConfirmProductView: Div {
                     
                     self.inventoryGrid.appendChild(
                         Div{
+                            if self.inventoryId != nil {
+                                Span(sobj.series.isEmpty ? "ID: \(sobj.id.uuidString)" : "Serie: \(sobj.series)")
+                                    .color(.lightBlueText)
+                            }
                             Span("\(bod)/\(sec)")
                                 .float(.right)
                             Div().class(.clear)
@@ -1013,6 +1047,10 @@ class ConfirmProductView: Div {
                     
                     self.inventoryGrid.appendChild(
                         Div{
+                            if self.inventoryId != nil {
+                                Span(sobj.series.isEmpty ? "ID: \(sobj.id.uuidString)" : "Serie: \(sobj.series)")
+                                    .color(.lightBlueText)
+                            }
                             Span("\(bod)/\(sec)")
                                 .float(.right)
                             Div().class(.clear)

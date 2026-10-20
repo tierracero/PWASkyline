@@ -35,6 +35,7 @@ enum TCOrderViewClass {
     static let handoffAction = "tc-order-handoff-action"
 
     static let body = "tc-order-body"
+    static let constructing = "tc-order-constructing"
     static let mainColumn = "tc-order-main-column"
     static let sideColumn = "tc-order-side-column"
     static let equipmentCard = "tc-order-equipment-card"
@@ -824,11 +825,88 @@ enum TCOrderViewTheme {
             TCOrderViewClass.sideColumn
         ]
         let loadingCards = cards.map { "\(body)[aria-busy='true'] .\($0)" }.joined(separator: ", ")
+        let panelClasses = [
+            TCOrderViewClass.equipmentCard,
+            TCOrderViewClass.notesCard,
+            TCOrderViewClass.filesCard,
+            TCOrderViewClass.chargesCard,
+            TCOrderViewClass.summaryScroll,
+            TCOrderViewClass.outcomeBar
+        ].map { ".\($0)" }.joined(separator: ", ")
+        let constructing = "\(body).\(TCOrderViewClass.constructing)[aria-busy='false']"
+        let panels = "\(constructing) :is(\(panelClasses))"
+        let contents = "\(panels) > *"
 
         WebApp.current.addStylesheet {
+            // Loading visibility remains tied to actual data readiness.
             OrderRule(Pointer(loadingCards))
                 .custom("visibility", "hidden")
                 .custom("pointer-events", "none")
+
+            OrderRule(Pointer(panels))
+                .custom("--tc-order-build-delay", "0ms")
+                .custom("--tc-order-fold-angle", "-16deg")
+                .custom("transform-origin", "center center")
+                .custom("animation", "tc-order-panel-construct 580ms cubic-bezier(.2,.8,.2,1) var(--tc-order-build-delay) backwards")
+
+            OrderRule(Pointer(contents))
+                .custom("animation", "tc-order-content-construct 300ms ease-out calc(var(--tc-order-build-delay) + 200ms) backwards")
+
+            OrderRule(Pointer("\(constructing) .\(TCOrderViewClass.summaryScroll)"))
+                .custom("--tc-order-build-delay", "70ms")
+                .custom("--tc-order-fold-angle", "16deg")
+
+            OrderRule(Pointer("\(constructing) .\(TCOrderViewClass.notesCard)"))
+                .custom("--tc-order-build-delay", "120ms")
+
+            OrderRule(Pointer("\(constructing) .\(TCOrderViewClass.filesCard)"))
+                .custom("--tc-order-build-delay", "180ms")
+                .custom("--tc-order-fold-angle", "16deg")
+        }
+
+        WebApp.current.addStylesheet {
+            OrderRule(Pointer("\(constructing) .\(TCOrderViewClass.chargesCard)"))
+                .custom("--tc-order-build-delay", "230ms")
+
+            OrderRule(Pointer("\(constructing) .\(TCOrderViewClass.outcomeBar)"))
+                .custom("--tc-order-build-delay", "280ms")
+                .custom("--tc-order-fold-angle", "16deg")
+
+            // Quiet modes remove motion without exposing unhydrated content.
+            OrderRule(Pointer("html[data-tc-performance-mode='on'] \(panels), html[data-tc-performance-mode='on'] \(contents), html[data-tc-dashboard-startup-animations='off'] \(panels), html[data-tc-dashboard-startup-animations='off'] \(contents)"))
+                .custom("animation", "none !important")
+
+            MediaRule(.all.prefersReducedMotion) {
+                OrderRule(Pointer("\(panels), \(contents)"))
+                    .custom("animation", "none !important")
+            }
+        }
+
+        WebApp.current.addStylesheet {
+            // These frames belong to the existing cards, not a separate HUD.
+            Keyframes("tc-order-panel-construct")
+                .from {
+                    OpacityProperty(0.25)
+                    TransformProperty(.init("perspective(1000px) rotateY(var(--tc-order-fold-angle)) scaleX(0.08)"))
+                }
+                .point(55) {
+                    OpacityProperty(1)
+                    TransformProperty(.init("perspective(1000px) rotateY(0deg) scaleX(1)"))
+                }
+                .to {
+                    OpacityProperty(1)
+                    TransformProperty(.init("none"))
+                }
+
+            Keyframes("tc-order-content-construct")
+                .from {
+                    OpacityProperty(0)
+                    TransformProperty(.translateY(6.px))
+                }
+                .to {
+                    OpacityProperty(1)
+                    TransformProperty(.init("none"))
+                }
         }
     }
 }

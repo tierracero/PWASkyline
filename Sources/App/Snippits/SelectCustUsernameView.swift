@@ -170,7 +170,7 @@ class SelectCustUsernameView: Div {
             }
             else {
                 
-                if let id = users.first?.id.uuidString.lowercased() {
+                if let id = ids.first?.uuidString.lowercased() {
                     self.userSelectListener = id
                 }
                 

@@ -99,7 +99,9 @@ class SalePointView: Div {
     lazy var showTaxesCheckbox = InputCheckbox($showTaxes)
         .id(.init(stringLiteral: "showTaxesBox"))
         .marginRight(3.px)
-    
+
+    var performanceModeEnabled = VisualPerformanceSettings.persistedPerformanceModeEnabled()
+
     lazy var itemGrid = Table{
         Tr {
             Td().width(50)
@@ -166,6 +168,15 @@ class SalePointView: Div {
     
     @DOM override var body: DOM.Content {
         
+
+        if performanceModeEnabled {
+            Div()
+            .position(.absolute)
+            .height(100.percent)
+            .width(100.percent)
+            .backgroundColor(.transparentBlack)
+        }
+
         Div {
             
             // Top Tools
@@ -695,6 +706,7 @@ class SalePointView: Div {
         .position(.absolute)
         .padding(all: 12.px)
         
+
     }
     
     override func buildUI() {
@@ -802,7 +814,11 @@ class SalePointView: Div {
                             }
                             
                             self.searchBox.text = ""
-                            
+
+                            Console.clear()
+
+                            print("⚠️  ONE RESULT")
+
                             switch data.t {
                             case .service:
                                 self.loadSOC(soc: data)
@@ -813,7 +829,7 @@ class SalePointView: Div {
                             case .rental:
                                 break
                             case .inventory:
-                                break
+                                self.confirmInventoryItem(data)
                             }
                             
                             return
@@ -837,7 +853,7 @@ class SalePointView: Div {
                                 case .rental:
                                     break
                                 case .inventory:
-                                    break
+                                    self.confirmInventoryItem(data)
                                 }
                                 
                             })
@@ -1608,24 +1624,74 @@ class SalePointView: Div {
         }
     }
     
-    func confirmProductView( pocid: UUID){
+    private func confirmInventoryItem(_ result: SearchChargeResponse) {
+        guard !selectedInventoryIDs.contains(result.i) else {
+            showError(.invalidField, "Este artículo ya está agregado al carrito")
+            return
+        }
+
+        let sessionId = custCatchID
+        let accountId = custAcct?.id
+        loadingView.show()
+
+        API.custAPIV1.pocInventoryDetails(id: result.i) { [weak self] response in
+            loadingView.hide()
+            guard let self, self.isInDOM, custCatchID == sessionId,
+                  self.custAcct?.id == accountId else { return }
+            guard let response else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+            guard response.status == .ok else {
+                showError(.generalError, response.msg)
+                return
+            }
+            guard let item = response.data?.prod, item.id == result.i else {
+                showError(.unexpectedResult, "No se pudo cargar el artículo de inventario solicitado")
+                return
+            }
+            guard !self.selectedInventoryIDs.contains(item.id) else {
+                showError(.invalidField, "Este artículo ya está agregado al carrito")
+                return
+            }
+
+            self.confirmProductView(pocid: item.POC, inventoryId: item.id, storeId: item.custStore)
+        }
+    }
+
+    func confirmProductView(pocid: UUID, inventoryId: UUID? = nil, storeId: UUID? = nil) {
+        let sessionId = custCatchID
+        let accountId = custAcct?.id
         
+        print("⚠️  confirmProductView")
+
         let _view = ConfirmProductView(
             accountId: custAcct?.id,
             costType: custAcct?.costType ?? .cost_a,
             authorizationContext: .sale,
             pocid: pocid,
             selectedInventoryIDs: self.selectedInventoryIDs,
+            blockPurchaseOrders: inventoryId != nil,
+            storeId: storeId,
+            inventoryId: inventoryId,
             callback: { poc, price, costType, units, items, storeid, isWarenty, internalWarenty, generateRepositionOrder, soldObjectFrom in
+                if let inventoryId {
+                    guard self.isInDOM, custCatchID == sessionId, self.custAcct?.id == accountId else { return }
+                    guard !self.selectedInventoryIDs.contains(inventoryId) else {
+                        showError(.invalidField, "Este artículo ya está agregado al carrito")
+                        return
+                    }
+                    guard units == 100, items.count == 1, items.first?.id == inventoryId else {
+                        showError(.invalidField, "Seleccione únicamente el artículo de inventario solicitado")
+                        return
+                    }
+                }
                 
                 if (units.toInt / 100) > items.count {
                     
                     let missingInventoryCount = ((units.toInt / 100) - items.count).toInt64
                     
-                    /**
-                     ``Add current Inventory``
-                     */
-                    
+                    // MARK: Add current Inventory
                     if items.count > 0 {
                         
                         let id = UUID()
@@ -1668,7 +1734,7 @@ class SalePointView: Div {
                             
                             var _selectedInventoryIDs: [UUID] = []
                             
-                            /// Ids  to be removed
+                            // Ids  to be removed
                             let ids = items.map{ $0.id }
                             
                             self.selectedInventoryIDs.forEach { id in
@@ -1726,10 +1792,7 @@ class SalePointView: Div {
                         
                     }
                     
-                    /**
-                        ``Add mining Inventory``
-                     */
-                    
+                    // MARK: Add mining Inventory
                     if missingInventoryCount > 0 {
                         
                         let id = UUID()

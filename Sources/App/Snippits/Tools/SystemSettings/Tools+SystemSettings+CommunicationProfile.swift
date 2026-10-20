@@ -14,13 +14,26 @@ extension ToolsView.SystemSettings {
     
     class CommunicationProfile: Div {
 
+        private enum RecipientStyle {
+            static let grid = "tc-communication-recipient-grid"
+            static let group = "tc-communication-recipient-group"
+            static let heading = "tc-communication-recipient-heading"
+            static let events = "tc-communication-recipient-events"
+            static let event = "tc-communication-recipient-event"
+            static let header = "tc-communication-recipient-header"
+            static let list = "tc-communication-recipient-list"
+            static let chip = "tc-communication-recipient-chip"
+            static let empty = "tc-communication-recipient-empty"
+        }
+
         private final class RecipientListEditor: Div {
             override class var name: String { "div" }
 
             private let title: String
             private let onChange: ([String]) -> Void
+            private var usernames: [String]
 
-            @State private var usernamesText: String = ""
+            private let recipientsList = Div().class(Class(RecipientStyle.list))
 
             init(
                 title: String,
@@ -28,7 +41,7 @@ extension ToolsView.SystemSettings {
                 onChange: @escaping ([String]) -> Void
             ) {
                 self.title = title
-                self.usernamesText = usernames.joined(separator: "\n")
+                self.usernames = usernames
                 self.onChange = onChange
                 super.init()
             }
@@ -37,36 +50,87 @@ extension ToolsView.SystemSettings {
                 fatalError("init() has not been implemented")
             }
 
-            lazy var usernamesField = TextArea(self.$usernamesText)
-                .placeholder("Un nombre de usuario por línea")
-                .class(.textFiledBlackDark)
-                .width(95.percent)
-                .height(64.px)
-
             @DOM override var body: DOM.Content {
                 Div {
-                    Label(self.title).color(.lightGray)
-                    Div().height(3.px)
-                    self.usernamesField
-                    Div().height(7.px)
+                    Span(self.title)
+                    Button("Agregar usuario")
+                        .attribute("type", "button")
+                        .class(Class(TCCrystalSurfaceClass.goodButton))
+                        .onClick { [weak self] in
+                            self?.selectRecipient()
+                        }
                 }
+                .class(Class(RecipientStyle.header))
+
+                self.recipientsList
             }
 
             override func buildUI() {
                 super.buildUI()
-                self.$usernamesText.listen { [weak self] value in
-                    guard let self else { return }
-                    let names = value
-                        .components(separatedBy: "\n")
-                        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                        .filter { !$0.isEmpty }
-                    self.onChange(Array(Set(names)).sorted())
+                self.class(Class(RecipientStyle.event))
+                renderRecipients()
+            }
+
+            private func renderRecipients() {
+                recipientsList.innerHTML = ""
+
+                if usernames.isEmpty {
+                    recipientsList.appendChild(
+                        Span("Sin destinatarios").class(Class(RecipientStyle.empty))
+                    )
+                    return
                 }
+
+                for username in usernames {
+                    recipientsList.appendChild(
+                        Div {
+                            Span(username)
+                            Button("×")
+                                .attribute("type", "button")
+                                .attribute("aria-label", "Quitar a \(username)")
+                                .onClick { [weak self] in
+                                    guard let self else { return }
+                                    self.usernames.removeAll { $0 == username }
+                                    self.renderRecipients()
+                                    self.onChange(self.usernames)
+                                }
+                        }
+                        .class(Class(RecipientStyle.chip))
+                    )
+                }
+            }
+
+            private func selectRecipient() {
+
+                let sessionId = custCatchID
+                let ignoredUsers = userCathByUUID.values.filter { user in
+                    self.usernames.contains {
+                        $0.caseInsensitiveCompare(user.username) == .orderedSame
+                    }
+                }.map { $0.id }
+
+                let picker = SelectCustUsernameView(type: .all, ignore: ignoredUsers) { [weak self] user in
+                    guard let self, self.isInDOM, custCatchID == sessionId else { return }
+                    let username = user.username.trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard !username.isEmpty else { return }
+                    guard !self.usernames.contains(where: {
+                        $0.caseInsensitiveCompare(username) == .orderedSame
+                    }) else {
+                        showError(.invalidField, "Este usuario ya recibe notificaciones de este evento")
+                        return
+                    }
+
+                    self.usernames.append(username)
+                    self.usernames.sort()
+                    self.renderRecipients()
+                    self.onChange(self.usernames)
+                }
+
+                addToDom(picker, presentation: .glass)
             }
 
             override func didRemoveFromDOM() {
                 super.didRemoveFromDOM()
-                self.$usernamesText.removeAllListeners()
             }
         }
         
@@ -181,6 +245,7 @@ extension ToolsView.SystemSettings {
         let dateCommunicationProfileDiv = Div().class(.roundDarkBlue)
         let rentCommunicationProfileDiv = Div().class(.roundDarkBlue)
         let notificationRecipientsDiv = Div().class(.roundDarkBlue)
+            .class(Class(RecipientStyle.grid))
         
         let ws = WS()
 
@@ -493,6 +558,7 @@ extension ToolsView.SystemSettings {
         
         override func buildUI() {
             super.buildUI()
+            Self.installRecipientStyles()
             height(100.percent)
             position(.relative)
             overflow(.hidden)
@@ -1038,19 +1104,124 @@ extension ToolsView.SystemSettings {
         }
 
 
+        private static var recipientStylesInstalled = false
+
+        private static func installRecipientStyles() {
+            guard !recipientStylesInstalled else { return }
+            recipientStylesInstalled = true
+            let grid = ".\(RecipientStyle.grid)"
+            let action = "\(grid) .\(TCCrystalSurfaceClass.goodButton)"
+
+            WebApp.current.addStylesheet {
+                CSSRule(Pointer(grid))
+                    .custom("display", "grid")
+                    .custom("grid-template-columns", "repeat(2, minmax(0, 1fr))")
+                    .custom("gap", "16px")
+                    .custom("align-items", "start")
+
+                CSSRule(Pointer("\(grid) .\(RecipientStyle.group)"))
+                    .custom("min-width", "0")
+                    .custom("padding", "12px")
+                    .custom("background", "rgba(6, 24, 42, 0.48)")
+                    .custom("border", "1px solid #245a7c")
+                    .custom("border-radius", "12px")
+
+                CSSRule(Pointer("\(grid) .\(RecipientStyle.heading)"))
+                    .custom("margin", "0 0 12px")
+                    .custom("padding", "10px 12px")
+                    .custom("background", "#252c3b")
+                    .custom("color", "rgb(73, 185, 245)")
+                    .custom("border-radius", "8px")
+
+                CSSRule(Pointer("\(grid) .\(RecipientStyle.events)"))
+                    .custom("display", "grid")
+                    .custom("gap", "10px")
+
+                CSSRule(Pointer("\(grid) .\(RecipientStyle.event)"))
+                    .custom("min-width", "0")
+                    .custom("padding", "10px")
+                    .custom("background", "rgba(3, 21, 38, 0.7)")
+                    .custom("border", "1px solid rgba(102, 184, 236, 0.2)")
+                    .custom("border-radius", "8px")
+
+                CSSRule(Pointer("\(grid) .\(RecipientStyle.header)"))
+                    .custom("display", "flex")
+                    .custom("align-items", "center")
+                    .custom("justify-content", "space-between")
+                    .custom("flex-wrap", "wrap")
+                    .custom("gap", "8px")
+                    .custom("color", "rgb(237, 247, 255)")
+                    .custom("font-size", "14px")
+            }
+
+            WebApp.current.addStylesheet {
+                CSSRule(Pointer(action))
+                    .custom("padding", "6px 10px")
+                    .custom("flex-shrink", "0")
+                    .custom("border", "2px solid #245a7c")
+                    .custom("border-radius", "8px")
+                    .custom("background", "linear-gradient(145deg, rgba(14, 57, 87, 0.95), rgba(5, 27, 48, 0.95))")
+                    .custom("color", "rgb(237, 247, 255)")
+                    .custom("font-size", "13px")
+                    .custom("cursor", "pointer")
+
+                CSSRule(Pointer("\(action):hover, \(action):focus-visible"))
+                    .custom("border-color", "rgb(73, 185, 245)")
+
+                CSSRule(Pointer("\(grid) .\(RecipientStyle.list)"))
+                    .custom("display", "flex")
+                    .custom("flex-wrap", "wrap")
+                    .custom("gap", "6px")
+                    .custom("margin-top", "10px")
+                    .custom("min-height", "26px")
+
+                CSSRule(Pointer("\(grid) .\(RecipientStyle.chip)"))
+                    .custom("display", "inline-flex")
+                    .custom("align-items", "center")
+                    .custom("gap", "6px")
+                    .custom("max-width", "100%")
+                    .custom("padding", "3px 8px")
+                    .custom("border", "1px solid #245a7c")
+                    .custom("border-radius", "14px")
+                    .custom("color", "rgb(237, 247, 255)")
+                    .custom("font-size", "13px")
+                    .custom("overflow-wrap", "anywhere")
+
+                CSSRule(Pointer("\(grid) .\(RecipientStyle.chip) button"))
+                    .custom("background", "transparent")
+                    .custom("border", "0")
+                    .custom("color", "rgb(168, 190, 208)")
+                    .custom("font-size", "18px")
+                    .custom("cursor", "pointer")
+
+                CSSRule(Pointer("\(grid) .\(RecipientStyle.empty)"))
+                    .custom("color", "rgb(168, 190, 208)")
+                    .custom("font-size", "13px")
+
+                MediaRule(.screen.maxWidth(900.px)) {
+                    CSSRule(Pointer(grid))
+                        .custom("grid-template-columns", "minmax(0, 1fr)")
+                }
+            }
+        }
+
         private func renderNotificationRecipients() {
             self.notificationRecipientsDiv.innerHTML = ""
 
             for group in Self.notificationRecipientGroups {
-                let section = Div()
-                section.appendChild(H3(group.title).color(.lightBlueText))
+                let events = Div().class(Class(RecipientStyle.events))
+                let section = Div {
+                    H3(group.title).class(Class(RecipientStyle.heading))
+                    events
+                }
+                .class(Class(RecipientStyle.group))
 
                 for event in group.events {
-                    section.appendChild(RecipientListEditor(
+                    events.appendChild(RecipientListEditor(
                         title: event.label,
                         usernames: self.notificationProfile[keyPath: event.recipients]
                     ) { [weak self] usernames in
-                        guard let self else { return }
+                        guard let self, self.isInDOM else { return }
                         self.notificationProfile[keyPath: event.recipients] = usernames
                     })
                 }

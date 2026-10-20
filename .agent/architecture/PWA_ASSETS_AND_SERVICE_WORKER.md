@@ -7,6 +7,7 @@ Authoritative rules: `PWA-*`.
 - `Sources/Service/Service.swift` defines the service worker manifest and lifecycle callbacks.
 - `Package.swift` copies `favicon.ico`, `skyline`, `tutorial`, `images`, `js`, and `css` resources for the `Service` target.
 - `WebSources` contains JS/WASI/webpack bootstrap files.
+- `WebSources/main.html` owns the initial logo-ring/background animation and transparent header/footer startup additions. Its centered startup stage spans 90vw with 5vw side gutters; the central rings retain their existing dimensions and proportions. Existing WASM events drive its scoped progress/failure labels, with DOM-ready replay for early events; quiet-mode CSS stops both rings and background pseudo-elements. Resource hints, loader cleanup IDs/function, WASI fetch/decoding, service-worker routing and generated output ownership are unchanged. Manual standalone desktop/narrow HTML previews reviewed; build/output refresh remains unrun.
 - Browser WASM module validation limits function signatures to 1000 parameters. Settings synchronization uses a client reference-backed snapshot to avoid oversized aggregate copy signatures; the old inspected development artifact contained 1001/1016-parameter settings-response helpers and must be rebuilt to incorporate the source fix.
 - The app WASI loader performs one GET per WASM target. Webpack embeds the decoded
   WASM byte length from the build artifact so Brotli/Gzip response streams can

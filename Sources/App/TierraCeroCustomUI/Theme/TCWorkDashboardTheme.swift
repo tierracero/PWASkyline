@@ -54,7 +54,6 @@ enum TCWorkDashboardClass {
     static let startupComplete = "tc-work-startup-complete"
     static let startupCore = "tc-work-startup-core"
     static let startupEmblem = "tc-work-startup-emblem"
-    static let startupRing = "tc-work-startup-ring"
     static let startupTitle = "tc-work-startup-title"
     static let startupCopy = "tc-work-startup-copy"
     static let startupStatuses = "tc-work-startup-statuses"
@@ -68,7 +67,12 @@ enum TCWorkDashboardClass {
     static let startupIndicator = "tc-work-startup-indicator"
     static let startupProgress = "tc-work-startup-progress"
     static let startupProgressFill = "tc-work-startup-progress-fill"
-    static let startupScan = "tc-work-startup-scan"
+    static let startupRing = "tc-work-startup-ring"
+    static let startupAssembly = "tc-work-startup-assembly"
+    static let startupSideFrames = "tc-work-startup-side-frames"
+    static let startupHeader = "tc-work-startup-header"
+    static let startupFooter = "tc-work-startup-footer"
+    static let startupFooterCopy = "tc-work-startup-footer-copy"
 }
 
 enum TCWorkDashboardTheme {
@@ -645,21 +649,8 @@ enum TCWorkDashboardTheme {
             Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupOverlay).\(TCWorkDashboardClass.startupComplete)"))
                 .custom("opacity", "0")
 
-            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupScan)"))
-                .position(.absolute)
-                .left(0.px)
-                .custom("top", "calc(100% + 8px)")
-                .width(100.percent)
-                .height(1.px)
-                .custom("background", "linear-gradient(90deg, transparent, rgba(77, 163, 255, 0.9), rgba(114, 216, 74, 0.58), transparent)")
-                .custom("box-shadow", "0 0 18px rgba(77, 163, 255, 0.68)")
-                .custom("transition", "top 1650ms cubic-bezier(0.3, 0.1, 0.2, 1) 80ms")
-
-            Rule(Pointer("\(root).\(TCWorkDashboardClass.startupRoot) .\(TCWorkDashboardClass.startupScan)"))
-                .custom("top", "-8px")
-
             Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupCore)"))
-                .custom("width", "min(420px, calc(100vw - 40px))")
+                .custom("width", "min(420px, 100%)")
                 .custom("padding", "26px 30px")
                 .custom("box-sizing", "border-box")
                 .custom("background", "linear-gradient(145deg, rgba(8, 31, 50, 0.88), rgba(3, 14, 28, 0.72))")
@@ -834,6 +825,149 @@ enum TCWorkDashboardTheme {
             Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupStateSkipped) .\(TCWorkDashboardClass.startupIndicator)"))
                 .custom("background", "#9b7d4d")
                 .custom("box-shadow", "0 0 7px rgba(155, 125, 77, 0.5)")
+        }
+
+        WebApp.current.addStylesheet {
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupAssembly)"))
+                .custom("width", "min(560px, calc(100vw - 48px))")
+                .custom("display", "flex")
+                .custom("flex-direction", "column")
+                .custom("align-items", "center")
+                .custom("gap", "26px")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupHeader), \(root) .\(TCWorkDashboardClass.startupFooter)"))
+                .custom("position", "relative")
+                .custom("width", "100%")
+                .custom("box-sizing", "border-box")
+                .custom("padding", "16px 24px")
+                .custom("background", "transparent")
+                .custom("box-shadow", "none")
+                .custom("backdrop-filter", "none")
+                .custom("-webkit-backdrop-filter", "none")
+                .custom("font-family", "ui-monospace, SFMono-Regular, Consolas, monospace")
+                .custom("color", "#86bac8")
+                .custom("font-size", "11px")
+                .custom("letter-spacing", ".16em")
+                .custom("text-align", "center")
+                .custom("opacity", "1")
+                .custom("transform", "scaleX(1)")
+                .custom("transition", "opacity 380ms ease, transform 650ms ease")
+
+            Rule(Pointer("\(root).\(TCWorkDashboardClass.startupRoot) .\(TCWorkDashboardClass.startupHeader), \(root).\(TCWorkDashboardClass.startupRoot) .\(TCWorkDashboardClass.startupFooter)"))
+                .custom("opacity", ".15")
+                .custom("transform", "scaleX(.82)")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupHeader)"))
+                .custom("border-top", "1px solid rgba(157,198,206,.38)")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupFooter)"))
+                .custom("border-bottom", "1px solid rgba(157,198,206,.38)")
+        }
+
+        WebApp.current.addStylesheet {
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupHeader)::before, \(root) .\(TCWorkDashboardClass.startupFooter)::after"))
+                .custom("content", "\"\"")
+                .custom("position", "absolute")
+                .custom("left", "8%")
+                .custom("right", "8%")
+                .custom("height", "12px")
+                .custom("border-left", "2px solid #b4d0d6")
+                .custom("border-right", "2px solid #b4d0d6")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupHeader)::before"))
+                .custom("top", "-20px")
+                .custom("border-top", "2px solid #b4d0d6")
+                .custom("transform", "perspective(160px) rotateX(-25deg)")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupFooter)::after"))
+                .custom("bottom", "-20px")
+                .custom("border-bottom", "2px solid #b4d0d6")
+                .custom("transform", "perspective(160px) rotateX(25deg)")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupFooterCopy)"))
+                .custom("margin-top", "18px")
+                .custom("color", "#738c96")
+                .custom("font-size", "10px")
+                .custom("letter-spacing", ".13em")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupFooter) .\(TCWorkDashboardClass.startupProgress)"))
+                .custom("margin-top", "0")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupFooter) .\(TCWorkDashboardClass.startupProgressFill)"))
+                .custom("background", "#9ccbd2")
+                .custom("box-shadow", "none")
+                .custom("transition", "transform 220ms linear")
+        }
+
+        WebApp.current.addStylesheet {
+            MediaRule(.screen.maxWidth(480.px)) {
+                Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupCore)"))
+                    .custom("padding", "22px 18px")
+
+                Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupHeader), \(root) .\(TCWorkDashboardClass.startupFooter)"))
+                    .custom("padding", "16px 10px")
+
+                Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupStatus)"))
+                    .custom("gap", "12px")
+
+                Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupState)"))
+                    .custom("flex-shrink", "0")
+
+                Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupTitle)"))
+                    .custom("font-size", "20px")
+                    .custom("letter-spacing", ".08em")
+            }
+        }
+
+        WebApp.current.addStylesheet {
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupAssembly)"))
+                .custom("position", "relative")
+                .custom("z-index", "1")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupSideFrames)"))
+                .custom("position", "absolute")
+                .custom("left", "50%")
+                .custom("top", "50%")
+                .custom("width", "min(1080px, calc(100vw - 48px))")
+                .custom("height", "min(520px, 72vh)")
+                .custom("pointer-events", "none")
+                .custom("z-index", "0")
+                .custom("opacity", "1")
+                .custom("transform", "translate(-50%, -50%) scale(1)")
+                .custom("transition", "opacity 600ms ease, transform 850ms cubic-bezier(.2,.8,.2,1)")
+
+            Rule(Pointer("\(root).\(TCWorkDashboardClass.startupRoot) .\(TCWorkDashboardClass.startupSideFrames)"))
+                .custom("opacity", "0")
+                .custom("transform", "translate(-50%, -50%) scale(.65, .85)")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupSideFrames)::before, \(root) .\(TCWorkDashboardClass.startupSideFrames)::after"))
+                .custom("content", "\"\"")
+                .custom("position", "absolute")
+                .custom("top", "18%")
+                .custom("bottom", "18%")
+                .custom("width", "16%")
+                .custom("box-sizing", "border-box")
+                .custom("border", "1px solid rgba(34, 170, 255, .42)")
+                .custom("border-left", "2px solid rgba(63, 193, 255, .95)")
+                .custom("border-right", "2px solid rgba(63, 193, 255, .95)")
+                .custom("background-color", "transparent")
+                .custom("background-image", "repeating-linear-gradient(0deg, transparent 0 31px, rgba(34, 170, 255, .10) 32px 33px)")
+                .custom("box-shadow", "0 0 9px rgba(34, 170, 255, .42), 0 0 24px rgba(19, 121, 244, .18), inset 0 0 9px rgba(34, 170, 255, .12)")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupSideFrames)::before"))
+                .custom("left", "0")
+                .custom("transform", "skewY(-28deg)")
+
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupSideFrames)::after"))
+                .custom("right", "0")
+                .custom("transform", "skewY(28deg)")
+        }
+
+        WebApp.current.addStylesheet {
+            MediaRule(.screen.maxWidth(900.px)) {
+                Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupSideFrames)"))
+                    .display(.none)
+            }
         }
     }
 }

@@ -33,14 +33,16 @@ class POCStorageControlItemView: Div {
         }
     
     lazy var locationView = Div()
+
+    var rowName = ""
     
     @DOM override var body: DOM.Content {
         
         self.checkbox
             .marginLeft(7.px)
             .float(.left)
-        
-        Div(item.id.uuidString.explode("-").last ?? "N/A")
+
+        Div(self.rowName)
             .class(.oneLineText)
             .width(40.percent)
             .marginLeft(7.px)
@@ -71,6 +73,13 @@ class POCStorageControlItemView: Div {
             })
         }
         
+        if item.series.isEmpty {
+            rowName =  "ID:" + (item.id.uuidString.explode("-").last  ?? "N/A")
+        }
+        else {
+            rowName = "SERIE: \(item.series)"
+        }
+
         var str = ""
         
         if let bodid = item.custStoreBodegas {
@@ -83,7 +92,7 @@ class POCStorageControlItemView: Div {
             str += seccions[secid]?.name ?? "S.N/D"
         }
      
-        locationView.appendChild(Span(str).fontSize(14.px))
+        locationView.appendChild(Span(str).fontSize(14.px)) 
     }
     
     override func didAddToDOM() {

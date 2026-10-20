@@ -47,7 +47,6 @@ final class TripViewBeta: Div {
 
     private let viewSessionId = custCatchID
     private var mutationGeneration = UUID()
-    private var confirmationView: ConfirmTripStatusUpdate?
 
     @State var financialView:  FinancialView = .charges
 
@@ -1106,7 +1105,6 @@ final class TripViewBeta: Div {
 
 
     private func confirmStatus(_ nextStatus: FiscalTripFollowupStatus) {
-        guard isInDOM, viewSessionId == custCatchID, !isChangingStatus, confirmationView == nil else { return }
 
         guard ConfirmTripStatusUpdate.isValidTransition(current: trip.status, requested: nextStatus) else {
             showError(.generalError, "El cambio de estatus solicitado no está disponible.")
@@ -1130,18 +1128,14 @@ final class TripViewBeta: Div {
     }
 
     private func presentConfirmation(_ view: ConfirmTripStatusUpdate) {
-        confirmationView = view
-        view.onDidRemoveFromDOM { [weak self, weak view] in
-            guard let self, self.confirmationView === view else { return }
-            self.confirmationView = nil
-        }
+        
         addToDom(view, presentation: .glass)
     }
 
     private func confirmDelivery(_ merchandiseItemId: UUID) {
-        guard isInDOM, viewSessionId == custCatchID, !isChangingStatus, confirmationView == nil,
-              trip.merchandise.count > 1,
-              let item = trip.merchandise.first(where: { $0.id == merchandiseItemId }) else { return }
+        guard trip.merchandise.count > 1, let item = trip.merchandise.first(where: { $0.id == merchandiseItemId }) else {
+                return
+        }
         if let error = ConfirmTripStatusUpdate.deliveryValidationError(
             current: trip.status, item: item, files: [], locations: trip.locations
         ) {
@@ -1306,8 +1300,6 @@ final class TripViewBeta: Div {
     override func didRemoveFromDOM() {
         super.didRemoveFromDOM()
         mutationGeneration = UUID()
-        confirmationView?.remove()
-        confirmationView = nil
         
         $status.removeAllListeners()
         $isChangingStatus.removeAllListeners()
