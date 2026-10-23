@@ -192,7 +192,7 @@ class ConfirmProductViewNew: Div {
                         self.remove()
                     }
                 
-                H2("Agregar Producto")
+                H2("🖥️ Agregar Producto")
                     .color(.lightBlueText)
                     .marginRight(7.px)
                     .marginLeft(7.px)

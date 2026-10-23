@@ -1,0 +1,51 @@
+--- before/Sources/App/Snippits/ManagePOC/ManagePOC.swift
++++ after/Sources/App/Snippits/ManagePOC/ManagePOC.swift
+@@ -3176,6 +3176,7 @@
+     }
+     
+     override func didAddToDOM() {
++        super.didAddToDOM()
+         if pocid == nil {
+             getBrands()
+         }
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -39,7 +39,7 @@
+ - The app registers `./service.js` during launch.
+ - The app uses Swift Web `Routes`, `Page`, lifecycle hooks, `@State`, and style declarations.
+ - Theme switching currently selects between `MainStyle`, `SKMainStyle`, and `SKLogInStyle`.
+-- `ManagePOC` requests remote product-camera uploads with `multipleTakes: true` and no preallocated event ID. A visible manager that requested the camera creates/reuses one `ImagePOCContainer` per incoming selected/initiate event, using that event ID for the card, manual editing, removal and product-save metadata. Product-camera completion loads each image without opening the editor; remote async upload completion also bypasses auto-edit, while local uploads retain their existing setting and the first-image avatar behavior remains. Finished/cancelled/removed event IDs prevent duplicate or delayed camera events from restoring cards; removal disables remote reception.
++- `ManagePOC` requests remote product-camera uploads with `multipleTakes: true` and no preallocated event ID. A visible manager that requested the camera creates/reuses one `ImagePOCContainer` per incoming selected/initiate event, using that event ID for the card, manual editing, removal and product-save metadata. Product-camera completion loads each image without opening the editor; remote async upload completion also bypasses auto-edit, while local uploads retain their existing setting and the first-image avatar behavior remains. Finished/cancelled/removed event IDs prevent duplicate or delayed camera events from restoring cards; removal disables remote reception. Its didAddToDOM override must call super before product setup: Web sets isInDOM there, and the existing camera event listener/card factory require that mounted flag. The missing call was restored on 2026-10-23; source/framework lifecycle and diff reviewed, builds/tests/live camera remain unverified.
+ - The app-wide readability pass raises explicit small UI text to 13px for tiny labels and 14px for supporting text that was 12–13px, including shared Trip/crystal/settings themes, state-dependent equipment fields, and chart labels. Compact counters/status badges retain 12px and the required-field superscript uses 10px. Report hints and product-price label heights accommodate the larger text; print/receipt/PDF/barcode typography and third-party resets retain their original sizing. Source-owned version/copyright footers use 13px in both `main.css` resource copies.
+ - `CreateNewCustomerDataView`, `ManageSubCustomerAccountView`, and `ManualAddressSearch` use TierraCeroCustomUI headers/controls and scoped crystal surfaces. `addToDom` automatically chooses the glass host for these customer/address views, `SearchCustomerView`, `SearchSubCustomerView`, and `CreateNewCusomerView` when the caller uses the standard presentation; explicit interactive/glass presentations remain supported.
+ - `SearchSubCustomerView` scopes API searches to its injected `CustAcctSearch` parent. One match enters selection; multiple matches appear as keyboard-selectable cards. A successful empty search opens `CreateNewCusomerView`, then passes the account type/search term and `requierFullAddress` flag to `ManageSubCustomerAccountView`. Required-address selection checks complete street/colony/city/state/country/zip and finite, in-range latitude/longitud; incomplete items show a Spanish alert and open the prefilled manager for editing. Search remains available after child cancellation and completes once with a parent-validated item after any required edit. Removed-view responses are ignored.
+--- before/.agent/PROJECT_MEMORY.md
++++ after/.agent/PROJECT_MEMORY.md
+@@ -34,6 +34,8 @@
+ - Generated public output trees were not refreshed by the error-reporting implementation.
+ 
+ ## Authoritative References
++
++- 2026-10-23: `ManagePOC.didAddToDOM()` calls its superclass before product setup. Web's superclass sets `isInDOM`; omitting it caused the existing camera listener/card factory to ignore continuous-capture events. One card per selected/initiate UUID and existing completion/duplicate/removal behavior are retained. See `architecture/SWIFWEB_APP_ARCHITECTURE.md` and `.artifacts/planning/manage-poc-camera-mount-20261023/`; source/framework/diff audit only, no builds/tests/live camera execution.
+ 
+ - 2026-10-22: Asset-unit maps show ten locations total including current. Kardex is paged oldest first, so the client scans all pages, keeps the nine newest unique valid coordinates excluding current, and draws gray age-faded markers with black text/3px black borders and a 4px orange line with independent map ownership. The first page also supplies Kardex cards. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`, `architecture/PWA_ASSETS_AND_SERVICE_WORKER.md` and `.artifacts/planning/asset-kardex-map-history-20261022/`; source/JavaScript syntax audit only, builds/tests/live map execution remain unrun and generated resources need normal refresh.
+ 
+--- before/.agent/TASKS_ARCHIVE.md
++++ after/.agent/TASKS_ARCHIVE.md
+@@ -1,6 +1,16 @@
+ # Tasks Archive
+ 
+ Verified completed tasks live here.
++
++---
++
++## MANAGE-POC-CAMERA-MOUNT-001 — Restore continuous camera event reception
++
++- **Completed**: 2026-10-23 (source fix).
++- **Scope/IDs**: `ManagePOC.didAddToDOM`, affected docs; `SWWEB-001/002`, `WS-001/002`.
++- **Reviewed plan/cause**: Existing multi-shot camera request and selected/initiate handlers already allocate one card per event UUID. The missing superclass mount call left `isInDOM` false, causing both the listener and card factory to reject camera events.
++- **Implementation**: Call `super.didAddToDOM()` before the existing new-product brand loading. Existing product-camera event routing, duplicate/terminal guards, local upload/edit/avatar/save behavior and the asset-item reference are preserved.
++- **Verification**: Framework mount/unmount and event guard paths, focused task-relative diff, whitespace and status reviewed. Builds/tests/live camera uploads were not authorized or run. Evidence: `.artifacts/planning/manage-poc-camera-mount-20261023/`.
+ 
+ ---
+ 

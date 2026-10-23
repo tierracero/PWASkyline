@@ -28,6 +28,9 @@ Current verified module and source structure for PWASkyline.
 - `ViewControlers/` — page controllers and top-level page flows.
 - `Snippits/` — reusable UI components and feature views, including Product Manager audit report presentations, order report delivery tables and CSV exports, order charge/payment deletion approval and refresh, velocity scoring, the dedicated Trip location and account-aware merchandise pickers, preloaded commercial-asset selection through `SearchComertialAsset`, parent-scoped subaccount creation/editing through `ManageSubCustomerAccountView`, and store-address confirmation through `ConfirmAdddressLocationView`.
 - `Styles/` — Swift Web CSS style declarations.
+- `Snippits/MapView.swift` — reusable coordinate map modal opened by asset-item Kardex map icons; reuses the independent MapKit preview helper and destroys its own map on dismissal.
+- `Snippits/CustAssetsView/CustAssets+AssetItemView.swift` — asset-unit editor, notes, Kardex cards and current-plus-nine unique location history; owns the map controller bundled through `Snippits/CustAssetsView/CustAssets+AssetItemMapBridge.swift` and shares the first history page with the Kardex tab.
+- `Snippits/QuickMessageObject.swift` — shared account and asset note-row presentation; full asset notes adapt to the existing quick model, with priority controls disabled by the read-only asset callers.
 - Trip status confirmation is owned by `Snippits/TripControler/ConfirmTripStatusUpdate.swift`; the beta detail view presents it, and `Snippits/MediaViewer.swift` previews its merchandise image galleries. The beta detail submits its status/comment/media through `API/CustComertialTripsEndpoint/CustComertialTrips+ChangeTripStatus.swift` and updates its status and the parent list only after API success. The same popup has a one-asset delivery mode for multi-item trips, submitted through `API/CustComertialTripsEndpoint/CustComertialTrips+DeliverAssetItem.swift`; confirmed `deliverd` state and returned status drive row markers and trip auto-completion.
 - `Functions/`, `Extentions/`, `Enums/`, `Structurs/`, `VirtualControlers/` — shared app helpers and runtime support. Error diagnostics are owned by `ErrorReportingControler`, its record/context types, the centralized POST transport, and the API decoding helper.
 
@@ -60,3 +63,7 @@ These directories should usually be treated as generated/deployable outputs, not
 - `swifweb/web` from `2.0.0-nightly.5`.
 - Tierra Cero private packages: `TCFundamentals`, `TCFireSignal`, `MapKitCore`, `TCSocialCore`, `TaecelAPICore`, `LanguagePack`, `WaWebAPICore`, `SkylineDocumentationCore`.
 - WebSources dev dependencies include webpack, JavaScriptKit local checkout bridge, and Wasmer WASI packages.
+
+## Vendor Favorites
+
+Vendor create/edit and vendor-search snippets consume the shared favorite field. The favorite button uses `API.custAPIV1.setFavoriteVendor(vendorId:favorite:)`; stars change only after success and duplicate submissions are blocked per vendor. `CatchControler` owns an in-memory favorite-vendor cache for the current user; `SearchVendorView` reads it after its first successful `getVendors(.favorites)` load. Successful star changes and create/edit saves add or remove records from the cache, and logout clears it. The listing wrapper accepts `GetVendorsType` with all as default. Source review completed; build/browser verification remains unrun.

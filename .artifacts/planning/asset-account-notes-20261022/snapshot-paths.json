@@ -1,0 +1,9 @@
+[
+  "Sources/App/Snippits/QuickMessageObject.swift",
+  "Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemView.swift",
+  "Sources/App/Snippits/CustAssetsView/CustAssets+AssetView.swift",
+  ".agent/architecture/SWIFWEB_APP_ARCHITECTURE.md",
+  ".agent/MODULES.md",
+  ".agent/PROJECT_MEMORY.md",
+  ".agent/TASKS_ARCHIVE.md"
+]

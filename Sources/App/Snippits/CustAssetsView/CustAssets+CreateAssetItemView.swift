@@ -369,6 +369,7 @@ extension CustAssetsView {
 
 
             WebApp.current.wsevent.listen { [weak self] in
+
                 guard let self, self.isInDOM else { return }
 
                 if $0.isEmpty { return }
@@ -388,6 +389,7 @@ extension CustAssetsView {
                     }
 
                     self.resetSerialScanner()
+
                     let text = payload.text.trimmingCharacters(in: .whitespacesAndNewlines)
                     guard !text.isEmpty else {
                         showError(.invalidFormat, "No se detectó un número de serie. Intente escanear nuevamente.")
@@ -432,6 +434,7 @@ extension CustAssetsView {
                     }
 
                 case .requestMobileCamaraFail:
+
                     if let payload = self.ws.requestMobileCamaraFail($0) {
                         
                         if  let view = self.imageRefrence[payload.eventid] {
@@ -441,10 +444,10 @@ extension CustAssetsView {
                         
                     }
                 case .requestMobileCamaraInitiate:
+
                     if let payload = self.ws.requestMobileCamaraInitiate($0) {
                         
-
-                        guard let view = self.imageRefrence[payload.eventid] else {
+                        guard let view: ImageGeneralView = self.imageRefrence[payload.eventid] else {
                             
                             let view = ImageGeneralView(
                                         relation: .assetItem,
@@ -482,6 +485,8 @@ extension CustAssetsView {
 
                             return
                         }
+
+                        view.loadPercent = "Iniciando Carga..."
 
                         self.mediaGrid.appendChild(view)
                         

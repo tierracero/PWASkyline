@@ -21,6 +21,7 @@ extension CustComponents {
         mobile: String,
         fiscalPOCMobile: String,
         creditDays: Int64,
+        favorite: Bool = false,
         callback: @escaping ( (_ resp: APIResponseGeneric<CustVendorsQuick>?) -> () )
     ) {
         sendPost(
@@ -36,7 +37,8 @@ extension CustComponents {
                 email: email,
                 mobile: mobile,
                 fiscalPOCMobile: fiscalPOCMobile,
-                creditDays: creditDays
+                creditDays: creditDays,
+                favorite: favorite
             )
         ) { payload in
             guard let data = payload else{

@@ -1,0 +1,13 @@
+capture-1: requestMobileCamaraSelected
+capture-1: requestMobileCamaraProgress
+capture-1: asyncFileUpdate Iniciando
+capture-1: requestMobileCamaraProgress
+capture-1: requestMobileCamaraProgress
+capture-1: requestMobileCamaraComplete 0x0
+capture-2: requestMobileCamaraCancel
+capture-1: asyncFileUpdate Fix Rotation
+capture-1: asyncFileUpdate Get Image Size
+capture-1: asyncFileUpdate Scale Image
+capture-1: asyncFileUpdate Generate thumbnail
+capture-1: asyncFileUpdate Generate mobile image
+capture-1: requestMobileCamaraComplete 1200x1600

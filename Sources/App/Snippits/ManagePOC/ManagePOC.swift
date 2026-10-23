@@ -1114,6 +1114,7 @@ class ManagePOC: Div {
                     .float(.left)
                 
                 Div{
+
                     Div("Departamento")
                         .color(.lightGray)
                         .fontSize(14.px)
@@ -2877,7 +2878,15 @@ class ManagePOC: Div {
                     
                     if let view = self.remoteCameraImage(for: payload.eventid) {
 
+                        // The mobile can acknowledge the upload before image processing finishes.
+                        guard payload.type != .image || (payload.width > 0 && payload.height > 0) else {
+                            view.loadPercent = "Procesando imagen…"
+                            return
+                        }
+
                         self.finishedRemoteCameraEvents.insert(payload.eventid)
+
+                        view.isLoaded = true
                         
                         view.loadPercent = ""
                         
@@ -2914,11 +2923,49 @@ class ManagePOC: Div {
                     
                 }
             case .requestMobileCamaraInitiate:
+
                 if let payload = self.ws.requestMobileCamaraInitiate($0) {
-                    
+
+                    guard let _ = imageRefrence[payload.eventid] else {
+
+                        let view: ImagePOCContainer = .init(
+                            type: .img,
+                            mediaid: nil,
+                            pocid: self.pocid,
+                            file: nil,
+                            image: nil,
+                            width: 0,
+                            description: "",
+                            height: 0,
+                            selectedAvatar: $selectedAvatar
+                        ) { viewid, mediaid, path, originalImage, originalWidth, originalHeight, isAvatar in
+                            
+                            self.startEditImage(
+                                viewid,
+                                mediaid,
+                                path,
+                                originalImage,
+                                originalWidth,
+                                originalHeight,
+                                isAvatar
+                            )
+                            
+                        } imAvatar: { name in
+                            self.selectedAvatar = name
+                        } removeMe: { viewid in
+                            self.imageRefrence.removeValue(forKey: viewid)
+                        }  
+                        
+                        imageRefrence[view.viewid] = view
+
+                        return
+
+                    }
+
                     _ = self.remoteCameraImage(for: payload.eventid)
                     
                 }
+            
             case .requestMobileCamaraProgress:
                 
                 guard let payload = self.ws.requestMobileCamaraProgress($0) else {
@@ -2952,6 +2999,15 @@ class ManagePOC: Div {
                 if let payload = self.ws.asyncFileUpload($0) {
                     
                     if let view: ImagePOCContainer = self.imageRefrence[payload.eventid] {
+
+                        if self.remoteCameraEvents.contains(payload.eventid) {
+                            guard !self.finishedRemoteCameraEvents.contains(payload.eventid),
+                                  payload.to == .product,
+                                  payload.type != .image || (payload.width > 0 && payload.height > 0) else {
+                                return
+                            }
+                            self.finishedRemoteCameraEvents.insert(payload.eventid)
+                        }
 
                         view.isLoaded = true
                         
@@ -2996,7 +3052,8 @@ class ManagePOC: Div {
                     return
                 }
                 
-                guard let view = self.imageRefrence[payload.eventId] else {
+                guard !self.finishedRemoteCameraEvents.contains(payload.eventId),
+                      let view = self.imageRefrence[payload.eventId] else {
                     return
                 }
                 
@@ -3175,6 +3232,7 @@ class ManagePOC: Div {
     }
     
     override func didAddToDOM() {
+        super.didAddToDOM()
         if pocid == nil {
             getBrands()
         }
@@ -3744,6 +3802,7 @@ class ManagePOC: Div {
     }
     
     private func remoteCameraImage(for eventId: UUID) -> ImagePOCContainer? {
+
         guard isInDOM, remoteCameraRequested,
               !finishedRemoteCameraEvents.contains(eventId) else {
             return nil
@@ -3845,7 +3904,7 @@ class ManagePOC: Div {
         }  
         
         imageRefrence[view.viewid] = view
-        
+
         xhr.onLoadStart { event in
             self.pocImageContainer.appendChild(view)
             _ = JSObject.global.scrollToBottom!("pocImageContainer")

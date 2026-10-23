@@ -4,6 +4,74 @@ Verified completed tasks live here.
 
 ---
 
+## ASSET-ITEM-MAP-BRIDGE-001 — Bundle the asset map factory with its caller
+
+- **Completed**: 2026-10-23 (source fix).
+- **Scope/IDs**: AssetItemView, new AssetItemMapBridge, source main.js and affected docs; `SWWEB-001/002/003`, `PWA-001/002/003`.
+- **Reviewed cause/plan**: The supplied asAu-5171 payload/CSV has valid coordinates and the live container has nonzero dimensions. Direct HTTP inspection found no createAssetItemLocationMap in deployed main.js, even with a fresh query key. Bundle the existing controller with App/WASM so its factory and Swift caller are delivered together.
+- **Implementation**: The mounted view installs the constant bridge script when absent before token/factory lookup. The unchanged controller moved from source main.js into `CustAssets+AssetItemMapBridge.swift`, preserving current marker, gray history/transparency, 4px orange line, unique-location selection and cleanup.
+- **Verification**: Supplied data/live DOM/public resource inspection, unchanged bridge extraction, framework Script/append behavior, JavaScript syntax and task-relative diff/whitespace/status reviewed. Builds/tests and corrected live map rendering were not run; no production deployment or public-output edits. Evidence: `.artifacts/planning/asset-item-map-bridge-20261023/`.
+
+---
+
+## MANAGE-POC-CAMERA-PROCESSING-001 — Finish the processed remote photo
+
+- **Completed**: 2026-10-23 (source fix).
+- **Scope/IDs**: `ManagePOC` camera/upload completion and processing handlers, affected docs; `SWWEB-001/002/003`, `WS-001/002`.
+- **Reviewed plan/cause**: Supplied events show an initial 0x0 camera completion, processing messages, and a later completion with valid image dimensions for the same UUID. The first completion prematurely closed the capture; later processing rewrote the label and the actual final completion was ignored.
+- **Implementation**: Keep zero-dimension image completion pending. Publish final metadata/readiness only for a processed image; apply equivalent terminal/readiness checks to the registered remote async upload path, and ignore later processing for finished/cancelled/removed capture IDs. Local upload behavior and existing user edits remain intact.
+- **Verification**: Supplied event ordering, shared payload fields, focused source/event-flow and task-relative diff/whitespace/status reviewed. Builds/tests/live camera uploads were not authorized or run. Redacted evidence: `.artifacts/planning/manage-poc-camera-processing-20261023/`.
+
+---
+
+## MANAGE-POC-CAMERA-MOUNT-001 — Restore continuous camera event reception
+
+- **Completed**: 2026-10-23 (source fix).
+- **Scope/IDs**: `ManagePOC.didAddToDOM`, affected docs; `SWWEB-001/002`, `WS-001/002`.
+- **Reviewed plan/cause**: Existing multi-shot camera request and selected/initiate handlers already allocate one card per event UUID. The missing superclass mount call left `isInDOM` false, causing both the listener and card factory to reject camera events.
+- **Implementation**: Call `super.didAddToDOM()` before the existing new-product brand loading. Existing product-camera event routing, duplicate/terminal guards, local upload/edit/avatar/save behavior and the asset-item reference are preserved.
+- **Verification**: Framework mount/unmount and event guard paths, focused task-relative diff, whitespace and status reviewed. Builds/tests/live camera uploads were not authorized or run. Evidence: `.artifacts/planning/manage-poc-camera-mount-20261023/`.
+
+---
+
+## ASSET-LOCATION-HISTORY-STYLE-001 — Strengthen history marker and route styling
+
+- **Completed**: 2026-10-22 (source styling).
+- **Scope/IDs**: `createAssetItemLocationMap` in `Sources/Service/skyline/js/main.js`, affected docs; `PWA-001/002/003`, `SWWEB-001/002`.
+- **Reviewed plan/implementation**: Apply black text and a 3px solid black border to the gray history markers; change the connecting line from 2px gray to 4px orange. Existing opacity-by-age, current marker, history data and map lifecycle are preserved.
+- **Verification**: Focused source/diff, JavaScript syntax and whitespace/status audit. Builds/tests/live map rendering were not run; public outputs require normal resource refresh. Evidence: `.artifacts/planning/asset-location-history-style-20261022/`.
+
+---
+
+## ASSET-KARDEX-MAP-HISTORY-001 — Show ten unique asset locations
+
+- **Completed**: 2026-10-22 (source implementation).
+- **Scope/IDs**: `AssetItemView`, source-owned MapKit helper, affected docs; `SWWEB-001/002/003`, `PWA-001/002/003`.
+- **Reviewed plan**: User confirmed ten total locations including current. Scan every ascending Kardex page, keeping nine newest distinct valid coordinates excluding current and sharing the first page with the event cards. Preserve the current marker; add gray history fading from 50% to 90% opacity and a chronological light gray line. Guard late callbacks and own/destroy the map.
+- **Implementation**: Completed history is applied whether map initialization or the page scan finishes first. Failed scans leave current visible and retry from the tabs; missing/invalid coordinates are skipped. Resource paths, generated outputs, note rows, event cards and the standalone map modal are retained.
+- **Verification**: API/server ordering, source flow, JavaScript syntax, task-relative diff/whitespace/status reviewed. Builds/tests/browser execution were not authorized or run; normal build/resource refresh remains required. Evidence: `.artifacts/planning/asset-kardex-map-history-20261022/`.
+
+---
+
+## ASSET-ACCOUNT-NOTES-001 — Match asset notes to account note rows
+
+- **Completed**: 2026-10-22 (source implementation).
+- **Scope/IDs**: `QuickMessageObject`, `AssetView`, `AssetItemView`, affected docs; `SWWEB-001`, `SWWEB-002`, `SWWEB-003`.
+- **Reviewed plan**: Reuse the account note presentation for full asset notes; keep the display field mapping intact, disable priority actions for the read-only asset lists, render newest-first rows with metadata, alternating backgrounds and wrapped messages, and compact the note count/list containers.
+- **Verification**: Shared-model field mapping, every existing QuickMessageObject caller/default, both asset render and empty-state paths, and task-relative diff/whitespace/status reviewed. Builds/tests/live rendering were not run under the repository confirmation rule. Evidence: `.artifacts/planning/asset-account-notes-20261022/`.
+
+---
+
+## ASSET-KARDEX-MAP-001 — Open event coordinates in a map modal
+
+- **Completed**: 2026-10-22 (source implementation).
+- **Scope/IDs**: `AssetItemView.kardexEventView`, new `Snippits/MapView.swift`, affected documentation; `SWWEB-001`, `SWWEB-002`, `SWWEB-003`.
+- **Reviewed plan**: Replace coordinate cells with an accessible top-right map icon for valid event coordinates. Add `MapView(latitude: Double, longitude: Double)` using the existing independent MapKit preview with mount/session/request guards and map destruction on removal. Preserve existing asset edits and event metadata/evidence.
+- **Implementation**: The icon opens the crystal map modal with the event's exact coordinate pair. Invalid/missing coordinates offer no map action; direct invalid MapView inputs show an unavailable message. Marker location is read-only, while pan/zoom remain available.
+- **Verification**: Source/API and task-relative diff/whitespace/status review. No build, tests, live browser, JWT, or map-network execution was authorized or run. Evidence: `.artifacts/planning/kardex-map-view-20261022/`.
+
+---
+
 ## PUSH-FREQUENCY-001 — Grouped personal push preferences
 
 - **Completed**: 2026-10-19
@@ -674,3 +742,137 @@ Verified completed tasks live here.
 - **Scope/IDs**: Work startup decorative markup and scoped theme; SWWEB-001/002/003.
 - **Implementation**: One noninteractive decoration supplies two angled side frames with bright cyan-blue edges, soft glow, transparent fills and faint technical lines. Existing startupRoot removal expands them behind the central assembly; narrow viewports (<=900px) hide them. Central ring/card, header/footer, real status/progress lifecycle and existing quiet-mode overlay suppression are preserved. main.html and order construction unchanged.
 - **Verification**: Manually reviewed source-derived desktop preview and computed transparent pane/blue edge/glow styles, source preservation comparisons, selector/builder/lifecycle/quiet-mode review, focused diff, whitespace, guarded application, candidate equality and tracked hashes/status. No build/test/compiler, actual sign-in/startup, generated refresh, deployment or commit. Evidence: `.artifacts/planning/work-startup-blue-side-frames/` in the attached chat worktree.
+
+## STARTUP-BLUE-BAR-VERSION-FINISH-001 — Match startup progress and verify orange versions
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff audit only, live rendering/builds/tests unverified.
+- **Scope/IDs**: Work footer progress theme, HTML shine quiet-mode selectors and owning UI/PWA facts; SWWEB-001/002/003, PWA-003.
+- **Implementation**: Preserved the already-added orange version labels in both views; HTML v0.90.30 matches current SkylineWeb beta 0.90.30, and Work computes its label from that runtime value. Work footer now shares the HTML blue gradient/glow/shine treatment. Both shine pseudo-elements stop in quiet modes. Current user HUD/backdrop/spacing, real progress, order construction and callbacks remain unchanged.
+- **Verification**: Reviewed existing version bindings, theme/source preservation, explicit pseudo-element suppression, focused diff/whitespace, guarded application, candidate equality and tracked hashes/status. No build/test/compiler, generated refresh, deployment or commit. Evidence: `.artifacts/planning/startup-blue-bar-version-finish/` in the attached chat worktree.
+
+## MAIN-STARTUP-BANDS-QUICK-FADE-001 — Fade HTML startup bands at full width
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff audit only, live rendering/builds/tests unverified.
+- **Scope/IDs**: main.html band-entry CSS and owning PWA facts; PWA-003.
+- **Implementation**: Replaces the 650ms scale/opacity entry with a 180ms opacity-only fade from 0 to 1. Bands remain at the existing 90vw stage width throughout. Static bracket shape, rings/background, progress/version, quiet modes and Work/order views unchanged.
+- **Verification**: Exact source preservation outside the two CSS replacements, focused diff, whitespace, guarded apply, candidate equality and tracked hashes/status. No build/test/compiler, generated refresh, deployment or commit. Evidence: `.artifacts/planning/main-startup-bands-quick-fade/` in the attached chat worktree.
+
+## MAIN-STARTUP-BANDS-LONGER-FADE-001 — Lengthen the HTML band fade
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff audit only, builds/tests/live rendering unverified.
+- **Implementation**: Changes only main.html band-entry duration from 180ms to 600ms. Existing opacity-only keyframes, 90vw width, quiet-mode/readiness and Work/order behavior unchanged. PWA-003.
+- **Verification**: Exact source preservation outside duration, focused diff/whitespace, guarded application, candidate equality and tracked hashes/status. No builds/tests/compiler, generated refresh, deployment or commit. Evidence: `.artifacts/planning/main-startup-bands-longer-fade/` in the attached chat worktree.
+
+## MAIN-STARTUP-BANDS-1000MS-001 — Preview one-second band fade
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff audit only.
+- **Change**: User-requested main.html band fade duration 600ms -> 1000ms; opacity-only effect and 90vw width preserved. PWA-003. All other source behavior unchanged.
+- **Verification**: Exact preservation outside duration, reviewed diff/whitespace, guarded application, candidate equality and tracked hashes/status. No build/test/compiler, generated output, deployment or commit. Evidence: `.artifacts/planning/main-startup-bands-1000ms/` in the attached chat worktree.
+
+## MAIN-STARTUP-BANDS-1500MS-001 — Preview 1.5-second band fade
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff audit only.
+- **Change**: User-requested main.html band fade duration 1000ms -> 1500ms; opacity-only effect and 90vw width retained. PWA-003. Other animations/loading behavior unchanged.
+- **Verification**: Exact source preservation outside duration, reviewed diff/whitespace, guarded application, candidate equality and tracked hashes/status. No build/test/compiler, live rendering, generated refresh, deployment or commit. Evidence: `.artifacts/planning/main-startup-bands-1500ms/` in the attached chat worktree.
+
+## WORK-OUTER-HUD-MORE-TRANSPARENT-001 — Soften the outer Work startup animation
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff audit only.
+- **Change**: Only Work startupSideFrames steady opacity 0.25 -> 0.12 (88% transparent). Starting opacity, timing, geometry, center/backdrop/progress/version and main.html/order unchanged. SWWEB-001/002/003.
+- **Verification**: Exact source preservation outside opacity/comment, focused diff/whitespace, guarded apply, candidate equality and tracked hashes/status, including unchanged main.html. No build/test/compiler, live rendering, generated refresh, deployment or commit. Evidence: `.artifacts/planning/work-outer-hud-more-transparent/` in the attached chat worktree.
+
+## WORK-OUTER-HUD-50-OPACITY-001 — Set outer Work animation to 50% opacity
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff audit only.
+- **Change**: Work startupSideFrames steady opacity 0.12 -> 0.50. Starting opacity, geometry/timing, central UI and frozen main.html unchanged. SWWEB-001/002/003.
+- **Verification**: Exact source preservation outside opacity/comment, focused diff/whitespace, guarded application, candidate equality and tracked hashes/status, including main.html unchanged. No build/test/compiler, live rendering, generated refresh, deployment or commit. Evidence: `.artifacts/planning/work-outer-hud-50-opacity/` in the attached chat worktree.
+
+## WORK-OUTER-HUD-5-OPACITY-001 — Set outer Work animation to 5% opacity
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff audit only.
+- **Change**: Work startupSideFrames steady opacity 0.50 -> 0.05. Starting opacity, geometry/timing, central UI and frozen main.html unchanged. SWWEB-001/002/003.
+- **Verification**: Exact source preservation outside opacity/comment, focused diff/whitespace, guarded application, candidate equality and tracked hashes/status, including main.html unchanged. No build/test/compiler, live rendering, generated refresh, deployment or commit. Evidence: `.artifacts/planning/work-outer-hud-5-opacity/` in the attached chat worktree.
+
+## WORK-OUTER-HUD-7-OPACITY-001 — Set outer Work animation to 7% opacity
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff audit only.
+- **Change**: Work startupSideFrames steady opacity 0.05 -> 0.07. Starting opacity, geometry/timing, central UI and frozen main.html unchanged. SWWEB-001/002/003.
+- **Verification**: Exact source preservation outside opacity/comment, focused diff/whitespace, guarded application, candidate equality and tracked hashes/status, including main.html unchanged. No build/test/compiler, live rendering, generated refresh, deployment or commit. Evidence: `.artifacts/planning/work-outer-hud-7-opacity/` in the attached chat worktree.
+
+## WORK-OUTER-HUD-10-OPACITY-001 — Set outer Work animation to 10% opacity
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff audit only.
+- **Change**: Work startupSideFrames steady opacity 0.07 -> 0.10. Starting opacity, geometry/timing, central UI and frozen main.html unchanged. SWWEB-001/002/003.
+- **Verification**: Exact source preservation outside opacity/comment, focused diff/whitespace, guarded application, candidate equality and tracked hashes/status, including main.html unchanged. No build/test/compiler, live rendering, generated refresh, deployment or commit. Evidence: `.artifacts/planning/work-outer-hud-10-opacity/` in the attached chat worktree.
+
+## ORDER-PASTEL-STATUS-BORDERS-001 — Use pastel status colors for order outlines
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff and isolated CSS presentation reviewed. Builds/tests and live Swift/WASM behavior unverified.
+- **Scope/IDs**: AccoutOverview presentation binding and scoped OrderView border theme; SWWEB-001/002/003.
+- **Implementation**: Existing orderStatus supplies the current color through an initial CSS variable assignment and one weak listener (existing teardown clears state listeners). The theme mixes 62% of that status color with 38% white for one-pixel folio/equipment/combined notes-files/charges/summary/outcome outlines. A final scoped rule overrides legacy borders, including the notes-files border:0. Existing inner inputs, text/surfaces, construction animation, data/status mutation, permissions and calculations remain unchanged; no new palette or server authority. main.html and Work startup unchanged.
+- **Verification**: Source-derived standalone presentation using all nine existing status hues; manually inspected pending gold, active blue and finalized green, matching computed outline colors and one-pixel width. Reviewed binding/load/status/reset/teardown flows, source preservation, selector cascade, focused diff/whitespace, guarded apply, candidate equality and tracked hashes/status. No build/test/compiler, actual order/status action, generated refresh, deployment or commit. Evidence: `.artifacts/planning/order-pastel-status-borders/` in the attached chat worktree.
+
+## ORDER-STATUS-BORDERS-INTERFACE-TONE-001 — Blend status borders with the interface palette
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff and isolated presentation reviewed, live App/builds/tests unverified.
+- **Change**: Keeps the existing status hue at 62%, replacing 38% white with the existing theme blue-gray --tc-order-muted. Highlighted outlines retain one-pixel weight and live status binding; inner controls/business logic, frozen main.html and Work/order animations unchanged. SWWEB-001/002/003.
+- **Verification**: Exact source preservation outside the one color expression, focused diff/whitespace, isolated CSS preview, guarded application, candidate equality and tracked hashes/status. No build/test/compiler, actual order action, generated refresh, deployment or commit. Evidence: `.artifacts/planning/order-status-borders-interface-tone/` in the attached chat worktree.
+
+## ORDER-STATUS-BORDERS-SUBTLE-001 — Reduce distracting status-outline contrast
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff and isolated presentation reviewed, live App/builds/tests unverified.
+- **Change**: One theme expression now uses 20% existing status hue plus 80% existing faint divider color (--tc-order-border-soft); current alpha combines to 36%. One-pixel weight, live binding and targeted surfaces retained. Inner controls/business logic and frozen startup views unchanged. SWWEB-001/002/003.
+- **Verification**: Exact source preservation outside expression, focused diff/whitespace, isolated CSS preview, guarded application, candidate equality and tracked hashes/status. No build/test/compiler, real order action, generated refresh, deployment or commit. Evidence: `.artifacts/planning/order-status-borders-subtle/` in the attached chat worktree.
+
+## ORDER-STATUS-BORDERS-SLIGHT-HIGHLIGHT-001 — Slightly emphasize the subtle status outlines
+
+- **Date**: 2026-10-20
+- **Status**: Implemented; source/diff audit only, live rendering/builds/tests unverified.
+- **Change**: Border color mix 20% status/80% faint divider -> 28% status/72% faint divider. Combined alpha increases modestly from 36% to 42.4%; existing 1px thickness, live status binding and all other UI/behavior retained. SWWEB-001/002/003.
+- **Verification**: Exact preservation outside one expression, reviewed diff/whitespace, guarded application, candidate equality and tracked hashes/status. main.html/Work unchanged. No build/test/compiler, real order action, generated refresh, deployment or commit. Evidence: `.artifacts/planning/order-status-borders-slight-highlight/` in the attached chat worktree.
+
+## VENDOR-FAVORITES-001 — Vendor favorites (2026-10-20)
+
+- Added shared/persisted false-default favorite, create/edit handling, tenant-scoped setFavoriteVendor contract/route/client and vendor-search stars.
+- Preserved favorite through all Quick/Min projections and four fiscal response copies; finished the existing favorites list filter.
+- Source/contract/migration/diff review completed. Builds/tests, database SQL and live browser/server requests were not run; no commit created.
+- Plan and audit: SkylineServer `.artifacts/planning/vendor-favorites/`.
+
+
+## DATA-FOLIO-OBJECT-TYPE-001 — Folio object classification (2026-10-23)
+
+- Added shared equipment/assetItem CustFolioObjectsType and required protocol/full/table type after modifiedAt. Concrete constructors and legacy Swift JSON default equipment; explicit assetItem survives table/transport conversions, server creation normalization and all five equipment SELECT projections. TCFireSignal inherits the shared field through existing equipment payloads.
+- Browser/native status and finalization DTO copies preserve classification. Four PWA contract-key helpers handle the new EquipmentObject.CodingKeys.type. Preserved the concurrent user edit's formatting while correcting its invalid typed enum case and adding the actual typed property.
+- Version3 scan confirmed no separate equipment entity. Added optional/defaulted FolioTable equipmentTypes JSON, CoreData.Order save/read/default lookup methods, and order-cache persistence. Created version3FolioObjectTypes.xcdatamodel and selected it in both Xcode project/current-version metadata; the previous model is retained byte-for-byte. Existing automatic/inferred migration flags remain enabled.
+- Updated Android shared/Kotlin mirror declarations with enum and constructor-default classification. No unrelated UI, dependency, order FolioTypes or business workflow changes.
+- Registered the global enum migration; existing tenants use SkylineServer Scripts/Database/AddCustFolioObjectsType.sql after that enum migration and before new queries. No SQL or Core Data store migration executed.
+- Source/decoder/constructor/projection/copy/default and baseline-relative diff review completed; new model XML and plist/project lint passed, and all git indexes remain unchanged. No tests added/run, builds, Swift/Kotlin compiler, momc, live endpoint/database/device execution, staging or commits. Existing user work preserved.
+- Coordinated evidence: SkylineServer .artifacts/planning/folio-object-types/PLAN.md, change.diff and AUDIT.md.
+
+
+## DATA-FOLIO-OBJECT-REL-ID-001 — Optional folio object relation (2026-10-23)
+
+- Synchronized optional UUID relId after type across shared protocol/full/table/list and current/deprecated creation DTOs. Preserved the user-added protocol/EquipmentObject fields, immutable creation fields and initializer ordering. Concrete defaults and missing/null Swift payloads use nil.
+- Added new-table nullable UUID storage, tenant-qualified manual Scripts/Database/AddCustFolioObjectsRelId.sql, table conversion, incoming create normalization/legacy conversions and all five equipment projections. TCFireSignal inherits relId through its existing shared request/response types.
+- PWA equipment copies and all four contract-key helpers, two native finalization copies and five Kotlin counterparts retain the relation. Kotlin's trailing nullable default preserves existing positional callers.
+- Version3 adds only optional empty-map equipmentRelIds in version3FolioObjectRelations.xcdatamodel, selects it in both model/project metadata and retains both previous versions. CoreData.Order initializes/preserves relation maps, saves type/relation metadata together from all three order cache update sites and provides UUID-map/optional lookup readers.
+- Source/decoder/constructor/copy/projection/SQL/default review, additive XML model comparison, plist/project lint and baseline-relative diff/status/index checks completed. No builds/tests/compilers, SQL/Core Data store migration, device/server execution, staging or commits. Existing tenant column rollout remains manual before deployment.
+- Coordinated plan, original snapshots, exact change diff and audit: SkylineServer .artifacts/planning/folio-object-rel-id/.
+
+## PWA-ASSET-SERVICE-LINKS-001 — Trip picker excludes assigned assets (2026-10-23)
+
+- CreateTripView filters assets with non-null `serviceTrip` or `serviceOrder` and rechecks those fields when a result is selected, covering stale search results. Server-side locked validation provides the authoritative check.
+- Source reviewed; no build, tests, or browser session were run. Evidence: SkylineServer `.artifacts/planning/asset-service-links/AUDIT.md`.

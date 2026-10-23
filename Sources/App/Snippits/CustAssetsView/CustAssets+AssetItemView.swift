@@ -18,6 +18,24 @@ extension CustAssetsView {
             case kardex
         }
 
+        private struct MapCoordinate: Hashable {
+            let latitude: Double
+            let longitude: Double
+        }
+
+        private struct MapHistoryLocation: Encodable {
+            let latitude: Double
+            let longitude: Double
+            let createdAt: Int64
+            let eventId: UUID
+
+            var coordinate: MapCoordinate {
+                MapCoordinate(latitude: latitude, longitude: longitude)
+            }
+        }
+
+        private static let maxMapLocations = 10
+
         let itemId: HybridIdentifier
 
         let onLoaded: ((CustCommercialAssetsItem) -> Void)?
@@ -44,6 +62,10 @@ extension CustAssetsView {
         @State private var avatar = ""
 
         @State private var serviceCard = ""
+
+        @State var department: CustAssetDeps? = nil
+
+        @State var categorie: CustAssetCats? = mil
 
         @State private var itemName = ""
         @State private var serial = ""
@@ -74,16 +96,26 @@ extension CustAssetsView {
         @State var status: CustCommercialAssetsItemStatus = .unavailable
 
         private var kardexLoaded = false
+        private var kardexResponse: CustAssetsComponents.GetAssetItemKardexResponse?
+        private var isLoadingKardexHistory = false
+        private var kardexHistoryComplete = false
+        private var historyRequest = UUID()
+        private var historyLocations: [MapHistoryLocation] = []
+        private var assetLocationMap: JSObject?
+        private var mapRequest = UUID()
 
         private lazy var contentView = Div()
             .id(.init("assetItemContent_\(callKey(7))"))
             .height(100.percent)
             .custom("min-height", "0")
 
-        private lazy var notesGrid = VGrid(.full) {}
+        private lazy var notesGrid = Div()
+            .class(.roundGrayBlackDark)
             .custom("min-height", "0")
+            .custom("box-sizing", "border-box")
+            .custom("line-height", "1.35")
+            .fontSize(14.px)
             .height(100.percent)
-            .marginTop(10.px)
             .overflow(.auto)
 
         private let mapId = "asset_item_map_" + callKey(32)
@@ -151,6 +183,9 @@ extension CustAssetsView {
             isLoadingItem = true
             isBusy = true
             editorGeneration = UUID()
+            historyRequest = UUID()
+            isLoadingKardexHistory = false
+            mapRequest = UUID()
             let generation = editorGeneration
             let sessionId = custCatchID
             let identifier: HybridIdentifier = assetItemId.map { .id($0) } ?? itemId
@@ -206,6 +241,8 @@ extension CustAssetsView {
                 self.avatar = payload.item.avatar ?? ""
                 self.serviceCard = payload.item.serviceCard.last ?? ""
                 self.status = payload.item.status
+                self.department = payload.department
+                self.categorie = payload.categorie
                 self.render(payload)
                 self.onLoaded?(payload.item)
                 self.loadLocationOptions(payload, generation: generation, sessionId: sessionId)
@@ -216,10 +253,16 @@ extension CustAssetsView {
         }
 
         private func render(_ payload: CustAssetsComponents.GetAssetItemResponse) {
+            clearMap()
             contentView.innerHTML = ""
             notesGrid.innerHTML = ""
             kardexGrid.innerHTML = ""
             kardexLoaded = false
+            kardexResponse = nil
+            historyRequest = UUID()
+            isLoadingKardexHistory = false
+            kardexHistoryComplete = false
+            historyLocations = []
 
             renderNotes(payload.notes)
 
@@ -236,9 +279,13 @@ extension CustAssetsView {
 
                     VBox(.raised) {
                         UTitle(self.$noteCount.map { "Notas (\($0))" })
+                            .fontSize(18.px)
+                            .class(.oneLineText)
                         self.notesGrid
                     }
                     .custom("grid-template-rows", "auto minmax(0, 1fr)")
+                    .custom("row-gap", "7px")
+                    .padding(all: 8.px)
                     .custom("min-height", "0")
                     .height(100.percent)
                     .display(.grid)
@@ -260,10 +307,11 @@ extension CustAssetsView {
             .custom("align-content", "stretch")
             .custom("min-height", "0")
             .height(100.percent)
-            .backgroundColor(.backGroundGraySlate)
+            //.backgroundColor(.backGroundGraySlate)
 
             contentView.appendChild(editor)
             loadMap(payload.item)
+            loadKardexHistory()
         }
 
         private func mediaColumn(_ payload: CustAssetsComponents.GetAssetItemResponse) -> Div {
@@ -401,6 +449,9 @@ extension CustAssetsView {
                 .marginTop(10.px)
 
                 Div {
+
+                    // TODO: add send to order button
+
                     ULargeButton("Guardar Cambios")
                         .class(Class(TCCrystalSurfaceClass.goodButton))
                         .disabled(self.$isBusy)
@@ -682,20 +733,15 @@ extension CustAssetsView {
                 return
             }
 
-            notes.forEach { note in
-                notesGrid.appendChild(noteView(note))
+            for (index, note) in notes.sorted(by: { $0.createdAt > $1.createdAt }).enumerated() {
+                notesGrid.appendChild(noteView(note, isEven: index.isEven))
             }
         }
 
-        private func noteView(_ note: CustGeneralNotes) -> Div {
-            VBox(.raised) {
-                Div(note.activity)
-                    .custom("white-space", "pre-wrap")
-                    .custom("line-height", "1.45")
-
-                UMinorTitle(note.type.rawValue)
-                    .marginTop(5.px)
-            }
+        private func noteView(_ note: CustGeneralNotes, isEven: Bool) -> Div {
+            QuickMessageObject(isEven: isEven, note: note, allowsPriorityChanges: false)
+                .custom("white-space", "pre-wrap")
+                .custom("overflow-wrap", "anywhere")
         }
 
         private func tabButton(_ title: String, tab: ItemTab) -> Div {
@@ -714,6 +760,8 @@ extension CustAssetsView {
 
                     if tab == .kardex {
                         self.loadKardex()
+                    } else {
+                        self.loadKardexHistory()
                     }
                 }
         }
@@ -726,95 +774,224 @@ extension CustAssetsView {
         }
 
         private func loadMap(_ item: CustCommercialAssetsItem) {
-            mapContainer.innerHTML = ""
+            clearMap()
 
-            guard let latitude = item.latitude, let longitude = item.longitude else {
+            guard let latitude = item.latitude, let longitude = item.longitude,
+                  MapView.hasValidCoordinates(latitude: latitude, longitude: longitude) else {
                 mapContainer.appendChild(
                     emptyState("No hay coordenadas registradas para esta unidad.")
                 )
                 return
             }
 
-            API.v1.jwt { token in
-                guard let token else {
+            let request = mapRequest
+            let generation = editorGeneration
+            let sessionId = custCatchID
+            AssetItemMapBridge.install(in: self)
+            mapContainer.appendChild(emptyState("Cargando mapa…"))
+
+            API.v1.jwt { [weak self] token in
+                guard let self, self.acceptsEditor(generation, sessionId: sessionId),
+                      self.mapRequest == request, self.assetItemId == item.id else { return }
+                self.mapContainer.innerHTML = ""
+                guard let token,
+                      let createMap = JSObject.global["createAssetItemLocationMap"].function,
+                      let map = createMap(self.mapId, token, latitude, longitude).object else {
                     self.mapContainer.appendChild(
                         emptyState("No fue posible cargar el mapa.")
                     )
                     return
                 }
 
-                let _ = JSObject.global.initiateSingleMapCord!(
-                    self.mapId,
-                    token,
-                    latitude,
-                    longitude,
-                    JSClosure { _ in .undefined }.jsValue
-                )
+                self.assetLocationMap = map
+                self.applyMapHistory()
             }
         }
 
-        private func loadKardex() {
+        private func clearMap() {
+            mapRequest = UUID()
+            if let assetLocationMap { _ = assetLocationMap.destroy?() }
+            assetLocationMap = nil
+            mapContainer.innerHTML = ""
+        }
 
-            guard let assetItemId else {
-                showAlert(.alerta, "No se ha cargado id del activo")
+        private func applyMapHistory() {
+            guard kardexHistoryComplete, let assetLocationMap,
+                  let data = try? JSONEncoder().encode(Array(historyLocations.reversed())),
+                  let json = String(data: data, encoding: .utf8) else { return }
+            _ = assetLocationMap.setHistory?(json)
+        }
+
+        private func loadKardex() {
+            if !kardexLoaded {
+                if let kardexResponse {
+                    renderKardex(kardexResponse)
+                } else {
+                    kardexGrid.innerHTML = ""
+                    kardexGrid.appendChild(UMinorTitle("Cargando kardex…"))
+                }
+            }
+            loadKardexHistory()
+        }
+
+        private func loadKardexHistory() {
+            guard isInDOM, !isLoadingItem, let assetItemId,
+                  !isLoadingKardexHistory, !kardexHistoryComplete else { return }
+            isLoadingKardexHistory = true
+            historyRequest = UUID()
+            historyLocations = []
+            loadKardexPage(
+                assetItemId: assetItemId, page: 0, previousEventId: nil,
+                request: historyRequest, generation: editorGeneration, sessionId: custCatchID
+            )
+        }
+
+        private func loadKardexPage(
+            assetItemId: UUID,
+            page: Int,
+            previousEventId: UUID?,
+            request: UUID,
+            generation: UUID,
+            sessionId: UUID
+        ) {
+            API.custAssetsV1.getAssetItemKardex(assetItemId: assetItemId, page: page) { [weak self] response in
+                guard let self, self.acceptsEditor(generation, sessionId: sessionId),
+                      self.historyRequest == request, self.assetItemId == assetItemId else { return }
+
+                guard let response else {
+                    self.failKardexHistory("No fue posible consultar el kardex.")
+                    return
+                }
+                guard response.status == .ok else {
+                    self.failKardexHistory(response.msg)
+                    return
+                }
+                guard let payload = response.data, payload.page == page,
+                      payload.events.last?.id != previousEventId || page == 0,
+                      !payload.hasMore || !payload.events.isEmpty else {
+                    self.failKardexHistory("No fue posible consultar el historial de ubicaciones.")
+                    return
+                }
+
+                if page == 0 {
+                    self.kardexResponse = payload
+                    if self.activeTab == .kardex { self.renderKardex(payload) }
+                }
+                self.retainLatestLocations(payload.events)
+
+                // Kardex pages are oldest first; scan every page before publishing the latest nine.
+                if payload.hasMore {
+                    self.loadKardexPage(
+                        assetItemId: assetItemId, page: page + 1,
+                        previousEventId: payload.events.last?.id,
+                        request: request, generation: generation, sessionId: sessionId
+                    )
+                } else {
+                    self.isLoadingKardexHistory = false
+                    self.kardexHistoryComplete = true
+                    self.applyMapHistory()
+                }
+            }
+        }
+
+        private func retainLatestLocations(_ events: [CustAssetsComponents.CustCommercialAssetsItemKardexObject]) {
+            let current = loadedPayload.flatMap { payload -> MapCoordinate? in
+                guard let latitude = payload.item.latitude, let longitude = payload.item.longitude else { return nil }
+                return MapCoordinate(latitude: latitude, longitude: longitude)
+            }
+            var unique = Dictionary(uniqueKeysWithValues: historyLocations.map { ($0.coordinate, $0) })
+            for event in events {
+                guard let latitude = event.latitude, let longitude = event.longitude,
+                      MapView.hasValidCoordinates(latitude: latitude, longitude: longitude) else { continue }
+                let location = MapHistoryLocation(
+                    latitude: latitude, longitude: longitude, createdAt: event.createdAt, eventId: event.id
+                )
+                guard location.coordinate != current else { continue }
+                if let existing = unique[location.coordinate], !Self.isNewer(location, than: existing) { continue }
+                unique[location.coordinate] = location
+            }
+            historyLocations = Array(unique.values.sorted { Self.isNewer($0, than: $1) }.prefix(Self.maxMapLocations - 1))
+        }
+
+        private static func isNewer(_ lhs: MapHistoryLocation, than rhs: MapHistoryLocation) -> Bool {
+            lhs.createdAt == rhs.createdAt
+                ? lhs.eventId.uuidString > rhs.eventId.uuidString
+                : lhs.createdAt > rhs.createdAt
+        }
+
+        private func failKardexHistory(_ message: String) {
+            isLoadingKardexHistory = false
+            historyLocations = []
+            if kardexResponse == nil {
+                kardexGrid.innerHTML = ""
+                kardexGrid.appendChild(emptyState(message))
+            }
+        }
+
+        private func renderKardex(_ payload: CustAssetsComponents.GetAssetItemKardexResponse) {
+            kardexLoaded = true
+            kardexGrid.innerHTML = ""
+            guard !payload.events.isEmpty else {
+                kardexGrid.appendChild(emptyState("No hay movimientos registrados para esta unidad."))
                 return
             }
 
-            guard !kardexLoaded else { return }
-
-            kardexLoaded = true
-
-            kardexGrid.innerHTML = ""
-
-            kardexGrid.appendChild(UMinorTitle("Cargando kardex…"))
-
-            API.custAssetsV1.getAssetItemKardex(assetItemId: assetItemId) { response in
-
-                self.kardexGrid.innerHTML = ""
-
-                guard let response else {
-                    self.kardexGrid.appendChild(
-                        emptyState("No fue posible consultar el kardex.")
-                    )
-                    return
-                }
-
-                guard response.status == .ok else {
-                    self.kardexGrid.appendChild(emptyState(response.msg))
-                    return
-                }
-
-                guard let payload = response.data, !payload.events.isEmpty else {
-                    self.kardexGrid.appendChild(
-                        emptyState("No hay movimientos registrados para esta unidad.")
-                    )
-                    return
-                }
-
-                if !payload.currentStateMatchesLatestEvent {
-                    self.kardexGrid.appendChild(
-                        UMinorTitle("El estado actual difiere del último evento registrado.")
-                            .color(.orange)
-                            .marginBottom(8.px)
-                    )
-                }
-
-                payload.events.forEach { event in
-                    self.kardexGrid.appendChild(self.kardexEventView(event))
-                }
+            if !payload.currentStateMatchesLatestEvent {
+                kardexGrid.appendChild(
+                    UMinorTitle("El estado actual difiere del último evento registrado.")
+                        .color(.orange)
+                        .marginBottom(8.px)
+                )
+            }
+            payload.events.forEach { event in
+                kardexGrid.appendChild(kardexEventView(event))
             }
         }
 
         private func kardexEventView(_ event: CustAssetsComponents.CustCommercialAssetsItemKardexObject) -> Div {
             VBox(.raised) {
                 Div {
-                    USubTitle(event.eventType.description)
-                        .class(.oneLineText)
+                    Div {
+                        USubTitle(event.eventType.description)
+                            .class(.oneLineText)
 
-                    UMinorTitle(getDate(event.createdAt).formatedLong)
-                        .class(.oneLineText)
-                        .marginTop(2.px)
+                        UMinorTitle(getDate(event.createdAt).formatedLong)
+                            .class(.oneLineText)
+                            .marginTop(2.px)
+                    }
+                    .custom("min-width", "0")
+
+                    if let latitude = event.latitude, let longitude = event.longitude,
+                       MapView.hasValidCoordinates(latitude: latitude, longitude: longitude) {
+                        USmallButton {
+                            Img()
+                                .src(TCOrderViewIcon.map.source)
+                                .attribute("aria-hidden", "true")
+                                .width(22.px)
+                                .height(22.px)
+                        }
+                        .attribute("type", "button")
+                        .attribute("title", "Ver ubicación en mapa")
+                        .attribute("aria-label", "Ver ubicación en mapa")
+                        .width(34.px)
+                        .height(34.px)
+                        .padding(all: 5.px)
+                        .display(.inlineFlex)
+                        .custom("align-items", "center")
+                        .custom("justify-content", "center")
+                        .custom("flex", "0 0 auto")
+                        .onClick {
+                            addToDom(
+                                MapView(latitude: latitude, longitude: longitude),
+                                presentation: .interactive
+                            )
+                        }
+                    }
                 }
+                .display(.flex)
+                .custom("align-items", "flex-start")
+                .custom("justify-content", "space-between")
+                .custom("gap", "10px")
 
                 Div {
                     self.detail("Tipo de ubicación", event.toLinkedTo?.description ?? event.toLinkType?.description)
@@ -827,15 +1004,6 @@ extension CustAssetsView {
                 .custom("grid-template-columns", "repeat(auto-fit, minmax(150px, 1fr))")
                 .custom("gap", "6px")
                 .marginTop(8.px)
-
-                Div {
-                    self.detail("Latitud", event.latitude.map { String($0) })
-                    self.detail("Longitud", event.longitude.map { String($0) })
-                }
-                .display(.grid)
-                .custom("grid-template-columns", "repeat(auto-fit, minmax(150px, 1fr))")
-                .custom("gap", "6px")
-                .marginTop(6.px)
 
                 if !event.noteId.activity.isEmpty {
                     Div(event.noteId.activity)
@@ -948,8 +1116,16 @@ extension CustAssetsView {
             addToDom(view)
             
         }
+
+        func startassetServiceOrder() {
+
+        }
         
         override func didRemoveFromDOM() {
+            editorGeneration = UUID()
+            historyRequest = UUID()
+            isLoadingKardexHistory = false
+            clearMap()
             super.didRemoveFromDOM()
             $title.removeAllListeners()
             $activeTab.removeAllListeners()
@@ -960,8 +1136,8 @@ extension CustAssetsView {
             $selectedSectionId.removeAllListeners()
             $selectedSubSectionId.removeAllListeners()
             $isBusy.removeAllListeners()
-            editorGeneration = UUID()
         }
 
     }
+
 }

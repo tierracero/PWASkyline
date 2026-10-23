@@ -804,7 +804,7 @@ class SalePointView: Div {
                 ) { term, resp in
                     
                     if self.searchBox.text == term {
-                        
+                         
                         self.resultBox.innerHTML = ""
                         
                         if resp.count == 1 {

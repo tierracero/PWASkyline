@@ -8,7 +8,7 @@ import TCFireSignal
 import Web
 
 struct TripControlGridItem: Hashable {
-    
+
     let item: CustCommercialTripControlQuick
 
     static func == (lhs: TripControlGridItem, rhs: TripControlGridItem) -> Bool {
@@ -51,14 +51,6 @@ class TripsControlerView: Div {
 
     @State var cancelledItems: [CustCommercialTripControlQuick] = []
 
-    @State private var pendingGridItems: [TripControlGridItem] = []
-
-    @State private var inProgressGridItems: [TripControlGridItem] = []
-
-    @State private var completedGridItems: [TripControlGridItem] = []
-
-    @State private var cancelledGridItems: [TripControlGridItem] = []
-
     @State var selectedTripsTypeLabel = "Actuales"
 
     @State var tripTypeMenuViewIsHidden = true
@@ -77,21 +69,13 @@ class TripsControlerView: Div {
 
     private var tripStatusChangesDuringRequest: [UUID: FiscalTripFollowupStatus] = [:]
 
-    private lazy var pendingItemsView = ForEach(self.$pendingGridItems) { item in
-        self.tripCard(item.item, accent: "#ff9f1a")
-    }
+    private lazy var pendingItemsView = Div()
 
-    private lazy var inProgressItemsView = ForEach(self.$inProgressGridItems) { item in
-        self.tripCard(item.item, accent: "#13b5ea")
-    }
+    private lazy var inProgressItemsView = Div()
 
-    private lazy var completedItemsView = ForEach(self.$completedGridItems) { item in
-        self.tripCard(item.item, accent: "#23ba3a")
-    }
+    private lazy var completedItemsView = Div()
 
-    private lazy var cancelledItemsView = ForEach(self.$cancelledGridItems) { item in
-        self.tripCard(item.item, accent: "#d94949")
-    }
+    private lazy var cancelledItemsView = Div()
 
     lazy var tripTypeMenu = Div()
         .hidden(self.$tripTypeMenuViewIsHidden)
@@ -353,11 +337,23 @@ class TripsControlerView: Div {
         self.inProgressItems = inProgressItems
         self.completedItems = completedItems
         self.cancelledItems = cancelledItems
-        self.pendingGridItems = pendingItems.map{ TripControlGridItem(item: $0) }
-        self.inProgressGridItems = inProgressItems.map{ TripControlGridItem(item: $0) }
-        self.completedGridItems = completedItems.map{ TripControlGridItem(item: $0) }
-        self.cancelledGridItems = cancelledItems.map{ TripControlGridItem(item: $0) }
+
+        renderTripCards(pendingItems, in: pendingItemsView, accent: "#ff9f1a")
+        renderTripCards(inProgressItems, in: inProgressItemsView, accent: "#13b5ea")
+        renderTripCards(completedItems, in: completedItemsView, accent: "#23ba3a")
+        renderTripCards(cancelledItems, in: cancelledItemsView, accent: "#d94949")
         
+    }
+
+    private func renderTripCards(
+        _ items: [CustCommercialTripControlQuick],
+        in container: Div,
+        accent: String
+    ) {
+        container.innerHTML = ""
+        items.forEach { item in
+            container.appendChild(tripCard(item, accent: accent))
+        }
     }
 
     func loadTrips(
@@ -727,12 +723,7 @@ class TripsControlerView: Div {
 
                 self.items.removeAll { $0.id == item.id }
                 self.items.append(item)
-
-                self.pendingItems.removeAll { $0.id == item.id }
-                self.pendingItems.append(item)
-                self.pendingGridItems = self.pendingItems.map {
-                    TripControlGridItem(item: $0)
-                }
+                self.processItems()
 
                 addToDom(TripViewBeta(
                     trip: resp
@@ -770,10 +761,6 @@ class TripsControlerView: Div {
         $inProgressItems.removeAllListeners()
         $completedItems.removeAllListeners()
         $cancelledItems.removeAllListeners()
-        $pendingGridItems.removeAllListeners()
-        $inProgressGridItems.removeAllListeners()
-        $completedGridItems.removeAllListeners()
-        $cancelledGridItems.removeAllListeners()
         $selectedTripsTypeLabel.removeAllListeners()
         $tripTypeMenuViewIsHidden.removeAllListeners()
     }

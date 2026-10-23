@@ -1,0 +1,7 @@
+Sources/App/Snippits/ManagePOC/ManagePOC.swift: exit 1 (files differ)
+
+.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md: exit 1 (files differ)
+
+.agent/PROJECT_MEMORY.md: exit 1 (files differ)
+
+.agent/TASKS_ARCHIVE.md: exit 1 (files differ)

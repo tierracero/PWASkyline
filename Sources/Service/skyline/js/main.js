@@ -396,10 +396,10 @@ function printServiceOrder(type,id,modifiedAt) {
             var fontSize = "12"
             
             if(configGeneral.docuWelcome.length > 1000 && configGeneral.docuWelcome.length < 1801){
-                fontSize = "10"
+                fontSize = "8"
             }
             else if(configGeneral.docuWelcome.length > 1800){
-                fontSize = "8"
+                fontSize = "7"
             }
             
             body =
@@ -425,7 +425,7 @@ function printServiceOrder(type,id,modifiedAt) {
             `<div id="qrdivinner" style="margin-bottom:7px"></div>`
             if(custStoreConfig.config.print.image != "none"){
                 if(custStoreConfig.config.print.image == "pinpattern"){
-                    body += '<img src="https://tierracero.com/dev/core/images/pimg-PatronPIN.jpg" height="180">';
+                    body += '<img src="https://tierracero.com/dev/core/images/pimg-PatronPIN.jpg" height="150">';
                 }
             }
             body +=
@@ -543,7 +543,7 @@ function printServiceOrder(type,id,modifiedAt) {
             body +=
             `<div style="font-size:${fontSize}px">`+
             (configGeneral.docuWelcome) +
-            `<br>Acuerdo de privacidad en ${orTagsURL}/privacidad.`
+            ` Acuerdo de privacidad en ${orTagsURL}/privacidad.`
             if(configGeneral.docuMoreTerm){
                 body += ` Para leer más información, visita ${orTagsURL}/legal.`
             }
@@ -588,7 +588,7 @@ function printServiceOrder(type,id,modifiedAt) {
             // TODO: Incluir publisis
             // if(custStoreConfig.config.print.image != "none"){
             //     if(custStoreConfig.config.print.image == "pinpattern"){
-            //         body += '<img src="https://tierracero.com/dev/core/images/pimg-PatronPIN.jpg" width="180">';
+            //         body += '<img src="https://tierracero.com/dev/core/images/pimg-PatronPIN.jpg" width="150">';
             //     }
             // }
             body +=
@@ -689,7 +689,7 @@ function printServiceOrder(type,id,modifiedAt) {
             body +=
             `<div style="font-size:9px">`+
             (configGeneral.docuWelcome) +
-            `<br>Acuerdo de privacidad en ${orTagsURL}/privacidad.`
+            ` Acuerdo de privacidad en ${orTagsURL}/privacidad.`
             if(configGeneral.docuMoreTerm){
                 body += ` Para leer más información, visita ${orTagsURL}/legal.`
             }
@@ -706,8 +706,8 @@ function printServiceOrder(type,id,modifiedAt) {
          
          var options = {
           text: "https://intratc.co/c/${order.id}",
-          width: 120,
-          height: 120,
+          width: 100,
+          height: 100,
           colorDark: "#000000",
           colorLight: "#ffffff",
           correctLevel: QRCode.CorrectLevel.H
@@ -824,7 +824,7 @@ function printServiceOrder(type,id,modifiedAt) {
             if(custStoreConfig.config.print.image != "none"){
                 body += `<div align="center">`
                 if(custStoreConfig.config.print.image == "pinpattern"){
-                    body += '<img src="https://tierracero.com/dev/core/images/pimg-PatronPIN.jpg" height="180">';
+                    body += '<img src="https://tierracero.com/dev/core/images/pimg-PatronPIN.jpg" height="150">';
                 }
                 body += `</div>`
             }
@@ -832,7 +832,7 @@ function printServiceOrder(type,id,modifiedAt) {
             body +=
             `<div style="font-size:9px">`+
             (configGeneral.docuWelcome) +
-            `<br>Acuerdo de privacidad en ${orTagsURL}/privacidad.`
+            ` Acuerdo de privacidad en ${orTagsURL}/privacidad.`
             if(configGeneral.docuMoreTerm){
                 body += ` Para leer más información, visita ${orTagsURL}/legal.`
             }
@@ -1037,7 +1037,7 @@ function printPdv(payload,custdata) {
     body +=
     `<div style="font-size:9px">`+
     //(configGeneral.docuWelcome) +
-    `<br>Acuerdo de privacidad en https://baronrojotrajes.com/privacidad.`
+    ` Acuerdo de privacidad en ${orTagsURL}/privacidad.`
 //    if(configGeneral.docuMoreTerm){
 //        body += ` Para leer más información, visita https://baronrojotrajes.com/legal.`
 //    }

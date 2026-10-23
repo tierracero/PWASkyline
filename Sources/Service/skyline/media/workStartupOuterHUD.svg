@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 650" fill="none" role="presentation" aria-hidden="true">
+  <!-- Work startup only: a transparent instrument HUD behind the existing central card. -->
+  <defs>
+    <linearGradient id="whiteRail" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#f4f9ff"/><stop offset="1" stop-color="#ccecff"/>
+    </linearGradient>
+    <linearGradient id="thinRail" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#8dbad6" stop-opacity=".08"/>
+      <stop offset=".5" stop-color="#b9d7e8" stop-opacity=".42"/>
+      <stop offset="1" stop-color="#8dbad6" stop-opacity=".08"/>
+    </linearGradient>
+  </defs>
+  <g stroke="url(#whiteRail)" stroke-width="5.4" stroke-linejoin="miter" stroke-linecap="square" opacity=".93">
+    <!-- Large angled bracket segments from the supplied reference. -->
+    <!-- Shorter corner legs, moved outward to clear the central startup box. -->
+    <path d="M192 147 L170 127 L64 239 L88 252"/>
+    <path d="M1008 147 L1030 127 L1136 239 L1112 252"/>
+    <path d="M88 493 L64 506 L170 616 L192 595"/>
+    <path d="M1112 493 L1136 506 L1030 616 L1008 595"/>
+  </g>
+  <g stroke="#bcd9eb" stroke-width="1" opacity=".24">
+    <!-- Perspective support lines terminating behind the Skyline control card. -->
+    <path d="M200 155 L303 259 M90 265 L310 380 M200 590 L303 500 M90 486 L310 374"/>
+    <path d="M1000 155 L897 259 M1110 265 L890 380 M1000 590 L897 500 M1110 486 L890 374"/>
+    <path d="M137 203 L184 168 L303 288 M1063 203 L1016 168 L897 288"/>
+    <path d="M137 540 L184 586 L303 467 M1063 540 L1016 586 L897 467"/>
+  </g>
+  <g stroke="#dff4ff" stroke-width="2.8" opacity=".83">
+    <!-- Target brackets are deliberately outside of the central card. -->
+    <path d="M295 260 H276 V318 M276 436 V490 H295"/>
+    <path d="M905 260 H924 V318 M924 436 V490 H905"/>
+    <path d="M283 223 H307 M893 223 H917 M283 530 H307 M893 530 H917"/>
+    <path d="M253 340 H266 M253 412 H266 M934 340 H947 M934 412 H947"/>
+  </g>
+  <g stroke="url(#thinRail)" stroke-width="1.5">
+    <path d="M278 223 H310 M890 223 H922 M278 530 H310 M890 530 H922"/>
+    <path d="M248 379 H295 M905 379 H952"/>
+  </g>
+  <!-- Upper calibration strip and precision ticks. -->
+  <g stroke="#ecf8ff" opacity=".9" stroke-linejoin="miter">
+    <path d="M362 50 H838 L828 71 M362 50 L373 71" stroke-width="5"/>
+    <g stroke-width="2.5"><path d="M380 51 v21" />
+    <path d="M390 51 v8" />
+    <path d="M400 51 v8" />
+    <path d="M410 51 v8" />
+    <path d="M420 51 v8" />
+    <path d="M430 51 v15" />
+    <path d="M440 51 v8" />
+    <path d="M450 51 v8" />
+    <path d="M460 51 v8" />
+    <path d="M470 51 v8" />
+    <path d="M480 51 v21" />
+    <path d="M490 51 v8" />
+    <path d="M500 51 v8" />
+    <path d="M510 51 v8" />
+    <path d="M520 51 v8" />
+    <path d="M530 51 v15" />
+    <path d="M540 51 v8" />
+    <path d="M550 51 v8" />
+    <path d="M560 51 v8" />
+    <path d="M570 51 v8" />
+    <path d="M580 51 v21" />
+    <path d="M590 51 v8" />
+    <path d="M600 51 v8" />
+    <path d="M610 51 v8" />
+    <path d="M620 51 v8" />
+    <path d="M630 51 v15" />
+    <path d="M640 51 v8" />
+    <path d="M650 51 v8" />
+    <path d="M660 51 v8" />
+    <path d="M670 51 v8" />
+    <path d="M680 51 v21" />
+    <path d="M690 51 v8" />
+    <path d="M700 51 v8" />
+    <path d="M710 51 v8" />
+    <path d="M720 51 v8" />
+    <path d="M730 51 v15" />
+    <path d="M740 51 v8" />
+    <path d="M750 51 v8" />
+    <path d="M760 51 v8" />
+    <path d="M770 51 v8" />
+    <path d="M780 51 v21" />
+    <path d="M790 51 v8" />
+    <path d="M800 51 v8" />
+    <path d="M810 51 v8" />
+    <path d="M820 51 v8" /></g>
+    <path d="M600 48 V75" stroke-width="2.2"/>
+  </g>
+  <g fill="#b9d4e6" font-family="ui-monospace,SFMono-Regular,Consolas,monospace" font-size="9" letter-spacing="1" text-anchor="middle" opacity=".75">
+    <text x="415" y="89">35</text><text x="505" y="89">36</text>
+    <text x="600" y="89">01</text><text x="695" y="89">02</text>
+    <text x="790" y="89">03</text>
+  </g>
+  <!-- Small lower telemetry notches outside the interactive central assembly. -->
+  <g stroke="#e3f5ff" stroke-width="2" opacity=".7">
+    <path d="M285 566 H332 M868 566 H915"/>
+    <path d="M297 556 V566 M903 556 V566"/>
+  </g>
+  <g fill="#b6d2e4" font-size="9" letter-spacing="1.6" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Consolas,monospace" opacity=".55">
+    <text x="309" y="582">SYS</text><text x="891" y="582">CTL</text>
+  </g>
+</svg>

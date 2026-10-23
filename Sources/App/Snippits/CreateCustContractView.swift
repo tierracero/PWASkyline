@@ -301,6 +301,10 @@ class CreateCustContractView: Div {
         switch key {
         case .refid:
             return "ID"
+        case .type:
+            return "Tipo de objeto"
+        case .relId:
+            return "ID de activo"
         case .IDTag1:
             return serviceTags.idTagName
         case .IDTag2:
@@ -344,7 +348,7 @@ class CreateCustContractView: Div {
 
     func relationPlaceholder(_ key: EquipmentObject.CodingKeys) -> String {
         switch key {
-        case .refid:
+        case .refid, .type, .relId:
             return ""
         case .IDTag1:
             return serviceTags.idTagPlaceholder
@@ -373,6 +377,10 @@ class CreateCustContractView: Div {
         switch key {
         case .refid:
             return equipment.id.uuidString
+        case .type:
+            return equipment.type.description
+        case .relId:
+            return equipment.relId?.uuidString ?? ""
         case .IDTag1:
             return equipment.IDTag1
         case .IDTag2:
@@ -436,7 +444,7 @@ class CreateCustContractView: Div {
             return equipment.tagCheck9
         case .tagCheck10:
             return equipment.tagCheck10
-        case .refid, .IDTag1, .IDTag2, .tag1, .tag2, .tag3, .tag4, .tag5, .tag6, .tagDescr:
+        case .refid, .type, .relId, .IDTag1, .IDTag2, .tag1, .tag2, .tag3, .tag4, .tag5, .tag6, .tagDescr:
             return false
         }
     }

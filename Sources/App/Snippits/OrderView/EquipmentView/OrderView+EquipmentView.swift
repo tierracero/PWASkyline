@@ -1424,6 +1424,8 @@ extension OrderView {
                                                 equipments.append(.init(
                                                     id: equipment.id,
                                                     createdAt: equipment.createdAt,
+                                                    type: equipment.type,
+                                                    relId: equipment.relId,
                                                     workedBy: equipment.workedBy,
                                                     deliveredBy: equipment.deliveredBy,
                                                     IDTag1: equipment.IDTag1,
@@ -1511,6 +1513,8 @@ extension OrderView {
                                            equipments.append(.init(
                                                id: equipment.id,
                                                createdAt: equipment.createdAt,
+                                               type: equipment.type,
+                                               relId: equipment.relId,
                                                workedBy: equipment.workedBy,
                                                deliveredBy: equipment.deliveredBy,
                                                IDTag1: equipment.IDTag1,
@@ -1908,6 +1912,8 @@ extension OrderView {
                                 equipments.append(.init(
                                     id: equipment.id,
                                     createdAt: equipment.createdAt,
+                                    type: equipment.type,
+                                    relId: equipment.relId,
                                     workedBy: equipment.workedBy,
                                     deliveredBy: equipment.deliveredBy,
                                     IDTag1: equipment.IDTag1,

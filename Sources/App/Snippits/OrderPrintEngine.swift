@@ -49,20 +49,23 @@ class OrderPrintEngine: Div {
     
     override class var name: String { "div" }
     
+    var orderImgIsHidden = false
+
     lazy var lineBreak = Div()
     
     lazy var dateViewOne = Div()
     lazy var dateViewTwo = Div()
-    
+
     lazy var qrInternal = Div()
-        .marginBottom(7.px)
-        .marginTop(12.px)
         .id(Id(stringLiteral: "qrInternal"))
+        .marginBottom(3.px)
+        .marginTop(3.px)
+        .height(100.px)
     
     lazy var qrCustomer = Div()
+        .id(Id(stringLiteral: "qrCustomer"))
         .marginBottom(7.px)
         .marginTop(12.px)
-        .id(Id(stringLiteral: "qrCustomer"))
     
     lazy var orderImg = Img()
     
@@ -139,30 +142,49 @@ class OrderPrintEngine: Div {
                         .align(.center)
                         .fontSize(42.px)
                         .width(33.percent)
+
                         /// DATE / DUE
                         Td{
                             self.dateViewOne
-                        }
-                        .width(33.percent)
-                    }
-                    ///
-                    Tr{
-                        Td{
-                            Strong(self.order.name)
-                        }.colSpan(2)
-                        Td{
+
+
+                            Div().height(7.px)
                             
-                            self.qrInternal
-                            
-                            Div{
-                                self.orderImg
-                                
-                                    .marginTop(7.px)
-                                    .height(170.px)
+                            Div {
+
+                                if self.orderImgIsHidden {
+
+                                    Div{
+                                        self.qrInternal
+                                    }
+                                    .align(.center)
+
+                                }
+                                else {
+
+                                    Div{
+                                        self.qrInternal
+                                        .width(95.percent)
+                                    }
+                                    .width(50.percent)
+                                    .align(.center)
+                                    .float(.left)
+
+                                    Div{
+                                        self.orderImg
+                                        .width(95.percent)
+                                    }
+                                    .width(50.percent)
+                                    .align(.center)
+                                    .float(.left)
+                                }
+
+                                Div().clear(.both)
+
                             }
-                            .align(.center)
                             
-                            
+                            Div().height(7.px)
+
                             Div()
                                 .borderBottom(width: .thin, style: .solid, color: .black)
                                 .marginTop(24.px)
@@ -180,8 +202,14 @@ class OrderPrintEngine: Div {
                                 .align(.center)
                             
                         }
-                        .rowSpan(4)
+                        .rowSpan(3)
                         .align(.center)
+                    }
+                    ///
+                    Tr{
+                        Td{
+                            Strong(self.order.name)
+                        }.colSpan(2)
                         
                     }
                     ///
@@ -211,13 +239,11 @@ class OrderPrintEngine: Div {
                             
                             Div{
                                 Span(configGeneral.docuWelcome)
-                                Br()
-                                Span("Acuerdo de privacidad en \(customerServiceProfile?.account.url ?? "")/privacidad.")
+                                Span(" Acuerdo de privacidad en \(customerServiceProfile?.account.url ?? "")/privacidad.")
                             }
                             .fontSize(self.fontSize)
                             
                         }
-                        .rowSpan(2)
                         .colSpan(2)
                     }
                 }
@@ -300,8 +326,7 @@ class OrderPrintEngine: Div {
                             
                             Div{
                                 Span(configGeneral.docuWelcome)
-                                Br()
-                                Span("Acuerdo de privacidad en \(customerServiceProfile?.account.url ?? "")/privacidad.")
+                                Span(" Acuerdo de privacidad en \(customerServiceProfile?.account.url ?? "")/privacidad.")
                             }
                             .fontSize(self.fontSize)
                             
@@ -379,8 +404,7 @@ class OrderPrintEngine: Div {
                 
                 Div{
                     Span(configGeneral.docuWelcome)
-                    Br()
-                    Span("Acuerdo de privacidad en \(customerServiceProfile?.account.url ?? "")/privacidad.")
+                    Span(" Acuerdo de privacidad en \(customerServiceProfile?.account.url ?? "")/privacidad.")
                 }
                 .fontSize(13.px)
                 
@@ -624,12 +648,15 @@ class OrderPrintEngine: Div {
             lineBreak.appendChild(Br())
         }
         
+
         switch configStore.print.image {
         case .none:
+            orderImgIsHidden = true
             self.orderImg.hidden(true)
         case .pinpattern:
             self.orderImg.src("https://tierracero.com/dev/core/images/pimg-PatronPIN.jpg")
         case .location:
+            orderImgIsHidden = true
             self.orderImg.hidden(true)
         }
         
@@ -691,13 +718,10 @@ class OrderPrintEngine: Div {
         )
         
         if( configGeneral.docuWelcome.count > 1000 && configGeneral.docuWelcome.count < 1801 ) {
-            fontSize = 10.px
+            fontSize = 8.px
         }
         else if(configGeneral.docuWelcome.count > 1800) {
-            fontSize =  8.px
-        }
-        else {
-            fontSize =  12.px
+            fontSize =  7.px
         }
         
         if let cstore = order.store {

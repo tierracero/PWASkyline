@@ -32,21 +32,35 @@ class SelectStore: Div {
         Div {
             Div {
                 Div {
+
+                    Img()
+                        .src("/skyline/media/cross.png")
+                        .height(24.px)
+                        .float(.right)
+                        .onClick {
+                            self.remove()
+                        }
+
                     Img()
                         .src("/skyline/media/icon_store.png")
+                        .marginRight(7.px)
                         .class(.iconBlue)
                         .height(24.px)
+                        .float(.right)
 
                     H2("Seleccione Tienda")
+                        .float(.right)
                         .class(
                             Class(TCTripBetaClass.titleText),
                             Class(TCCrystalSurfaceClass.tripPickerTitle)
                         )
+
+                    Div().clear(.both)
+                    
                 }
                 .custom("align-items", "center")
                 .custom("min-width", "0")
                 .custom("gap", "8px")
-                .display(.flex)
 
             }
             .class(

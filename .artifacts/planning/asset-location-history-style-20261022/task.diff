@@ -1,0 +1,86 @@
+--- before/Sources/Service/skyline/js/main.js
++++ after/Sources/Service/skyline/js/main.js
+@@ -2215,8 +2215,8 @@
+                                 height: "26px",
+                                 borderRadius: "50%",
+                                 background: "rgb(145, 145, 145)",
+-                                color: "white",
+-                                border: "2px solid rgb(225, 225, 225)",
++                                color: "black",
++                                border: "3px solid rgb(0 0 0)",
+                                 boxSizing: "border-box",
+                                 display: "flex",
+                                 alignItems: "center",
+@@ -2239,8 +2239,8 @@
+                     });
+                     historyOverlay = new mapkit.PolylineOverlay(coordinates.concat([currentCoordinate]), {
+                         style: new mapkit.Style({
+-                            lineWidth: 2,
+-                            strokeColor: "rgb(200, 205, 210)",
++                            lineWidth: 4,
++                            strokeColor: "rgb(255, 165, 0)",
+                             strokeOpacity: 0.65,
+                             lineCap: "round",
+                             lineJoin: "round"
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -19,7 +19,7 @@
+ - In order mode, `TCOrderViewTheme` scopes the `AccoutOverview` shell to the standalone `SalePointView` holder geometry: top 25px, left 40px, width `calc(100% - 100px)`, height `calc(100% - 70px)` and 24px rounded corners. The theme retains its existing zero shell padding and border-box sizing. Internal OrderView elements, toolbar/content rules and corner speech icon placement are unchanged. Source-audited; browser rendering remains unverified.
+ - `AssetItemView.dataColumn` edits the existing update contract fields: name, serial, current cost, section and subsection. Other item/custody metadata remains read-only and service-card activation stays separate. `Guardar Cambios` validates exact nonnegative cents and classification IDs, calls `updateAssettem` with the loaded item UUID, accepts a successful nil-note no-op response, and reloads authoritative details/notes by UUID. Current classification scope supplies catalog choices; failed catalog reads preserve existing IDs, and changing section clears its subsection. Mount/session/generation guards and disabled controls protect pending loads/saves. Source-audited; browser/build behavior remains unverified.
+ - `AssetView` and `AssetItemView` notes reuse the account `QuickMessageObject` rows in compact bordered scroll containers, ordered newest first with alternating backgrounds, date/time, the note type description, resolved author and wrapped activity text. The full-note initializer preserves ID, timestamp, actor, type and activity while adapting to the existing display model; actorless full notes show Sistema. Asset rows disable priority-change actions through an optional flag whose existing-caller default remains enabled. Asset note data/counts and save/refresh paths remain intact. Source/diff reviewed; build and live rendering remain unverified.
+-- `AssetItemView.mapContainer` automatically reads all ascending Kardex pages and retains only the nine newest valid distinct historical coordinate pairs, excluding the saved current coordinate: ten locations total including current. Duplicate positions retain their latest event; timestamp/UUID define stable order. The first page is shared with the existing Kardex cards. The current marker retains its default appearance and saved position; numbered gray historical markers fade from 50% opacity (oldest) to 90% (newest), with a light gray chronological polyline ending at current. A single historical marker uses 90%. The view owns its MapKit controller, destroys it before replacement/removal, and guards token/history callbacks by mount, session, editor generation, request and item identity. Only a complete history scan is drawn; failures preserve current and allow retry from the tabs. Source/contract and JavaScript syntax reviewed; build and live map rendering remain unverified.
++- `AssetItemView.mapContainer` automatically reads all ascending Kardex pages and retains only the nine newest valid distinct historical coordinate pairs, excluding the saved current coordinate: ten locations total including current. Duplicate positions retain their latest event; timestamp/UUID define stable order. The first page is shared with the existing Kardex cards. The current marker retains its default appearance and saved position; numbered gray historical markers have black text and a 3px solid black border, fade from 50% opacity (oldest) to 90% (newest), and connect through a 4px orange chronological polyline ending at current. A single historical marker uses 90%. The view owns its MapKit controller, destroys it before replacement/removal, and guards token/history callbacks by mount, session, editor generation, request and item identity. Only a complete history scan is drawn; failures preserve current and allow retry from the tabs. Source/contract and JavaScript syntax reviewed; build and live map rendering remain unverified.
+ - Store configuration binds existing and newly created `StoreView` instances to `display: flex` when selected and `display: none` otherwise, preserving the theme’s bounded flex column so its card grid fills the available workspace height. `StoreView.usersContainers` retains `flex: 1 1 0`, an initial zero height, `min-height: 0`, and automatic overflow; the user list grows between its header and action and excess rows scroll. The supplied recording showed the prior block-display override leaving unused space below the cards. Loading and user-card interactions remain unchanged; source-audited, fixed browser rendering remains unverified.
+ - `CustAssetsAvatarUploader` accepts an optional `[MediaViewer.MediaFile]` image list, initializes the current avatar first, and shows at most five 12px selection dots beneath the preview. Selecting a dot changes the preview without changing the saved avatar; clicking the preview opens the existing MediaViewer with the full photo list at that image and media actions disabled. Asset-item detail supplies its existing photos and displays only the uploader preview, with no separate thumbnail grid below it. Its marked `isAvatar` photo uses the saved item avatar as its preview reference while retaining the original file/ID. Avatar matching and upload reconciliation compare image identities with recognized thump_/og_/wap_ prefixes and query/fragment suffixes removed, preserving host/directory identity and all render URLs; a matching photo is reused instead of adding a duplicate standalone avatar. Upload results and external avatar changes restore focus to the current avatar. Updated on 2026-10-14; source review only, browser/build behavior remains unverified.
+ - `ManageLocationItem` exposes a bottom-left red crystal Eliminar action for an existing editor ID linked to a saved `.location` source. It uses the linked `locationId`, not the generated editor UUID, with the existing `deleteLocation` confirmation/error flow. The endpoint cancels the saved location without deleting its database record. Only success closes the editor and notifies `CreateTripView` through its existing saved-location list/selection cleanup; pending deletion prevents duplicate calls and saving. An optional live deletion-policy closure defaults to allowing deletion; trip creation denies deletion of its primary stops while additional destinations exist and rechecks before confirmation submission. The existing `removeLocation` trip-stop operation is not called. Browser/server behavior remains unverified.
+--- before/.agent/architecture/PWA_ASSETS_AND_SERVICE_WORKER.md
++++ after/.agent/architecture/PWA_ASSETS_AND_SERVICE_WORKER.md
+@@ -17,7 +17,7 @@
+ - `DevPublic` and `DistPublic` contain app/service JS, WASM, compressed WASM, HTML, manifest, favicon, and service worker outputs.
+ - `Sources/Service/skyline/js/speechRecognition.js` is the source-owned browser bridge exposed as `globalThis.PWASkylineSpeech`; it is copied through the existing `skyline` resource declaration and loaded only by the authenticated work shell.
+ - `Sources/Service/skyline/js/main.js` exposes `createSubCustomerLocationMap` for the subaccount manager's read-only location preview. It returns a local MapKit instance for caller-owned destruction and does not modify the legacy shared map/marker globals. Generated public copies require the normal resource/build refresh to include this helper.
+-- The same resource exposes `createAssetItemLocationMap`, an independently owned controller with `setHistory` and `destroy` for asset-item history. It keeps the default current marker, adds up to nine distinct gray custom annotations with age-based opacity, and fits a light gray polyline through history to current. Swift supplies the completed chronological selection as JSON; the helper also validates/deduplicates coordinates. This source edit does not change legacy map globals, resource paths or service-worker behavior. JavaScript syntax reviewed; generated public copies still require the normal build/resource refresh, and live MapKit rendering remains unverified.
++- The same resource exposes `createAssetItemLocationMap`, an independently owned controller with `setHistory` and `destroy` for asset-item history. It keeps the default current marker, adds up to nine distinct gray custom annotations with black text, a 3px black border and age-based opacity, and fits a 4px orange polyline through history to current. Swift supplies the completed chronological selection as JSON; the helper also validates/deduplicates coordinates. This source edit does not change legacy map globals, resource paths or service-worker behavior. JavaScript syntax reviewed; generated public copies still require the normal build/resource refresh, and live MapKit rendering remains unverified.
+ 
+ ## Rules
+ 
+--- before/.agent/SOURCE_MAP.md
++++ after/.agent/SOURCE_MAP.md
+@@ -40,7 +40,7 @@
+ | `Sources/App/Snippits/SearchSubCustomerView.swift` | Parent-account-scoped subcustomer search/selection, no-result creation, and required-address completion through the subaccount manager. |
+ | `Sources/App/Snippits/ManualAddressSearch.swift` | Crystal postal-address and coordinate lookup dialogs; returns the selected address or geocoder snapshot to its caller. |
+ | `Sources/App/Snippits/MapView.swift` | Reusable `MapView(latitude:longitude:)` modal with an independently owned MapKit location marker; asset-item Kardex headers open it from a map icon when event coordinates are valid. |
+-| `Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemView.swift`, `Sources/Service/skyline/js/main.js` | Asset-unit map history: scan ascending Kardex pages, select nine newest unique earlier coordinates plus current, render fading gray markers/connecting line, and own/clean up the map controller. |
++| `Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemView.swift`, `Sources/Service/skyline/js/main.js` | Asset-unit map history: scan ascending Kardex pages, select nine newest unique earlier coordinates plus current, render fading gray markers with black text/borders and an orange connecting line, and own/clean up the map controller. |
+ | `Sources/App/Snippits/TripControler/TripControler+AddLocation.swift` | Dedicated fiscal-location picker; owns origin/destination presentation and location-typed callbacks, including prefilled confirmation and resumption for incomplete store addresses. |
+ | `Sources/App/Snippits/TripControler/TripControler+AddMerchandise.swift` | Account/origin-aware fiscal-merchandise base picker; preserves selection and creation callbacks. |
+ | `Sources/App/Snippits/TripControler/ConfirmTripStatusUpdate.swift`, `TripControler+TripViewBeta.swift` | Beta trip status and per-asset delivery actions with a shared crystal confirmation form; validates transitions, comments, linked routes and evidence, marks confirmed deliveries, and refreshes trip/notes after API success. |
+--- before/.agent/PROJECT_MEMORY.md
++++ after/.agent/PROJECT_MEMORY.md
+@@ -35,7 +35,7 @@
+ 
+ ## Authoritative References
+ 
+-- 2026-10-22: Asset-unit maps show ten locations total including current. Kardex is paged oldest first, so the client scans all pages, keeps the nine newest unique valid coordinates excluding current, and draws gray age-faded markers/line with independent map ownership. The first page also supplies Kardex cards. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`, `architecture/PWA_ASSETS_AND_SERVICE_WORKER.md` and `.artifacts/planning/asset-kardex-map-history-20261022/`; source/JavaScript syntax audit only, builds/tests/live map execution remain unrun and generated resources need normal refresh.
++- 2026-10-22: Asset-unit maps show ten locations total including current. Kardex is paged oldest first, so the client scans all pages, keeps the nine newest unique valid coordinates excluding current, and draws gray age-faded markers with black text/3px black borders and a 4px orange line with independent map ownership. The first page also supplies Kardex cards. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`, `architecture/PWA_ASSETS_AND_SERVICE_WORKER.md` and `.artifacts/planning/asset-kardex-map-history-20261022/`; source/JavaScript syntax audit only, builds/tests/live map execution remain unrun and generated resources need normal refresh.
+ 
+ - 2026-10-22: Asset and asset-unit notes reuse the account note rows with date/time, note type descriptions, author and newest-first alternating presentation. Asset callers disable priority controls while existing callers retain their default behavior. See `architecture/SWIFWEB_APP_ARCHITECTURE.md` and `.artifacts/planning/asset-account-notes-20261022/`; source/diff review only, no builds/tests/browser execution.
+ 
+--- before/.agent/TASKS_ARCHIVE.md
++++ after/.agent/TASKS_ARCHIVE.md
+@@ -1,6 +1,15 @@
+ # Tasks Archive
+ 
+ Verified completed tasks live here.
++
++---
++
++## ASSET-LOCATION-HISTORY-STYLE-001 — Strengthen history marker and route styling
++
++- **Completed**: 2026-10-22 (source styling).
++- **Scope/IDs**: `createAssetItemLocationMap` in `Sources/Service/skyline/js/main.js`, affected docs; `PWA-001/002/003`, `SWWEB-001/002`.
++- **Reviewed plan/implementation**: Apply black text and a 3px solid black border to the gray history markers; change the connecting line from 2px gray to 4px orange. Existing opacity-by-age, current marker, history data and map lifecycle are preserved.
++- **Verification**: Focused source/diff, JavaScript syntax and whitespace/status audit. Builds/tests/live map rendering were not run; public outputs require normal resource refresh. Evidence: `.artifacts/planning/asset-location-history-style-20261022/`.
+ 
+ ---
+ 

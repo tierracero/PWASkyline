@@ -11,6 +11,7 @@ import Web
 public func killSession(){
 
     CatchControler.shared.clearTaskAlerts()
+    CatchControler.shared.clearFavoriteVendors()
     
     WebApp.current.window.localStorage.clear()
 

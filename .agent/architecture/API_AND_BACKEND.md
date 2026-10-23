@@ -49,6 +49,8 @@ Authoritative rules: `API-*`.
 
 - Shared CTAM full/Quick responses include alertFamily, optional alertFrequency, and optional notified. Legacy transport payloads decode to general/nil/nil. The server preserves these fields through list/detail/order queries and WebSocket copies; existing PWA renderers consume the extended shared types without a route or UI change in this metadata stage.
 
+- Equipment payloads carry shared `CustFolioObjectsType` (equipment/assetItem), defaulting legacy JSON to equipment. Equipment status/cache DTO copies retain the existing type. Contract relation keys include type with a human-readable label/value and optional relId as an asset UUID string. Shared equipment creation/list payloads carry relId after type, defaulting missing/null values to nil; all three browser equipment status/cache copies retain it. Existing service-tag fields keep their meaning.
+
 ## Rules
 
 ### API-001 — Client Contract Ownership
@@ -71,3 +73,11 @@ Fiscal, CFDI, Carta Porte, payment, credit, and account-balance flows require es
 - For new payloads, verify whether the type already exists in a private package before duplicating it locally.
 - Error-report delivery succeeds only after a successful HTTP status, decodable response, and backend `.ok` status; delivery failures update the original persisted record and never create a recursive report.
 - Diagnostics use `TCFundamentals.ErrorReportingPriorty` directly (`zero`, `low`, `med`, and `high`) for persistence, queue ordering, and backend delivery.
+
+## Vendor Favorite Integration
+
+Vendor create sends favorite (default false); save may omit it to preserve a stored favorite. `setFavoriteVendor` posts shared `SetFavoriteVendorRequest(vendorId:favorite:)` and decodes `APIResponse`. `getVendors(type:)` sends the shared list request, defaulting all. SearchVendorView and product-vendor matches render a separate star action that preserves selection/add behavior; state changes after `.ok` only. Search results and edits retain the returned favorite field. Source reviewed; builds, tests and browser verification have not run for this change. Deploy the updated shared packages/server and apply the vendor favorite column SQL before enabling the client.
+
+## Trip Asset Service Eligibility
+
+The CreateTripView inventory picker excludes commercial asset items with a non-null `serviceTrip` or `serviceOrder`, and its final selection callback rechecks both fields to reject stale search results. SkylineServer repeats eligibility validation under the asset row lock before trip creation.

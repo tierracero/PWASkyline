@@ -2275,7 +2275,8 @@ class CreateTripView: Div {
                 account: self.account,
                 currentLocation: currentLocation,
                 items: payload.items.filter {
-                    !selectedIds.contains($0.id) && $0.status == expectedStatus &&
+                    !selectedIds.contains($0.id) && $0.serviceTrip == nil && $0.serviceOrder == nil &&
+                    $0.status == expectedStatus &&
                     $0.currentLocation.rawValue == origin.locationType.rawValue && $0.currentLocationId == locationId
                 },
                 callback: { [weak self] item in
@@ -2291,6 +2292,10 @@ class CreateTripView: Div {
 
     private func configureCommercialAsset(_ item: CustCommercialAssetsItem, request: Int) {
         guard !merchendise.contains(where: { $0.merchandiseType == .commercialAsset && $0.merchandiseId == item.id }) else { return }
+        guard item.serviceTrip == nil, item.serviceOrder == nil else {
+            showError(.invalidField, "El activo ya esta asignado a un viaje o una orden de servicio.")
+            return
+        }
         guard let origin, let locationId = origin.locationId,
               item.currentLocation.rawValue == origin.locationType.rawValue,
               item.currentLocationId == locationId,

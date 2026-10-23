@@ -3068,6 +3068,8 @@ class StartServiceOrder: Div {
         var _equipments: [EquipmentObject] = []
         
         _equipments.append(.init(
+            type: .equipment,
+            relId: nil,
             IDTag1: self._idTag1,
             IDTag2: self._idTag2,
             tag1: self._tag1,
@@ -4001,9 +4003,7 @@ class StartServiceOrder: Div {
                 
                 let id = _poc.refid
                 
-                let currentUnits = items.count.toFloat.toCents
-                
-                if currentUnits > 0 {
+                if units > 0 {
                     
                     let tr: OldChargeTrRow = OldChargeTrRow(
                         preCharge: true,
@@ -4023,7 +4023,7 @@ class StartServiceOrder: Div {
                         
                         self.charges.forEach { charge in
                             
-                            if charge.refid == viewId {
+                            if charge.refid == id {
                                 return
                             }
                             

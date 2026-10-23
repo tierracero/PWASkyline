@@ -131,8 +131,7 @@ class OrderPrintChargesEngine: Div {
                             
                             Div{
                                 Span(configGeneral.docuWelcome)
-                                Br()
-                                Span("Acuerdo de privacidad en \(customerServiceProfile?.account.url ?? "")/privacidad.")
+                                Span(" Acuerdo de privacidad en \(customerServiceProfile?.account.url ?? "")/privacidad.")
                             }
                             .fontSize(self.fontSize)
                             

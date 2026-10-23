@@ -63,6 +63,10 @@ class SearchVendorView: Div {
     @State var term = ""
     
     @State var results: [CustVendorsQuick] = []
+
+    private var favoriteStates: [UUID: State<Bool>] = [:]
+
+    private var favoriteSavingStates: [UUID: State<Bool>] = [:]
     
     @State var createAccountViewIsHidden: Bool = true
     
@@ -83,6 +87,8 @@ class SearchVendorView: Div {
     @State var mobile: String = ""
     
     @State var creditDays: String = "0"
+
+    @State var favorite: Bool = false
     
     lazy var seachVendorField = InputText(self.$term)
         .custom("width","calc(100% - 210px)")
@@ -519,6 +525,14 @@ class SearchVendorView: Div {
                     Div().class(.clear)
                     
                     self.creditDaysField
+
+                    Div().class(.clear).marginTop(12.px)
+
+                    Label {
+                        InputCheckbox(self.$favorite)
+                        Span(" Proveedor favorito")
+                    }
+                    .color(.white)
                     
                     Div().class(.clear).marginTop(7.px)
                 }
@@ -609,22 +623,64 @@ class SearchVendorView: Div {
             
             $0.forEach { prof in
                 
+                let favorite = self.favoriteStates[prof.id] ?? State(wrappedValue: prof.favorite)
+                let isSaving = self.favoriteSavingStates[prof.id] ?? State(wrappedValue: false)
+                self.favoriteStates[prof.id] = favorite
+                self.favoriteSavingStates[prof.id] = isSaving
+                if !isSaving.wrappedValue {
+                    favorite.wrappedValue = prof.favorite
+                }
+
                 self.resultDiv.appendChild(
-                    Div{
-                        Div("\(prof.rfc) \(prof.razon) \(prof.businessName)")
-                            .class(.oneLineText)
-                            .fontSize(18.px)
-                        
-                        Div("\(prof.firstName) \(prof.lastName)")
-                            .class(.oneLineText)
-                            .fontSize(23.px)
-                    }
-                        .width(96.percent)
-                        .class(.uibtnLarge)
+                    Div {
+                        Div {
+                            Div("\(prof.rfc) \(prof.razon) \(prof.businessName)")
+                                .class(.oneLineText)
+                                .fontSize(18.px)
+
+                            Div("\(prof.firstName) \(prof.lastName)")
+                                .class(.oneLineText)
+                                .fontSize(23.px)
+                        }
+                        .custom("flex", "1")
+                        .custom("min-width", "0")
                         .onClick {
-                            self.callback(prof)
+                            var vendor = prof
+                            vendor.favorite = favorite.wrappedValue
+                            self.callback(vendor)
                             self.remove()
-                        })
+                        }
+
+                        VendorFavoriteButton(
+                            vendorId: prof.id,
+                            favorite: favorite,
+                            isSaving: isSaving
+                        ) { [weak self] favorite in
+                            guard let self else {
+                                return
+                            }
+
+                            var updatedVendor = prof
+                            updatedVendor.favorite = favorite
+                            CatchControler.shared.updateFavoriteVendor(
+                                updatedVendor,
+                                for: custCatchID
+                            )
+
+                            self.results = self.results.map { item in
+                                var item = item
+                                if item.id == prof.id {
+                                    item.favorite = favorite
+                                }
+                                return item
+                            }
+                        }
+                    }
+                    .custom("display", "flex")
+                    .custom("align-items", "center")
+                    .width(96.percent)
+                    .class(.uibtnLarge)
+                )
                 
             }
         }
@@ -650,6 +706,8 @@ class SearchVendorView: Div {
             self.mobile = vendor.mobile
             
             self.creditDays = vendor.creditDays.toString
+
+            self.favorite = vendor.favorite
             
         }
         else if let vendorid = id {
@@ -697,6 +755,10 @@ class SearchVendorView: Div {
                 self.mobile = vendor.mobile
                 
                 self.creditDays = vendor.creditDays.toString
+
+                self.vendor = vendor
+
+                self.favorite = vendor.favorite
                 
             }
         }
@@ -707,6 +769,51 @@ class SearchVendorView: Div {
         super.didAddToDOM()
         
         seachVendorField.select()
+
+        if id == nil {
+            loadFavoriteVendors()
+        }
+    }
+
+    private func loadFavoriteVendors() {
+        let userID = custCatchID
+
+        if let cachedVendors = CatchControler.shared.cachedFavoriteVendors(for: userID) {
+            results = cachedVendors
+            return
+        }
+
+        seachVendorField.class(.isLoading)
+
+        API.custAPIV1.getVendors(type: .favorites) { [weak self] resp in
+            guard let self else {
+                return
+            }
+
+            self.seachVendorField.removeClass(.isLoading)
+
+            guard self.isInDOM, custCatchID == userID else {
+                return
+            }
+
+            guard let resp else {
+                showError(.comunicationError, .serverConextionError)
+                return
+            }
+
+            guard resp.status == .ok else {
+                showError(.generalError, resp.msg)
+                return
+            }
+
+            guard let vendors = resp.data?.vendors else {
+                showError(.generalError, "No se recivio payload")
+                return
+            }
+
+            CatchControler.shared.cacheFavoriteVendors(vendors, for: userID)
+            self.results = CatchControler.shared.cachedFavoriteVendors(for: userID) ?? vendors
+        }
     }
     
     func search(){
@@ -786,7 +893,8 @@ class SearchVendorView: Div {
                 email: self.email,
                 mobile: self.mobile,
                 fiscalPOCMobile: self.fiscalPOCMobile,
-                creditDays: creditDays
+                creditDays: creditDays,
+                favorite: self.favorite
             ) { resp in
                 
                 loadingView.hide()
@@ -803,7 +911,7 @@ class SearchVendorView: Div {
                 
                 showSuccess(.operacionExitosa, "Proveedor Registrado")
                 
-                self.callback(.init(
+                let updatedVendor = CustVendorsQuick(
                     id: id,
                     folio: self.vendor?.folio ?? "",
                     username: self.vendor?.username ?? "",
@@ -819,8 +927,15 @@ class SearchVendorView: Div {
                     lastDataAudit: self.vendor?.lastDataAudit,
                     creditActive: self.vendor?.creditActive ?? false,
                     creditLimit: self.vendor?.creditLimit ?? 0,
-                    creditDays: creditDays
-                ))
+                    creditDays: creditDays,
+                    favorite: self.favorite
+                )
+
+                CatchControler.shared.updateFavoriteVendor(
+                    updatedVendor,
+                    for: custCatchID
+                )
+                self.callback(updatedVendor)
                 
                 self.remove()
                 
@@ -837,7 +952,8 @@ class SearchVendorView: Div {
                 email: self.email,
                 mobile: self.mobile,
                 fiscalPOCMobile: self.fiscalPOCMobile,
-                creditDays: creditDays
+                creditDays: creditDays,
+                favorite: self.favorite
             ) { resp in
                 
                 loadingView.hide()
@@ -858,6 +974,11 @@ class SearchVendorView: Div {
                 }
                 
                 showSuccess(.operacionExitosa, "Proveedor Registrado")
+
+                CatchControler.shared.updateFavoriteVendor(
+                    vendor,
+                    for: custCatchID
+                )
                 
                 self.callback(vendor)
                 
@@ -884,6 +1005,9 @@ class SearchVendorView: Div {
         $fiscalPOCMobile.removeAllListeners()
         $mobile.removeAllListeners()
         $creditDays.removeAllListeners()
+        $favorite.removeAllListeners()
+        favoriteStates.removeAll()
+        favoriteSavingStates.removeAll()
     }
 }
 

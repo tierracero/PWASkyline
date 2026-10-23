@@ -16,14 +16,39 @@ class QuickMessageObject: Div {
     let isEven: Bool
     
     let note: CustGeneralNotesQuick
+
+    private let allowsPriorityChanges: Bool
     
     init(
         isEven: Bool,
-        note: CustGeneralNotesQuick
+        note: CustGeneralNotesQuick,
+        allowsPriorityChanges: Bool = true
     ) {
         self.isEven = isEven
         self.note = note
+        self.allowsPriorityChanges = allowsPriorityChanges
         super.init()
+    }
+
+    convenience init(
+        isEven: Bool,
+        note: CustGeneralNotes,
+        allowsPriorityChanges: Bool = true
+    ) {
+        self.init(
+            isEven: isEven,
+            note: CustGeneralNotesQuick(
+                id: note.id,
+                createdAt: note.createdAt,
+                createdBy: note.createdBy,
+                type: note.type,
+                activity: note.activity
+            ),
+            allowsPriorityChanges: allowsPriorityChanges
+        )
+        if note.createdBy == nil {
+            username = "Sistema"
+        }
     }
     
     required init() {
@@ -54,16 +79,18 @@ class QuickMessageObject: Div {
                 .color(r: 255, g: 84, b: 84)
                 .fontSize(24.px)
             
-            Div().height(3.px).clear(.both)
-            
-            Div{
-                Div("Bajar Prioridad")
-                    .class(.uibtn)
-                    .onClick {
-                        self.lowerNotePriority()
-                    }
+            if self.allowsPriorityChanges {
+                Div().height(3.px).clear(.both)
+
+                Div {
+                    Div("Bajar Prioridad")
+                        .class(.uibtn)
+                        .onClick {
+                            self.lowerNotePriority()
+                        }
+                }
+                .align(.right)
             }
-            .align(.right)
             
         }
         else {

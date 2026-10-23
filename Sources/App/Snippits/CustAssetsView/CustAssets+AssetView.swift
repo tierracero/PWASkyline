@@ -119,10 +119,13 @@ extension CustAssetsView {
             .custom("min-height", "0")
             .height(100.percent)
 
-        private lazy var notesGrid = VGrid(.full) {}
+        private lazy var notesGrid = Div()
+            .class(.roundGrayBlackDark)
             .custom("min-height", "0")
+            .custom("box-sizing", "border-box")
+            .custom("line-height", "1.35")
+            .fontSize(14.px)
             .height(100.percent)
-            .marginTop(10.px)
             .overflow(.auto)
 
         private lazy var addAssetButton = USmallButton("+ Ingresar Inventario")
@@ -260,12 +263,16 @@ extension CustAssetsView {
                 VGrid(.oneThird) {
                     VBox(.raised) {
                         UTitle(self.$noteCount.map { "Notas (\($0))" })
+                            .fontSize(18.px)
+                            .class(.oneLineText)
                         self.notesGrid
                     }
                     .height(100.percent)
                     .custom("min-height", "0")
                     .display(.grid)
                     .custom("grid-template-rows", "auto minmax(0, 1fr)")
+                    .custom("row-gap", "7px")
+                    .padding(all: 8.px)
                 }
                 .height(100.percent)
                 .custom("min-height", "0")
@@ -537,8 +544,8 @@ extension CustAssetsView {
                 return
             }
 
-            notes.forEach { note in
-                notesGrid.appendChild(noteView(note))
+            for (index, note) in notes.sorted(by: { $0.createdAt > $1.createdAt }).enumerated() {
+                notesGrid.appendChild(noteView(note, isEven: index.isEven))
             }
         }
 
@@ -548,16 +555,10 @@ extension CustAssetsView {
             renderNotes()
         }
 
-        private func noteView(_ note: CustGeneralNotes) -> Div {
-            VGrid(.full) {
-                VBox {
-                    Div(note.activity)
-                        .custom("white-space", "pre-wrap")
-                        .custom("line-height", "1.45")
-                    UMinorTitle(note.type.rawValue)
-                        .marginTop(5.px)
-                }
-            }
+        private func noteView(_ note: CustGeneralNotes, isEven: Bool) -> Div {
+            QuickMessageObject(isEven: isEven, note: note, allowsPriorityChanges: false)
+                .custom("white-space", "pre-wrap")
+                .custom("overflow-wrap", "anywhere")
         }
 
         private func save() {

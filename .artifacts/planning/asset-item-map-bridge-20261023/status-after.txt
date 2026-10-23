@@ -1,0 +1,53 @@
+ M .agent/MODULES.md
+ M .agent/PROJECT_MEMORY.md
+ M .agent/SOURCE_MAP.md
+ M .agent/TASKS_ARCHIVE.md
+ M .agent/architecture/API_AND_BACKEND.md
+ M .agent/architecture/PWA_ASSETS_AND_SERVICE_WORKER.md
+ M .agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+ M Sources/App/API/CustEndpoint/Cust+CreateVendor.swift
+ M Sources/App/API/CustEndpoint/Cust+GetVendors.swift
+ M Sources/App/API/CustEndpoint/Cust+SaveVendor.swift
+ M Sources/App/Functions/killSession.swift
+ M Sources/App/SkylineWeb.swift
+ M Sources/App/Snippits/AccoutOverview.swift
+ M Sources/App/Snippits/ConfirmProductView.swift
+ M Sources/App/Snippits/ConfirmProductViewNew.swift
+ M Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemView.swift
+ M Sources/App/Snippits/CustAssetsView/CustAssets+AssetView.swift
+ M Sources/App/Snippits/CustAssetsView/CustAssets+CreateAssetItemView.swift
+ M Sources/App/Snippits/ManagePOC/ManagePOC.swift
+ M Sources/App/Snippits/OrderPrintChargesEngine.swift
+ M Sources/App/Snippits/OrderPrintEngine.swift
+ M Sources/App/Snippits/OrderRowView.swift
+ M Sources/App/Snippits/QuickMessageObject.swift
+ M Sources/App/Snippits/SalePoint/SalePointView.swift
+ M Sources/App/Snippits/SearchProductVendor.swift
+ M Sources/App/Snippits/SearchProductVendorItem.swift
+ M Sources/App/Snippits/SearchVendorView.swift
+ M Sources/App/Snippits/SelectStore.swift
+ M Sources/App/Snippits/StartServiceOrder.swift
+ M Sources/App/Snippits/TripControler/TripsControlerView.swift
+ M Sources/App/TierraCeroCustomUI/Theme/TCOrderViewTheme.swift
+ M Sources/App/TierraCeroCustomUI/Theme/TCWorkDashboardTheme.swift
+ M Sources/App/ViewControlers/WorkViewControler.swift
+ M Sources/App/VirtualControlers/CatchControler.swift
+ M Sources/Service/js/main.js
+ M Sources/Service/skyline/js/main.js
+ M WebSources/main.html
+?? .artifacts/planning/asset-account-notes-20261022/
+?? .artifacts/planning/asset-item-map-bridge-20261023/
+?? .artifacts/planning/asset-kardex-map-history-20261022/
+?? .artifacts/planning/asset-location-history-style-20261022/
+?? .artifacts/planning/kardex-map-view-20261022/
+?? .artifacts/planning/manage-poc-camera-mount-20261023/
+?? .artifacts/planning/manage-poc-camera-processing-20261023/
+?? .artifacts/planning/startup-loader-blue-version-20261020.md
+?? .artifacts/planning/work-startup-background-clarity-20261020.md
+?? .artifacts/planning/work-startup-hud-outline-20261020.md
+?? .artifacts/planning/work-startup-hud-spacing-20261020.md
+?? Sources/App/API/CustEndpoint/Cust+SetFavoriteVendor.swift
+?? Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemMapBridge.swift
+?? Sources/App/Snippits/MapView.swift
+?? Sources/App/Snippits/VendorFavoriteButton.swift
+?? Sources/Service/skyline/media/workStartupOuterHUD.svg

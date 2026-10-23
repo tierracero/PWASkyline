@@ -1694,6 +1694,8 @@ class StartServiceOrderEquipmentView: Div {
         }
         
         callback(.init(
+            type: .equipment,
+            relId: nil,
             refid: refid,
             IDTag1: _idTag1,
             IDTag2: _idTag2,

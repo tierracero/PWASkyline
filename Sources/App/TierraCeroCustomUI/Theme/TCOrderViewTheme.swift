@@ -111,6 +111,7 @@ enum TCOrderViewTheme {
                 .custom("--tc-order-surface-deep", "rgba(3, 21, 38, 0.72)")
                 .custom("--tc-order-border", "rgba(102, 184, 236, 0.28)")
                 .custom("--tc-order-border-soft", "rgba(122, 148, 168, 0.20)")
+                .custom("--tc-order-status-border", "color-mix(in srgb, var(--tc-order-status-color, var(--tc-order-blue-soft)) 28%, var(--tc-order-border-soft) 72%)")
                 .custom("--tc-order-blue", "#1689e8")
                 .custom("--tc-order-blue-soft", "#5cb7ff")
                 .custom("--tc-order-orange", "#ff9f0a")
@@ -742,14 +743,7 @@ enum TCOrderViewTheme {
                 .custom("max-width", "24%")
                 .custom("min-width", "0")
                 .custom("flex", "0 1 auto")
-                .custom("padding", "5px 10px")
                 .custom("margin-left", "8px")
-                .custom("border", "1px solid var(--tc-order-blue-soft)")
-                .custom("border-radius", "7px")
-                .custom("background", "rgba(22, 137, 232, 0.14)")
-                .custom("color", "var(--tc-order-blue-soft)")
-                .custom("font-size", "19px")
-                .custom("font-weight", "700")
 
             OrderRule(Pointer("\(root) .\(TCOrderViewClass.statusHolder)"))
                 .custom("display", "flex")
@@ -811,6 +805,11 @@ enum TCOrderViewTheme {
                 .custom("flex", "1")
                 .custom("text-align", "left")
                 .custom("margin", "0 !important")
+        }
+
+        WebApp.current.addStylesheet {
+            OrderRule(Pointer("\(root) .\(TCOrderViewClass.equipmentCard), \(root) .\(TCOrderViewClass.communicationsGrid), \(root) .\(TCOrderViewClass.chargesCard), \(root) .\(TCOrderViewClass.summaryScroll), \(root) .\(TCOrderViewClass.outcomeBar)"))
+                .custom("border", "1px solid var(--tc-order-status-border) !important")
         }
 
         installLoadingStyles(root: root)

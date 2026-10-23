@@ -46,6 +46,7 @@ public class SearchProductVendor: Div {
         Td("SKU/UPC/POC").width(120.px)
         Td("Descripcion")
         Td("Costo").width(100.px)
+        Td("Favorito").width(50.px)
         Td("Agregar").width(35.px)
     }
     
@@ -141,8 +142,13 @@ public class SearchProductVendor: Div {
             /// RFC /  CustVendorsQuick
             var vendorRefrence: [String:CustVendorsQuick] = [:]
             
+            var favoriteStates: [String: State<Bool>] = [:]
+            var favoriteSavingStates: [String: State<Bool>] = [:]
+
             payload.vendors.forEach { vendor in
                 vendorRefrence[vendor.rfc] = vendor
+                favoriteStates[vendor.rfc] = State(wrappedValue: vendor.favorite)
+                favoriteSavingStates[vendor.rfc] = State(wrappedValue: false)
             }
             
             self.providerGrid.innerHTML = ""
@@ -154,6 +160,8 @@ public class SearchProductVendor: Div {
                 self.providerGrid.appendChild(SearchProductVendorItem(
                     term: self.name,
                     vendor: vendorRefrence[item.rfc],
+                    favorite: favoriteStates[item.rfc] ?? State(wrappedValue: false),
+                    favoriteIsSaving: favoriteSavingStates[item.rfc] ?? State(wrappedValue: false),
                     item: item,
                     isActive: true,
                     pocid: self.pocid,
@@ -178,6 +186,8 @@ public class SearchProductVendor: Div {
                 self.providerGrid.appendChild(SearchProductVendorItem(
                     term: self.name,
                     vendor: vendorRefrence[item.rfc],
+                    favorite: favoriteStates[item.rfc] ?? State(wrappedValue: false),
+                    favoriteIsSaving: favoriteSavingStates[item.rfc] ?? State(wrappedValue: false),
                     item: item,
                     isActive: false,
                     pocid: self.pocid,

@@ -150,7 +150,7 @@ class ConfirmProductView: Div {
         .width(70.px)
         .onKeyUp { input, event in
             if event.key == "Enter" {
-                self.addToKart()
+                self.addToKart(self.inventoryId)
             }
         }
         .disabled(self.$quantFieldIsDisabeld)
@@ -610,7 +610,7 @@ class ConfirmProductView: Div {
                     .hidden(self.$changePriceViewIsHidden.map{ !$0 })
                     .class(.uibtnLargeOrange)
                     .onClick {
-                        self.addToKart()
+                        self.addToKart(self.inventoryId)
                     }
             }
             .align(.right)
@@ -792,7 +792,7 @@ class ConfirmProductView: Div {
         }
     }
     
-    func addToKart(){
+    func addToKart(_ id: UUID?){
         
         quantFieldIsDisabeld = true
 
@@ -812,8 +812,52 @@ class ConfirmProductView: Div {
         var _cuant = cuant
         
         var items: [CustPOCInventoryMin] = []
+
+        var forcedOrigin: SoldObjectFrom? = nil
+        var forcedStoreId: UUID? = nil
+
+        if let id {
+            guard cuant == 1 else {
+                quantFieldIsDisabeld = false
+                showError(.invalidField, "Solo puede agregar una unidad del artículo seleccionado")
+                return
+            }
+
+            guard !selectedInventoryIDs.contains(id) else {
+                quantFieldIsDisabeld = false
+                showError(.invalidField, "Este artículo ya está agregado al carrito")
+                return
+            }
+
+            if let item = inConcession.first(where: { $0.id == id }) {
+                guard let accountId else {
+                    quantFieldIsDisabeld = false
+                    showError(.generalError, "No se localizo la cuenta del concesionario")
+                    return
+                }
+
+                items.append(.init(
+                    id: item.id,
+                    custStoreBodegas: nil,
+                    custStoreSecciones: nil,
+                    alocatedTo: item.alocatedTo,
+                    series: item.series
+                ))
+                forcedOrigin = .consessionId(accountId)
+            } else if let (storeId, item) = inventory.lazy.compactMap({ storeInventory in
+                storeInventory.inventory.first(where: { $0.id == id }).map { (storeInventory.store.id, $0) }
+            }).first {
+                items.append(item)
+                forcedOrigin = .storeId(storeId)
+                forcedStoreId = storeId
+            } else {
+                quantFieldIsDisabeld = false
+                showError(.generalError, "El artículo seleccionado ya no está disponible para esta venta")
+                return
+            }
+        }
         
-        if storeIdSelectListener == "concession" {
+        if id == nil && storeIdSelectListener == "concession" {
             
             inConcession.forEach { item in
                 if !selectedInventoryIDs.contains(item.id) {
@@ -834,7 +878,7 @@ class ConfirmProductView: Div {
             }
             
         }
-        else {
+        else if id == nil {
             
             guard let storeId = UUID(uuidString: storeIdSelectListener) else {
                 quantFieldIsDisabeld = false
@@ -872,11 +916,9 @@ class ConfirmProductView: Div {
         print("cuant \(cuant)")
         
 
-        storeIdSelectListener
+        var from: SoldObjectFrom? = forcedOrigin
 
-        var from: SoldObjectFrom? = nil
-
-        if storeIdSelectListener == "concession" {
+        if id == nil && storeIdSelectListener == "concession" {
                 guard let accountId else {
                     showError(.generalError, "No se localizo la cuenta del concesionario")
                     return 
@@ -885,7 +927,7 @@ class ConfirmProductView: Div {
                 from = .consessionId(accountId)
                 
         }
-        else {
+        else if id == nil {
 
             guard let storeId = UUID(uuidString: storeIdSelectListener) else {
                 showError(.generalError, "No se localizo la tienda seleccionada")
@@ -943,7 +985,7 @@ class ConfirmProductView: Div {
             costType,
             Int64(cuant * 100),
             items,
-            storeid,
+            forcedStoreId ?? storeid,
             isWarenty,
             internalWarenty,
             generateRepositionOrder,
@@ -985,15 +1027,18 @@ class ConfirmProductView: Div {
                     
                     self.inventoryGrid.appendChild(
                         Div{
-                            if self.inventoryId != nil {
-                                Span(sobj.series.isEmpty ? "ID: \(sobj.id.uuidString)" : "Serie: \(sobj.series)")
+                            Span(sobj.series.isEmpty ? "ID: \(sobj.id.uuidString)" : sobj.series)
                                     .color(.lightBlueText)
-                            }
+
                             Span("\(bod)/\(sec)")
                                 .float(.right)
                             Div().class(.clear)
                         }
                         .class(.smallButtonBox)
+                        .cursor(.pointer)
+                        .onClick {
+                            self.addToKart(sobj.id)
+                        }
                     )
                 }
             }
@@ -1047,15 +1092,17 @@ class ConfirmProductView: Div {
                     
                     self.inventoryGrid.appendChild(
                         Div{
-                            if self.inventoryId != nil {
-                                Span(sobj.series.isEmpty ? "ID: \(sobj.id.uuidString)" : "Serie: \(sobj.series)")
+                            Span(sobj.series.isEmpty ? "ID: \(sobj.id.uuidString)" : sobj.series)
                                     .color(.lightBlueText)
-                            }
                             Span("\(bod)/\(sec)")
                                 .float(.right)
                             Div().class(.clear)
                         }
                         .class(.smallButtonBox)
+                        .cursor(.pointer)
+                        .onClick {
+                            self.addToKart(sobj.id)
+                        }
                     )
                 }
             }

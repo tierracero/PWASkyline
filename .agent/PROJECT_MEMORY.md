@@ -35,6 +35,18 @@ When this governance bootstrap began, the repository already contained many modi
 
 ## Authoritative References
 
+- 2026-10-23: Valid asset-item coordinates can still show map creation failure if App calls a factory absent from the deployed main.js. Direct inspection of the reported site's resource (including a fresh cache key) confirmed this mismatch. `CustAssets+AssetItemMapBridge.swift` now bundles and installs the existing map factory with App/WASM; the separate main.js copy was removed from source. Current/history rendering and map ownership remain intact. See the UI/PWA architecture chunks and `.artifacts/planning/asset-item-map-bridge-20261023/`; syntax/source/resource audit only, rebuilt live rendering remains unverified.
+
+- 2026-10-23: `ManagePOC` treats zero-dimension remote photo completions as upload acknowledgments and waits for the processed image with positive dimensions. The provided event sequence had two completions for one capture; prematurely marking the first terminal caused the final image to be ignored while processing text remained. Final completion clears the status, updates metadata/readiness and blocks late processing or duplicate upload updates. See `architecture/SWIFWEB_APP_ARCHITECTURE.md` and `.artifacts/planning/manage-poc-camera-processing-20261023/`; source/event-sequence/diff audit only, builds/tests/live uploads remain unrun.
+
+- 2026-10-23: `ManagePOC.didAddToDOM()` calls its superclass before product setup. Web's superclass sets `isInDOM`; omitting it caused the existing camera listener/card factory to ignore continuous-capture events. One card per selected/initiate UUID and existing completion/duplicate/removal behavior are retained. See `architecture/SWIFWEB_APP_ARCHITECTURE.md` and `.artifacts/planning/manage-poc-camera-mount-20261023/`; source/framework/diff audit only, no builds/tests/live camera execution.
+
+- 2026-10-22: Asset-unit maps show ten locations total including current. Kardex is paged oldest first, so the client scans all pages, keeps the nine newest unique valid coordinates excluding current, and draws gray age-faded markers with black text/3px black borders and a 4px orange line with independent map ownership. The first page also supplies Kardex cards. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`, `architecture/PWA_ASSETS_AND_SERVICE_WORKER.md` and `.artifacts/planning/asset-kardex-map-history-20261022/`; source/JavaScript syntax audit only, builds/tests/live map execution remain unrun and generated resources need normal refresh.
+
+- 2026-10-22: Asset and asset-unit notes reuse the account note rows with date/time, note type descriptions, author and newest-first alternating presentation. Asset callers disable priority controls while existing callers retain their default behavior. See `architecture/SWIFWEB_APP_ARCHITECTURE.md` and `.artifacts/planning/asset-account-notes-20261022/`; source/diff review only, no builds/tests/browser execution.
+
+- 2026-10-22: Asset-item Kardex cards replace latitude/longitude cells with a top-right map icon for valid event coordinates. `Snippits/MapView.swift` provides a reusable coordinate modal with independent MapKit ownership and dismissal cleanup. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`; source/diff audit only, builds/tests/browser execution remain unrun.
+
 - 2026-10-19: Personal settings include seven business-event push frequencies using the shared CustPushNotificationAlertFrequency enum, saved explicitly through notificationsSaveSettings. The existing PWA reminder controls remain distinct. See API_AND_BACKEND and SWIFWEB_APP_ARCHITECTURE; source-only validation, no delivery scheduler in this phase.
 
 - 2026-10-09: The saved-location cancellation action in `ManageLocationItem` and its linked-ID/picker synchronization are documented in `architecture/SWIFWEB_APP_ARCHITECTURE.md`.
@@ -129,3 +141,31 @@ When this governance bootstrap began, the repository already contained many modi
 - 2026-10-20: main.html startup composition now spans 90vw with centered 5vw gutters instead of a 560px cap. Existing rings, transparent bands, loading behavior and Work/order animations are unchanged. Source/diff review only; no builds/tests/compiler.
 
 - 2026-10-20: Added the screenshot-highlighted angled side frames only to Work system startup, with glowing cyan-blue rails and transparent, faintly lined interiors. They assemble with existing startupRoot timing, sit behind the central UI and hide below/equal 900px. main.html, order construction, readiness/completion and quiet-mode behavior unchanged. Isolated preview/computed styles and source/diff reviewed; no builds/tests/compiler or live App verification.
+
+- 2026-10-20: Verified orange version labels already present in both startup views (HTML v0.90.30 matches SkylineWeb beta 0.90.30; Work derives it at runtime). Work footer now matches the HTML shining-blue bar, and both shine pseudo-elements have explicit quiet-mode suppression. Current HUD/backdrop/spacing and readiness/callbacks preserved; source/diff audit only, no builds/tests/compiler.
+
+- 2026-10-20: main.html top/bottom startup bands now use a quick 180ms fade-in from opacity 0 to 1 instead of scale/growth. Existing 90vw width, rings, loading/version and quiet-mode behavior preserved; Work/order unchanged. Source/diff audited; builds/tests/compiler unrun.
+
+- 2026-10-20: Lengthened only main.html top/bottom band fade from 180ms to 600ms at user request. Opacity-only entry, 90vw width, loading behavior and Work/order animations unchanged. Source/diff reviewed; builds/tests/compiler unrun.
+
+- 2026-10-20: Set main.html top/bottom band fade to the requested 1000ms. Opacity-only entry and 90vw width unchanged. Source/diff audited; builds/tests/compiler unrun.
+
+- 2026-10-20: Set main.html top/bottom opacity-only band fade to requested 1500ms. Existing 90vw width and all other behavior preserved. Source/diff reviewed; builds/tests/compiler unrun.
+
+- 2026-10-20: User freezes main.html. Only /work outer HUD startupSideFrames opacity lowered from 0.25 to 0.12 (88% transparent); central UI, backdrop, geometry and transitions unchanged. Source/diff audited; builds/tests/compiler unrun.
+
+- 2026-10-20: Set only /work outer startup HUD to requested 50% opacity (previously 12%). Center and frozen main.html unchanged. Source/diff reviewed; builds/tests/compiler unrun.
+
+- 2026-10-20: Set /work outer startup HUD to requested 5% opacity (95% transparent). Central UI and frozen main.html unchanged. Source/diff reviewed; builds/tests/compiler unrun.
+
+- 2026-10-20: Set /work outer startup HUD to requested 7% opacity (93% transparent). Center and frozen main.html unchanged. Source/diff reviewed; builds/tests/compiler unrun.
+
+- 2026-10-20: Set /work outer startup HUD to requested 10% opacity (90% transparent). Center and frozen main.html unchanged. Source/diff reviewed; builds/tests/compiler unrun.
+
+- 2026-10-20: OrderView highlighted outlines (folio/equipment/notes-files/charges/summary/outcome) now follow existing live orderStatus using a 62% status-color/38% white pastel mix. AccoutOverview binds the scoped CSS variable initially and with a weak listener, covered by existing teardown. Inner controls/business logic and frozen startup views unchanged. Isolated pending/active/finalized presentation and source/diff reviewed; no builds/tests/compiler/live App mutation.
+
+- 2026-10-20: Order status outlines now blend the same 62% status hue with 38% of existing --tc-order-muted blue-gray instead of white, giving a quieter tone that fits the interface. Binding, one-pixel weight and all other UI/behavior unchanged. Source/diff and isolated presentation reviewed; builds/tests/compiler unrun.
+
+- 2026-10-20: Reduced Order status border emphasis to 20% status hue + 80% translucent --tc-order-border-soft divider color (36% combined opacity), replacing the bright opaque mix. Same 1px outlines/live binding; all other source behavior/startup views unchanged. Isolated presentation/source/diff reviewed; builds/tests/compiler unrun.
+
+- 2026-10-20: Added a small amount of Order outline emphasis: status mix 20% -> 28%, faint divider 80% -> 72% (42.4% combined alpha). Existing 1px border, live binding and frozen startup views unchanged. Source/diff audited; builds/tests/compiler unrun.

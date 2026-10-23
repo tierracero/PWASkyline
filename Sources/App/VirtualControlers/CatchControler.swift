@@ -81,6 +81,86 @@ public final class CatchControler {
 
         taskAlerts = []
     }
+
+    private var favoriteVendorCacheUserID: UUID?
+
+    private var loadedFavoriteVendorCacheUserID: UUID?
+
+    private var favoriteVendorOverrides: [UUID: CustVendorsQuick] = [:]
+
+    private(set) var favoriteVendors: [CustVendorsQuick] = []
+
+    func cachedFavoriteVendors(for userID: UUID) -> [CustVendorsQuick]? {
+        guard favoriteVendorCacheUserID == userID,
+              loadedFavoriteVendorCacheUserID == userID else {
+            return nil
+        }
+
+        return favoriteVendors
+    }
+
+    func cacheFavoriteVendors(_ vendors: [CustVendorsQuick], for userID: UUID) {
+        guard custCatchID == userID else {
+            return
+        }
+
+        var cachedVendors = vendors.filter { $0.favorite }
+
+        for vendor in favoriteVendorOverrides.values {
+            if let index = cachedVendors.firstIndex(where: { $0.id == vendor.id }) {
+                if vendor.favorite {
+                    cachedVendors[index] = vendor
+                }
+                else {
+                    cachedVendors.remove(at: index)
+                }
+            }
+            else if vendor.favorite {
+                cachedVendors.append(vendor)
+            }
+        }
+
+        favoriteVendors = cachedVendors
+        favoriteVendorOverrides.removeAll()
+        favoriteVendorCacheUserID = userID
+        loadedFavoriteVendorCacheUserID = userID
+    }
+
+    func updateFavoriteVendor(_ vendor: CustVendorsQuick, for userID: UUID) {
+        guard custCatchID == userID else {
+            return
+        }
+
+        if favoriteVendorCacheUserID != userID {
+            favoriteVendors = []
+            favoriteVendorCacheUserID = userID
+            loadedFavoriteVendorCacheUserID = nil
+            favoriteVendorOverrides = [:]
+        }
+
+        if loadedFavoriteVendorCacheUserID != userID {
+            favoriteVendorOverrides[vendor.id] = vendor
+        }
+
+        if vendor.favorite {
+            if let index = favoriteVendors.firstIndex(where: { $0.id == vendor.id }) {
+                favoriteVendors[index] = vendor
+            }
+            else {
+                favoriteVendors.append(vendor)
+            }
+        }
+        else {
+            favoriteVendors.removeAll { $0.id == vendor.id }
+        }
+    }
+
+    func clearFavoriteVendors() {
+        favoriteVendors = []
+        favoriteVendorCacheUserID = nil
+        loadedFavoriteVendorCacheUserID = nil
+        favoriteVendorOverrides = [:]
+    }
     
     /// [ Country : [ State : [PostalCodesMexico] ]]
     public var cityRefrence: [Countries: [ String : [PostalCodesMexicoItem] ]] = [:]

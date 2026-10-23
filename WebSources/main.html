@@ -314,7 +314,7 @@
                 position: relative; padding: 18px 24px; color: #b5ccd5;
                 font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
                 background: transparent; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none;
-                animation: initial-band-build 650ms ease-out both;
+                animation: initial-band-fade-in 1500ms ease-out both;
             }
             .initial-band-top { border-top: 1px solid rgba(157,198,206,.38); }
             .initial-band-bottom { border-bottom: 1px solid rgba(157,198,206,.38); }
@@ -324,19 +324,45 @@
             }
             .initial-band-top::before { top: -20px; border-top: 2px solid #b4d0d6; transform: perspective(160px) rotateX(-25deg); }
             .initial-band-bottom::after { bottom: -20px; border-bottom: 2px solid #b4d0d6; transform: perspective(160px) rotateX(25deg); }
-            .initial-system-id { display: flex; justify-content: space-between; gap: 12px; font-size: 11px; letter-spacing: .16em; color: #86bac8; }
-            .initial-system-id span:last-child { color: #78909a; }
+            .initial-system-id { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 11px; letter-spacing: .16em; color: #86bac8; }
+            .initial-system-id > span:last-child { color: #78909a; }
+            .initial-version-badge {
+                display: inline-flex; align-items: center; justify-content: center;
+                padding: 3px 9px; border: 1px solid rgba(255, 159, 10, .55);
+                border-radius: 999px; background: rgba(255, 159, 10, .10);
+                box-shadow: 0 0 10px rgba(255, 159, 10, .12);
+                color: #ff9f0a; font-size: 10px; font-weight: 700;
+                letter-spacing: .03em; white-space: nowrap;
+            }
             .initial-telemetry { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
             #initial-loading-label { margin: 0; font-size: 13px; font-weight: 400; color: #a6bcc5; }
             #initial-loading-percent { margin: 0; font-size: 13px; font-weight: 500; text-align: right; color: #e2edf0; }
             #initial-loading-percent.error { color: #f39b8e; max-width: 70%; overflow-wrap: anywhere; }
-            .progress { height: 4px; margin-top: 14px; overflow: hidden; background: rgba(134,186,200,.12); }
-            .progress-bar { height: 100%; width: 0; background: #9ccbd2; transition: width 180ms linear; }
-            .progress-bar-indeterminate { width: 28%; animation: initial-progress 1600ms ease-in-out infinite; }
-            .initial-footer { display: flex; justify-content: space-between; gap: 8px; margin-top: 18px; font-size: 10px; letter-spacing: .13em; color: #738c96; }
+            /* Bright blue loading finish is exclusive to the HTML/WASM boot screen. */
+            #element_03.progress {
+                height: 4px; margin-top: 14px; overflow: hidden; border-radius: 999px;
+                background: rgba(33, 119, 202, .18);
+                box-shadow: 0 0 12px rgba(18, 149, 255, .22);
+            }
+            #element_03 .progress-bar {
+                position: relative; height: 100%; width: 0; overflow: hidden; border-radius: inherit;
+                background: linear-gradient(90deg, #1379f4 0%, #10a8ff 40%, #58dcff 76%, #1593ff 100%);
+                box-shadow: 0 0 10px rgba(34, 197, 255, .85);
+                transition: width 180ms linear;
+            }
+            #element_03 .progress-bar::after {
+                content: ""; position: absolute; inset: 0;
+                background: linear-gradient(100deg, transparent 0%, rgba(255, 255, 255, .05) 35%, rgba(237, 252, 255, .9) 50%, rgba(255, 255, 255, .05) 65%, transparent 100%);
+                transform: translateX(-120%);
+                animation: initial-progress-shine 1700ms ease-in-out infinite;
+            }
+            #element_03 .progress-bar-indeterminate { width: 28%; animation: initial-progress 1600ms ease-in-out infinite; }
+            .initial-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 18px; font-size: 10px; letter-spacing: .13em; color: #738c96; }
+            .initial-footer-meta { display: flex; align-items: center; gap: 10px; }
             #element_02.initial-loader-exit { opacity: 0; pointer-events: none; }
-            @keyframes initial-band-build { from { opacity: .15; transform: scaleX(.82); } to { opacity: 1; transform: scaleX(1); } }
+            @keyframes initial-band-fade-in { from { opacity: 0; } to { opacity: 1; } }
             @keyframes initial-progress { 0%, 100% { transform: translateX(-100%); } 50% { transform: translateX(360%); } }
+            @keyframes initial-progress-shine { from { transform: translateX(-120%); } to { transform: translateX(120%); } }
             @media (max-width: 480px) {
                 .initial-orbit-stage { height: 390px; }
                 .initial-band { padding: 16px 10px; }
@@ -353,16 +379,18 @@
             }
             html[data-tc-performance-mode="on"] #element_02,
             html[data-tc-performance-mode="on"] #element_02 *,
+            html[data-tc-performance-mode="on"] #element_03 .progress-bar::after,
             html[data-tc-performance-mode="on"] #element_02::before,
             html[data-tc-performance-mode="on"] #element_02::after,
             html[data-tc-dashboard-startup-animations="off"] #element_02,
             html[data-tc-dashboard-startup-animations="off"] #element_02 *,
+            html[data-tc-dashboard-startup-animations="off"] #element_03 .progress-bar::after,
             html[data-tc-dashboard-startup-animations="off"] #element_02::before,
             html[data-tc-dashboard-startup-animations="off"] #element_02::after {
                 animation: none !important; transition: none !important; will-change: auto;
             }
             @media (prefers-reduced-motion: reduce) {
-                #element_02, #element_02 *, #element_02::before, #element_02::after { animation: none !important; transition: none !important; will-change: auto; }
+                #element_02, #element_02 *, #element_02::before, #element_02::after, #element_03 .progress-bar::after { animation: none !important; transition: none !important; will-change: auto; }
             }
         </style>
         <div id="element_02">
@@ -384,7 +412,7 @@
                             <h4 id="initial-loading-percent" role="status" aria-live="polite">CONECTANDO</h4>
                         </div>
                         <div class="progress" id="element_03" role="progressbar" aria-label="Carga de la aplicación" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar"></div></div>
-                        <div class="initial-footer" aria-hidden="true"><span>WEBASSEMBLY</span><span>SKYLINE / TIERRA CERO</span><span>SYS. INIT</span></div>
+                        <div class="initial-footer"><span>WEBASSEMBLY</span><span>SKYLINE / TIERRA CERO</span><div class="initial-footer-meta"><span>SYS. INIT</span><!-- Static pre-WASM version: keep in sync with SkylineWeb.swift. --><span class="initial-version-badge">v0.90.30</span></div></div>
                     </footer>
                 </div>
             </main>

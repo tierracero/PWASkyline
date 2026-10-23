@@ -39,6 +39,8 @@ Repository file map for PWASkyline.
 | `Sources/App/Snippits/ConfirmAdddressLocationView.swift` | Prefilled store-address confirmation with required postal fields/state/coordinates, address lookup and map preview; preserves loaded store configuration while saving, reloads the store, refreshes caches, and returns it to the Trip picker. |
 | `Sources/App/Snippits/SearchSubCustomerView.swift` | Parent-account-scoped subcustomer search/selection, no-result creation, and required-address completion through the subaccount manager. |
 | `Sources/App/Snippits/ManualAddressSearch.swift` | Crystal postal-address and coordinate lookup dialogs; returns the selected address or geocoder snapshot to its caller. |
+| `Sources/App/Snippits/MapView.swift` | Reusable `MapView(latitude:longitude:)` modal with an independently owned MapKit location marker; asset-item Kardex headers open it from a map icon when event coordinates are valid. |
+| `Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemView.swift`, `CustAssets+AssetItemMapBridge.swift` | Asset-unit map history with a factory bundled in App/WASM: scan ascending Kardex pages, select nine newest unique earlier coordinates plus current, render fading gray markers with black text/borders and an orange connecting line, and own/clean up the map controller. |
 | `Sources/App/Snippits/TripControler/TripControler+AddLocation.swift` | Dedicated fiscal-location picker; owns origin/destination presentation and location-typed callbacks, including prefilled confirmation and resumption for incomplete store addresses. |
 | `Sources/App/Snippits/TripControler/TripControler+AddMerchandise.swift` | Account/origin-aware fiscal-merchandise base picker; preserves selection and creation callbacks. |
 | `Sources/App/Snippits/TripControler/ConfirmTripStatusUpdate.swift`, `TripControler+TripViewBeta.swift` | Beta trip status and per-asset delivery actions with a shared crystal confirmation form; validates transitions, comments, linked routes and evidence, marks confirmed deliveries, and refreshes trip/notes after API success. |
@@ -65,6 +67,7 @@ Repository file map for PWASkyline.
 | `Sources/Service/js/` | Copied JavaScript resources. |
 | `Sources/Service/images/` | Copied image resources. |
 | `Sources/Service/skyline/` | Skyline static resource tree: CSS, JS, media, document icons, tutorial assets, and the `PWASkylineSpeech` browser bridge. |
+| `Sources/Service/skyline/media/workStartupOuterHUD.svg` | Transparent, non-interactive white/cyan HUD frame for the authenticated Work startup overlay only; referenced by `WorkViewControler.startupOverlay`. |
 
 ## Web/WASI Bootstrap
 
@@ -102,3 +105,11 @@ Do not edit unless explicitly scoped:
 | `AGENTS.md` | Root agent router and project rules. |
 | `.agent/` | Stable agent governance documentation tree. |
 | `.artifacts/` | Transient plans, logs, screenshots, patches, and review evidence. |
+
+## Vendor Favorites
+
+- `Sources/App/API/CustEndpoint/Cust+SetFavoriteVendor.swift`: typed shared-contract favorite mutation wrapper.
+- `Sources/App/Snippits/VendorFavoriteButton.swift`: reusable server-confirmed star control with shared per-vendor pending state.
+- `Sources/App/VirtualControlers/CatchControler.swift`: current-user in-memory cache of favorite vendors, updated after favorite mutations and cleared on logout.
+- `SearchVendorView.swift`: create/edit favorite checkbox and search-row stars; all existing entry points reuse this picker.
+- `SearchProductVendor.swift` / `SearchProductVendorItem.swift`: vendor stars beside product matches, sharing state across repeated vendor rows.

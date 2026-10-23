@@ -436,8 +436,15 @@ class WorkViewControler: PageController {
         .class(Class(TCWorkDashboardClass.startupProgressFill))
 
     lazy var startupOverlay = Div {
-        Div()
-            .class(Class(TCWorkDashboardClass.startupSideFrames))
+        Div {
+            // Decorative HUD only: never affects work startup state or controls.
+            Img()
+                .src("/skyline/media/workStartupOuterHUD.svg")
+                .class(Class(TCWorkDashboardClass.startupHudArtwork))
+                .attribute("alt", "")
+        }
+        .class(Class(TCWorkDashboardClass.startupSideFrames))
+        .attribute("aria-hidden", "true")
 
         Div {
             Div("TC / SYSTEM BOOT — 02 / WORK")
@@ -473,6 +480,12 @@ class WorkViewControler: PageController {
                     self.startupProgressFill
                 }
                 .class(Class(TCWorkDashboardClass.startupProgress))
+
+                Div(
+                    "SISTEMA · \(SkylineWeb().version.mode.rawValue.uppercased()) " +
+                    "\(SkylineWeb().version.major).\(SkylineWeb().version.minor).\(SkylineWeb().version.patch)"
+                )
+                    .class(Class(TCWorkDashboardClass.startupVersion))
 
                 Div("SKYLINE / TIERRA CERO — SYS. INIT")
                     .class(Class(TCWorkDashboardClass.startupFooterCopy))

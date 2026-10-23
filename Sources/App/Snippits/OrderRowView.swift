@@ -70,19 +70,7 @@ class OrderRowView: Div {
             /// Folio / Status Details
             Div{
                 H2(self.folio)
-                Div{
-                    H2(self.typeOrder)
-                        .textAlign(.center)
-                        .width(28.px)
-                        .height(28.px)
-                        .borderRadius(all: 24.px)
-                        .backgroundColor(.init(r: 255, g: 255, b: 255, a: 0.5))
-                        .marginTop(3.px)
-                        .marginLeft(7.px)
-                        .float(.left)
-                        .hidden(configStoreProcessing.moduleProfile.count == 1)
-                        .color(.black)
-                }
+               
                 Div().class(.clear)
 
                 Div(self.$uname)

@@ -1,0 +1,9 @@
+Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemView.swift: 1, no whitespace diagnostics
+Sources/Service/skyline/js/main.js: 1, no whitespace diagnostics
+.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md: 1, no whitespace diagnostics
+.agent/architecture/PWA_ASSETS_AND_SERVICE_WORKER.md: 1, no whitespace diagnostics
+.agent/MODULES.md: 1, no whitespace diagnostics
+.agent/SOURCE_MAP.md: 1, no whitespace diagnostics
+.agent/PROJECT_MEMORY.md: 1, no whitespace diagnostics
+.agent/TASKS_ARCHIVE.md: 1, no whitespace diagnostics
+Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemMapBridge.swift: 1, no whitespace diagnostics

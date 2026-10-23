@@ -8,13 +8,14 @@ import TCFireSignal
 extension CustComponents {
         
     static func getVendors(
+        type: GetVendorsType = .all,
         callback: @escaping ((_ resp: APIResponseGeneric<GetVendorsResponse>?) -> ())
     ) {
         sendPost(
             rout,
             version,
             "getVendors",
-            EmptyPayload()
+            GetVendorsRequest(type: type)
         ) { data in
             
             guard let data else{

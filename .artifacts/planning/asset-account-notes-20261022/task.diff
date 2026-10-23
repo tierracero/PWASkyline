@@ -1,0 +1,249 @@
+--- before/Sources/App/Snippits/QuickMessageObject.swift
++++ after/Sources/App/Snippits/QuickMessageObject.swift
+@@ -16,14 +16,39 @@
+     let isEven: Bool
+     
+     let note: CustGeneralNotesQuick
++
++    private let allowsPriorityChanges: Bool
+     
+     init(
+         isEven: Bool,
+-        note: CustGeneralNotesQuick
++        note: CustGeneralNotesQuick,
++        allowsPriorityChanges: Bool = true
+     ) {
+         self.isEven = isEven
+         self.note = note
++        self.allowsPriorityChanges = allowsPriorityChanges
+         super.init()
++    }
++
++    convenience init(
++        isEven: Bool,
++        note: CustGeneralNotes,
++        allowsPriorityChanges: Bool = true
++    ) {
++        self.init(
++            isEven: isEven,
++            note: CustGeneralNotesQuick(
++                id: note.id,
++                createdAt: note.createdAt,
++                createdBy: note.createdBy,
++                type: note.type,
++                activity: note.activity
++            ),
++            allowsPriorityChanges: allowsPriorityChanges
++        )
++        if note.createdBy == nil {
++            username = "Sistema"
++        }
+     }
+     
+     required init() {
+@@ -54,16 +79,18 @@
+                 .color(r: 255, g: 84, b: 84)
+                 .fontSize(24.px)
+             
+-            Div().height(3.px).clear(.both)
+-            
+-            Div{
+-                Div("Bajar Prioridad")
+-                    .class(.uibtn)
+-                    .onClick {
+-                        self.lowerNotePriority()
+-                    }
++            if self.allowsPriorityChanges {
++                Div().height(3.px).clear(.both)
++
++                Div {
++                    Div("Bajar Prioridad")
++                        .class(.uibtn)
++                        .onClick {
++                            self.lowerNotePriority()
++                        }
++                }
++                .align(.right)
+             }
+-            .align(.right)
+             
+         }
+         else {
+--- before/Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemView.swift
++++ after/Sources/App/Snippits/CustAssetsView/CustAssets+AssetItemView.swift
+@@ -80,10 +80,13 @@
+             .height(100.percent)
+             .custom("min-height", "0")
+ 
+-        private lazy var notesGrid = VGrid(.full) {}
++        private lazy var notesGrid = Div()
++            .class(.roundGrayBlackDark)
+             .custom("min-height", "0")
++            .custom("box-sizing", "border-box")
++            .custom("line-height", "1.35")
++            .fontSize(14.px)
+             .height(100.percent)
+-            .marginTop(10.px)
+             .overflow(.auto)
+ 
+         private let mapId = "asset_item_map_" + callKey(32)
+@@ -236,9 +239,13 @@
+ 
+                     VBox(.raised) {
+                         UTitle(self.$noteCount.map { "Notas (\($0))" })
++                            .fontSize(18.px)
++                            .class(.oneLineText)
+                         self.notesGrid
+                     }
+                     .custom("grid-template-rows", "auto minmax(0, 1fr)")
++                    .custom("row-gap", "7px")
++                    .padding(all: 8.px)
+                     .custom("min-height", "0")
+                     .height(100.percent)
+                     .display(.grid)
+@@ -682,20 +689,15 @@
+                 return
+             }
+ 
+-            notes.forEach { note in
+-                notesGrid.appendChild(noteView(note))
+-            }
+-        }
+-
+-        private func noteView(_ note: CustGeneralNotes) -> Div {
+-            VBox(.raised) {
+-                Div(note.activity)
+-                    .custom("white-space", "pre-wrap")
+-                    .custom("line-height", "1.45")
+-
+-                UMinorTitle(note.type.rawValue)
+-                    .marginTop(5.px)
+-            }
++            for (index, note) in notes.sorted(by: { $0.createdAt > $1.createdAt }).enumerated() {
++                notesGrid.appendChild(noteView(note, isEven: index.isEven))
++            }
++        }
++
++        private func noteView(_ note: CustGeneralNotes, isEven: Bool) -> Div {
++            QuickMessageObject(isEven: isEven, note: note, allowsPriorityChanges: false)
++                .custom("white-space", "pre-wrap")
++                .custom("overflow-wrap", "anywhere")
+         }
+ 
+         private func tabButton(_ title: String, tab: ItemTab) -> Div {
+--- before/Sources/App/Snippits/CustAssetsView/CustAssets+AssetView.swift
++++ after/Sources/App/Snippits/CustAssetsView/CustAssets+AssetView.swift
+@@ -119,10 +119,13 @@
+             .custom("min-height", "0")
+             .height(100.percent)
+ 
+-        private lazy var notesGrid = VGrid(.full) {}
++        private lazy var notesGrid = Div()
++            .class(.roundGrayBlackDark)
+             .custom("min-height", "0")
++            .custom("box-sizing", "border-box")
++            .custom("line-height", "1.35")
++            .fontSize(14.px)
+             .height(100.percent)
+-            .marginTop(10.px)
+             .overflow(.auto)
+ 
+         private lazy var addAssetButton = USmallButton("+ Ingresar Inventario")
+@@ -260,12 +263,16 @@
+                 VGrid(.oneThird) {
+                     VBox(.raised) {
+                         UTitle(self.$noteCount.map { "Notas (\($0))" })
++                            .fontSize(18.px)
++                            .class(.oneLineText)
+                         self.notesGrid
+                     }
+                     .height(100.percent)
+                     .custom("min-height", "0")
+                     .display(.grid)
+                     .custom("grid-template-rows", "auto minmax(0, 1fr)")
++                    .custom("row-gap", "7px")
++                    .padding(all: 8.px)
+                 }
+                 .height(100.percent)
+                 .custom("min-height", "0")
+@@ -537,8 +544,8 @@
+                 return
+             }
+ 
+-            notes.forEach { note in
+-                notesGrid.appendChild(noteView(note))
++            for (index, note) in notes.sorted(by: { $0.createdAt > $1.createdAt }).enumerated() {
++                notesGrid.appendChild(noteView(note, isEven: index.isEven))
+             }
+         }
+ 
+@@ -548,16 +555,10 @@
+             renderNotes()
+         }
+ 
+-        private func noteView(_ note: CustGeneralNotes) -> Div {
+-            VGrid(.full) {
+-                VBox {
+-                    Div(note.activity)
+-                        .custom("white-space", "pre-wrap")
+-                        .custom("line-height", "1.45")
+-                    UMinorTitle(note.type.rawValue)
+-                        .marginTop(5.px)
+-                }
+-            }
++        private func noteView(_ note: CustGeneralNotes, isEven: Bool) -> Div {
++            QuickMessageObject(isEven: isEven, note: note, allowsPriorityChanges: false)
++                .custom("white-space", "pre-wrap")
++                .custom("overflow-wrap", "anywhere")
+         }
+ 
+         private func save() {
+--- before/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
++++ after/.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md
+@@ -18,6 +18,7 @@
+ - `TripViewBeta` adds an Entrega column: only multi-item in-progress trips offer Entregar for undelivered linked commercial assets. `FiscalMercanciaItem.deliverd` supplies the Entregado marker on every trip size; canceled final movements use Movimiento finalizado. The delivery initializer of `ConfirmTripStatusUpdate` reuses one-item comments, local uploads, remote camera and gallery evidence, blocks confirmation during pending image uploads, and validates linked routes/unique safe filenames. The parent serializes status/delivery mutations and owns one popup, closes it on removal, checks session/trip/asset/snapshot response identities, then applies only the confirmed item flag and returned trip status (including auto-completion), notifies the dashboard/caller and refreshes trip/notes. Generation and confirmed-item checks reject stale refreshes. Optional destination section/subsection are omitted by this UI. App target compilation verified with the updated shared packages; browser/mobile/server behavior remains unverified.
+ - In order mode, `TCOrderViewTheme` scopes the `AccoutOverview` shell to the standalone `SalePointView` holder geometry: top 25px, left 40px, width `calc(100% - 100px)`, height `calc(100% - 70px)` and 24px rounded corners. The theme retains its existing zero shell padding and border-box sizing. Internal OrderView elements, toolbar/content rules and corner speech icon placement are unchanged. Source-audited; browser rendering remains unverified.
+ - `AssetItemView.dataColumn` edits the existing update contract fields: name, serial, current cost, section and subsection. Other item/custody metadata remains read-only and service-card activation stays separate. `Guardar Cambios` validates exact nonnegative cents and classification IDs, calls `updateAssettem` with the loaded item UUID, accepts a successful nil-note no-op response, and reloads authoritative details/notes by UUID. Current classification scope supplies catalog choices; failed catalog reads preserve existing IDs, and changing section clears its subsection. Mount/session/generation guards and disabled controls protect pending loads/saves. Source-audited; browser/build behavior remains unverified.
++- `AssetView` and `AssetItemView` notes reuse the account `QuickMessageObject` rows in compact bordered scroll containers, ordered newest first with alternating backgrounds, date/time, the note type description, resolved author and wrapped activity text. The full-note initializer preserves ID, timestamp, actor, type and activity while adapting to the existing display model; actorless full notes show Sistema. Asset rows disable priority-change actions through an optional flag whose existing-caller default remains enabled. Asset note data/counts and save/refresh paths remain intact. Source/diff reviewed; build and live rendering remain unverified.
+ - Store configuration binds existing and newly created `StoreView` instances to `display: flex` when selected and `display: none` otherwise, preserving the theme’s bounded flex column so its card grid fills the available workspace height. `StoreView.usersContainers` retains `flex: 1 1 0`, an initial zero height, `min-height: 0`, and automatic overflow; the user list grows between its header and action and excess rows scroll. The supplied recording showed the prior block-display override leaving unused space below the cards. Loading and user-card interactions remain unchanged; source-audited, fixed browser rendering remains unverified.
+ - `CustAssetsAvatarUploader` accepts an optional `[MediaViewer.MediaFile]` image list, initializes the current avatar first, and shows at most five 12px selection dots beneath the preview. Selecting a dot changes the preview without changing the saved avatar; clicking the preview opens the existing MediaViewer with the full photo list at that image and media actions disabled. Asset-item detail supplies its existing photos and displays only the uploader preview, with no separate thumbnail grid below it. Its marked `isAvatar` photo uses the saved item avatar as its preview reference while retaining the original file/ID. Avatar matching and upload reconciliation compare image identities with recognized thump_/og_/wap_ prefixes and query/fragment suffixes removed, preserving host/directory identity and all render URLs; a matching photo is reused instead of adding a duplicate standalone avatar. Upload results and external avatar changes restore focus to the current avatar. Updated on 2026-10-14; source review only, browser/build behavior remains unverified.
+ - `ManageLocationItem` exposes a bottom-left red crystal Eliminar action for an existing editor ID linked to a saved `.location` source. It uses the linked `locationId`, not the generated editor UUID, with the existing `deleteLocation` confirmation/error flow. The endpoint cancels the saved location without deleting its database record. Only success closes the editor and notifies `CreateTripView` through its existing saved-location list/selection cleanup; pending deletion prevents duplicate calls and saving. An optional live deletion-policy closure defaults to allowing deletion; trip creation denies deletion of its primary stops while additional destinations exist and rechecks before confirmation submission. The existing `removeLocation` trip-stop operation is not called. Browser/server behavior remains unverified.
+--- before/.agent/MODULES.md
++++ after/.agent/MODULES.md
+@@ -29,6 +29,7 @@
+ - `Snippits/` — reusable UI components and feature views, including Product Manager audit report presentations, order report delivery tables and CSV exports, order charge/payment deletion approval and refresh, velocity scoring, the dedicated Trip location and account-aware merchandise pickers, preloaded commercial-asset selection through `SearchComertialAsset`, parent-scoped subaccount creation/editing through `ManageSubCustomerAccountView`, and store-address confirmation through `ConfirmAdddressLocationView`.
+ - `Styles/` — Swift Web CSS style declarations.
+ - `Snippits/MapView.swift` — reusable coordinate map modal opened by asset-item Kardex map icons; reuses the independent MapKit preview helper and destroys its own map on dismissal.
++- `Snippits/QuickMessageObject.swift` — shared account and asset note-row presentation; full asset notes adapt to the existing quick model, with priority controls disabled by the read-only asset callers.
+ - Trip status confirmation is owned by `Snippits/TripControler/ConfirmTripStatusUpdate.swift`; the beta detail view presents it, and `Snippits/MediaViewer.swift` previews its merchandise image galleries. The beta detail submits its status/comment/media through `API/CustComertialTripsEndpoint/CustComertialTrips+ChangeTripStatus.swift` and updates its status and the parent list only after API success. The same popup has a one-asset delivery mode for multi-item trips, submitted through `API/CustComertialTripsEndpoint/CustComertialTrips+DeliverAssetItem.swift`; confirmed `deliverd` state and returned status drive row markers and trip auto-completion.
+ - `Functions/`, `Extentions/`, `Enums/`, `Structurs/`, `VirtualControlers/` — shared app helpers and runtime support. Error diagnostics are owned by `ErrorReportingControler`, its record/context types, the centralized POST transport, and the API decoding helper.
+ 
+--- before/.agent/PROJECT_MEMORY.md
++++ after/.agent/PROJECT_MEMORY.md
+@@ -34,6 +34,8 @@
+ - Generated public output trees were not refreshed by the error-reporting implementation.
+ 
+ ## Authoritative References
++
++- 2026-10-22: Asset and asset-unit notes reuse the account note rows with date/time, note type descriptions, author and newest-first alternating presentation. Asset callers disable priority controls while existing callers retain their default behavior. See `architecture/SWIFWEB_APP_ARCHITECTURE.md` and `.artifacts/planning/asset-account-notes-20261022/`; source/diff review only, no builds/tests/browser execution.
+ 
+ - 2026-10-22: Asset-item Kardex cards replace latitude/longitude cells with a top-right map icon for valid event coordinates. `Snippits/MapView.swift` provides a reusable coordinate modal with independent MapKit ownership and dismissal cleanup. See `architecture/SWIFWEB_APP_ARCHITECTURE.md`; source/diff audit only, builds/tests/browser execution remain unrun.
+ 
+--- before/.agent/TASKS_ARCHIVE.md
++++ after/.agent/TASKS_ARCHIVE.md
+@@ -1,6 +1,15 @@
+ # Tasks Archive
+ 
+ Verified completed tasks live here.
++
++---
++
++## ASSET-ACCOUNT-NOTES-001 — Match asset notes to account note rows
++
++- **Completed**: 2026-10-22 (source implementation).
++- **Scope/IDs**: `QuickMessageObject`, `AssetView`, `AssetItemView`, affected docs; `SWWEB-001`, `SWWEB-002`, `SWWEB-003`.
++- **Reviewed plan**: Reuse the account note presentation for full asset notes; keep the display field mapping intact, disable priority actions for the read-only asset lists, render newest-first rows with metadata, alternating backgrounds and wrapped messages, and compact the note count/list containers.
++- **Verification**: Shared-model field mapping, every existing QuickMessageObject caller/default, both asset render and empty-state paths, and task-relative diff/whitespace/status reviewed. Builds/tests/live rendering were not run under the repository confirmation rule. Evidence: `.artifacts/planning/asset-account-notes-20261022/`.
+ 
+ ---
+ 

@@ -16,6 +16,10 @@ class SearchProductVendorItem: Tr {
     var term: String
     
     let vendor: CustVendorsQuick?
+
+    let favorite: State<Bool>
+
+    let favoriteIsSaving: State<Bool>
     
     let item: CustFiscalProductControl
     
@@ -30,6 +34,8 @@ class SearchProductVendorItem: Tr {
     init(
         term: String,
         vendor: CustVendorsQuick?,
+        favorite: State<Bool>,
+        favoriteIsSaving: State<Bool>,
         item: CustFiscalProductControl,
         isActive: Bool,
         pocid: UUID,
@@ -39,6 +45,8 @@ class SearchProductVendorItem: Tr {
     ) {
         self.term = term
         self.vendor = vendor
+        self.favorite = favorite
+        self.favoriteIsSaving = favoriteIsSaving
         self.item = item
         self.isActive = isActive
         self.pocid = pocid
@@ -66,6 +74,25 @@ class SearchProductVendorItem: Tr {
             .fontWeight(self.$codeIsIncluded.map{ $0 ? .bolder  : .normal })
         self.nameGrid
         Td(self.item.cost.formatMoney).color(.gray)
+        Td {
+            if let vendor = self.vendor {
+                VendorFavoriteButton(
+                    vendorId: vendor.id,
+                    favorite: self.favorite,
+                    isSaving: self.favoriteIsSaving
+                ) { [weak self] favorite in
+                    guard let self, var updatedVendor = self.vendor else {
+                        return
+                    }
+
+                    updatedVendor.favorite = favorite
+                    CatchControler.shared.updateFavoriteVendor(
+                        updatedVendor,
+                        for: custCatchID
+                    )
+                }
+            }
+        }
         Td{
             Img()
                 .src(self.$isActive.map{ $0 ? "/skyline/media/heart.png" : "/skyline/media/heart_gray.png"})

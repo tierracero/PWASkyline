@@ -1,0 +1,4 @@
+Sources/App/Snippits/ManagePOC/ManagePOC.swift: exit 1 (no diagnostics)
+.agent/architecture/SWIFWEB_APP_ARCHITECTURE.md: exit 1 (no diagnostics)
+.agent/PROJECT_MEMORY.md: exit 1 (no diagnostics)
+.agent/TASKS_ARCHIVE.md: exit 1 (no diagnostics)

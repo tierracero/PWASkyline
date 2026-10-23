@@ -70,9 +70,11 @@ enum TCWorkDashboardClass {
     static let startupRing = "tc-work-startup-ring"
     static let startupAssembly = "tc-work-startup-assembly"
     static let startupSideFrames = "tc-work-startup-side-frames"
+    static let startupHudArtwork = "tc-work-startup-hud-artwork"
     static let startupHeader = "tc-work-startup-header"
     static let startupFooter = "tc-work-startup-footer"
     static let startupFooterCopy = "tc-work-startup-footer-copy"
+    static let startupVersion = "tc-work-startup-version"
 }
 
 enum TCWorkDashboardTheme {
@@ -599,9 +601,10 @@ enum TCWorkDashboardTheme {
                 .custom("transition-delay", "960ms")
 
             Rule(Pointer("\(root).\(TCWorkDashboardClass.startupRoot) .\(TCWorkDashboardClass.background)"))
-                .custom("opacity", "0.08")
+                // Let the dashboard backdrop show through softly during system boot.
+                .custom("opacity", "0.28")
                 .custom("transform", "scale(1.04)")
-                .custom("filter", "blur(8px) brightness(0.45)")
+                .custom("filter", "blur(4px) brightness(0.90)")
 
             Rule(Pointer("\(root).\(TCWorkDashboardClass.startupRoot) .\(TCWorkDashboardClass.topBar)"))
                 .custom("opacity", "0")
@@ -641,7 +644,8 @@ enum TCWorkDashboardTheme {
                 .custom("justify-content", "center")
                 .custom("overflow", "hidden")
                 .custom("pointer-events", "none")
-                .custom("background", "radial-gradient(circle at center, rgba(8, 35, 58, 0.52), rgba(2, 8, 17, 0.82) 58%, rgba(1, 5, 12, 0.94))")
+                // Brighter translucent blue layers, scoped to the /work startup overlay.
+                .custom("background", "radial-gradient(circle at center, rgba(27, 75, 112, 0.45), rgba(8, 28, 50, 0.72) 58%, rgba(5, 17, 36, 0.86))")
                 .custom("opacity", "1")
                 .custom("transition", "opacity 460ms ease")
                 .zIndex(999999999)
@@ -884,18 +888,32 @@ enum TCWorkDashboardTheme {
                 .custom("border-bottom", "2px solid #b4d0d6")
                 .custom("transform", "perspective(160px) rotateX(25deg)")
 
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupVersion)"))
+                .custom("margin-top", "10px")
+                .custom("color", "var(--tc-work-orange)")
+                .custom("font-size", "11px")
+                .custom("font-weight", "600")
+                .custom("letter-spacing", ".16em")
+                .custom("text-align", "center")
+
             Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupFooterCopy)"))
-                .custom("margin-top", "18px")
+                .custom("margin-top", "12px")
                 .custom("color", "#738c96")
                 .custom("font-size", "10px")
                 .custom("letter-spacing", ".13em")
 
             Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupFooter) .\(TCWorkDashboardClass.startupProgress)"))
                 .custom("margin-top", "0")
+                .custom("height", "4px")
+                .custom("background", "rgba(33, 119, 202, .18)")
+                .custom("box-shadow", "0 0 12px rgba(18, 149, 255, .22)")
 
             Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupFooter) .\(TCWorkDashboardClass.startupProgressFill)"))
-                .custom("background", "#9ccbd2")
-                .custom("box-shadow", "none")
+                .custom("position", "relative")
+                .custom("overflow", "hidden")
+                .custom("border-radius", "inherit")
+                .custom("background", "linear-gradient(90deg, #1379f4 0%, #10a8ff 40%, #58dcff 76%, #1593ff 100%)")
+                .custom("box-shadow", "0 0 10px rgba(34, 197, 255, .85)")
                 .custom("transition", "transform 220ms linear")
         }
 
@@ -928,11 +946,13 @@ enum TCWorkDashboardTheme {
                 .custom("position", "absolute")
                 .custom("left", "50%")
                 .custom("top", "50%")
-                .custom("width", "min(1080px, calc(100vw - 48px))")
-                .custom("height", "min(520px, 72vh)")
+                // Wider outer HUD with 10% opacity; SVG side details are
+                // also shifted outward so they clear the inner card on smaller desktops.
+                .custom("width", "min(1700px, calc(100vw - 16px))")
+                .custom("height", "min(850px, 94vh)")
                 .custom("pointer-events", "none")
                 .custom("z-index", "0")
-                .custom("opacity", "1")
+                .custom("opacity", "0.10")
                 .custom("transform", "translate(-50%, -50%) scale(1)")
                 .custom("transition", "opacity 600ms ease, transform 850ms cubic-bezier(.2,.8,.2,1)")
 
@@ -940,27 +960,15 @@ enum TCWorkDashboardTheme {
                 .custom("opacity", "0")
                 .custom("transform", "translate(-50%, -50%) scale(.65, .85)")
 
-            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupSideFrames)::before, \(root) .\(TCWorkDashboardClass.startupSideFrames)::after"))
-                .custom("content", "\"\"")
-                .custom("position", "absolute")
-                .custom("top", "18%")
-                .custom("bottom", "18%")
-                .custom("width", "16%")
-                .custom("box-sizing", "border-box")
-                .custom("border", "1px solid rgba(34, 170, 255, .42)")
-                .custom("border-left", "2px solid rgba(63, 193, 255, .95)")
-                .custom("border-right", "2px solid rgba(63, 193, 255, .95)")
-                .custom("background-color", "transparent")
-                .custom("background-image", "repeating-linear-gradient(0deg, transparent 0 31px, rgba(34, 170, 255, .10) 32px 33px)")
-                .custom("box-shadow", "0 0 9px rgba(34, 170, 255, .42), 0 0 24px rgba(19, 121, 244, .18), inset 0 0 9px rgba(34, 170, 255, .12)")
-
-            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupSideFrames)::before"))
-                .custom("left", "0")
-                .custom("transform", "skewY(-28deg)")
-
-            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupSideFrames)::after"))
-                .custom("right", "0")
-                .custom("transform", "skewY(28deg)")
+            // Instrument-outline SVG replaces the old glowing side panels.
+            // It is purely decorative and sits behind the existing startup assembly.
+            Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupHudArtwork)"))
+                .custom("display", "block")
+                .width(100.percent)
+                .height(100.percent)
+                .custom("object-fit", "contain")
+                .custom("user-select", "none")
+                .custom("filter", "drop-shadow(0 0 8px rgba(144, 218, 255, 0.15))")
         }
 
         WebApp.current.addStylesheet {
@@ -968,6 +976,35 @@ enum TCWorkDashboardTheme {
                 Rule(Pointer("\(root) .\(TCWorkDashboardClass.startupSideFrames)"))
                     .display(.none)
             }
+        }
+
+        WebApp.current.addStylesheet {
+            let shine = "\(root) .\(TCWorkDashboardClass.startupFooter) .\(TCWorkDashboardClass.startupProgressFill)::after"
+
+            Rule(Pointer(shine))
+                .custom("content", "\"\"")
+                .custom("position", "absolute")
+                .custom("inset", "0")
+                .custom("pointer-events", "none")
+                .custom("background", "linear-gradient(100deg, transparent 0%, rgba(255, 255, 255, .05) 35%, rgba(237, 252, 255, .9) 50%, rgba(255, 255, 255, .05) 65%, transparent 100%)")
+                .custom("transform", "translateX(-120%)")
+                .custom("animation", "tc-work-startup-progress-shine 1700ms ease-in-out infinite")
+
+            Rule(Pointer("html[data-tc-performance-mode='on'] \(shine), html[data-tc-dashboard-startup-animations='off'] \(shine)"))
+                .custom("animation", "none !important")
+
+            MediaRule(.all.prefersReducedMotion) {
+                Rule(Pointer(shine))
+                    .custom("animation", "none !important")
+            }
+
+            Keyframes("tc-work-startup-progress-shine")
+                .from {
+                    TransformProperty(.init("translateX(-120%)"))
+                }
+                .to {
+                    TransformProperty(.init("translateX(120%)"))
+                }
         }
     }
 }

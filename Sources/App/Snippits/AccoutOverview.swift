@@ -734,9 +734,16 @@ public class AccoutOverview: Div {
 
                 Div(self.$order.map { $0?.folio ?? "" })
                     .class(Class(TCOrderViewClass.headerFolio))
+                    .class(Class(TCOrderViewClass.headerStatus))
                     .class(.oneLineText)
-                    .fontSize(32.px)
+                    .fontSize(24.px)
                     .color(.white)
+                    .backgroundColor(self.$orderStatus.map { ($0 ?? .sideStatus).crystalTintColor })
+                    .border(
+                        width: .thin,
+                        style: .solid,
+                        color: self.$orderStatus.map { ($0 ?? .sideStatus).color }
+                    )
                     .hidden(self.$order.map { $0 == nil })
                     .display(self.$load.map { $0 == .order ? .inlineFlex : .none })
                 
@@ -795,6 +802,13 @@ public class AccoutOverview: Div {
     
     public override func buildUI() {
         TCOrderViewTheme.install()
+
+        // The existing order status drives the folio pill and scoped panel outlines.
+        custom("--tc-order-status-color", (orderStatus ?? .sideStatus).color.description)
+        $orderStatus.listen { [weak self] status in
+            guard let self else { return }
+            self.custom("--tc-order-status-color", (status ?? .sideStatus).color.description)
+        }
 
         height(100.percent)
         position(.absolute)
