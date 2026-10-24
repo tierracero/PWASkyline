@@ -65,7 +65,7 @@ extension CustAssetsView {
 
         @State var department: CustAssetDeps? = nil
 
-        @State var categorie: CustAssetCats? = mil
+        @State var categorie: CustAssetCats? = nil
 
         @State private var itemName = ""
         @State private var serial = ""
