@@ -21,6 +21,8 @@ final class CustAssetsAvatarUploader: Div {
     
     private let itemId: UUID?
 
+    private let allowUpload: Bool
+
     private var availableImages: [MediaViewer.MediaFile]
 
     private var images: [MediaViewer.MediaFile] = []
@@ -55,11 +57,13 @@ final class CustAssetsAvatarUploader: Div {
         avatar: State<String>,
         destination: ImagePickerTo,
         itemId: UUID? = nil,
+        allowUpload: Bool = true,
         images: [MediaViewer.MediaFile] = []
     ) {
         self.avatar = avatar
         self.destination = destination
         self.itemId = itemId
+        self.allowUpload = allowUpload
         self.availableImages = images.filter { $0.type == .image && !$0.file.purgeSpaces.isEmpty }
         super.init()
         refreshImages()
@@ -74,14 +78,16 @@ final class CustAssetsAvatarUploader: Div {
 
         Div {
 
-            Img()
-                .src("/skyline/media/upload2.png")
-                .cursor(.pointer)
-                .float(.right)
-                .height(22.px)
-                .onClick {
-                    self.fileLoader.click()
-                }
+            if self.allowUpload {
+                Img()
+                    .src("/skyline/media/upload2.png")
+                    .cursor(.pointer)
+                    .float(.right)
+                    .height(22.px)
+                    .onClick {
+                        self.fileLoader.click()
+                    }
+            }
 
             Div("Avatar")
                 .fontWeight(.bold)
@@ -191,6 +197,7 @@ final class CustAssetsAvatarUploader: Div {
     }
 
     private func loadMedia(_ file: File) {
+        guard allowUpload else { return }
         uploadTripAvatar(
             file: file,
             eventId: viewId,

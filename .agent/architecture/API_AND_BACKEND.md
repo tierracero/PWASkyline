@@ -50,6 +50,7 @@ Authoritative rules: `API-*`.
 - Shared CTAM full/Quick responses include alertFamily, optional alertFrequency, and optional notified. Legacy transport payloads decode to general/nil/nil. The server preserves these fields through list/detail/order queries and WebSocket copies; existing PWA renderers consume the extended shared types without a route or UI change in this metadata stage.
 
 - Equipment payloads carry shared `CustFolioObjectsType` (equipment/assetItem), defaulting legacy JSON to equipment. Equipment status/cache DTO copies retain the existing type. Contract relation keys include type with a human-readable label/value and optional relId as an asset UUID string. Shared equipment creation/list payloads carry relId after type, defaulting missing/null values to nil; all three browser equipment status/cache copies retain it. Existing service-tag fields keep their meaning.
+- Asset-item service-order creation uses the existing `custOrder/v1/create` request with one `EquipmentObject(type: .assetItem, relId: item.id)` and the asset owner's account. The request `store` is the current physical store/warehouse UUID, not `owningStore`. The server remains authoritative for current-location operation type, active status, account ownership, and trip/order reservations; the browser preflight only controls button visibility. Reservation and release are recorded with the existing `assetUpdate` Kardex context and the order UUID, preserving compatibility with clients pinned to the shared payload. Finalizing or canceling the service order releases the item in the same transaction, regardless of the order's generic pickup flag. No new order wire route or local DTO is introduced.
 
 ## Rules
 
@@ -81,3 +82,11 @@ Vendor create sends favorite (default false); save may omit it to preserve a sto
 ## Trip Asset Service Eligibility
 
 The CreateTripView inventory picker excludes commercial asset items with a non-null `serviceTrip` or `serviceOrder`, and its final selection callback rechecks both fields to reject stale search results. SkylineServer repeats eligibility validation under the asset row lock before trip creation.
+
+## Order File Kardex Reference
+
+Order-file lists use the shared TCFundamentals `CustOrderLoadFolioFiles` payload, which includes optional `kardexId` after `item`. PWASkyline has no duplicate local file model; old responses decode with a nil value. `Package.swift` resolves TCFundamentals from remote `main`, so this field becomes available after the shared change reaches that branch and PWASkyline refreshes the dependency.
+
+## Order Media Item Association
+
+OrderView links uploaded order files to a folio object only when exactly one equipment or asset item is present. It sends that `CustFolioObjects.id` as `itemId` to the existing upload manager. Order-message camera requests carry the same optional ID through `RequestMobileCamaraRequst`; callers outside an order keep the nil default. TCFireSignal and TCFundamentals own the shared request and APNS payload fields, so their revisions must be available to PWASkyline before refreshing its remote-main dependencies.

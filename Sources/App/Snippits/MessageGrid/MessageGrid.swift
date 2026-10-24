@@ -20,6 +20,9 @@ class MessageGrid: Div, SpeechRecognitionTarget {
     
     /// Order ID
     let orderid: UUID
+
+    /// Optional linked equipment or asset-item folio-object ID for order media.
+    let itemId: UUID?
     
     let accountid: UUID
     
@@ -49,11 +52,13 @@ class MessageGrid: Div, SpeechRecognitionTarget {
         notes: [CustOrderLoadFolioNotes],
         lastCommunicationMethod: State<MessagingCommunicationMethods?>,
         deferInitialLoad: Bool = false,
+        itemId: UUID? = nil,
         callback: @escaping ((_ note: CustOrderLoadFolioNotes) -> ())
     ) {
         
         self.style = style
         self.orderid = orderid
+        self.itemId = itemId
         self.accountid = accountid
         self.folio = folio
         self.name = name
@@ -257,7 +262,8 @@ class MessageGrid: Div, SpeechRecognitionTarget {
                         eventid: eventid,
                         relatedid: self.orderid,
                         relatedfolio: self.folio,
-                        multipleTakes: false
+                        multipleTakes: false,
+                        itemId: self.itemId
                     ) { resp in
                         
                         loadingView.hide()

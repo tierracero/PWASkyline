@@ -18,6 +18,7 @@ extension CustComponents {
         relatedid: UUID?,
         relatedfolio: String,
         multipleTakes: Bool,
+        itemId: UUID? = nil,
         callback: @escaping ( (_ resp: APIResponse?) -> () )
     ) {
         
@@ -31,7 +32,8 @@ extension CustComponents {
                 eventid: eventid,
                 relatedid: relatedid,
                 relatedfolio: relatedfolio,
-                multipleTakes: multipleTakes
+                multipleTakes: multipleTakes,
+                itemId: itemId
             )
         ) { payload in
             guard let data = payload else{

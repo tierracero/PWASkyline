@@ -876,3 +876,15 @@ Verified completed tasks live here.
 
 - CreateTripView filters assets with non-null `serviceTrip` or `serviceOrder` and rechecks those fields when a result is selected, covering stale search results. Server-side locked validation provides the authoritative check.
 - Source reviewed; no build, tests, or browser session were run. Evidence: SkylineServer `.artifacts/planning/asset-service-links/AUDIT.md`.
+
+## PWA-FILE-KARDEX-001 — Shared order-file Kardex metadata (2026-10-23)
+
+- PWASkyline's `CustOrderLoadFolioFiles` values inherit optional `kardexId` from TCFundamentals. No local file DTO or copy path exists; the shared response is passed through the existing order file cache. Its package manifest resolves TCFundamentals from remote `main`, so clients receive the field after the shared change reaches that branch and the dependency is refreshed.
+- Source/contract reviewed; builds, tests, and browser runtime were not run. Evidence: SkylineServer `.artifacts/planning/cust-files-kardex-id/AUDIT.md`.
+
+
+## PWA-ORDER-FILE-ITEM-ASSOCIATION-001 — Link order media to a sole folio object (2026-10-23)
+
+- OrderView includes `CustFolioObjects.id` as `itemId` for direct uploads and order-message camera requests only when exactly one equipment or asset-item record is linked. Zero/multiple records retain nil.
+- The request field is source-compatible and optional. TCFireSignal carries it in `RequestMobileCamaraRequst`, and TCFundamentals carries it in `APNSNotificationPayload`; PWASkyline uses remote-main shared dependencies, so the shared changes must reach those branches before dependency refresh/build.
+- Static call-chain and diff review completed. No build, tests, browser/device session, staging, or commit. Evidence: `.artifacts/planning/order-file-equipment-link/AUDIT.md`.

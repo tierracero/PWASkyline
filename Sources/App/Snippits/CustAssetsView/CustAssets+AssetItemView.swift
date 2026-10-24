@@ -73,6 +73,10 @@ extension CustAssetsView {
         @State private var selectedSectionId = ""
         @State private var selectedSubSectionId = ""
         @State private var isBusy = false
+        @State private var canStartServiceOrder = false
+
+        private var blockedActions = false
+        private var orderAvailabilityRequest = UUID()
 
         private var loadedPayload: CustAssetsComponents.GetAssetItemResponse?
         private var sections: [CustCommercialAssetsSection] = []
@@ -84,11 +88,11 @@ extension CustAssetsView {
 
         private lazy var sectionSelect = USelectField(self.$selectedSectionId)
             .width(100.percent)
-            .disabled(self.$isBusy)
+            .disabled(self.$isBusy.map { $0 || self.blockedActions })
 
         private lazy var subSectionSelect = USelectField(self.$selectedSubSectionId)
             .width(100.percent)
-            .disabled(self.$isBusy)
+            .disabled(self.$isBusy.map { $0 || self.blockedActions })
 
         @State private var noteCount = 0
 
@@ -183,6 +187,8 @@ extension CustAssetsView {
             isLoadingItem = true
             isBusy = true
             editorGeneration = UUID()
+            orderAvailabilityRequest = UUID()
+            canStartServiceOrder = false
             historyRequest = UUID()
             isLoadingKardexHistory = false
             mapRequest = UUID()
@@ -225,6 +231,8 @@ extension CustAssetsView {
                 }
                 self.assetItemId = payload.item.id
                 self.loadedPayload = payload
+                self.blockedActions = payload.item.serviceOrder != nil || payload.item.serviceTrip != nil ||
+                    payload.item.currentLocation == .subaccount
                 self.isHydratingEditor = true
                 self.itemName = payload.item.name
                 self.serial = payload.item.serial ?? ""
@@ -245,6 +253,7 @@ extension CustAssetsView {
                 self.categorie = payload.categorie
                 self.render(payload)
                 self.onLoaded?(payload.item)
+                self.refreshOrderAvailability(payload, generation: generation, sessionId: sessionId)
                 self.loadLocationOptions(payload, generation: generation, sessionId: sessionId)
                 if self.acceptsEditor(generation, sessionId: sessionId), self.activeTab == .kardex {
                     self.loadKardex()
@@ -324,6 +333,7 @@ extension CustAssetsView {
                             avatar: self.$avatar,
                             destination: .assetItem,
                             itemId: payload.item.id,
+                            allowUpload: !self.blockedActions,
                             images: payload.images.map {
                                 .init(
                                     fileId: $0.id,
@@ -364,7 +374,7 @@ extension CustAssetsView {
                         UField("Nombre", required: true) {
                             UTextField(self.$itemName)
                                 .width(100.percent)
-                                .disabled(self.$isBusy)
+                                .disabled(self.$isBusy.map { $0 || self.blockedActions })
                         }
                     }
 
@@ -373,7 +383,7 @@ extension CustAssetsView {
                             UTextField(self.$serial)
                                 .placeholder("Opcional")
                                 .width(100.percent)
-                                .disabled(self.$isBusy)
+                                .disabled(self.$isBusy.map { $0 || self.blockedActions })
                         }
                     }
 
@@ -440,7 +450,7 @@ extension CustAssetsView {
                             UTextField(self.$currentCost)
                                 .placeholder("0.00")
                                 .width(100.percent)
-                                .disabled(self.$isBusy)
+                                .disabled(self.$isBusy.map { $0 || self.blockedActions })
                         }
                     }
 
@@ -450,13 +460,20 @@ extension CustAssetsView {
 
                 Div {
 
-                    // TODO: add send to order button
-
-                    ULargeButton("Guardar Cambios")
+                    ULargeButton("Crear orden de servicio")
                         .class(Class(TCCrystalSurfaceClass.goodButton))
+                        .hidden(self.$canStartServiceOrder.map { !$0 })
                         .disabled(self.$isBusy)
-                        .onClick { self.saveChanges() }
+                        .onClick { self.startassetServiceOrder() }
+
+                    if !self.blockedActions {
+                        ULargeButton("Guardar Cambios")
+                            .class(Class(TCCrystalSurfaceClass.goodButton))
+                            .disabled(self.$isBusy)
+                            .onClick { self.saveChanges() }
+                    }
                 }
+                .custom("gap", "10px")
                 .display(.flex)
                 .custom("justify-content", "flex-end")
                 .marginTop(10.px)
@@ -602,7 +619,7 @@ extension CustAssetsView {
         }
 
         private func saveChanges() {
-            guard isInDOM, !isBusy, let payload = loadedPayload else { return }
+            guard isInDOM, !isBusy, !blockedActions, let payload = loadedPayload else { return }
             let name = itemName.purgeSpaces.purgeHtml
             guard !name.isEmpty else {
                 showError(.requiredField, .requierdValid("Nombre"))
@@ -1100,6 +1117,8 @@ extension CustAssetsView {
 
         func addwarrantyCard() {
 
+            guard !blockedActions else { return }
+
             guard let assetItemId else {
                 showAlert(.alerta, "No se ha cargado id del activo")
                 return
@@ -1118,11 +1137,62 @@ extension CustAssetsView {
         }
 
         func startassetServiceOrder() {
+            guard canStartServiceOrder, !isBusy, let payload = loadedPayload else { return }
+            addToDom(CustAssetItemCreateOrder(payload: payload) { [weak self] orderId in
+                guard let self, self.isInDOM else { return }
+                self.load()
+                OrderCatchControler.shared.loadFolio(orderid: orderId) {
+                    account, order, notes, payments, charges, pocs, files, contracts,
+                    equipments, rentals, transferOrder, orderHighPriorityNote,
+                    accountHighPriorityNote, tasks, route, loadFromCatch in
+                    let overview = AccoutOverview(id: .id(order.custAcct))
+                    overview.loadOrder(
+                        account: account, order: order, notes: notes, payments: payments,
+                        charges: charges, pocs: pocs, files: files, contracts: contracts,
+                        equipments: equipments, rentals: rentals,
+                        transferOrder: transferOrder,
+                        orderHighPriorityNote: orderHighPriorityNote,
+                        accountHighPriorityNote: accountHighPriorityNote,
+                        tasks: tasks, orderRoute: route, loadFromCatch: loadFromCatch
+                    )
+                    minViewAcctRefrence[order.custAcct] = overview
+                    addToDom(overview)
+                }
+            })
+        }
 
+        private func refreshOrderAvailability(
+            _ payload: CustAssetsComponents.GetAssetItemResponse,
+            generation: UUID,
+            sessionId: UUID
+        ) {
+            canStartServiceOrder = false
+            let item = payload.item
+            guard !blockedActions, item.status == .active,
+                  payload.asset.status == .active,
+                  let accountId = item.owningAccount,
+                  let currentStoreId = item.currentLocationId,
+                  item.currentLocation == .store || item.currentLocation == .warehouse else { return }
+            let requestId = UUID()
+            orderAvailabilityRequest = requestId
+            API.custAPIV1.loadStore(storeId: currentStoreId) { [weak self] locationResponse in
+                guard let self, self.acceptsEditor(generation, sessionId: sessionId),
+                      self.orderAvailabilityRequest == requestId,
+                      locationResponse?.status == .ok,
+                      locationResponse?.data?.config.operationType == .internal else { return }
+                API.custAccountV1.load(id: .id(accountId)) { [weak self] accountResponse in
+                    guard let self, self.acceptsEditor(generation, sessionId: sessionId),
+                          self.orderAvailabilityRequest == requestId,
+                          accountResponse?.status == .ok,
+                          accountResponse?.data?.custAcct.id == accountId else { return }
+                    self.canStartServiceOrder = true
+                }
+            }
         }
         
         override func didRemoveFromDOM() {
             editorGeneration = UUID()
+            orderAvailabilityRequest = UUID()
             historyRequest = UUID()
             isLoadingKardexHistory = false
             clearMap()
@@ -1136,6 +1206,7 @@ extension CustAssetsView {
             $selectedSectionId.removeAllListeners()
             $selectedSubSectionId.removeAllListeners()
             $isBusy.removeAllListeners()
+            $canStartServiceOrder.removeAllListeners()
         }
 
     }

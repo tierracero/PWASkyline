@@ -15,7 +15,7 @@ Each architecture boundary rule has a unique ID owned by exactly one chunk. Rout
 | `APP-003` | `architecture/APP_AND_PLATFORM.md` | Verified facts and planned work must remain separate. |
 | `SWWEB-001` | `architecture/SWIFWEB_APP_ARCHITECTURE.md` | Browser UI is owned by the `App` target. |
 | `SWWEB-002` | `architecture/SWIFWEB_APP_ARCHITECTURE.md` | Route and theme changes must preserve existing Swift Web lifecycle. |
-| `SWWEB-003` | `architecture/SWIFWEB_APP_ARCHITECTURE.md` | UI state cannot become hidden server-data authority. |
+| `SWWEB-003` | `architecture/SWIFWEB_APP_ARCHITECTURE.md` | UI state, including asset-order preflight, cannot become hidden server-data authority. |
 | `API-001` | `architecture/API_AND_BACKEND.md` | API wrappers own client-side request/response contracts. |
 | `API-002` | `architecture/API_AND_BACKEND.md` | Backend contract drift requires explicit review. |
 | `API-003` | `architecture/API_AND_BACKEND.md` | Fiscal/payment flows require focused verification. |

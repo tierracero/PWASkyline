@@ -39,6 +39,15 @@ class OrderView: Div {
     var files: [CustOrderLoadFolioFiles]
     var contracts: [CustPageContent]
     var equipments: [CustOrderLoadFolioEquipments]
+
+    private var linkedOrderFileItemId: UUID? {
+        let linkedItems = equipments.filter {
+            $0.type == .equipment || $0.type == .assetItem
+        }
+        guard linkedItems.count == 1 else { return nil }
+        return linkedItems[0].id
+    }
+
     var rentals: [CustPOCRentalsMin]
     var transferOrder: CustTranferManager?
     var orderHighPriorityNote: [HighPriorityNote]
@@ -210,6 +219,7 @@ class OrderView: Div {
         notes: self.notes,
         lastCommunicationMethod: self.$lastCommunicationMethod,
         deferInitialLoad: true,
+        itemId: self.linkedOrderFileItemId,
         callback: { note in
             
         })
@@ -5622,6 +5632,10 @@ class OrderView: Div {
         formData.append("to", ImagePickerTo.order.rawValue)
 
         formData.append("id", self.order.id.uuidString)
+
+        if let itemId = self.linkedOrderFileItemId {
+            formData.append("itemId", itemId.uuidString)
+        }
 
         formData.append("folio", self.order.folio)
         
