@@ -422,9 +422,9 @@ class MessageGrid: Div, SpeechRecognitionTarget {
                     
                 }
             case .requestMobileCamaraInitiate:
-                if let payload = self.ws.requestMobileCamaraInitiate(value) {
+                if let payload = self.ws.requestMobileCamaraInitiate(value), let eventId = payload.eventid {
                     
-                    if  let view = self.noteViewCatche[payload.eventid] {
+                    if let view = self.noteViewCatche[eventId] {
                         
                         self.grid.appendChild(view)
                         
@@ -449,8 +449,8 @@ class MessageGrid: Div, SpeechRecognitionTarget {
                     
                 }
             case .requestMobileCamaraSelected:
-                if let payload = self.ws.requestMobileCamaraSelected(value) {
-                    if let view = self.noteViewCatche[payload.eventid] {
+                if let payload = self.ws.requestMobileCamaraSelected(value), let eventId = payload.eventid {
+                    if let view = self.noteViewCatche[eventId] {
                         view.activity = "Iniciando Carga.."
                     }
                 }

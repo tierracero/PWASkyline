@@ -299,8 +299,8 @@ final class ConfirmTripStatusUpdate: Div {
 
     private func confirm() {
         guard isInDOM, sessionId == custCatchID, !didConfirm else { return }
-        if deliveryItem != nil, rows.contains(where: { $0.hasPendingUploads }) {
-            showError(.generalError, "Espere a que terminen de cargar las imágenes antes de entregar el activo.")
+        if rows.contains(where: { $0.hasPendingUploads }) {
+            showError(.generalError, "Espere a que terminen las imágenes; reintente o retire las fallidas antes de confirmar.")
             return
         }
         guard isValidTransition else {
@@ -357,11 +357,11 @@ final class ConfirmTripStatusUpdate: Div {
                 file: payload.file, avatar: payload.avatar, url: payload.url
             )
         case .requestMobileCamaraSelected:
-            guard let payload = ws.requestMobileCamaraSelected(message) else { return }
-            _ = remoteCameraRow(for: payload.eventid)
+            guard let payload = ws.requestMobileCamaraSelected(message), let eventId = payload.eventid else { return }
+            _ = remoteCameraRow(for: eventId)
         case .requestMobileCamaraInitiate:
-            guard let payload = ws.requestMobileCamaraInitiate(message) else { return }
-            _ = remoteCameraRow(for: payload.eventid)
+            guard let payload = ws.requestMobileCamaraInitiate(message), let eventId = payload.eventid else { return }
+            _ = remoteCameraRow(for: eventId)
         case .requestMobileCamaraProgress:
             guard let payload = ws.requestMobileCamaraProgress(message) else { return }
             remoteCameraRow(for: payload.eventid)?.setProgress("\(payload.percent)%", eventId: payload.eventid)
@@ -402,10 +402,12 @@ final class ConfirmTripStatusUpdate: Div {
             guard let self, self.isInDOM, self.sessionId == custCatchID, let row, row.isInDOM,
                   self.remoteCameraRow === row else { return }
             guard let response else {
+                row.remoteCameraRequestFailed()
                 showError(.generalError, "No se pudo solicitar la cámara remota.")
                 return
             }
             guard response.status == .ok else {
+                row.remoteCameraRequestFailed()
                 showError(.generalError, response.msg)
                 return
             }
@@ -437,6 +439,13 @@ private extension ConfirmTripStatusUpdate {
         private let destination: ImagePickerTo = .assetItem
         private var order: [UUID] = []
         private var pending: [UUID: String] = [:]
+        private var failures: [UUID: String] = [:]
+        private let uploadSessionID = custCatchID
+        private var isCurrentSession: Bool { uploadSessionID == custCatchID }
+        private var sources: [UUID: File] = [:]
+        private var processingEvents: Set<UUID> = []
+        private var processingChecks: [UUID: UUID] = [:]
+        private var retryingRemoteID: UUID?
         private var files: [UUID: MediaViewer.MediaFile] = [:]
         private var requests: [UUID: XMLHttpRequest] = [:]
         private var remoteCameraEvents: Set<UUID> = []
@@ -448,8 +457,9 @@ private extension ConfirmTripStatusUpdate {
         @State private var avatar = "/skyline/media/tierraceroRoundLogoWhite.svg"
         @State private var imageCount = 0
         @State private var progress = ""
+        @State private var failedCount = 0
         var completedFiles: [MediaViewer.MediaFile] { order.compactMap { files[$0] } }
-        var hasPendingUploads: Bool { !pending.isEmpty }
+        var hasPendingUploads: Bool { !pending.isEmpty || !failures.isEmpty }
 
         init(item: FiscalMercanciaItem, onRequestCamera: @escaping (MerchandiseRow) -> Void) {
             self.item = item
@@ -501,6 +511,16 @@ private extension ConfirmTripStatusUpdate {
                     .color(ConfirmTripStatusUpdate.accent)
                     .marginTop(5.px)
                     .hidden(self.$progress.map { $0.isEmpty })
+                Div {
+                    Button("Reintentar imágenes")
+                        .class(Class(TCCrystalSurfaceClass.goodButton))
+                        .onClick { [weak self] in self?.retryFailed() }
+                    Button("Retirar fallidas")
+                        .class(Class(TCCrystalSurfaceClass.goodButton))
+                        .onClick { [weak self] in self?.discardFailed() }
+                }
+                .hidden(self.$failedCount.map { $0 == 0 })
+
             }
             .custom("flex", "1")
             .custom("min-width", "0")
@@ -561,31 +581,37 @@ private extension ConfirmTripStatusUpdate {
         func contains(_ eventId: UUID) -> Bool { pending[eventId] != nil }
 
         func owns(_ eventId: UUID) -> Bool {
-            contains(eventId) || files[eventId] != nil || finishedEvents.contains(eventId)
+            contains(eventId) || failures[eventId] != nil || files[eventId] != nil || finishedEvents.contains(eventId)
         }
 
         func beginRemoteCapture(_ eventId: UUID) -> Bool {
-            guard isInDOM, !finishedEvents.contains(eventId) else { return false }
+            guard isInDOM, isCurrentSession, !finishedEvents.contains(eventId) else { return false }
             if contains(eventId) { return remoteCameraEvents.contains(eventId) }
+            if let previous = retryingRemoteID, previous != eventId,
+               let position = order.firstIndex(of: previous), failures[previous] != nil {
+                discardFailure(previous)
+                order.insert(eventId, at: min(position, order.count))
+                retryingRemoteID = nil
+            }
             remoteCameraEvents.insert(eventId)
             begin(eventId, message: "0%")
             return true
         }
 
         private func begin(_ eventId: UUID, message: String) {
-            order.append(eventId)
+            if !order.contains(eventId) { order.append(eventId) }
             pending[eventId] = message
             refresh()
         }
 
         func setProgress(_ message: String, eventId: UUID) {
-            guard isInDOM, contains(eventId) else { return }
+            guard isInDOM, isCurrentSession, contains(eventId) else { return }
             pending[eventId] = message
             refresh()
         }
 
         func complete(eventId: UUID, type: FileTypes, file: String, avatar: String, url: String) {
-            guard isInDOM, contains(eventId) else { return }
+            guard isInDOM, isCurrentSession, contains(eventId) else { return }
             guard type == .image, !file.isEmpty, !url.isEmpty else {
                 fail(eventId: eventId, message: "Adjunte únicamente imágenes válidas.")
                 return
@@ -597,6 +623,11 @@ private extension ConfirmTripStatusUpdate {
             } else {
                 order.removeAll { $0 == eventId }
             }
+            sources[eventId] = nil
+            if retryingRemoteID == eventId { retryingRemoteID = nil }
+            failures[eventId] = nil
+            processingEvents.remove(eventId)
+            processingChecks[eventId] = nil
             finishedEvents.insert(eventId)
             pending.removeValue(forKey: eventId)
             requests.removeValue(forKey: eventId)
@@ -605,15 +636,57 @@ private extension ConfirmTripStatusUpdate {
 
         func fail(eventId: UUID, message: String? = nil) {
             guard contains(eventId) else { return }
-            finishedEvents.insert(eventId)
             pending.removeValue(forKey: eventId)
-            order.removeAll { $0 == eventId }
+            processingChecks[eventId] = nil
+            failures[eventId] = message ?? "Carga cancelada."
             let request = requests.removeValue(forKey: eventId)
             request?.abort()
             refresh()
-            if isInDOM, let message {
+            if isInDOM, isCurrentSession, let message {
                 showError(.generalError, message)
             }
+        }
+
+        private func retryFailed() {
+            guard isInDOM, isCurrentSession else { return }
+            let failed = order.filter { failures[$0] != nil }
+            for id in failed {
+                if processingEvents.contains(id) {
+                    failures[id] = nil
+                    pending[id] = "Procesando…"
+                    refresh()
+                    checkUpload(id, attempt: 0)
+                } else if let file = sources[id], let position = order.firstIndex(of: id) {
+                    discardFailure(id)
+                    upload(file, at: position)
+                } else {
+                    guard retryingRemoteID == nil else { continue }
+                    retryingRemoteID = id
+                    onRequestCamera(self)
+                    break
+                }
+            }
+        }
+
+        private func discardFailure(_ id: UUID) {
+            guard failures[id] != nil else { return }
+            if retryingRemoteID == id { retryingRemoteID = nil }
+            failures[id] = nil
+            sources[id] = nil
+            processingEvents.remove(id)
+            processingChecks[id] = nil
+            order.removeAll { $0 == id }
+            finishedEvents.insert(id)
+            refresh()
+        }
+
+        private func discardFailed() {
+            guard isInDOM, isCurrentSession else { return }
+            for id in order.filter({ failures[$0] != nil }) { discardFailure(id) }
+        }
+
+        func remoteCameraRequestFailed() {
+            retryingRemoteID = nil
         }
 
         private func refresh() {
@@ -627,10 +700,12 @@ private extension ConfirmTripStatusUpdate {
                     (directory.isEmpty ? "" : directory + "/") + "thump_" + path.lastPathComponent
                 avatar = name.hasPrefix("http") || name.hasPrefix("/") ? name : (first.url ?? "") + name
             }
-            progress = order.compactMap { pending[$0] }.joined(separator: " · ")
+            failedCount = failures.count
+            progress = order.compactMap { pending[$0] ?? failures[$0] }.joined(separator: " · ")
         }
 
-        private func upload(_ file: File) {
+        private func upload(_ file: File, at position: Int? = nil) {
+            guard isInDOM, isCurrentSession else { return }
             guard file.type.hasPrefix("image/") else {
                 showError(.generalError, "Adjunte únicamente imágenes.")
                 return
@@ -640,6 +715,8 @@ private extension ConfirmTripStatusUpdate {
                 return
             }
             let eventId = UUID()
+            sources[eventId] = file
+            if let position { order.insert(eventId, at: min(position, order.count)) }
             let xhr = XMLHttpRequest()
             begin(eventId, message: "0%")
             requests[eventId] = xhr
@@ -647,9 +724,11 @@ private extension ConfirmTripStatusUpdate {
             xhr.onError { [weak self] _ in
                 self?.fail(eventId: eventId, message: "No se pudo cargar la imagen.")
             }
+            xhr.onTimeout { [weak self] in self?.fail(eventId: eventId, message: "La imagen tardó demasiado en subir.") }
+            xhr.onAbort { [weak self] in self?.fail(eventId: eventId) }
             xhr.onLoadEnd { [weak self, weak xhr] in
-                guard let self, let xhr, self.isInDOM, self.contains(eventId) else { return }
-                guard let data = xhr.responseText?.data(using: .utf8),
+                guard let self, let xhr, self.isInDOM, self.isCurrentSession, self.contains(eventId) else { return }
+                guard (200...299).contains(xhr.status), let data = xhr.responseText?.data(using: .utf8),
                       let response = try? decodeAPIResponse(APIResponseGeneric<CustComponents.UploadManagerResponse>.self, from: data) else {
                     self.fail(eventId: eventId, message: "No se pudo leer la respuesta de la carga.")
                     return
@@ -660,9 +739,14 @@ private extension ConfirmTripStatusUpdate {
                 }
                 switch result {
                 case .processing:
+                    self.processingEvents.insert(eventId)
                     self.setProgress("Procesando…", eventId: eventId)
                     self.checkUpload(eventId, attempt: 0)
                 case .processed(let payload):
+                    guard payload.eventid == eventId, payload.to == self.destination, payload.toId == nil else {
+                        self.fail(eventId: eventId, message: "La imagen recibida no corresponde a esta carga.")
+                        return
+                    }
                     self.complete(eventId: eventId, type: payload.type, file: payload.fileName, avatar: payload.avatar, url: payload.url)
                 }
             }
@@ -684,6 +768,7 @@ private extension ConfirmTripStatusUpdate {
             data.append("connid", custCatchChatConnID)
             data.append("remoteCamera", false.description)
             xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
+            xhr.jsValue.timeout = 300_000.jsValue
             xhr.setRequestHeader("Accept", "application/json")
             xhr.setRequestHeader("WSId", custCatchChatConnID)
             guard let header = try? JSONEncoder().encode(APIHeader(
@@ -699,11 +784,13 @@ private extension ConfirmTripStatusUpdate {
             xhr.send(data)
         }
 
-        private func checkUpload(_ eventId: UUID, attempt: Int) {
+        private func checkUpload(_ eventId: UUID, attempt: Int, generation: UUID? = nil) {
+            let checkID = generation ?? UUID()
+            processingChecks[eventId] = checkID
             Dispatch.asyncAfter(7) { [weak self] in
-                guard let self, self.isInDOM, self.contains(eventId) else { return }
+                guard let self, self.isInDOM, self.isCurrentSession, self.contains(eventId), self.processingChecks[eventId] == checkID else { return }
                 API.custAPIV1.asyncCheckUploadStatus(type: .upload, eventid: eventId) { [weak self] response in
-                    guard let self, self.isInDOM, self.contains(eventId) else { return }
+                    guard let self, self.isInDOM, self.isCurrentSession, self.contains(eventId), self.processingChecks[eventId] == checkID else { return }
                     guard let response, response.status == .ok, let payload = response.data else {
                         self.fail(eventId: eventId, message: "No se pudo verificar la carga de la imagen.")
                         return
@@ -718,11 +805,12 @@ private extension ConfirmTripStatusUpdate {
                         self.complete(eventId: eventId, type: .image, file: file, avatar: "thump_" + file, url: url)
                     case .active, .processed:
                         if attempt < 20 {
-                            self.checkUpload(eventId, attempt: attempt + 1)
+                            self.checkUpload(eventId, attempt: attempt + 1, generation: checkID)
                         } else {
                             self.fail(eventId: eventId, message: "La carga de la imagen tardó demasiado. Intente nuevamente.")
                         }
                     case .error:
+                        self.processingEvents.remove(eventId)
                         self.fail(eventId: eventId, message: "Falló la carga de la imagen.")
                     }
                 }
@@ -739,6 +827,11 @@ private extension ConfirmTripStatusUpdate {
         }
 
         func stopUploads() {
+            retryingRemoteID = nil
+            sources.removeAll()
+            failures.removeAll()
+            processingEvents.removeAll()
+            processingChecks.removeAll()
             pending.removeAll()
             remoteCameraEvents.removeAll()
             let active = Array(requests.values)
@@ -755,6 +848,7 @@ private extension ConfirmTripStatusUpdate {
             $avatar.removeAllListeners()
             $imageCount.removeAllListeners()
             $progress.removeAllListeners()
+            $failedCount.removeAllListeners()
         }
     }
 }

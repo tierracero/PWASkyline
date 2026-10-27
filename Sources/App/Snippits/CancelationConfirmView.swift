@@ -68,6 +68,35 @@ class CancelationConfirmView: Div {
         .borderRadius(all: 24.px)
     }
     
+    private func buildAssetPickupConfirmation() {
+        confirmView.appendChild(
+            P("Las órdenes con activos requieren entregar todos sus elementos antes de cerrar.")
+                .fontSize(24.px)
+        )
+        confirmView.appendChild(
+            Div { Strong("Confirmar: todo entregado") }
+                .padding(all: 12.px)
+                .class(.smallButtonBox)
+                .onClick {
+                    self.equipments = self.equipments.map { item in
+                        var item = item
+                        item.workedBy = item.workedBy ?? custCatchID
+                        item.deliveredBy = item.deliveredBy ?? custCatchID
+                        return item
+                    }
+                    self.rentals = self.rentals.map { item in
+                        var item = item
+                        item.workedBy = item.workedBy ?? custCatchID
+                        item.deliveredBy = item.deliveredBy ?? custCatchID
+                        return item
+                    }
+                    self.callback(self.rentals, self.equipments)
+                    self.remove()
+                }
+        )
+        confirmView.left(25.percent).top(30.percent).width(50.percent)
+    }
+
     override func buildUI() {
         super.buildUI()
         
@@ -78,6 +107,11 @@ class CancelationConfirmView: Div {
         position(.absolute)
             .zIndex(999999998)
         
+        if equipments.contains(where: { $0.type == .assetItem }) {
+            buildAssetPickupConfirmation()
+            return
+        }
+
         switch self.type {
         case .folio:
             

@@ -2,7 +2,31 @@
 
 Verified completed tasks live here.
 
+## MEDIA-UPLOAD-RETRY-001 — Retry failed asset/trip attachments
+
+- **Completed**: 2026-10-26 (source implementation and isolated checks).
+- **Approved scope**: user requests retry buttons for asset-item creation/trip media in all three apps; prior explicit focused build/test authorization applies. Architecture: SWWEB-001/002/003, API-001/002.
+- **Implementation**: Local asset upload previews/Files survive failure with retry; feature-owned bounded processing checks resume acknowledged events. Trip rows retain failure/source state, offer retry/discard and block whole-trip/delivery confirmation on pending/failed images. Fresh raw attempts replace only failed events, preserve order, retain successful files and ignore obsolete HTTP/WS/poll callbacks. Remote retry requests another handset capture and keeps the failed placeholder until replacement begins. Repare and native companions implement matching local retry/processing behavior with their own existing API/UI conventions.
+- **Verification**: 11 exact-uploader fault scenarios and 14 extracted native/Web state scenarios pass with isolated doubles; all nine changed Swift sources parse. Native sources compile but linking stops on existing duplicate _main. Focused PWA cached-module typechecks stop on Swift 6.2.3 dependencies under the Swift 6.4 compiler; full WASM/browser/live-network behavior remains unverified. Diff/baseline/index/whitespace audit and owner docs/memory are synchronized. No generated output, dependency pin, backend/schema change, deployment, staging or commit command issued.
+- **Evidence**: `/Users/victorcantu/Development/apps/version3/.artifacts/media-upload-retry-20261026/` contains the scoped plan, baselines, exact source fixture scope/results, native/PWA logs and final audit.
+
+
+## ASSET-INVENTORY-FILTER-001 — Cross-client inventory categories
+
+- **Approval**: October 25, 2026; user requests matching iOS/Skyline/Repare filters, confirms the combined active/available category, actual trip/order UUIDs, additional response data as needed, Repare /assets inventory and focused builds/tests.
+- **Completed**: October 26, 2026 (source implementation/audit; integrated build unavailable).
+- **Scope**: Adds the normal themed USelectField next to inventory search and passes its state into the existing scheduled list controller. Same exclusive buckets/All fallback as native/Repare; actual shared optional reservation IDs, physical custody and current status drive presentation. Existing user form/row/data behavior is preserved.
+- **Verification**: Seven touched Swift sources parse; identical actual helper/DTO fixtures pass 16 category cases, 16 payload cases, physical custody/ownership and old/null/new JSON compatibility. Temporary Skyline App build stops on unavailable TCFundamentals revision 417160b; Repare local-source attempt stops on unavailable TaecelAPICore revision 0810e16. Native sources compile with the new shared payload but linking fails on duplicate _main in AppDelegate.o/UIKitPlus.o. Original manifests/pins and generated outputs are preserved. Browser/runtime and live API validation remain unrun; no complete build is claimed.
+- **Evidence**: `/Users/victorcantu/Development/apps/version3/.artifacts/asset-inventory-categories-20261025/`. GUI/API/source/memory facts synchronized. Release the updated shared payload/server projection with the clients; no deployment or commit.
+
 ---
+
+
+## ASSET-ORDER-PICKUP-REQUIRED-001 — Mandatory pickup for asset orders (2026-10-24)
+
+- Scope: SkylineServer asset service and Finalize/Cancel/turnout, pickup-status and generic-status handlers; PWASkyline FinalizeConfirmView, CancelationConfirmView, OrderView submission and equipment pickup controls. Architecture: API-002, API-003, DATA-002, SEC-003; PWA API-001, API-002, SWWEB-003.
+- Implemented: asset-containing close requests must include each saved equipment/rental ID exactly once and deliver every line before close writes. Asset settlement checks saved delivery. Closed asset orders reject pickup recovery; generic terminal changes use dedicated Finalize/Cancel. Legacy turnout uses the same completeness validation. The PWA offers explicit all-delivered confirmation, retains complete arrays and guards submission/recovery. Existing session connections, ordinary orders, repaired/canceled outcomes and unrelated work are preserved.
+- Validation: focused before/after source and shared-contract review, whitespace checks and git-status audit passed; unrelated baseline files remain byte-for-byte unchanged. Evidence: /private/tmp/asset-order-mandatory-pickup-y0i365sf/audit.txt. No build, compiler invocation, tests or browser/runtime validation ran; compiler/runtime behavior remains unverified. No commit created.
 
 ## ASSET-ITEM-MAP-BRIDGE-001 — Bundle the asset map factory with its caller
 

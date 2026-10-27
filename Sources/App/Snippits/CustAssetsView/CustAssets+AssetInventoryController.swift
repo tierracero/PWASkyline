@@ -7,6 +7,56 @@ import TCFundamentals
 import TCFireSignal
 import Web
 
+/// Presentation-only categories for the currently loaded asset units.
+enum AssetInventoryFilter: String, CaseIterable {
+    case all
+    case available
+    case inTrip
+    case inOrder
+    case toMerm
+    case inSubaccount
+
+    var title: String {
+        switch self {
+        case .all: return "Todos"
+        case .available: return "Activos y disponibles"
+        case .inTrip: return "En viaje"
+        case .inOrder: return "En orden"
+        case .toMerm: return "A merma"
+        case .inSubaccount: return "En subcuenta"
+        }
+    }
+
+    func matches(
+        status: CustCommercialAssetsItemStatus,
+        isInSubaccount: Bool,
+        serviceTrip: UUID?,
+        serviceOrder: UUID?
+    ) -> Bool {
+        if self == .all { return true }
+        if serviceTrip != nil { return self == .inTrip }
+        if serviceOrder != nil { return self == .inOrder }
+        if status == .tomerm { return self == .toMerm }
+        if isInSubaccount { return self == .inSubaccount }
+        return self == .available && status == .active
+    }
+
+    func matches(_ item: CustAssetsComponents.AssetsItemPayload) -> Bool {
+        let isInSubaccount: Bool
+        if case .subaccount = item.location {
+            isInSubaccount = true
+        } else {
+            isInSubaccount = false
+        }
+        return matches(
+            status: item.status,
+            isInSubaccount: isInSubaccount,
+            serviceTrip: item.serviceTrip,
+            serviceOrder: item.serviceOrder
+        )
+    }
+}
+
 extension CustAssetsView {
 
     final class AssetInventoryController: Div {
@@ -16,6 +66,8 @@ extension CustAssetsView {
         let items: State<[CustAssetsComponents.AssetsItemPayload]>
 
         private let searchTerm: State<String>
+
+        private let filter: State<String>
 
         private var renderId = UUID()
 
@@ -27,10 +79,12 @@ extension CustAssetsView {
 
         init(
             items: State<[CustAssetsComponents.AssetsItemPayload]>,
-            searchTerm: State<String> = State(wrappedValue: "")
+            searchTerm: State<String> = State(wrappedValue: ""),
+            filter: State<String> = State(wrappedValue: AssetInventoryFilter.all.rawValue)
         ) {
             self.items = items
             self.searchTerm = searchTerm
+            self.filter = filter
             super.init()
 
             items.listen { [weak self] _ in
@@ -38,6 +92,9 @@ extension CustAssetsView {
             }
             searchTerm.listen { [weak self] _ in
                 self?.scheduleRender(after: 0.2)
+            }
+            filter.listen { [weak self] _ in
+                self?.scheduleRender(after: 0.01)
             }
         }
 
@@ -86,15 +143,16 @@ extension CustAssetsView {
             list.innerHTML = ""
             let allItems = items.wrappedValue
             let query = searchTerm.wrappedValue.purgeSpaces.pseudo
+            let selectedFilter = AssetInventoryFilter(rawValue: filter.wrappedValue) ?? .all
             let matches = allItems.filter {
-                query.isEmpty || [$0.folio, ($0.serial ?? ""), $0.name]
-                    .joined(separator: " ").pseudo.contains(query)
+                selectedFilter.matches($0) && (query.isEmpty || [$0.folio, ($0.serial ?? ""), $0.name]
+                    .joined(separator: " ").pseudo.contains(query))
             }
 
             guard !matches.isEmpty else {
                 list.appendChild(emptyState(allItems.isEmpty
                     ? "No hay unidades registradas para este activo."
-                    : "No hay unidades que coincidan con la búsqueda.")
+                    : "No hay unidades que coincidan con los filtros.")
                     .custom("height", "calc(100% - 45px)"))
                 return
             }

@@ -169,3 +169,11 @@ When this governance bootstrap began, the repository already contained many modi
 - 2026-10-20: Reduced Order status border emphasis to 20% status hue + 80% translucent --tc-order-border-soft divider color (36% combined opacity), replacing the bright opaque mix. Same 1px outlines/live binding; all other source behavior/startup views unchanged. Isolated presentation/source/diff reviewed; builds/tests/compiler unrun.
 
 - 2026-10-20: Added a small amount of Order outline emphasis: status mix 20% -> 28%, faint divider 80% -> 72% (42.4% combined alpha). Existing 1px border, live binding and frozen startup views unchanged. Source/diff audited; builds/tests/compiler unrun.
+
+## Asset inventory categories
+
+- Model inventory shares the native/Repare category semantics and preserves text search. The UI owner documents selector/lifecycle behavior, and the API owner documents the optional getAsset reservation-field rollout. No filter becomes server state or a new authorization policy.
+
+## Draft media retries
+
+- Asset-item creation and trip update rows retain failed local uploads for retry/removal and block submission while attachments remain unfinished. Processing resumes without another transfer. Remote handset failures request recapture rather than assuming the browser has the bytes. Owners: [Swift Web GUI](architecture/SWIFWEB_APP_ARCHITECTURE.md), [API](architecture/API_AND_BACKEND.md).

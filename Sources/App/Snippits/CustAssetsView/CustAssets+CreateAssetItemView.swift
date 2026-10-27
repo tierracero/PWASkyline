@@ -43,6 +43,13 @@ extension CustAssetsView {
         let onSubSectionCreated: (CustCommercialAssetsSubSection) -> Void
 
         var uploadFileControler: [UUID:ImageGeneralView]  = [:]
+        private let mediaSessionID = custCatchID
+        private var mediaSources: [UUID: File] = [:]
+        private var mediaRequests: [UUID: XMLHttpRequest] = [:]
+        private var failedMedia: Set<UUID> = []
+        private var processingMedia: Set<UUID> = []
+        private var mediaChecks: [UUID: UUID] = [:]
+        @State private var failedMediaCount = 0
 
         let ws = WS()
     
@@ -203,6 +210,11 @@ extension CustAssetsView {
                             .onClick {
                                 self.mediaFileInput.click()
                             }
+
+                            Button("Reintentar archivos")
+                                .class(Class(TCCrystalSurfaceClass.goodButton))
+                                .hidden(self.$failedMediaCount.map { $0 == 0 })
+                                .onClick { [weak self] in self?.retryMedia() }
 
                             Div{
                                 Img()
@@ -445,9 +457,9 @@ extension CustAssetsView {
                     }
                 case .requestMobileCamaraInitiate:
 
-                    if let payload = self.ws.requestMobileCamaraInitiate($0) {
+                    if let payload = self.ws.requestMobileCamaraInitiate($0), let eventId = payload.eventid {
                         
-                        guard let view: ImageGeneralView = self.imageRefrence[payload.eventid] else {
+                        guard let view: ImageGeneralView = self.imageRefrence[eventId] else {
                             
                             let view = ImageGeneralView(
                                         relation: .assetItem,
@@ -477,7 +489,7 @@ extension CustAssetsView {
 
                             self.imageOrder.append(view.viewId)
 
-                            self.imageRefrence[payload.eventid] = view
+                            self.imageRefrence[eventId] = view
 
                             self.mediaGrid.appendChild(view)
 
@@ -518,9 +530,9 @@ extension CustAssetsView {
                     }
                 case .requestMobileCamaraSelected:
 
-                    if let payload = self.ws.requestMobileCamaraSelected($0) {
+                    if let payload = self.ws.requestMobileCamaraSelected($0), let eventId = payload.eventid {
 
-                        guard let view = self.imageRefrence[payload.eventid] else {
+                        guard let view = self.imageRefrence[eventId] else {
                             
                             let view = ImageGeneralView(
                                         relation: .assetItem,
@@ -550,7 +562,7 @@ extension CustAssetsView {
 
                             self.imageOrder.append(view.viewId)
 
-                            self.imageRefrence[payload.eventid] = view
+                            self.imageRefrence[eventId] = view
 
                             self.mediaGrid.appendChild(view)
 
@@ -799,7 +811,8 @@ extension CustAssetsView {
             
         }
 
-        private func uploadMedia(_ file: File) {
+        private func uploadMedia(_ file: File, at position: Int? = nil) {
+            guard isInDOM, mediaSessionID == custCatchID else { return }
             let fileSize = file.size / 1000 / 1000
 
             if (file.type.contains("video") || file.type.contains("image")), fileSize > 30 {
@@ -828,75 +841,57 @@ extension CustAssetsView {
                     self?.selectedAvatar = name
                 },
                 removeMe: { [weak self] viewId in
-                    self?.uploadFileControler.removeValue(forKey: viewId)
-                    self?.imageOrder.removeAll { $0 == viewId }
+                    self?.removeLocalMedia(viewId)
                 }
             )
 
-            uploadFileControler[view.viewId] = view
-            
-            imageOrder.append(view.viewId)
-
-            func removeUploadView() {
-                uploadFileControler.removeValue(forKey: view.viewId)
-                imageOrder.removeAll { $0 == view.viewId }
-                view.remove()
+            let id = view.viewId
+            uploadFileControler[id] = view
+            mediaSources[id] = file
+            if let position { imageOrder.insert(id, at: min(position, imageOrder.count)) }
+            else { imageOrder.append(id) }
+            mediaGrid.appendChild(view)
+            // Shared image views may also finish from WebSocket before the HTTP reply.
+            view.$image.listen { [weak self, weak view] _ in
+                guard let self, let view, self.mediaSessionID == custCatchID, view.isLoaded, view.file != nil else { return }
+                self.clearMediaRetry(id)
             }
-
             let xhr = XMLHttpRequest()
-
-            xhr.onLoadStart { _ in
-                self.mediaGrid.appendChild(view)
-            }
-
-            xhr.onError { _ in
-                showError(.comunicationError, .serverConextionError)
-                removeUploadView()
-            }
-
-            xhr.onLoadEnd {
-                guard let responseText = xhr.responseText,
-                      let data = responseText.data(using: .utf8) else {
-                    showError(.generalError, .serverConextionError)
-                    removeUploadView()
+            mediaRequests[id] = xhr
+            xhr.onError { [weak self] _ in self?.failMedia(id, message: "No se pudo subir el archivo.") }
+            xhr.onTimeout { [weak self] in self?.failMedia(id, message: "El archivo tardó demasiado en subir.") }
+            xhr.onAbort { [weak self] in self?.failMedia(id, message: "Carga cancelada.") }
+            xhr.onLoadEnd { [weak self, weak xhr, weak view] in
+                guard let self, let xhr, let view, self.isInDOM, self.mediaSessionID == custCatchID,
+                      self.uploadFileControler[id] === view, self.mediaRequests[id] === xhr else { return }
+                self.mediaRequests[id] = nil
+                if view.isLoaded, view.file != nil { self.clearMediaRetry(id); return }
+                guard (200...299).contains(xhr.status),
+                      let data = xhr.responseText?.data(using: .utf8),
+                      let response = try? decodeAPIResponse(APIResponseGeneric<CustComponents.UploadManagerResponse>.self, from: data),
+                      response.status == .ok, let result = response.data else {
+                    self.failMedia(id, message: "El servidor no pudo recibir el archivo. Puede reintentar la carga.")
                     return
                 }
-
-                do {
-                    let response = try JSONDecoder().decode(
-                        APIResponseGeneric<CustComponents.UploadManagerResponse>.self,
-                        from: data
-                    )
-
-                    guard response.status == .ok else {
-                        showError(.generalError, response.msg)
-                        removeUploadView()
+                switch result {
+                case .processing:
+                    self.processingMedia.insert(id)
+                    view.loadPercent = "Procesando..."
+                    self.checkMedia(id)
+                case .processed(let payload):
+                    guard payload.eventid == id, payload.to == .assetItem, !payload.fileName.isEmpty else {
+                        self.failMedia(id, message: "El archivo recibido no corresponde a esta carga.")
                         return
                     }
-
-                    guard let process = response.data else {
-                        showError(.generalError, "No se pudo cargar el archivo.")
-                        removeUploadView()
-                        return
-                    }
-
-                    switch process {
-                    case .processing:
-                        view.loadPercent = "Procesando..."
-                        view.chekUploadState(wait: 7)
-                    case .processed(let payload):
-                        view.isLoaded = true
-                        view.loadPercent = ""
-                        view.mediaId = payload.mediaid
-                        view.width = payload.width
-                        view.height = payload.height
-                        view.file = payload.fileName
-                        view.image = payload.avatar
-                        view.loadImage(payload.avatar)
-                    }
-                } catch {
-                    showError(.generalError, .serverConextionError)
-                    removeUploadView()
+                    view.isLoaded = true
+                    view.loadPercent = ""
+                    view.mediaId = payload.mediaid
+                    view.width = payload.width
+                    view.height = payload.height
+                    view.file = payload.fileName
+                    view.image = payload.avatar
+                    view.loadImage(payload.avatar)
+                    self.clearMediaRetry(id)
                 }
             }
 
@@ -908,9 +903,10 @@ extension CustAssetsView {
                     passive: false,
                     mozSystemGroup: false
                 )
-            ) { event in
+            ) { [weak self, weak xhr, weak view] event in
                 let progressEvent = ProgressEvent(event.jsEvent)
-                guard progressEvent.total > 0 else { return }
+                guard let self, let xhr, let view, self.isInDOM, self.mediaSessionID == custCatchID, self.mediaRequests[id] === xhr,
+                      progressEvent.total > 0 else { return }
 
                 view.loadPercent = "\(((Double(progressEvent.loaded) / Double(progressEvent.total)) * 100).toInt)%"
             }
@@ -926,6 +922,7 @@ extension CustAssetsView {
             formData.append("remoteCamera", false.description)
 
             xhr.open(method: "POST", url: "https://api.tierracero.co/cust/v1/uploadManager")
+            xhr.jsValue.timeout = 300_000.jsValue
             xhr.setRequestHeader("Accept", "application/json")
             xhr.setRequestHeader("WSId", custCatchChatConnID)
 
@@ -943,9 +940,97 @@ extension CustAssetsView {
             let string = String(data: jsonData, encoding: .utf8),
             let encoded = string.data(using: .utf8)?.base64EncodedString() {
                 xhr.setRequestHeader("Authorization", encoded)
+            } else {
+                failMedia(id, message: "No se pudo preparar la carga.")
+                return
             }
 
             xhr.send(formData)
+        }
+
+        private func clearMediaRetry(_ id: UUID) {
+            mediaSources[id] = nil
+            failedMedia.remove(id)
+            processingMedia.remove(id)
+            mediaChecks[id] = nil
+            failedMediaCount = failedMedia.count
+        }
+
+        private func removeLocalMedia(_ id: UUID) {
+            let view = uploadFileControler.removeValue(forKey: id)
+            imageOrder.removeAll { $0 == id }
+            clearMediaRetry(id)
+            let request = mediaRequests.removeValue(forKey: id)
+            request?.abort()
+            view?.remove()
+        }
+
+        private func failMedia(_ id: UUID, message: String) {
+            guard isInDOM, mediaSessionID == custCatchID, let view = uploadFileControler[id] else { return }
+            if view.isLoaded, view.file != nil { clearMediaRetry(id); return }
+            failedMedia.insert(id)
+            mediaChecks[id] = nil
+            failedMediaCount = failedMedia.count
+            let request = mediaRequests.removeValue(forKey: id)
+            request?.abort()
+            view.loadPercent = "Error"
+            showError(.generalError, message)
+        }
+
+        private func retryMedia() {
+            guard isInDOM, mediaSessionID == custCatchID else { return }
+            let failed = imageOrder.filter { failedMedia.contains($0) }
+            for id in failed {
+                guard let view = uploadFileControler[id] else { continue }
+                if view.isLoaded, view.file != nil { clearMediaRetry(id); continue }
+                if processingMedia.contains(id) {
+                    failedMedia.remove(id)
+                    failedMediaCount = failedMedia.count
+                    view.loadPercent = "Procesando..."
+                    checkMedia(id)
+                } else if let file = mediaSources[id], let position = imageOrder.firstIndex(of: id) {
+                    removeLocalMedia(id)
+                    uploadMedia(file, at: position)
+                }
+            }
+        }
+
+        private func checkMedia(_ id: UUID, attempt: Int = 0, generation: UUID? = nil) {
+            let checkID = generation ?? UUID()
+            mediaChecks[id] = checkID
+            Dispatch.asyncAfter(7) { [weak self] in
+                guard let self, self.isInDOM, self.mediaSessionID == custCatchID, self.mediaChecks[id] == checkID,
+                      let view = self.uploadFileControler[id], !view.isLoaded else { return }
+                API.custAPIV1.asyncCheckUploadStatus(type: .upload, eventid: id) { [weak self, weak view] response in
+                    guard let self, let view, self.isInDOM, self.mediaSessionID == custCatchID, self.uploadFileControler[id] === view,
+                          self.mediaChecks[id] == checkID, !view.isLoaded else { return }
+                    guard let response, response.status == .ok, let state = response.data else {
+                        self.failMedia(id, message: "No se pudo verificar el procesamiento. Puede reintentar la consulta.")
+                        return
+                    }
+                    switch state.status {
+                    case .done:
+                        guard let name = state.image, !name.isEmpty else {
+                            self.failMedia(id, message: "No se recibió el archivo procesado.")
+                            return
+                        }
+                        view.isLoaded = true
+                        view.loadPercent = ""
+                        view.file = name
+                        view.width = state.width
+                        view.height = state.height
+                        view.image = name
+                        view.loadImage(name)
+                        self.clearMediaRetry(id)
+                    case .active, .processed:
+                        if attempt < 20 { self.checkMedia(id, attempt: attempt + 1, generation: checkID) }
+                        else { self.failMedia(id, message: "El archivo sigue en proceso. Puede reintentar la consulta.") }
+                    case .error:
+                        self.processingMedia.remove(id)
+                        self.failMedia(id, message: "No se pudo procesar el archivo. Puede reintentar la carga.")
+                    }
+                }
+            }
         }
 
         private func refreshSections() {
@@ -1074,6 +1159,14 @@ extension CustAssetsView {
         }
 
         override func didRemoveFromDOM() {
+            mediaSources.removeAll()
+            failedMedia.removeAll()
+            processingMedia.removeAll()
+            mediaChecks.removeAll()
+            let requests = Array(mediaRequests.values)
+            mediaRequests.removeAll()
+            requests.forEach { $0.abort() }
+            $failedMediaCount.removeAllListeners()
             resetSerialScanner()
             super.didRemoveFromDOM()
             $name.removeAllListeners()

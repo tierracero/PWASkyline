@@ -1129,6 +1129,11 @@ extension OrderView {
                                     /// Validad if user has permition to remove isReady flag
                                     if custCatchHerk >= configStoreProcessing.restrictOrderClosing {
                                         
+                                        if self.orderView.equipments.contains(where: { $0.type == .assetItem }),
+                                           CustFolioStatus.inactiveStatusList.contains(self.orderView.status) {
+                                            showError(.generalError, "Una orden cerrada con activos no puede quedar pendiente de entrega.")
+                                            return
+                                        }
                                         addToDom(ConfirmView(type: .yesNo, title: "Confirme", message: "Marcar como: NO entregado", callback: { confirmed, _ in
                                             
                                             if confirmed {

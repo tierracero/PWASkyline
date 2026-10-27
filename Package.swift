@@ -54,7 +54,7 @@ deps.appendFromMain("git@github.com:tierracero/TCFundamentals.git",
 							 targets: .product(name: "TCFundamentals", package: "TCFundamentals"))
 
 deps.appendFromMain("git@github.com:tierracero/TCFireSignal.git",
-							 targets: .product(name: "TCFireSignal", package: "TCFireSignal"))
+                             targets: .product(name: "TCFireSignal", package: "TCFireSignal"))
 
 deps.appendFromMain("git@github.com:tierracero/PowerMailCore.git",
                       targets: .product(name: "PowerMailCore", package: "PowerMailCore"))

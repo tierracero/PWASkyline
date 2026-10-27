@@ -458,6 +458,27 @@ extension CustAssetsView {
                 }
                 .marginTop(10.px)
 
+                if payload.order != nil || payload.trip != nil {
+                    UTitle("Proceso relacionado")
+                    VGrid(.half) {
+                        if let order = payload.order {
+                            self.readOnlyField("Orden de servicio", order.folio)
+                            self.readOnlyField("Estado de la orden", order.status.description)
+                            self.readOnlyField(
+                                "Detalle de la orden",
+                                order.smallDescription.isEmpty ? order.description : order.smallDescription
+                            )
+                        }
+
+                        if let trip = payload.trip {
+                            self.readOnlyField("Viaje", trip.folio)
+                            self.readOnlyField("Nombre del viaje", trip.name)
+                            self.readOnlyField("Estado del viaje", trip.status.description)
+                        }
+                    }
+                    .marginTop(10.px)
+                }
+
                 Div {
 
                     ULargeButton("Crear orden de servicio")

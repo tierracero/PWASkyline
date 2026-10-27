@@ -4638,7 +4638,17 @@ class OrderView: Div {
         }
     }
     
+    private func validateAssetPickup() -> Bool {
+        if equipments.contains(where: { $0.type == .assetItem }),
+           equipments.contains(where: { $0.deliveredBy == nil }) || rentals.contains(where: { $0.deliveredBy == nil }) {
+            showError(.generalError, "Todos los elementos de una orden con activos deben estar entregados antes de cerrar.")
+            return false
+        }
+        return true
+    }
+
     func finilizeOrder(){
+        guard validateAssetPickup() else { return }
         
         let equipments: [API.custOrderV1.FinalizeEquipment] = self.equipments.map {
             .init(
@@ -4705,6 +4715,7 @@ class OrderView: Div {
     }
     
     func cancelOrder(){
+        guard validateAssetPickup() else { return }
     
         let equipments: [API.custOrderV1.FinalizeEquipment] = self.equipments.map {
             .init(
@@ -4780,6 +4791,9 @@ class OrderView: Div {
             addToDom(CancelationConfirmView( type: self.order.type, rentals: self.rentals, equipments: self.equipments){ rentals, equipments in
                 
                 self.equipments = equipments
+                if equipments.contains(where: { $0.type == .assetItem }) {
+                    self.rentals = rentals
+                }
                 
                 equipments.forEach { eq in
                     
@@ -4859,6 +4873,9 @@ class OrderView: Div {
         if let equipments {
             
             self.equipments = equipments
+            if equipments.contains(where: { $0.type == .assetItem }), let rentals {
+                self.rentals = rentals
+            }
             
             equipments.forEach { eq in
                 
@@ -4939,6 +4956,9 @@ class OrderView: Div {
                 }
                 
                 self.equipments = equipments
+                if equipments.contains(where: { $0.type == .assetItem }) {
+                    self.rentals = rentals
+                }
                 
                 equipments.forEach { eq in
                     

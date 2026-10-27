@@ -3642,6 +3642,9 @@ class WorkViewControler: PageController {
                     
                     loadAccountView(id: .folio(term))
                     
+                case .subaccount:
+                    showAlert(.alerta, "\(type.description) aun no es soportado")
+
                 case .user:
                     showAlert(.alerta, "\(type.description) aun no es soportado")
                 case .sale:
@@ -3671,7 +3674,6 @@ class WorkViewControler: PageController {
                     let salePoint = SalePointView(loadBy: .budget(.folio(term)))
                     
                     addToDom(salePoint)
-                    
                     
                 case .budgetOrder:
                     showAlert(.alerta, "\(type.description) aun no es soportado")
@@ -3755,8 +3757,6 @@ class WorkViewControler: PageController {
                         
                         let type = payload.card.type
 
-
-
                         // scRM-26B713I
                         print("TYPE: \(type)")
 
@@ -3777,7 +3777,7 @@ class WorkViewControler: PageController {
                 case .financialServices:
                     showAlert(.alerta, "\(type.description) aun no es soportado")
                 case .followup: 
-                    break
+                    showAlert(.alerta, "\(type.description) aun no es soportado")
                 case .comertialTrip:
 
                     loadingView.show()
@@ -3816,7 +3816,7 @@ class WorkViewControler: PageController {
                     }
                     
                     addToDom(view)
-
+                
                 }
                 
                 return

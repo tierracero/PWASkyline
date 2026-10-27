@@ -98,6 +98,20 @@ extension CustAssetsView {
 
         @State private var inventorySearchTerm = ""
 
+        @State private var inventoryFilter = AssetInventoryFilter.all.rawValue
+
+        private lazy var inventoryFilterSelect: USelectField = {
+            let select = USelectField(self.$inventoryFilter)
+                .attribute("aria-label", "Filtrar inventario por categoría")
+                .width(220.px)
+                .custom("max-width", "100%")
+                .marginLeft(12.px)
+            for filter in AssetInventoryFilter.allCases {
+                select.appendChild(Option(filter.title).value(filter.rawValue))
+            }
+            return select
+        }()
+
         private lazy var inventorySearchField = UTextField(self.$inventorySearchTerm)
             .placeholder("Filtrar por folio, serie o nombre")
             .attribute("aria-label", "Filtrar inventario")
@@ -107,7 +121,8 @@ extension CustAssetsView {
 
         private lazy var inventoryController = AssetInventoryController(
             items: self.$items,
-            searchTerm: self.$inventorySearchTerm
+            searchTerm: self.$inventorySearchTerm,
+            filter: self.$inventoryFilter
         )
 
         @State var department: CustAssetDepsQuick? = nil
@@ -292,6 +307,9 @@ extension CustAssetsView {
                             .float(.left)
 
                             self.inventorySearchField
+                            .float(.left)
+
+                            self.inventoryFilterSelect
                             .float(.left)
                             
                             self.addAssetButton
@@ -708,6 +726,7 @@ extension CustAssetsView {
             super.didRemoveFromDOM()
             $items.removeAllListeners()
             $inventorySearchTerm.removeAllListeners()
+            $inventoryFilter.removeAllListeners()
             $title.removeAllListeners()
             $noteCount.removeAllListeners()
             $productType.removeAllListeners()
@@ -751,10 +770,9 @@ extension CustAssetsView {
 
                 loadingView.show()
 
-
                 var thisStore: CustStore? = nil
                 
-                switch self.viewType {
+                switch registrationType {
                 case .store(let store):
                     thisStore = store
                 case .warehose(let store):
@@ -765,15 +783,18 @@ extension CustAssetsView {
                     thisStore = store
                 }
                 
-                guard let thisStore else { return }
-                
+                guard let thisStore else {
+                    return
+                }
 
                 API.custAssetsV1.getAssetsSection(
                     type: thisStore.storeType == .warehouse ? .warehose(thisStore) : .store(thisStore)
                 ) { response in
                     loadingView.hide()
 
-                    guard self.isInDOM else { return }
+                    guard self.isInDOM else {
+                        return
+                    }
 
                     guard let response else {
                         showError(.comunicationError, .serverConextionError)

@@ -2924,9 +2924,9 @@ class ManagePOC: Div {
                 }
             case .requestMobileCamaraInitiate:
 
-                if let payload = self.ws.requestMobileCamaraInitiate($0) {
+                if let payload = self.ws.requestMobileCamaraInitiate($0), let eventId = payload.eventid {
 
-                    guard let _ = imageRefrence[payload.eventid] else {
+                    guard let _ = imageRefrence[eventId] else {
 
                         let view: ImagePOCContainer = .init(
                             type: .img,
@@ -2962,7 +2962,7 @@ class ManagePOC: Div {
 
                     }
 
-                    _ = self.remoteCameraImage(for: payload.eventid)
+                    _ = self.remoteCameraImage(for: eventId)
                     
                 }
             
@@ -2989,9 +2989,9 @@ class ManagePOC: Div {
                 }
             case .requestMobileCamaraSelected:
                 
-                if let payload = self.ws.requestMobileCamaraSelected($0) {
+                if let payload = self.ws.requestMobileCamaraSelected($0), let eventId = payload.eventid {
 
-                    _ = self.remoteCameraImage(for: payload.eventid)
+                    _ = self.remoteCameraImage(for: eventId)
                 }
 
             case .asyncFileUpload:
