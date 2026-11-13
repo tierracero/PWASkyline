@@ -17,6 +17,7 @@ extension CustCommercialTripsComponents {
         fiscalProfile: UUID? = nil,
         odometerInitial: Int64?,
         odometerFinal: Int64?,
+        comment: String = "",
         callback: @escaping ((_ resp: APIResponse?) -> ())
     ) {
         sendPost(
@@ -34,7 +35,8 @@ extension CustCommercialTripsComponents {
                 insurancePayloadId: insurancePayloadId,
                 fiscalProfile: fiscalProfile,
                 odometerInitial: odometerInitial,
-                odometerFinal: odometerFinal
+                odometerFinal: odometerFinal,
+                comment: comment
             )
         ) { data in
             

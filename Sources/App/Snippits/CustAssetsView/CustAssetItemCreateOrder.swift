@@ -24,6 +24,7 @@ final class CustAssetItemCreateOrder: Div {
         self.payload = payload
         self.onCreated = onCreated
         super.init()
+        self.descriptionText = payload.item.lastComment
     }
 
     required init() { fatalError("Use init(payload:onCreated:)") }

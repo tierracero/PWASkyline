@@ -12,6 +12,8 @@ import TCFireSignal
 extension FiscalComponents {
     
     static func search(
+        form: Int64,
+        to: Int64,
         emisorRfc: String,
         term: String,
         callback: @escaping ( (_ resp: APIResponseGeneric<SearchResponse>?) -> () )
@@ -22,6 +24,8 @@ extension FiscalComponents {
             version,
             "search",
             SearchRequest(
+                form: form,
+                to: to,
                 emisorRfc: emisorRfc,
                 term: term
             )

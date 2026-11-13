@@ -30,13 +30,10 @@ final class SearchComertialAsset: Div {
         let scopedItems: [CustCommercialAssetsItem]
         
         switch currentLocation {
-        case .store(let id, let account):
+        case .store(let id, let account), .warehose(let id, let account):
             scopedItems = items.filter {
-                $0.currentLocation == .store && $0.currentLocationId == id && $0.owningAccount == account
-            }
-        case .warehose(let id, let account):
-            scopedItems = items.filter {
-                $0.currentLocation == .warehouse && $0.currentLocationId == id && $0.owningAccount == account
+                ($0.currentLocation == .store || $0.currentLocation == .warehouse) &&
+                $0.currentLocationId == id && $0.owningAccount == account
             }
         case .subAccount(let id):
             scopedItems = items.filter {
@@ -58,7 +55,7 @@ final class SearchComertialAsset: Div {
     }
 
     private lazy var searchField = UTextField(self.$term)
-        .placeholder("Buscar por folio, nombre o serie")
+        .placeholder("Buscar por nombre, serie, tarjeta o folio")
         .width(100.percent)
 
     private lazy var itemsContainer = Div()
@@ -116,8 +113,9 @@ final class SearchComertialAsset: Div {
     private func renderItems() {
         itemsContainer.innerHTML = ""
         let query = term.purgeSpaces.pseudo
-        let matches = items.filter {
-            query.isEmpty || [$0.folio, $0.name, $0.serial ?? ""].joined(separator: " ").pseudo.contains(query)
+        let matches = items.filter { item in
+            let searchableValues = [item.folio, item.name, item.serial ?? ""] + item.serviceCard
+            return query.isEmpty || searchableValues.joined(separator: " ").pseudo.contains(query)
         }
         guard !matches.isEmpty else {
             itemsContainer.appendChild(USmallTitle(items.isEmpty

@@ -88,6 +88,7 @@ extension CustAssetsView {
 
         @State private var name = ""
         @State private var serial = ""
+        @State private var comment = ""
 
         private var serialScannerEventId: UUID?
         private var serialScannerSessionId: UUID?
@@ -325,6 +326,15 @@ extension CustAssetsView {
 
                             self.serviceCardField
                             
+                        }
+                    }
+
+                    VGrid(.full) {
+                        UField("Comentario / condición al recibir", required: false) {
+                            UTextArea(self.$comment)
+                                .placeholder("Describa golpes, piezas faltantes o fallas de la unidad")
+                                .height(100.px)
+                                .width(100.percent)
                         }
                     }
 
@@ -761,6 +771,7 @@ extension CustAssetsView {
                 serial: serial.isEmpty ? nil : serial.purgeSpaces,
                 name: name,
                 serviceCard: serviceCard.isEmpty ? nil : serviceCard.purgeSpaces,
+                comment: comment.trimmingCharacters(in: .whitespacesAndNewlines),
                 images: images
             )
 
@@ -1171,6 +1182,7 @@ extension CustAssetsView {
             super.didRemoveFromDOM()
             $name.removeAllListeners()
             $serial.removeAllListeners()
+            $comment.removeAllListeners()
             $serviceCard.removeAllListeners()
             $acquisitionCost.removeAllListeners()
             $currentCost.removeAllListeners()

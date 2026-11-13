@@ -19,7 +19,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
         @State var data: API.custOrderV1.ReportResponseType? = nil
         
         @State var reportType: OrderReportTypes? = nil
-        
+
         @State var reportTypeListener = ""
         
         lazy var reportTypeSelect = Select(self.$reportTypeListener)
@@ -141,7 +141,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
                     Div().clear(.both)
                     self.dateSelect
                 }
-                .hidden(self.$reportType.map{ $0 == nil })
+                .hidden(self.$reportType.map{ !($0?.dateable == true) })
                 .marginLeft(12.px)
                 .marginTop(3.px)
                 .float(.left)
@@ -157,7 +157,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
                         .hidden(self.$endAtLabel.map{ $0.isEmpty })
                         .color(.white)
                 }
-                .hidden(self.$reportType.map{ $0 == nil })
+                .hidden(self.$reportType.map{ !($0?.dateable == true) })
                 .marginLeft(12.px)
                 .marginTop(3.px)
                 .float(.left)
@@ -173,7 +173,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
                         .hidden(self.$endAtLabel.map{ $0.isEmpty })
                         .color(.white)
                 }
-                .hidden(self.$reportType.map{ $0 == nil })
+                .hidden(self.$reportType.map{ !($0?.dateable == true) })
                 .marginLeft(12.px)
                 .marginTop(3.px)
                 .float(.left)
@@ -299,11 +299,11 @@ extension ToolsView.HistorySettings.OrderProcessing {
             
             var endAtUTS: Int64? = nil
             
-            if let range = DateRangeSelection(rawValue: dateSelectListener)?.range {
+            if reportType.dateable, let range = DateRangeSelection(rawValue: dateSelectListener)?.range {
                 startAtUTS = range.startAt
                 endAtUTS = range.endAt
             }
-            else {
+            else if reportType.dateable {
                 
                 if startAt.isEmpty {
                     showError(.requiredField, "Ingrese fecha de Inicio")
@@ -417,14 +417,16 @@ extension ToolsView.HistorySettings.OrderProcessing {
                 
             }
             
-            guard let startAtUTS else {
-                showError(.generalError, "Ingrese fecha de inicion valida")
-                return
-            }
-            
-            guard let endAtUTS else {
-                showError(.generalError, "Ingrese fecha de finalizacion valida")
-                return
+            if reportType.dateable {
+                guard let startAtUTS else {
+                    showError(.generalError, "Ingrese fecha de inicion valida")
+                    return
+                }
+
+                guard let endAtUTS else {
+                    showError(.generalError, "Ingrese fecha de finalizacion valida")
+                    return
+                }
             }
             
             self.data = nil
@@ -473,6 +475,8 @@ extension ToolsView.HistorySettings.OrderProcessing {
             }
             
             switch data {
+            case .current(let storeReports):
+                parseReportCurrent(storeReports)
             case .general(let general):
                 parseReportGeneral(
                     created: general.created,
@@ -501,6 +505,231 @@ extension ToolsView.HistorySettings.OrderProcessing {
             }
             
         }
+
+        private struct CurrentStoreCounts {
+            let pending: Int
+            let pendingSpare: Int
+            let active: Int
+            let pendingPickup: Int
+            let collection: Int
+            let inOrder: Int
+            let outOrder: Int
+            let inDelegate: Int
+            let outDelegate: Int
+            let routes: Int
+        }
+
+        private func currentStoreCounts(_ report: API.custOrderV1.StoreCurrentPayload) -> CurrentStoreCounts {
+            CurrentStoreCounts(
+                pending: report.pending.count,
+                pendingSpare: report.pendingSpare.count,
+                active: report.active.count,
+                pendingPickup: report.pendingPickup.count,
+                collection: report.collection.count,
+                inOrder: report.inOrder.count,
+                outOrder: report.outOrder.count,
+                inDelegate: report.inDelegate.count,
+                outDelegate: report.outDelegate.count,
+                routes: report.routes.count
+            )
+        }
+
+        private func currentStoreOrderSections(
+            _ report: API.custOrderV1.StoreCurrentPayload
+        ) -> [(String, [CustOrderLoadFolios])] {
+            [
+                ("Pendientes", report.pending),
+                ("Pendientes de insumo", report.pendingSpare),
+                ("Activas", report.active),
+                ("Pendientes de entrega", report.pendingPickup),
+                ("Cobranza", report.collection),
+                ("En orden", report.inOrder),
+                ("Orden saliente", report.outOrder)
+            ]
+        }
+
+        private func currentStoreSummary(_ report: API.custOrderV1.StoreCurrentPayload) -> [(String, Int)] {
+            let counts = currentStoreCounts(report)
+            return [
+                ("Pendientes", counts.pending),
+                ("Pendientes de insumo", counts.pendingSpare),
+                ("Activas", counts.active),
+                ("Pendientes de entrega", counts.pendingPickup),
+                ("Cobranza", counts.collection),
+                ("En orden", counts.inOrder),
+                ("Orden saliente", counts.outOrder),
+                ("Delegaciones de entrada", counts.inDelegate),
+                ("Delegaciones de salida", counts.outDelegate),
+                ("Rutas activas", counts.routes)
+            ]
+        }
+
+        private func currentStoreFolioTotal(_ report: API.custOrderV1.StoreCurrentPayload) -> Int {
+            let folioIds = currentStoreOrderSections(report).flatMap { $0.1.map(\.id) }
+            return Set(folioIds).count
+        }
+
+        private func currentStoreSummaryTable(_ report: API.custOrderV1.StoreCurrentPayload) -> Div {
+            let labels = Tr().backgroundColor(.black).color(.yellowTC).fontSize(13.px)
+            let values = Tr().color(.white).fontWeight(.bold)
+
+            for (label, count) in currentStoreSummary(report) {
+                labels.appendChild(Td(label)
+                    .padding(all: 8.px)
+                    .whiteSpace(.nowrap))
+                values.appendChild(Td(String(count))
+                    .padding(all: 10.px)
+                    .fontSize(22.px))
+            }
+
+            labels.appendChild(Td("Total de folios")
+                .padding(all: 8.px)
+                .whiteSpace(.nowrap)
+                .backgroundColor(.yellowTC)
+                .color(.black))
+            values.appendChild(Td(String(currentStoreFolioTotal(report)))
+                .padding(all: 10.px)
+                .fontSize(22.px)
+                .backgroundColor(.yellowTC)
+                .color(.black))
+
+            return Div {
+                Table {
+                    THead { labels }
+                    TBody { values }
+                }
+                .width(100.percent)
+                .textAlign(.center)
+            }
+            .width(100.percent)
+            .overflow(.auto)
+            .borderRadius(7.px)
+            .marginBottom(18.px)
+        }
+
+        private func currentStoreStatusSection(_ title: String, orders: [CustOrderLoadFolios]) -> Div {
+            let tableBody = TBody()
+            for order in orders {
+                tableBody.appendChild(Tr {
+                    Td(getDate(order.createdAt).formatedLong)
+                        .whiteSpace(.nowrap)
+                        .padding(all: 7.px)
+                    Td(order.folio)
+                        .whiteSpace(.nowrap)
+                        .padding(all: 7.px)
+                    Td(order.name).padding(all: 7.px)
+                    Td(order.description)
+                        .whiteSpace(.preWrap)
+                        .padding(all: 7.px)
+                    Td(order.status.description).padding(all: 7.px)
+                    Td(order.pendingPickup ? "Si" : "No").padding(all: 7.px)
+                    Td(order.balance.formatMoney)
+                        .textAlign(.right)
+                        .padding(all: 7.px)
+                }.color(.white))
+            }
+
+            return Div {
+                H2("\(title): \(orders.count) \(orders.count == 1 ? "folio" : "folios")")
+                    .color(.yellowTC)
+                    .fontSize(20.px)
+                    .marginBottom(8.px)
+                Div {
+                    Table {
+                        THead {
+                            Tr {
+                                Td("Creado").width(11.percent).padding(all: 7.px)
+                                Td("Folio").width(11.percent).padding(all: 7.px)
+                                Td("Cliente").width(15.percent).padding(all: 7.px)
+                                Td("Descripción").width(33.percent).padding(all: 7.px)
+                                Td("Estatus").width(13.percent).padding(all: 7.px)
+                                Td("Pendiente de entrega").width(11.percent).padding(all: 7.px)
+                                Td("Saldo").width(6.percent).textAlign(.right).padding(all: 7.px)
+                            }.backgroundColor(.black).color(.yellowTC)
+                        }
+                        tableBody
+                    }.width(100.percent)
+                }
+                .width(100.percent)
+                .overflow(.auto)
+            }.marginBottom(24.px)
+        }
+
+        private func parseReportCurrent(_ storeReports: [API.custOrderV1.StoreCurrentPayload]) {
+            self.gridDiv.innerHTML = ""
+
+            guard !storeReports.isEmpty else {
+                self.gridDiv.appendChild(H2("No hay tiendas actuales para este reporte.").color(.white))
+                return
+            }
+
+            for report in storeReports {
+                let storeSection = Div {
+                    Div {
+                        Img()
+                            .src("/skyline/media/download2.png")
+                            .marginRight(24.px)
+                            .width(36.px)
+                            .float(.right)
+                            .onClick { self.printCurrentReportCSV(report) }
+
+                        H1("Carga actual: \(report.store.name)")
+                            .color(.yellowTC)
+                            .marginBottom(7.px)
+                            .marginTop(12.px)
+                    }
+
+                    self.currentStoreSummaryTable(report)
+                }.marginBottom(32.px)
+
+                for (section, orders) in currentStoreOrderSections(report) where !orders.isEmpty {
+                    storeSection.appendChild(currentStoreStatusSection(section, orders: orders))
+                }
+
+                if currentStoreFolioTotal(report) == 0 {
+                    storeSection.appendChild(H3("No hay folios actuales en esta tienda.").color(.white))
+                }
+
+                self.gridDiv.appendChild(storeSection)
+            }
+        }
+
+        private func currentReportCSVRow(_ values: [String]) -> String {
+            values.map { value in
+                "\"\(value.replacingOccurrences(of: "\"", with: "\"\""))\""
+            }.joined(separator: ",")
+        }
+
+        private func printCurrentReportCSV(_ report: API.custOrderV1.StoreCurrentPayload) {
+            let summary = currentStoreSummary(report) + [("Total de folios", currentStoreFolioTotal(report))]
+            var csv = currentReportCSVRow(["Resumen de carga actual"])
+            csv += "\n" + currentReportCSVRow(["Tienda", report.store.name])
+            csv += "\n\n" + currentReportCSVRow(summary.map { $0.0 })
+            csv += "\n" + currentReportCSVRow(summary.map { String($0.1) })
+
+            for (section, orders) in currentStoreOrderSections(report) where !orders.isEmpty {
+                csv += "\n\n" + currentReportCSVRow([section, String(orders.count)])
+                csv += "\n" + currentReportCSVRow([
+                    "Creado", "Folio", "Cliente", "Descripción", "Estatus", "Pendiente de entrega", "Saldo"
+                ])
+                for order in orders {
+                    csv += "\n" + currentReportCSVRow([
+                        getDate(order.createdAt).formatedLong,
+                        order.folio,
+                        order.name,
+                        order.description,
+                        order.status.description,
+                        order.pendingPickup ? "Si" : "No",
+                        order.balance.formatMoney.replace(from: ",", to: "")
+                    ])
+                }
+            }
+
+            let fileName = "reporte de carga actual \(report.store.name) \(Date().cronStamp)"
+                .uppercased()
+                .replace(from: " ", to: "_") + ".csv"
+            _ = JSObject.global.download!(fileName, csv)
+        }
         
         func parseReportGeneral(
             created: [API.custOrderV1.ReportsObjects],
@@ -522,7 +751,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
                 }
                 
                 @State var isHiddenA: Bool = false
-                
+
                 if created.count > 0 {
                     
                     self.gridDiv.appendChild(Div{
@@ -1124,6 +1353,11 @@ extension ToolsView.HistorySettings.OrderProcessing {
             guard let data: API.custOrderV1.ReportResponseType else {
                 return
             }
+
+            if case .current(let storeReports) = data {
+                storeReports.forEach { printCurrentReportCSV($0) }
+                return
+            }
             
             var startAtUTS: Int64? = nil
             
@@ -1267,6 +1501,8 @@ extension ToolsView.HistorySettings.OrderProcessing {
                 }
              
                 switch data {
+                case .current(_):
+                    break
                 case .general(let payload):
                     
                     var storeName = ""
@@ -1482,7 +1718,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
             loadingView.hide()
             
         }
-        
+
         func printReportDeliveredData(
             userref: [UUID: CustUsername],
             fileName: String,

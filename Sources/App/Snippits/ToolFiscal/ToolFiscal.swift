@@ -55,6 +55,38 @@ private func fiscalOfficialDateUnixTimestamp(_ value: String) -> Int64? {
     return Int64(uts)
 }
 
+private func fiscalSearchDateTimestamp(_ value: String, endOfDay: Bool) -> Int64? {
+    let parts = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        .split(separator: "/", omittingEmptySubsequences: false)
+
+    guard parts.count == 3,
+          let day = Int(parts[0]), (1...31).contains(day),
+          let month = Int(parts[1]), (1...12).contains(month),
+          parts[2].count == 4,
+          let year = Int(parts[2]), year > 0 else {
+        return nil
+    }
+
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = .current
+    var components = DateComponents()
+    components.year = year
+    components.month = month
+    components.day = day
+    components.hour = endOfDay ? 23 : 0
+    components.minute = endOfDay ? 59 : 0
+    components.second = endOfDay ? 59 : 0
+
+    guard let date = calendar.date(from: components) else { return nil }
+    let validated = calendar.dateComponents([.year, .month, .day], from: date)
+    guard validated.year == year, validated.month == month, validated.day == day else {
+        return nil
+    }
+
+    // Match the existing DateRangeSelection/report timestamp convention.
+    return Int64(date.timeIntervalSince1970) + (60 * 60 * 6)
+}
+
 class ToolFiscal: Div {
     
     override class var name: String { "div" }
@@ -977,7 +1009,8 @@ class ToolFiscal: Div {
                 }
                 
                 H2("Facturas a Credito")
-                    .marginTop(7, .px, important: true)
+                    .custom("font-size","27px !important")
+                    .marginTop(0, .px, important: true)
                     .color(.white)
             }
             
@@ -989,7 +1022,6 @@ class ToolFiscal: Div {
             .custom("height", "calc(100% - 50px)")
             .padding(all: 3.px)
             .margin(all: 3.px)
-            .class(Class(TCCrystalSurfaceClass.fiscalHistoryList))
             
         }
         .height(100.percent)
@@ -997,21 +1029,123 @@ class ToolFiscal: Div {
         .float(.left)
         
         Div{
+
+
+
+            Div {
+
+                Div {
+
+                    Img()
+                        .src("/skyline/media/reload.png")
+                        .marginRight(7.px)
+                        .height(24.px)
+                        .width(24.px)
+                        .float(.left)
+
+                    Span("Refrescar")
+                }
+                .class(.uibtnLargeOrange)
+                .float(.right)
+                .marginTop(0.px)
+                .onClick {
+                    self.loadHistory()
+                }
+
+                Div {
+                    Span("Cancelaciones")
+                }
+                .class(.uibtnLargeOrange)
+                .marginRight(7.px)
+                .marginTop(0.px)
+                .float(.right)
+                .onClick {
+                    addToDom(FiscalCurrentCancelationsView())
+                }
+
+                H2("Historial")
+                    .custom("font-size","27px !important")
+                    .color(.white)
+
+                Div().class(.clear)    
+            }
+
+            Div().height(3.px)
+
             
             Div{
-                
-                Img()
-                    .src("/skyline/media/reload.png")
-                    .marginLeft(7.px)
-                    .height(32.px)
-                    .width(32.px)
-                    .float(.right)
-                    .onClick {
-                        self.loadHistory()
+
+                Div{
+
+                    /// Date Select Type
+                    Div{
+                        Label("Seleccione Fecha")
+                            .fontSize(14.px)
+                            .color(.gray)
+                        
+                        Div().clear(.both)
+                        
+                        self.dateSelect
                     }
+
+                    Div{
+                            
+                        /// Star At
+                        Div{
+                            Label("Fecha Inicio")
+                                .marginBottom(3.px)
+                                .fontSize(14.px)
+                                .color(.gray)
+                            
+                            Div().clear(.both)
+                            
+                            self.startAtField
+                                .hidden(self.$endAtLabel.map{ !$0.isEmpty })
+                            
+                            Div(self.$startAtLabel)
+                                .hidden(self.$endAtLabel.map{ $0.isEmpty })
+                                .marginBottom(9.px)
+                                .fontSize(22.px)
+                                .color(.white)
+                        }
+                        .marginLeft(12.px)
+                        .marginTop(3.px)
+                        .float(.left)
+
+                        /// End At
+                        Div{
+                            Label("Fecha Final")
+                                .marginBottom(3.px)
+                                .fontSize(14.px)
+                                .color(.gray)
+                            
+                            Div().clear(.both)
+                            
+                            self.endAtField
+                                .hidden(self.$endAtLabel.map{ !$0.isEmpty })
+                            
+                            Div(self.$endAtLabel)
+                                .hidden(self.$endAtLabel.map{ $0.isEmpty })
+                                .marginBottom(9.px)
+                                .fontSize(22.px)
+                                .color(.white)
+                        }
+                        .marginLeft(12.px)
+                        .marginTop(3.px)
+                        .float(.left)
+                    }
+                    
+                }
+                .marginTop(7.px)
+                .float(.left)
                 
                 Div {
-                    Div("Busqueda Avanzada")
+                    Div{
+                        Img()
+                        .src("/skyline/media/zoom.png")
+                        .height(24.px)
+                        .width(24.px)
+                    }
                     .margin(all: 7.px)
                 }
                     .marginRight(7.px)
@@ -1023,33 +1157,12 @@ class ToolFiscal: Div {
                 
                 self.documentFilterFilter
                 
-                Div {
-                    H2("Historial")
-                        .color(.white)
-                }
-                .float(.left)
-                
                 Div().clear(.both)
                 
             }
             .marginTop(3.px)
 
             Div().class(.clear).height(4.px)
-
-            Div{
-                Div{
-                    Span("Cancelaciones")
-                }
-                    .class(.uibtnLargeOrange)
-                    .marginRight(7.px)
-                    .marginTop(0.px)
-                    .onClick {
-                        addToDom(FiscalCurrentCancelationsView())
-                    }
-
-                Div().class(.clear)    
-            }
-            .align(.right)
 
 
             Div{
@@ -1058,8 +1171,6 @@ class ToolFiscal: Div {
             .custom("height", "calc(100% - 95px)")
             .padding(all: 3.px)
             .margin(all: 3.px)
-            .class(Class(TCCrystalSurfaceClass.fiscalHistoryList))
-
 
         }
         .height(100.percent)
@@ -1068,14 +1179,10 @@ class ToolFiscal: Div {
         
     }
         .hidden(self.$currentView.map({ $0 != .history }))
-        .display(self.$currentView.map({ ($0 != .history) ? .none : .grid }))
         .height(100.percent)
         .width(100.percent)
-        .class(Class(TCCrystalSurfaceClass.fiscalHistory))
     
-    lazy var toolsView = Div{
-        
-    }
+    lazy var toolsView = Div ()
         .hidden(self.$currentView.map({ $0 != .tools }))
         .display(self.$currentView.map({ ($0 != .tools) ? .none : .flex }))
         .height(100.percent)
@@ -1115,25 +1222,45 @@ class ToolFiscal: Div {
                 return
             }
         })
+
+
+    // Date Rangable
+    
+    @State var dateSelectListener = ""
+    
+    lazy var dateSelect = USelectField(self.$dateSelectListener)
+        .fontSize(22.px)
+        .height(42.px)
+        .width(200.px)
+    
+    /// the day the current active report  is done
+    var startAtResultDate: Int64 = 0
+    @State var startAt = ""
+    
+    lazy var startAtField = UTextField(self.$startAt)
+        .placeholder("DD/MM/AAAA")
+        .fontSize(22.px)
+        .width(150.px)
+        .height(34.px)
+    
+    /// the day the current active report  is done
+    var endAtResultDate: Int64 = 0
+    @State var endAt = ""
+    
+    lazy var endAtField = UTextField(self.$endAt)
+        .placeholder("DD/MM/AAAA")
+        .fontSize(22.px)
+        .width(150.px)
+        .height(34.px)
+    
+    @State var startAtLabel = ""
+    
+    @State var endAtLabel = ""
+    
     
     @DOM override var body: DOM.Content {
         
-        Div{
-            
-/*
-
-            VTitle("Detalle del Viaje · \(self.trip.folio)", icon: "icon_route.png") {
-                USmallButton("Carta Liberación")
-                    .onClick {
-                        self.printReleaseLetter()
-                    }
-
-                self.fiscalButton
-                self.statusSelect
-            } onClose: {
-                self.remove()
-            }
-            */
+        Div {
 
             /// Header and grouped fiscal actions.
             VTitle(
@@ -1661,6 +1788,33 @@ class ToolFiscal: Div {
             
         }
         
+        $dateSelectListener.listen {
+            
+            guard let range = DateRangeSelection(rawValue: $0)?.range else {
+                self.startAtLabel = ""
+                self.endAtLabel = ""
+                return
+            }
+            
+            let startAt = getDate(range.startAt)
+            
+            let endAt = getDate(range.endAt)
+            
+            self.startAtLabel = "\(startAt.formatedLong) \(startAt.time)"
+            
+            self.endAtLabel = "\(endAt.formatedLong) 23:59"
+            
+        }
+        
+        DateRangeSelection.allCases.forEach { item in
+            dateSelect.appendChild(
+                Option(item.description)
+                    .value(item.rawValue)
+            )
+        }
+        
+        dateSelectListener = DateRangeSelection.lastThirtydays.rawValue
+        
     }
     
     override func didAddToDOM() {
@@ -1819,7 +1973,7 @@ class ToolFiscal: Div {
         }
     }
     
-    func renderFiscalDocument(
+    func renderFiscalDocument (
         isPreDocument: Bool,
         _ renderdData:  @escaping ((
             _ taxMode: TaxMode,
@@ -2924,7 +3078,6 @@ class ToolFiscal: Div {
     
     func advancedSearch(){
         
-        $fiscalProfileListener
         
         var prof: FiscalComponents.Profile? = nil
         
@@ -2946,9 +3099,46 @@ class ToolFiscal: Div {
             return
         }
         
+        guard let dateSelection = DateRangeSelection(rawValue: dateSelectListener) else {
+            showError(.requiredField, "Seleccione un periodo de búsqueda")
+            return
+        }
+
+        let searchFrom: Int64
+        let searchTo: Int64
+
+        if dateSelection == .custome {
+            guard let from = fiscalSearchDateTimestamp(startAt, endOfDay: false) else {
+                showError(.invalidField, "Fecha de inicio inválida. Use DD/MM/AAAA")
+                startAtField.select()
+                return
+            }
+            guard let to = fiscalSearchDateTimestamp(endAt, endOfDay: true) else {
+                showError(.invalidField, "Fecha final inválida. Use DD/MM/AAAA")
+                endAtField.select()
+                return
+            }
+            searchFrom = from
+            searchTo = to
+        } else {
+            guard let range = dateSelection.range else {
+                showError(.unexpectedResult, "No fue posible calcular el periodo de búsqueda")
+                return
+            }
+            searchFrom = range.startAt
+            searchTo = range.endAt
+        }
+
+        guard searchFrom <= searchTo else {
+            showError(.invalidField, "La fecha de inicio debe ser anterior o igual a la fecha final")
+            return
+        }
+
         loadingView.show()
         
         API.fiscalV1.search(
+            form: searchFrom,
+            to: searchTo,
             emisorRfc: emisorRfc,
             term: documentFilter
         ) { resp in
@@ -3053,6 +3243,11 @@ class ToolFiscal: Div {
         $useOfDocumentListener.removeAllListeners()
         $documentFilter.removeAllListeners()
         $fiscalProfileListener.removeAllListeners()
+        $dateSelectListener.removeAllListeners()
+        $startAt.removeAllListeners()
+        $endAt.removeAllListeners()
+        $startAtLabel.removeAllListeners()
+        $endAtLabel.removeAllListeners()
         $periodSelectListener.removeAllListeners()
         $monthSelectListener.removeAllListeners()
         $yearFieldListener.removeAllListeners()

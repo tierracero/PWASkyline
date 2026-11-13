@@ -38,6 +38,17 @@ extension ProductManagerView.AuditView {
             )
         }
 
+        private lazy var csvButton = reportButton(
+            label: "CSV",
+            icon: "/skyline/media/excel.png",
+            action: "csv"
+        ) {
+            self.export(
+                using: "createProductAuditExcelFromElement",
+                callback: self.excelCallback
+            )
+        }
+
         private lazy var pdfButton = reportButton(
             label: "PDF",
             icon: "/skyline/media/pdf.png",
@@ -66,6 +77,7 @@ extension ProductManagerView.AuditView {
 
         @DOM override var body: DOM.Content {
             self.excelButton
+            self.csvButton
             self.pdfButton
             self.playButton
         }
@@ -73,6 +85,8 @@ extension ProductManagerView.AuditView {
         override func buildUI() {
             super.buildUI()
             self.class(Class(TCCrystalSurfaceClass.auditReportActions))
+            csvButton.display(.none)
+            playButton.display(.none)
             display(.none)
         }
 
@@ -82,7 +96,8 @@ extension ProductManagerView.AuditView {
             aiResponse: String?,
             in resultContainer: Div,
             pdfCallback: (() -> Void)? = nil,
-            excelCallback: (() -> Void)? = nil
+            excelCallback: (() -> Void)? = nil,
+            excelButtonLabel: String = "Excel"
         ) {
             reportTitle = title
             self.fileName = fileName
@@ -91,8 +106,12 @@ extension ProductManagerView.AuditView {
             self.pdfCallback = pdfCallback
             self.excelCallback = excelCallback
 
+            let usesCSV = excelButtonLabel.caseInsensitiveCompare("CSV") == .orderedSame
+            excelButton.display(usesCSV ? .none : .inlineFlex)
+            csvButton.display(usesCSV ? .inlineFlex : .none)
+
             resultContainer.appendChild(self)
-            playButton.hidden(self.aiResponse.isEmpty)
+            playButton.display(self.aiResponse.isEmpty ? .none : .inlineFlex)
             display(.flex)
         }
 
@@ -101,7 +120,9 @@ extension ProductManagerView.AuditView {
             aiResponse = ""
             pdfCallback = nil
             excelCallback = nil
-            playButton.hidden(true)
+            excelButton.display(.inlineFlex)
+            csvButton.display(.none)
+            playButton.display(.none)
             display(.none)
         }
 

@@ -90,15 +90,15 @@ extension CustAssetsView {
                                 .color(.gray)
                                 
                         }
-                        // .backgroundColor(Color(r: 10, g: 22, b: 34, a: 0.6).important)
-                        // .borderColor(Color(r: 66, g: 183, b: 245, a: 0.2).important)
-                        // .custom("justify-content", "space-between")
-                        // .custom("align-items", "center")
-                        // .custom("gap", "8px")
-                        // .display(.flex)
-                        // .onClick {
-                        //     self.loadDepartment(department)
-                        // }
+                        .backgroundColor(Color(r: 10, g: 22, b: 34, a: 0.6).important)
+                        .borderColor(Color(r: 66, g: 183, b: 245, a: 0.2).important)
+                        .custom("justify-content", "space-between")
+                        .custom("align-items", "center")
+                        .custom("gap", "8px")
+                        .display(.flex)
+                        .onClick {
+                            self.loadDepartment(department)
+                        }
                 
                     Div().height(7.px)
                 }
@@ -120,7 +120,7 @@ extension CustAssetsView {
             VPopUp(.compact) {
 
                 VTitle("Control de Activos", icon: "commertial_assets_icon.png") {
-                    USmallTitle("Activos \(self.viewType.relationType.description)")
+                    USmallTitle("Crear Activo")
                 } onClose: {
                     self.remove()
                 }

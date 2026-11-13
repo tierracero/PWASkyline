@@ -730,11 +730,26 @@ extension ProductManagerView.AuditView {
 
                 self.resultDiv.innerHTML = ""
 
+                let reportTitle = "Reporte de \(type.description)"
+                let reportFileName = "inventario-\(type.rawValue)-\(getNow())"
+                let departmentCSVCallback: (() -> Void)? = type == .byDepartement
+                    ? {
+                        self.downloadDepartmentInventoryCSV(
+                            fileName: reportFileName,
+                            payload: payload,
+                            requestedStartAt: startAtUTS,
+                            requestedEndAt: endAtUTS
+                        )
+                    }
+                    : nil
+
                 self.reportActions.present(
-                    title: "Reporte de \(type.description)",
-                    fileName: "inventario-\(type.rawValue)-\(getNow())",
+                    title: reportTitle,
+                    fileName: reportFileName,
                     aiResponse: resp.airesponse,
-                    in: self.resultDiv
+                    in: self.resultDiv,
+                    excelCallback: departmentCSVCallback,
+                    excelButtonLabel: type == .byDepartement ? "CSV" : "Excel"
                 )
                 
                 self.pocRefrence = Dictionary(uniqueKeysWithValues: payload.pocs.map{ poc in (poc.id, poc) })
@@ -748,7 +763,8 @@ extension ProductManagerView.AuditView {
                         type: type,
                         payload: payload,
                         requestedStartAt: startAtUTS,
-                        requestedEndAt: endAtUTS
+                        requestedEndAt: endAtUTS,
+                        renderId: renderId
                     )
                 }
                 
@@ -3245,6 +3261,7 @@ extension ProductManagerView.AuditView {
             showActivity: Bool = true,
             showShortage: Bool = true,
             showLastSoldAt: Bool = false,
+            showStockDates: Bool = false,
             cardexRange: (startAt: Int64, endAt: Int64)? = nil
         ) {
             guard renderId == inventoryRenderId else {
@@ -3313,6 +3330,10 @@ extension ProductManagerView.AuditView {
                         if showLastSoldAt {
                             Td("Última venta")
                         }
+                        if showStockDates {
+                            Td("Stock más antiguo")
+                            Td("Stock más reciente")
+                        }
                         if showActivity {
                             Td("Movs.")
                             Td("Última actividad")
@@ -3359,6 +3380,8 @@ extension ProductManagerView.AuditView {
             }
 
             let latestSoldAt = sortedSummaries.map { $0.lastSoldAt }.max() ?? 0
+            let oldestStockAt = sortedSummaries.compactMap { $0.oldestStock }.min()
+            let newestStockAt = sortedSummaries.compactMap { $0.newestStock }.max()
             let totalCost = usePOCPrices
                 ? sortedSummaries.compactMap { self.pocRefrence[$0.productId]?.cost }.reduce(0, +)
                 : sortedSummaries.map { $0.currentCostValue }.reduce(0, +)
@@ -3385,6 +3408,10 @@ extension ProductManagerView.AuditView {
                         Td(latestSoldAt > 0
                             ? self.inventoryDateTime(latestSoldAt)
                             : "Sin ventas")
+                    }
+                    if showStockDates {
+                        Td(self.inventoryDateTime(oldestStockAt))
+                        Td(self.inventoryDateTime(newestStockAt))
                     }
                     if showActivity {
                         Td(sortedSummaries.map { summary in
@@ -3425,6 +3452,7 @@ extension ProductManagerView.AuditView {
                 showActivity: showActivity,
                 showShortage: showShortage,
                 showLastSoldAt: showLastSoldAt,
+                showStockDates: showStockDates,
                 cardexRange: cardexRange
             )
         }
@@ -3442,6 +3470,7 @@ extension ProductManagerView.AuditView {
             showActivity: Bool,
             showShortage: Bool,
             showLastSoldAt: Bool,
+            showStockDates: Bool,
             cardexRange: (startAt: Int64, endAt: Int64)?,
             index: Int = 0
         ) {
@@ -3498,6 +3527,10 @@ extension ProductManagerView.AuditView {
                             ? self.inventoryDateTime(summary.lastSoldAt)
                             : "Sin ventas")
                     }
+                    if showStockDates {
+                        Td(self.inventoryDateTime(summary.oldestStock))
+                        Td(self.inventoryDateTime(summary.newestStock))
+                    }
                     if showActivity {
                         Td((movementCountByProductAndStore[key] ?? 0).toString)
                         Td(self.inventoryDateTime(lastActivity))
@@ -3542,6 +3575,7 @@ extension ProductManagerView.AuditView {
                     showActivity: showActivity,
                     showShortage: showShortage,
                     showLastSoldAt: showLastSoldAt,
+                    showStockDates: showStockDates,
                     cardexRange: cardexRange,
                     index: index + 1
                 )
@@ -3625,7 +3659,8 @@ extension ProductManagerView.AuditView {
             type: InventoryAuditTypes,
             payload: CustPOCComponents.AuditsResponse,
             requestedStartAt: Int64?,
-            requestedEndAt: Int64?
+            requestedEndAt: Int64?,
+            renderId: UUID
         ) {
             let inventorySummaries = payload.inventorySummaries ?? []
             let salesSummaries = payload.salesSummaries ?? []
@@ -3793,6 +3828,305 @@ extension ProductManagerView.AuditView {
             }
 
             resultDiv.appendChild(metrics)
+
+            if type == .byDepartement {
+                renderCurrentDepartmentInventory(
+                    payload: payload,
+                    summaries: inventorySummaries,
+                    renderId: renderId
+                )
+            }
+        }
+
+        fileprivate func renderCurrentDepartmentInventory(
+            payload: CustPOCComponents.AuditsResponse,
+            summaries: [CustPOCComponents.AuditInventorySummary],
+            renderId: UUID
+        ) {
+            guard renderId == inventoryRenderId else {
+                return
+            }
+
+            guard !summaries.isEmpty else {
+                resultDiv.appendChild(
+                    H2("Inventario actual")
+                        .color(.yellowTC)
+                        .marginTop(18.px)
+                )
+                resultDiv.appendChild(
+                    Table().noResult(
+                        label: "El servidor no incluyó resúmenes de inventario actual para este reporte."
+                    )
+                )
+                return
+            }
+
+            var departmentReference: [UUID: String] = [:]
+            payload.departments?.forEach { department in
+                departmentReference[department.id] = department.name
+            }
+
+            var storeReference: [UUID: String] = [:]
+            payload.stores?.forEach { store in
+                storeReference[store.id] = store.name
+            }
+            stores.forEach { id, store in
+                storeReference[id] = store.name
+            }
+
+            let departmentIds = Set(summaries.compactMap { $0.departmentId })
+            let departmentNames = departmentIds.compactMap { departmentReference[$0] }.sorted()
+            let sectionTitle = departmentNames.count == 1
+                ? "Inventario actual • \(departmentNames[0])"
+                : "Inventario actual"
+
+            renderInventoryDepartment(
+                renderId: renderId,
+                departmentId: nil,
+                summaries: summaries,
+                departmentReference: departmentReference,
+                storeReference: storeReference,
+                lastActivityByProduct: [:],
+                lastActivityByProductAndStore: [:],
+                movementCountByProductAndStore: [:],
+                showDepartmentHeader: false,
+                sectionTitle: sectionTitle,
+                showStore: true,
+                showActivity: false,
+                showShortage: false,
+                showLastSoldAt: true,
+                showStockDates: true
+            )
+        }
+
+        private func downloadDepartmentInventoryCSV(
+            fileName: String,
+            payload: CustPOCComponents.AuditsResponse,
+            requestedStartAt: Int64?,
+            requestedEndAt: Int64?
+        ) {
+            var rows: [[String]] = []
+
+            let inventorySummaries = payload.inventorySummaries ?? []
+            var departmentReference: [UUID: String] = [:]
+            payload.departments?.forEach { department in
+                departmentReference[department.id] = department.name
+            }
+
+            var storeReference: [UUID: String] = [:]
+            payload.stores?.forEach { store in
+                storeReference[store.id] = store.name
+            }
+            stores.forEach { id, store in
+                storeReference[id] = store.name
+            }
+
+            rows.append(["Reporte", "Inventario por departamento"])
+            rows.append(["Alcance", inventoryReportScope(payload: payload)])
+
+            let requestedFrom: Int64? = (requestedStartAt ?? 0) > 0 ? requestedStartAt : nil
+            let requestedTo: Int64? = (requestedEndAt ?? 0) > 0 ? requestedEndAt : nil
+            let activityFrom = payload.activityFrom ?? requestedFrom
+            let activityTo = payload.activityTo ?? requestedTo
+            rows.append([
+                "Periodo del reporte",
+                activityFrom != nil && activityTo != nil
+                    ? "\(inventoryDateTime(activityFrom)) — \(inventoryDateTime(activityTo))"
+                    : "No especificado"
+            ])
+            rows.append(["Generado", inventoryDateTime(payload.generatedAt)])
+            rows.append([])
+            rows.append(["Inventario actual"])
+            rows.append([
+                "Tienda", "Departamento", "POC/SKU/UPC", "Producto", "Marca", "Modelo",
+                "Estado", "Existencia actual", "Inventario mínimo", "Última venta",
+                "Stock más antiguo", "Stock más reciente", "Valor costo", "Valor venta"
+            ])
+
+            let sortedInventorySummaries = inventorySummaries.sorted { lhs, rhs in
+                let leftStore = inventoryStoreName(id: lhs.storeId, reference: storeReference)
+                let rightStore = inventoryStoreName(id: rhs.storeId, reference: storeReference)
+                let storeComparison = leftStore.localizedCaseInsensitiveCompare(rightStore)
+                if storeComparison != .orderedSame {
+                    return storeComparison == .orderedAscending
+                }
+
+                let leftPOC = payload.pocs.first(where: { $0.id == lhs.productId })
+                let rightPOC = payload.pocs.first(where: { $0.id == rhs.productId })
+                let leftKey = (leftPOC?.upc.isEmpty == false ? leftPOC?.upc : leftPOC?.name) ?? ""
+                let rightKey = (rightPOC?.upc.isEmpty == false ? rightPOC?.upc : rightPOC?.name) ?? ""
+                return leftKey.localizedCaseInsensitiveCompare(rightKey) == .orderedAscending
+            }
+
+            for summary in sortedInventorySummaries {
+                let product = payload.pocs.first(where: { $0.id == summary.productId })
+                let status = summary.isZeroInventory
+                    ? "Agotado"
+                    : (summary.isLowInventory ? "Bajo" : "Disponible")
+                rows.append([
+                    inventoryStoreName(id: summary.storeId, reference: storeReference),
+                    inventoryDepartmentName(id: summary.departmentId, reference: departmentReference),
+                    product?.upc.isEmpty == false ? product?.upc ?? "N/D" : "N/D",
+                    product?.name ?? "N/D",
+                    product?.brand ?? "N/D",
+                    product?.model ?? "N/D",
+                    status,
+                    summary.currentStock.toString,
+                    summary.minInventory?.toString ?? "N/D",
+                    summary.lastSoldAt > 0 ? inventoryDateTime(summary.lastSoldAt) : "Sin ventas",
+                    inventoryDateTime(summary.oldestStock),
+                    inventoryDateTime(summary.newestStock),
+                    departmentInventoryMoney(summary.currentCostValue),
+                    departmentInventoryMoney(summary.currentRetailValue)
+                ])
+            }
+
+            if sortedInventorySummaries.isEmpty {
+                rows.append(["No se recibieron resúmenes de inventario actual para este reporte."])
+            }
+            else {
+                rows.append([
+                    "Totales", "", "", "\(sortedInventorySummaries.count) registros", "", "", "",
+                    sortedInventoryUnitsTotal(sortedInventorySummaries.map { $0.currentStock }),
+                    sortedInventoryUnitsTotal(sortedInventorySummaries.compactMap { $0.minInventory }),
+                    "", "", "",
+                    departmentInventoryMoney(sortedInventorySummaries.map { $0.currentCostValue }.reduce(0, +)),
+                    departmentInventoryMoney(sortedInventorySummaries.map { $0.currentRetailValue }.reduce(0, +))
+                ])
+            }
+
+            rows.append([])
+            rows.append(["Promedio vendido por día y producto"])
+
+            var soldUnitsByProduct: [UUID: Int64] = [:]
+            var saleTimestamps: [Int64] = []
+            var salesSource = ""
+
+            if let summaries = payload.salesSummaries, !summaries.isEmpty {
+                summaries.forEach { summary in
+                    soldUnitsByProduct[summary.productId, default: 0] += summary.units
+                    saleTimestamps.append(summary.firstSoldAt)
+                    saleTimestamps.append(summary.lastSoldAt)
+                }
+                salesSource = "ventas agregadas"
+            }
+            else if let summaries = payload.productMovementSummaries, !summaries.isEmpty {
+                summaries.forEach { summary in
+                    soldUnitsByProduct[summary.productId, default: 0] += summary.soldUnits
+                    if let firstMovementAt = summary.firstMovementAt {
+                        saleTimestamps.append(firstMovementAt)
+                    }
+                    if let lastMovementAt = summary.lastMovementAt {
+                        saleTimestamps.append(lastMovementAt)
+                    }
+                }
+                salesSource = "movimientos agregados"
+            }
+            else if !payload.cardex.isEmpty {
+                payload.cardex.forEach { movement in
+                    guard movement.mode == .remove else { return }
+                    switch movement.channel {
+                    case .pdv, .order, .eSale:
+                        soldUnitsByProduct[movement.pocId, default: 0] += Int64(movement.processedUnits)
+                        saleTimestamps.append(movement.createdAt)
+                    case .default:
+                        break
+                    }
+                }
+                salesSource = "Cardex"
+            }
+            else {
+                payload.items.forEach { product in
+                    product.items.forEach { item in
+                        guard let soldAt = item.soldAt else { return }
+                        soldUnitsByProduct[product.id, default: 0] += 1
+                        saleTimestamps.append(soldAt)
+                    }
+                }
+                if !soldUnitsByProduct.isEmpty {
+                    salesSource = "detalle de ventas"
+                }
+            }
+
+            let cardexByProduct = Dictionary(grouping: payload.cardex) { $0.pocId }
+            let displayedProductIds = Set(soldUnitsByProduct.keys).union(cardexByProduct.keys)
+            let products = displayedProductIds.compactMap { productId in
+                payload.pocs.first(where: { $0.id == productId })
+            }.sorted { lhs, rhs in
+                let left = "\(lhs.upc) \(lhs.name)".purgeSpaces
+                let right = "\(rhs.upc) \(rhs.name)".purgeSpaces
+                return left.localizedCaseInsensitiveCompare(right) == .orderedAscending
+            }
+
+            if products.isEmpty {
+                rows.append(["No se recibieron ventas o movimientos de Cardex para calcular el promedio diario en este reporte."])
+            }
+            else {
+                let fallbackStartAt = saleTimestamps.min() ?? (getNow() - (90 * 24 * 60 * 60))
+                let fallbackEndAt = saleTimestamps.max() ?? getNow()
+                let startAt = payload.activityFrom
+                    ?? (requestedFrom ?? fallbackStartAt)
+                let endAt = payload.activityTo
+                    ?? ((requestedTo ?? 0) > startAt ? requestedTo : nil)
+                    ?? fallbackEndAt
+                let reportDays = max(1, Int(ceil(Double(max(endAt - startAt, 1)) / 86_400.0)))
+                let totalSoldUnits = products.map { soldUnitsByProduct[$0.id] ?? 0 }.reduce(0, +)
+
+                rows.append(["Periodo", "\(inventoryDateTime(startAt)) — \(inventoryDateTime(endAt))"])
+                rows.append(["Días", reportDays.toString])
+                rows.append(["Fuente", salesSource.isEmpty ? "No disponible" : salesSource])
+                rows.append(["POC/SKU/UPC", "Producto", "Vendido", "Días", "Prom. vendido / día"])
+
+                for product in products {
+                    let unitsSold = soldUnitsByProduct[product.id] ?? 0
+                    rows.append([
+                        product.upc.isEmpty ? "N/D" : product.upc,
+                        "\(product.name) \(product.brand) \(product.model)".purgeSpaces,
+                        unitsSold.toString,
+                        reportDays.toString,
+                        departmentInventoryAverage(unitsSold, days: reportDays)
+                    ])
+                }
+
+                rows.append([
+                    "Totales", "\(products.count) productos", totalSoldUnits.toString,
+                    reportDays.toString,
+                    departmentInventoryAverage(totalSoldUnits, days: reportDays)
+                ])
+            }
+
+            let csv = "\u{FEFF}" + rows.map(departmentInventoryCSVRow).joined(separator: "\r\n") + "\r\n"
+            _ = JSObject.global.download!("\(fileName).csv", csv)
+        }
+
+        private func departmentInventoryCSVRow(_ values: [String]) -> String {
+            values.map { value in
+                let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+                let firstCharacter = trimmed.first
+                let beginsWithFormula = firstCharacter == "=" || firstCharacter == "+"
+                    || firstCharacter == "-" || firstCharacter == "@"
+                let safeValue = beginsWithFormula && Double(trimmed) == nil ? "'\(value)" : value
+                return "\"\(safeValue.replacingOccurrences(of: "\"", with: "\"\""))\""
+            }.joined(separator: ",")
+        }
+
+        private func departmentInventoryMoney(_ minorUnits: Int64) -> String {
+            let magnitude = minorUnits.magnitude
+            let wholeUnits = magnitude / 100
+            let fractionalUnits = magnitude % 100
+            let sign = minorUnits < 0 ? "-" : ""
+            let fraction = fractionalUnits < 10 ? "0\(fractionalUnits)" : "\(fractionalUnits)"
+            return "\(sign)\(wholeUnits).\(fraction)"
+        }
+
+        private func departmentInventoryAverage(_ units: Int64, days: Int) -> String {
+            let safeDays = max(days, 1)
+            let hundredths = Int64((Double(units) * 100.0 / Double(safeDays)).rounded())
+            return departmentInventoryMoney(hundredths)
+        }
+
+        private func sortedInventoryUnitsTotal(_ values: [Int64]) -> String {
+            values.reduce(0, +).toString
         }
 
         fileprivate func inventoryReportScope(

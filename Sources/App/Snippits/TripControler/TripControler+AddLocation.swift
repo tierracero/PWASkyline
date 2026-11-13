@@ -382,7 +382,7 @@ class TripControlerAddLocation: Div {
             self.callback(CustCommercialTripsComponents.TripLocation(
                 placementType: self.viewType == .origin ? .origen : .destino,
                 placementId: store.storePrefix + String(store.id.uuidString.suffix(12)),
-                locationType: .store,
+                locationType: store.storeType == .warehouse ? .warehouse : .store,
                 locationId: store.id,
                 rfc: profile.rfc,
                 razon: profile.razon,

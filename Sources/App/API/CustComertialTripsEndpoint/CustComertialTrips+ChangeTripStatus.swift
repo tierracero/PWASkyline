@@ -10,6 +10,7 @@ extension CustCommercialTripsComponents {
         status: FiscalTripFollowupStatus,
         comment: String,
         media: [ChangeTripStatusMedia],
+        commentOnly: Bool = false,
         callback: @escaping ((_ resp: APIResponse?) -> ())
     ) {
         sendPost(
@@ -20,7 +21,8 @@ extension CustCommercialTripsComponents {
                 tripId: tripId,
                 status: status,
                 comment: comment,
-                media: media
+                media: media,
+                commentOnly: commentOnly
             )
         ) { data in
             

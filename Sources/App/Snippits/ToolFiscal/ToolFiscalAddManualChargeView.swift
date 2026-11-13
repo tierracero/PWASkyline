@@ -932,18 +932,23 @@ class ToolFiscalAddManualChargeView: Div {
     func addNewTax() {
         
         guard let _retentionType = TaxRetentionType(rawValue: self.newRetentionTypeLister) else {
+            showError(.generalError, "Seleccione Tipo de Retencion")
             return
         }
         
         guard let _taxType = TaxType(rawValue: self.newTaxTypeListener) else {
+            showError(.generalError, "Seleccione Tipo de Impuesto")
             return
         }
         
         guard let _taxFactor = TaxFactor(rawValue: self.newTaxFactorListener) else {
+            showError(.generalError, "Seleccione Tipo de Factor")
             return
         }
         
-        guard let _ = Double(self.newTaxTaza) else {
+        // 0.040000
+        guard self.newTaxTaza.count == 8, let _ = Double(self.newTaxTaza) else {
+            showError(.generalError, "Ingrese taza valida: EG: 0.040000")
             return
         }
         

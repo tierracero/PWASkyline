@@ -393,6 +393,14 @@ extension CustAssetsView {
 
                     }
 
+                    VGrid(.full) {
+                        UField("Último comentario", required: false) {
+                            Div(item.lastComment.isEmpty ? "Sin comentarios" : item.lastComment)
+                                .whiteSpace(.preWrap)
+                                .color(.white)
+                        }
+                    }
+
                     VGrid(.oneForth) {
                         self.readOnlyField("Folio de compra", item.purchasFiscalDocumentFolio)
                     }

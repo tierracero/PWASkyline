@@ -2270,14 +2270,15 @@ class CreateTripView: Div {
                 showError(.unexpectedResult, .unexpenctedMissingPayload)
                 return
             }
+
             let selectedIds = Set(self.merchendise.filter { $0.merchandiseType == .commercialAsset }.compactMap { $0.merchandiseId })
+
             guard let picker = SearchComertialAsset(
                 account: self.account,
                 currentLocation: currentLocation,
                 items: payload.items.filter {
                     !selectedIds.contains($0.id) && $0.serviceTrip == nil && $0.serviceOrder == nil &&
-                    $0.status == expectedStatus &&
-                    $0.currentLocation.rawValue == origin.locationType.rawValue && $0.currentLocationId == locationId
+                    $0.status == expectedStatus && self.matchesTripAssetOrigin($0, origin: origin)
                 },
                 callback: { [weak self] item in
                     guard let self, self.isInDOM, self.assetSearchRequest == request else { return }
@@ -2290,15 +2291,28 @@ class CreateTripView: Div {
         }
     }
 
+    private func matchesTripAssetOrigin(
+        _ item: CustCommercialAssetsItem,
+        origin: CustCommercialTripsComponents.TripLocation
+    ) -> Bool {
+        guard let locationId = origin.locationId, item.currentLocationId == locationId else { return false }
+        switch origin.locationType {
+        case .store, .warehouse:
+            return item.currentLocation == .store || item.currentLocation == .warehouse
+        case .subaccount:
+            return item.currentLocation == .subaccount
+        default:
+            return false
+        }
+    }
+
     private func configureCommercialAsset(_ item: CustCommercialAssetsItem, request: Int) {
         guard !merchendise.contains(where: { $0.merchandiseType == .commercialAsset && $0.merchandiseId == item.id }) else { return }
         guard item.serviceTrip == nil, item.serviceOrder == nil else {
             showError(.invalidField, "El activo ya esta asignado a un viaje o una orden de servicio.")
             return
         }
-        guard let origin, let locationId = origin.locationId,
-              item.currentLocation.rawValue == origin.locationType.rawValue,
-              item.currentLocationId == locationId,
+        guard let origin, matchesTripAssetOrigin(item, origin: origin),
               item.status == (origin.locationType == .subaccount ? .unavailable : .active) else {
             showError(.invalidField, "El activo no está disponible en el origen seleccionado.")
             return

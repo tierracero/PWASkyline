@@ -912,3 +912,27 @@ Verified completed tasks live here.
 - OrderView includes `CustFolioObjects.id` as `itemId` for direct uploads and order-message camera requests only when exactly one equipment or asset-item record is linked. Zero/multiple records retain nil.
 - The request field is source-compatible and optional. TCFireSignal carries it in `RequestMobileCamaraRequst`, and TCFundamentals carries it in `APNSNotificationPayload`; PWASkyline uses remote-main shared dependencies, so the shared changes must reach those branches before dependency refresh/build.
 - Static call-chain and diff review completed. No build, tests, browser/device session, staging, or commit. Evidence: `.artifacts/planning/order-file-equipment-link/AUDIT.md`.
+
+## TRIP-STORE-WAREHOUSE-MATCH-001 — Equivalent trip-origin labels (2026-10-29)
+
+- Approved scope/IDs: `SearchComertialAsset.swift`, `TripControler+CreateTripView.swift`, companion SkylineServer initial origin validation and architecture documentation; API-001, API-002.
+- Combined store/warehouse picker matching for the same physical UUID and owning account. A shared private origin helper applies the same label tolerance to prefiltering and final selection. Subaccount type/UUID matching, expected status, service reservations and duplicate-selection rejection remain enforced.
+- Preserved the user's AddLocation warehouse-label correction and other work. Architecture documentation records the matching rule; no request/response, enum, dependency, schema or movement-history format changed.
+- Source/call-chain and baseline-relative diff review completed. Scoped `git diff --check` passed; six unrelated pre-existing PWA files remain byte-for-byte unchanged. Builds/tests and browser/server execution were not run because repository guidance requires separate confirmation. No staging or commit.
+
+## API-ORDER-CURRENT-REPORT-001 — Current order report (2026-10-30)
+
+- SkylineServer processes `OrderReportTypes.current` without date bounds and returns one `StoreCurrentPayload` per active store matching the optional selection. Each response mirrors the loadFolios order/transfer/delegate/route buckets and adds collection items; loadFolios itself is unchanged.
+- PWASkyline displays per-store counts and order rows, and downloads a separate summary/detail CSV for each store. Static source and response-flow audit plus scoped diff checks completed; no build/tests were run under repository verification rules. No staging or commit.
+
+## PWA-CURRENT-REPORT-PRESENTATION-001 — Current report status sections (2026-10-31)
+
+- Approved scope/IDs: current-report presentation and CSV in OrderProcessing, source map and UI architecture; `SWWEB-001`, `SWWEB-002`, `SWWEB-003`.
+- Kept per-store sections, replaced stacked counts with a horizontal table, and highlighted a unique folio total across order groups, excluding delegate/route metadata. Nonempty status groups have separate tables and count headings with consistent columns; removed the redundant Grupo column. The store CSV mirrors the summary/total and grouped sections with quoted values.
+- Source and task-relative diff review plus scoped `git diff --check` passed. All eight unrelated pre-existing modified files and other report functions were preserved byte-for-byte. No build/tests, live browser validation, staging or commit; the user will validate manually under the existing verification instruction.
+
+## ASSET-LAST-COMMENT-001 — Asset latest condition and event comments (2026-11-05)
+
+- User-approved scope: shared asset protocol/value/table and inventory projection, creation and trip contracts, server creation/trip/order/retirement event writers, Skyline/Repare/native registration/detail/order flows, and supporting docs. Added lastComment immediately before status, empty-string legacy JSON compatibility and fresh-table default; existing tenant SQL is provided separately and is not executed or registered as an automatic upgrade.
+- Per-item receiving comments persist in initial asset state and Kardex-linked notes. Nonempty trip event/update comments, order work descriptions, saved equipment resolutions at close, and retirement reasons replace the latest value and remain in the corresponding event note. The user explicitly chose to keep the previous value when no new comment is supplied. Delivered trip assets are excluded from later comment-only updates. All three apps collect receiving comments, show the latest value and prefill service-order descriptions; batch drafts preserve each unit's comment. Native Add Comment uses the current-status trip comment path.
+- Source/contract and focused diff review completed. Scoped whitespace checks and preservation audits are recorded in /private/tmp/asset-lastcomment-20261105. No build/tests, live app/API/database execution, dependency refresh, staging or commit. Shared revisions and the user-run tenant ALTER are required before deployment.
