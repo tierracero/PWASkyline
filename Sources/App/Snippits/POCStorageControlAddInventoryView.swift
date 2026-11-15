@@ -317,8 +317,8 @@ class POCStorageControlAddInventoryView: Div {
     
     func addInventory(){
         
-        guard let units = Float(unitsString)?.toInt else {
-            showError(.invalidFormat, "Ingrese unidades validas")
+        guard let units = Int(unitsString.trimmingCharacters(in: .whitespacesAndNewlines)), units > 0 else {
+            showError(.invalidFormat, "Ingrese una cantidad entera mayor a cero")
             unitsField.select()
             return
         }

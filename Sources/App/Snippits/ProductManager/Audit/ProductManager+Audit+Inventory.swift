@@ -4934,20 +4934,23 @@ extension ProductManagerView.AuditView {
                 items.forEach { item in
                     
                     var channel = "Concesion"
-                    
-                    var operation = "+"
-                    
+                
+                    //var operation = "+"
+
                     switch item.channel {
                     case .pdv:
                         channel = "PDV"
+                        //operation = "-"
                     case .order:
                         channel = "ODS"
+                        //operation = "-"
                     case .eSale:
                         channel = "eSale"
+                        //operation = "-"
                     case .default:
                         if  item.relation == .unconcession {
                             channel = "Desconcesionado"
-                            operation = "-"
+                            //operation = "-"
                         }
                     }
                     
@@ -5007,7 +5010,8 @@ extension ProductManagerView.AuditView {
                         }
                         Td(item.initialUnits.toString)
                             .align(.center)
-                        Td("\(operation) \(item.processedUnits.toString)")
+                        // Td("\(operation) \(item.processedUnits.toString)")
+                        Td(item.processedUnits.toString)
                             .align(.center)
                         Td(item.finalUnits.toString)
                             .align(.center)
@@ -5032,7 +5036,6 @@ extension ProductManagerView.AuditView {
                 let units = item.items.count
                 
                 let totalPrice = item.items.map{ $0.price }.reduce(0, +)
-                
                 
                 var avaragePrice: Int64 = 0
                 

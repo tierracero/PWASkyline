@@ -25,6 +25,11 @@ extension CustPOCComponents {
             alocatedTo: UUID?,
         callback: @escaping ( (_ resp: APIResponseGeneric<AddManualInventoryResponse>?) -> () )) {
         
+        guard !items.isEmpty, items.allSatisfy({ $0.units.count > 0 }) else {
+            callback(.init(error: "Cada producto debe incluir una cantidad entera mayor a cero."))
+            return
+        }
+
         sendPost(
             rout,
             version,
