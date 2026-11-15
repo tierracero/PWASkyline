@@ -19,15 +19,19 @@ class AdvancesSearchViewControler: Div {
     @State var orders: [CustOrderLoadFolios] = []
     
     @State var accounts: [CustAcctAPI] = []
+
+    @State var assetItems: [CustCommercialAssetsItem] = []
     
     init(
         searchTerm: String,
         orders: [CustOrderLoadFolios],
-        accounts: [CustAcctAPI]
+        accounts: [CustAcctAPI],
+        assetItems: [CustCommercialAssetsItem] = []
     ) {
         self.searchTerm = searchTerm
         self.orders = orders
         self.accounts = accounts
+        self.assetItems = assetItems
     }
     
     required init() {
@@ -396,6 +400,32 @@ class AdvancesSearchViewControler: Div {
     lazy var searchRightView = ForEach(self.$accounts) {
         AccountRowView(data: $0) { accountid in
             loadAccountView(id: .id(accountid))
+        }
+    }
+
+    lazy var searchAssetView = ForEach(self.$assetItems) { assetItem in
+        Div {
+            UTitle(assetItem.name)
+                .color(.white)
+
+            Div {
+                Span(assetItem.folio)
+                Span(assetItem.$serial.map { $0 ?? "" })
+                    .hidden(assetItem.$serial.map { ($0 ?? "").isEmpty })
+                    .marginLeft(8.px)
+            }
+            .color(.lightGray)
+            .fontSize(13.px)
+            .marginTop(4.px)
+        }
+        .custom("border", "1px solid rgba(66, 183, 245, 0.28)")
+        .custom("background", "rgba(5, 17, 27, 0.55)")
+        .custom("border-radius", "8px")
+        .padding(all: 10.px)
+        .marginBottom(6.px)
+        .cursor(.pointer)
+        .onClick {
+            addToDom(CustAssetsView.AssetItemView(itemId: .id(assetItem.id)))
         }
     }
     
@@ -1109,6 +1139,13 @@ class AdvancesSearchViewControler: Div {
                     
                     Table().noResult(label: "-🔎 No hay ordenes para mostrar-")
                         .hidden(self.$orders.map{ !$0.isEmpty })
+
+                    H2("Resultados por Activos")
+                        .color(.white)
+                        .hidden(self.$assetItems.map { $0.isEmpty })
+
+                    self.searchAssetView
+                        .hidden(self.$assetItems.map { $0.isEmpty })
                 }
                 
                 Div{
@@ -1784,6 +1821,8 @@ class AdvancesSearchViewControler: Div {
             self.orders = data.orders
             
             self.accounts = data.accounts
+
+            self.assetItems = data.assteItems
             
         }
     }
@@ -1793,6 +1832,7 @@ class AdvancesSearchViewControler: Div {
         $searchTerm.removeAllListeners()
         $orders.removeAllListeners()
         $accounts.removeAllListeners()
+        $assetItems.removeAllListeners()
         $bizData.removeAllListeners()
         $firstName.removeAllListeners()
         $lastName.removeAllListeners()

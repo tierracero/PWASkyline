@@ -1,5 +1,4 @@
 // swift-tools-version:5.10
-
 import PackageDescription
 import Foundation
 
@@ -27,6 +26,15 @@ extension Array where Element == Dep {
             )
         )
     }
+
+    mutating func appendFromBranch(_ url: String, branch: String, targets: Target.Dependency...) {
+        append(
+            .init(
+                package: .package(url: url, branch: branch),
+                targets: targets
+            )
+        )
+    }
     
     mutating func appendFromMaster(_ url: String, targets: Target.Dependency...) {
         append(
@@ -48,7 +56,9 @@ extension Array where Element == Dep {
 
 var deps: [Dep] = [] 
 
+// deps.appendFromBranch("https://github.com/swifweb/web", branch: "nightly-6.2", targets: .product(name: "Web", package: "web"))
 deps.append("https://github.com/swifweb/web", from: "2.0.0-nightly.5", targets: .product( name: "Web", package: "web"))
+
 
 deps.appendFromMain("git@github.com:tierracero/TCFundamentals.git",
 							 targets: .product(name: "TCFundamentals", package: "TCFundamentals"))

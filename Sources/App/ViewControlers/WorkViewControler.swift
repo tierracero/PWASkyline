@@ -3876,7 +3876,9 @@ class WorkViewControler: PageController {
             
             let accounts = data.accounts
             
-            if (orders.count == 1) && accounts.isEmpty {
+            let assetItems = data.assteItems
+            
+            if (orders.count == 1) && accounts.isEmpty && assetItems.isEmpty {
                 
                 minimizeAccountViews()
                 
@@ -3918,7 +3920,7 @@ class WorkViewControler: PageController {
                 return
             }
             
-            if orders.isEmpty && (accounts.count == 1) {
+            if orders.isEmpty && (accounts.count == 1) && assetItems.isEmpty {
                 
                 guard let account = accounts.first else {
                     return
@@ -3928,11 +3930,18 @@ class WorkViewControler: PageController {
                 
                 return
             }
+
+            if orders.isEmpty && accounts.isEmpty && assetItems.count == 1,
+               let assetItem = assetItems.first {
+                addToDom(CustAssetsView.AssetItemView(itemId: .id(assetItem.id)))
+                return
+            }
             
             addToDom(AdvancesSearchViewControler(
                 searchTerm: term,
                 orders: orders,
-                accounts: accounts
+                accounts: accounts,
+                assetItems: assetItems
             ))
             
         }

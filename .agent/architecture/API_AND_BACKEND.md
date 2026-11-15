@@ -4,6 +4,8 @@ Authoritative rules: `API-*`.
 
 ## Verified Facts
 
+- `custOrder/v1/searchFolio` retains the shared order/account result models and locally decodes the backend's `assteItems` collection into the folio, name, serial and ID needed by the UI. Work search opens one asset item immediately only when it is the sole result; mixed/multiple results render clickable asset rows that open the existing asset-item detail by UUID. The endpoint path and request are unchanged. Source reviewed; build/browser verification remains unrun.
+
 - Asset registration has a per-unit receiving-comment field carried by CreateAssetItemObject.comment, including staged batch items. Asset detail shows lastComment, and the service-order creation description starts with that value. Submitted nonempty lifecycle comments replace the asset snapshot and remain in the matching Kardex note; empty comments retain the previous value. Trip status/delivery forms retain their existing comment fields, and the updateTrip wrapper also accepts comment. Shared package revisions containing the extended contracts must be resolved before building. Source reviewed; builds/browser verification remain unrun.
 
 - Asset-item/trip media retry is client draft behavior through existing uploadManager/asyncCheckUploadStatus endpoints. A fresh raw retry has a new upload event and retains its original destination/type; acknowledged processing resumes without another POST, and stale generations plus event/destination checks protect attachment publication. CreateAssetItem/changeTripStatus/delivery writes are never retried by these controls. No backend/wire/persistence or dependency changes are required.
