@@ -110,7 +110,6 @@ let package: Package = Package(
             resources: [
                 .copy("favicon.ico"),
                 .copy("skyline"),
-                .copy("tutorial"),
                 .copy("images"),
                 .copy("js"),
                 .copy("css")

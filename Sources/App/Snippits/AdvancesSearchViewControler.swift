@@ -16,16 +16,16 @@ class AdvancesSearchViewControler: Div {
     
     @State var searchTerm: String
     
-    @State var orders: [CustOrderLoadFolios] = []
+    @State var orders: [CustOrderLoadFolios]
     
-    @State var accounts: [CustAcctAPI] = []
+    @State var accounts: [CustAcctAPI]
 
-    @State var assetItems: [CustCommercialAssetsItem] = []
+    @State var assetItems: [CustCommercialAssetsItem]
     
     init(
         searchTerm: String,
-        orders: [CustOrderLoadFolios],
-        accounts: [CustAcctAPI],
+        orders: [CustOrderLoadFolios] = [],
+        accounts: [CustAcctAPI] = [],
         assetItems: [CustCommercialAssetsItem] = []
     ) {
         self.searchTerm = searchTerm
@@ -403,15 +403,17 @@ class AdvancesSearchViewControler: Div {
         }
     }
 
-    lazy var searchAssetView = ForEach(self.$assetItems) { assetItem in
+    lazy var searchAssetView = ForEach(Array(self.assetItems.indices)) { index in
+        let assetItem = self.assetItems[index]
+
         Div {
             UTitle(assetItem.name)
                 .color(.white)
 
             Div {
                 Span(assetItem.folio)
-                Span(assetItem.$serial.map { $0 ?? "" })
-                    .hidden(assetItem.$serial.map { ($0 ?? "").isEmpty })
+                Span(assetItem.serial ?? "")
+                    .hidden((assetItem.serial ?? "").isEmpty)
                     .marginLeft(8.px)
             }
             .color(.lightGray)
@@ -1822,7 +1824,7 @@ class AdvancesSearchViewControler: Div {
             
             self.accounts = data.accounts
 
-            self.assetItems = data.assteItems
+            self.assetItems = []
             
         }
     }
