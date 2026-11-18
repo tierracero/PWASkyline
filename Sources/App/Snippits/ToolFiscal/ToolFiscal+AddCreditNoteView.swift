@@ -32,7 +32,7 @@ extension ToolFiscal {
        
     class AddCreditNoteView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         /// Fiscal Documnet
         var doc: FIAccountsServices

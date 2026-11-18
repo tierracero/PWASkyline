@@ -15,7 +15,7 @@ extension ToolsView {
     
     class SystemSettings: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         @State var selectedSetting: ConfigurationView = .seviceOrder
         

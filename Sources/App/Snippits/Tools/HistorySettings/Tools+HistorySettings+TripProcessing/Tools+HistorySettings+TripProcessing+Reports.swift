@@ -15,7 +15,7 @@ extension ToolsView.HistorySettings.TripProcessing {
     
     class Reports: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         @State var reportType: TripReportTypes? = nil
         

@@ -14,7 +14,7 @@ extension ProductManagerView {
     
     class Configuration: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         lazy var mainContainer = Div()
             .custom("height","calc(100% - 35px)")

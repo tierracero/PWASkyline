@@ -11,7 +11,7 @@ import Web
 
 class SearchProductVendorItem: Tr {
     
-    override class var name: String { "tr" }
+    nonisolated override class var name: String { "tr" }
     
     var term: String
     

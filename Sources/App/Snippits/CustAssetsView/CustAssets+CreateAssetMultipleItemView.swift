@@ -12,7 +12,7 @@ extension CustAssetsView {
 
     final class CreateAssetMultipleItemView: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         static var viewid: UUID { .init() }
 

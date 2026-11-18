@@ -12,7 +12,7 @@ import Web
 
 class AddServiceFormView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     let allowManualCharges: Bool
     

@@ -13,7 +13,7 @@ extension CustAssetsView {
 
     final class SubLocationEditor: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         let section: CustCommercialAssetsSection
         let callback: (CustCommercialAssetsSubSection) -> Void

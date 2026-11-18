@@ -13,7 +13,7 @@ public enum VBoxStyle {
 
 /// A visible Tierra Cero surface/card.
 public final class VBox: Div {
-    public override class var name: String { "div" }
+    public nonisolated override class var name: String { "div" }
 
     public let style: VBoxStyle
 

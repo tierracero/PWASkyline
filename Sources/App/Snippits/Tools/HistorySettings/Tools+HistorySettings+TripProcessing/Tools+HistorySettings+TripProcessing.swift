@@ -18,7 +18,7 @@ extension ToolsView.HistorySettings {
     
     class TripProcessing: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         @State var currentView: CuttentView = .reportView
 

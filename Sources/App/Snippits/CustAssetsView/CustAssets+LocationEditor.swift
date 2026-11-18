@@ -13,7 +13,7 @@ extension CustAssetsView {
 
     final class LocationEditor: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         let relationType: CustCommercialAssetsLocationLinkedType
         let relationId: UUID

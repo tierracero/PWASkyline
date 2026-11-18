@@ -12,7 +12,7 @@ import Web
 
 class ChatMessageView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     let type: RoomType
     

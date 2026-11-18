@@ -7,14 +7,14 @@
 import Foundation
 import TCFundamentals
 import TCFireSignal
-import LanguagePack
+@preconcurrency import LanguagePack
 import Web
 
 extension AccountView {
     
     class DetailView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         let account: CustAcct
         

@@ -8,7 +8,7 @@
 import Foundation
 import TCFundamentals
 import TCFireSignal
-import LanguagePack
+@preconcurrency import LanguagePack
 import Web
 
 private typealias AccountViewBetaRule = CSSRule
@@ -299,7 +299,7 @@ private enum AccountViewTripBetaStyle {
 
 class AccountView: PageController {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var account: CustAcct
     

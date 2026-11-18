@@ -11,7 +11,7 @@ import Web
 
 class ConfirmProductItemView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     let poc: SearchChargeResponse
 

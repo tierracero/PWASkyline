@@ -11,7 +11,7 @@ extension CustAssetsView {
 
     final class AssetItemView: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         private enum ItemTab: Equatable {
             case map

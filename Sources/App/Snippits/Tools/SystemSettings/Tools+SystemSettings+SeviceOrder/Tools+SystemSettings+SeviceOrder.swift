@@ -14,7 +14,7 @@ extension ToolsView.SystemSettings {
     
     class SeviceOrder: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         let configStoreProcessing: ConfigStoreProcessing
         

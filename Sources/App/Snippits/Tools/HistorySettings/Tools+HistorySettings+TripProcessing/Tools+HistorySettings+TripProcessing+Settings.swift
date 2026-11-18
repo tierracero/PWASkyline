@@ -13,7 +13,7 @@ extension ToolsView.HistorySettings.TripProcessing {
 
     class Settings: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         var operadors: [CustCommercialTripOperador]
 

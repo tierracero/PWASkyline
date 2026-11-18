@@ -14,7 +14,7 @@ extension ToolsView.WebPage.ServicePage {
     
     class ServiceRow: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         let service: CustWebContent
         

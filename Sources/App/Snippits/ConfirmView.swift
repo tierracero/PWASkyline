@@ -12,7 +12,7 @@ import Web
 @available(*, deprecated, message: "Use ConfirmationView")
 public class ConfirmView: Div {
     
-    public override class var name: String { "div" }
+    public nonisolated override class var name: String { "div" }
     
     let type: ConfirmViewButton
     

@@ -14,7 +14,7 @@ extension MoneyManagerView.FinancialServicesView {
     
     class LendingView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         @State var user: CustUsername? = nil
         

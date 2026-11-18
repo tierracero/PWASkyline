@@ -14,7 +14,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
     
     class WorkRequest: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         private var userCreated: ((
             _ user: CustUsername

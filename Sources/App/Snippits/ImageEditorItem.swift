@@ -12,7 +12,7 @@ import Web
 
 class ImageEditorItem: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     @State var url: String?
     var width: Int

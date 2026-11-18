@@ -7,7 +7,7 @@ import Web
 
 /// Popup title bar with an action area and a consistent close control.
 public final class VTitle: Div {
-    public override class var name: String { "div" }
+    public nonisolated override class var name: String { "div" }
 
     private let titleContentView = Div()
     private let titleView = Div()

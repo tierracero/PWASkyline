@@ -4,7 +4,7 @@ import Web
 
 final class MapView: Div {
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     let latitude: Double
     let longitude: Double

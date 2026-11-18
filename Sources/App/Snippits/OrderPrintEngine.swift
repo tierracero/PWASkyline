@@ -47,7 +47,7 @@ class OrderPrintEngine: Div {
         fatalError("init() has not been implemented")
     }
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var orderImgIsHidden = false
 

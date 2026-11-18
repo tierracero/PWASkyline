@@ -45,7 +45,7 @@ import Web
  */
 class EditChargePOCView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     /// service, product, manual, rental
     var type: ChargeType

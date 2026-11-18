@@ -12,7 +12,7 @@ import Web
 
 class CreateCustContractView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     let orderId: UUID
 
@@ -554,7 +554,7 @@ extension CreateCustContractView {
     
     class ContractInputField: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         let key: String
         let relation: CustContractRelationRelationType

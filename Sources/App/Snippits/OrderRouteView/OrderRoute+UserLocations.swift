@@ -13,7 +13,7 @@ extension OrderRouteView {
     
     class UserLocations: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         var userLocations: [API.custRouteV1.UserLocationsObject]
         

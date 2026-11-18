@@ -12,7 +12,7 @@ import Web
 
 class ImageGeneralView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     /// logoIndexMain, logoIndexWhite, logoIndexWhiteTrans, logoIndexBlack, logoIndexBlackTrans, logoIndexIcon, ...
     let relation: ImagePickerTo

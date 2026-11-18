@@ -12,7 +12,7 @@ import TCFireSignal
 
 class AddCartaPorteFromHistoryView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     let cartaPortes: [CustFiscalCartaPorteItem]
     
@@ -223,7 +223,7 @@ class AddCartaPorteFromHistoryView: Div {
         
         confirmDateIsHidden = false
         
-        cartaPorte.locations.forEach { location in
+        for location in cartaPorte.locations {
             
             let date = getDate(nil)
             
@@ -235,14 +235,12 @@ class AddCartaPorteFromHistoryView: Div {
             
             dateTimeRefence[location.placementId] = $time
             
-            var dateTag = "Fecha de salida"
-            
-            var hourTag = "Hora de salida"
-            
-            if location.placementType == .destino {
-                dateTag = "Fecha de llegada"
-                hourTag = "Hora de llegada"
-            }
+            let dateTag = location.placementType == .destino
+                ? "Fecha de llegada"
+                : "Fecha de salida"
+            let hourTag = location.placementType == .destino
+                ? "Hora de llegada"
+                : "Hora de salida"
             
             dateConfirmView.appendChild(H2("Tienda \(location.storeName)").color(.white))
             

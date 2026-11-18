@@ -1,0 +1,27 @@
+{
+  "dashboardCounts": [
+    0,
+    4,
+    0,
+    2
+  ],
+  "toolbarAndCreateActionsRestored": true,
+  "order": "fobo01-5003",
+  "orderDetails": [
+    "folio",
+    "print control",
+    "equipment",
+    "notes",
+    "charges/payments"
+  ],
+  "fiscalHistorySwitches": true,
+  "existingInvoice": "1014",
+  "fiscalDetailsAndRelatedDocuments": true,
+  "pdfAndXMLControlsVisible": true,
+  "pdfActionReachedSaveDialog": true,
+  "downloadCancelled": true,
+  "signatureMismatchInFinalConsole": false,
+  "wasiExitInFinalConsole": false,
+  "runtimeTrapInFinalConsole": false,
+  "businessRecordsModified": false
+}

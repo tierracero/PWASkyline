@@ -11,7 +11,7 @@ import Web
 
 class RentalItemView: Tr {
     
-    override class var name: String { "tr" }
+    nonisolated override class var name: String { "tr" }
     
     var img = Img()
         .src("/skyline/media/tc-logo-32x32.png")

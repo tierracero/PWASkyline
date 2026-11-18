@@ -15,7 +15,7 @@ extension ToolsView.SystemSettings {
     
     class StoreProducts: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         let configStoreProduct: ConfigStoreProduct
         

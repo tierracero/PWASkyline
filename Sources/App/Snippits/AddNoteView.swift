@@ -12,7 +12,7 @@ import Web
 
 class AddNoteView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     ///service, product, inventory, webContent, pageContent, album, purches, user, gps, account, subAccount, none, store, storeBodega, storeSeccion
     let relationType : CustGeneralNotesTargetTypes

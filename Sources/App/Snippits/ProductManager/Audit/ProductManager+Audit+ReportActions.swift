@@ -10,7 +10,7 @@ extension ProductManagerView.AuditView {
 
     final class ReportActions: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         private let resultElementId: String
         private var reportTitle = "Reporte"

@@ -39,7 +39,7 @@ Current verified module and source structure for PWASkyline.
 
 `Sources/Service` contains the Swift service-worker executable and copied resource trees.
 
-- `main.swift` starts the service.
+- `main.swift` calls the package's synchronous `Service.main()` bootstrap in WASM and awaits its native bootstrap for manifest extraction; worker startup executes on `WebWorkerActor`.
 - `Service.swift` defines the PWA manifest and service-worker lifecycle hooks.
 - `css/`, `js/`, `images/`, and `skyline/` are copied resources.
 
@@ -61,9 +61,13 @@ These directories should usually be treated as generated/deployable outputs, not
 
 ## Active Dependencies
 
-- `swifweb/web` from `2.0.0-nightly.5`.
+- `tierracero/web` on `master`, with an optional local checkout selected by `TIERRACERO_WEB_PACKAGE_PATH`.
 - Tierra Cero private packages: `TCFundamentals`, `TCFireSignal`, `MapKitCore`, `TCSocialCore`, `TaecelAPICore`, `LanguagePack`, `WaWebAPICore`, `SkylineDocumentationCore`.
 - WebSources dev dependencies include webpack, JavaScriptKit local checkout bridge, and Wasmer WASI packages.
+
+## Container Build Tools
+
+The `.devcontainer/Dockerfile` installs the `.devcontainer/wasm-opt` wrapper so SwiftStream release optimization accepts Swift 6's nontrapping float-to-int instructions. The PWA architecture chunk owns this compatibility requirement.
 
 ## Vendor Favorites
 

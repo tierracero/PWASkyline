@@ -11,7 +11,7 @@ import Web
 
 class SelectCustContractView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var orderContract: [CustomerCustomeScript]
     

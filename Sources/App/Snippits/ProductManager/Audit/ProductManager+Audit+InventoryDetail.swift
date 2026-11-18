@@ -14,7 +14,7 @@ extension ProductManagerView.AuditView {
     
     class InventoryDetail: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         let poc: CustPOCQuick
         

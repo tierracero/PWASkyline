@@ -18,7 +18,7 @@ class PaymentConfirmationView: Div {
     var printname = ""
     var printlastname = ""
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     @State var saleId: UUID
     

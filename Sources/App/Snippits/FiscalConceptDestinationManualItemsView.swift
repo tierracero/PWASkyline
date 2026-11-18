@@ -14,7 +14,7 @@ import Web
 
 class FiscalConceptDestinationManualItemsView: Tr {
     
-    override class var name: String { "tr" }
+    nonisolated override class var name: String { "tr" }
     
     var documentStatus: State<CustInventoryPurchaseManagerStatus?>
     /// store, order, sold, merm, returnToVendor

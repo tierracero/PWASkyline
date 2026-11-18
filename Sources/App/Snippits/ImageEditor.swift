@@ -17,7 +17,7 @@ import XMLHttpRequest
 
 class ImageEditor: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     private static weak var activeWebSocketEditor: ImageEditor?
 

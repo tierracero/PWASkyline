@@ -14,7 +14,7 @@ extension BudgetView {
     
     class ItemView: Tr {
         
-        override class var name: String { "tr" }
+        nonisolated override class var name: String { "tr" }
         
         /// Store Id
         var storeid: UUID

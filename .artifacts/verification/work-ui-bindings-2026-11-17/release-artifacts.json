@@ -1,0 +1,21 @@
+{
+  "directory": "DistPublic",
+  "files": [
+    {
+      "target": "app",
+      "bytes": 90017710,
+      "sha256": "dcb20fc74a6424264ea39382ce37fece036a661f21d540c5d909f9590a67efc9",
+      "valid": true,
+      "gzipMatches": true,
+      "brotliMatches": true
+    },
+    {
+      "target": "service",
+      "bytes": 48624014,
+      "sha256": "1b4fc6df65924871c70be5dc7322de623aacb46bafc042effdcb2f4c4a080894",
+      "valid": true,
+      "gzipMatches": true,
+      "brotliMatches": true
+    }
+  ]
+}

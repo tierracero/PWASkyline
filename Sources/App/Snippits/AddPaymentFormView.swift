@@ -11,7 +11,7 @@ import Web
 
 class AddPaymentFormView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     /// CustAcct.id
     let accountId: UUID?

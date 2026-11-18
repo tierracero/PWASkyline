@@ -11,7 +11,7 @@ import Web
 
 class OrdersSuperView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     let workView: WorkViewControler
     

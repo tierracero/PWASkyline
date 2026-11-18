@@ -12,7 +12,7 @@ import Web
 
 class MoneyManagerView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     @DOM override var body: DOM.Content {
         VPopUp(.fitContent(w: 980)) {

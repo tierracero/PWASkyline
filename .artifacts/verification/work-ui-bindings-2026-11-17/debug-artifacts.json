@@ -1,0 +1,21 @@
+{
+  "directory": "DevPublic",
+  "files": [
+    {
+      "target": "app",
+      "bytes": 365802777,
+      "sha256": "c1a2e88d8f8894111aa9da8baed2c3795a476386c104c649a026e2bb5938bc77",
+      "valid": true,
+      "gzipMatches": true,
+      "brotliMatches": true
+    },
+    {
+      "target": "service",
+      "bytes": 64591795,
+      "sha256": "10c955e8a95c6ac29a6433e49f670fa3decb7dd9eb051fc3a4bed1588c0c7437",
+      "valid": true,
+      "gzipMatches": true,
+      "brotliMatches": true
+    }
+  ]
+}

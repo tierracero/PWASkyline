@@ -13,7 +13,7 @@ import FacebookCore
 
 class SocialManagerPostCommentRow: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     let mainid: UUID
     

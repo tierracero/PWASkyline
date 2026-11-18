@@ -11,7 +11,7 @@ import TCFireSignal
 import Web
 
 class ToolFiscalAddManualChargeView: Div {
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     @State var item: FiscalItem?
     

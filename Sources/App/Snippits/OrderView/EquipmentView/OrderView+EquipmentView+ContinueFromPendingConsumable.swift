@@ -13,7 +13,7 @@ extension OrderView.EquipmentView {
     
     class ContinueFromPendingConsumable: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         public var orderId: UUID
         

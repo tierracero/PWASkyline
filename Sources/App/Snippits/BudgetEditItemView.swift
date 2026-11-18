@@ -12,7 +12,7 @@ import Web
 
 class BudgetEditItemView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     ///service, product, manual, rental
     let type: ChargeType

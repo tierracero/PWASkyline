@@ -13,7 +13,7 @@ import Web
 
 class QuickOrderSearch: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     private var callback: ((
         _ order: CustOrderLoadFolios

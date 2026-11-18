@@ -10,7 +10,7 @@ import Web
 
 class SideMenuView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     @State var performanceModeEnabled: Bool
     

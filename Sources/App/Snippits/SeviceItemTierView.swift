@@ -12,7 +12,7 @@ import Web
 
 class SeviceItemTierView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     ///dep, cat, line, main, all
     let type: CustProductType

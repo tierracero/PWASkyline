@@ -12,7 +12,7 @@ extension CustAssetsView {
 
     final class CreateAssetItemView: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         static var viewid: UUID { .init() }
 
@@ -1215,7 +1215,7 @@ extension CustAssetsView {
 
     final class AssetLocationPicker: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         struct PickerOption {
             let id: UUID

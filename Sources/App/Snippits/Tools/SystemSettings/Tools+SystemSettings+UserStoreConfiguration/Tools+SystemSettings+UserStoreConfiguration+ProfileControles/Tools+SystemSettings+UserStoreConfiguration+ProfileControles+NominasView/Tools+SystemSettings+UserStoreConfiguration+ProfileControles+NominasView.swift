@@ -14,7 +14,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles {
     
     class NominasView: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         @State var nominas: [CustNominaConfiguration]
 

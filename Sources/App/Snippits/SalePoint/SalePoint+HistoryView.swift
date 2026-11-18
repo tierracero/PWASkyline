@@ -15,7 +15,7 @@ extension SalePointView {
     
     class HistoryView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         var accountRefrence: [UUID:CustAcctQuick] = [:]
         

@@ -10,7 +10,7 @@ import Web
 
 class TripControlerManageVehical: Div {
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     private var callback: (
         _ item: CallbackType

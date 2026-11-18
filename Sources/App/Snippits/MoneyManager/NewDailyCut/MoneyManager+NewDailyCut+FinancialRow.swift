@@ -14,7 +14,7 @@ extension MoneyManagerView.NewDailyCutView {
     
     class FinancialRow: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         let item: API.custAPIV1.FinancialsRender
         

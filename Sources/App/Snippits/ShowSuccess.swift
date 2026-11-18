@@ -24,7 +24,7 @@ public class ShowSuccess: Div {
 		fatalError("init() has not been implemented")
 	}
 	
-    public override class var name: String { "div" }
+    public nonisolated override class var name: String { "div" }
 	
     @DOM public override var body: DOM.Content {
 		Div{

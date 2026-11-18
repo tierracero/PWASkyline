@@ -13,7 +13,7 @@ extension OrderView {
     
     class OrderProjectItemObjectView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
      
         let object: CustOrderProjetcManagerItemObject
         

@@ -12,7 +12,7 @@ import TCFireSignal
 
 class BudgetConfirmationView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     @State var custAcct: CustAcctSearch?
     let comment: String

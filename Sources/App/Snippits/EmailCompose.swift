@@ -13,7 +13,7 @@ import XMLHttpRequest
 
 class EmailCompose: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var uid: Int?
     

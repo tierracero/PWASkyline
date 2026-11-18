@@ -12,7 +12,7 @@ import Web
 
 class OrderCalendarView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     @State var currentMonthName = "Mes Actual"
     

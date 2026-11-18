@@ -10,7 +10,7 @@ import Web
 
 public class ShowError: Div {
     
-    public override class var name: String { "div" }
+    public nonisolated override class var name: String { "div" }
     
 	let title: String
     

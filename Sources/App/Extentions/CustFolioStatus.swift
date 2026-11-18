@@ -9,6 +9,7 @@ import Foundation
 import TCFundamentals
 import Web
 
+@MainActor
 extension CustFolioStatus {
 
     public var crystalTintColor: Color {

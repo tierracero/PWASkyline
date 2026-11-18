@@ -12,7 +12,7 @@ import Web
 
 class ToolViewFiscalXMLDocument: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var doc: API.fiscalV1.FiscalXMLIngresoResponse
     

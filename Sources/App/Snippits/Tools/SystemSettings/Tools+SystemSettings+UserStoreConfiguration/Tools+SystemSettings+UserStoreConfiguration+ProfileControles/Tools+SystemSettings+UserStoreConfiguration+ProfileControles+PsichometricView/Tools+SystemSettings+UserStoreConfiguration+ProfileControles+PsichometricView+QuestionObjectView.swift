@@ -14,7 +14,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.Psich
     
     class QuestionObjectView: Div  {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         /// this is the itemId to identify one object form an other 
         var itemId: UUID

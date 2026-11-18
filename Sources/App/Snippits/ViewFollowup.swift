@@ -12,7 +12,7 @@ import Web
 
 class ViewFollowup: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     public let account: CustAcct
     
@@ -513,7 +513,7 @@ class ViewFollowup: Div {
 
 class CloseFollowupView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     let followup: CustFollowUp
     

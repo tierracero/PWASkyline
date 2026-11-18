@@ -1,0 +1,35 @@
+🔳 Phase 0: Remove DistPublic folder
+🔳 Phase 1: Resolve Swift dependencies for each build type
+🔳 Phase 2: Check if required Swift dependencies present
+🔳 Phase 3: Retrieve executable Swift targets
+🔳 Phase 4: Check that App target name present
+🔳 Phase 5: Build executable targets
+stdout: Build of product 'App' complete! (0.75s)
+🧱 Built swift target for `.native` in debug mode in 1s14ms
+stdout: Build of product 'Service' complete! (0.42s)
+🧱 Built swift target for `.native` in debug mode in 595ms
+stdout: Build of product 'App' complete! (1.12s)
+🧱 Built swift target for `.wasi` in release mode in 1s335ms
+🔳 Phase 5.1: Proceed WASM file
+Executing /usr/local/bin/wasm-opt -Os --enable-bulk-memory --enable-sign-ext /workspaces/PWASkyline/DistPublic/app.wasm -o /workspaces/PWASkyline/DistPublic/app.wasm
+💾 Optimized app.wasm 105.1 MiB → 85.6 MiB in 55s15ms
+🧳 Gzipped app.wasm 85.6 MiB → 27.7 MiB in 5s869ms
+🧳 Brotling app.wasm
+🧳 Brotled app.wasm 85.6 MiB → 16.7 MiB in 2m7s
+stdout: Build of product 'Service' complete! (1.97s)
+🧱 Built swift target for `.wasi` in release mode in 2s176ms
+🔳 Phase 5.1: Proceed WASM file
+Executing /usr/local/bin/wasm-opt -Os --enable-bulk-memory --enable-sign-ext /workspaces/PWASkyline/DistPublic/service.wasm -o /workspaces/PWASkyline/DistPublic/service.wasm
+💾 Optimized service.wasm 51.7 MiB → 46.4 MiB in 12s502ms
+🧳 Gzipped service.wasm 46.4 MiB → 17.2 MiB in 3s216ms
+🧳 Brotling service.wasm
+🧳 Brotled service.wasm 46.4 MiB → 11.2 MiB in 1m16s
+🔳 Phase 6: Build JavaScriptKit TypeScript sources
+🔳 Phase 7: Build all the web sources
+🔳 Phase 8: Retrieve manifest from the Service target
+🔳 Phase 9: Retrieve index from the App target
+🔳 Phase 10: Copy bundled resources from Swift build folder
+🔳 Phase 11: Compile SCSS
+🔳 Phase 12: Proceed HTML
+🔳 Phase 13: Process additional JS
+✅ Release Build Succeeded in 4m54s

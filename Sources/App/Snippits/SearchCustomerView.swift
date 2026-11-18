@@ -12,7 +12,7 @@ import TCFireSignal
 
 class SearchCustomerView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     private var callback: ((_ term: String,_ account: [CustAcctSearch]) -> ())
     

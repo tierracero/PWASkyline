@@ -11,7 +11,7 @@ import TCFireSignal
 import Web
 
 class StartNewChat: Div {
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var currentChatIds: [UUID]
     private var callback: ((_ id: CustChatRoomProfile) -> ())

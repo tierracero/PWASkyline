@@ -7,7 +7,7 @@ import Web
 
 final class TCSpeechRecognitionFloatingButton: Div {
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     private static let assistantPreparationReply =
         "Tu módulo de IA está en preparación. Espéralo muy pronto."

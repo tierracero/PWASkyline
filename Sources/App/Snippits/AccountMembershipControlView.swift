@@ -12,7 +12,7 @@ import Web
 
 class AccountMembershipControlView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var accountId: UUID
     

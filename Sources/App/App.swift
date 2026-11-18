@@ -14,7 +14,7 @@ class App: WebApp {
 
     @AppBuilder override var app: Configuration {
         Lifecycle.didFinishLaunching { app in
-
+            #if arch(wasm32)
             VisualPerformanceSettings.apply()
             
             Navigator.shared.serviceWorker?.register("/service.js")
@@ -73,6 +73,7 @@ class App: WebApp {
             _ = JSObject.global.removeInitalElements!()
 
             print("Lifecycle.didFinishLaunching")
+            #endif
         }.willTerminate {
             print("Lifecycle.willTerminate")
         }.willResignActive {

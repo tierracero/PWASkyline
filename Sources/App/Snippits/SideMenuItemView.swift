@@ -10,7 +10,7 @@ import Web
 
 class SideMenuItemView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var icon: String
     var title: String

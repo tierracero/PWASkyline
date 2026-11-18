@@ -14,7 +14,7 @@ extension ProductManagerView.AuditView {
     
     class Merms: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         private var mermRenderId = UUID()
         

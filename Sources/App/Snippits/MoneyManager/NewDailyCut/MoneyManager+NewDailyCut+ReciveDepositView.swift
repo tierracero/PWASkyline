@@ -14,7 +14,7 @@ extension MoneyManagerView.NewDailyCutView {
     
     class ReciveDepositView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         let type: MoneyManagerType
         let userid: UUID

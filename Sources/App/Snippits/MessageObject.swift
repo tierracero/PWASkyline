@@ -12,7 +12,7 @@ import Web
 
 class MessageObject: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     let type: MediaDownloadType
     

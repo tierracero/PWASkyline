@@ -12,7 +12,7 @@ import Web
 import XMLHttpRequest
 class SocialManagerItem: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
  
     let page: CustSocialPageQuick
     

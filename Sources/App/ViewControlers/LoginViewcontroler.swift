@@ -8,7 +8,7 @@
 import Foundation
 import TCFundamentals
 import JavaScriptKit
-import LanguagePack
+@preconcurrency import LanguagePack
 import Web
 
 public class LoginViewcontroler: PageController {
@@ -42,6 +42,13 @@ public class LoginViewcontroler: PageController {
     
     ///confirmUsername , confirmMobile∫
     @State var passwordRecoveryMode: PasswordRecoveryMode? = nil
+
+    private lazy var passwordTextIsHidden = $viewPassword.map { !$0 }
+    private lazy var passwordToggleSource = $viewPassword.map {
+        !$0 ? "/skyline/media/hidePassword.webp" : "/skyline/media/viewPassword.png"
+    }
+    private lazy var usernameRecoveryIsHidden = $passwordRecoveryMode.map { $0 != .confirmUsername }
+    private lazy var mobileRecoveryIsHidden = $passwordRecoveryMode.map { $0 != .confirmMobile }
     
     lazy var usernameField = InputEmail(self.$username)
 		.width(90.percent)
@@ -181,7 +188,7 @@ public class LoginViewcontroler: PageController {
                     Div().clear(.both).height(3.px)
 
                     self.passwordTextField
-                        .hidden(self.$viewPassword.map { !$0 })
+                        .hidden(self.passwordTextIsHidden)
                         .onKeyUp { input, event in
                             if event.code == "Enter" || event.code == "NumpadEnter" {
                                 guard !self.usernameField.text.isEmpty else { return }
@@ -199,7 +206,7 @@ public class LoginViewcontroler: PageController {
                         }
 
                     Img()
-                        .src(self.$viewPassword.map { !$0 ? "/skyline/media/hidePassword.webp" : "/skyline/media/viewPassword.png" })
+                        .src(self.passwordToggleSource)
                         .class(.iconWhite, Class("tc-login-main-password-toggle"))
                         .marginTop(18.px)
                         .cursor(.pointer)
@@ -290,7 +297,7 @@ public class LoginViewcontroler: PageController {
         }
     }
     .class(Class("tc-login-recovery-popup"))
-    .hidden(self.$passwordRecoveryMode.map { $0 != .confirmUsername })
+    .hidden(self.usernameRecoveryIsHidden)
 
     lazy var passwordRecoveryBox = VPopUp(.fitContent(w: 560)) {
         VTitle("Confirma tu celular", icon: "icon_mobile.png") {
@@ -339,7 +346,7 @@ public class LoginViewcontroler: PageController {
         }
     }
     .class(Class("tc-login-recovery-popup"))
-    .hidden(self.$passwordRecoveryMode.map { $0 != .confirmMobile })
+    .hidden(self.mobileRecoveryIsHidden)
 
 
 

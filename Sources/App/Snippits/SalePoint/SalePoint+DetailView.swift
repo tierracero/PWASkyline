@@ -16,7 +16,7 @@ extension SalePointView {
     
     class DetailView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         // TODO: change to load by id
         

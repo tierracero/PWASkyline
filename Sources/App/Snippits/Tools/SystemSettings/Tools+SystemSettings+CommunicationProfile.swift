@@ -27,7 +27,7 @@ extension ToolsView.SystemSettings {
         }
 
         private final class RecipientListEditor: Div {
-            override class var name: String { "div" }
+            nonisolated override class var name: String { "div" }
 
             private let title: String
             private let onChange: ([String]) -> Void
@@ -134,7 +134,7 @@ extension ToolsView.SystemSettings {
             }
         }
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         var viewId: UUID = .init()
 

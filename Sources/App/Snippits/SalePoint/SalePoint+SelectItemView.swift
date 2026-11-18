@@ -13,7 +13,7 @@ import Web
 extension SalePointView {
     class SelectItemView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         @State var items: [CustPOCInventorySoldObject]
         

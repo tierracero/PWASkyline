@@ -1,0 +1,3 @@
+#!/bin/sh
+# Preserve SwiftStream's optimizer arguments and enable Swift 6's trunc_sat opcodes.
+exec /usr/local/libexec/wasm-opt --enable-nontrapping-float-to-int "$@"

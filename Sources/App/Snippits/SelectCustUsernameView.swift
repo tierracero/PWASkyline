@@ -12,7 +12,7 @@ import Web
 
 class SelectCustUsernameView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var type: LoadType
     

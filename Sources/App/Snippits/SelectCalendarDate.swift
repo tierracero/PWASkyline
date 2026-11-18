@@ -17,7 +17,7 @@ import Web
 
 class SelectCalendarDate: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     /// folio, date, sale, pdv, eSale, rental
     var type: FolioTypes?

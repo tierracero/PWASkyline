@@ -7,7 +7,7 @@ extension CustAssetsView {
 
     final class CustAssetsQuickDepartmentView: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         let viewType: InitiateAssetItemViewType
 

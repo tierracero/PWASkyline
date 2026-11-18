@@ -13,7 +13,7 @@ import Web
 /// This view asumes it was succesfully finished
 class CancelationConfirmView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var type: FolioTypes
     var equipments: [CustOrderLoadFolioEquipments]

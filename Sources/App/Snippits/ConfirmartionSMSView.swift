@@ -8,11 +8,12 @@
 import Foundation
 import TCFundamentals
 import TCFireSignal
+@preconcurrency import LanguagePack
 import Web
 
 class ConfirmartionSMSView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     let tokens: [String]
     

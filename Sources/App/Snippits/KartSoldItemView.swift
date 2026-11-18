@@ -11,7 +11,7 @@ import Web
 
 class KartSoldItemView: Tr {
     
-    override class var name: String { "tr" }
+    nonisolated override class var name: String { "tr" }
     
     var id: UUID
     var cost: Int64

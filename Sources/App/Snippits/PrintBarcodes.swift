@@ -11,7 +11,7 @@ import Web
 
 class PrintBarcodes: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var barodes: [BarcodePrinting]
     

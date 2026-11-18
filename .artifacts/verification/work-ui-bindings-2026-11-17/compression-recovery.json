@@ -1,0 +1,38 @@
+[
+  {
+    "file": "DevPublic/app.wasm",
+    "gzipBefore": true,
+    "brotliBefore": true,
+    "unchangedWASM": true,
+    "sha256": "c1a2e88d8f8894111aa9da8baed2c3795a476386c104c649a026e2bb5938bc77",
+    "gzipMatches": true,
+    "brotliMatches": true
+  },
+  {
+    "file": "DevPublic/service.wasm",
+    "gzipBefore": true,
+    "brotliBefore": true,
+    "unchangedWASM": true,
+    "sha256": "10c955e8a95c6ac29a6433e49f670fa3decb7dd9eb051fc3a4bed1588c0c7437",
+    "gzipMatches": true,
+    "brotliMatches": true
+  },
+  {
+    "file": "DistPublic/app.wasm",
+    "gzipBefore": false,
+    "brotliBefore": true,
+    "unchangedWASM": true,
+    "sha256": "dcb20fc74a6424264ea39382ce37fece036a661f21d540c5d909f9590a67efc9",
+    "gzipMatches": true,
+    "brotliMatches": true
+  },
+  {
+    "file": "DistPublic/service.wasm",
+    "gzipBefore": true,
+    "brotliBefore": true,
+    "unchangedWASM": true,
+    "sha256": "1b4fc6df65924871c70be5dc7322de623aacb46bafc042effdcb2f4c4a080894",
+    "gzipMatches": true,
+    "brotliMatches": true
+  }
+]

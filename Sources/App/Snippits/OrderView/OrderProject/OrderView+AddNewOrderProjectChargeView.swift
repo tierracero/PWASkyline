@@ -14,7 +14,7 @@ extension OrderView {
     
     class AddNewOrderProjectChargeView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         var projectId: UUID
         

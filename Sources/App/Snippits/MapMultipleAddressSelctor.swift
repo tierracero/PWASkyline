@@ -11,7 +11,7 @@ import Web
 
 public class MapMultipleAddressSelector: Div {
     
-    public override class var name: String { "div" }
+    public nonisolated override class var name: String { "div" }
 
     @State var linkedLocations: [AppleMap]
     

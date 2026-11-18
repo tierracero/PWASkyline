@@ -14,7 +14,7 @@ extension CustConcessionView {
     
     class AddManualInventorieView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         let viewId: UUID = .init()
         
@@ -962,7 +962,7 @@ extension CustConcessionView {
     
     class AddManualInventorieRow: Tr {
 
-        override class var name: String { "tr" }
+        nonisolated override class var name: String { "tr" }
 
         let viewId: UUID = .init()
 

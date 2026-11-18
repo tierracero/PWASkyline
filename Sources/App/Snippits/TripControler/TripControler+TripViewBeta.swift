@@ -13,7 +13,7 @@ import Web
 /// evaluated without changing the production trip-detail flow.
 final class TripViewBeta: Div {
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     var trip: CustCommercialTripsComponents.GetTripItem
 

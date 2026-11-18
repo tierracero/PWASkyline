@@ -13,7 +13,7 @@ import Web
 extension ToolsView.SystemSettings.SeviceOrder {
     class RewadsAddTierReward: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         let currentRewardsItems: [RewardsProgramItems]
         

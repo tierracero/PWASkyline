@@ -14,7 +14,7 @@ import TCFireSignal
 /// Instant Comunication Room View
 class IMSocialChatView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     let roomType: RoomType
     

@@ -15,7 +15,7 @@ extension ToolsView {
     
     class WebPage: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         var account: TCAccountsItem
         

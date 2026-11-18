@@ -9,7 +9,7 @@ import Web
 
 class TripPrintEngine: Div {
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     let trip: CustCommercialTripsComponents.GetTripItem
 

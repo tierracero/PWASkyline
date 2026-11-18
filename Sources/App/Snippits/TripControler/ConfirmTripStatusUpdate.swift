@@ -10,7 +10,7 @@ import XMLHttpRequest
 
 final class ConfirmTripStatusUpdate: Div {
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     private static let accent: Color = .init(r: 36, g: 185, b: 232)
     private static let secondaryText: Color = .init(r: 176, g: 205, b: 220)
@@ -431,7 +431,7 @@ private extension ConfirmTripStatusUpdate {
 
     final class MerchandiseRow: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         let item: FiscalMercanciaItem
         // Stage unregistered images with the existing asset upload pipeline.

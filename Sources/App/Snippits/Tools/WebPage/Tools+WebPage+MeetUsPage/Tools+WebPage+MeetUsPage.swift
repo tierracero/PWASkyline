@@ -14,7 +14,7 @@ extension ToolsView.WebPage {
     
     class MeetUsPage: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         @State var metaTitle: String
         

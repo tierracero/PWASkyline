@@ -12,7 +12,7 @@ import Web
 
 class ImagePOCContainer: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     /// img, vdo, audio, gif, threeSixtyPan, threeSixtyCore
     var type: WebFilesTypes

@@ -21,7 +21,7 @@ extension OrderView {
     
     class AddOrderProject: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         public let accountId: UUID
         

@@ -5,7 +5,7 @@ import Web
 
 final class ConfirmAdddressLocationView: Div {
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     let store: CustStore
     private let sessionId = custCatchID

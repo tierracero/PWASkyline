@@ -13,7 +13,7 @@ extension OrderView {
     
     class EquipmentView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         var orderView: OrderView
         var status: State<CustFolioStatus>

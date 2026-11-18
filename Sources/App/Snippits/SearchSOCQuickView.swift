@@ -13,7 +13,7 @@ import Web
 /// Searches and registes vendors
 class SearchSOCQuickView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     let excludIds: [UUID]
     

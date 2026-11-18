@@ -1,0 +1,7 @@
+# Packaging isolation
+
+The final debug and release commands were mistakenly run concurrently. Their Swift compile operations serialize through SwiftPM, but SwiftStream compression continues outside that lock and both configurations use `/tmp/app.wasm` and `/tmp/app.wasm.gz` (also the service equivalents). Release failed copying the removed temporary gzip; debug artifact verification rejected a truncated gzip. Build banners were therefore not accepted as proof.
+
+Installed SwiftStream `proceedWasmFile` always copies the original module and reruns compression, so the reviewed recovery is to run the normal debug build to completion, validate all its artifacts, then run the normal release build alone and validate all its artifacts. No generated binary or minified output is patched manually. Native index generation now succeeds. The source and browser behavior repairs are independently verified; this correction is limited to build execution.
+
+Further narrowing: both normal builds completed WASM/JS/HTML generation, and only compressed copies fail integrity. The reviewed recovery uses the same installed gzip/Brotli commands and levels sequentially on the completed WASM originals, with unique temporary paths. Regenerate only invalid compressed copies, require the original WASM hashes to remain unchanged, and validate all final outputs. This is source-driven regeneration of the failed compression step, not a manual WASM/minified-JS patch. No further native-window interaction is required.

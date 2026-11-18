@@ -12,7 +12,7 @@ import Web
 
 class BudgetManualChargeView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     private var callback: ((
         _ units: Int64,

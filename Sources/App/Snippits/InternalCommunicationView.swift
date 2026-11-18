@@ -11,7 +11,7 @@ import Web
 /// `API.custAPIV1.sincCustSettings`.
 class InternalCommunicationView: Div {
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     var internalCommunications: [InternalCommunicationMessagesMin]
 

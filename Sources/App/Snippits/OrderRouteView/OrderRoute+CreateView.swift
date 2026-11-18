@@ -12,7 +12,7 @@ import Web
 extension OrderRouteView{
     class CreateView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         /// [ CustOrder.id :  OrderRowView]
         var orders: [CustOrderLoadFolios]

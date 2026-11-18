@@ -9,7 +9,7 @@ import Web
 
 class FollowupControler: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     init(
         items: [CustCommercialTripControlQuick]

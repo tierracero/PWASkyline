@@ -10,7 +10,7 @@ import Web
 
 public class LoadingView: Div {
 	
-	public override class var name: String { "Div" }
+	public nonisolated override class var name: String { "Div" }
 
     @State var helpText: String?  = nil
 

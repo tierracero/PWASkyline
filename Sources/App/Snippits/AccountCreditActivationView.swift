@@ -8,12 +8,12 @@
 import Foundation
 import TCFundamentals
 import TCFireSignal
-import LanguagePack
+@preconcurrency import LanguagePack
 import Web
 
 class AccountCreditActivationView: PageController {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var accountId: UUID
     

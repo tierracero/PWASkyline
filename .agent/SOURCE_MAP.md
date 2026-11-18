@@ -9,6 +9,7 @@ Repository file map for PWASkyline.
 | `Package.swift` | Swift Package manifest; defines `App` and `Service` executables and dependencies. |
 | `Package.resolved` | Dependency-resolution lockfile. Edit only in dependency-change tasks. |
 | `.devcontainer/` | Container development environment metadata. |
+| `.devcontainer/wasm-opt` | Optimizer wrapper installed by the Dockerfile to enable nontrapping float-to-int instructions emitted by Swift 6. |
 | `.vscode/` | Editor launch/settings metadata. |
 
 ## App Target Source

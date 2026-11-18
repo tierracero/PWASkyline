@@ -12,7 +12,7 @@ import Web
 
 class EmailViewControler: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     /// minimized, default, maximized
     @State var mode: ViewMode

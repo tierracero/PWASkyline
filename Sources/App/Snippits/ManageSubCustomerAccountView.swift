@@ -5,7 +5,7 @@ import Web
 
 final class ManageSubCustomerAccountView: Div {
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     let searchTerm: String
 

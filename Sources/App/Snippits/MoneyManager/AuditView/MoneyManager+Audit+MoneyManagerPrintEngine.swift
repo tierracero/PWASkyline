@@ -14,7 +14,7 @@ extension MoneyManagerView.AuditView {
     
     class MoneyManagerPrintEngine: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         let item: CustMoneyManager
         

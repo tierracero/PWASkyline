@@ -13,7 +13,7 @@ extension CustAssetsView {
 
     final class CategoryEditor: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         let department: CustAssetDeps
         let callback: (CustAssetCats) -> Void

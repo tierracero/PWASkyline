@@ -6,7 +6,7 @@ import Foundation
 import Web
 
 public final class UField: Div {
-    public override class var name: String { "div" }
+    public nonisolated override class var name: String { "div" }
 
     private let labelView = Label()
     private let contentView = Div()
@@ -57,7 +57,7 @@ public final class UDateField: InputDate {
 }
 
 public final class USelectField: Select {
-    public override class var name: String { "select" }
+    public nonisolated override class var name: String { "select" }
 
     public required init() {
         super.init()
@@ -66,7 +66,7 @@ public final class USelectField: Select {
 }
 
 public final class UTextArea: TextArea {
-    public override class var name: String { "textarea" }
+    public nonisolated override class var name: String { "textarea" }
 
     public required init() {
         super.init()

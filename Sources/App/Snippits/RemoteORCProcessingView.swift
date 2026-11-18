@@ -10,7 +10,7 @@ import Web
 
 class RemoteORCProcessingView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     let script: OCRCustomeScript
     private var callback: (
@@ -371,7 +371,7 @@ extension RemoteORCProcessingView {
 
     class RemoteORCProcessingItem: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         let item: OCRCustomePayloadItem
 

@@ -12,7 +12,7 @@ import Web
 
 class ServiceOperationalObjectsView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     /// Current linked id's to SOC
     @State var currentIds: [UUID]

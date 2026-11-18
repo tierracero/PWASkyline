@@ -12,7 +12,7 @@ import Web
 
 class PaymentReciptFormView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     let order: CustOrderLoadFolioDetails?
     

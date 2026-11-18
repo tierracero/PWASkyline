@@ -8,7 +8,7 @@
 import Foundation
 import TCFundamentals
 import TCFireSignal
-import LanguagePack
+@preconcurrency import LanguagePack
 import TaecelAPICore
 import Web
 
@@ -16,7 +16,7 @@ extension RewardsView {
  
     class RequestView: PageController {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         let accountId: UUID
         

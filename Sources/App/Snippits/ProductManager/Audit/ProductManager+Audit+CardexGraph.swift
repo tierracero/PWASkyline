@@ -11,7 +11,7 @@ extension ProductManagerView.AuditView {
 
     class CardexGraphView: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         private let aggregateItem: CustPOCComponents.CardexObject?
         private let poc: CustPOCQuick

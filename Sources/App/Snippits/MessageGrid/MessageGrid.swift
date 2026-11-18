@@ -13,7 +13,7 @@ import Web
 
 class MessageGrid: Div, SpeechRecognitionTarget {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     /// light, dark
     let style: StyleType

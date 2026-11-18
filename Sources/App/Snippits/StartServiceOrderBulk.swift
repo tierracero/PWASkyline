@@ -11,7 +11,7 @@ import XMLHttpRequest
 
 class StartServiceOrderBulk: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var account: CustAcctSearch
     
@@ -527,7 +527,7 @@ class StartServiceOrderBulk: Div {
 
 class SeviceOrderBulkResults: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     @State var orders: [CustOrder]
     
@@ -692,7 +692,7 @@ class SeviceOrderBulkResults: Div {
 
 class SeviceOrderBulkItem: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var item: OrderExtractPayload
     

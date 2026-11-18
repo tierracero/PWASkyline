@@ -12,7 +12,7 @@ import Web
 
 class CreateServiceLevelDepartement: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     let dep: CustSvcDeps?
     

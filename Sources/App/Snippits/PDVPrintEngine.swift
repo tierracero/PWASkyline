@@ -49,7 +49,7 @@ class PDVPrintEngine: Div {
         fatalError("init() has not been implemented")
     }
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     /// [ CustPOC.id : CustPOCCardex ]
     var cardexRefrence: [UUID:CustPOCCardex] = [:]

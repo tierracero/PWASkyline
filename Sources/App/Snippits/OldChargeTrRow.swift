@@ -11,7 +11,7 @@ import Web
 @available(*, deprecated, message: "Uee FinaceTrRow insted")
 class OldChargeTrRow: Tr {
     
-    override class var name: String { "tr" }
+    nonisolated override class var name: String { "tr" }
     
     let preCharge: Bool
     

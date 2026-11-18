@@ -12,7 +12,7 @@ import Web
 
 class CreateNewCustomerDataView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var searchTerm: String
     

@@ -8,13 +8,13 @@
 import Foundation
 import TCFundamentals
 import TCFireSignal
-import LanguagePack
+@preconcurrency import LanguagePack
 import Web
 import XMLHttpRequest
 
 class StartServiceOrder: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var custAcct: CustAcctSearch
     

@@ -38,6 +38,7 @@ Each architecture boundary rule has a unique ID owned by exactly one chunk. Rout
 | Fiscal, payment, Carta Porte | `API_AND_BACKEND` | `SECURITY_AND_STATE` |
 | WebSocket event flow | `WEBSOCKET_AND_REALTIME` | `API_AND_BACKEND`, `SECURITY_AND_STATE` |
 | Service worker / manifest / static assets | `PWA_ASSETS_AND_SERVICE_WORKER` | `APP_AND_PLATFORM` |
+| Swift/WASI container build tool compatibility | `PWA_ASSETS_AND_SERVICE_WORKER` | `APP_AND_PLATFORM` |
 | Session, tokens, browser storage, permissions | `SECURITY_AND_STATE` | `API_AND_BACKEND`, `WEBSOCKET_AND_REALTIME` |
 
 ## Architecture Change Rule

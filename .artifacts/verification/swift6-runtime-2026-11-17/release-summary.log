@@ -1,0 +1,31 @@
+🔳 Phase 0: Remove DistPublic folder
+🔳 Phase 1: Resolve Swift dependencies for each build type
+🔳 Phase 2: Check if required Swift dependencies present
+🔳 Phase 3: Retrieve executable Swift targets
+🔳 Phase 4: Check that App target name present
+🔳 Phase 5: Build executable targets
+stdout: Build of product 'App' complete! (0.66s)
+🧱 Built swift target for `.native` in debug mode in 863ms
+stdout: Build of product 'Service' complete! (0.46s)
+🧱 Built swift target for `.native` in debug mode in 675ms
+stdout: Build of product 'App' complete! (382.51s)
+🧱 Built swift target for `.wasi` in release mode in 6m22s
+🔳 Phase 5.1: Proceed WASM file
+💾 Optimized app.wasm 105.1 MiB → 85.6 MiB in 56s89ms
+🧳 Gzipped app.wasm 85.6 MiB → 27.7 MiB in 5s291ms
+🧳 Brotled app.wasm 85.6 MiB → 16.7 MiB in 2m7s
+stdout: Build of product 'Service' complete! (1.91s)
+🧱 Built swift target for `.wasi` in release mode in 2s123ms
+🔳 Phase 5.1: Proceed WASM file
+💾 Optimized service.wasm 51.7 MiB → 46.4 MiB in 12s846ms
+🧳 Gzipped service.wasm 46.4 MiB → 17.2 MiB in 3s285ms
+🧳 Brotled service.wasm 46.4 MiB → 11.2 MiB in 1m18s
+🔳 Phase 6: Build JavaScriptKit TypeScript sources
+🔳 Phase 7: Build all the web sources
+🔳 Phase 8: Retrieve manifest from the Service target
+🔳 Phase 9: Retrieve index from the App target
+🔳 Phase 10: Copy bundled resources from Swift build folder
+🔳 Phase 11: Compile SCSS
+🔳 Phase 12: Proceed HTML
+🔳 Phase 13: Process additional JS
+✅ Release Build Succeeded in 11m19s

@@ -10,7 +10,7 @@ import SkylineDocumentationCore
 
 class SkylineDocumentationView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     @State var selectedFamily: DocumentFamily? = nil
 

@@ -9,7 +9,7 @@ import Web
 
 class TripControlerAddElement<Item>: Div {
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     let icon: String
     let title: String

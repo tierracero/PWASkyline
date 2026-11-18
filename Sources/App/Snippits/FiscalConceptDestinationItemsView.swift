@@ -12,7 +12,7 @@ import Web
 
 class FiscalConceptDestinationItemsView: Tr {
     
-    override class var name: String { "tr" }
+    nonisolated override class var name: String { "tr" }
     
     var addMoreButtonIsHidden: State<Bool>
     /// store, order, sold, merm, returnToVendor

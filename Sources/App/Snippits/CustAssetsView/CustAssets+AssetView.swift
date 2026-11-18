@@ -12,7 +12,7 @@ extension CustAssetsView {
 
     final class AssetView: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         /// store, warehose, account, subAccount
         let viewType: InitiateAssetItemViewType

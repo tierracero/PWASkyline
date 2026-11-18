@@ -11,7 +11,7 @@ import Web
 /// browser's current calendar and time zone.
 public final class DateTimePicker: Div {
 
-    public override class var name: String { "div" }
+    public nonisolated override class var name: String { "div" }
 
     private let setTime: Bool
     private let from: Int64?

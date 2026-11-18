@@ -12,7 +12,7 @@ import Web
 
 class ProductTransferReportView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     let reportType: InventoryTransferReportTypes
     

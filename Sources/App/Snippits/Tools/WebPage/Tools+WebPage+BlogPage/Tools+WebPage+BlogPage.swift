@@ -9,7 +9,7 @@ extension ToolsView.WebPage {
 
     class BlogPage: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         @State var metaTitle: String
         

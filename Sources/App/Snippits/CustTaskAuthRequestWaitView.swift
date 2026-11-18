@@ -12,7 +12,7 @@ import Web
 
 class CustTaskAuthRequestWaitView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     private enum Action {
         case changePrice(type: ChargeType, id: UUID, requestedPrice: Int64, reason: String, authorizationContext: CustComponents.ChangePriceAuthorizationContext)

@@ -14,7 +14,7 @@ extension MoneyManagerView {
     
     class NewDailyCutView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         /// bankDeposit, generalTransfer, safeBoxDeposit
         @State var type: MoneyManagerType

@@ -11,7 +11,7 @@ import Web
 
 class CartaPorteOperator: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     @State var id: UUID?
     

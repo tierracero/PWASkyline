@@ -5,7 +5,7 @@ import Web
 
 /// Confirms a service order for one concrete commercial asset item.
 final class CustAssetItemCreateOrder: Div {
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     private let payload: CustAssetsComponents.GetAssetItemResponse
     private let onCreated: (UUID) -> Void

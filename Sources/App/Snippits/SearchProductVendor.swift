@@ -7,11 +7,12 @@
 
 import Foundation
 import TCFundamentals
+import TCFireSignal
 import Web
 
 public class SearchProductVendor: Div {
     
-    public override class var name: String { "div" }
+    public nonisolated override class var name: String { "div" }
     
     var pocid: UUID
     
@@ -201,7 +202,7 @@ public class SearchProductVendor: Div {
                             ))
                         }
                         else{
-                            showAlert(.alerta, "Para tambien remover provedro del producto debe hacer se desde los detalles del producto")
+                            showAlert(.alerta, "Para tambien remover proveedor del producto debe hacer se desde los detalles del producto")
                         }
                         
                     }))

@@ -14,7 +14,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
     
     class ScheduleObjectView: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         let day: Weekdays
 

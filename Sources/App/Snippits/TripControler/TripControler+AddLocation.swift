@@ -9,7 +9,7 @@ import Web
 
 class TripControlerAddLocation: Div {
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     let viewType: ViewType
     let account: CustAcctSearch

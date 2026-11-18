@@ -12,7 +12,7 @@ import Web
 
 class ManageBodegaView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var relationType: API.custAPIV1.CreateBodegaRelationType
     

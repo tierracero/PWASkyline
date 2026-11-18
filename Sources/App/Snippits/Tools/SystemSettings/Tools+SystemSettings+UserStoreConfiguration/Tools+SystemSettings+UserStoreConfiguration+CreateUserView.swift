@@ -11,7 +11,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
     final class CreateUserView: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         private let store: CustStore
         private let availability: CustUsernameComponents.PreRequestUsernameResponse

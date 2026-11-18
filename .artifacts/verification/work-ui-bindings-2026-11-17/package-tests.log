@@ -1,0 +1,256 @@
+Fetching https://github.com/swiftwasm/JavaScriptKit from cache
+Fetched https://github.com/swiftwasm/JavaScriptKit from cache (0.68s)
+Computing version for https://github.com/swiftwasm/JavaScriptKit
+Computed https://github.com/swiftwasm/JavaScriptKit at 0.17.0 (1.08s)
+Creating working copy for https://github.com/swiftwasm/JavaScriptKit
+Working copy of https://github.com/swiftwasm/JavaScriptKit resolved at 0.17.0
+Building for debugging...
+[Computing dependencies]
+[Pre-planning 1 / 2566]
+[Planning deferred tasks]
+[338 / 748] JavaScriptKit_JavaScriptKit
+[339 / 748]
+[346 / 749] _CJavaScriptKit
+[354 / 759]
+[359 / 759] JavaScriptKit
+[369 / 810]
+[374 / 810]
+[378 / 810]
+[379 / 810]
+[384 / 810]
+[388 / 810]
+[391 / 810]
+[393 / 810]
+[394 / 810]
+[410 / 810] JavaScriptKit
+[414 / 810] JavaScriptKit
+[418 / 812] JavaScriptKit
+[418 / 812] JavaScriptEventLoop
+<module-includes>:1:9: note: in file included from <module-includes>:1:
+1 | #import "_CJavaScriptKit+I64.h"
+  |         `- note: in file included from <module-includes>:1:
+2 | 
+
+/private/tmp/web-binding-tests/checkouts/JavaScriptKit/Sources/_CJavaScriptBigIntSupport/include/_CJavaScriptKit+I64.h:11:16: warning: unknown attribute '__import_module__' ignored
+ 9 | /// @param value The value to convert.
+10 | /// @param is_signed Whether to treat the value as a signed integer or not.
+11 | __attribute__((__import_module__("javascript_kit"),
+   |                `- warning: unknown attribute '__import_module__' ignored
+12 |                __import_name__("swjs_i64_to_bigint")))
+13 | extern JavaScriptObjectRef _i64_to_bigint(const long long value, bool is_signed);
+
+<module-includes>:1:9: note: in file included from <module-includes>:1:
+1 | #import "_CJavaScriptKit+I64.h"
+  |         `- note: in file included from <module-includes>:1:
+2 | 
+
+/private/tmp/web-binding-tests/checkouts/JavaScriptKit/Sources/_CJavaScriptBigIntSupport/include/_CJavaScriptKit+I64.h:12:16: warning: unknown attribute '__import_name__' ignored
+10 | /// @param is_signed Whether to treat the value as a signed integer or not.
+11 | __attribute__((__import_module__("javascript_kit"),
+12 |                __import_name__("swjs_i64_to_bigint")))
+   |                `- warning: unknown attribute '__import_name__' ignored
+13 | extern JavaScriptObjectRef _i64_to_bigint(const long long value, bool is_signed);
+14 | 
+
+<module-includes>:1:9: note: in file included from <module-includes>:1:
+1 | #import "_CJavaScriptKit+I64.h"
+  |         `- note: in file included from <module-includes>:1:
+2 | 
+
+/private/tmp/web-binding-tests/checkouts/JavaScriptKit/Sources/_CJavaScriptBigIntSupport/include/_CJavaScriptKit+I64.h:19:16: warning: unknown attribute '__import_module__' ignored
+17 | /// @param ref The target JavaScript object.
+18 | /// @param is_signed Whether to treat the return value as a signed integer or not.
+19 | __attribute__((__import_module__("javascript_kit"),
+   |                `- warning: unknown attribute '__import_module__' ignored
+20 |                __import_name__("swjs_bigint_to_i64")))
+21 | extern long long _bigint_to_i64(const JavaScriptObjectRef ref, bool is_signed);
+
+<module-includes>:1:9: note: in file included from <module-includes>:1:
+1 | #import "_CJavaScriptKit+I64.h"
+  |         `- note: in file included from <module-includes>:1:
+2 | 
+
+4 warnings generated.
+/private/tmp/web-binding-tests/checkouts/JavaScriptKit/Sources/_CJavaScriptBigIntSupport/include/_CJavaScriptKit+I64.h:20:16: warning: unknown attribute '__import_name__' ignored
+18 | /// @param is_signed Whether to treat the return value as a signed integer or not.
+19 | __attribute__((__import_module__("javascript_kit"),
+20 |                __import_name__("swjs_bigint_to_i64")))
+   |                `- warning: unknown attribute '__import_name__' ignored
+21 | extern long long _bigint_to_i64(const JavaScriptObjectRef ref, bool is_signed);
+22 | 
+[434 / 822] JavaScriptEventLoop
+[443 / 823] JavaScriptKit
+[458 / 877]
+[466 / 877]
+<module-includes>:1:9: note: in file included from <module-includes>:1:
+1 | #import "_CJavaScriptKit+I64.h"
+  |         `- note: in file included from <module-includes>:1:
+2 | 
+
+/private/tmp/web-binding-tests/checkouts/JavaScriptKit/Sources/_CJavaScriptBigIntSupport/include/_CJavaScriptKit+I64.h:11:16: warning: unknown attribute '__import_module__' ignored
+ 9 | /// @param value The value to convert.
+10 | /// @param is_signed Whether to treat the value as a signed integer or not.
+11 | __attribute__((__import_module__("javascript_kit"),
+   |                `- warning: unknown attribute '__import_module__' ignored
+12 |                __import_name__("swjs_i64_to_bigint")))
+13 | extern JavaScriptObjectRef _i64_to_bigint(const long long value, bool is_signed);
+
+<module-includes>:1:9: note: in file included from <module-includes>:1:
+1 | #import "_CJavaScriptKit+I64.h"
+  |         `- note: in file included from <module-includes>:1:
+2 | 
+
+/private/tmp/web-binding-tests/checkouts/JavaScriptKit/Sources/_CJavaScriptBigIntSupport/include/_CJavaScriptKit+I64.h:12:16: warning: unknown attribute '__import_name__' ignored
+10 | /// @param is_signed Whether to treat the value as a signed integer or not.
+11 | __attribute__((__import_module__("javascript_kit"),
+12 |                __import_name__("swjs_i64_to_bigint")))
+   |                `- warning: unknown attribute '__import_name__' ignored
+13 | extern JavaScriptObjectRef _i64_to_bigint(const long long value, bool is_signed);
+14 | 
+
+<module-includes>:1:9: note: in file included from <module-includes>:1:
+1 | #import "_CJavaScriptKit+I64.h"
+  |         `- note: in file included from <module-includes>:1:
+2 | 
+
+/private/tmp/web-binding-tests/checkouts/JavaScriptKit/Sources/_CJavaScriptBigIntSupport/include/_CJavaScriptKit+I64.h:19:16: warning: unknown attribute '__import_module__' ignored
+17 | /// @param ref The target JavaScript object.
+18 | /// @param is_signed Whether to treat the return value as a signed integer or not.
+19 | __attribute__((__import_module__("javascript_kit"),
+   |                `- warning: unknown attribute '__import_module__' ignored
+20 |                __import_name__("swjs_bigint_to_i64")))
+21 | extern long long _bigint_to_i64(const JavaScriptObjectRef ref, bool is_signed);
+
+<module-includes>:1:9: note: in file included from <module-includes>:1:
+1 | #import "_CJavaScriptKit+I64.h"
+  |         `- note: in file included from <module-includes>:1:
+2 | 
+
+4 warnings generated.
+/private/tmp/web-binding-tests/checkouts/JavaScriptKit/Sources/_CJavaScriptBigIntSupport/include/_CJavaScriptKit+I64.h:20:16: warning: unknown attribute '__import_name__' ignored
+18 | /// @param is_signed Whether to treat the return value as a signed integer or not.
+19 | __attribute__((__import_module__("javascript_kit"),
+20 |                __import_name__("swjs_bigint_to_i64")))
+   |                `- warning: unknown attribute '__import_name__' ignored
+21 | extern long long _bigint_to_i64(const JavaScriptObjectRef ref, bool is_signed);
+22 | 
+[470 / 877]
+[474 / 877]
+[477 / 877]
+[482 / 877]
+[483 / 877]
+[484 / 877]
+[485 / 877]
+[501 / 877] WebFoundation
+[523 / 895] NavigationTimingAPI
+[533 / 913] NavigationTimingAPI
+[614 / 918] BroadcastChannelAPI
+[634 / 936] GamepadAPI
+[690 / 958] StreamsAPI
+[743 / 958] WebFoundation-product
+[776 / 974] NotificationsAPI
+[816 / 979] Events
+[819 / 979] HistoryAPI
+[835 / 1004] HistoryAPI
+[867 / 1020] FetchAPI-product
+[883 / 1020] DOMEvents
+[898 / 1020]
+[906 / 1022] DOMEvents
+[907 / 1022] WebSocketAPI
+[927 / 1036] WebSocketAPI
+[942 / 1040] WorkersAPI
+[943 / 1040] Worker
+[974 / 1063] Worker-product
+[999 / 1064] NavigatorAPI
+[1003 / 1064] DOM
+[1019 / 1080] DOM
+[1027 / 1082] ResizeObserverAPI
+[1042 / 1100] ResizeObserverAPI
+[1052 / 1100] CSS
+[1052 / 1100] DOM
+[1057 / 1100] CSS
+[1063 / 1100] Web
+[1065 / 1102] ARIA
+[1084 / 1121] ARIA
+[1091 / 1121] Web
+[1099 / 1121] Web
+/Users/victorcantu/Development/Packages/web/Sources/Web/WebberPreview/DomElement+Preview.swift:87:10: warning: result of call to 'joined(separator:)' is unused [#NoUsage]
+85 |         })
+86 |         .sorted(by: { $0 < $1 })
+87 |         .joined(separator: " ")
+   |          `- warning: result of call to 'joined(separator:)' is unused [#NoUsage]
+88 |         result += ">"
+89 |         if let s = self as? BaseContentElementable, s.innerText.count > 0 {
+
+[#NoUsage]: <https://docs.swift.org/compiler/documentation/diagnostics/no-usage>
+[1100 / 1121] CSS
+[1111 / 1122] WebTests-product
+[1126 / 1160]
+[1132 / 1160]
+[1135 / 1160]
+[1138 / 1160]
+[1140 / 1160]
+[1143 / 1160]
+[1144 / 1160]
+[1154 / 1160] WebTests-product
+/Users/victorcantu/Development/Packages/web/Tests/WebTests/StateBindingTests.swift:12:18: warning: weak variable 'weakText' was never mutated; consider changing to 'let' constant [#VariableNeverMutated::WeakMutability]
+ 10 |         var pane: Div? = Div().hidden(selected.map { !$0 })
+ 11 |         var styled: Div? = Div().display(selected.map { $0 ? DisplayType.block : .none })
+ 12 |         weak var weakText = text
+    |                  `- warning: weak variable 'weakText' was never mutated; consider changing to 'let' constant [#VariableNeverMutated::WeakMutability]
+ 13 |         weak var weakPane = pane
+ 14 |         weak var weakStyled = styled
+
+/Users/victorcantu/Development/Packages/web/Tests/WebTests/StateBindingTests.swift:13:18: warning: weak variable 'weakPane' was never mutated; consider changing to 'let' constant [#VariableNeverMutated::WeakMutability]
+ 11 |         var styled: Div? = Div().display(selected.map { $0 ? DisplayType.block : .none })
+ 12 |         weak var weakText = text
+ 13 |         weak var weakPane = pane
+    |                  `- warning: weak variable 'weakPane' was never mutated; consider changing to 'let' constant [#VariableNeverMutated::WeakMutability]
+ 14 |         weak var weakStyled = styled
+ 15 | 
+
+/Users/victorcantu/Development/Packages/web/Tests/WebTests/StateBindingTests.swift:14:18: warning: weak variable 'weakStyled' was never mutated; consider changing to 'let' constant [#VariableNeverMutated::WeakMutability]
+ 12 |         weak var weakText = text
+ 13 |         weak var weakPane = pane
+ 14 |         weak var weakStyled = styled
+    |                  `- warning: weak variable 'weakStyled' was never mutated; consider changing to 'let' constant [#VariableNeverMutated::WeakMutability]
+ 15 | 
+ 16 |         selected.wrappedValue = true
+
+/Users/victorcantu/Development/Packages/web/Tests/WebTests/StateBindingTests.swift:102:18: warning: weak variable 'weakRule' was never mutated; consider changing to 'let' constant [#VariableNeverMutated::WeakMutability]
+100 |             DisplayProperty(selected.map { $0 ? DisplayType.block : .none })
+101 |         }
+102 |         weak var weakRule = rule
+    |                  `- warning: weak variable 'weakRule' was never mutated; consider changing to 'let' constant [#VariableNeverMutated::WeakMutability]
+103 |         let number = State(wrappedValue: 1)
+104 |         var numeric: NumericValueContainer? = NumericValueContainer(number.map { $0 + 1 })
+
+/Users/victorcantu/Development/Packages/web/Tests/WebTests/StateBindingTests.swift:105:18: warning: weak variable 'weakNumeric' was never mutated; consider changing to 'let' constant [#VariableNeverMutated::WeakMutability]
+103 |         let number = State(wrappedValue: 1)
+104 |         var numeric: NumericValueContainer? = NumericValueContainer(number.map { $0 + 1 })
+105 |         weak var weakNumeric = numeric
+    |                  `- warning: weak variable 'weakNumeric' was never mutated; consider changing to 'let' constant [#VariableNeverMutated::WeakMutability]
+106 |         selected.wrappedValue = true
+107 |         number.wrappedValue = 2
+
+[#VariableNeverMutated]: <https://docs.swift.org/compiler/documentation/diagnostics/variable-never-mutated>
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[1156 / 1160] WebTests-product
+Build complete! (18.67 s)
+Test Suite 'Selected tests' started at 2026-11-17 08:21:12.052.
+Test Suite 'WebTests.xctest' started at 2026-11-17 08:21:12.053.
+Test Suite 'StateBindingTests' started at 2026-11-17 08:21:12.053.
+Test Case '-[WebTests.StateBindingTests testCSSReplacementAndShutdownIgnoreQueuedUpdates]' started.
+Test Case '-[WebTests.StateBindingTests testCSSReplacementAndShutdownIgnoreQueuedUpdates]' passed (0.071 seconds).
+Test Case '-[WebTests.StateBindingTests testCSSRuleBuilderAndNumericInputsRetainMappedState]' started.
+Test Case '-[WebTests.StateBindingTests testCSSRuleBuilderAndNumericInputsRetainMappedState]' passed (0.030 seconds).
+Test Case '-[WebTests.StateBindingTests testHolderRetainsMappedChainUntilCancellationAndCanBeReused]' started.
+Test Case '-[WebTests.StateBindingTests testHolderRetainsMappedChainUntilCancellationAndCanBeReused]' passed (0.000 seconds).
+Test Case '-[WebTests.StateBindingTests testTemporaryMappedInputsUpdateAndReleaseWithElements]' started.
+Test Case '-[WebTests.StateBindingTests testTemporaryMappedInputsUpdateAndReleaseWithElements]' passed (0.056 seconds).
+Test Suite 'StateBindingTests' passed at 2026-11-17 08:21:12.212.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.158 (0.158) seconds
+Test Suite 'WebTests.xctest' passed at 2026-11-17 08:21:12.212.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.158 (0.158) seconds
+Test Suite 'Selected tests' passed at 2026-11-17 08:21:12.212.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.158 (0.160) seconds

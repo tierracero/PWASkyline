@@ -13,7 +13,7 @@ extension ToolsView {
  
     class HistorySettings: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         @State var departmentSelectListener = ""
         

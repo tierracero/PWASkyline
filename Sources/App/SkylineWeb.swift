@@ -16,7 +16,7 @@ public struct SkylineWeb {
         mode: .beta,
         major: 0,
         minor: 90,
-        patch: 35
+        patch: 36
     )
 	
 	public init() {}
@@ -257,7 +257,7 @@ open class _SkyLine {
         mode: .beta,
         major: 0,
         minor: 90,
-        patch: 35
+        patch: 36
     )
 	
 	lazy var loadingView: LoadingView = LoadingView ()

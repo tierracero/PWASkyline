@@ -11,7 +11,7 @@ import Web
 
 class InventoryControlItemView: Tr {
     
-    override class var name: String { "tr" }
+    nonisolated override class var name: String { "tr" }
  
     let poc: CustPOCQuick
     let items: [UUID]

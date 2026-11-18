@@ -1,0 +1,31 @@
+{
+  "results": [
+    {
+      "target": "app",
+      "bytes": 89748264,
+      "validWasm": true,
+      "gzipBytes": 29087671,
+      "gzipMatches": true,
+      "brotliBytes": 17486428,
+      "brotliMatches": true,
+      "sha256": "7046d1172759e888c28b367fe4ab78764ce6c29fb5469fe357a725aeeeff0530"
+    },
+    {
+      "target": "service",
+      "bytes": 48610236,
+      "validWasm": true,
+      "gzipBytes": 18056767,
+      "gzipMatches": true,
+      "brotliBytes": 11783582,
+      "brotliMatches": true,
+      "sha256": "7b86b141ebac11b0c27fd1d5b6a82091eeb8235bda1387404d7689e8d00d3c08"
+    }
+  ],
+  "packagedFiles": {
+    "app.js": true,
+    "service.js": true,
+    "main.html": true,
+    "site.webmanifest": true,
+    "favicon.ico": true
+  }
+}

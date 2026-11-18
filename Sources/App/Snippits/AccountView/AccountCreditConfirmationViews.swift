@@ -16,7 +16,7 @@ private struct AccountCreditConfirmationField {
 
 private class AccountCreditConfirmationFieldView: Div {
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     let field: AccountCreditConfirmationField
 
@@ -52,7 +52,7 @@ private class AccountCreditConfirmationFieldView: Div {
 
 class ActvateBuissnessCreditConfirmationView: Div {
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     let businessName: String
     let fiscalRazon: String
@@ -181,7 +181,7 @@ class ActvateBuissnessCreditConfirmationView: Div {
 
 class ActvatePersonalCreditConfirmationView: Div {
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     let firstName: String
     let lastName: String

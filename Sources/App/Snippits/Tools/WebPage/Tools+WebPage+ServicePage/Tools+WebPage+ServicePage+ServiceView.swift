@@ -14,7 +14,7 @@ extension ToolsView.WebPage.ServicePage {
     
     class ServiceView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         @State var id: UUID?
         

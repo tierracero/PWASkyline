@@ -12,7 +12,7 @@ import Web
 
 class AdvancesSearchViewControler: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     @State var searchTerm: String
     

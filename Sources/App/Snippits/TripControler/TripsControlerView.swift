@@ -22,7 +22,7 @@ struct TripControlGridItem: Hashable {
 
 class TripsControlerView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     private static weak var mountedView: TripsControlerView?
 

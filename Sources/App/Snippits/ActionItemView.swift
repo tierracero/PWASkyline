@@ -12,7 +12,7 @@ import TCFireSignal
 
 class ActionItemView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     /// Object Refrence, this will be modified everytime  we have a modification on the value of the refrence
     var objects: [UUID: CustSaleActionObjectItems] = [:]

@@ -12,7 +12,7 @@ import JavaScriptKit
 
 class ConcessionConfirmationView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     @State var accountid: UUID
     

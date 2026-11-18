@@ -10,7 +10,7 @@ extension CustConcessionView {
     
     class PreviewItems: Div {
     
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         let selectedItems:[CustPOCInventorySoldObject]
 

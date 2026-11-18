@@ -18,7 +18,7 @@ public enum VGridSize {
 ///
 /// `VGrid` never supplies a surface, border, radius, shadow, or card padding.
 public final class VGrid: Div {
-    public override class var name: String { "div" }
+    public nonisolated override class var name: String { "div" }
 
     public let size: VGridSize
 

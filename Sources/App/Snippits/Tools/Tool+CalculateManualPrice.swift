@@ -14,7 +14,7 @@ extension ToolsView {
     
     class CalculateManualPrice: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         let cost: Int64
         

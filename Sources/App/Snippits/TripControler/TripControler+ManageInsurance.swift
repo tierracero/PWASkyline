@@ -39,7 +39,7 @@ private func tripInsuranceDateInputUTS(
 
 class TripControlerManageInsurance: Div {
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     /// civil, ambient, payload
     @State var type: ComertialTripInsuranceType

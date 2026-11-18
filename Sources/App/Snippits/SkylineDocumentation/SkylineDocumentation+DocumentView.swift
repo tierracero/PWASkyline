@@ -18,7 +18,7 @@ extension SkylineDocumentationView {
             case notHelpful
         }
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         var family: DocumentFamily
 

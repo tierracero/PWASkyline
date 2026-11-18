@@ -11,9 +11,9 @@ import Web
 public class CustomEvent: Event {
 
     /// Returns how much work has been loaded
-    public let detail: String
+    public nonisolated let detail: String
 
-    required init (_ event: JSValue) {
+    nonisolated required init (_ event: JSValue) {
         detail = event.detail.string ?? ""
         super.init(event)
     }

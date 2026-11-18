@@ -14,7 +14,7 @@ extension MoneyManagerView.NewDailyCutView {
     
     class NewDailyCutSelectUserView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         private var callback: ((
             _ user: API.custAPIV1.UserList

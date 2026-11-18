@@ -12,7 +12,7 @@ import Web
 
 class ServiceAccionsView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     /// saleItem, actionItem
     var type: SaleActionType

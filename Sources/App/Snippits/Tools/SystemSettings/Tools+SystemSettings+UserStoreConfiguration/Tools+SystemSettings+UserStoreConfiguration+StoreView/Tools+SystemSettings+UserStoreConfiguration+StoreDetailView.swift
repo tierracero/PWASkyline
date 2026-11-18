@@ -14,7 +14,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
     
     class StoreDetailView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         /* MARK: Store details */
 

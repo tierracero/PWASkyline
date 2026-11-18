@@ -13,7 +13,7 @@ extension ToolsView.HistorySettings {
     
     class OrderProcessing: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         @State var currentView: CuttentView = .reportView
         

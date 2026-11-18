@@ -66,7 +66,7 @@ private func tripLocationDateTimeInputUTS(
 
 class ManageLocationItem: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     private let isEditing: Bool
     private let onDelete: (UUID) -> Void

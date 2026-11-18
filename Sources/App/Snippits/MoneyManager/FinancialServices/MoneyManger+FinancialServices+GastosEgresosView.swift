@@ -11,7 +11,7 @@ extension MoneyManagerView.FinancialServicesView {
 
     final class GastosEgresosView: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         private enum Mode {
             case create

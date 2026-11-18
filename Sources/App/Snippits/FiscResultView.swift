@@ -11,7 +11,7 @@ import Web
 
 class FiscResultView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var type: FiscResultViewType
     

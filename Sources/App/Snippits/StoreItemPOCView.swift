@@ -12,7 +12,7 @@ import Web
 
 class StoreItemPOCView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     let searchTerm: String
     

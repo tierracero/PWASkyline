@@ -11,7 +11,7 @@ extension SalePointView {
 
     class BudgetHistoricalView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         var budgets: [API.custPDVV1.GetBudgetsObjeto]
         

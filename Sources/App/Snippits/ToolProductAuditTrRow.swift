@@ -12,7 +12,7 @@ import Web
 
 class ToolProductAuditTrRow: Tr {
     
-    override class var name: String { "tr" }
+    nonisolated override class var name: String { "tr" }
     
     var rowNumber: Int
     

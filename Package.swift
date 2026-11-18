@@ -1,4 +1,4 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.2
 import PackageDescription
 import Foundation
 
@@ -9,11 +9,7 @@ struct Dep {
 }
 
 extension Array where Element == Dep {
-    
-    mutating func appendLocal(_ path: String, targets: Target.Dependency...) {
-        append(.init(package: .package(path: "~/Development/Packages/\(path)"), targets: targets))
-    }
-    
+
     mutating func append(_ url: String, from: Version, targets: Target.Dependency...) {
         append(.init(package: .package(url: url, from: from), targets: targets))
     }
@@ -54,11 +50,20 @@ extension Array where Element == Dep {
     }
 }
 
-var deps: [Dep] = [] 
+var deps: [Dep] = []
 
-// deps.appendFromBranch("https://github.com/swifweb/web", branch: "nightly-6.2", targets: .product(name: "Web", package: "web"))
-deps.append("https://github.com/swifweb/web", from: "2.0.0-nightly.5", targets: .product( name: "Web", package: "web"))
-
+if let localWebPackagePath = ProcessInfo.processInfo.environment["TIERRACERO_WEB_PACKAGE_PATH"],
+   !localWebPackagePath.isEmpty {
+    deps.append(.init(
+        package: .package(path: localWebPackagePath),
+        targets: [.product(name: "Web", package: "web")]
+    ))
+} else {
+    deps.appendFromMaster(
+        "git@github.com:tierracero/web.git",
+        targets: .product(name: "Web", package: "web")
+    )
+}
 
 deps.appendFromMain("git@github.com:tierracero/TCFundamentals.git",
 							 targets: .product(name: "TCFundamentals", package: "TCFundamentals"))
@@ -100,7 +105,10 @@ let package: Package = Package(
     targets: [
         .executableTarget(
             name: "App",
-            dependencies: deps.flatMap{ $0.targets }
+            dependencies: deps.flatMap{ $0.targets },
+            swiftSettings: [
+                .defaultIsolation(MainActor.self)
+            ]
         ),
         .executableTarget(
             name: "Service",

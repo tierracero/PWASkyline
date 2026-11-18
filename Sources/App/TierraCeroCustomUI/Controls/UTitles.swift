@@ -6,7 +6,7 @@ import Foundation
 import Web
 
 public final class UTitle: Div {
-    public override class var name: String { "div" }
+    public nonisolated override class var name: String { "div" }
 
     public required init() {
         super.init()
@@ -15,7 +15,7 @@ public final class UTitle: Div {
 }
 
 public final class USubTitle: Div {
-    public override class var name: String { "div" }
+    public nonisolated override class var name: String { "div" }
 
     public required init() {
         super.init()
@@ -24,7 +24,7 @@ public final class USubTitle: Div {
 }
 
 public final class UMinorTitle: Div {
-    public override class var name: String { "div" }
+    public nonisolated override class var name: String { "div" }
 
     public required init() {
         super.init()
@@ -33,7 +33,7 @@ public final class UMinorTitle: Div {
 }
 
 public final class USmallTitle: Div {
-    public override class var name: String { "div" }
+    public nonisolated override class var name: String { "div" }
 
     public required init() {
         super.init()

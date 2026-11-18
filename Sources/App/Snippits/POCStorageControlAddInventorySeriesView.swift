@@ -12,7 +12,7 @@ import Web
 
 class POCStorageControlAddInventorySeriesView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     let pocName: String
 
@@ -196,7 +196,7 @@ extension POCStorageControlAddInventorySeriesView {
 
     class InventorySeriesItem: Div {
     
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         let cc: Int
 

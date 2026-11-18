@@ -14,7 +14,7 @@ extension ProductManagerView {
     
     class AuditView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         var auditType: AuditType
         

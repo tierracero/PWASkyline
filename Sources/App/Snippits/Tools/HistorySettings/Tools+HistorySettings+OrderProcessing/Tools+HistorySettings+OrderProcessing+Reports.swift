@@ -14,7 +14,7 @@ extension ToolsView.HistorySettings.OrderProcessing {
     
     class Reports: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         @State var data: API.custOrderV1.ReportResponseType? = nil
         

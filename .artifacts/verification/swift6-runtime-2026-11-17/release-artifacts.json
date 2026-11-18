@@ -1,0 +1,22 @@
+[
+  {
+    "target": "app",
+    "bytes": 89756283,
+    "valid": true,
+    "gzipBytes": 29085492,
+    "gzipMatches": true,
+    "brotliBytes": 17496500,
+    "brotliMatches": true,
+    "sha256": "cfda6dceb29ed75d8d52d4632a4e991da4f89a30f95e6ba870439d5c15a4c131"
+  },
+  {
+    "target": "service",
+    "bytes": 48619297,
+    "valid": true,
+    "gzipBytes": 18055620,
+    "gzipMatches": true,
+    "brotliBytes": 11792561,
+    "brotliMatches": true,
+    "sha256": "19be4ba6da6f90e8d576375fac3d763760bffada8d26d8aaf8a5c66742b7b6e6"
+  }
+]

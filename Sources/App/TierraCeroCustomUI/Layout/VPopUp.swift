@@ -17,7 +17,7 @@ public enum VPopUpSize {
 /// Scoped popup overlay and panel used by the TripController beta UI.
 public final class VPopUp: Div {
     
-    public override class var name: String { "div" }
+    public nonisolated override class var name: String { "div" }
 
     /// compact, semiFull, full, fitContent, custome
     public let size: VPopUpSize

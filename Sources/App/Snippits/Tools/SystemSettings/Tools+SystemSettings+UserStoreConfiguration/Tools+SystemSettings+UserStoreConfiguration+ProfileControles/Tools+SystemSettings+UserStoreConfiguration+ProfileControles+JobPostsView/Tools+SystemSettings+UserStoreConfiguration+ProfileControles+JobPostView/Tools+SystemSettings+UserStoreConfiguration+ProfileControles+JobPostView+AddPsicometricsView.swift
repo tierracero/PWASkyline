@@ -14,7 +14,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration.ProfileControles.JobPo
     
     class AddPsicometricsView: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         private var callback: (
             _ item: PsychometricsTestQuick

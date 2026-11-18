@@ -14,7 +14,7 @@ class SocialManagerAddProfileView: Div {
     
     let ws = WS()
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     private var callback: ((
         _ page: CustSocialPageQuick

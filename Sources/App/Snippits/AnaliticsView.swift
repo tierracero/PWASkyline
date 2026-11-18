@@ -34,7 +34,7 @@ enum NotificationType: Codable, CustomStringConvertible {
 
 class AnaliticsView: PageController {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     @State var asMainView: Bool
     

@@ -14,7 +14,7 @@ extension MoneyManagerView.AuditView {
 
     class PaymentRow: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         let item: API.custAPIV1.PaymentToRender
         

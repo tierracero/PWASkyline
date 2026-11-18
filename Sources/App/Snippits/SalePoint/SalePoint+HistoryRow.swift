@@ -12,7 +12,7 @@ import Web
 extension SalePointView {
     class HistoryRow: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         let sale: CustSaleQuick
         

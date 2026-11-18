@@ -4,7 +4,7 @@ import TCFireSignal
 import Web
 
 final class SearchSubCustomerView: Div {
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     let custAcct: CustAcctSearch
 

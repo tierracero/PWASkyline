@@ -13,7 +13,7 @@ import Web
 extension ManagePOC {
     class SelectProductType: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         /// Wether it will show all the tooks for creation or not
         let productType: String

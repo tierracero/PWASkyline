@@ -12,7 +12,7 @@ import Web
 
 class ToolViewHistoricalInventoryManualDispertionsView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         /// general, byStore, byVendor
         @State var reportType: PurchaseOrderAuditTypes? = nil

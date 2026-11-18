@@ -7,7 +7,7 @@ import Web
 
 public final class USmallButton: Button {
 
-    public override class var name: String { "button" }
+    public nonisolated override class var name: String { "button" }
 
     public required init() {
         super.init()
@@ -18,7 +18,7 @@ public final class USmallButton: Button {
 
 public final class ULargeButton: Button {
 
-    public override class var name: String { "button" }
+    public nonisolated override class var name: String { "button" }
 
     public required init() {
         super.init()

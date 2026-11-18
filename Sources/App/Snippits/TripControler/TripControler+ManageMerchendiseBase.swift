@@ -9,7 +9,7 @@ import Web
 
 class TripControlerManageMerchendiseBase: Div {
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     private let callback: (
         _ item: CallbackType

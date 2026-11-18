@@ -15,7 +15,7 @@ class CreateStoreLevelLine: Div {
     
     let viewId: UUID = .init()
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     let line: CustStoreLinesAPI?
     

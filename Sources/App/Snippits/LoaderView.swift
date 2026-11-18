@@ -10,7 +10,7 @@ import Web
 
 class LoaderView: Div {
 	
-	override class var name: String { "Div" }
+	nonisolated override class var name: String { "Div" }
 
 	required init() {}
 

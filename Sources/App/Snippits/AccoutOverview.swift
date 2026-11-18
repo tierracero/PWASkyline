@@ -24,7 +24,7 @@ extension AccoutOverview {
 
 public class AccoutOverview: Div {
     
-    public override class var name: String { "div" }
+    public nonisolated override class var name: String { "div" }
     
     let id: HybridIdentifier
     

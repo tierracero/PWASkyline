@@ -11,7 +11,7 @@ extension ToolsView.SystemSettings.UserStoreConfiguration {
 
     final class UserCancelationRequestView: Div {
 
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         private let store: CustStore
         private let user: CustUsername

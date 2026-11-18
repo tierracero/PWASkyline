@@ -18,7 +18,7 @@ enum SuperViewPresentation {
 
 final class SuperView: Div {
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     private let content: DOMElement?
     private let presentation: SuperViewPresentation
@@ -50,7 +50,7 @@ final class SuperView: Div {
         observeContentLifecycle(content)
     }
 
-    deinit {
+    isolated deinit {
         disconnectContentObserver()
         #if arch(wasm32) && JAVASCRIPTKIT_WITHOUT_WEAKREFS
         contentObserverClosure?.release()

@@ -14,7 +14,7 @@ extension ToolsView.WebPage.MeetUsPage {
     
     class ProfileRow: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         let item: CustWebContent
         

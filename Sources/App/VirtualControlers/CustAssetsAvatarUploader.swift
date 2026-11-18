@@ -9,7 +9,7 @@ import Web
 
 final class CustAssetsAvatarUploader: Div {
 
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
 
     let ws = WS()
     

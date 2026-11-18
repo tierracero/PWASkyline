@@ -10,9 +10,10 @@ import TCFundamentals
 import Web
 //@State
 
-private var _shared: CatchControler?
-
+@MainActor
 public final class CatchControler {
+
+    private static var _shared: CatchControler?
 
     public static var shared: CatchControler {
         guard let shared = _shared else {

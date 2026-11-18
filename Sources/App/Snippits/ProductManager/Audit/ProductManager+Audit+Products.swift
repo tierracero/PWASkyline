@@ -14,7 +14,7 @@ extension ProductManagerView.AuditView {
     
     class Products: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         @State var typeSelectListener: CardexRequestType = .store
         

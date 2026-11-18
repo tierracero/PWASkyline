@@ -13,7 +13,7 @@ import XMLHttpRequest
 
 class ManageFiscalProfile: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     @State var fiscid: UUID?
     

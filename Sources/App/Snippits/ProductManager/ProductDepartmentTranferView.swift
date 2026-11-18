@@ -15,7 +15,7 @@ extension ProductManagerView{
     
     class ProductDepartmentTranferView: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         ///dep, cat, line, main, all
         let level: CustProductType

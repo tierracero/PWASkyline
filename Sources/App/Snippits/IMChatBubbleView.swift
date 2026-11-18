@@ -12,7 +12,7 @@ import Web
 /// Instant Comunication Message View
 class IMChatBubbleView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     ///Icon that represents if the msg is un read, read, or user is righting
     @State var icon = ""
     @State var chatNick = "..."

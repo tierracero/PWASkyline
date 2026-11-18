@@ -8,14 +8,14 @@
 import Foundation
 import TCFundamentals
 import TCFireSignal
-import LanguagePack
+@preconcurrency import LanguagePack
 import Web
 
 extension AccountView {
     
     class ConfimeSiweCard: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         let custAcct: UUID
         

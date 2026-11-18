@@ -11,7 +11,7 @@ import TCFireSignal
 import Web
 
 class ToolFiscalAddComplementoView: Div {
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     /// fiscalProfiles
     var profile: FiscalComponents.Profile
     

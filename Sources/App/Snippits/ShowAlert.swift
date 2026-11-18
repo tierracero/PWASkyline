@@ -25,7 +25,7 @@ class ShowAlert: Div {
 		fatalError("init() has not been implemented")
 	}
 	
-	override class var name: String { "div" }
+	nonisolated override class var name: String { "div" }
 	
 	@DOM override var body: DOM.Content {
 		Div{

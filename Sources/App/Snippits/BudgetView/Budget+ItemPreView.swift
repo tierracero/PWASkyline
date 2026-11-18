@@ -14,7 +14,7 @@ extension BudgetView {
     
     class ItemPreView: Tr {
         
-        override class var name: String { "tr" }
+        nonisolated override class var name: String { "tr" }
         
         let budgetid: UUID
         

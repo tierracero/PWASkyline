@@ -14,7 +14,7 @@ extension ToolsView.SystemSettings {
     
     class SeviceTags: Div {
         
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
         
         /// object, helth, food, delivery, service, product
         @State var typeOfServiceObject: ConfigTypeOfServiceObject

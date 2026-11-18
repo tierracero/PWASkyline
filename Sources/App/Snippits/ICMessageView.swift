@@ -28,7 +28,7 @@ import Web
 /// Instant Comunication Message View
 class ICMessageView: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     let data: API.custAPIV1.LoadMessaging
     

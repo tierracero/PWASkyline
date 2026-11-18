@@ -8,13 +8,13 @@
 import Foundation
 import TCFundamentals
 import TCFireSignal
-import LanguagePack
+@preconcurrency import LanguagePack
 import TaecelAPICore
 import Web
 
 class RewardsView: PageController {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     let accountId: UUID
     

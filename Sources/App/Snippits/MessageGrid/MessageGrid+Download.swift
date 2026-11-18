@@ -15,7 +15,7 @@ extension MessageGrid {
 
     class Download: Div {
     
-        override class var name: String { "div" }
+        nonisolated override class var name: String { "div" }
 
         /// Order ID
         let orderId: UUID

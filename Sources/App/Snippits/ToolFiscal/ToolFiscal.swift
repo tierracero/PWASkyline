@@ -89,7 +89,7 @@ private func fiscalSearchDateTimestamp(_ value: String, endOfDay: Bool) -> Int64
 
 class ToolFiscal: Div {
     
-    override class var name: String { "div" }
+    nonisolated override class var name: String { "div" }
     
     var accountId: UUID?
 
